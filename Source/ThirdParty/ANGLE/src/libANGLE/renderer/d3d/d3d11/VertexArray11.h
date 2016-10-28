@@ -11,15 +11,16 @@
 
 #include "libANGLE/renderer/VertexArrayImpl.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
+#include "libANGLE/signal_utils.h"
 
 namespace rx
 {
 class Renderer11;
 
-class VertexArray11 : public VertexArrayImpl
+class VertexArray11 : public VertexArrayImpl, public angle::SignalReceiver
 {
   public:
-    VertexArray11(const gl::VertexArray::Data &data);
+    VertexArray11(const gl::VertexArrayState &data);
     ~VertexArray11() override;
 
     void syncState(const gl::VertexArray::DirtyBits &dirtyBits) override;
@@ -32,10 +33,11 @@ class VertexArray11 : public VertexArrayImpl
 
     const std::vector<TranslatedAttribute> &getTranslatedAttribs() const;
 
+    // SignalReceiver implementation
+    void signal(angle::SignalToken token) override;
+
   private:
     void updateVertexAttribStorage(size_t attribIndex);
-    void markBufferDataDirty(size_t attribIndex);
-    void unlinkBuffer(size_t attribIndex, VertexStorageType storageType);
 
     std::vector<VertexStorageType> mAttributeStorageTypes;
     std::vector<TranslatedAttribute> mTranslatedAttribs;
@@ -52,7 +54,7 @@ class VertexArray11 : public VertexArrayImpl
     // We need to keep a safe pointer to the Buffer so we can attach the correct dirty callbacks.
     std::vector<BindingPointer<gl::Buffer>> mCurrentBuffers;
 
-    std::vector<NotificationCallback> mOnBufferDataDirty;
+    std::vector<angle::ChannelBinding> mOnBufferDataDirty;
 };
 
 }  // namespace rx

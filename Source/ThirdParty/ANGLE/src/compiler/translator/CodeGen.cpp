@@ -4,8 +4,6 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/Compiler.h"
-
 #ifdef ANGLE_ENABLE_ESSL
 #include "compiler/translator/TranslatorESSL.h"
 #endif

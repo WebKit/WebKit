@@ -6,7 +6,6 @@
     'variables':
     {
         'angle_code': 1,
-        'angle_post_build_script%': 0,
         'angle_gen_path': '<(SHARED_INTERMEDIATE_DIR)/angle',
         'angle_id_script_base': 'commit_id.py',
         'angle_id_script': '<(angle_gen_path)/<(angle_id_script_base)',
@@ -16,11 +15,13 @@
         'angle_enable_d3d9%': 0,
         'angle_enable_d3d11%': 0,
         'angle_enable_gl%': 0,
+        'angle_enable_vulkan%': 0,
         'angle_enable_essl%': 1, # Enable this for all configs by default
         'angle_enable_glsl%': 1, # Enable this for all configs by default
         'angle_enable_hlsl%': 0,
         'angle_link_glx%': 0,
         'angle_gl_library_type%': 'shared_library',
+        'dcheck_always_on%': 0,
         'conditions':
         [
             ['OS=="win"',
@@ -29,6 +30,7 @@
                 'angle_enable_d3d9%': 1,
                 'angle_enable_d3d11%': 1,
                 'angle_enable_hlsl%': 1,
+                'angle_enable_vulkan%': 1,
             }],
             ['OS=="linux" and use_x11==1 and chromeos==0',
             {
@@ -43,6 +45,7 @@
                 'angle_enable_gl%': 1,
             }],
         ],
+        'angle_enable_null%': 1, # Available on all platforms
     },
     'includes':
     [
@@ -65,6 +68,7 @@
             [
                 '.',
                 '../include',
+                'common/third_party/numerics',
             ],
             'dependencies':
             [
@@ -74,11 +78,25 @@
             {
                 'include_dirs':
                 [
-                    '<(angle_path)/src',
                     '<(angle_path)/include',
+                    '<(angle_path)/src',
+                    '<(angle_path)/src/common/third_party/numerics',
                 ],
                 'conditions':
                 [
+                    ['dcheck_always_on==1',
+                    {
+                        'configurations':
+                        {
+                            'Release_Base':
+                            {
+                                'defines':
+                                [
+                                    'ANGLE_ENABLE_RELEASE_ASSERTS',
+                                ],
+                            },
+                        },
+                    }],
                     ['OS=="win"',
                     {
                         'configurations':
@@ -96,6 +114,19 @@
             },
             'conditions':
             [
+                ['dcheck_always_on==1',
+                {
+                    'configurations':
+                    {
+                        'Release_Base':
+                        {
+                            'defines':
+                            [
+                                'ANGLE_ENABLE_RELEASE_ASSERTS',
+                            ],
+                        },
+                    },
+                }],
                 ['OS=="win"',
                 {
                     'configurations':
@@ -110,6 +141,33 @@
                     },
                 }],
             ],
+        },
+
+        {
+            'target_name': 'angle_image_util',
+            'type': 'static_library',
+            'includes': [ '../build/common_defines.gypi', ],
+            'sources':
+            [
+                '<@(libangle_image_util_sources)',
+            ],
+            'include_dirs':
+            [
+                '.',
+                '../include',
+            ],
+            'dependencies':
+            [
+                'angle_common',
+            ],
+            'direct_dependent_settings':
+            {
+                'include_dirs':
+                [
+                    '<(angle_path)/include',
+                    '<(angle_path)/src',
+                ],
+            },
         },
 
         {
@@ -245,29 +303,6 @@
                             'type' : 'shared_library',
                         }],
                     ]
-                },
-            ], # targets
-        }],
-        ['angle_post_build_script!=0 and OS=="win"',
-        {
-            'targets':
-            [
-                {
-                    'target_name': 'post_build',
-                    'type': 'none',
-                    'includes': [ '../build/common_defines.gypi', ],
-                    'dependencies': [ 'libGLESv2', 'libEGL' ],
-                    'actions':
-                    [
-                        {
-                            'action_name': 'ANGLE Post-Build Script',
-                            'message': 'Running <(angle_post_build_script)...',
-                            'msvs_cygwin_shell': 0,
-                            'inputs': [ '<(angle_post_build_script)', '<!@(["python", "<(angle_post_build_script)", "inputs", "<(angle_path)", "<(CONFIGURATION_NAME)", "$(PlatformName)", "<(PRODUCT_DIR)"])' ],
-                            'outputs': [ '<!@(python <(angle_post_build_script) outputs "<(angle_path)" "<(CONFIGURATION_NAME)" "$(PlatformName)" "<(PRODUCT_DIR)")' ],
-                            'action': ['python', '<(angle_post_build_script)', 'run', '<(angle_path)', '<(CONFIGURATION_NAME)', '$(PlatformName)', '<(PRODUCT_DIR)'],
-                        },
-                    ], #actions
                 },
             ], # targets
         }],

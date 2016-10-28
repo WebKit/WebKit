@@ -185,22 +185,20 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
     String translatedShaderSource;
     String shaderInfoLog;
-    int extraCompileOptions = SH_CLAMP_INDIRECT_ARRAY_BOUNDS | SH_UNFOLD_SHORT_CIRCUIT | SH_ENFORCE_PACKING_RESTRICTIONS | SH_INIT_VARYINGS_WITHOUT_STATIC_USE | SH_LIMIT_EXPRESSION_COMPLEXITY | SH_LIMIT_CALL_STACK_DEPTH;
+    int extraCompileOptions = SH_CLAMP_INDIRECT_ARRAY_BOUNDS | SH_UNFOLD_SHORT_CIRCUIT | SH_INIT_OUTPUT_VARIABLES | SH_ENFORCE_PACKING_RESTRICTIONS | SH_LIMIT_EXPRESSION_COMPLEXITY | SH_LIMIT_CALL_STACK_DEPTH;
 
     if (m_requiresBuiltInFunctionEmulation)
-        extraCompileOptions |= SH_EMULATE_BUILT_IN_FUNCTIONS;
+        extraCompileOptions |= SH_EMULATE_ABS_INT_FUNCTION;
 
-    Vector<ANGLEShaderSymbol> symbols;
+    Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>> symbols;
     bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, extraCompileOptions);
 
     entry.log = shaderInfoLog;
     entry.isValid = isValid;
 
-    size_t numSymbols = symbols.size();
-    for (size_t i = 0; i < numSymbols; ++i) {
-        ANGLEShaderSymbol shaderSymbol = symbols[i];
-        GraphicsContext3D::SymbolInfo symbolInfo(shaderSymbol.dataType, shaderSymbol.size, shaderSymbol.mappedName, shaderSymbol.precision, shaderSymbol.staticUse);
-        entry.symbolMap(shaderSymbol.symbolType).set(shaderSymbol.name, symbolInfo);
+    for (const std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>& pair : symbols) {
+        const std::string& name = pair.second.name;
+        entry.symbolMap(pair.first).set(String(name.c_str(), name.length()), pair.second);
     }
 
     if (!isValid)

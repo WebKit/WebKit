@@ -15,7 +15,7 @@ class TranslatorHLSL : public TCompiler
     TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 #ifdef ANGLE_ENABLE_HLSL
     TranslatorHLSL *getAsTranslatorHLSL() override { return this; }
-#endif
+#endif // ANGLE_ENABLE_HLSL
 
     bool hasInterfaceBlock(const std::string &interfaceBlockName) const;
     unsigned int getInterfaceBlockRegister(const std::string &interfaceBlockName) const;
@@ -23,10 +23,11 @@ class TranslatorHLSL : public TCompiler
     const std::map<std::string, unsigned int> *getUniformRegisterMap() const;
 
   protected:
-    void translate(TIntermNode *root, int compileOptions) override;
+    void translate(TIntermNode *root, ShCompileOptions compileOptions) override;
+    bool shouldFlattenPragmaStdglInvariantAll() override;
 
     // collectVariables needs to be run always so registers can be assigned.
-    bool shouldCollectVariables(int compileOptions) override { return true; }
+    bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
 
     std::map<std::string, unsigned int> mInterfaceBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;

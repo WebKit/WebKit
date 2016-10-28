@@ -24,7 +24,7 @@ class RegenerateStructNames : public TIntermTraverser
 
   protected:
     void visitSymbol(TIntermSymbol *) override;
-    bool visitAggregate(Visit, TIntermAggregate *) override;
+    bool visitBlock(Visit, TIntermBlock *block) override;
 
   private:
     const TSymbolTable &mSymbolTable;

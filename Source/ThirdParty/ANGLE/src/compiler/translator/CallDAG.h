@@ -41,7 +41,7 @@ class CallDAG : angle::NonCopyable
     struct Record
     {
         std::string name;
-        TIntermAggregate *node;
+        TIntermFunctionDefinition *node;
         std::vector<int> callees;
     };
 
@@ -57,7 +57,7 @@ class CallDAG : angle::NonCopyable
     InitResult init(TIntermNode *root, TInfoSinkBase *info);
 
     // Returns InvalidIndex if the function wasn't found
-    size_t findIndex(const TIntermAggregate *function) const;
+    size_t findIndex(const TFunctionSymbolInfo *functionInfo) const;
 
     const Record &getRecordFromIndex(size_t index) const;
     const Record &getRecord(const TIntermAggregate *function) const;

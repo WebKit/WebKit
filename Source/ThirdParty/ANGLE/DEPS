@@ -16,10 +16,10 @@ deps = {
 
   # Cherry is a dEQP management GUI written in Go. We use it for viewing test results.
   "third_party/cherry":
-      "https://android.googlesource.com/platform/external/cherry@af6c09fe05115f0cca61ae23ee871bda27cf1ff5",
+      "https://android.googlesource.com/platform/external/cherry@d2e26b4d864ec2a6757e7f1174e464949ca5bf73",
 
   "third_party/deqp/src":
-      "https://android.googlesource.com/platform/external/deqp@cc0ded6c77267bbb14d21aac358fc5d9690c07f8",
+      "https://android.googlesource.com/platform/external/deqp@f4f3d8079e7a37d7675ab93583e6438d0bca0e58",
 
   "third_party/libpng":
       "https://android.googlesource.com/platform/external/libpng@094e181e79a3d6c23fd005679025058b7df1ad6c",
@@ -28,7 +28,7 @@ deps = {
       Var('chromium_git') + "/chromium/src/third_party/zlib@afd8c4593c010c045902f6c0501718f1823064a3",
 
   "buildtools":
-      Var('chromium_git') + '/chromium/buildtools.git@125d157607de4d7c95bf8b02dd580aae17962f19',
+      Var('chromium_git') + '/chromium/buildtools.git@06e80a0e17319868d4a9b13f9bb6a248dc8d8b20',
 }
 
 hooks = [

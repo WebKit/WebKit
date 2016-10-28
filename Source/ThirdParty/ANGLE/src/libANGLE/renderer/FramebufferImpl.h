@@ -28,27 +28,27 @@ namespace rx
 class FramebufferImpl : angle::NonCopyable
 {
   public:
-    explicit FramebufferImpl(const gl::Framebuffer::Data &data) : mData(data) { }
+    explicit FramebufferImpl(const gl::FramebufferState &state) : mState(state) {}
     virtual ~FramebufferImpl() { }
 
     virtual gl::Error discard(size_t count, const GLenum *attachments) = 0;
     virtual gl::Error invalidate(size_t count, const GLenum *attachments) = 0;
     virtual gl::Error invalidateSub(size_t count, const GLenum *attachments, const gl::Rectangle &area) = 0;
 
-    virtual gl::Error clear(const gl::Data &data, GLbitfield mask) = 0;
-    virtual gl::Error clearBufferfv(const gl::Data &data,
+    virtual gl::Error clear(ContextImpl *context, GLbitfield mask) = 0;
+    virtual gl::Error clearBufferfv(ContextImpl *context,
                                     GLenum buffer,
                                     GLint drawbuffer,
                                     const GLfloat *values) = 0;
-    virtual gl::Error clearBufferuiv(const gl::Data &data,
+    virtual gl::Error clearBufferuiv(ContextImpl *context,
                                      GLenum buffer,
                                      GLint drawbuffer,
                                      const GLuint *values) = 0;
-    virtual gl::Error clearBufferiv(const gl::Data &data,
+    virtual gl::Error clearBufferiv(ContextImpl *context,
                                     GLenum buffer,
                                     GLint drawbuffer,
                                     const GLint *values) = 0;
-    virtual gl::Error clearBufferfi(const gl::Data &data,
+    virtual gl::Error clearBufferfi(ContextImpl *context,
                                     GLenum buffer,
                                     GLint drawbuffer,
                                     GLfloat depth,
@@ -56,19 +56,26 @@ class FramebufferImpl : angle::NonCopyable
 
     virtual GLenum getImplementationColorReadFormat() const = 0;
     virtual GLenum getImplementationColorReadType() const = 0;
-    virtual gl::Error readPixels(const gl::State &state, const gl::Rectangle &area, GLenum format, GLenum type, GLvoid *pixels) const = 0;
+    virtual gl::Error readPixels(ContextImpl *context,
+                                 const gl::Rectangle &area,
+                                 GLenum format,
+                                 GLenum type,
+                                 GLvoid *pixels) const = 0;
 
-    virtual gl::Error blit(const gl::State &state, const gl::Rectangle &sourceArea, const gl::Rectangle &destArea,
-                           GLbitfield mask, GLenum filter, const gl::Framebuffer *sourceFramebuffer) = 0;
+    virtual gl::Error blit(ContextImpl *context,
+                           const gl::Rectangle &sourceArea,
+                           const gl::Rectangle &destArea,
+                           GLbitfield mask,
+                           GLenum filter) = 0;
 
     virtual bool checkStatus() const = 0;
 
     virtual void syncState(const gl::Framebuffer::DirtyBits &dirtyBits) = 0;
 
-    const gl::Framebuffer::Data &getData() const { return mData; }
+    const gl::FramebufferState &getState() const { return mState; }
 
   protected:
-    const gl::Framebuffer::Data &mData;
+    const gl::FramebufferState &mState;
 };
 
 }

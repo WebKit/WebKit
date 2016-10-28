@@ -45,6 +45,7 @@ struct FunctionsGLX::GLXFunctionTable
           getCurrentDrawablePtr(nullptr),
           waitXPtr(nullptr),
           waitGLPtr(nullptr),
+          getClientStringPtr(nullptr),
           queryExtensionsStringPtr(nullptr),
           getFBConfigsPtr(nullptr),
           chooseFBConfigPtr(nullptr),
@@ -75,6 +76,7 @@ struct FunctionsGLX::GLXFunctionTable
     PFNGLXWAITGLPROC waitGLPtr;
 
     // GLX 1.1
+    PFNGLXGETCLIENTSTRINGPROC getClientStringPtr;
     PFNGLXQUERYEXTENSIONSSTRINGPROC queryExtensionsStringPtr;
 
     //GLX 1.3
@@ -175,6 +177,7 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     GET_FNPTR_OR_ERROR(&mFnPtrs->waitGLPtr, glXWaitGL);
 
     // GLX 1.1
+    GET_FNPTR_OR_ERROR(&mFnPtrs->getClientStringPtr, glXGetClientString);
     GET_FNPTR_OR_ERROR(&mFnPtrs->queryExtensionsStringPtr, glXQueryExtensionsString);
 
     // Check we have a working GLX
@@ -314,6 +317,11 @@ void FunctionsGLX::waitGL() const
 }
 
 // GLX 1.1
+const char *FunctionsGLX::getClientString(int name) const
+{
+    return mFnPtrs->getClientStringPtr(mXDisplay, name);
+}
+
 const char *FunctionsGLX::queryExtensionsString() const
 {
     return mFnPtrs->queryExtensionsStringPtr(mXDisplay, mXScreen);

@@ -89,7 +89,7 @@ class TextureStorage9_2D : public TextureStorage9
 class TextureStorage9_EGLImage final : public TextureStorage9
 {
   public:
-    TextureStorage9_EGLImage(Renderer9 *renderer, EGLImageD3D *image);
+    TextureStorage9_EGLImage(Renderer9 *renderer, EGLImageD3D *image, RenderTarget9 *renderTarget9);
     ~TextureStorage9_EGLImage() override;
 
     gl::Error getSurfaceLevel(GLenum target,

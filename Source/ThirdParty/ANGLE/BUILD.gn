@@ -3,8 +3,18 @@
 # found in the LICENSE file.
 
 # import the use_x11 variable
+import("//build/config/dcheck_always_on.gni")
+import("//build/config/linux/pkg_config.gni")
 import("//build/config/ui.gni")
+import("//testing/libfuzzer/fuzzer_test.gni")
 import("//third_party/angle/build/angle_common.gni")
+import("//ui/ozone/ozone.gni")
+
+if (ozone_platform_gbm) {
+  pkg_config("libdrm") {
+    packages = [ "libdrm" ]
+  }
+}
 
 angle_git_is_present = exec_script("src/commit_id.py",
                                    [
@@ -39,6 +49,17 @@ config("internal_config") {
   ]
 }
 
+config("extra_warnings") {
+  # Enable more default warnings on Windows.
+  if (is_win) {
+    cflags = [
+      "/we4244",  # Conversion: possible loss of data.
+      "/we4456",  # Variable shadowing.
+      "/we4458",  # declaration hides class member.
+    ]
+  }
+}
+
 if (is_win) {
   copy("copy_compiler_dll") {
     sources = [
@@ -50,6 +71,8 @@ if (is_win) {
   }
 }
 
+angle_undefine_configs = [ "//build/config/compiler:default_include_dirs" ]
+
 component("translator") {
   sources = [
     "src/compiler/translator/ShaderLang.cpp",
@@ -58,11 +81,8 @@ component("translator") {
 
   defines = [ "ANGLE_TRANSLATOR_IMPLEMENTATION" ]
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":internal_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs -= angle_undefine_configs
+  configs += [ ":internal_config" ]
 
   public_deps = [
     ":translator_lib",
@@ -90,15 +110,20 @@ source_set("includes") {
 static_library("preprocessor") {
   sources = rebase_path(compiler_gypi.angle_preprocessor_sources, ".", "src")
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":internal_config",
-    "//build/config/compiler:no_chromium_code",
+  configs -= angle_undefine_configs
+  configs += [ ":internal_config" ]
+
+  public_deps = [
+    ":angle_common",
   ]
 }
 
 config("translator_static_config") {
   defines = [ "ANGLE_TRANSLATOR_STATIC" ]
+}
+
+config("translator_disable_pool_alloc") {
+  defines = [ "ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC" ]
 }
 
 config("debug_annotations_config") {
@@ -107,47 +132,86 @@ config("debug_annotations_config") {
   }
 }
 
+config("angle_release_asserts_config") {
+  if (dcheck_always_on) {
+    defines = [ "ANGLE_ENABLE_RELEASE_ASSERTS" ]
+  }
+}
+
+config("angle_common_config") {
+  include_dirs = [ "src/common/third_party/numerics" ]
+}
+
 static_library("angle_common") {
   sources = rebase_path(gles_gypi.libangle_common_sources, ".", "src")
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs -= angle_undefine_configs
   configs += [
-    ":internal_config",
+    ":angle_common_config",
     ":debug_annotations_config",
-    "//build/config/compiler:no_chromium_code",
+    ":extra_warnings",
+    ":internal_config",
   ]
 
-  public_deps = [ ":commit_id" ]
+  public_deps = [
+    ":commit_id",
+  ]
+  public_configs = [
+    ":angle_release_asserts_config",
+    ":angle_common_config",
+  ]
+}
+
+config("angle_image_util_config") {
+  include_dirs = [
+    "include",
+    "src",
+  ]
+}
+
+static_library("angle_image_util") {
+  sources = rebase_path(gles_gypi.libangle_image_util_sources, ".", "src")
+
+  configs -= angle_undefine_configs
+  configs += [ ":internal_config" ]
+
+  public_configs = [ ":angle_image_util_config" ]
+
+  public_deps = [
+    ":angle_common",
+  ]
 }
 
 static_library("translator_lib") {
   sources = rebase_path(compiler_gypi.angle_translator_lib_sources, ".", "src")
   defines = []
 
-  if (angle_enable_essl) {
+  if (angle_enable_essl || use_libfuzzer) {
     sources +=
         rebase_path(compiler_gypi.angle_translator_lib_essl_sources, ".", "src")
     defines += [ "ANGLE_ENABLE_ESSL" ]
   }
 
-  if (angle_enable_glsl) {
+  if (angle_enable_glsl || use_libfuzzer) {
     sources +=
         rebase_path(compiler_gypi.angle_translator_lib_glsl_sources, ".", "src")
     defines += [ "ANGLE_ENABLE_GLSL" ]
   }
 
-  if (angle_enable_hlsl) {
+  if (angle_enable_hlsl || use_libfuzzer) {
     sources +=
         rebase_path(compiler_gypi.angle_translator_lib_hlsl_sources, ".", "src")
     defines += [ "ANGLE_ENABLE_HLSL" ]
   }
-  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs -= angle_undefine_configs
   configs += [
     ":internal_config",
     ":translator_static_config",
-    "//build/config/compiler:no_chromium_code",
   ]
   public_configs = [ ":external_config" ]
+  if (use_libfuzzer) {
+    all_dependent_configs = [ ":translator_disable_pool_alloc" ]
+  }
 
   deps = [
     ":includes",
@@ -157,6 +221,12 @@ static_library("translator_lib") {
   public_deps = [
     ":angle_common",
   ]
+
+  if (is_win) {
+    # Necessary to suppress some system header xtree warnigns in Release.
+    # For some reason this warning doesn't get triggered in Chromium
+    cflags = [ "/wd4718" ]
+  }
 }
 
 static_library("translator_static") {
@@ -169,15 +239,27 @@ static_library("translator_static") {
     defines = [ "ANGLE_ENABLE_HLSL" ]
   }
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":internal_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs -= angle_undefine_configs
+  configs += [ ":internal_config" ]
   public_configs = [ ":translator_static_config" ]
 
   public_deps = [
     ":translator_lib",
+  ]
+}
+
+source_set("translator_fuzzer") {
+  sources = [
+    "src/compiler/fuzz/translator_fuzzer.cpp",
+  ]
+
+  include_dirs = [
+    "include",
+    "src",
+  ]
+
+  deps = [
+    ":translator_static",
   ]
 }
 
@@ -224,9 +306,15 @@ config("libANGLE_config") {
   }
   if (angle_enable_gl) {
     defines += [ "ANGLE_ENABLE_OPENGL" ]
+    if (use_x11) {
+      defines += [ "ANGLE_USE_X11" ]
+    }
   }
-  if (use_x11) {
-    defines += [ "ANGLE_USE_X11" ]
+  if (angle_enable_vulkan) {
+    defines += [ "ANGLE_ENABLE_VULKAN" ]
+  }
+  if (angle_enable_null) {
+    defines += [ "ANGLE_ENABLE_NULL" ]
   }
   defines += [
     "GL_GLEXT_PROTOTYPES",
@@ -255,9 +343,11 @@ static_library("libANGLE") {
   include_dirs = []
   libs = []
   defines = [ "LIBANGLE_IMPLEMENTATION" ]
-
-  deps = [
+  public_deps = [
     ":angle_common",
+  ]
+  deps = [
+    ":angle_image_util",
     ":commit_id",
     ":includes",
     ":translator_static",
@@ -290,32 +380,79 @@ static_library("libANGLE") {
     }
     if (use_x11) {
       sources += rebase_path(gles_gypi.libangle_gl_glx_sources, ".", "src")
-      deps += [
-        "src/third_party/libXNVCtrl:libXNVCtrl"
-      ]
+      deps += [ "src/third_party/libXNVCtrl:libXNVCtrl" ]
       libs += [
         "X11",
         "Xi",
         "Xext",
       ]
     }
+    if (is_mac) {
+      sources += rebase_path(gles_gypi.libangle_gl_cgl_sources, ".", "src")
+      libs += [
+        "Cocoa.framework",
+        "IOSurface.framework",
+        "OpenGL.framework",
+        "QuartzCore.framework",
+      ]
+    }
+    if (is_android) {
+      sources += rebase_path(gles_gypi.libangle_gl_egl_sources, ".", "src")
+      sources += rebase_path(gles_gypi.libangle_gl_egl_dl_sources, ".", "src")
+      sources +=
+          rebase_path(gles_gypi.libangle_gl_egl_android_sources, ".", "src")
+      libs += [
+        "android",
+        "log",
+      ]
+    }
+    if (ozone_platform_gbm) {
+      configs += [ ":libdrm" ]
+      defines += [ "ANGLE_USE_OZONE" ]
+      deps += [ "//third_party/minigbm" ]
+      sources += rebase_path(gles_gypi.libangle_gl_egl_sources, ".", "src")
+      sources += rebase_path(gles_gypi.libangle_gl_egl_dl_sources, ".", "src")
+      sources += rebase_path(gles_gypi.libangle_gl_ozone_sources, ".", "src")
+    }
+  }
+
+  if (angle_enable_vulkan) {
+    sources += rebase_path(gles_gypi.libangle_vulkan_sources, ".", "src")
+  }
+
+  if (angle_enable_null) {
+    sources += rebase_path(gles_gypi.libangle_null_sources, ".", "src")
   }
 
   if (is_debug) {
     defines += [ "ANGLE_GENERATE_SHADER_DEBUG_INFO" ]
   }
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs -= angle_undefine_configs
+
   configs += [
     ":commit_id_config",
     ":debug_annotations_config",
+    ":extra_warnings",
     ":libANGLE_config",
     ":internal_config",
-    "//build/config/compiler:no_chromium_code",
   ]
 
   if (is_win) {
-    deps += [ ":copy_compiler_dll" ]
+    data_deps = [
+      ":copy_compiler_dll",
+    ]
+  }
+}
+
+config("shared_library_public_config") {
+  if (is_mac && !is_component_build) {
+    # Executable targets that depend on the shared libraries below need to have
+    # the rpath setup in non-component build configurations.
+    ldflags = [
+      "-rpath",
+      "@executable_path/",
+    ]
   }
 }
 
@@ -327,13 +464,20 @@ shared_library("libGLESv2") {
         [ "/DEF:" + rebase_path("src/libGLESv2/libGLESv2.def", root_build_dir) ]
   }
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
+  if (is_mac && !is_component_build) {
+    ldflags = [
+      "-install_name",
+      "@rpath/${target_name}.dylib",
+    ]
+    public_configs = [ ":shared_library_public_config" ]
+  }
+
+  configs -= angle_undefine_configs
   configs += [
     ":internal_config",
     ":commit_id_config",
     ":debug_annotations_config",
     ":libANGLE_config",
-    "//build/config/compiler:no_chromium_code",
   ]
 
   defines = [ "LIBGLESV2_IMPLEMENTATION" ]
@@ -351,13 +495,21 @@ shared_library("libEGL") {
     ldflags = [ "/DEF:" + rebase_path("src/libEGL/libEGL.def", root_build_dir) ]
   }
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
+  if (is_mac && !is_component_build) {
+    ldflags = [
+      "-install_name",
+      "@rpath/${target_name}.dylib",
+    ]
+    public_configs = [ ":shared_library_public_config" ]
+  }
+
+  configs -= angle_undefine_configs
   configs += [
-    ":internal_config",
     ":commit_id_config",
     ":debug_annotations_config",
+    ":extra_warnings",
+    ":internal_config",
     ":libANGLE_config",
-    "//build/config/compiler:no_chromium_code",
   ]
 
   defines = [ "LIBEGL_IMPLEMENTATION" ]
@@ -375,12 +527,12 @@ util_gypi = exec_script("//build/gypi_to_gn.py",
 
 config("angle_util_config") {
   include_dirs = [ "util" ]
-  if (is_linux) {
+  if (is_linux && use_x11) {
     libs = [ "X11" ]
   }
 }
 
-static_library("angle_util") {
+shared_library("angle_util") {
   sources = rebase_path(util_gypi.util_sources, ".", "util")
 
   if (is_win) {
@@ -389,28 +541,61 @@ static_library("angle_util") {
 
   if (is_linux) {
     sources += rebase_path(util_gypi.util_linux_sources, ".", "util")
-    libs = [ "rt" ]
+    libs = [
+      "rt",
+      "dl",
+    ]
   }
 
   if (is_mac) {
     sources += rebase_path(util_gypi.util_osx_sources, ".", "util")
+    libs = [
+      "AppKit.framework",
+      "QuartzCore.framework",
+    ]
   }
 
   if (use_x11) {
     sources += rebase_path(util_gypi.util_x11_sources, ".", "util")
   }
 
+  if (is_android) {
+    # To prevent linux sources filtering on android
+    set_sources_assignment_filter([])
+    sources += rebase_path(util_gypi.util_linux_sources, ".", "util")
+    sources += rebase_path(util_gypi.util_android_sources, ".", "util")
+    libs = [
+      "android",
+      "log",
+    ]
+  }
+
+  if (use_ozone) {
+    sources += rebase_path(util_gypi.util_ozone_sources, ".", "util")
+  }
+
   defines = [
     "GL_GLEXT_PROTOTYPES",
     "EGL_EGLEXT_PROTOTYPES",
+    "LIBANGLE_UTIL_IMPLEMENTATION",
   ]
 
-  configs += [ ":debug_annotations_config" ]
+  configs += [
+    ":debug_annotations_config",
+    ":extra_warnings",
+  ]
 
   public_configs = [
     ":angle_util_config",
     ":internal_config",
   ]
+  if (is_mac && !is_component_build) {
+    ldflags = [
+      "-install_name",
+      "@rpath/lib${target_name}.dylib",
+    ]
+    public_configs += [ ":shared_library_public_config" ]
+  }
 
   deps = [
     ":angle_common",

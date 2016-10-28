@@ -34,10 +34,10 @@ class NonCopyable
 };
 
 extern const uintptr_t DirtyPointer;
-}
+}  // namespace angle
 
 template <typename T, size_t N>
-inline size_t ArraySize(T(&)[N])
+constexpr inline size_t ArraySize(T (&)[N])
 {
     return N;
 }
@@ -62,7 +62,7 @@ void SafeRelease(T& resource)
 }
 
 template <typename T>
-void SafeDelete(T*& resource)
+void SafeDelete(T *&resource)
 {
     delete resource;
     resource = NULL;
@@ -116,7 +116,10 @@ inline bool IsMaskFlagSet(T mask, T flag)
 
 inline const char* MakeStaticString(const std::string &str)
 {
-    static auto& strings = *new std::set<std::string>;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+    static std::set<std::string> strings;
+#pragma GCC diagnostic pop
     std::set<std::string>::iterator it = strings.find(str);
     if (it != strings.end())
     {
@@ -156,11 +159,20 @@ size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>
 std::string FormatString(const char *fmt, va_list vararg);
 std::string FormatString(const char *fmt, ...);
 
+template <typename T>
+std::string ToString(const T &value)
+{
+    std::ostringstream o;
+    o << value;
+    return o.str();
+}
+
 // snprintf is not defined with MSVC prior to to msvc14
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf _snprintf
 #endif
 
+#define GL_BGR565_ANGLEX 0x6ABB
 #define GL_BGRA4_ANGLEX 0x6ABC
 #define GL_BGR5_A1_ANGLEX 0x6ABD
 #define GL_INT_64_ANGLEX 0x6ABE
@@ -168,5 +180,11 @@ std::string FormatString(const char *fmt, ...);
 
 // Hidden enum for the NULL D3D device type.
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE 0x6AC0
+
+#define ANGLE_TRY_CHECKED_MATH(result)                               \
+    if (!result.IsValid())                                           \
+    {                                                                \
+        return gl::Error(GL_INVALID_OPERATION, "Integer overflow."); \
+    }
 
 #endif // COMMON_ANGLEUTILS_H_

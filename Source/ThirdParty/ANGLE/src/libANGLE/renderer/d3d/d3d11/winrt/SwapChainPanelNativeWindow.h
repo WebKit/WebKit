@@ -11,6 +11,8 @@
 
 #include "libANGLE/renderer/d3d/d3d11/winrt/InspectableNativeWindow.h"
 
+#include <memory>
+
 namespace rx
 {
 class SwapChainPanelNativeWindow : public InspectableNativeWindow, public std::enable_shared_from_this<SwapChainPanelNativeWindow>
@@ -20,15 +22,15 @@ class SwapChainPanelNativeWindow : public InspectableNativeWindow, public std::e
 
     bool initialize(EGLNativeWindowType window, IPropertySet *propertySet) override;
     HRESULT createSwapChain(ID3D11Device *device,
-                            DXGIFactory *factory,
+                            IDXGIFactory2 *factory,
                             DXGI_FORMAT format,
                             unsigned int width,
                             unsigned int height,
                             bool containsAlpha,
-                            DXGISwapChain **swapChain) override;
+                            IDXGISwapChain1 **swapChain) override;
 
   protected:
-    HRESULT scaleSwapChain(const SIZE &windowSize, const RECT &clientRect) override;
+    HRESULT scaleSwapChain(const Size &windowSize, const RECT &clientRect) override;
 
     bool registerForSizeChangeEvents();
     void unregisterForSizeChangeEvents();
@@ -37,7 +39,7 @@ class SwapChainPanelNativeWindow : public InspectableNativeWindow, public std::e
     ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> mSwapChainPanel;
     ComPtr<ABI::Windows::UI::Core::ICoreDispatcher> mSwapChainPanelDispatcher;
     ComPtr<IMap<HSTRING, IInspectable*>> mPropertyMap;
-    ComPtr<DXGISwapChain> mSwapChain;
+    ComPtr<IDXGISwapChain1> mSwapChain;
 };
 
 [uuid(8ACBD974-8187-4508-AD80-AEC77F93CF36)]
@@ -72,8 +74,7 @@ class SwapChainPanelSizeChangedHandler :
             HRESULT result = sizeChangedEventArgs->get_NewSize(&newSize);
             if (SUCCEEDED(result))
             {
-                SIZE windowSize = { lround(newSize.Width), lround(newSize.Height) };
-                host->setNewClientSize(windowSize);
+                host->setNewClientSize(newSize);
             }
         }
 
@@ -87,6 +88,6 @@ class SwapChainPanelSizeChangedHandler :
 HRESULT GetSwapChainPanelSize(
     const ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> &swapChainPanel,
     const ComPtr<ABI::Windows::UI::Core::ICoreDispatcher> &dispatcher,
-    SIZE *windowSize);
+    Size *windowSize);
 }
 #endif // LIBANGLE_RENDERER_D3D_D3D11_WINRT_SWAPCHAINPANELNATIVEWINDOW_H_

@@ -9,21 +9,6 @@
 namespace gl
 {
 
-template <typename T>
-bool operator==(const Color<T> &a, const Color<T> &b)
-{
-    return a.red == b.red &&
-           a.green == b.green &&
-           a.blue == b.blue &&
-           a.alpha == b.alpha;
-}
-
-template <typename T>
-bool operator!=(const Color<T> &a, const Color<T> &b)
-{
-    return !(a == b);
-}
-
 inline bool operator==(const Rectangle &a, const Rectangle &b)
 {
     return a.x == b.x &&
@@ -52,25 +37,6 @@ inline bool operator==(const SamplerState &a, const SamplerState &b)
 }
 
 inline bool operator!=(const SamplerState &a, const SamplerState &b)
-{
-    return !(a == b);
-}
-
-inline bool operator==(const TextureState &a, const TextureState &b)
-{
-    return a.swizzleRed == b.swizzleRed &&
-           a.swizzleGreen == b.swizzleGreen &&
-           a.swizzleBlue == b.swizzleBlue &&
-           a.swizzleAlpha == b.swizzleAlpha &&
-           a.samplerState == b.samplerState &&
-           a.baseLevel == b.baseLevel &&
-           a.maxLevel == b.maxLevel &&
-           a.immutableFormat == b.immutableFormat &&
-           a.immutableLevels == b.immutableLevels &&
-           a.usage == b.usage;
-}
-
-inline bool operator!=(const TextureState &a, const TextureState &b)
 {
     return !(a == b);
 }

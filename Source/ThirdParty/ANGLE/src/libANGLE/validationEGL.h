@@ -92,8 +92,13 @@ Error ValidateCreateStreamProducerD3DTextureNV12ANGLE(const Display *display,
                                                       const AttributeMap &attribs);
 Error ValidateStreamPostD3DTextureNV12ANGLE(const Display *display,
                                             const Stream *stream,
-                                            const void *texture,
+                                            void *texture,
                                             const AttributeMap &attribs);
+Error ValidateGetSyncValuesCHROMIUM(const Display *display,
+                                    const Surface *surface,
+                                    const EGLuint64KHR *ust,
+                                    const EGLuint64KHR *msc,
+                                    const EGLuint64KHR *sbc);
 
 // Other validation
 Error ValidateCompatibleConfigs(const Display *display,

@@ -16,13 +16,14 @@
 namespace rx
 {
 
-WindowSurfaceWGL::WindowSurfaceWGL(RendererGL *renderer,
+WindowSurfaceWGL::WindowSurfaceWGL(const egl::SurfaceState &state,
+                                   RendererGL *renderer,
                                    EGLNativeWindowType window,
                                    int pixelFormat,
                                    HGLRC wglContext,
                                    const FunctionsWGL *functions,
                                    EGLint orientation)
-    : SurfaceGL(renderer),
+    : SurfaceGL(state, renderer),
       mPixelFormat(pixelFormat),
       mWGLContext(wglContext),
       mWindow(window),

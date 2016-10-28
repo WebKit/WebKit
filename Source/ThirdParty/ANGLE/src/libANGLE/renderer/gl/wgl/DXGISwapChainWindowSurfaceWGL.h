@@ -26,7 +26,8 @@ struct WorkaroundsGL;
 class DXGISwapChainWindowSurfaceWGL : public SurfaceGL
 {
   public:
-    DXGISwapChainWindowSurfaceWGL(RendererGL *renderer,
+    DXGISwapChainWindowSurfaceWGL(const egl::SurfaceState &state,
+                                  RendererGL *renderer,
                                   EGLNativeWindowType window,
                                   ID3D11Device *device,
                                   HANDLE deviceHandle,
@@ -53,7 +54,7 @@ class DXGISwapChainWindowSurfaceWGL : public SurfaceGL
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
-    FramebufferImpl *createDefaultFramebuffer(const gl::Framebuffer::Data &data) override;
+    FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &data) override;
 
   private:
     egl::Error setObjectsLocked(bool locked);
@@ -65,6 +66,7 @@ class DXGISwapChainWindowSurfaceWGL : public SurfaceGL
 
     StateManagerGL *mStateManager;
     const WorkaroundsGL &mWorkarounds;
+    RendererGL *mRenderer;
     const FunctionsGL *mFunctionsGL;
     const FunctionsWGL *mFunctionsWGL;
 

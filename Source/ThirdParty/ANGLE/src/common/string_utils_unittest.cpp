@@ -138,4 +138,26 @@ TEST(StringUtilsTest, HexStringToUIntBasic)
 
 // Note: ReadFileToString is harder to test
 
+
+TEST(StringUtilsTest, BeginsEndsWith)
+{
+    ASSERT_FALSE(BeginsWith("foo", "bar"));
+    ASSERT_FALSE(BeginsWith("", "foo"));
+    ASSERT_FALSE(BeginsWith("foo", "foobar"));
+
+    ASSERT_TRUE(BeginsWith("foobar", "foo"));
+    ASSERT_TRUE(BeginsWith("foobar", ""));
+    ASSERT_TRUE(BeginsWith("foo", "foo"));
+    ASSERT_TRUE(BeginsWith("", ""));
+
+    ASSERT_FALSE(EndsWith("foo", "bar"));
+    ASSERT_FALSE(EndsWith("", "bar"));
+    ASSERT_FALSE(EndsWith("foo", "foobar"));
+
+    ASSERT_TRUE(EndsWith("foobar", "bar"));
+    ASSERT_TRUE(EndsWith("foobar", ""));
+    ASSERT_TRUE(EndsWith("bar", "bar"));
+    ASSERT_TRUE(EndsWith("", ""));
+}
+
 }

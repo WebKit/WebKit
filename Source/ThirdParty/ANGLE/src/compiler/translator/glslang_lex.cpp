@@ -2075,7 +2075,6 @@ case 237:
 YY_RULE_SETUP
 {
     yyextra->error(*yylloc, "Illegal character at fieldname start", yytext, "");
-    yyextra->recover();
     return 0;
 }
 	YY_BREAK
@@ -2090,7 +2089,7 @@ case YY_STATE_EOF(FIELDS):
 	YY_BREAK
 case 239:
 YY_RULE_SETUP
-{ return 0; }
+{ assert(false); return 0; }
 	YY_BREAK
 case 240:
 YY_RULE_SETUP
@@ -3275,7 +3274,6 @@ int reserved_word(yyscan_t yyscanner) {
     struct yyguts_t* yyg = (struct yyguts_t*) yyscanner;
 
     yyextra->error(*yylloc, "Illegal use of reserved word", yytext, "");
-    yyextra->recover();
     return 0;
 }
 
@@ -3325,7 +3323,6 @@ int uint_constant(TParseContext *context)
     if (context->getShaderVersion() < 300)
     {
         context->error(*yylloc, "Unsigned integers are unsupported prior to GLSL ES 3.00", yytext, "");
-        context->recover();
         return 0;
     }
 
@@ -3342,7 +3339,6 @@ int floatsuffix_check(TParseContext* context)
     if (context->getShaderVersion() < 300)
     {
         context->error(*yylloc, "Floating-point suffix unsupported prior to GLSL ES 3.00", yytext);
-        context->recover();
         return 0;
     }
 
@@ -3356,7 +3352,6 @@ int floatsuffix_check(TParseContext* context)
 
 void yyerror(YYLTYPE* lloc, TParseContext* context, void *scanner, const char* reason) {
     context->error(*lloc, reason, yyget_text(scanner));
-    context->recover();
 }
 
 int int_constant(TParseContext *context) {

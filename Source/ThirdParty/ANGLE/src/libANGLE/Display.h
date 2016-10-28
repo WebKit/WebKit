@@ -14,11 +14,11 @@
 #include <set>
 #include <vector>
 
-#include "libANGLE/Error.h"
+#include "libANGLE/AttributeMap.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Config.h"
-#include "libANGLE/AttributeMap.h"
-#include "libANGLE/renderer/Renderer.h"
+#include "libANGLE/Error.h"
+#include "libANGLE/Version.h"
 
 namespace gl
 {
@@ -112,6 +112,8 @@ class Display final : angle::NonCopyable
     Device *getDevice() const;
     EGLenum getPlatform() const { return mPlatform; }
 
+    gl::Version getMaxSupportedESVersion() const;
+
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
 
@@ -139,6 +141,7 @@ class Display final : angle::NonCopyable
     StreamSet mStreamSet;
 
     bool mInitialized;
+    bool mDeviceLost;
 
     Caps mCaps;
 

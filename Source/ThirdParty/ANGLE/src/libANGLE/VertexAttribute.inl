@@ -27,33 +27,6 @@ inline bool operator!=(const VertexAttribute &a, const VertexAttribute &b)
     return !(a == b);
 }
 
-template <typename T>
-T QuerySingleVertexAttributeParameter(const VertexAttribute& attrib, GLenum pname)
-{
-  switch (pname)
-  {
-    case GL_VERTEX_ATTRIB_ARRAY_ENABLED:
-      return static_cast<T>(attrib.enabled ? GL_TRUE : GL_FALSE);
-    case GL_VERTEX_ATTRIB_ARRAY_SIZE:
-      return static_cast<T>(attrib.size);
-    case GL_VERTEX_ATTRIB_ARRAY_STRIDE:
-      return static_cast<T>(attrib.stride);
-    case GL_VERTEX_ATTRIB_ARRAY_TYPE:
-      return static_cast<T>(attrib.type);
-    case GL_VERTEX_ATTRIB_ARRAY_NORMALIZED:
-      return static_cast<T>(attrib.normalized ? GL_TRUE : GL_FALSE);
-    case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
-      return static_cast<T>(attrib.buffer.id());
-    case GL_VERTEX_ATTRIB_ARRAY_DIVISOR:
-      return static_cast<T>(attrib.divisor);
-    case GL_VERTEX_ATTRIB_ARRAY_INTEGER:
-      return static_cast<T>(attrib.pureInteger ? GL_TRUE : GL_FALSE);
-    default:
-      UNREACHABLE();
-      return static_cast<T>(0);
-  }
-}
-
 inline VertexAttribCurrentValueData::VertexAttribCurrentValueData()
     : Type(GL_FLOAT)
 {

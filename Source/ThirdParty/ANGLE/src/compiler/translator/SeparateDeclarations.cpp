@@ -48,8 +48,8 @@ bool SeparateDeclarationsTraverser::visitAggregate(Visit, TIntermAggregate *node
         TIntermSequence *sequence = node->getSequence();
         if (sequence->size() > 1)
         {
-            TIntermAggregate *parentAgg = getParentNode()->getAsAggregate();
-            ASSERT(parentAgg != nullptr);
+            TIntermBlock *parentBlock = getParentNode()->getAsBlock();
+            ASSERT(parentBlock != nullptr);
 
             TIntermSequence replacementDeclarations;
             for (size_t ii = 0; ii < sequence->size(); ++ii)
@@ -62,7 +62,8 @@ bool SeparateDeclarationsTraverser::visitAggregate(Visit, TIntermAggregate *node
                 replacementDeclarations.push_back(replacementDeclaration);
             }
 
-            mMultiReplacements.push_back(NodeReplaceWithMultipleEntry(parentAgg, node, replacementDeclarations));
+            mMultiReplacements.push_back(
+                NodeReplaceWithMultipleEntry(parentBlock, node, replacementDeclarations));
         }
         return false;
     }

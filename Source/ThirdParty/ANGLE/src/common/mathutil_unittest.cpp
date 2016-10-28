@@ -168,5 +168,43 @@ TEST(MathUtilTest, isInf)
     EXPECT_FALSE(isInf(bitCast<float>(1u << 31 | 0xfeu << 23 | 0x7fffffu)));
 }
 
+TEST(MathUtilTest, CountLeadingZeros)
+{
+    for (unsigned int i = 0; i < 32u; ++i)
+    {
+        uint32_t iLeadingZeros = 1u << (31u - i);
+        EXPECT_EQ(i, CountLeadingZeros(iLeadingZeros));
+    }
+    EXPECT_EQ(32u, CountLeadingZeros(0));
 }
 
+// Some basic tests. Tests that rounding up zero produces zero.
+TEST(MathUtilTest, BasicRoundUp)
+{
+    EXPECT_EQ(0u, rx::roundUp(0u, 4u));
+    EXPECT_EQ(4u, rx::roundUp(1u, 4u));
+    EXPECT_EQ(4u, rx::roundUp(4u, 4u));
+}
+
+// Test that rounding up zero produces zero for checked ints.
+TEST(MathUtilTest, CheckedRoundUpZero)
+{
+    auto checkedValue = rx::CheckedRoundUp(0u, 4u);
+    ASSERT_TRUE(checkedValue.IsValid());
+    ASSERT_EQ(0u, checkedValue.ValueOrDie());
+}
+
+// Test out-of-bounds with CheckedRoundUp
+TEST(MathUtilTest, CheckedRoundUpInvalid)
+{
+    // The answer to this query is out of bounds.
+    auto limit        = std::numeric_limits<unsigned int>::max();
+    auto checkedValue = rx::CheckedRoundUp(limit, limit - 1);
+    ASSERT_FALSE(checkedValue.IsValid());
+
+    // Our implementation can't handle this query, despite the parameters being in range.
+    auto checkedLimit = rx::CheckedRoundUp(limit - 1, limit);
+    ASSERT_FALSE(checkedLimit.IsValid());
+}
+
+}  // anonymous namespace

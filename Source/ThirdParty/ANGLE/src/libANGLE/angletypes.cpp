@@ -53,24 +53,21 @@ SamplerState::SamplerState()
 {
 }
 
-TextureState::TextureState()
-    : swizzleRed(GL_RED),
-      swizzleGreen(GL_GREEN),
-      swizzleBlue(GL_BLUE),
-      swizzleAlpha(GL_ALPHA),
-      samplerState(),
-      baseLevel(0),
-      maxLevel(1000),
-      immutableFormat(false),
-      immutableLevels(0),
-      usage(GL_NONE)
+// static
+SamplerState SamplerState::CreateDefaultForTarget(GLenum target)
 {
-}
+    SamplerState state;
 
-bool TextureState::swizzleRequired() const
-{
-    return swizzleRed != GL_RED || swizzleGreen != GL_GREEN ||
-           swizzleBlue != GL_BLUE || swizzleAlpha != GL_ALPHA;
+    // According to OES_EGL_image_external: For external textures, the default min filter is
+    // GL_LINEAR and the default s and t wrap modes are GL_CLAMP_TO_EDGE.
+    if (target == GL_TEXTURE_EXTERNAL_OES)
+    {
+        state.minFilter = GL_LINEAR;
+        state.wrapS     = GL_CLAMP_TO_EDGE;
+        state.wrapT     = GL_CLAMP_TO_EDGE;
+    }
+
+    return state;
 }
 
 static void MinMax(int a, int b, int *minimum, int *maximum)

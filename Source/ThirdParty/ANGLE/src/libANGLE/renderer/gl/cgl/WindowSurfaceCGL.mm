@@ -142,22 +142,24 @@
     namespace rx
     {
 
-    WindowSurfaceCGL::WindowSurfaceCGL(RendererGL *renderer,
+    WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
+                                       RendererGL *renderer,
                                        CALayer *layer,
                                        const FunctionsGL *functions,
                                        CGLContextObj context)
-        : SurfaceGL(renderer),
+        : SurfaceGL(state, renderer),
           mSwapLayer(nil),
           mCurrentSwapId(0),
           mLayer(layer),
           mContext(context),
           mFunctions(functions),
           mStateManager(renderer->getStateManager()),
+          mRenderer(renderer),
           mWorkarounds(renderer->getWorkarounds()),
           mFramebuffer(0),
           mDSRenderbuffer(0)
-{
-    pthread_mutex_init(&mSwapState.mutex, nullptr);
+    {
+        pthread_mutex_init(&mSwapState.mutex, nullptr);
 }
 
 WindowSurfaceCGL::~WindowSurfaceCGL()
@@ -320,10 +322,11 @@ EGLint WindowSurfaceCGL::getSwapBehavior() const
     return EGL_BUFFER_DESTROYED;
 }
 
-FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Framebuffer::Data &data)
+FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::FramebufferState &state)
 {
     // TODO(cwallez) assert it happens only once?
-    return new FramebufferGL(mFramebuffer, data, mFunctions, mWorkarounds, mStateManager);
+    return new FramebufferGL(mFramebuffer, state, mFunctions, mWorkarounds, mRenderer->getBlitter(),
+                             mStateManager);
 }
 
 }

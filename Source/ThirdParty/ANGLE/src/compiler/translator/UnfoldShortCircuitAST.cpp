@@ -10,32 +10,30 @@ namespace
 {
 
 // "x || y" is equivalent to "x ? true : y".
-TIntermSelection *UnfoldOR(TIntermTyped *x, TIntermTyped *y)
+TIntermTernary *UnfoldOR(TIntermTyped *x, TIntermTyped *y)
 {
-    const TType boolType(EbtBool, EbpUndefined);
     TConstantUnion *u = new TConstantUnion;
     u->setBConst(true);
     TIntermConstantUnion *trueNode = new TIntermConstantUnion(
         u, TType(EbtBool, EbpUndefined, EvqConst, 1));
-    return new TIntermSelection(x, trueNode, y, boolType);
+    return new TIntermTernary(x, trueNode, y);
 }
 
 // "x && y" is equivalent to "x ? y : false".
-TIntermSelection *UnfoldAND(TIntermTyped *x, TIntermTyped *y)
+TIntermTernary *UnfoldAND(TIntermTyped *x, TIntermTyped *y)
 {
-    const TType boolType(EbtBool, EbpUndefined);
     TConstantUnion *u = new TConstantUnion;
     u->setBConst(false);
     TIntermConstantUnion *falseNode = new TIntermConstantUnion(
         u, TType(EbtBool, EbpUndefined, EvqConst, 1));
-    return new TIntermSelection(x, y, falseNode, boolType);
+    return new TIntermTernary(x, y, falseNode);
 }
 
 }  // namespace anonymous
 
 bool UnfoldShortCircuitAST::visitBinary(Visit visit, TIntermBinary *node)
 {
-    TIntermSelection *replacement = NULL;
+    TIntermTernary *replacement = nullptr;
 
     switch (node->getOp())
     {
@@ -50,8 +48,7 @@ bool UnfoldShortCircuitAST::visitBinary(Visit visit, TIntermBinary *node)
     }
     if (replacement)
     {
-        mReplacements.push_back(
-            NodeUpdateEntry(getParentNode(), node, replacement, false));
+        queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
     }
     return true;
 }

@@ -30,7 +30,7 @@ class ValidateOutputs : public TIntermTraverser
     typedef std::vector<TIntermSymbol *> OutputVector;
     OutputVector mOutputs;
     OutputVector mUnspecifiedLocationOutputs;
-    std::set<TString> mVisitedSymbols;
+    std::set<std::string> mVisitedSymbols;
 };
 
 #endif // COMPILER_TRANSLATOR_VALIDATEOUTPUTS_H_

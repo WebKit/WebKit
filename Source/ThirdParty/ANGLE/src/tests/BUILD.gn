@@ -1,0 +1,348 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//testing/test.gni")
+import("//build/config/chromecast_build.gni")
+import("//third_party/angle/build/angle_common.gni")
+
+unittests_gypi = exec_script("//build/gypi_to_gn.py",
+                             [
+                               rebase_path("angle_unittests.gypi"),
+                               "--replace=<(angle_path)=.",
+                             ],
+                             "scope",
+                             [ "angle_unittests.gypi" ])
+
+test("angle_unittests") {
+  include_dirs = [
+    "testing/gtest/include",
+    "../../src",
+  ]
+
+  sources = rebase_path(unittests_gypi.angle_unittests_sources, ".", "../..")
+
+  if (angle_enable_hlsl) {
+    sources +=
+        rebase_path(unittests_gypi.angle_unittests_hlsl_sources, ".", "../..")
+    defines = [ "ANGLE_ENABLE_HLSL" ]
+  }
+
+  sources += [ "//gpu/angle_unittest_main.cc" ]
+
+  deps = [
+    "//base",
+    "//base/test:test_support",
+    "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/angle:libANGLE",
+    "//third_party/angle:preprocessor",
+    "//third_party/angle:translator_static",
+  ]
+}
+
+if (is_win || is_linux || is_mac || is_android) {
+  end2end_gypi = exec_script("//build/gypi_to_gn.py",
+                             [
+                               rebase_path("angle_end2end_tests.gypi"),
+                               "--replace=<(angle_path)=.",
+                             ],
+                             "scope",
+                             [ "angle_end2end_tests.gypi" ])
+
+  test("angle_end2end_tests") {
+    include_dirs = [
+      "testing/gtest/include",
+      "../../src/tests",
+      "../../util",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+
+    sources =
+        rebase_path(end2end_gypi.angle_end2end_tests_sources, ".", "../..")
+
+    if (is_win) {
+      sources += rebase_path(end2end_gypi.angle_end2end_tests_win_sources,
+                             ".",
+                             "../..")
+    }
+    if (use_x11) {
+      sources += rebase_path(end2end_gypi.angle_end2end_tests_x11_sources,
+                             ".",
+                             "../..")
+    }
+
+    sources += [ "//gpu/angle_end2end_tests_main.cc" ]
+
+    configs += [
+      "//third_party/angle:internal_config",
+      "//third_party/angle:libANGLE_config",
+    ]
+
+    if (is_linux && !is_component_build) {
+      # Set rpath to find libEGL.so and libGLESv2.so even in a non-component build.
+      configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+    }
+
+    deps = [
+      "//base",
+      "//base/test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+      "//third_party/angle:angle_util",
+      "//third_party/angle:libANGLE",
+      "//third_party/angle:libEGL",
+      "//third_party/angle:libGLESv2",
+      "//third_party/angle:preprocessor",
+      "//third_party/angle:translator_static",
+    ]
+  }
+}
+
+if (is_win) {
+  perftests_gypi = exec_script("//build/gypi_to_gn.py",
+                               [
+                                 rebase_path("angle_perftests.gypi"),
+                                 "--replace=<(angle_path)=.",
+                               ],
+                               "scope",
+                               [ "angle_perftests.gypi" ])
+
+  test("angle_perftests") {
+    include_dirs = [
+      "testing/gtest/include",
+      "../../src/tests",
+      "../../util",
+    ]
+
+    sources = rebase_path(perftests_gypi.angle_perf_tests_sources, ".", "../..")
+
+    sources +=
+        rebase_path(perftests_gypi.angle_perf_tests_win_sources, ".", "../..")
+
+    sources += [ "//gpu/angle_perftests_main.cc" ]
+
+    configs += [
+      "//third_party/angle:internal_config",
+      "//third_party/angle:libANGLE_config",
+    ]
+
+    deps = [
+      "//base",
+      "//base/test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+      "//third_party/angle:angle_util",
+      "//third_party/angle:libANGLE",
+      "//third_party/angle:libEGL",
+      "//third_party/angle:libGLESv2",
+    ]
+  }
+}
+
+###-----------------------------------------------------
+### dEQP tests
+###-----------------------------------------------------
+
+declare_args() {
+  # Don't build dEQP by default.
+  build_angle_deqp_tests = false
+}
+
+# TODO(jmadill): Other platforms.
+if (build_angle_deqp_tests) {
+  deqp_gypi = exec_script("//build/gypi_to_gn.py",
+                          [
+                            rebase_path("deqp.gypi"),
+                            "--replace=<(angle_path)=.",
+                            "--replace=<(deqp_path)=../deqp/src",
+                          ],
+                          "scope",
+                          [ "deqp.gypi" ])
+
+  config("angle_deqp_support") {
+    include_dirs = rebase_path(deqp_gypi.deqp_include_dirs, ".", "../..")
+    if (is_win) {
+      include_dirs += [ "../deqp/src/framework/platform/win32" ]
+      cflags = deqp_gypi.deqp_win_cflags
+    }
+    defines = deqp_gypi.deqp_defines
+    defines += [ "_MBCS" ]
+
+    # Ask the system headers to expose all the regular function otherwise
+    # dEQP doesn't compile and produces warnings about implicitly defined
+    # functions.
+    if (is_linux) {
+      # This has to be GNU_SOURCE as on Linux dEQP uses syscall()
+      defines += [ "_GNU_SOURCE" ]
+    }
+    if (is_android) {
+      # _XOPEN_SOURCE=600 is what is used in deqp/src/Android.mk
+      defines += [ "_XOPEN_SOURCE=600" ]
+    }
+  }
+
+  deqp_undefine_configs = [
+    "//build/config/compiler:chromium_code",
+    "//build/config/compiler:no_rtti",
+  ]
+
+  if (is_win) {
+    deqp_undefine_configs += [
+      "//build/config/win:lean_and_mean",
+      "//build/config/win:nominmax",
+      "//build/config/win:unicode",
+    ]
+  }
+
+  if (is_linux || is_android) {
+    deqp_undefine_configs += [ "//build/config/gcc:no_exceptions" ]
+  }
+
+  static_library("angle_deqp_decpp") {
+    configs -= deqp_undefine_configs
+    public_configs = [
+      ":angle_deqp_support",
+      "//build/config/compiler:no_chromium_code",
+      "//third_party/angle:internal_config",
+    ]
+    sources = rebase_path(deqp_gypi.deqp_libtester_decpp_sources, ".", "../..")
+  }
+
+  config("angle_deqp_libtester_config") {
+    defines = [ "ANGLE_DEQP_LIBTESTER_IMPLEMENTATION" ]
+
+    if (is_clang) {
+      # TODO(jmadill): Remove this once we fix dEQP.
+      cflags_cc = [ "-Wno-delete-non-virtual-dtor" ]
+    }
+  }
+
+  static_library("angle_deqp_libtester") {
+    public_deps = [
+      ":angle_deqp_decpp",
+      "//third_party/angle:angle_util",
+      "//third_party/angle:libEGL",
+      "//third_party/libpng:libpng",
+    ]
+    configs -= deqp_undefine_configs
+    public_configs = [ ":angle_deqp_libtester_config" ]
+    sources = rebase_path(deqp_gypi.deqp_libtester_sources, ".", "../..")
+    if (is_win) {
+      sources += rebase_path(deqp_gypi.deqp_libtester_sources_win, ".", "../..")
+    }
+    if (is_linux || is_android) {
+      sources +=
+          rebase_path(deqp_gypi.deqp_libtester_sources_unix, ".", "../..")
+    }
+    if (is_android) {
+      libs = [ "log" ]
+    }
+  }
+
+  config("angle_deqp_gtest_support_config") {
+    include_dirs = [ "third_party/gpu_test_expectations" ]
+  }
+
+  source_set("angle_deqp_gtest_support") {
+    testonly = true
+    public_deps = [
+      "//base",
+      "//base/test:test_support",
+      "//testing/gtest",
+      "//third_party/angle:angle_common",
+      "//third_party/angle:angle_util",
+    ]
+    public_configs = [ ":angle_deqp_gtest_support_config" ]
+    sources = deqp_gypi.deqp_gpu_test_expectations_sources
+    sources += [ "//gpu/angle_deqp_tests_main.cc" ]
+
+    # Taken from gpu/BUILD.gn
+    # TODO(jmadill): this should be in a shared location
+    if (is_linux && !is_chromecast) {
+      libs = [ "pci" ]
+    }
+  }
+
+  api_names = [
+    "gles2",
+    "gles3",
+    "gles31",
+    "egl",
+  ]
+  target_defines = [
+    "ANGLE_DEQP_GLES2_TESTS",
+    "ANGLE_DEQP_GLES3_TESTS",
+    "ANGLE_DEQP_GLES31_TESTS",
+    "ANGLE_DEQP_EGL_TESTS",
+  ]
+  target_sources = [
+    deqp_gypi.deqp_gles2_sources,
+    deqp_gypi.deqp_gles3_sources,
+    deqp_gypi.deqp_gles31_sources,
+    deqp_gypi.deqp_egl_sources,
+  ]
+
+  foreach(index,
+          [
+            0,
+            1,
+            2,
+            3,
+          ]) {
+    api_name = api_names[index]
+    config_name = "angle_deqp_lib${api_name}_config"
+    config(config_name) {
+      defines = [ target_defines[index] ]
+    }
+
+    shared_library_name = "angle_deqp_lib${api_name}"
+    shared_library(shared_library_name) {
+      deps = [
+        ":angle_deqp_libtester",
+        "//third_party/angle:angle_util",
+      ]
+
+      configs -= deqp_undefine_configs
+      public_configs = [ ":${config_name}" ]
+
+      sources = rebase_path(target_sources[index], ".", "../..")
+      sources += [
+        "deqp_support/angle_deqp_libtester_main.cpp",
+        "deqp_support/tcuANGLEPlatform.cpp",
+        "deqp_support/tcuANGLEPlatform.h",
+      ]
+    }
+
+    test_name = "angle_deqp_${api_name}_tests"
+    test(test_name) {
+      deps = [
+        ":${shared_library_name}",
+        ":angle_deqp_gtest_support",
+      ]
+
+      # Must be included outside of the source set for the define
+      sources = [
+        "deqp_support/angle_deqp_gtest.cpp",
+      ]
+
+      data = [
+        "deqp_support/deqp_${api_name}_test_expectations.txt",
+        "../../../deqp/src/android/cts/master/${api_name}-master.txt",
+        "../../../deqp/src/data/",
+      ]
+
+      if (is_linux && !is_component_build) {
+        # Set rpath to find *.so files even in a non-component build.
+        configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+      }
+
+      if (is_android) {
+        use_native_activity = true
+      }
+    }
+  }
+}

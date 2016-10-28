@@ -11,96 +11,6 @@
 
 namespace rx
 {
-NativeWindow::NativeWindow(EGLNativeWindowType window,
-                           const egl::Config *config,
-                           bool directComposition)
-{
-    mWindow = window;
-    mConfig = config;
-}
-
-NativeWindow::~NativeWindow()
-{
-}
-
-void NativeWindow::commitChange()
-{
-}
-
-bool NativeWindow::initialize()
-{
-    // If the native window type is a IPropertySet, extract the
-    // EGLNativeWindowType (IInspectable) and initialize the
-    // proper host with this IPropertySet.
-    ComPtr<ABI::Windows::Foundation::Collections::IPropertySet> propertySet;
-    ComPtr<IInspectable> eglNativeWindow;
-    if (IsEGLConfiguredPropertySet(mWindow, &propertySet, &eglNativeWindow))
-    {
-        // A property set was found and the EGLNativeWindowType was
-        // retrieved. The mWindow member of the host to must be updated
-        // to use the EGLNativeWindowType specified in the property set.
-        // mWindow is treated as a raw pointer not an AddRef'd interface, so
-        // the old mWindow does not need a Release() before this assignment.
-        mWindow = eglNativeWindow.Get();
-    }
-
-    ComPtr<ABI::Windows::UI::Core::ICoreWindow> coreWindow;
-    ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> swapChainPanel;
-    if (IsCoreWindow(mWindow, &coreWindow))
-    {
-        mImpl = std::make_shared<CoreWindowNativeWindow>();
-        if (mImpl)
-        {
-            return mImpl->initialize(mWindow, propertySet.Get());
-        }
-    }
-    else if (IsSwapChainPanel(mWindow, &swapChainPanel))
-    {
-        mImpl = std::make_shared<SwapChainPanelNativeWindow>();
-        if (mImpl)
-        {
-            return mImpl->initialize(mWindow, propertySet.Get());
-        }
-    }
-    else
-    {
-        ERR("Invalid IInspectable EGLNativeWindowType detected. Valid IInspectables include ICoreWindow, ISwapChainPanel and IPropertySet");
-    }
-
-    return false;
-}
-
-bool NativeWindow::getClientRect(RECT *rect)
-{
-    if (mImpl)
-    {
-        return mImpl->getClientRect(rect);
-    }
-
-    return false;
-}
-
-bool NativeWindow::isIconic()
-{
-    return false;
-}
-
-bool NativeWindow::isValidNativeWindow(EGLNativeWindowType window)
-{
-    return IsValidEGLNativeWindowType(window);
-}
-
-HRESULT NativeWindow::createSwapChain(ID3D11Device *device, DXGIFactory *factory, DXGI_FORMAT format, unsigned int width, unsigned int height, DXGISwapChain **swapChain)
-{
-    if (mImpl)
-    {
-        bool containsAlpha = (mConfig->alphaSize > 0);
-        return mImpl->createSwapChain(device, factory, format, width, height, containsAlpha,
-                                      swapChain);
-    }
-
-    return E_UNEXPECTED;
-}
 
 bool IsCoreWindow(EGLNativeWindowType window, ComPtr<ABI::Windows::UI::Core::ICoreWindow> *coreWindow)
 {
@@ -205,18 +115,6 @@ bool IsEGLConfiguredPropertySet(EGLNativeWindowType window, ABI::Windows::Founda
     }
 
     return false;
-}
-
-// A Valid EGLNativeWindowType IInspectable can only be:
-//
-// ICoreWindow
-// ISwapChainPanel
-// IPropertySet
-//
-// Anything else will be rejected as an invalid IInspectable.
-bool IsValidEGLNativeWindowType(EGLNativeWindowType window)
-{
-    return IsCoreWindow(window) || IsSwapChainPanel(window) || IsEGLConfiguredPropertySet(window);
 }
 
 // Retrieve an optional property from a property set
@@ -369,4 +267,10 @@ HRESULT GetOptionalSinglePropertyValue(const ComPtr<ABI::Windows::Foundation::Co
     return result;
 }
 
+RECT InspectableNativeWindow::clientRect(const Size &size)
+{
+    // We don't have to check if a swapchain scale was specified here; the default value is 1.0f
+    // which will have no effect.
+    return {0, 0, lround(size.Width * mSwapChainScale), lround(size.Height * mSwapChainScale)};
+}
 }

@@ -15,14 +15,15 @@
 namespace rx
 {
 
-PbufferSurfaceGLX::PbufferSurfaceGLX(RendererGL *renderer,
+PbufferSurfaceGLX::PbufferSurfaceGLX(const egl::SurfaceState &state,
+                                     RendererGL *renderer,
                                      EGLint width,
                                      EGLint height,
                                      bool largest,
                                      const FunctionsGLX &glx,
                                      glx::Context context,
                                      glx::FBConfig fbConfig)
-    : SurfaceGLX(renderer),
+    : SurfaceGLX(state, renderer),
       mWidth(width),
       mHeight(height),
       mLargest(largest),

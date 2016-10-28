@@ -40,9 +40,33 @@ const char *GetShaderTypeString(GLenum type)
 namespace rx
 {
 
-ShaderD3D::ShaderD3D(const gl::Shader::Data &data) : ShaderImpl(data)
+ShaderD3D::ShaderD3D(const gl::ShaderState &data, const WorkaroundsD3D &workarounds)
+    : ShaderImpl(data), mAdditionalOptions(0)
 {
     uncompile();
+
+    if (workarounds.expandIntegerPowExpressions)
+    {
+        mAdditionalOptions |= SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS;
+    }
+
+    if (workarounds.getDimensionsIgnoresBaseLevel)
+    {
+        mAdditionalOptions |= SH_HLSL_GET_DIMENSIONS_IGNORES_BASE_LEVEL;
+    }
+
+    if (workarounds.preAddTexelFetchOffsets)
+    {
+        mAdditionalOptions |= SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH;
+    }
+    if (workarounds.rewriteUnaryMinusOperator)
+    {
+        mAdditionalOptions |= SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR;
+    }
+    if (workarounds.emulateIsnanFloat)
+    {
+        mAdditionalOptions |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
+    }
 }
 
 ShaderD3D::~ShaderD3D()
@@ -117,12 +141,12 @@ ShShaderOutput ShaderD3D::getCompilerOutputType() const
     return mCompilerOutputType;
 }
 
-int ShaderD3D::prepareSourceAndReturnOptions(std::stringstream *shaderSourceStream,
-                                             std::string *sourcePath)
+ShCompileOptions ShaderD3D::prepareSourceAndReturnOptions(std::stringstream *shaderSourceStream,
+                                                          std::string *sourcePath)
 {
     uncompile();
 
-    int additionalOptions = 0;
+    ShCompileOptions additionalOptions = 0;
 
     const std::string &source = mData.getSource();
 
@@ -134,6 +158,8 @@ int ShaderD3D::prepareSourceAndReturnOptions(std::stringstream *shaderSourceStre
         additionalOptions |= SH_LINE_DIRECTIVES | SH_SOURCE_PATH;
     }
 #endif
+
+    additionalOptions |= mAdditionalOptions;
 
     *shaderSourceStream << source;
     return additionalOptions;

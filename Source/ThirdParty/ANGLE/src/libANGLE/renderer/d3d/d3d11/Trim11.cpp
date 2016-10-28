@@ -11,9 +11,15 @@
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 #if defined (ANGLE_ENABLE_WINDOWS_STORE)
-using namespace ABI::Windows::Foundation;
+#include <wrl.h>
+#include <wrl/wrappers/corewrappers.h>
+#include <windows.applicationmodel.core.h>
+using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::ApplicationModel;
 using namespace ABI::Windows::ApplicationModel::Core;
+using namespace ABI::Windows::Foundation;
+using namespace ABI::Windows::Foundation::Collections;
 #endif
 
 namespace rx
@@ -41,7 +47,6 @@ void Trim11::trim()
 
 #if defined (ANGLE_ENABLE_WINDOWS_STORE)
     ID3D11Device* device = mRenderer->getDevice();
-    // IDXGIDevice3 is only supported on Windows 8.1 and Windows Phone 8.1 and above.
     IDXGIDevice3 *dxgiDevice3 = d3d11::DynamicCastComObject<IDXGIDevice3>(device);
     if (dxgiDevice3)
     {

@@ -18,10 +18,7 @@ struct Optional
           mValue(T())
     {}
 
-    explicit Optional(const T &valueIn)
-        : mValid(true),
-          mValue(valueIn)
-    {}
+    Optional(const T &valueIn) : mValid(true), mValue(valueIn) {}
 
     Optional(const Optional &other)
         : mValid(other.mValid),

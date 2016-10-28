@@ -26,8 +26,10 @@ class Blit11 : angle::NonCopyable
     explicit Blit11(Renderer11 *renderer);
     ~Blit11();
 
-    gl::Error swizzleTexture(ID3D11ShaderResourceView *source, ID3D11RenderTargetView *dest, const gl::Extents &size,
-                             GLenum swizzleRed, GLenum swizzleGreen, GLenum swizzleBlue, GLenum swizzleAlpha);
+    gl::Error swizzleTexture(ID3D11ShaderResourceView *source,
+                             ID3D11RenderTargetView *dest,
+                             const gl::Extents &size,
+                             const gl::SwizzleState &swizzleTarget);
 
     gl::Error copyTexture(ID3D11ShaderResourceView *source,
                           const gl::Box &sourceArea,
@@ -38,27 +40,69 @@ class Blit11 : angle::NonCopyable
                           const gl::Rectangle *scissor,
                           GLenum destFormat,
                           GLenum filter,
-                          bool maskOffAlpha);
+                          bool maskOffAlpha,
+                          bool unpackPremultiplyAlpha,
+                          bool unpackUnmultiplyAlpha);
 
-    gl::Error copyStencil(ID3D11Resource *source, unsigned int sourceSubresource, const gl::Box &sourceArea, const gl::Extents &sourceSize,
-                          ID3D11Resource *dest, unsigned int destSubresource, const gl::Box &destArea, const gl::Extents &destSize,
+    gl::Error copyStencil(const TextureHelper11 &source,
+                          unsigned int sourceSubresource,
+                          const gl::Box &sourceArea,
+                          const gl::Extents &sourceSize,
+                          const TextureHelper11 &dest,
+                          unsigned int destSubresource,
+                          const gl::Box &destArea,
+                          const gl::Extents &destSize,
                           const gl::Rectangle *scissor);
 
-    gl::Error copyDepth(ID3D11ShaderResourceView *source, const gl::Box &sourceArea, const gl::Extents &sourceSize,
-                        ID3D11DepthStencilView *dest, const gl::Box &destArea, const gl::Extents &destSize,
+    gl::Error copyDepth(ID3D11ShaderResourceView *source,
+                        const gl::Box &sourceArea,
+                        const gl::Extents &sourceSize,
+                        ID3D11DepthStencilView *dest,
+                        const gl::Box &destArea,
+                        const gl::Extents &destSize,
                         const gl::Rectangle *scissor);
 
-    gl::Error copyDepthStencil(ID3D11Resource *source, unsigned int sourceSubresource, const gl::Box &sourceArea, const gl::Extents &sourceSize,
-                               ID3D11Resource *dest, unsigned int destSubresource, const gl::Box &destArea, const gl::Extents &destSize,
+    gl::Error copyDepthStencil(const TextureHelper11 &source,
+                               unsigned int sourceSubresource,
+                               const gl::Box &sourceArea,
+                               const gl::Extents &sourceSize,
+                               const TextureHelper11 &dest,
+                               unsigned int destSubresource,
+                               const gl::Box &destArea,
+                               const gl::Extents &destSize,
                                const gl::Rectangle *scissor);
+
+    gl::ErrorOrResult<TextureHelper11> resolveDepth(RenderTarget11 *depth);
+
+    gl::ErrorOrResult<TextureHelper11> resolveStencil(RenderTarget11 *depthStencil, bool alsoDepth);
+
+    using BlitConvertFunction = void(const gl::Box &sourceArea,
+                                     const gl::Box &destArea,
+                                     const gl::Rectangle &clipRect,
+                                     const gl::Extents &sourceSize,
+                                     unsigned int sourceRowPitch,
+                                     unsigned int destRowPitch,
+                                     ptrdiff_t readOffset,
+                                     ptrdiff_t writeOffset,
+                                     size_t copySize,
+                                     size_t srcPixelStride,
+                                     size_t destPixelStride,
+                                     const uint8_t *sourceData,
+                                     uint8_t *destData);
 
   private:
     enum BlitShaderType
     {
         BLITSHADER_INVALID,
         BLITSHADER_2D_RGBAF,
+        BLITSHADER_2D_RGBAF_PREMULTIPLY,
+        BLITSHADER_2D_RGBAF_UNMULTIPLY,
         BLITSHADER_2D_BGRAF,
+        BLITSHADER_2D_BGRAF_PREMULTIPLY,
+        BLITSHADER_2D_BGRAF_UNMULTIPLY,
         BLITSHADER_2D_RGBF,
+        BLITSHADER_2D_RGBF_PREMULTIPLY,
+        BLITSHADER_2D_RGBF_UNMULTIPLY,
         BLITSHADER_2D_RGF,
         BLITSHADER_2D_RF,
         BLITSHADER_2D_ALPHA,
@@ -107,9 +151,13 @@ class Blit11 : angle::NonCopyable
         SWIZZLESHADER_ARRAY_INT,
     };
 
-    typedef void (*WriteVertexFunction)(const gl::Box &sourceArea, const gl::Extents &sourceSize,
-                                        const gl::Box &destArea, const gl::Extents &destSize,
-                                        void *outVertices, unsigned int *outStride, unsigned int *outVertexCount,
+    typedef void (*WriteVertexFunction)(const gl::Box &sourceArea,
+                                        const gl::Extents &sourceSize,
+                                        const gl::Box &destArea,
+                                        const gl::Extents &destSize,
+                                        void *outVertices,
+                                        unsigned int *outStride,
+                                        unsigned int *outVertexCount,
                                         D3D11_PRIMITIVE_TOPOLOGY *outTopology);
 
     enum ShaderDimension
@@ -137,21 +185,76 @@ class Blit11 : angle::NonCopyable
 
     ShaderSupport getShaderSupport(const Shader &shader);
 
-    static BlitShaderType GetBlitShaderType(GLenum destinationFormat, bool isSigned, ShaderDimension dimension);
+    static BlitShaderType GetBlitShaderType(GLenum destinationFormat,
+                                            bool isSigned,
+                                            bool unpackPremultiplyAlpha,
+                                            bool unpackUnmultiplyAlpha,
+                                            ShaderDimension dimension);
     static SwizzleShaderType GetSwizzleShaderType(GLenum type, D3D11_SRV_DIMENSION dimensionality);
 
-    gl::Error copyDepthStencil(ID3D11Resource *source, unsigned int sourceSubresource, const gl::Box &sourceArea, const gl::Extents &sourceSize,
-                               ID3D11Resource *dest, unsigned int destSubresource, const gl::Box &destArea, const gl::Extents &destSize,
-                               const gl::Rectangle *scissor, bool stencilOnly);
+    gl::Error copyDepthStencilImpl(const TextureHelper11 &source,
+                                   unsigned int sourceSubresource,
+                                   const gl::Box &sourceArea,
+                                   const gl::Extents &sourceSize,
+                                   const TextureHelper11 &dest,
+                                   unsigned int destSubresource,
+                                   const gl::Box &destArea,
+                                   const gl::Extents &destSize,
+                                   const gl::Rectangle *scissor,
+                                   bool stencilOnly);
 
-    void addBlitShaderToMap(BlitShaderType blitShaderType, ShaderDimension dimension, ID3D11PixelShader *ps);
+    gl::Error copyAndConvertImpl(const TextureHelper11 &source,
+                                 unsigned int sourceSubresource,
+                                 const gl::Box &sourceArea,
+                                 const gl::Extents &sourceSize,
+                                 const TextureHelper11 &destStaging,
+                                 const gl::Box &destArea,
+                                 const gl::Extents &destSize,
+                                 const gl::Rectangle *scissor,
+                                 size_t readOffset,
+                                 size_t writeOffset,
+                                 size_t copySize,
+                                 size_t srcPixelStride,
+                                 size_t destPixelStride,
+                                 BlitConvertFunction *convertFunction);
 
-    gl::Error getBlitShader(GLenum destFormat, bool isSigned, ShaderDimension dimension, const Shader **shaderOut);
-    gl::Error getSwizzleShader(GLenum type, D3D11_SRV_DIMENSION viewDimension, const Shader **shaderOut);
+    gl::Error copyAndConvert(const TextureHelper11 &source,
+                             unsigned int sourceSubresource,
+                             const gl::Box &sourceArea,
+                             const gl::Extents &sourceSize,
+                             const TextureHelper11 &dest,
+                             unsigned int destSubresource,
+                             const gl::Box &destArea,
+                             const gl::Extents &destSize,
+                             const gl::Rectangle *scissor,
+                             size_t readOffset,
+                             size_t writeOffset,
+                             size_t copySize,
+                             size_t srcPixelStride,
+                             size_t destPixelStride,
+                             BlitConvertFunction *convertFunction);
 
-    void addSwizzleShaderToMap(SwizzleShaderType swizzleShaderType, ShaderDimension dimension, ID3D11PixelShader *ps);
+    void addBlitShaderToMap(BlitShaderType blitShaderType,
+                            ShaderDimension dimension,
+                            ID3D11PixelShader *ps);
+
+    gl::Error getBlitShader(GLenum destFormat,
+                            bool isSigned,
+                            bool unpackPremultiplyAlpha,
+                            bool unpackUnmultiplyAlpha,
+                            ShaderDimension dimension,
+                            const Shader **shaderOut);
+    gl::Error getSwizzleShader(GLenum type,
+                               D3D11_SRV_DIMENSION viewDimension,
+                               const Shader **shaderOut);
+
+    void addSwizzleShaderToMap(SwizzleShaderType swizzleShaderType,
+                               ShaderDimension dimension,
+                               ID3D11PixelShader *ps);
 
     void clearShaderMap();
+    void releaseResolveDepthStencilResources();
+    gl::Error initResolveDepthStencil(const gl::Extents &extents);
 
     Renderer11 *mRenderer;
 
@@ -177,8 +280,16 @@ class Blit11 : angle::NonCopyable
     d3d11::LazyBlendState mAlphaMaskBlendState;
 
     ID3D11Buffer *mSwizzleCB;
+
+    d3d11::LazyShader<ID3D11VertexShader> mResolveDepthStencilVS;
+    d3d11::LazyShader<ID3D11PixelShader> mResolveDepthPS;
+    d3d11::LazyShader<ID3D11PixelShader> mResolveDepthStencilPS;
+    d3d11::LazyShader<ID3D11PixelShader> mResolveStencilPS;
+    ID3D11ShaderResourceView *mStencilSRV;
+    TextureHelper11 mResolvedDepthStencil;
+    ID3D11RenderTargetView *mResolvedDepthStencilRTView;
 };
 
-}
+}  // namespace rx
 
-#endif   // LIBANGLE_RENDERER_D3D_D3D11_BLIT11_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_BLIT11_H_

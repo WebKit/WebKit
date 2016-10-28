@@ -6,25 +6,39 @@
 
 // system_utils.h: declaration of OS-specific utility functions
 
-#ifndef SAMPLE_UTIL_PATH_UTILS_H
-#define SAMPLE_UTIL_PATH_UTILS_H
+#ifndef UTIL_SYSTEM_UTILS_H_
+#define UTIL_SYSTEM_UTILS_H_
 
 #include <string>
+
+#include <export.h>
+
+#include "common/angleutils.h"
 
 namespace angle
 {
 
-std::string GetExecutablePath();
-std::string GetExecutableDirectory();
+ANGLE_EXPORT const char *GetExecutablePath();
+ANGLE_EXPORT const char *GetExecutableDirectory();
+ANGLE_EXPORT const char *GetSharedLibraryExtension();
 
 // Cross platform equivalent of the Windows Sleep function
-void Sleep(unsigned int milliseconds);
+ANGLE_EXPORT void Sleep(unsigned int milliseconds);
 
-void SetLowPriorityProcess();
+ANGLE_EXPORT void SetLowPriorityProcess();
 
 // Write a debug message, either to a standard output or Debug window.
-void WriteDebugMessage(const char *format, ...);
+ANGLE_EXPORT void WriteDebugMessage(const char *format, ...);
+
+class ANGLE_EXPORT Library : angle::NonCopyable
+{
+  public:
+    virtual ~Library() {}
+    virtual void *getSymbol(const std::string &symbolName) = 0;
+};
+
+ANGLE_EXPORT Library *loadLibrary(const std::string &libraryName);
 
 } // namespace angle
 
-#endif // SAMPLE_UTIL_PATH_UTILS_H
+#endif  // UTIL_SYSTEM_UTILS_H_

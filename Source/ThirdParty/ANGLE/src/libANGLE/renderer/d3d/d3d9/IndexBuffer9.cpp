@@ -40,7 +40,7 @@ gl::Error IndexBuffer9::initialize(unsigned int bufferSize, GLenum indexType, bo
         }
         else if (indexType == GL_UNSIGNED_INT)
         {
-            ASSERT(mRenderer->getRendererExtensions().elementIndexUint);
+            ASSERT(mRenderer->getNativeExtensions().elementIndexUint);
             format = D3DFMT_INDEX32;
         }
         else UNREACHABLE();

@@ -358,4 +358,13 @@ EGLBoolean EGLAPIENTRY eglStreamPostD3DTextureNV12ANGLE(EGLDisplay dpy,
 {
     return egl::StreamPostD3DTextureNV12ANGLE(dpy, stream, texture, attrib_list);
 }
+
+EGLBoolean EGLAPIENTRY eglGetSyncValuesCHROMIUM(EGLDisplay dpy,
+                                                EGLSurface surface,
+                                                EGLuint64KHR *ust,
+                                                EGLuint64KHR *msc,
+                                                EGLuint64KHR *sbc)
+{
+    return egl::GetSyncValuesCHROMIUM(dpy, surface, ust, msc, sbc);
+}
 }

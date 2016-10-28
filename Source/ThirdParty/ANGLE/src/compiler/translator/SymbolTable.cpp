@@ -21,13 +21,33 @@
 
 int TSymbolTable::uniqueIdCounter = 0;
 
+TSymbol::TSymbol(const TString *n) : uniqueId(TSymbolTable::nextUniqueId()), name(n)
+{
+}
+
 //
 // Functions have buried pointers to delete.
 //
 TFunction::~TFunction()
 {
+    clearParameters();
+}
+
+void TFunction::clearParameters()
+{
     for (TParamList::iterator i = parameters.begin(); i != parameters.end(); ++i)
         delete (*i).type;
+    parameters.clear();
+    mangledName = nullptr;
+}
+
+void TFunction::swapParameters(const TFunction &parametersSource)
+{
+    clearParameters();
+    for (auto parameter : parametersSource.parameters)
+    {
+        addParameter(parameter);
+    }
 }
 
 const TString *TFunction::buildMangledName() const
@@ -53,8 +73,6 @@ TSymbolTableLevel::~TSymbolTableLevel()
 
 bool TSymbolTableLevel::insert(TSymbol *symbol)
 {
-    symbol->setUniqueId(TSymbolTable::nextUniqueId());
-
     // returning true means symbol was added to the table
     tInsertResult result = level.insert(tLevelPair(symbol->getMangledName(), symbol));
 
@@ -63,8 +81,6 @@ bool TSymbolTableLevel::insert(TSymbol *symbol)
 
 bool TSymbolTableLevel::insertUnmangled(TFunction *function)
 {
-    function->setUniqueId(TSymbolTable::nextUniqueId());
-
     // returning true means symbol was added to the table
     tInsertResult result = level.insert(tLevelPair(function->getName(), function));
 
@@ -88,7 +104,9 @@ TSymbol *TSymbolTable::find(const TString &name, int shaderVersion,
 
     do
     {
-        if (level == ESSL3_BUILTINS && shaderVersion != 300)
+        if (level == ESSL3_1_BUILTINS && shaderVersion != 310)
+            level--;
+        if (level == ESSL3_BUILTINS && shaderVersion < 300)
             level--;
         if (level == ESSL1_BUILTINS && shaderVersion != 100)
             level--;
@@ -110,7 +128,9 @@ TSymbol *TSymbolTable::findBuiltIn(
 {
     for (int level = LAST_BUILTIN_LEVEL; level >= 0; level--)
     {
-        if (level == ESSL3_BUILTINS && shaderVersion != 300)
+        if (level == ESSL3_1_BUILTINS && shaderVersion != 310)
+            level--;
+        if (level == ESSL3_BUILTINS && shaderVersion < 300)
             level--;
         if (level == ESSL1_BUILTINS && shaderVersion != 100)
             level--;

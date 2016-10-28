@@ -46,25 +46,38 @@ namespace d3d11
 #define {prefix}RT D3D11_FORMAT_SUPPORT_RENDER_TARGET
 #define {prefix}MS D3D11_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET
 #define {prefix}DS D3D11_FORMAT_SUPPORT_DEPTH_STENCIL
+#define {prefix}MIPGEN D3D11_FORMAT_SUPPORT_MIP_AUTOGEN
 
 namespace
 {{
 
 const DXGISupport &GetDefaultSupport()
 {{
-    static UINT AllSupportFlags = D3D11_FORMAT_SUPPORT_TEXTURE2D |
-                                  D3D11_FORMAT_SUPPORT_TEXTURE3D |
-                                  D3D11_FORMAT_SUPPORT_TEXTURECUBE |
-                                  D3D11_FORMAT_SUPPORT_SHADER_SAMPLE |
-                                  D3D11_FORMAT_SUPPORT_RENDER_TARGET |
-                                  D3D11_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET |
-                                  D3D11_FORMAT_SUPPORT_DEPTH_STENCIL;
+    static UINT AllSupportFlags =
+        D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_TEXTURE3D |
+        D3D11_FORMAT_SUPPORT_TEXTURECUBE | D3D11_FORMAT_SUPPORT_SHADER_SAMPLE |
+        D3D11_FORMAT_SUPPORT_RENDER_TARGET | D3D11_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET |
+        D3D11_FORMAT_SUPPORT_DEPTH_STENCIL | D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
     static const DXGISupport defaultSupport(0, 0, AllSupportFlags);
     return defaultSupport;
 }}
 
+const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
+{{
+    // clang-format off
+    switch (dxgiFormat)
+    {{
+{table_data_9_3}
+        default:
+            UNREACHABLE();
+            return GetDefaultSupport();
+    }}
+    // clang-format on
+}}
+
 const DXGISupport &GetDXGISupport_10_0(DXGI_FORMAT dxgiFormat)
 {{
+    // clang-format off
     switch (dxgiFormat)
     {{
 {table_data_10_0}
@@ -72,10 +85,12 @@ const DXGISupport &GetDXGISupport_10_0(DXGI_FORMAT dxgiFormat)
             UNREACHABLE();
             return GetDefaultSupport();
     }}
+    // clang-format on
 }}
 
 const DXGISupport &GetDXGISupport_10_1(DXGI_FORMAT dxgiFormat)
 {{
+    // clang-format off
     switch (dxgiFormat)
     {{
 {table_data_10_1}
@@ -83,10 +98,12 @@ const DXGISupport &GetDXGISupport_10_1(DXGI_FORMAT dxgiFormat)
             UNREACHABLE();
             return GetDefaultSupport();
     }}
+    // clang-format on
 }}
 
 const DXGISupport &GetDXGISupport_11_0(DXGI_FORMAT dxgiFormat)
 {{
+    // clang-format off
     switch (dxgiFormat)
     {{
 {table_data_11_0}
@@ -94,6 +111,7 @@ const DXGISupport &GetDXGISupport_11_0(DXGI_FORMAT dxgiFormat)
             UNREACHABLE();
             return GetDefaultSupport();
     }}
+    // clang-format on
 }}
 
 }}
@@ -105,11 +123,14 @@ const DXGISupport &GetDXGISupport_11_0(DXGI_FORMAT dxgiFormat)
 #undef {prefix}RT
 #undef {prefix}MS
 #undef {prefix}DS
+#undef {prefix}MIPGEN
 
 const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL featureLevel)
 {{
     switch (featureLevel)
     {{
+        case D3D_FEATURE_LEVEL_9_3:
+            return GetDXGISupport_9_3(dxgiFormat);
         case D3D_FEATURE_LEVEL_10_0:
             return GetDXGISupport_10_0(dxgiFormat);
         case D3D_FEATURE_LEVEL_10_1:
@@ -129,7 +150,7 @@ const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL feat
 table_init = ""
 
 def do_format(format_data):
-    table_data = {'10_0': '', '10_1': '', '11_0': ''}
+    table_data = {'9_3': '', '10_0': '', '10_1': '', '11_0': ''}
 
     json_flag_to_d3d = {
         'texture2D': macro_prefix + '2D',
@@ -138,7 +159,8 @@ def do_format(format_data):
         'shaderSample': macro_prefix + 'SAMPLE',
         'renderTarget': macro_prefix + 'RT',
         'multisampleRT': macro_prefix + 'MS',
-        'depthStencil': macro_prefix + 'DS'
+        'depthStencil': macro_prefix + 'DS',
+        'mipAutoGen': macro_prefix + 'MIPGEN'
     }
 
     for format_name, format_support in sorted(format_data.iteritems()):
@@ -146,6 +168,9 @@ def do_format(format_data):
         always_supported = set()
         never_supported = set()
         optionally_supported = set()
+        fl_9_3_supported = set()
+        fl_9_3_check = set()
+        fl_10_0_supported = set()
         fl_10_1_supported = set()
         fl_11_0_supported = set()
         fl_11_0_check = set()
@@ -163,8 +188,7 @@ def do_format(format_data):
             elif support == 'never':
                 never_supported.update(d3d_flag)
             elif support == '10_0':
-                # TODO(jmadill): FL 9_3 handling
-                always_supported.update(d3d_flag)
+                fl_10_0_supported.update(d3d_flag)
             elif support == '10_1':
                 fl_10_1_supported.update(d3d_flag)
             elif support == '11_0':
@@ -181,21 +205,33 @@ def do_format(format_data):
                 fl_10_0_check_11_0_supported.update(d3d_flag)
             elif support == '11_0check':
                 fl_11_0_check.update(d3d_flag)
+            elif support == '9_3always_10_0check11_0always':
+                fl_9_3_supported.update(d3d_flag)
+                fl_10_0_check_11_0_supported.update(d3d_flag)
+            elif support == '9_3check_10_0always':
+                fl_9_3_check.update(d3d_flag)
+                fl_10_0_supported.update(d3d_flag)
             else:
                 print("Data specification error: " + support)
                 sys.exit(1)
 
-        for feature_level in ['10_0', '10_1', '11_0']:
+        for feature_level in ['9_3', '10_0', '10_1', '11_0']:
             always_for_fl = always_supported
             optional_for_fl = optionally_supported
-            if feature_level == '10_0':
+            if feature_level == '9_3':
+                always_for_fl = fl_9_3_supported.union(always_for_fl)
+                optional_for_fl = fl_9_3_check.union(optional_for_fl)
+            elif feature_level == '10_0':
+                always_for_fl = fl_10_0_supported.union(always_for_fl)
                 optional_for_fl = fl_10_0_check_10_1_supported.union(optional_for_fl)
                 optional_for_fl = fl_10_0_check_11_0_supported.union(optional_for_fl)
-            if feature_level == '10_1':
+            elif feature_level == '10_1':
+                always_for_fl = fl_10_0_supported.union(always_for_fl)
                 always_for_fl = fl_10_1_supported.union(always_for_fl)
                 always_for_fl = fl_10_0_check_10_1_supported.union(always_for_fl)
                 optional_for_fl = fl_10_0_check_11_0_supported.union(optional_for_fl)
             elif feature_level == '11_0':
+                always_for_fl = fl_10_0_supported.union(always_for_fl)
                 always_for_fl = fl_10_0_check_10_1_supported.union(always_for_fl)
                 always_for_fl = fl_10_0_check_11_0_supported.union(always_for_fl)
                 always_for_fl = fl_10_1_supported.union(always_for_fl)
@@ -218,7 +254,8 @@ def do_format(format_data):
     return table_data
 
 def join_table_data(table_data_1, table_data_2):
-    return {'10_0': table_data_1['10_0'] + table_data_2['10_0'],
+    return {'9_3':  table_data_1['9_3']  + table_data_2['9_3'],
+            '10_0': table_data_1['10_0'] + table_data_2['10_0'],
             '10_1': table_data_1['10_1'] + table_data_2['10_1'],
             '11_0': table_data_1['11_0'] + table_data_2['11_0']}
 
@@ -227,12 +264,13 @@ with open('dxgi_support_data.json') as dxgi_file:
     dxgi_file.close()
     json_data = json.loads(file_data)
 
-    table_data = {'10_0': '', '10_1': '', '11_0': ''}
+    table_data = {'9_3': '', '10_0': '', '10_1': '', '11_0': ''}
 
     for format_data in json_data:
         table_data = join_table_data(table_data, do_format(format_data))
 
     out_data = template.format(prefix=macro_prefix,
+                               table_data_9_3=table_data['9_3'],
                                table_data_10_0=table_data['10_0'],
                                table_data_10_1=table_data['10_1'],
                                table_data_11_0=table_data['11_0'])

@@ -21,14 +21,15 @@ static int IgnoreX11Errors(Display *, XErrorEvent *)
     return 0;
 }
 
-WindowSurfaceGLX::WindowSurfaceGLX(const FunctionsGLX &glx,
+WindowSurfaceGLX::WindowSurfaceGLX(const egl::SurfaceState &state,
+                                   const FunctionsGLX &glx,
                                    DisplayGLX *glxDisplay,
                                    RendererGL *renderer,
                                    Window window,
                                    Display *display,
                                    glx::Context context,
                                    glx::FBConfig fbConfig)
-    : SurfaceGLX(renderer),
+    : SurfaceGLX(state, renderer),
       mParent(window),
       mWindow(0),
       mDisplay(display),

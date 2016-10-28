@@ -12,9 +12,16 @@
 class BuiltInFunctionEmulator;
 
 //
-// This is only a workaround for OpenGL driver bugs, and isn't needed in general.
+// This works around bug in Intel Mac drivers.
 //
-void InitBuiltInFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *emu, sh::GLenum shaderType);
+void InitBuiltInAbsFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *emu,
+                                                      sh::GLenum shaderType);
+
+//
+// This works around isnan() bug in Intel Mac drivers
+//
+void InitBuiltInIsnanFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *emu,
+                                                        int targetGLSLVersion);
 
 //
 // This function is emulating built-in functions missing from GLSL 1.30 and higher.

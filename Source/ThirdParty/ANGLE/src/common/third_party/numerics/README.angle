@@ -1,0 +1,16 @@
+Name: Chromium: base/numerics
+Short Name: base::numerics
+Version:
+URL: https://chromium.googlesource.com/chromium/src.git/+/lkcr/base/numerics/
+SOURCE CODE: Copy the Chromium folder manually into this folder and run git cl format.
+Date: 30/05/2016
+Revision: 28b5bbb227d331c01e6ff9b2f8729732135aadc7 (Chromium)
+Security Critical: no
+License: Chromium
+License File: LICENSE in Chromium/src
+
+Description:
+base::numerics is a library for doing some simple safe math and conversions. To update the checkout, simply
+overwrite the base/numerics folder with Chromium's latest. The only modifications are to the base/logging.h
+file which defines CHECK to be ASSERT to be compatible with ANGLE.
+

@@ -10,32 +10,39 @@
 
 #include "common/BitSetIterator.h"
 #include "common/debug.h"
-#include "libANGLE/Data.h"
+#include "libANGLE/ContextState.h"
 #include "libANGLE/State.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/renderer/gl/BlitGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/RenderbufferGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/TextureGL.h"
 #include "libANGLE/renderer/gl/WorkaroundsGL.h"
+#include "libANGLE/renderer/gl/formatutilsgl.h"
+#include "libANGLE/renderer/gl/renderergl_utils.h"
 #include "platform/Platform.h"
 
 using namespace gl;
+using angle::CheckedNumeric;
 
 namespace rx
 {
 
-FramebufferGL::FramebufferGL(const Framebuffer::Data &data,
+FramebufferGL::FramebufferGL(const FramebufferState &state,
                              const FunctionsGL *functions,
                              StateManagerGL *stateManager,
                              const WorkaroundsGL &workarounds,
+                             BlitGL *blitter,
                              bool isDefault)
-    : FramebufferImpl(data),
+    : FramebufferImpl(state),
       mFunctions(functions),
       mStateManager(stateManager),
       mWorkarounds(workarounds),
+      mBlitter(blitter),
       mFramebufferID(0),
       mIsDefault(isDefault)
 {
@@ -46,14 +53,16 @@ FramebufferGL::FramebufferGL(const Framebuffer::Data &data,
 }
 
 FramebufferGL::FramebufferGL(GLuint id,
-                             const Framebuffer::Data &data,
+                             const FramebufferState &state,
                              const FunctionsGL *functions,
                              const WorkaroundsGL &workarounds,
+                             BlitGL *blitter,
                              StateManagerGL *stateManager)
-    : FramebufferImpl(data),
+    : FramebufferImpl(state),
       mFunctions(functions),
       mStateManager(stateManager),
       mWorkarounds(workarounds),
+      mBlitter(blitter),
       mFramebufferID(id),
       mIsDefault(true)
 {
@@ -149,7 +158,7 @@ Error FramebufferGL::invalidateSub(size_t count,
     return Error(GL_NO_ERROR);
 }
 
-Error FramebufferGL::clear(const Data &data, GLbitfield mask)
+Error FramebufferGL::clear(ContextImpl *context, GLbitfield mask)
 {
     syncClearState(mask);
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
@@ -158,7 +167,7 @@ Error FramebufferGL::clear(const Data &data, GLbitfield mask)
     return Error(GL_NO_ERROR);
 }
 
-Error FramebufferGL::clearBufferfv(const Data &data,
+Error FramebufferGL::clearBufferfv(ContextImpl *context,
                                    GLenum buffer,
                                    GLint drawbuffer,
                                    const GLfloat *values)
@@ -170,7 +179,7 @@ Error FramebufferGL::clearBufferfv(const Data &data,
     return Error(GL_NO_ERROR);
 }
 
-Error FramebufferGL::clearBufferuiv(const Data &data,
+Error FramebufferGL::clearBufferuiv(ContextImpl *context,
                                     GLenum buffer,
                                     GLint drawbuffer,
                                     const GLuint *values)
@@ -182,7 +191,7 @@ Error FramebufferGL::clearBufferuiv(const Data &data,
     return Error(GL_NO_ERROR);
 }
 
-Error FramebufferGL::clearBufferiv(const Data &data,
+Error FramebufferGL::clearBufferiv(ContextImpl *context,
                                    GLenum buffer,
                                    GLint drawbuffer,
                                    const GLint *values)
@@ -194,7 +203,7 @@ Error FramebufferGL::clearBufferiv(const Data &data,
     return Error(GL_NO_ERROR);
 }
 
-Error FramebufferGL::clearBufferfi(const Data &data,
+Error FramebufferGL::clearBufferfi(ContextImpl *context,
                                    GLenum buffer,
                                    GLint drawbuffer,
                                    GLfloat depth,
@@ -209,21 +218,19 @@ Error FramebufferGL::clearBufferfi(const Data &data,
 
 GLenum FramebufferGL::getImplementationColorReadFormat() const
 {
-    const FramebufferAttachment *readAttachment = getData().getReadAttachment();
-    GLenum internalFormat = readAttachment->getInternalFormat();
-    const InternalFormat &internalFormatInfo    = GetInternalFormatInfo(internalFormat);
-    return internalFormatInfo.format;
+    const auto *readAttachment = mState.getReadAttachment();
+    const Format &format       = readAttachment->getFormat();
+    return format.info->getReadPixelsFormat();
 }
 
 GLenum FramebufferGL::getImplementationColorReadType() const
 {
-    const FramebufferAttachment *readAttachment = getData().getReadAttachment();
-    GLenum internalFormat = readAttachment->getInternalFormat();
-    const InternalFormat &internalFormatInfo    = GetInternalFormatInfo(internalFormat);
-    return internalFormatInfo.type;
+    const auto *readAttachment = mState.getReadAttachment();
+    const Format &format       = readAttachment->getFormat();
+    return format.info->getReadPixelsType();
 }
 
-Error FramebufferGL::readPixels(const State &state,
+Error FramebufferGL::readPixels(ContextImpl *context,
                                 const gl::Rectangle &area,
                                 GLenum format,
                                 GLenum type,
@@ -231,31 +238,124 @@ Error FramebufferGL::readPixels(const State &state,
 {
     // TODO: don't sync the pixel pack state here once the dirty bits contain the pixel pack buffer
     // binding
-    const PixelPackState &packState = state.getPackState();
+    const PixelPackState &packState = context->getGLState().getPackState();
     mStateManager->setPixelPackState(packState);
 
-    mStateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, mFramebufferID);
-    mFunctions->readPixels(area.x, area.y, area.width, area.height, format, type, pixels);
+    nativegl::ReadPixelsFormat readPixelsFormat =
+        nativegl::GetReadPixelsFormat(mFunctions, mWorkarounds, format, type);
+    GLenum readFormat = readPixelsFormat.format;
+    GLenum readType   = readPixelsFormat.type;
 
-    return Error(GL_NO_ERROR);
+    mStateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, mFramebufferID);
+
+    if (mWorkarounds.packOverlappingRowsSeparatelyPackBuffer && packState.pixelBuffer.get() &&
+        packState.rowLength != 0 && packState.rowLength < area.width)
+    {
+        return readPixelsRowByRowWorkaround(area, readFormat, readType, packState, pixels);
+    }
+
+    if (mWorkarounds.packLastRowSeparatelyForPaddingInclusion)
+    {
+        gl::Extents size(area.width, area.height, 1);
+
+        bool apply;
+        ANGLE_TRY_RESULT(ShouldApplyLastRowPaddingWorkaround(size, packState, readFormat, readType,
+                                                             false, pixels),
+                         apply);
+
+        if (apply)
+        {
+            return readPixelsPaddingWorkaround(area, readFormat, readType, packState, pixels);
+        }
+    }
+
+    mFunctions->readPixels(area.x, area.y, area.width, area.height, readFormat, readType, pixels);
+
+    return gl::NoError();
 }
 
-Error FramebufferGL::blit(const State &state,
+Error FramebufferGL::blit(ContextImpl *context,
                           const gl::Rectangle &sourceArea,
                           const gl::Rectangle &destArea,
                           GLbitfield mask,
-                          GLenum filter,
-                          const Framebuffer *sourceFramebuffer)
+                          GLenum filter)
 {
-    const FramebufferGL *sourceFramebufferGL = GetImplAs<FramebufferGL>(sourceFramebuffer);
+    const Framebuffer *sourceFramebuffer     = context->getGLState().getReadFramebuffer();
+    const Framebuffer *destFramebuffer       = context->getGLState().getDrawFramebuffer();
 
+    bool needManualColorBlit = false;
+
+    // The manual SRGB blit is only needed to perform correct linear interpolation. We don't
+    // need to make sure there is SRGB conversion for NEAREST as the values will be copied.
+    if (filter != GL_NEAREST)
+    {
+
+        // Prior to OpenGL 4.4 BlitFramebuffer (section 18.3.1 of GL 4.3 core profile) reads:
+        //      When values are taken from the read buffer, no linearization is performed, even
+        //      if the format of the buffer is SRGB.
+        // Starting from OpenGL 4.4 (section 18.3.1) it reads:
+        //      When values are taken from the read buffer, if FRAMEBUFFER_SRGB is enabled and the
+        //      value of FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING for the framebuffer attachment
+        //      corresponding to the read buffer is SRGB, the red, green, and blue components are
+        //      converted from the non-linear sRGB color space according [...].
+        {
+            const FramebufferAttachment *readAttachment = sourceFramebuffer->getReadColorbuffer();
+            bool sourceSRGB =
+                readAttachment != nullptr && readAttachment->getColorEncoding() == GL_SRGB;
+            needManualColorBlit =
+                needManualColorBlit || (sourceSRGB && mFunctions->isAtMostGL(gl::Version(4, 3)));
+        }
+
+        // Prior to OpenGL 4.2 BlitFramebuffer (section 4.3.2 of GL 4.1 core profile) reads:
+        //      Blit operations bypass the fragment pipeline. The only fragment operations which
+        //      affect a blit are the pixel ownership test and scissor test.
+        // Starting from OpenGL 4.2 (section 4.3.2) it reads:
+        //      When values are written to the draw buffers, blit operations bypass the fragment
+        //      pipeline. The only fragment operations which affect a blit are the pixel ownership
+        //      test,  the scissor test and sRGB conversion.
+        if (!needManualColorBlit)
+        {
+            bool destSRGB = false;
+            for (size_t i = 0; i < destFramebuffer->getDrawbufferStateCount(); ++i)
+            {
+                const FramebufferAttachment *attachment = destFramebuffer->getDrawBuffer(i);
+                if (attachment && attachment->getColorEncoding() == GL_SRGB)
+                {
+                    destSRGB = true;
+                    break;
+                }
+            }
+
+            needManualColorBlit =
+                needManualColorBlit || (destSRGB && mFunctions->isAtMostGL(gl::Version(4, 1)));
+        }
+    }
+
+    // Enable FRAMEBUFFER_SRGB if needed
+    syncDrawState();
+
+    GLenum blitMask = mask;
+    if (needManualColorBlit && (mask & GL_COLOR_BUFFER_BIT))
+    {
+        ANGLE_TRY(mBlitter->blitColorBufferWithShader(sourceFramebuffer, destFramebuffer,
+                                                      sourceArea, destArea, filter));
+        blitMask &= ~GL_COLOR_BUFFER_BIT;
+    }
+
+    if (blitMask == 0)
+    {
+        return gl::NoError();
+    }
+
+    const FramebufferGL *sourceFramebufferGL = GetImplAs<FramebufferGL>(sourceFramebuffer);
     mStateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, sourceFramebufferGL->getFramebufferID());
     mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebufferID);
 
     mFunctions->blitFramebuffer(sourceArea.x, sourceArea.y, sourceArea.x1(), sourceArea.y1(),
-                                destArea.x, destArea.y, destArea.x1(), destArea.y1(), mask, filter);
+                                destArea.x, destArea.y, destArea.x1(), destArea.y1(), blitMask,
+                                filter);
 
-    return Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 bool FramebufferGL::checkStatus() const
@@ -285,21 +385,21 @@ void FramebufferGL::syncState(const Framebuffer::DirtyBits &dirtyBits)
         {
             case Framebuffer::DIRTY_BIT_DEPTH_ATTACHMENT:
                 BindFramebufferAttachment(mFunctions, GL_DEPTH_ATTACHMENT,
-                                          mData.getDepthAttachment());
+                                          mState.getDepthAttachment());
                 break;
             case Framebuffer::DIRTY_BIT_STENCIL_ATTACHMENT:
                 BindFramebufferAttachment(mFunctions, GL_STENCIL_ATTACHMENT,
-                                          mData.getStencilAttachment());
+                                          mState.getStencilAttachment());
                 break;
             case Framebuffer::DIRTY_BIT_DRAW_BUFFERS:
             {
-                const auto &drawBuffers = mData.getDrawBufferStates();
+                const auto &drawBuffers = mState.getDrawBufferStates();
                 mFunctions->drawBuffers(static_cast<GLsizei>(drawBuffers.size()),
                                         drawBuffers.data());
                 break;
             }
             case Framebuffer::DIRTY_BIT_READ_BUFFER:
-                mFunctions->readBuffer(mData.getReadBufferState());
+                mFunctions->readBuffer(mState.getReadBufferState());
                 break;
             default:
             {
@@ -309,7 +409,7 @@ void FramebufferGL::syncState(const Framebuffer::DirtyBits &dirtyBits)
                     static_cast<size_t>(dirtyBit - Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0);
                 BindFramebufferAttachment(mFunctions,
                                           static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + index),
-                                          mData.getColorAttachment(index));
+                                          mState.getColorAttachment(index));
                 break;
             }
         }
@@ -341,17 +441,17 @@ void FramebufferGL::syncClearState(GLbitfield mask)
         if (mWorkarounds.doesSRGBClearsOnLinearFramebufferAttachments &&
             (mask & GL_COLOR_BUFFER_BIT) != 0 && !mIsDefault)
         {
-            bool hasSRBAttachment = false;
-            for (const auto &attachment : mData.getColorAttachments())
+            bool hasSRGBAttachment = false;
+            for (const auto &attachment : mState.getColorAttachments())
             {
                 if (attachment.isAttached() && attachment.getColorEncoding() == GL_SRGB)
                 {
-                    hasSRBAttachment = true;
+                    hasSRGBAttachment = true;
                     break;
                 }
             }
 
-            mStateManager->setFramebufferSRGBEnabled(hasSRBAttachment);
+            mStateManager->setFramebufferSRGBEnabled(hasSRGBAttachment);
         }
         else
         {
@@ -369,8 +469,8 @@ void FramebufferGL::syncClearBufferState(GLenum buffer, GLint drawBuffer)
         {
             // If doing a clear on a color buffer, set SRGB blend enabled only if the color buffer
             // is an SRGB format.
-            const auto &drawbufferState  = mData.getDrawBufferStates();
-            const auto &colorAttachments = mData.getColorAttachments();
+            const auto &drawbufferState  = mState.getDrawBufferStates();
+            const auto &colorAttachments = mState.getColorAttachments();
 
             const FramebufferAttachment *attachment = nullptr;
             if (drawbufferState[drawBuffer] >= GL_COLOR_ATTACHMENT0 &&
@@ -391,5 +491,72 @@ void FramebufferGL::syncClearBufferState(GLenum buffer, GLint drawBuffer)
             mStateManager->setFramebufferSRGBEnabled(!mIsDefault);
         }
     }
+}
+gl::Error FramebufferGL::readPixelsRowByRowWorkaround(const gl::Rectangle &area,
+                                                      GLenum format,
+                                                      GLenum type,
+                                                      const gl::PixelPackState &pack,
+                                                      GLvoid *pixels) const
+{
+    intptr_t offset = reinterpret_cast<intptr_t>(pixels);
+
+    const gl::InternalFormat &glFormat =
+        gl::GetInternalFormatInfo(gl::GetSizedInternalFormat(format, type));
+    GLuint rowBytes = 0;
+    ANGLE_TRY_RESULT(glFormat.computeRowPitch(type, area.width, pack.alignment, pack.rowLength),
+                     rowBytes);
+    GLuint skipBytes = 0;
+    ANGLE_TRY_RESULT(glFormat.computeSkipBytes(rowBytes, 0, pack, false), skipBytes);
+
+    gl::PixelPackState directPack;
+    directPack.pixelBuffer = pack.pixelBuffer;
+    directPack.alignment   = 1;
+    mStateManager->setPixelPackState(directPack);
+    directPack.pixelBuffer.set(nullptr);
+
+    offset += skipBytes;
+    for (GLint row = 0; row < area.height; ++row)
+    {
+        mFunctions->readPixels(area.x, row + area.y, area.width, 1, format, type,
+                               reinterpret_cast<GLvoid *>(offset));
+        offset += row * rowBytes;
+    }
+
+    return gl::NoError();
+}
+
+gl::Error FramebufferGL::readPixelsPaddingWorkaround(const gl::Rectangle &area,
+                                                     GLenum format,
+                                                     GLenum type,
+                                                     const gl::PixelPackState &pack,
+                                                     GLvoid *pixels) const
+{
+    const gl::InternalFormat &glFormat =
+        gl::GetInternalFormatInfo(gl::GetSizedInternalFormat(format, type));
+    GLuint rowBytes = 0;
+    ANGLE_TRY_RESULT(glFormat.computeRowPitch(type, area.width, pack.alignment, pack.rowLength),
+                     rowBytes);
+    GLuint skipBytes = 0;
+    ANGLE_TRY_RESULT(glFormat.computeSkipBytes(rowBytes, 0, pack, false), skipBytes);
+
+    // Get all by the last row
+    if (area.height > 1)
+    {
+        mFunctions->readPixels(area.x, area.y, area.width, area.height - 1, format, type, pixels);
+    }
+
+    // Get the last row manually
+    gl::PixelPackState directPack;
+    directPack.pixelBuffer = pack.pixelBuffer;
+    directPack.alignment   = 1;
+    mStateManager->setPixelPackState(directPack);
+    directPack.pixelBuffer.set(nullptr);
+
+    intptr_t lastRowOffset =
+        reinterpret_cast<intptr_t>(pixels) + skipBytes + (area.height - 1) * rowBytes;
+    mFunctions->readPixels(area.x, area.y + area.height - 1, area.width, 1, format, type,
+                           reinterpret_cast<GLvoid *>(lastRowOffset));
+
+    return gl::NoError();
 }
 }  // namespace rx

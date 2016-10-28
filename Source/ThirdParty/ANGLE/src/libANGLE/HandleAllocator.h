@@ -41,6 +41,7 @@ class HandleAllocator final : angle::NonCopyable
     typedef std::vector<GLuint> HandleList;
     HandleList mFreeValues;
 
+    // Represents an inclusive range [begin, end]
     struct HandleRange
     {
         HandleRange(GLuint beginIn, GLuint endIn) : begin(beginIn), end(endIn) {}

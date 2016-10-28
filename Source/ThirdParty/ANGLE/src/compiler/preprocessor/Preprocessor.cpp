@@ -4,16 +4,15 @@
 // found in the LICENSE file.
 //
 
-#include "Preprocessor.h"
+#include "compiler/preprocessor/Preprocessor.h"
 
-#include <cassert>
-
-#include "DiagnosticsBase.h"
-#include "DirectiveParser.h"
-#include "Macro.h"
-#include "MacroExpander.h"
-#include "Token.h"
-#include "Tokenizer.h"
+#include "common/debug.h"
+#include "compiler/preprocessor/DiagnosticsBase.h"
+#include "compiler/preprocessor/DirectiveParser.h"
+#include "compiler/preprocessor/Macro.h"
+#include "compiler/preprocessor/MacroExpander.h"
+#include "compiler/preprocessor/Token.h"
+#include "compiler/preprocessor/Tokenizer.h"
 
 namespace pp
 {
@@ -30,7 +29,7 @@ struct PreprocessorImpl
         : diagnostics(diag),
           tokenizer(diag),
           directiveParser(&tokenizer, &macroSet, diag, directiveHandler),
-          macroExpander(&directiveParser, &macroSet, diag, false)
+          macroExpander(&directiveParser, &macroSet, diag)
     {
     }
 };
@@ -78,8 +77,8 @@ void Preprocessor::lex(Token *token)
           // Convert preprocessing tokens to compiler tokens or report
           // diagnostics.
           case Token::PP_HASH:
-            assert(false);
-            break;
+              UNREACHABLE();
+              break;
           case Token::PP_NUMBER:
             mImpl->diagnostics->report(Diagnostics::PP_INVALID_NUMBER,
                                        token->location, token->text);

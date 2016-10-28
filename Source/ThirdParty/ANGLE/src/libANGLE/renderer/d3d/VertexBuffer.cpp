@@ -160,7 +160,9 @@ gl::Error StreamingVertexBufferInterface::storeDynamicAttribute(const gl::Vertex
     ANGLE_TRY_RESULT(getSpaceRequired(attrib, count, instances), spaceRequired);
 
     // Protect against integer overflow
-    if (!IsUnsignedAdditionSafe(mWritePosition, spaceRequired))
+    angle::CheckedNumeric<unsigned int> checkedPosition(mWritePosition);
+    checkedPosition += spaceRequired;
+    if (!checkedPosition.IsValid())
     {
         return gl::Error(GL_OUT_OF_MEMORY, "Internal error, new vertex buffer write position would overflow.");
     }
@@ -189,11 +191,11 @@ gl::Error StreamingVertexBufferInterface::reserveVertexSpace(const gl::VertexAtt
     ANGLE_TRY_RESULT(mFactory->getVertexSpaceRequired(attrib, count, instances), requiredSpace);
 
     // Align to 16-byte boundary
-    unsigned int alignedRequiredSpace = roundUp(requiredSpace, 16u);
+    auto alignedRequiredSpace = rx::CheckedRoundUp(requiredSpace, 16u);
+    alignedRequiredSpace += mReservedSpace;
 
     // Protect against integer overflow
-    if (!IsUnsignedAdditionSafe(mReservedSpace, alignedRequiredSpace) ||
-        alignedRequiredSpace < requiredSpace)
+    if (!alignedRequiredSpace.IsValid())
     {
         return gl::Error(GL_OUT_OF_MEMORY,
                          "Unable to reserve %u extra bytes in internal vertex buffer, "
@@ -201,7 +203,7 @@ gl::Error StreamingVertexBufferInterface::reserveVertexSpace(const gl::VertexAtt
                          requiredSpace);
     }
 
-    mReservedSpace += alignedRequiredSpace;
+    mReservedSpace = alignedRequiredSpace.ValueOrDie();
 
     return gl::NoError();
 }

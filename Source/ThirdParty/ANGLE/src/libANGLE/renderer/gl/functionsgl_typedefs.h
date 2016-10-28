@@ -627,6 +627,9 @@ typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXATTRIBIFORMATPROC)(GLuint, GLint,
 typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXATTRIBLFORMATPROC)(GLuint, GLint, GLenum, GLuint);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXBINDINGDIVISORPROC)(GLuint, GLuint);
 
+// NV_framebuffer_mixed_samples
+typedef void (INTERNAL_GL_APIENTRY *PFNGLCOVERAGEMODULATIONNVPROC)(GLenum);
+
 // 4.4
 typedef void (INTERNAL_GL_APIENTRY *PFNGLBINDBUFFERSBASEPROC)(GLenum, GLuint, GLsizei, const GLuint *);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLBINDBUFFERSRANGEPROC)(GLenum, GLuint, GLsizei, const GLuint *, const GLintptr *, const GLsizeiptr *);

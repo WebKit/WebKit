@@ -196,8 +196,9 @@ gl::Error PixelTransfer11::copyBufferToTexture(const gl::PixelUnpackState &unpac
     GLenum unsizedFormat = gl::GetInternalFormatInfo(destinationFormat).format;
     GLenum sourceFormat = gl::GetSizedInternalFormat(unsizedFormat, sourcePixelsType);
 
-    const d3d11::TextureFormat &sourceFormatInfo = d3d11::GetTextureFormatInfo(sourceFormat, mRenderer->getRenderer11DeviceCaps());
-    DXGI_FORMAT srvFormat = sourceFormatInfo.formatSet->srvFormat;
+    const d3d11::Format &sourceFormatInfo =
+        d3d11::Format::Get(sourceFormat, mRenderer->getRenderer11DeviceCaps());
+    DXGI_FORMAT srvFormat = sourceFormatInfo.srvFormat;
     ASSERT(srvFormat != DXGI_FORMAT_UNKNOWN);
     Buffer11 *bufferStorage11 = GetAs<Buffer11>(sourceBuffer.getImplementation());
     ID3D11ShaderResourceView *bufferSRV = nullptr;

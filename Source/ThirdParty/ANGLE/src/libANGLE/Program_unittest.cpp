@@ -8,7 +8,6 @@
 
 #include <gtest/gtest.h>
 
-#include "tests/angle_unittests_utils.h"
 #include "libANGLE/Program.h"
 
 using namespace gl;

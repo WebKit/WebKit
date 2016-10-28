@@ -9,15 +9,23 @@
 #ifndef COMMON_MATHUTIL_H_
 #define COMMON_MATHUTIL_H_
 
-#include "common/debug.h"
-#include "common/platform.h"
-
 #include <limits>
 #include <algorithm>
 #include <math.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#include <base/numerics/safe_math.h>
+
+#include "common/debug.h"
+#include "common/platform.h"
+
+namespace angle
+{
+using base::CheckedNumeric;
+using base::IsValueInRangeForNumericType;
+}
 
 namespace gl
 {
@@ -34,6 +42,15 @@ struct Vector4
     float y;
     float z;
     float w;
+};
+
+struct Vector2
+{
+    Vector2() {}
+    Vector2(float x, float y) : x(x), y(y) {}
+
+    float x;
+    float y;
 };
 
 inline bool isPow2(int x)
@@ -127,7 +144,7 @@ inline unsigned int unorm(float x)
 
 inline bool supportsSSE2()
 {
-#if defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM)
+#if defined(ANGLE_USE_SSE)
     static bool checked = false;
     static bool supports = false;
 
@@ -136,21 +153,22 @@ inline bool supportsSSE2()
         return supports;
     }
 
-    int info[4];
-    __cpuid(info, 0);
-
-    if (info[0] >= 1)
+#if defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM)
     {
-        __cpuid(info, 1);
+        int info[4];
+        __cpuid(info, 0);
 
-        supports = (info[3] >> 26) & 1;
+        if (info[0] >= 1)
+        {
+            __cpuid(info, 1);
+
+            supports = (info[3] >> 26) & 1;
+        }
     }
-
+#endif  // defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM)
     checked = true;
-
     return supports;
-#else
-    UNIMPLEMENTED();
+#else  // defined(ANGLE_USE_SSE)
     return false;
 #endif
 }
@@ -467,6 +485,43 @@ inline T shiftData(T input)
     return (input & mask) << inputBitStart;
 }
 
+inline unsigned int CountLeadingZeros(uint32_t x)
+{
+    // Use binary search to find the amount of leading zeros.
+    unsigned int zeros = 32u;
+    uint32_t y;
+
+    y = x >> 16u;
+    if (y != 0)
+    {
+        zeros = zeros - 16u;
+        x     = y;
+    }
+    y = x >> 8u;
+    if (y != 0)
+    {
+        zeros = zeros - 8u;
+        x     = y;
+    }
+    y = x >> 4u;
+    if (y != 0)
+    {
+        zeros = zeros - 4u;
+        x     = y;
+    }
+    y = x >> 2u;
+    if (y != 0)
+    {
+        zeros = zeros - 2u;
+        x     = y;
+    }
+    y = x >> 1u;
+    if (y != 0)
+    {
+        return zeros - 2u;
+    }
+    return zeros - x;
+}
 
 inline unsigned char average(unsigned char a, unsigned char b)
 {
@@ -676,7 +731,75 @@ inline bool isInf(float f)
     return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) && !(bitCast<uint32_t>(f) & 0x7fffffu);
 }
 
+namespace priv
+{
+template <unsigned int N, unsigned int R>
+struct iSquareRoot
+{
+    static constexpr unsigned int solve()
+    {
+        return (R * R > N)
+                   ? 0
+                   : ((R * R == N) ? R : static_cast<unsigned int>(iSquareRoot<N, R + 1>::value));
+    }
+    enum Result
+    {
+        value = iSquareRoot::solve()
+    };
+};
+
+template <unsigned int N>
+struct iSquareRoot<N, N>
+{
+    enum result
+    {
+        value = N
+    };
+};
+
+}  // namespace priv
+
+template <unsigned int N>
+constexpr unsigned int iSquareRoot()
+{
+    return priv::iSquareRoot<N, 1>::value;
 }
+
+// Sum, difference and multiplication operations for signed ints that wrap on 32-bit overflow.
+//
+// Unsigned types are defined to do arithmetic modulo 2^n in C++. For signed types, overflow
+// behavior is undefined.
+
+template <typename T>
+inline T WrappingSum(T lhs, T rhs)
+{
+    uint32_t lhsUnsigned = static_cast<uint32_t>(lhs);
+    uint32_t rhsUnsigned = static_cast<uint32_t>(rhs);
+    return static_cast<T>(lhsUnsigned + rhsUnsigned);
+}
+
+template <typename T>
+inline T WrappingDiff(T lhs, T rhs)
+{
+    uint32_t lhsUnsigned = static_cast<uint32_t>(lhs);
+    uint32_t rhsUnsigned = static_cast<uint32_t>(rhs);
+    return static_cast<T>(lhsUnsigned - rhsUnsigned);
+}
+
+inline int32_t WrappingMul(int32_t lhs, int32_t rhs)
+{
+    int64_t lhsWide = static_cast<int64_t>(lhs);
+    int64_t rhsWide = static_cast<int64_t>(rhs);
+    // The multiplication is guaranteed not to overflow.
+    int64_t resultWide = lhsWide * rhsWide;
+    // Implement the desired wrapping behavior by masking out the high-order 32 bits.
+    resultWide = resultWide & 0xffffffffll;
+    // Casting to a narrower signed type is fine since the casted value is representable in the
+    // narrower type.
+    return static_cast<int32_t>(resultWide);
+}
+
+}  // namespace gl
 
 namespace rx
 {
@@ -684,33 +807,22 @@ namespace rx
 template <typename T>
 T roundUp(const T value, const T alignment)
 {
-    return value + alignment - 1 - (value - 1) % alignment;
+    auto temp = value + alignment - static_cast<T>(1);
+    return temp - temp % alignment;
+}
+
+template <typename T>
+angle::CheckedNumeric<T> CheckedRoundUp(const T value, const T alignment)
+{
+    angle::CheckedNumeric<T> checkedValue(value);
+    angle::CheckedNumeric<T> checkedAlignment(alignment);
+    return roundUp(checkedValue, checkedAlignment);
 }
 
 inline unsigned int UnsignedCeilDivide(unsigned int value, unsigned int divisor)
 {
     unsigned int divided = value / divisor;
     return (divided + ((value % divisor == 0) ? 0 : 1));
-}
-
-template <class T>
-inline bool IsUnsignedAdditionSafe(T lhs, T rhs)
-{
-    static_assert(!std::numeric_limits<T>::is_signed, "T must be unsigned.");
-    return (rhs <= std::numeric_limits<T>::max() - lhs);
-}
-
-template <class T>
-inline bool IsUnsignedMultiplicationSafe(T lhs, T rhs)
-{
-    static_assert(!std::numeric_limits<T>::is_signed, "T must be unsigned.");
-    return (lhs == T(0) || rhs == T(0) || (rhs <= std::numeric_limits<T>::max() / lhs));
-}
-
-template <class SmallIntT, class BigIntT>
-inline bool IsIntegerCastSafe(BigIntT bigValue)
-{
-    return (static_cast<BigIntT>(static_cast<SmallIntT>(bigValue)) == bigValue);
 }
 
 #if defined(_MSC_VER)
@@ -730,8 +842,8 @@ inline uint16_t RotR16(uint16_t x, int8_t r)
     return (x >> r) | (x << (16 - r));
 }
 
-#define ANGLE_ROTL(x,y) RotL(x,y)
-#define ANGLE_ROTR16(x,y) RotR16(x,y)
+#define ANGLE_ROTL(x, y) ::rx::RotL(x, y)
+#define ANGLE_ROTR16(x, y) ::rx::RotR16(x, y)
 
 #endif // namespace rx
 

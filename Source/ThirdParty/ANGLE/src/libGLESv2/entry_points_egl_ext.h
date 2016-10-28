@@ -79,6 +79,14 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY StreamPostD3DTextureNV12ANGLE(EGLDisplay dpy
                                                                   EGLStreamKHR stream,
                                                                   void *texture,
                                                                   const EGLAttrib *attrib_list);
+
+// EGL_CHROMIUM_get_sync_values
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY GetSyncValuesCHROMIUM(EGLDisplay dpy,
+                                                          EGLSurface surface,
+                                                          EGLuint64KHR *ust,
+                                                          EGLuint64KHR *msc,
+                                                          EGLuint64KHR *sbc);
+
 }  // namespace egl
 
 #endif // LIBGLESV2_ENTRYPOINTSEGLEXT_H_

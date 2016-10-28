@@ -1,3 +1,38 @@
+2016-10-27  Alex Christensen  <achristensen@webkit.org>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=164101
+
+        Reviewed by Darin Adler.
+
+        ShCheckVariablesWithinPackingLimits has changed signatures from taking a ShVariableInfo* and length
+        to taking a std::vector<sh::ShaderVariable> which requires more information about the shader variables
+        than we kept in GraphicsContext3D::SymbolInfo.  I removed the SymbolInfo class because it was redundant
+        with ANGLE's sh::ShaderVariable and now unused.
+
+        Covered by existing WebGL tests.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::appendSymbol):
+        (WebCore::getStructInfo):
+        (WebCore::getSymbolInfo):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::ANGLEShaderSymbol::isSampler): Deleted.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::SymbolInfo::SymbolInfo): Deleted.
+        (WebCore::GraphicsContext3D::SymbolInfo::operator==): Deleted.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking):
+        (WebCore::GraphicsContext3D::precisionsMatch):
+        (WebCore::GraphicsContext3D::mappedSymbolName):
+        (WebCore::GraphicsContext3D::originalSymbolName):
+
 2016-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Remove RenderStyle::isRunningAcceleratedAnimation()

@@ -20,7 +20,9 @@ class StateManagerGL;
 class VertexArrayGL : public VertexArrayImpl
 {
   public:
-    VertexArrayGL(const gl::VertexArray::Data &data, const FunctionsGL *functions, StateManagerGL *stateManager);
+    VertexArrayGL(const gl::VertexArrayState &data,
+                  const FunctionsGL *functions,
+                  StateManagerGL *stateManager);
     ~VertexArrayGL() override;
 
     gl::Error syncDrawArraysState(const gl::AttributesMask &activeAttributesMask,

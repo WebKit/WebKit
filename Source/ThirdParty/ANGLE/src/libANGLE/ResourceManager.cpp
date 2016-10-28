@@ -4,25 +4,24 @@
 // found in the LICENSE file.
 //
 
-// ResourceManager.cpp: Implements the gl::ResourceManager class, which tracks and 
+// ResourceManager.cpp: Implements the gl::ResourceManager class, which tracks and
 // retrieves objects which may be shared by multiple Contexts.
 
 #include "libANGLE/ResourceManager.h"
 
 #include "libANGLE/Buffer.h"
+#include "libANGLE/Fence.h"
+#include "libANGLE/Path.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Renderbuffer.h"
+#include "libANGLE/Sampler.h"
 #include "libANGLE/Shader.h"
 #include "libANGLE/Texture.h"
-#include "libANGLE/Sampler.h"
-#include "libANGLE/Fence.h"
-#include "libANGLE/renderer/Renderer.h"
+#include "libANGLE/renderer/GLImplFactory.h"
 
 namespace gl
 {
-ResourceManager::ResourceManager(rx::ImplFactory *factory)
-    : mFactory(factory),
-      mRefCount(1)
+ResourceManager::ResourceManager() : mRefCount(1)
 {
 }
 
@@ -62,6 +61,12 @@ ResourceManager::~ResourceManager()
     {
         deleteFenceSync(mFenceSyncMap.begin()->first);
     }
+
+    for (auto it = mPathMap.begin(); it != mPathMap.end(); ++it)
+    {
+        const auto *p = it->second;
+        delete p;
+    }
 }
 
 void ResourceManager::addRef()
@@ -88,25 +93,24 @@ GLuint ResourceManager::createBuffer()
 }
 
 // Returns an unused shader/program name
-GLuint ResourceManager::createShader(const gl::Limitations &rendererLimitations, GLenum type)
+GLuint ResourceManager::createShader(rx::GLImplFactory *factory,
+                                     const gl::Limitations &rendererLimitations,
+                                     GLenum type)
 {
+    ASSERT(type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER || type == GL_COMPUTE_SHADER);
     GLuint handle = mProgramShaderHandleAllocator.allocate();
 
-    if (type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER)
-    {
-        mShaderMap[handle] = new Shader(this, mFactory, rendererLimitations, type, handle);
-    }
-    else UNREACHABLE();
+    mShaderMap[handle] = new Shader(this, factory, rendererLimitations, type, handle);
 
     return handle;
 }
 
 // Returns an unused program/shader name
-GLuint ResourceManager::createProgram()
+GLuint ResourceManager::createProgram(rx::GLImplFactory *factory)
 {
     GLuint handle = mProgramShaderHandleAllocator.allocate();
 
-    mProgramMap[handle] = new Program(mFactory, this, handle);
+    mProgramMap[handle] = new Program(factory, this, handle);
 
     return handle;
 }
@@ -142,15 +146,40 @@ GLuint ResourceManager::createSampler()
 }
 
 // Returns the next unused fence name, and allocates the fence
-GLuint ResourceManager::createFenceSync()
+GLuint ResourceManager::createFenceSync(rx::GLImplFactory *factory)
 {
     GLuint handle = mFenceSyncHandleAllocator.allocate();
 
-    FenceSync *fenceSync = new FenceSync(mFactory->createFenceSync(), handle);
+    FenceSync *fenceSync = new FenceSync(factory->createFenceSync(), handle);
     fenceSync->addRef();
     mFenceSyncMap[handle] = fenceSync;
 
     return handle;
+}
+
+ErrorOrResult<GLuint> ResourceManager::createPaths(rx::GLImplFactory *factory, GLsizei range)
+{
+    // Allocate client side handles.
+    const GLuint client = mPathHandleAllocator.allocateRange(static_cast<GLuint>(range));
+    if (client == HandleRangeAllocator::kInvalidHandle)
+        return gl::Error(GL_OUT_OF_MEMORY, "Failed to allocate path handle range.");
+
+    const auto &paths = factory->createPaths(range);
+    if (paths.empty())
+    {
+        mPathHandleAllocator.releaseRange(client, range);
+        return gl::Error(GL_OUT_OF_MEMORY, "Failed to allocate path objects.");
+    }
+
+    auto hint = mPathMap.begin();
+
+    for (GLsizei i = 0; i < range; ++i)
+    {
+        const auto impl = paths[static_cast<unsigned>(i)];
+        const auto id   = client + i;
+        hint            = mPathMap.insert(hint, std::make_pair(id, new Path(impl)));
+    }
+    return client;
 }
 
 void ResourceManager::deleteBuffer(GLuint buffer)
@@ -197,7 +226,7 @@ void ResourceManager::deleteProgram(GLuint program)
             mProgramMap.erase(programObject);
         }
         else
-        { 
+        {
             programObject->second->flagForDeletion();
         }
     }
@@ -251,6 +280,21 @@ void ResourceManager::deleteFenceSync(GLuint fenceSync)
     }
 }
 
+void ResourceManager::deletePaths(GLuint first, GLsizei range)
+{
+    for (GLsizei i = 0; i < range; ++i)
+    {
+        const auto id = first + i;
+        const auto it = mPathMap.find(id);
+        if (it == mPathMap.end())
+            continue;
+        Path *p = it->second;
+        delete p;
+        mPathMap.erase(it);
+    }
+    mPathHandleAllocator.releaseRange(first, static_cast<GLuint>(range));
+}
+
 Buffer *ResourceManager::getBuffer(unsigned int handle)
 {
     auto buffer = mBufferMap.find(handle);
@@ -265,7 +309,7 @@ Buffer *ResourceManager::getBuffer(unsigned int handle)
     }
 }
 
-Shader *ResourceManager::getShader(unsigned int handle)
+Shader *ResourceManager::getShader(unsigned int handle) const
 {
     auto shader = mShaderMap.find(handle);
 
@@ -352,12 +396,34 @@ FenceSync *ResourceManager::getFenceSync(unsigned int handle)
     }
 }
 
+const Path *ResourceManager::getPath(GLuint handle) const
+{
+    auto it = mPathMap.find(handle);
+    if (it == std::end(mPathMap))
+        return nullptr;
+    return it->second;
+}
+
+Path *ResourceManager::getPath(GLuint handle)
+{
+    auto it = mPathMap.find(handle);
+    if (it == std::end(mPathMap))
+        return nullptr;
+
+    return it->second;
+}
+
+bool ResourceManager::hasPath(GLuint handle) const
+{
+    return mPathHandleAllocator.isUsed(handle);
+}
+
 void ResourceManager::setRenderbuffer(GLuint handle, Renderbuffer *buffer)
 {
     mRenderbufferMap[handle] = buffer;
 }
 
-Buffer *ResourceManager::checkBufferAllocation(GLuint handle)
+Buffer *ResourceManager::checkBufferAllocation(rx::GLImplFactory *factory, GLuint handle)
 {
     if (handle == 0)
     {
@@ -372,7 +438,7 @@ Buffer *ResourceManager::checkBufferAllocation(GLuint handle)
         return bufferMapIt->second;
     }
 
-    Buffer *buffer = new Buffer(mFactory->createBuffer(), handle);
+    Buffer *buffer = new Buffer(factory->createBuffer(), handle);
     buffer->addRef();
 
     if (handleAllocated)
@@ -388,7 +454,9 @@ Buffer *ResourceManager::checkBufferAllocation(GLuint handle)
     return buffer;
 }
 
-Texture *ResourceManager::checkTextureAllocation(GLuint handle, GLenum type)
+Texture *ResourceManager::checkTextureAllocation(rx::GLImplFactory *factory,
+                                                 GLuint handle,
+                                                 GLenum type)
 {
     if (handle == 0)
     {
@@ -403,7 +471,7 @@ Texture *ResourceManager::checkTextureAllocation(GLuint handle, GLenum type)
         return textureMapIt->second;
     }
 
-    Texture *texture = new Texture(mFactory->createTexture(type), handle, type);
+    Texture *texture = new Texture(factory, handle, type);
     texture->addRef();
 
     if (handleAllocated)
@@ -419,7 +487,8 @@ Texture *ResourceManager::checkTextureAllocation(GLuint handle, GLenum type)
     return texture;
 }
 
-Renderbuffer *ResourceManager::checkRenderbufferAllocation(GLuint handle)
+Renderbuffer *ResourceManager::checkRenderbufferAllocation(rx::GLImplFactory *factory,
+                                                           GLuint handle)
 {
     if (handle == 0)
     {
@@ -434,7 +503,7 @@ Renderbuffer *ResourceManager::checkRenderbufferAllocation(GLuint handle)
         return renderbufferMapIt->second;
     }
 
-    Renderbuffer *renderbuffer = new Renderbuffer(mFactory->createRenderbuffer(), handle);
+    Renderbuffer *renderbuffer = new Renderbuffer(factory->createRenderbuffer(), handle);
     renderbuffer->addRef();
 
     if (handleAllocated)
@@ -450,7 +519,7 @@ Renderbuffer *ResourceManager::checkRenderbufferAllocation(GLuint handle)
     return renderbuffer;
 }
 
-Sampler *ResourceManager::checkSamplerAllocation(GLuint samplerHandle)
+Sampler *ResourceManager::checkSamplerAllocation(rx::GLImplFactory *factory, GLuint samplerHandle)
 {
     // Samplers cannot be created via Bind
     if (samplerHandle == 0)
@@ -462,7 +531,7 @@ Sampler *ResourceManager::checkSamplerAllocation(GLuint samplerHandle)
 
     if (!sampler)
     {
-        sampler                    = new Sampler(mFactory, samplerHandle);
+        sampler                    = new Sampler(factory, samplerHandle);
         mSamplerMap[samplerHandle] = sampler;
         sampler->addRef();
     }
@@ -473,6 +542,21 @@ Sampler *ResourceManager::checkSamplerAllocation(GLuint samplerHandle)
 bool ResourceManager::isSampler(GLuint sampler)
 {
     return mSamplerMap.find(sampler) != mSamplerMap.end();
+}
+
+bool ResourceManager::isTextureGenerated(GLuint texture) const
+{
+    return texture == 0 || mTextureMap.find(texture) != mTextureMap.end();
+}
+
+bool ResourceManager::isBufferGenerated(GLuint buffer) const
+{
+    return buffer == 0 || mBufferMap.find(buffer) != mBufferMap.end();
+}
+
+bool ResourceManager::isRenderbufferGenerated(GLuint renderbuffer) const
+{
+    return renderbuffer == 0 || mRenderbufferMap.find(renderbuffer) != mRenderbufferMap.end();
 }
 
 }  // namespace gl

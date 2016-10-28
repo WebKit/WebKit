@@ -73,7 +73,6 @@ TString QualifiedStructNameString(const TStructure &structure, bool useHLSLRowMa
                                   bool useStd140Packing);
 TString InterpolationString(TQualifier qualifier);
 TString QualifierString(TQualifier qualifier);
-int HLSLTextureCoordsCount(const TBasicType samplerType);
 // Parameters may need to be included in function names to disambiguate between overloaded
 // functions.
 TString DisambiguateFunctionName(const TIntermSequence *parameters);

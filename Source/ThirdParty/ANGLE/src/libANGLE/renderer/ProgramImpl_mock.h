@@ -20,14 +20,14 @@ namespace rx
 class MockProgramImpl : public rx::ProgramImpl
 {
   public:
-    MockProgramImpl() : ProgramImpl(gl::Program::Data()) {}
+    MockProgramImpl() : ProgramImpl(gl::ProgramState()) {}
     virtual ~MockProgramImpl() { destroy(); }
 
     MOCK_METHOD2(load, LinkResult(gl::InfoLog &, gl::BinaryInputStream *));
     MOCK_METHOD1(save, gl::Error(gl::BinaryOutputStream *));
     MOCK_METHOD1(setBinaryRetrievableHint, void(bool));
 
-    MOCK_METHOD2(link, LinkResult(const gl::Data &, gl::InfoLog &));
+    MOCK_METHOD2(link, LinkResult(const gl::ContextState &, gl::InfoLog &));
     MOCK_METHOD2(validate, GLboolean(const gl::Caps &, gl::InfoLog *));
 
     MOCK_METHOD3(setUniform1fv, void(GLint, GLsizei, const GLfloat *));
@@ -56,6 +56,8 @@ class MockProgramImpl : public rx::ProgramImpl
     MOCK_METHOD2(setUniformBlockBinding, void(GLuint, GLuint));
     MOCK_CONST_METHOD2(getUniformBlockSize, bool(const std::string &, size_t *));
     MOCK_CONST_METHOD2(getUniformBlockMemberInfo, bool(const std::string &, sh::BlockMemberInfo *));
+    MOCK_METHOD4(setPathFragmentInputGen,
+                 void(const std::string &, GLenum, GLint, const GLfloat *));
 
     MOCK_METHOD0(destroy, void());
 };

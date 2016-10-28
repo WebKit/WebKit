@@ -21,8 +21,8 @@ class MockBufferImpl : public BufferImpl
   public:
     ~MockBufferImpl() { destructor(); }
 
-    MOCK_METHOD3(setData, gl::Error(const void*, size_t, GLenum));
-    MOCK_METHOD3(setSubData, gl::Error(const void*, size_t, size_t));
+    MOCK_METHOD4(setData, gl::Error(GLenum, const void *, size_t, GLenum));
+    MOCK_METHOD4(setSubData, gl::Error(GLenum, const void *, size_t, size_t));
     MOCK_METHOD4(copySubData, gl::Error(BufferImpl *, GLintptr, GLintptr, GLsizeiptr));
     MOCK_METHOD2(map, gl::Error(GLenum, GLvoid **));
     MOCK_METHOD4(mapRange, gl::Error(size_t, size_t, GLbitfield, GLvoid **));
