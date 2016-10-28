@@ -39,6 +39,7 @@
 #include "RenderStyle.h"
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 
@@ -55,6 +56,7 @@ KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* 
 #if ENABLE(FILTERS_LEVEL_2)
     checkForMatchingBackdropFilterFunctionLists();
 #endif
+    computeStackingContextImpact();
 }
 
 KeyframeAnimation::~KeyframeAnimation()
@@ -62,6 +64,16 @@ KeyframeAnimation::~KeyframeAnimation()
     // Make sure to tell the renderer that we are ending. This will make sure any accelerated animations are removed.
     if (!postActive())
         endAnimation();
+}
+
+void KeyframeAnimation::computeStackingContextImpact()
+{
+    for (auto propertyID : m_keyframes.properties()) {
+        if (WillChangeData::propertyCreatesStackingContext(propertyID)) {
+            m_triggersStackingContext = true;
+            break;
+        }
+    }
 }
 
 void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
@@ -147,6 +159,7 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
         return false;
     }
 
+    // FIXME: the code below never changes the state, so this function always returns false.
     AnimationState oldState = state();
 
     // Run a cycle of animation.

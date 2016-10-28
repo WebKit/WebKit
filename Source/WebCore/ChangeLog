@@ -1,3 +1,44 @@
+2016-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        If an animation's keyframes affect stacking context properties, create stacking context while the animation is running
+        https://bugs.webkit.org/show_bug.cgi?id=164094
+
+        Reviewed by Dean Jackson.
+
+        The CSS animations spec <https://drafts.csswg.org/css-animations-1/> now makes it
+        clear that a keyframe animation animating properties which can affect stacking context
+        should establish stacking context while it's running, or filling-forwards. This is part
+        of the "the user agent must act as if the will-change property...includes all the properties
+        animated by the animation" clause.
+
+        Implement by having CompositeAnimation::animate() track whether running animations should
+        create stacking context, replacing existing code in AnimationController::updateAnimations()
+        which only looked at opacity and transform. Transitions are also checked to see if they need
+        to trigger stacking context.
+
+        This allows for the removal of a 0.9999 hack when blending opacity.
+
+        Tests: animations/stacking-context-fill-forwards.html
+               animations/stacking-context-not-fill-forwards.html
+               animations/stacking-context-unchanged-while-running.html
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/CSSPropertyAnimation.cpp:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::computeStackingContextImpact):
+        (WebCore::KeyframeAnimation::animate):
+        * page/animation/KeyframeAnimation.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        (WebCore::propertyCreatesStackingContext): Deleted.
+        * rendering/style/WillChangeData.h:
+
 2016-10-27  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move code generators off of domSignature::type and onto domSignature::idlType

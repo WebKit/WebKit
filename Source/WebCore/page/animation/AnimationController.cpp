@@ -624,13 +624,6 @@ bool AnimationController::updateAnimations(RenderElement& renderer, const Render
 #endif
     }
 
-    if (animatedStyle) {
-        // If the animations/transitions change opacity or transform, we need to update
-        // the style to impose the stacking rules. Note that this is also
-        // done in StyleResolver::adjustRenderStyle().
-        if (animatedStyle->hasAutoZIndex() && (animatedStyle->opacity() < 1.0f || animatedStyle->hasTransform()))
-            animatedStyle->setZIndex(0);
-    }
     return animationStateChanged;
 }
 
