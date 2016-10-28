@@ -1196,12 +1196,6 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const Re
         // Because fixed elements get moved around without re-computing overlap, we have to compute an overlap
         // rect that covers all the locations that the fixed element could move to.
         // FIXME: need to handle sticky too.
-        LayoutRect viewportRect;
-        if (m_renderView.frameView().useFixedLayout())
-            viewportRect = m_renderView.unscaledDocumentRect();
-        else
-            viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-
         extent.bounds = m_renderView.frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
     }
 
