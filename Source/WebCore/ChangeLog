@@ -1,3 +1,31 @@
+2016-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove RenderStyle::isRunningAcceleratedAnimation()
+        https://bugs.webkit.org/show_bug.cgi?id=164109
+
+        Reviewed by David Hyatt.
+
+        RenderStyle::isRunningAcceleratedAnimation() was added in r40876 to handle interrupted
+        accelerated transitions, and to allow RenderLayer::currentTransform() to know when it
+        has to manually get the animated style.
+        
+        The latter can now use isRunningAcceleratedAnimationOnRenderer(), and interrupting
+        accelerated transitions seems to work fine without it, so remove it.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isRunningAcceleratedAnimation): Deleted.
+        (WebCore::RenderStyle::setIsRunningAcceleratedAnimation): Deleted.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Teach WebGL code about new buffer targets in WebGL2

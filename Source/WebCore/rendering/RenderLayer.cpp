@@ -995,9 +995,8 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
         return TransformationMatrix();
     
     RenderBox* box = renderBox();
-    ASSERT(box);
-    // FIXME: replace with call to AnimationController::isRunningAcceleratedAnimationOnRenderer() and remove RenderStyle::isRunningAcceleratedAnimation().
-    if (renderer().style().isRunningAcceleratedAnimation()) {
+
+    if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused)) {
         TransformationMatrix currTransform;
         FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
         std::unique_ptr<RenderStyle> style = renderer().animation().getAnimatedStyleForRenderer(renderer());

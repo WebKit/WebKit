@@ -207,8 +207,6 @@ public:
 
     unsigned m_textDecorationStyle : 3; // TextDecorationStyle
 
-    unsigned m_runningAcceleratedAnimation : 1;
-
     unsigned m_aspectRatioType : 2;
 
 #if ENABLE(CSS_COMPOSITING)

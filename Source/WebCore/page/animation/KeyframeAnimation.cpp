@@ -176,13 +176,7 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
         double progress = 0;
         fetchIntervalEndpointsForProperty(propertyID, fromStyle, toStyle, progress);
 
-        bool needsAnim = CSSPropertyAnimation::blendProperties(this, propertyID, animatedStyle.get(), fromStyle, toStyle, progress);
-        if (!needsAnim)
-            // If we are running an accelerated animation, set a flag in the style
-            // to indicate it. This can be used to make sure we get an updated
-            // style for hit testing, etc.
-            // FIXME: still need this?
-            animatedStyle->setIsRunningAcceleratedAnimation();
+        CSSPropertyAnimation::blendProperties(this, propertyID, animatedStyle.get(), fromStyle, toStyle, progress);
     }
     
     return state() != oldState;
