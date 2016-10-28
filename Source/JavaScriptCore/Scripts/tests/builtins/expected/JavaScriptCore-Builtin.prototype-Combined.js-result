@@ -106,10 +106,10 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "JSCBuiltins.h"
 
 #include "BuiltinExecutables.h"
-#include "Executable.h"
 #include "HeapInlines.h"
 #include "Intrinsic.h"
 #include "JSCellInlines.h"
+#include "UnlinkedFunctionExecutable.h"
 #include "VM.h"
 
 namespace JSC {

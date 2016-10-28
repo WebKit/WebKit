@@ -106,7 +106,6 @@ JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "BuiltinPrototypeBuiltins.h"
 
 #include "BuiltinExecutables.h"
-#include "Executable.h"
 #include "HeapInlines.h"
 #include "Intrinsic.h"
 #include "JSCellInlines.h"
