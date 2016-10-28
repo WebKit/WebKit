@@ -389,84 +389,93 @@ static int clampRGBComponent(const CSSPrimitiveValue& value)
     return clampTo<int>(result, 0, 255);
 }
 
-static bool parseRGBParameters(CSSParserTokenRange& range, RGBA32& result, bool parseAlpha)
+static Color parseRGBParameters(CSSParserTokenRange& range, bool parseAlpha)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
+    Color result;
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSPrimitiveValue> colorParameter = consumeInteger(args);
     if (!colorParameter)
         colorParameter = consumePercent(args, ValueRangeAll);
     if (!colorParameter)
-        return false;
+        return Color();
     const bool isPercent = colorParameter->isPercentage();
     int colorArray[3];
     colorArray[0] = clampRGBComponent(*colorParameter);
     for (int i = 1; i < 3; i++) {
         if (!consumeCommaIncludingWhitespace(args))
-            return false;
+            return Color();
         colorParameter = isPercent ? consumePercent(args, ValueRangeAll) : consumeInteger(args);
         if (!colorParameter)
-            return false;
+            return Color();
         colorArray[i] = clampRGBComponent(*colorParameter);
     }
     if (parseAlpha) {
         if (!consumeCommaIncludingWhitespace(args))
-            return false;
+            return Color();
         double alpha;
         if (!consumeNumberRaw(args, alpha))
-            return false;
+            return Color();
         // Convert the floating pointer number of alpha to an integer in the range [0, 256),
         // with an equal distribution across all 256 values.
         int alphaComponent = static_cast<int>(clampTo<double>(alpha, 0.0, 1.0) * nextafter(256.0, 0.0));
-        result = makeRGBA(colorArray[0], colorArray[1], colorArray[2], alphaComponent);
+        result = Color(makeRGBA(colorArray[0], colorArray[1], colorArray[2], alphaComponent));
     } else {
-        result = makeRGB(colorArray[0], colorArray[1], colorArray[2]);
+        result = Color(makeRGB(colorArray[0], colorArray[1], colorArray[2]));
     }
-    return args.atEnd();
+
+    if (!args.atEnd())
+        return Color();
+
+    return result;
 }
 
-static bool parseHSLParameters(CSSParserTokenRange& range, RGBA32& result, bool parseAlpha)
+static Color parseHSLParameters(CSSParserTokenRange& range, bool parseAlpha)
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSPrimitiveValue> hslValue = consumeNumber(args, ValueRangeAll);
     if (!hslValue)
-        return false;
+        return Color();
     double colorArray[3];
     colorArray[0] = (((hslValue->intValue() % 360) + 360) % 360) / 360.0;
     for (int i = 1; i < 3; i++) {
         if (!consumeCommaIncludingWhitespace(args))
-            return false;
+            return Color();
         hslValue = consumePercent(args, ValueRangeAll);
         if (!hslValue)
-            return false;
+            return Color();
         double doubleValue = hslValue->doubleValue();
         colorArray[i] = clampTo<double>(doubleValue, 0.0, 100.0) / 100.0; // Needs to be value between 0 and 1.0.
     }
     double alpha = 1.0;
     if (parseAlpha) {
         if (!consumeCommaIncludingWhitespace(args))
-            return false;
+            return Color();
         if (!consumeNumberRaw(args, alpha))
-            return false;
+            return Color();
         alpha = clampTo<double>(alpha, 0.0, 1.0);
     }
-    result = makeRGBAFromHSLA(colorArray[0], colorArray[1], colorArray[2], alpha);
-    return args.atEnd();
+
+    if (!args.atEnd())
+        return Color();
+
+    return Color(makeRGBAFromHSLA(colorArray[0], colorArray[1], colorArray[2], alpha));
 }
 
-static bool parseHexColor(CSSParserTokenRange& range, RGBA32& result, bool acceptQuirkyColors)
+static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
 {
+    RGBA32 result;
     const CSSParserToken& token = range.peek();
     if (token.type() == HashToken) {
         if (!Color::parseHexColor(token.value(), result))
-            return false;
+            return Color();
     } else if (acceptQuirkyColors) {
         String color;
         if (token.type() == NumberToken || token.type() == DimensionToken) {
             if (token.numericValueType() != IntegerValueType
                 || token.numericValue() < 0. || token.numericValue() >= 1000000.)
-                return false;
+                return Color();
             if (token.type() == NumberToken) // e.g. 112233
                 color = String::format("%d", static_cast<int>(token.numericValue()));
             else // e.g. 0001FF
@@ -478,27 +487,38 @@ static bool parseHexColor(CSSParserTokenRange& range, RGBA32& result, bool accep
         }
         unsigned length = color.length();
         if (length != 3 && length != 6)
-            return false;
+            return Color();
         if (!Color::parseHexColor(color, result))
-            return false;
+            return Color();
     } else {
-        return false;
+        return Color();
     }
     range.consumeIncludingWhitespace();
-    return true;
+    return Color(result);
 }
 
-static bool parseColorFunction(CSSParserTokenRange& range, RGBA32& result)
+static Color parseColorFunction(CSSParserTokenRange& range)
 {
-    CSSValueID functionId = range.peek().functionId();
-    if (functionId < CSSValueRgb || functionId > CSSValueHsla)
-        return false;
     CSSParserTokenRange colorRange = range;
-    if ((functionId <= CSSValueRgba && !parseRGBParameters(colorRange, result, functionId == CSSValueRgba))
-        || (functionId >= CSSValueHsl && !parseHSLParameters(colorRange, result, functionId == CSSValueHsla)))
-        return false;
+    CSSValueID functionId = range.peek().functionId();
+    Color color;
+    switch (functionId) {
+    case CSSValueRgb:
+    case CSSValueRgba:
+        color = parseRGBParameters(colorRange, functionId == CSSValueRgba);
+        break;
+    case CSSValueHsl:
+    case CSSValueHsla:
+        color = parseHSLParameters(colorRange, functionId == CSSValueHsla);
+        break;
+    case CSSValueColor:
+        // FIXME-NEWPARSER: Add support for color().
+        return Color();
+    default:
+        return Color();
+    }
     range = colorRange;
-    return true;
+    return color;
 }
 
 RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool acceptQuirkyColors)
@@ -509,10 +529,12 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode
             return nullptr;
         return consumeIdent(range);
     }
-    RGBA32 color = Color::transparent;
-    if (!parseHexColor(range, color, acceptQuirkyColors) && !parseColorFunction(range, color))
+    Color color = parseHexColor(range, acceptQuirkyColors);
+    if (!color.isValid())
+        color = parseColorFunction(range);
+    if (!color.isValid())
         return nullptr;
-    return CSSValuePool::singleton().createValue(Color(color));
+    return CSSValuePool::singleton().createValue(color);
 }
 
 static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)

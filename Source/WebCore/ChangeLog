@@ -1,5 +1,26 @@
 2016-10-28  Dean Jackson  <dino@apple.com>
 
+        New CSS Parser should use Colors not RGBA32s
+        https://bugs.webkit.org/show_bug.cgi?id=164124
+        <rdar://problem/29000373>
+
+        Reviewed by Darin Adler.
+
+        The old parser has moved from using RGBA32 values to using
+        Colors directly. This was so we could support ExtendedColors
+        via the new color() syntax.
+
+        Update the new CSS parser to do the same.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHexColor):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeColor):
+
+2016-10-28  Dean Jackson  <dino@apple.com>
+
         Allow new CSS parser to handle insertRule, etc via parseRule
         https://bugs.webkit.org/show_bug.cgi?id=164122
         <rdar://problem/29000101>
