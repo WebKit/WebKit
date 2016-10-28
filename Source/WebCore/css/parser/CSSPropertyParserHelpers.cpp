@@ -31,6 +31,7 @@
 #include "CSSPropertyParserHelpers.h"
 
 #include "CSSCalculationValue.h"
+#include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
@@ -1020,6 +1021,16 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserCon
     return CSSCrossfadeValue::create(fromImageValue.releaseNonNull(), toImageValue.releaseNonNull(), percentage.releaseNonNull());
 }
 
+static RefPtr<CSSValue> consumeWebkitCanvas(CSSParserTokenRange& args)
+{
+    if (args.peek().type() != IdentToken)
+        return nullptr;
+    auto canvasName = args.consumeIncludingWhitespace().value().toString();
+    if (!args.atEnd())
+        return nullptr;
+    return CSSCanvasValue::create(canvasName);
+}
+    
 static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSParserContext context)
 {
     CSSValueID id = range.peek().functionId();
@@ -1046,6 +1057,8 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeDeprecatedRadialGradient(args, context.mode, Repeating);
     else if (id == CSSValueWebkitCrossFade)
         result = consumeCrossFade(args, context);
+    else if (id == CSSValueWebkitCanvas)
+        result = consumeWebkitCanvas(args);
 
     if (!result || !args.atEnd())
         return nullptr;
@@ -1089,7 +1102,8 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueRepeatingLinearGradient || id == CSSValueRepeatingRadialGradient
         || id == CSSValueWebkitLinearGradient || id == CSSValueWebkitRadialGradient
         || id == CSSValueWebkitRepeatingLinearGradient || id == CSSValueWebkitRepeatingRadialGradient
-        || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValuePaint;
+        || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValueWebkitCanvas
+        || id == CSSValuePaint;
 }
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, ConsumeGeneratedImage generatedImage)

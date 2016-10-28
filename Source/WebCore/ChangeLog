@@ -1,3 +1,18 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add support for -webkit-canvas images
+        https://bugs.webkit.org/show_bug.cgi?id=164144
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeWebkitCanvas):
+        (WebCore::CSSPropertyParserHelpers::consumeGeneratedImage):
+        (WebCore::CSSPropertyParserHelpers::isGeneratedImage):
+
 2016-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         One file per class for Executable.h/.cpp

@@ -1155,6 +1155,7 @@ radial-gradient
 repeating-linear-gradient
 repeating-radial-gradient
 paint
+-webkit-canvas
 -webkit-cross-fade
 -webkit-gradient
 -webkit-linear-gradient
