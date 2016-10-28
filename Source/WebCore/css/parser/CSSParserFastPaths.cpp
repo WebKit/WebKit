@@ -792,6 +792,11 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyWebkitTouchCallout:
         return valueID == CSSValueDefault || valueID == CSSValueNone;
 #endif
+    case CSSPropertyWebkitMarqueeDirection:
+        return valueID == CSSValueForwards || valueID == CSSValueBackwards || valueID == CSSValueAhead || valueID == CSSValueReverse || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueDown
+            || valueID == CSSValueUp || valueID == CSSValueAuto;
+    case CSSPropertyWebkitMarqueeStyle:
+        return valueID == CSSValueNone || valueID == CSSValueSlide || valueID == CSSValueScroll || valueID == CSSValueAlternate;
     default:
         ASSERT_NOT_REACHED();
         return false;

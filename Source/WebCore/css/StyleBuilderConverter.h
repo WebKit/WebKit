@@ -341,14 +341,14 @@ inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& sty
     
     if (value.isValueID()) {
         switch (value.valueID()) {
-            case cssValueFor0:
-                return Length(0, Percent);
-            case cssValueFor100:
-                return Length(100, Percent);
-            case CSSValueCenter:
-                return Length(50, Percent);
-            default:
-                ASSERT_NOT_REACHED();
+        case cssValueFor0:
+            return Length(0, Percent);
+        case cssValueFor100:
+            return Length(100, Percent);
+        case CSSValueCenter:
+            return Length(50, Percent);
+        default:
+            ASSERT_NOT_REACHED();
         }
     }
         

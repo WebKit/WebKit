@@ -1,5 +1,21 @@
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support the marquee properties
+        https://bugs.webkit.org/show_bug.cgi?id=164132
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitMarqueeIncrement):
+        (WebCore::consumeWebkitMarqueeRepetition):
+        (WebCore::consumeWebkitMarqueeSpeed):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Miscellaneous bug fixes
         https://bugs.webkit.org/show_bug.cgi?id=164131
 

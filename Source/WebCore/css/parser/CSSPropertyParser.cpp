@@ -3125,6 +3125,27 @@ static RefPtr<CSSValue> consumeLineGrid(CSSParserTokenRange& range)
     return consumeCustomIdent(range);
 }
 
+static RefPtr<CSSValue> consumeWebkitMarqueeIncrement(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().type() == IdentToken)
+        return consumeIdent<CSSValueSmall, CSSValueMedium, CSSValueLarge>(range);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
+}
+
+static RefPtr<CSSValue> consumeWebkitMarqueeRepetition(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == IdentToken)
+        return consumeIdent<CSSValueInfinite>(range);
+    return consumeNumber(range, ValueRangeNonNegative);
+}
+
+static RefPtr<CSSValue> consumeWebkitMarqueeSpeed(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().type() == IdentToken)
+        return consumeIdent<CSSValueSlow, CSSValueNormal, CSSValueFast>(range);
+    return consumeTime(range, cssParserMode, ValueRangeNonNegative, UnitlessQuirk::Allow);
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3495,6 +3516,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #endif
     case CSSPropertyWebkitLineGrid:
         return consumeLineGrid(m_range);
+    case CSSPropertyWebkitMarqueeIncrement:
+        return consumeWebkitMarqueeIncrement(m_range, m_context.mode);
+    case CSSPropertyWebkitMarqueeRepetition:
+        return consumeWebkitMarqueeRepetition(m_range);
+    case CSSPropertyWebkitMarqueeSpeed:
+        return consumeWebkitMarqueeSpeed(m_range, m_context.mode);
     default:
         return nullptr;
     }
@@ -4731,6 +4758,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeGridTemplateShorthand(CSSPropertyGridTemplate, important);
     case CSSPropertyGrid:
         return consumeGridShorthand(important);
+    case CSSPropertyWebkitMarquee:
+        return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:
         return false;
     }
