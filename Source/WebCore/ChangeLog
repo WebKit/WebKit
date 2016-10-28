@@ -1,3 +1,15 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix font-family parsing inside @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=164155
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        Use the full font-family parsing that returns a CSSValueList,
+        since we can handle multiple families.
+
 2016-10-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Direct2D] Implement ImageBufferData::putData.

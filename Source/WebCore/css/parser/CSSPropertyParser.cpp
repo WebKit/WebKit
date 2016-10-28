@@ -3679,9 +3679,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
     case CSSPropertyFontFamily:
-        if (consumeGenericFamily(m_range))
-            return false;
-        parsedValue = consumeFamilyName(m_range);
+        parsedValue = consumeFontFamily(m_range);
         break;
     case CSSPropertySrc: // This is a list of urls or local references.
         parsedValue = consumeFontFaceSrc(m_range, m_context);
