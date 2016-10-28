@@ -37,7 +37,7 @@
 namespace WebCore {
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
-    : opacity(RenderStyle::initialOpacity())
+    : m_opacity(RenderStyle::initialOpacity())
     , m_aspectRatioDenominator(RenderStyle::initialAspectRatioDenominator())
     , m_aspectRatioNumerator(RenderStyle::initialAspectRatioNumerator())
     , m_perspective(RenderStyle::initialPerspective())
@@ -119,7 +119,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 
 inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
     : RefCounted<StyleRareNonInheritedData>()
-    , opacity(o.opacity)
+    , m_opacity(o.m_opacity)
     , m_aspectRatioDenominator(o.m_aspectRatioDenominator)
     , m_aspectRatioNumerator(o.m_aspectRatioNumerator)
     , m_perspective(o.m_perspective)
@@ -225,7 +225,7 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData()
 
 bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) const
 {
-    return opacity == o.opacity
+    return m_opacity == o.m_opacity
         && m_aspectRatioDenominator == o.m_aspectRatioDenominator
         && m_aspectRatioNumerator == o.m_aspectRatioNumerator
         && m_perspective == o.m_perspective

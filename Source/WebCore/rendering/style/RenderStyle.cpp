@@ -795,7 +795,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
         return true;
 #endif
 
-    if (rareNonInheritedData->opacity != other.rareNonInheritedData->opacity) {
+    if (rareNonInheritedData->m_opacity != other.rareNonInheritedData->m_opacity) {
         changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         // Don't return; keep looking for another change.
     }

@@ -1,5 +1,25 @@
 2016-10-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename StyleRareNonInheritedData::opacity to m_opacity
+        https://bugs.webkit.org/show_bug.cgi?id=164104
+
+        Reviewed by Dave Hyatt.
+
+        Pure rename.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::opacity):
+        (WebCore::RenderStyle::setOpacity):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::hasOpacity):
+
+2016-10-27  Simon Fraser  <simon.fraser@apple.com>
+
         If an animation's keyframes affect stacking context properties, create stacking context while the animation is running
         https://bugs.webkit.org/show_bug.cgi?id=164094
 
