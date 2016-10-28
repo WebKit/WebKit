@@ -1,3 +1,10 @@
+2016-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix when building against the MacOSX10.12.sdk where "macos" is not recognized
+        in the availability macros.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2016-10-27  Megan Gardner  <megan_gardner@apple.com>
 
         Add support for wide gamut for ShareableBitmap for image popovers
