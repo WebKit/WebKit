@@ -1,3 +1,13 @@
+2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix in CLoop builds after r208063.
+
+        Include required headers.
+
+        * parser/Parser.h:
+        * runtime/Completion.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+
 2016-10-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update reference files for builtins generator tests after r208063.

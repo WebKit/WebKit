@@ -38,6 +38,7 @@
 #include "JSWithScope.h"
 #include "ModuleAnalyzer.h"
 #include "Parser.h"
+#include "ProgramExecutable.h"
 #include "ScriptProfilingScope.h"
 #include <wtf/WTFThreadData.h>
 
