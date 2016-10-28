@@ -5685,8 +5685,8 @@ void SpeculativeJIT::compile(Node* node)
         compileMaterializeNewObject(node);
         break;
 
-    case CallDOM:
-        compileCallDOM(node);
+    case CallDOMGetter:
+        compileCallDOMGetter(node);
         break;
 
     case CheckDOM:

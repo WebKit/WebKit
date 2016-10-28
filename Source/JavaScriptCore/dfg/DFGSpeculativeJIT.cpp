@@ -7223,9 +7223,9 @@ static void allocateTemporaryRegistersForPatchpoint(SpeculativeJIT* jit, Vector<
     }
 }
 
-void SpeculativeJIT::compileCallDOM(Node* node)
+void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
-    DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+    DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;

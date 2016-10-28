@@ -1057,8 +1057,8 @@ private:
         case CheckDOM:
             compileCheckDOM();
             break;
-        case CallDOM:
-            compileCallDOM();
+        case CallDOMGetter:
+            compileCallDOMGetter();
             break;
 
         case PhantomLocal:
@@ -9062,9 +9062,9 @@ private:
         patchpoint->effects = Effects::forCheck();
     }
 
-    void compileCallDOM()
+    void compileCallDOMGetter()
     {
-        DOMJIT::CallDOMPatchpoint* domJIT = m_node->callDOMData()->patchpoint;
+        DOMJIT::CallDOMGetterPatchpoint* domJIT = m_node->callDOMGetterData()->patchpoint;
 
         Edge& baseEdge = m_node->child1();
         LValue base = lowCell(baseEdge);

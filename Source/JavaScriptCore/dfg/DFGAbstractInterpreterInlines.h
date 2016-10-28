@@ -2289,12 +2289,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         filterClassInfo(value, node->classInfo());
         break;
     }
-    case CallDOM: {
-        CallDOMData* callDOMData = node->callDOMData();
-        DOMJIT::CallDOMPatchpoint* patchpoint = callDOMData->patchpoint;
+    case CallDOMGetter: {
+        CallDOMGetterData* callDOMGetterData = node->callDOMGetterData();
+        DOMJIT::CallDOMGetterPatchpoint* patchpoint = callDOMGetterData->patchpoint;
         if (patchpoint->effect.writes)
             clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).setType(m_graph, callDOMData->domJIT->resultType());
+        forNode(node).setType(m_graph, callDOMGetterData->domJIT->resultType());
         break;
     }
     case CheckArray: {

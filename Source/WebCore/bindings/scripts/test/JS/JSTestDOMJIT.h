@@ -74,7 +74,7 @@ public:
     TestDOMJITAnyAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -84,7 +84,7 @@ public:
     TestDOMJITBooleanAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -94,7 +94,7 @@ public:
     TestDOMJITByteAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -104,7 +104,7 @@ public:
     TestDOMJITOctetAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -114,7 +114,7 @@ public:
     TestDOMJITShortAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -124,7 +124,7 @@ public:
     TestDOMJITUnsignedShortAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -134,7 +134,7 @@ public:
     TestDOMJITLongAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -144,7 +144,7 @@ public:
     TestDOMJITUnsignedLongAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -154,7 +154,7 @@ public:
     TestDOMJITLongLongAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -164,7 +164,7 @@ public:
     TestDOMJITUnsignedLongLongAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -174,7 +174,7 @@ public:
     TestDOMJITFloatAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -184,7 +184,7 @@ public:
     TestDOMJITUnrestrictedFloatAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -194,7 +194,7 @@ public:
     TestDOMJITDoubleAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -204,7 +204,7 @@ public:
     TestDOMJITUnrestrictedDoubleAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -214,7 +214,7 @@ public:
     TestDOMJITDomStringAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -224,7 +224,7 @@ public:
     TestDOMJITByteStringAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -234,7 +234,7 @@ public:
     TestDOMJITUsvStringAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -244,7 +244,7 @@ public:
     TestDOMJITNodeAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -254,7 +254,7 @@ public:
     TestDOMJITBooleanNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -264,7 +264,7 @@ public:
     TestDOMJITByteNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -274,7 +274,7 @@ public:
     TestDOMJITOctetNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -284,7 +284,7 @@ public:
     TestDOMJITShortNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -294,7 +294,7 @@ public:
     TestDOMJITUnsignedShortNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -304,7 +304,7 @@ public:
     TestDOMJITLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -314,7 +314,7 @@ public:
     TestDOMJITUnsignedLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -324,7 +324,7 @@ public:
     TestDOMJITLongLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -334,7 +334,7 @@ public:
     TestDOMJITUnsignedLongLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -344,7 +344,7 @@ public:
     TestDOMJITFloatNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -354,7 +354,7 @@ public:
     TestDOMJITUnrestrictedFloatNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -364,7 +364,7 @@ public:
     TestDOMJITDoubleNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -374,7 +374,7 @@ public:
     TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -384,7 +384,7 @@ public:
     TestDOMJITDomStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -394,7 +394,7 @@ public:
     TestDOMJITByteStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -404,7 +404,7 @@ public:
     TestDOMJITUsvStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 
@@ -414,7 +414,7 @@ public:
     TestDOMJITNodeNullableAttrDOMJIT();
 #if ENABLE(JIT)
     Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;
-    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;
+    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;
 #endif
 };
 

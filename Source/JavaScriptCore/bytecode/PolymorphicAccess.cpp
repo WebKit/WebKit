@@ -32,7 +32,7 @@
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
 #include "DOMJITAccessCasePatchpointParams.h"
-#include "DOMJITCallDOMPatchpoint.h"
+#include "DOMJITCallDOMGetterPatchpoint.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "Heap.h"
@@ -1432,7 +1432,7 @@ void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGe
     GPRReg scratchGPR = state.scratchGPR;
 
     // We construct the environment that can execute the DOMJIT::Patchpoint here.
-    Ref<DOMJIT::CallDOMPatchpoint> patchpoint = m_rareData->domJIT->callDOM();
+    Ref<DOMJIT::CallDOMGetterPatchpoint> patchpoint = m_rareData->domJIT->callDOMGetter();
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;

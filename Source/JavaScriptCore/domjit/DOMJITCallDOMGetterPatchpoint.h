@@ -33,11 +33,11 @@
 
 namespace JSC { namespace DOMJIT {
 
-class CallDOMPatchpoint : public Patchpoint {
+class CallDOMGetterPatchpoint : public Patchpoint {
 public:
-    static Ref<CallDOMPatchpoint> create()
+    static Ref<CallDOMGetterPatchpoint> create()
     {
-        return adoptRef(*new CallDOMPatchpoint());
+        return adoptRef(*new CallDOMGetterPatchpoint());
     }
 
     // To look up DOMWrapper cache, GlobalObject is required.
@@ -49,7 +49,7 @@ public:
     Effect effect { };
 
 private:
-    CallDOMPatchpoint() = default;
+    CallDOMGetterPatchpoint() = default;
 };
 
 } }

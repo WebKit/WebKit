@@ -1749,7 +1749,7 @@ sub GenerateHeader
             push(@headerContent, "    $domJITClassName();\n");
             push(@headerContent, "#if ENABLE(JIT)\n");
             push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;\n");
-            push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;\n");
             push(@headerContent, "#endif\n");
             push(@headerContent, "};\n\n");
         }

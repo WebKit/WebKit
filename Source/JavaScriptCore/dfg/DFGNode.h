@@ -61,7 +61,7 @@ namespace JSC {
 namespace DOMJIT {
 class GetterSetter;
 class Patchpoint;
-class CallDOMPatchpoint;
+class CallDOMGetterPatchpoint;
 }
 
 namespace Profiler {
@@ -232,9 +232,9 @@ struct StackAccessData {
     FlushedAt flushedAt() { return FlushedAt(format, machineLocal); }
 };
 
-struct CallDOMData {
+struct CallDOMGetterData {
     DOMJIT::GetterSetter* domJIT { nullptr };
-    DOMJIT::CallDOMPatchpoint* patchpoint { nullptr };
+    DOMJIT::CallDOMGetterPatchpoint* patchpoint { nullptr };
 };
 
 // === Node ===
@@ -1459,7 +1459,7 @@ public:
         case StringReplaceRegExp:
         case ToNumber:
         case LoadFromJSMapBucket:
-        case CallDOM:
+        case CallDOMGetter:
             return true;
         default:
             return false;
@@ -2342,15 +2342,15 @@ public:
         return m_opInfo.as<DOMJIT::Patchpoint*>();
     }
 
-    bool hasCallDOMData() const
+    bool hasCallDOMGetterData() const
     {
-        return op() == CallDOM;
+        return op() == CallDOMGetter;
     }
 
-    CallDOMData* callDOMData()
+    CallDOMGetterData* callDOMGetterData()
     {
-        ASSERT(hasCallDOMData());
-        return m_opInfo.as<CallDOMData*>();
+        ASSERT(hasCallDOMGetterData());
+        return m_opInfo.as<CallDOMGetterData*>();
     }
 
     bool hasClassInfo() const

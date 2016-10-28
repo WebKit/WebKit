@@ -33,7 +33,7 @@
 #include "DFGHeapLocation.h"
 #include "DFGLazyNode.h"
 #include "DFGPureValue.h"
-#include "DOMJITCallDOMPatchpoint.h"
+#include "DOMJITCallDOMGetterPatchpoint.h"
 
 namespace JSC { namespace DFG {
 
@@ -908,8 +908,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node, node->classInfo()));
         return;
 
-    case CallDOM: {
-        DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+    case CallDOMGetter: {
+        DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
         DOMJIT::Effect effect = patchpoint->effect;
         if (effect.reads) {
             if (effect.reads == DOMJIT::HeapRange::top())
@@ -926,7 +926,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (effect.def) {
             DOMJIT::HeapRange range = effect.def.value();
             if (range == DOMJIT::HeapRange::none())
-                def(PureValue(node, node->callDOMData()->domJIT));
+                def(PureValue(node, node->callDOMGetterData()->domJIT));
             else {
                 // Def with heap location. We do not include "GlobalObject" for that since this information is included in the base node.
                 // FIXME: When supporting the other nodes like getElementById("string"), we should include the base and the id string.

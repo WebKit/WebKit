@@ -632,9 +632,9 @@ public:
             return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
         }
 
-        Ref<DOMJIT::CallDOMPatchpoint> callDOM() override
+        Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override
         {
-            Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
+            Ref<DOMJIT::CallDOMGetterPatchpoint> patchpoint = DOMJIT::CallDOMGetterPatchpoint::create();
             patchpoint->requireGlobalObject = false;
             patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
@@ -725,9 +725,9 @@ public:
             return JSValue::encode(jsNumber(object->value()));
         }
 
-        Ref<DOMJIT::CallDOMPatchpoint> callDOM() override
+        Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override
         {
-            RefPtr<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
+            RefPtr<DOMJIT::CallDOMGetterPatchpoint> patchpoint = DOMJIT::CallDOMGetterPatchpoint::create();
             static_assert(GPRInfo::numberOfRegisters >= 4, "Number of registers should be larger or equal to 4.");
             patchpoint->numGPScratchRegisters = GPRInfo::numberOfRegisters - 4;
             patchpoint->numFPScratchRegisters = 3;

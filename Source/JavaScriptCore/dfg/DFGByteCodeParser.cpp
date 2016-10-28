@@ -2673,9 +2673,9 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, const GetByIdVaria
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void blessCallDOM(Node* node)
+static void blessCallDOMGetter(Node* node)
 {
-    DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+    DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
     if (!patchpoint->effect.mustGenerate())
         node->clearFlags(NodeMustGenerate);
 }
@@ -2698,22 +2698,22 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     // We do not need to emit CheckCell thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
     addToGraph(CheckDOM, OpInfo(checkDOMPatchpoint.ptr()), OpInfo(domJIT->thisClassInfo()), thisNode);
 
-    CallDOMData* callDOMData = m_graph.m_callDOMData.add();
-    Ref<DOMJIT::CallDOMPatchpoint> callDOMPatchpoint = domJIT->callDOM();
-    m_graph.m_domJITPatchpoints.append(callDOMPatchpoint.ptr());
+    CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
+    Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetterPatchpoint = domJIT->callDOMGetter();
+    m_graph.m_domJITPatchpoints.append(callDOMGetterPatchpoint.ptr());
 
-    callDOMData->domJIT = domJIT;
-    callDOMData->patchpoint = callDOMPatchpoint.ptr();
+    callDOMGetterData->domJIT = domJIT;
+    callDOMGetterData->patchpoint = callDOMGetterPatchpoint.ptr();
 
-    Node* callDOMNode = nullptr;
+    Node* callDOMGetterNode = nullptr;
     // GlobalObject of thisNode is always used to create a DOMWrapper.
-    if (callDOMPatchpoint->requireGlobalObject) {
+    if (callDOMGetterPatchpoint->requireGlobalObject) {
         Node* globalObject = addToGraph(GetGlobalObject, thisNode);
-        callDOMNode = addToGraph(CallDOM, OpInfo(callDOMData), OpInfo(prediction), thisNode, globalObject);
+        callDOMGetterNode = addToGraph(CallDOMGetter, OpInfo(callDOMGetterData), OpInfo(prediction), thisNode, globalObject);
     } else
-        callDOMNode = addToGraph(CallDOM, OpInfo(callDOMData), OpInfo(prediction), thisNode);
-    blessCallDOM(callDOMNode);
-    set(VirtualRegister(resultOperand), callDOMNode);
+        callDOMGetterNode = addToGraph(CallDOMGetter, OpInfo(callDOMGetterData), OpInfo(prediction), thisNode);
+    blessCallDOMGetter(callDOMGetterNode);
+    set(VirtualRegister(resultOperand), callDOMGetterNode);
     return true;
 }
 

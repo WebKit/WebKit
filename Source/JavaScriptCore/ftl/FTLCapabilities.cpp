@@ -271,7 +271,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DefineAccessorProperty:
     case ToLowerCase:
     case CheckDOM:
-    case CallDOM:
+    case CallDOMGetter:
         // These are OK.
         break;
 

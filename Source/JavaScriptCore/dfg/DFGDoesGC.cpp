@@ -298,7 +298,7 @@ bool doesGC(Graph& graph, Node* node)
     case StringReplaceRegExp:
     case CreateRest:
     case ToLowerCase:
-    case CallDOM:
+    case CallDOMGetter:
         return true;
         
     case MultiPutByOffset:

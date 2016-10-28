@@ -1,5 +1,61 @@
 2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DOMJIT] Rename CallDOM to CallDOMGetter
+        https://bugs.webkit.org/show_bug.cgi?id=164157
+
+        Reviewed by Keith Miller.
+
+        Rename CallDOM to CallDOMGetter to represent that
+        this is used for DOMJIT getter explicitly.
+        CallDOM will be used for DOM functions (like element.getAttribute()) later.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::emitDOMJITGetter):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::blessCallDOMGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::blessCallDOM): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCallDOMGetterData):
+        (JSC::DFG::Node::callDOMGetterData):
+        (JSC::DFG::Node::hasCallDOMData): Deleted.
+        (JSC::DFG::Node::callDOMData): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        (JSC::DFG::SpeculativeJIT::compileCallDOM): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * domjit/DOMJITCallDOMGetterPatchpoint.h: Renamed from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (JSC::DOMJIT::CallDOMGetterPatchpoint::create):
+        * domjit/DOMJITGetterSetter.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM): Deleted.
+        * jsc.cpp:
+
+2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, build fix in CLoop builds after r208063.
 
         Include required headers.

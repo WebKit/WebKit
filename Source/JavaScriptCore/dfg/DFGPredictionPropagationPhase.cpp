@@ -709,7 +709,7 @@ private:
         case GetFromArguments:
         case LoadFromJSMapBucket:
         case ToNumber:
-        case CallDOM: {
+        case CallDOMGetter: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }

@@ -1710,8 +1710,8 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
 
-        case CallDOM: {
-            DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+        case CallDOMGetter: {
+            DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
             fixEdge<CellUse>(node->child1()); // DOM.
             if (patchpoint->requireGlobalObject)
                 fixEdge<KnownCellUse>(node->child2()); // GlobalObject.

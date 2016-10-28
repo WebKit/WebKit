@@ -2560,7 +2560,7 @@ public:
     void compileAllocatePropertyStorage(Node*);
     void compileReallocatePropertyStorage(Node*);
     void compileGetButterfly(Node*);
-    void compileCallDOM(Node*);
+    void compileCallDOMGetter(Node*);
     void compileCheckDOM(Node*);
     
 #if USE(JSVALUE32_64)
