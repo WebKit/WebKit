@@ -919,13 +919,44 @@ void WebGLRenderingContextBase::bindBuffer(GC3Denum target, WebGLBuffer* buffer)
     else if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
         m_boundVertexArrayObject->setElementArrayBuffer(buffer);
     else {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "bindBuffer", "invalid target");
-        return;
+        bool success = false;
+#if ENABLE(WEBGL2)
+        if (isWebGL2()) {
+            success = true;
+            switch (target) {
+            case GraphicsContext3D::COPY_READ_BUFFER:
+                m_boundCopyReadBuffer = buffer;
+                break;
+            case GraphicsContext3D::COPY_WRITE_BUFFER:
+                m_boundCopyWriteBuffer = buffer;
+                break;
+            case GraphicsContext3D::PIXEL_PACK_BUFFER:
+                m_boundPixelPackBuffer = buffer;
+                break;
+            case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+                m_boundPixelUnpackBuffer = buffer;
+                break;
+            case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+                m_boundTransformFeedbackBuffer = buffer;
+                break;
+            case GraphicsContext3D::UNIFORM_BUFFER:
+                m_boundUniformBuffer = buffer;
+                break;
+            default:
+                success = false;
+                break;
+            }
+        }
+#endif
+        if (!success) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "bindBuffer", "invalid target");
+            return;
+        }
     }
 
     m_context->bindBuffer(target, objectOrZero(buffer));
     if (buffer)
-        buffer->setTarget(target);
+        buffer->setTarget(target, isWebGL2());
 }
 
 void WebGLRenderingContextBase::bindFramebuffer(GC3Denum target, WebGLFramebuffer* buffer)
@@ -2165,7 +2196,24 @@ WebGLGetInfo WebGLRenderingContextBase::getBufferParameter(GC3Denum target, GC3D
 {
     if (isContextLostOrPending())
         return WebGLGetInfo();
-    if (target != GraphicsContext3D::ARRAY_BUFFER && target != GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+
+    bool valid = false;
+    if (target == GraphicsContext3D::ARRAY_BUFFER || target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
+        valid = true;
+#if ENABLE(WEBGL2)
+    if (isWebGL2()) {
+        switch (target) {
+        case GraphicsContext3D::COPY_READ_BUFFER:
+        case GraphicsContext3D::COPY_WRITE_BUFFER:
+        case GraphicsContext3D::PIXEL_PACK_BUFFER:
+        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContext3D::UNIFORM_BUFFER:
+            valid = true;
+        }
+    }
+#endif
+    if (!valid) {
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getBufferParameter", "invalid target");
         return WebGLGetInfo();
     }
@@ -4457,6 +4505,37 @@ WebGLBuffer* WebGLRenderingContextBase::validateBufferDataParameters(const char*
         buffer = m_boundArrayBuffer.get();
         break;
     default:
+#if ENABLE(WEBGL2)
+        bool success = true;
+        if (isWebGL2()) {
+            switch (target) {
+            case GraphicsContext3D::COPY_READ_BUFFER:
+                buffer = m_boundCopyReadBuffer.get();
+                break;
+            case GraphicsContext3D::COPY_WRITE_BUFFER:
+                buffer = m_boundCopyWriteBuffer.get();
+                break;
+            case GraphicsContext3D::PIXEL_PACK_BUFFER:
+                buffer = m_boundPixelPackBuffer.get();
+                break;
+            case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+                buffer = m_boundPixelUnpackBuffer.get();
+                break;
+            case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+                buffer = m_boundTransformFeedbackBuffer.get();
+                break;
+            case GraphicsContext3D::UNIFORM_BUFFER:
+                buffer = m_boundUniformBuffer.get();
+                break;
+            default:
+                success = false;
+                break;
+            }
+        } else
+            success = false;
+        if (success)
+            break;
+#endif
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
         return nullptr;
     }

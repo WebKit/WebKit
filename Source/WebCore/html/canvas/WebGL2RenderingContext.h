@@ -44,6 +44,8 @@ public:
     WebGL2RenderingContext(HTMLCanvasElement*, RefPtr<GraphicsContext3D>&&, GraphicsContext3D::Attributes);
 
     /* Buffer objects */
+    using WebGLRenderingContextBase::bufferData;
+    using WebGLRenderingContextBase::bufferSubData;
     void bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length);
     void bufferSubData(GC3Denum target, long long offset, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length);
     void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size);

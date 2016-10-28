@@ -427,6 +427,12 @@ protected:
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;
+    RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
+    RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
+    RefPtr<WebGLBuffer> m_boundPixelPackBuffer;
+    RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
+    RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
+    RefPtr<WebGLBuffer> m_boundUniformBuffer;
 
     RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
     RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;

@@ -87,6 +87,18 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
         m_byteLength = byteLength;
         return true;
     default:
+#if ENABLE(WEBGL2)
+        switch (m_target) {
+        case GraphicsContext3D::COPY_READ_BUFFER:
+        case GraphicsContext3D::COPY_WRITE_BUFFER:
+        case GraphicsContext3D::PIXEL_PACK_BUFFER:
+        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContext3D::UNIFORM_BUFFER:
+            m_byteLength = byteLength;
+            return true;
+        }
+#endif
         return false;
     }
 }
@@ -135,6 +147,17 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data
     case GraphicsContext3D::ARRAY_BUFFER:
         return true;
     default:
+#if ENABLE(WEBGL2)
+        switch (m_target) {
+        case GraphicsContext3D::COPY_READ_BUFFER:
+        case GraphicsContext3D::COPY_WRITE_BUFFER:
+        case GraphicsContext3D::PIXEL_PACK_BUFFER:
+        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContext3D::UNIFORM_BUFFER:
+            return true;
+        }
+#endif
         return false;
     }
 }
@@ -186,13 +209,26 @@ void WebGLBuffer::setCachedMaxIndex(GC3Denum type, int value)
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % WTF_ARRAY_LENGTH(m_maxIndexCache);
 }
 
-void WebGLBuffer::setTarget(GC3Denum target)
+void WebGLBuffer::setTarget(GC3Denum target, bool forWebGL2)
 {
     // In WebGL, a buffer is bound to one target in its lifetime
     if (m_target)
         return;
     if (target == GraphicsContext3D::ARRAY_BUFFER || target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
         m_target = target;
+    else if (forWebGL2) {
+#if ENABLE(WEBGL2)
+        switch (target) {
+        case GraphicsContext3D::COPY_READ_BUFFER:
+        case GraphicsContext3D::COPY_WRITE_BUFFER:
+        case GraphicsContext3D::PIXEL_PACK_BUFFER:
+        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContext3D::UNIFORM_BUFFER:
+            m_target = target;
+        }
+#endif
+    }
 }
 
 void WebGLBuffer::clearCachedMaxIndices()

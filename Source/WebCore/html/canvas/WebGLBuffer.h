@@ -61,7 +61,7 @@ public:
     void setCachedMaxIndex(GC3Denum type, int value);
 
     GC3Denum getTarget() const { return m_target; }
-    void setTarget(GC3Denum);
+    void setTarget(GC3Denum, bool forWebGL2);
 
     bool hasEverBeenBound() const { return object() && m_target; }
 

@@ -1,3 +1,29 @@
+2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Teach WebGL code about new buffer targets in WebGL2
+        https://bugs.webkit.org/show_bug.cgi?id=163924
+
+        Reviewed by Dean Jackson.
+
+        WebGL 2 adds new buffer targets. Instead of completely reimplementing
+        the functions again for WebGL 2, we can simply check if we are using
+        a new kind of context to conditionally enable support.
+
+        Test: fast/canvas/webgl/webgl2-buffer-targets.html
+
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferDataImpl):
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl):
+        (WebCore::WebGLBuffer::setTarget):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::bindBuffer):
+        (WebCore::WebGLRenderingContextBase::getBufferParameter):
+        (WebCore::WebGLRenderingContextBase::validateBufferDataParameters):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2016-10-27  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Enhance grid-auto-flow parsing to allow dense first.
