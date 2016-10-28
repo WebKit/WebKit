@@ -2203,20 +2203,45 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         shape = consumeBasicShapePolygon(args, context);
     else if (id == CSSValueInset)
         shape = consumeBasicShapeInset(args, context);
-    if (!shape || !args.atEnd())
+    if (!shape)
         return nullptr;
     range = rangeCopy;
     
     return CSSValuePool::singleton().createValue(shape.releaseNonNull());
 }
 
+static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    bool shapeFound = false;
+    bool boxFound = false;
+    while (!range.atEnd() && !(shapeFound && boxFound)) {
+        RefPtr<CSSValue> componentValue;
+        if (range.peek().type() == FunctionToken && !shapeFound) {
+            componentValue = consumeBasicShape(range, context);
+            shapeFound = true;
+        } else if (range.peek().type() == IdentToken && !boxFound) {
+            componentValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueFill, CSSValueStroke, CSSValueViewBox>(range);
+            boxFound = true;
+        }
+        if (!componentValue)
+            return nullptr;
+        list->append(componentValue.releaseNonNull());
+    }
+    
+    if (!range.atEnd())
+        return nullptr;
+    
+    return list;
+}
+    
 static RefPtr<CSSValue> consumeWebkitClipPath(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     if (RefPtr<CSSPrimitiveValue> url = consumeUrl(range))
         return url;
-    return consumeBasicShape(range, context);
+    return consumeBasicShapeOrBox(range, context);
 }
 
 static RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParserContext& context)

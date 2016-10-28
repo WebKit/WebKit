@@ -1,3 +1,15 @@
+2016-10-27  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add support for a reference box to -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=164107
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShape):
+        (WebCore::consumeBasicShapeOrBox):
+        (WebCore::consumeWebkitClipPath):
+
 2016-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOM] Add JSEventType
