@@ -1,3 +1,32 @@
+2016-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: scrubbing support
+        https://bugs.webkit.org/show_bug.cgi?id=163726
+        <rdar://problem/27989481>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the ScrubberSupport class which brings support for scrubbing the media
+        by interacting with the scrubber in the media controls and correctly reflecting
+        the media's current time as set via the media API.
+
+        Tests: media/modern-media-controls/scrubber-support/scrubber-support-click.html
+               media/modern-media-controls/scrubber-support/scrubber-support-drag.html
+               media/modern-media-controls/scrubber-support/scrubber-support-media-api.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/scrubbing-support.js: Added.
+        (ScrubbingSupport.prototype.get control):
+        (ScrubbingSupport.prototype.get mediaEvents):
+        (ScrubbingSupport.prototype.controlValueWillStartChanging):
+        (ScrubbingSupport.prototype.controlValueDidChange):
+        (ScrubbingSupport.prototype.controlValueDidStopChanging):
+        (ScrubbingSupport.prototype.syncControl):
+        (ScrubbingSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows WebGL build after r208022

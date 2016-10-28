@@ -32,6 +32,7 @@ media/elapsed-time-support.js
 media/mute-support.js
 media/playback-support.js
 media/remaining-time-support.js
+media/scrubbing-support.js
 media/skip-back-support.js
 media/start-support.js
 media/media-controller.js

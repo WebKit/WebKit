@@ -23,57 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class ScrubbingSupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new ElapsedTimeSupport(this);
-        new MuteSupport(this);
-        new PlaybackSupport(this);
-        new RemainingTimeSupport(this);
-        new ScrubbingSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.timeControl.scrubber;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        return ["timeupdate"];
     }
 
-    handleEvent(event)
+    controlValueWillStartChanging(control)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        const media = this.mediaController.media;
+        const isPaused = media.paused;
+        if (!isPaused)
+            media.pause();
+
+        this._wasPausedWhenScrubbingStarted = isPaused;
     }
 
-    // Private
-
-    _updateControlsSize()
+    controlValueDidChange(control)
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        const media = this.mediaController.media;
+        media.fastSeek(control.value * media.duration);
+    }
+
+    controlValueDidStopChanging(control)
+    {
+        if (!this._wasPausedWhenScrubbingStarted)
+            this.mediaController.media.play();
+
+        delete this._wasPausedWhenScrubbingStarted;
+    }
+
+    syncControl()
+    {
+        const media = this.mediaController.media;
+        if (isNaN(media.duration))
+            return;
+
+        this.control.value = media.currentTime / media.duration;
     }
 
 }
