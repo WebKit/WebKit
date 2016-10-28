@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="c" width="40" height="40"></canvas>
+<script>
+description("Checks that using a WebGL 2 context doesn't cause an error.");
+
+if (window.internals)
+	internals.setWebGL2Enabled(true);
+
+var canvas = document.getElementById("c");
+var context = canvas.getContext("webgl2");
+shouldBe("context.getError()", "context.NO_ERROR");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

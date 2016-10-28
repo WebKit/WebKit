@@ -1,3 +1,59 @@
+2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] [WebGL2] Temporarily upgrade WebGL 2's internal OpenGL context from version 2.1 to 3.2
+        https://bugs.webkit.org/show_bug.cgi?id=164091
+
+        Reviewed by Dean Jackson.
+
+        In order to test WebGL2 correctly, I had to upgrade the macOS's OpenGL 
+        context to a 3.2-compatible context to make sure the new symbols are
+        accepted. Eventually, this 3.2-compatible context will have to be
+        reverted and replaced with an ANGLE context. The current 3.2-compatible
+        context is just for testing.
+
+        Test: fast/canvas/webgl/webgl2-context-creation.html
+
+        * html/canvas/WebGLBuffer.cpp: Use "nullptr" instead of 0.
+        (WebCore::WebGLBuffer::associateBufferData):
+        * html/canvas/WebGLRenderingContextBase.cpp: Use make_unique() instead
+        of the unique_ptr constructor.
+        (WebCore::WebGLRenderingContextBase::create):
+        * platform/graphics/GraphicsContext3D.h: GraphicsContext should know
+        if it is using a 3.2-compatible context because some parts of 2.1 are
+        removed in these contexts, and replaced with new things which aren't
+        in 2.1.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::setPixelFormat): Use kCGLPFAOpenGLProfile to specify an
+        OpenGL 3.2 context.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): GL_CLAMP is deprecated
+        in OpenGL 3.2. Fortunately, GL_CLAMP_TO_EDGE isn't deprecated and does
+        exactly what we want. In OpenGL3.2, point sprites are always enabled,
+        so there's no need to enable them in those contexts.
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp: In OpenGL 3.2,
+        glGetString() no longer accepts GL_EXTENSIONS. Instead, glGetStringi()
+        is used instead. Unfortunately, glGetString() is not available in
+        OpenGL 2.1 contexts, so we need to use one or the other based on the
+        version of the context we're using.
+        (WebCore::Extensions3DOpenGL::Extensions3DOpenGL):
+        (WebCore::Extensions3DOpenGL::getExtensions):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+        Instead of modifying getExtensions() to use glGetStringi(), it makes
+        better sense to modify this function because getExtensions() returns
+        a string. Building up a string just to split it up again is silly, so
+        modifying this function instead makes more sense.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getIntegerv): GL_MAX_VARYING_FLOATS is
+        removed in OpenGL 3.2 contexts. However, it is replaced by
+        GL_MAX_VARYING_COMPONENTS, though this is deprecated but not removed.
+        In the more recent OpenGL context versions, GL_MAX_VARYING_VECTORS is
+        recommended instead, but that isn't available in OpenGL 3.2.
+        (WebCore::GraphicsContext3D::getExtensions):
+
 2016-10-27  Megan Gardner  <megan_gardner@apple.com>
 
         Add support for wide gamut for ShareableBitmap for image popovers

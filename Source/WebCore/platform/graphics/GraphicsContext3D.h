@@ -1443,6 +1443,8 @@ private:
     std::unique_ptr<GraphicsContext3DPrivate> m_private;
     
     WebGLRenderingContextBase* m_webglContext;
+
+    bool m_isForWebGL2 { false };
 };
 
 } // namespace WebCore
