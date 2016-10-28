@@ -1,5 +1,5 @@
-//@ runFTLNoCJIT
 //@ largeHeap
+//@ runFTLNoCJIT if !$memoryLimited
 // This test should not crash or fail any assertions.
 
 function shouldEqual(stepId, actual, expected) {

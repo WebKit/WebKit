@@ -1,3 +1,13 @@
+2016-10-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Skip 2 JS stress tests on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=164125
+
+        Unreviewed quick fix to unbreak JSCOnly ARM bots as soon as possible.
+
+        * stress/joined-strings-should-not-exceed-max-string-length.js:
+        * stress/string-prototype-replace-should-throw-out-of-memory-error-when-using-too-much-memory.js:
+
 2016-10-27  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] forbid lexical redeclaration of generator formal parameters
