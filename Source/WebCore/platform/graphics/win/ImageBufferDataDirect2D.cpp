@@ -33,6 +33,7 @@
 #include "HWndDC.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "RenderTargetScopedDrawing.h"
 #include <d2d1.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
@@ -63,23 +64,23 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), bitmap.get());
 
-    HRESULT hr;
+    BOOL ok = TRUE;
 
-    COMPtr<ID2D1GdiInteropRenderTarget> gdiRenderTarget;
-    hr = platformContext->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&gdiRenderTarget);
-    if (FAILED(hr))
-        return nullptr;
+    {
+        RenderTargetScopedDrawing scopedDraw(*context);
 
-    platformContext->BeginDraw();
+        COMPtr<ID2D1GdiInteropRenderTarget> gdiRenderTarget;
+        HRESULT hr = platformContext->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&gdiRenderTarget);
+        if (FAILED(hr))
+            return nullptr;
 
-    HDC hdc = nullptr;
-    hr = gdiRenderTarget->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hdc);
+        HDC hdc = nullptr;
+        hr = gdiRenderTarget->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hdc);
 
-    BOOL ok = ::BitBlt(bitmapDC.get(), 0, 0, rect.width(), rect.height(), hdc, rect.x(), rect.y(), SRCCOPY);
+        ok = ::BitBlt(bitmapDC.get(), 0, 0, rect.width(), rect.height(), hdc, rect.x(), rect.y(), SRCCOPY);
 
-    hr = gdiRenderTarget->ReleaseDC(nullptr);
-
-    hr = platformContext->EndDraw();
+        hr = gdiRenderTarget->ReleaseDC(nullptr);
+    }
 
     if (!ok)
         return nullptr;

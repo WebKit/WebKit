@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008, 2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2009, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,7 @@
 
 #if USE(DIRECT2D)
 #include "COMPtr.h"
+#include "RenderTargetScopedDrawing.h"
 #include <d2d1.h>
 #endif
 
@@ -224,14 +225,12 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     HRESULT hr = platformContext->CreateCompatibleRenderTarget(IntSize(rect().size()), &nativeImageTarget);
     ASSERT(SUCCEEDED(hr));
 
-    nativeImageTarget->BeginDraw();
     GraphicsContext localContext(nativeImageTarget.get());
-    localContext.setDidBeginDraw(true);
 
-    draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
-
-    hr = nativeImageTarget->Flush();
-    ASSERT(SUCCEEDED(hr));
+    {
+        RenderTargetScopedDrawing scopedDraw(localContext);
+        draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
+    }
 
     COMPtr<ID2D1Bitmap> nativeImage;
     hr = nativeImageTarget->GetBitmap(&nativeImage);

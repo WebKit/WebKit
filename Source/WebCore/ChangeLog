@@ -1,3 +1,46 @@
+2016-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Create a RAII Helper Class for the Render Target
+        https://bugs.webkit.org/show_bug.cgi?id=164005
+
+        Reviewed by Alex Christensen.
+
+        Tested by existing SVG, image, and Canvas layout tests.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::fill): Use new convenience helper class.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::didBeginDraw):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate): Add an
+        assertion that we are in a valid state when cleaning up the graphics context.
+        (WebCore::GraphicsContextPlatformPrivate::clip): Clipping can only happen in a Draw operation.
+        Open a new BeginDraw if asked to Clip. The Begin must stay active when this method returns,
+        as the Clip layer is only valid during a Draw operation.
+        (WebCore::GraphicsContextPlatformPrivate::beginDraw): Added.
+        (WebCore::GraphicsContextPlatformPrivate::endDraw): Added.
+        (WebCore::GraphicsContext::beginDrawIfNeeded): Added.
+        (WebCore::GraphicsContext::endDraw): Added.
+        (WebCore::GraphicsContext::drawWithoutShadow): Revise to use new RenderTargetHelper class.
+        (WebCore::GraphicsContext::drawWithShadow): Ditto.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Ditto.
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): Ditto.
+        (WebCore::GraphicsContext::setDidBeginDraw): Deleted.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        (WebCore::GraphicsContextPlatformPrivate::didBeginDraw): Revise to use count instead of
+        a separate boolean.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::getData): Revise to use new RenderTargetHelper class.
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::drawNativeImage): Ditto.
+        * platform/graphics/win/RenderTargetHelper.h: Added.
+        (WebCore::RenderTargetHelper::RenderTargetHelper):
+        (WebCore::RenderTargetHelper::~RenderTargetHelper):
+        (WebCore::RenderTargetHelper::endDraw):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImage): Revise to use new RenderTargetHelper class.
+
 2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec

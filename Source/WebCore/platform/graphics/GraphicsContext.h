@@ -552,9 +552,10 @@ public:
     WEBCORE_EXPORT static ID2D1Factory* systemFactory();
     WEBCORE_EXPORT static ID2D1RenderTarget* defaultRenderTarget();
 
-    WEBCORE_EXPORT void setDidBeginDraw(bool);
+    WEBCORE_EXPORT bool beginDrawIfNeeded();
     WEBCORE_EXPORT bool didBeginDraw() const;
     D2D1_COLOR_F colorWithGlobalAlpha(const Color&) const;
+    WEBCORE_EXPORT void endDraw();
 
     ID2D1Brush* solidStrokeBrush() const;
     ID2D1Brush* solidFillBrush() const;

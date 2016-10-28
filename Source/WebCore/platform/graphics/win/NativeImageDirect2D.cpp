@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "RenderTargetScopedDrawing.h"
 #include <d2d1.h>
 
 namespace WebCore {
@@ -85,14 +86,13 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
 
     float opacity = 1.0f;
 
-    if (!context.didBeginDraw())
-        platformContext->BeginDraw();
+    bool temporaryDraw = context.beginDrawIfNeeded();
 
     platformContext->DrawBitmap(image.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
 
     HRESULT hr = S_OK;
-    if (!context.didBeginDraw())
-        hr = platformContext->EndDraw();
+    if (temporaryDraw)
+        context.endDraw();
     else
         hr = platformContext->Flush();
 

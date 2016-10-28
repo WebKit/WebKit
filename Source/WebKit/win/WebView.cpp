@@ -164,6 +164,7 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <bindings/ScriptValue.h>
+#include <comdef.h>
 #include <d2d1.h>
 #include <wtf/MainThread.h>
 #include <wtf/RAMSize.h>
@@ -194,6 +195,10 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullScreenController.h>
+#endif
+
+#if USE(DIRECT2D)
+#include <WebCore/RenderTargetScopedDrawing.h>
 #endif
 
 #include <ShlObj.h>
@@ -1063,7 +1068,7 @@ void WebView::sizeChanged(const IntSize& newSize)
     // Create a Direct2D render target.
     auto renderTargetProperties = D2D1::RenderTargetProperties();
     renderTargetProperties.usage = D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE;
-    auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, newSize);
+    auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, newSize, D2D1_PRESENT_OPTIONS_IMMEDIATELY);
     HRESULT hr = GraphicsContext::systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_renderTarget);
     ASSERT(SUCCEEDED(hr));
 #endif
@@ -1217,7 +1222,6 @@ void WebView::performLayeredWindowUpdate()
 
 void WebView::paintWithDirect2D()
 {
-#if USE(DIRECT2D)
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
         return;
@@ -1236,45 +1240,42 @@ void WebView::paintWithDirect2D()
 
         auto pixelSize = D2D1::SizeU(clientRect.width(), clientRect.height());
 
-        auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, pixelSize);
+        auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, pixelSize, D2D1_PRESENT_OPTIONS_IMMEDIATELY);
         HRESULT hr = GraphicsContext::systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_renderTarget);
         if (!SUCCEEDED(hr))
             return;
     }
 
-    m_renderTarget->BeginDraw();
-
-    m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
-    m_renderTarget->Clear();
-
-    // Direct2D honors the scale factor natively.
-    float scaleFactor = 1.0f;
-    float inverseScaleFactor = 1.0f / scaleFactor;
-
-    RECT clientRect;
-    GetClientRect(m_viewWindow, &clientRect);
-
-    IntRect dirtyRectPixels(0, 0, clientRect.right, clientRect.bottom);
-    FloatRect logicalDirtyRectFloat = dirtyRectPixels;
-    logicalDirtyRectFloat.scale(inverseScaleFactor);
-    IntRect logicalDirtyRect(enclosingIntRect(logicalDirtyRectFloat));
-
+    RECT clientRect = {};
     GraphicsContext gc(m_renderTarget.get());
-    gc.setDidBeginDraw(true);
 
-    if (frameView && frameView->frame().contentRenderer()) {
-        gc.save();
-        gc.scale(FloatSize(scaleFactor, scaleFactor));
-        gc.clip(logicalDirtyRect);
-        frameView->paint(gc, logicalDirtyRect);
-        gc.restore();
-        if (m_shouldInvertColors)
-            gc.fillRect(logicalDirtyRect, Color::white, CompositeDifference);
+    {
+        WebCore::RenderTargetScopedDrawing scopedDraw(gc);
+
+        m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
+        m_renderTarget->Clear();
+
+        // Direct2D honors the scale factor natively.
+        float scaleFactor = 1.0f;
+        float inverseScaleFactor = 1.0f / scaleFactor;
+
+        GetClientRect(m_viewWindow, &clientRect);
+
+        IntRect dirtyRectPixels(0, 0, clientRect.right, clientRect.bottom);
+        FloatRect logicalDirtyRectFloat = dirtyRectPixels;
+        logicalDirtyRectFloat.scale(inverseScaleFactor);
+        IntRect logicalDirtyRect(enclosingIntRect(logicalDirtyRectFloat));
+
+        if (frameView && frameView->frame().contentRenderer()) {
+            gc.save();
+            gc.scale(FloatSize(scaleFactor, scaleFactor));
+            gc.clip(logicalDirtyRect);
+            frameView->paint(gc, logicalDirtyRect);
+            gc.restore();
+            if (m_shouldInvertColors)
+                gc.fillRect(logicalDirtyRect, Color::white, CompositeDifference);
+        }
     }
-
-    HRESULT hr = m_renderTarget->EndDraw();
-    // FIXME: Recognize and recover from error state:
-    UNUSED_PARAM(hr);
 
     ::ValidateRect(m_viewWindow, &clientRect);
 #else
@@ -3151,6 +3152,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     m_page->setDeviceScaleFactor(deviceScaleFactor());
 
     setSmartInsertDeleteEnabled(TRUE);
+
     return hr;
 }
 

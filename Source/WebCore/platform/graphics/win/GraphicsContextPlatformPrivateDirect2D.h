@@ -32,6 +32,7 @@
 #include <d2d1effects.h>
 #include <d2d1helper.h>
 #include <windows.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -39,16 +40,15 @@ namespace WebCore {
 class GraphicsContextPlatformPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextPlatformPrivate(ID2D1RenderTarget* renderTarget)
-        : m_renderTarget(renderTarget)
-    {
-    }
+    GraphicsContextPlatformPrivate(ID2D1RenderTarget*);
+    ~GraphicsContextPlatformPrivate();
 
     enum Direct2DLayerType { AxisAlignedClip, LayerClip };
 
     void clip(const FloatRect&);
     void clip(const Path&);
     void clip(ID2D1Geometry*);
+    void beginDrawIfNeeded();
     void endDraw();
     void flush();
     void save();
@@ -75,11 +75,13 @@ public:
 
     COMPtr<ID2D1SolidColorBrush> brushWithColor(const D2D1_COLOR_F&);
 
+    bool didBeginDraw() const { return m_beginDrawCount.unsafeGet(); }
+
     HDC m_hdc { nullptr };
     D2D1_BLEND_MODE m_blendMode { D2D1_BLEND_MODE_MULTIPLY };
     D2D1_COMPOSITE_MODE m_compositeMode { D2D1_COMPOSITE_MODE_SOURCE_OVER };
+    Checked<unsigned> m_beginDrawCount { 0 };
     bool m_shouldIncludeChildWindows { false };
-    bool m_didBeginDraw { false };
     bool m_strokeSyleIsDirty { false };
 
     COMPtr<ID2D1SolidColorBrush> m_solidStrokeBrush;

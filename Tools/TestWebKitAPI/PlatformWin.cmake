@@ -28,6 +28,8 @@ add_definitions(-DWEBCORE_EXPORT=)
 set(test_webcore_LIBRARIES
     Crypt32
     D2d1
+    Dwrite
+    dxguid
     Iphlpapi
     Psapi
     Shlwapi
@@ -35,6 +37,7 @@ set(test_webcore_LIBRARIES
     WebCore${DEBUG_SUFFIX}
     WebCoreDerivedSources${DEBUG_SUFFIX}
     WebKit${DEBUG_SUFFIX}
+    WindowsCodecs
     gtest
 )
 

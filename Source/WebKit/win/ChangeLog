@@ -1,3 +1,14 @@
+2016-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Create a RAII Helper Class for the Render Target
+        https://bugs.webkit.org/show_bug.cgi?id=164005
+
+        Reviewed by Alex Christensen.
+
+        * WebView.cpp:
+        (WebView::sizeChanged): Construct RenderTarget with higher-resolution display timer.
+        (WebView::paintWithDirect2D): Revise to use new RenderTargetHelper class.
+
 2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec
