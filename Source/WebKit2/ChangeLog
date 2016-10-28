@@ -1,3 +1,22 @@
+2016-10-28  Antti Koivisto  <antti@apple.com>
+
+        Enable CFNetwork connection cache fast lane for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=164129
+
+        Reviewed by Andreas Kling.
+
+        The idea of this feature is keep a connection free for higher priority requests so low-priority
+        image loads can't take all the available connections.
+
+        We have this enabled on WK1 but not on WK2. See what enabling it does for performance in bots.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::initializeNetworkSettings):
+
+            Based on code inspection setting kHTTPMinimumFastLanePriority is not sufficient to enable this feature,
+            kHTTPNumFastLanes needs also be set to a non-zero value. Use the same constants as WK1.
+            Also enable this on Mac to unify behavior.
+
 2016-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] New stable DOM API headers should be included from webkitdom.h

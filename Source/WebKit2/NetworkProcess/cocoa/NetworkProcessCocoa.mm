@@ -60,10 +60,11 @@ static void initializeNetworkSettings()
         WebCore::ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled()) {
+        const unsigned fastLaneConnectionCount = 1;
+
         _CFNetworkHTTPConnectionCacheSetLimit(kHTTPPriorityNumLevels, toPlatformRequestPriority(WebCore::ResourceLoadPriority::Highest));
-#if PLATFORM(IOS)
         _CFNetworkHTTPConnectionCacheSetLimit(kHTTPMinimumFastLanePriority, toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium));
-#endif
+        _CFNetworkHTTPConnectionCacheSetLimit(kHTTPNumFastLanes, fastLaneConnectionCount);
     }
 }
 
