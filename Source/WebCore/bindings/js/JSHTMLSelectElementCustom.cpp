@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSHTMLSelectElementCustom.h"
 
+#include "CustomElementReactionQueue.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -49,6 +50,9 @@ void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned
 
 void JSHTMLSelectElement::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
+#if ENABLE(CUSTOM_ELEMENTS)
+    CustomElementReactionStack customElementReactionStack;
+#endif
     selectIndexSetter(&wrapped(), exec, index, value);
 }
 

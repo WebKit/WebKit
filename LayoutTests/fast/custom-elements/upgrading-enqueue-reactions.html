@@ -8,29 +8,12 @@
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+<script src="resources/additional-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
 <script>
 setup({allow_uncaught_exception:true});
-
-function create_constructor_log(element) {
-    return {type: 'constructed', element: element};
-}
-
-function assert_constructor_log_entry(log, element) {
-    assert_equals(log.type, 'constructed');
-    assert_equals(log.element, element);
-}
-
-function create_connected_callback_log(element) {
-    return {type: 'connected', element: element};
-}
-
-function assert_connected_log_entry(log, element) {
-    assert_equals(log.type, 'connected');
-    assert_equals(log.element, element);
-}
 
 test_with_window(function (contentWindow) {
     const contentDocument = contentWindow.document;

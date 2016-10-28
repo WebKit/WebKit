@@ -30,7 +30,7 @@
     readonly attribute ShadowRootMode   mode;
     readonly attribute Element          host;
 
-    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
+    [CEReactions, SetterMayThrowLegacyException, TreatNullAs=EmptyString] attribute DOMString innerHTML;
 };
 
 ShadowRoot implements DocumentOrShadowRoot;

@@ -91,7 +91,7 @@
     boolean queryCommandSupported(DOMString command);
     DOMString queryCommandValue(DOMString command);
 
-    attribute DOMString title;
+    [CEReactions] attribute DOMString title;
     attribute DOMString dir;
     attribute DOMString designMode;
 
@@ -101,7 +101,7 @@
 
     [GetterMayThrowLegacyException, SetterMayThrowLegacyException] attribute USVString cookie;
 
-    [SetterMayThrowLegacyException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
+    [CEReactions, ImplementedAs=bodyOrFrameset, SetterMayThrowLegacyException] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images;

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSHTMLOptionsCollection.h"
 
+#include "CustomElementReactionQueue.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -49,6 +50,10 @@ bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyN
 
 void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 {
+#if ENABLE(CUSTOM_ELEMENTS)
+    CustomElementReactionStack customElementReactionStack;
+#endif
+
     ExceptionCode ec = 0;
     unsigned newLength = 0;
     double lengthValue = value.toNumber(&state);
@@ -67,6 +72,10 @@ void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 
 void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
 {
+#if ENABLE(CUSTOM_ELEMENTS)
+    CustomElementReactionStack customElementReactionStack;
+#endif
+
     selectIndexSetter(&wrapped().selectElement(), exec, index, value);
 }
 

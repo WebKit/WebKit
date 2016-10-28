@@ -1,3 +1,45 @@
+2016-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CEReactions to the remaining HTML DOM APIs
+        https://bugs.webkit.org/show_bug.cgi?id=163969
+
+        Reviewed by Chris Dumez.
+
+        Added W3C style testharness.js tests for CEReactions to various HTMLElements under fast/custom-elements/reactions.
+        Also added some WebKit specific tests using the same harness outside that directory.
+
+        * fast/custom-elements/reactions-for-indieui-expected.txt: Added.
+        * fast/custom-elements/reactions-for-indieui.html: Added.
+        * fast/custom-elements/reactions-for-webkit-extensions-expected.txt:
+        * fast/custom-elements/reactions-for-webkit-extensions.html:
+        * fast/custom-elements/reactions/Document-expected.txt: Added.
+        * fast/custom-elements/reactions/Document.html: Added.
+        * fast/custom-elements/reactions/HTMLAnchorElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLAnchorElement.html: Added.
+        * fast/custom-elements/reactions/HTMLOptionElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLOptionElement.html: Added.
+        * fast/custom-elements/reactions/HTMLOptionsCollection-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLOptionsCollection.html: Added.
+        * fast/custom-elements/reactions/HTMLOutputElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLOutputElement.html: Added.
+        * fast/custom-elements/reactions/HTMLSelectElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLSelectElement.html: Added.
+        * fast/custom-elements/reactions/HTMLTableElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLTableElement.html: Added.
+        * fast/custom-elements/reactions/HTMLTableRowElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLTableRowElement.html: Added.
+        * fast/custom-elements/reactions/HTMLTableSectionElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLTableSectionElement.html: Added.
+        * fast/custom-elements/reactions/HTMLTitleElement-expected.txt: Added.
+        * fast/custom-elements/reactions/HTMLTitleElement.html: Added.
+        * fast/custom-elements/reactions/ShadowRoot-expected.txt: Added.
+        * fast/custom-elements/reactions/ShadowRoot.html: Added.
+        * fast/custom-elements/resources/additional-helpers.js: Added.
+        * fast/custom-elements/upgrading-enqueue-reactions-expected.txt:
+        * fast/custom-elements/upgrading-enqueue-reactions.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-10-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: volume control support

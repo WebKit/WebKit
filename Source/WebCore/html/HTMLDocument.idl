@@ -25,10 +25,10 @@
     NewImpurePropertyFiresWatchpoints,
     OverrideBuiltins,
 ] interface HTMLDocument : Document {
-    [Custom, ForwardDeclareInHeader] void open();
+    [CEReactions, Custom, ForwardDeclareInHeader] void open();
     void close();
-    [Custom] void write(optional DOMString text);
-    [Custom] void writeln(optional DOMString text);
+    [CEReactions, Custom] void write(optional DOMString text);
+    [CEReactions, Custom] void writeln(optional DOMString text);
 
     [Custom, Replaceable] readonly attribute HTMLAllCollection all;
 

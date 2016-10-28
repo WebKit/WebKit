@@ -121,7 +121,7 @@
 #endif
 
 #if defined(ENABLE_INDIE_UI) && ENABLE_INDIE_UI
-    [Reflect] attribute DOMString uiactions;
+    [CEReactions, Reflect] attribute DOMString uiactions;
 #endif
 
     [CEReactions, MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);

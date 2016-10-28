@@ -176,6 +176,7 @@ http/tests/notifications/legacy/notification-request-permission-then-navigate.ht
 
 # Datalist is not yet enabled.
 webkit.org/b/98934 fast/forms/datalist [ Skip ]
+webkit.org/b/98934 fast/custom-elements/reactions-for-indieui.html [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/98936 fast/forms/date [ Skip ]

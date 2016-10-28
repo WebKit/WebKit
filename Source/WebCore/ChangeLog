@@ -1,3 +1,45 @@
+2016-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CEReactions to the remaining HTML DOM APIs
+        https://bugs.webkit.org/show_bug.cgi?id=163969
+
+        Reviewed by Chris Dumez.
+
+        Added CEReactions to the remaining DOM and HTML APIs as needed.
+
+        Tests: fast/custom-elements/reactions-for-indieui.html
+               fast/custom-elements/reactions/Document.html
+               fast/custom-elements/reactions/HTMLAnchorElement.html
+               fast/custom-elements/reactions/HTMLOptionElement.html
+               fast/custom-elements/reactions/HTMLOptionsCollection.html
+               fast/custom-elements/reactions/HTMLOutputElement.html
+               fast/custom-elements/reactions/HTMLSelectElement.html
+               fast/custom-elements/reactions/HTMLTableElement.html
+               fast/custom-elements/reactions/HTMLTableRowElement.html
+               fast/custom-elements/reactions/HTMLTableSectionElement.html
+               fast/custom-elements/reactions/HTMLTitleElement.html
+               fast/custom-elements/reactions/ShadowRoot.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength):
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::indexSetter):
+        * dom/CharacterData.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/ShadowRoot.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTitleElement.idl:
+
 2016-10-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: volume control support

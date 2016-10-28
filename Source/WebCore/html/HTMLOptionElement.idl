@@ -30,6 +30,6 @@
     attribute boolean selected;
     attribute DOMString value;
 
-    attribute DOMString text;
+    [CEReactions] attribute DOMString text;
     readonly attribute long index;
 };
