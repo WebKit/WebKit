@@ -1,3 +1,86 @@
+2016-10-28  Youenn Fablet  <youenn@apple.com>
+
+        PeerMediaDescription does not need to be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=164059
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::createAnswerTask):
+        (WebCore::createSourceMap):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::addIceCandidateTask):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::configurationFromJSON):
+        (WebCore::configurationToJSON):
+        (WebCore::SDPProcessor::generateCandidateLine):
+        (WebCore::SDPProcessor::parseCandidateLine):
+        * platform/mediastream/IceCandidate.h:
+        * platform/mediastream/MediaEndpointSessionConfiguration.h:
+        (WebCore::MediaEndpointSessionConfiguration::mediaDescriptions):
+        (WebCore::MediaEndpointSessionConfiguration::addMediaDescription):
+        (WebCore::MediaEndpointSessionConfiguration::clone):
+        * platform/mediastream/PeerMediaDescription.h:
+        (WebCore::PeerMediaDescription::addPayload):
+        (WebCore::PeerMediaDescription::addSsrc):
+        (WebCore::PeerMediaDescription::clearSsrcs):
+        (WebCore::PeerMediaDescription::addIceCandidate):
+        (WebCore::PeerMediaDescription::create): Deleted.
+        (WebCore::PeerMediaDescription::~PeerMediaDescription): Deleted.
+        (WebCore::PeerMediaDescription::type): Deleted.
+        (WebCore::PeerMediaDescription::setType): Deleted.
+        (WebCore::PeerMediaDescription::port): Deleted.
+        (WebCore::PeerMediaDescription::setPort): Deleted.
+        (WebCore::PeerMediaDescription::address): Deleted.
+        (WebCore::PeerMediaDescription::setAddress): Deleted.
+        (WebCore::PeerMediaDescription::mode): Deleted.
+        (WebCore::PeerMediaDescription::setMode): Deleted.
+        (WebCore::PeerMediaDescription::mid): Deleted.
+        (WebCore::PeerMediaDescription::setMid): Deleted.
+        (WebCore::PeerMediaDescription::payloads): Deleted.
+        (WebCore::PeerMediaDescription::setPayloads): Deleted.
+        (WebCore::PeerMediaDescription::rtcpMux): Deleted.
+        (WebCore::PeerMediaDescription::setRtcpMux): Deleted.
+        (WebCore::PeerMediaDescription::rtcpAddress): Deleted.
+        (WebCore::PeerMediaDescription::setRtcpAddress): Deleted.
+        (WebCore::PeerMediaDescription::rtcpPort): Deleted.
+        (WebCore::PeerMediaDescription::setRtcpPort): Deleted.
+        (WebCore::PeerMediaDescription::mediaStreamId): Deleted.
+        (WebCore::PeerMediaDescription::setMediaStreamId): Deleted.
+        (WebCore::PeerMediaDescription::mediaStreamTrackId): Deleted.
+        (WebCore::PeerMediaDescription::setMediaStreamTrackId): Deleted.
+        (WebCore::PeerMediaDescription::dtlsSetup): Deleted.
+        (WebCore::PeerMediaDescription::setDtlsSetup): Deleted.
+        (WebCore::PeerMediaDescription::dtlsFingerprintHashFunction): Deleted.
+        (WebCore::PeerMediaDescription::setDtlsFingerprintHashFunction): Deleted.
+        (WebCore::PeerMediaDescription::dtlsFingerprint): Deleted.
+        (WebCore::PeerMediaDescription::setDtlsFingerprint): Deleted.
+        (WebCore::PeerMediaDescription::cname): Deleted.
+        (WebCore::PeerMediaDescription::setCname): Deleted.
+        (WebCore::PeerMediaDescription::ssrcs): Deleted.
+        (WebCore::PeerMediaDescription::iceUfrag): Deleted.
+        (WebCore::PeerMediaDescription::setIceUfrag): Deleted.
+        (WebCore::PeerMediaDescription::icePassword): Deleted.
+        (WebCore::PeerMediaDescription::setIcePassword): Deleted.
+        (WebCore::PeerMediaDescription::iceCandidates): Deleted.
+        (WebCore::PeerMediaDescription::clone): Deleted.
+        (WebCore::PeerMediaDescription::PeerMediaDescription): Deleted.
+        * platform/mediastream/mac/MediaEndpointMac.cpp:
+        (WebCore::MediaEndpointMac::addRemoteCandidate):
+        (WebCore::MediaEndpointMac::OnIceCandidate):
+        * platform/mediastream/mac/MediaEndpointMac.h:
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::updateSendConfiguration):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::updateConfigurationMids):
+
 2016-10-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: scrubbing support

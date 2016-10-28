@@ -43,12 +43,13 @@ namespace WebCore {
 
 class MediaStream;
 class MediaStreamTrack;
-class PeerMediaDescription;
 class SDPProcessor;
 
-typedef Vector<RefPtr<PeerMediaDescription>> MediaDescriptionVector;
-typedef Vector<RefPtr<RTCRtpSender>> RtpSenderVector;
-typedef Vector<RefPtr<RTCRtpTransceiver>> RtpTransceiverVector;
+struct PeerMediaDescription;
+
+using MediaDescriptionVector = Vector<PeerMediaDescription>;
+using RtpSenderVector = Vector<RefPtr<RTCRtpSender>>;
+using RtpTransceiverVector = Vector<RefPtr<RTCRtpTransceiver>>;
 
 class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEndpointClient {
 public:

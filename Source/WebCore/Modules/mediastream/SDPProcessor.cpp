@@ -199,22 +199,22 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
         RefPtr<InspectorObject> mediaDescriptionObject = InspectorObject::create();
         mediaDescriptionsArray->get(i)->asObject(mediaDescriptionObject);
 
-        RefPtr<PeerMediaDescription> mediaDescription = PeerMediaDescription::create();
+        PeerMediaDescription mediaDescription;
 
         if (mediaDescriptionObject->getString(typeString(), stringValue))
-            mediaDescription->setType(stringValue);
+            mediaDescription.type = stringValue;
 
         if (mediaDescriptionObject->getInteger(portString(), intValue))
-            mediaDescription->setPort(intValue);
+            mediaDescription.port = intValue;
 
         if (mediaDescriptionObject->getString(addressString(), stringValue))
-            mediaDescription->setAddress(stringValue);
+            mediaDescription.address = stringValue;
 
         if (mediaDescriptionObject->getString(modeString(), stringValue))
-            mediaDescription->setMode(stringValue);
+            mediaDescription.mode = stringValue;
 
         if (mediaDescriptionObject->getString(midString(), stringValue))
-            mediaDescription->setMid(stringValue);
+            mediaDescription.mid = stringValue;
 
         RefPtr<InspectorArray> payloadsArray = InspectorArray::create();
         mediaDescriptionObject->getArray(payloadsString(), payloadsArray);
@@ -258,37 +258,37 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
                     payload.addParameter("rtxTime", intValue);
             }
 
-            mediaDescription->addPayload(WTFMove(payload));
+            mediaDescription.addPayload(WTFMove(payload));
         }
 
         RefPtr<InspectorObject> rtcpObject = InspectorObject::create();
         if (mediaDescriptionObject->getObject(rtcpString(), rtcpObject)) {
             if (rtcpObject->getBoolean(muxString(), boolValue))
-                mediaDescription->setRtcpMux(boolValue);
+                mediaDescription.rtcpMux = boolValue;
 
             if (rtcpObject->getString(rtcpAddressString(), stringValue))
-                mediaDescription->setRtcpAddress(stringValue);
+                mediaDescription.rtcpAddress = stringValue;
 
             if (rtcpObject->getInteger(rtcpPortString(), intValue))
-                mediaDescription->setRtcpPort(intValue);
+                mediaDescription.rtcpPort = intValue;
         }
 
         if (mediaDescriptionObject->getString(mediaStreamIdString(), stringValue))
-            mediaDescription->setMediaStreamId(stringValue);
+            mediaDescription.mediaStreamId = stringValue;
 
         if (mediaDescriptionObject->getString(mediaStreamTrackIdString(), stringValue))
-            mediaDescription->setMediaStreamTrackId(stringValue);
+            mediaDescription.mediaStreamTrackId = stringValue;
 
         RefPtr<InspectorObject> dtlsObject = InspectorObject::create();
         if (mediaDescriptionObject->getObject(dtlsString(), dtlsObject)) {
             if (dtlsObject->getString(setupString(), stringValue))
-                mediaDescription->setDtlsSetup(stringValue);
+                mediaDescription.dtlsSetup = stringValue;
 
             if (dtlsObject->getString(fingerprintHashFunctionString(), stringValue))
-                mediaDescription->setDtlsFingerprintHashFunction(stringValue);
+                mediaDescription.dtlsFingerprintHashFunction = stringValue;
 
             if (dtlsObject->getString(fingerprintString(), stringValue))
-                mediaDescription->setDtlsFingerprint(stringValue);
+                mediaDescription.dtlsFingerprint = stringValue;
         }
 
         RefPtr<InspectorArray> ssrcsArray = InspectorArray::create();
@@ -296,19 +296,19 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
 
         for (unsigned j = 0; j < ssrcsArray->length(); ++j) {
             ssrcsArray->get(j)->asInteger(intValue);
-            mediaDescription->addSsrc(intValue);
+            mediaDescription.addSsrc(intValue);
         }
 
         if (mediaDescriptionObject->getString(cnameString(), stringValue))
-            mediaDescription->setCname(stringValue);
+            mediaDescription.cname = stringValue;
 
         RefPtr<InspectorObject> iceObject = InspectorObject::create();
         if (mediaDescriptionObject->getObject(iceString(), iceObject)) {
             if (iceObject->getString(ufragString(), stringValue))
-                mediaDescription->setIceUfrag(stringValue);
+                mediaDescription.iceUfrag = stringValue;
 
             if (iceObject->getString(passwordString(), stringValue))
-                mediaDescription->setIcePassword(stringValue);
+                mediaDescription.icePassword = stringValue;
 
             RefPtr<InspectorArray> candidatesArray = InspectorArray::create();
             iceObject->getArray(candidatesString(), candidatesArray);
@@ -317,7 +317,7 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
                 RefPtr<InspectorObject> candidateObject = InspectorObject::create();
                 candidatesArray->get(j)->asObject(candidateObject);
 
-                mediaDescription->addIceCandidate(createCandidate(*candidateObject));
+                mediaDescription.addIceCandidate(createCandidate(*candidateObject));
             }
         }
 
@@ -351,18 +351,18 @@ static String configurationToJSON(const MediaEndpointSessionConfiguration& confi
 
     RefPtr<InspectorArray> mediaDescriptionsArray = InspectorArray::create();
 
-    for (const RefPtr<PeerMediaDescription>& mediaDescription : configuration.mediaDescriptions()) {
+    for (const auto& mediaDescription : configuration.mediaDescriptions()) {
         RefPtr<InspectorObject> mediaDescriptionObject = InspectorObject::create();
 
-        mediaDescriptionObject->setString(typeString(), mediaDescription->type());
-        mediaDescriptionObject->setInteger(portString(), mediaDescription->port());
-        mediaDescriptionObject->setString(addressString(), mediaDescription->address());
-        mediaDescriptionObject->setString(modeString(), mediaDescription->mode());
-        mediaDescriptionObject->setString(midString(), mediaDescription->mid());
+        mediaDescriptionObject->setString(typeString(), mediaDescription.type);
+        mediaDescriptionObject->setInteger(portString(), mediaDescription.port);
+        mediaDescriptionObject->setString(addressString(), mediaDescription.address);
+        mediaDescriptionObject->setString(modeString(), mediaDescription.mode);
+        mediaDescriptionObject->setString(midString(), mediaDescription.mid);
 
         RefPtr<InspectorArray> payloadsArray = InspectorArray::create();
 
-        for (auto& payload : mediaDescription->payloads()) {
+        for (auto& payload : mediaDescription.payloads) {
             RefPtr<InspectorObject> payloadObject = InspectorObject::create();
 
             payloadObject->setInteger(typeString(), payload.type);
@@ -387,35 +387,35 @@ static String configurationToJSON(const MediaEndpointSessionConfiguration& confi
         mediaDescriptionObject->setArray(payloadsString(), payloadsArray);
 
         RefPtr<InspectorObject> rtcpObject = InspectorObject::create();
-        rtcpObject->setBoolean(muxString(), mediaDescription->rtcpMux());
-        rtcpObject->setString(addressString(), mediaDescription->rtcpAddress());
-        rtcpObject->setInteger(portString(), mediaDescription->rtcpPort());
+        rtcpObject->setBoolean(muxString(), mediaDescription.rtcpMux);
+        rtcpObject->setString(addressString(), mediaDescription.rtcpAddress);
+        rtcpObject->setInteger(portString(), mediaDescription.rtcpPort);
         mediaDescriptionObject->setObject(rtcpString(), rtcpObject);
 
-        mediaDescriptionObject->setString(mediaStreamIdString(), mediaDescription->mediaStreamId());
-        mediaDescriptionObject->setString(mediaStreamTrackIdString(), mediaDescription->mediaStreamTrackId());
+        mediaDescriptionObject->setString(mediaStreamIdString(), mediaDescription.mediaStreamId);
+        mediaDescriptionObject->setString(mediaStreamTrackIdString(), mediaDescription.mediaStreamTrackId);
 
         RefPtr<InspectorObject> dtlsObject = InspectorObject::create();
-        dtlsObject->setString(setupString(), mediaDescription->dtlsSetup());
-        dtlsObject->setString(fingerprintHashFunctionString(), mediaDescription->dtlsFingerprintHashFunction());
-        dtlsObject->setString(fingerprintString(), mediaDescription->dtlsFingerprint());
+        dtlsObject->setString(setupString(), mediaDescription.dtlsSetup);
+        dtlsObject->setString(fingerprintHashFunctionString(), mediaDescription.dtlsFingerprintHashFunction);
+        dtlsObject->setString(fingerprintString(), mediaDescription.dtlsFingerprint);
         mediaDescriptionObject->setObject(dtlsString(), dtlsObject);
 
         RefPtr<InspectorArray> ssrcsArray = InspectorArray::create();
 
-        for (auto ssrc : mediaDescription->ssrcs())
+        for (auto ssrc : mediaDescription.ssrcs)
             ssrcsArray->pushDouble(ssrc);
         mediaDescriptionObject->setArray(ssrcsString(), ssrcsArray);
 
-        mediaDescriptionObject->setString(cnameString(), mediaDescription->cname());
+        mediaDescriptionObject->setString(cnameString(), mediaDescription.cname);
 
         RefPtr<InspectorObject> iceObject = InspectorObject::create();
-        iceObject->setString(ufragString(), mediaDescription->iceUfrag());
-        iceObject->setString(passwordString(), mediaDescription->icePassword());
+        iceObject->setString(ufragString(), mediaDescription.iceUfrag);
+        iceObject->setString(passwordString(), mediaDescription.icePassword);
 
         RefPtr<InspectorArray> candidatesArray = InspectorArray::create();
 
-        for (auto& candidate : mediaDescription->iceCandidates())
+        for (auto& candidate : mediaDescription.iceCandidates)
             candidatesArray->pushObject(createCandidateObject(candidate));
 
         iceObject->setArray(candidatesString(), candidatesArray);

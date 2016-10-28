@@ -217,8 +217,8 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateReceiveConfiguration(MediaEn
     for (unsigned i = m_transceivers.size(); i < configuration->mediaDescriptions().size(); ++i) {
         TransceiverConfig config;
         config.type = SessionTypeMedia;
-        config.isDtlsClient = configuration->mediaDescriptions()[i]->dtlsSetup() == "active";
-        config.mid = configuration->mediaDescriptions()[i]->mid();
+        config.isDtlsClient = configuration->mediaDescriptions()[i].dtlsSetup == "active";
+        config.mid = configuration->mediaDescriptions()[i].mid;
         transceiverConfigs.append(WTFMove(config));
     }
 
@@ -227,7 +227,7 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateReceiveConfiguration(MediaEn
     // Prepare the new sessions.
     for (unsigned i = m_numberOfReceivePreparedSessions; i < m_transceivers.size(); ++i) {
         OwrSession* session = m_transceivers[i]->session();
-        prepareMediaSession(OWR_MEDIA_SESSION(session), configuration->mediaDescriptions()[i].get(), isInitiator);
+        prepareMediaSession(OWR_MEDIA_SESSION(session), &configuration->mediaDescriptions()[i], isInitiator);
         owr_transport_agent_add_session(m_transportAgent, session);
     }
 
@@ -252,33 +252,33 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
     for (unsigned i = m_transceivers.size(); i < configuration->mediaDescriptions().size(); ++i) {
         TransceiverConfig config;
         config.type = SessionTypeMedia;
-        config.isDtlsClient = configuration->mediaDescriptions()[i]->dtlsSetup() != "active";
-        config.mid = configuration->mediaDescriptions()[i]->mid();
+        config.isDtlsClient = configuration->mediaDescriptions()[i].dtlsSetup != "active";
+        config.mid = configuration->mediaDescriptions()[i].mid;
         transceiverConfigs.append(WTFMove(config));
     }
 
     ensureTransportAgentAndTransceivers(isInitiator, transceiverConfigs);
 
     for (unsigned i = 0; i < m_transceivers.size(); ++i) {
-        OwrSession* session = m_transceivers[i]->session();
-        PeerMediaDescription& mdesc = *configuration->mediaDescriptions()[i];
+        auto* session = m_transceivers[i]->session();
+        auto& mdesc = configuration->mediaDescriptions()[i];
 
-        if (mdesc.type() == "audio" || mdesc.type() == "video")
-            g_object_set(session, "rtcp-mux", mdesc.rtcpMux(), nullptr);
+        if (mdesc.type == "audio" || mdesc.type == "video")
+            g_object_set(session, "rtcp-mux", mdesc.rtcpMux, nullptr);
 
-        if (mdesc.iceCandidates().size()) {
-            for (auto& candidate : mdesc.iceCandidates())
-                internalAddRemoteCandidate(session, candidate, mdesc.iceUfrag(), mdesc.icePassword());
+        if (mdesc.iceCandidates.size()) {
+            for (auto& candidate : mdesc.iceCandidates)
+                internalAddRemoteCandidate(session, candidate, mdesc.iceUfrag, mdesc.icePassword);
         }
 
         if (i < m_numberOfSendPreparedSessions)
             continue;
 
-        if (!sendSourceMap.contains(mdesc.mid()))
+        if (!sendSourceMap.contains(mdesc.mid))
             continue;
 
         const MediaPayload* payload = nullptr;
-        for (auto& p : mdesc.payloads()) {
+        for (auto& p : mdesc.payloads) {
             if (p.encodingName.convertToASCIIUppercase() != "RTX") {
                 payload = &p;
                 break;
@@ -288,14 +288,14 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
         if (!payload)
             return UpdateResult::Failed;
 
-        auto* rtxPayload = findRtxPayload(mdesc.payloads(), payload->type);
-        auto* source = static_cast<RealtimeMediaSourceOwr*>(sendSourceMap.get(mdesc.mid()));
+        auto* rtxPayload = findRtxPayload(mdesc.payloads, payload->type);
+        auto* source = static_cast<RealtimeMediaSourceOwr*>(sendSourceMap.get(mdesc.mid));
 
         ASSERT(codecTypes.find(payload->encodingName.convertToASCIIUppercase()) != notFound);
         auto codecType = static_cast<OwrCodecType>(codecTypes.find(payload->encodingName.convertToASCIIUppercase()));
 
         OwrPayload* sendPayload;
-        if (mdesc.type() == "audio")
+        if (mdesc.type == "audio")
             sendPayload = owr_audio_payload_new(codecType, payload->type, payload->clockRate, payload->channels);
         else {
             sendPayload = owr_video_payload_new(codecType, payload->type, payload->clockRate, payload->ccmfir, payload->nackpli);
@@ -466,8 +466,8 @@ void MediaEndpointOwr::unmuteRemoteSource(const String& mid, OwrMediaSource* rea
 
 void MediaEndpointOwr::prepareSession(OwrSession* session, PeerMediaDescription* mediaDescription)
 {
-    g_object_set_data_full(G_OBJECT(session), "ice-ufrag", g_strdup(mediaDescription->iceUfrag().ascii().data()), g_free);
-    g_object_set_data_full(G_OBJECT(session), "ice-password", g_strdup(mediaDescription->icePassword().ascii().data()), g_free);
+    g_object_set_data_full(G_OBJECT(session), "ice-ufrag", g_strdup(mediaDescription->iceUfrag.ascii().data()), g_free);
+    g_object_set_data_full(G_OBJECT(session), "ice-password", g_strdup(mediaDescription->icePassword.ascii().data()), g_free);
 
     g_signal_connect(session, "on-new-candidate", G_CALLBACK(gotCandidate), this);
     g_signal_connect(session, "on-candidate-gathering-done", G_CALLBACK(candidateGatheringDone), this);
@@ -478,28 +478,28 @@ void MediaEndpointOwr::prepareMediaSession(OwrMediaSession* mediaSession, PeerMe
 {
     prepareSession(OWR_SESSION(mediaSession), mediaDescription);
 
-    bool useRtcpMux = !isInitiator && mediaDescription->rtcpMux();
+    bool useRtcpMux = !isInitiator && mediaDescription->rtcpMux;
     g_object_set(mediaSession, "rtcp-mux", useRtcpMux, nullptr);
 
-    if (!mediaDescription->cname().isEmpty() && mediaDescription->ssrcs().size()) {
-        g_object_set(mediaSession, "cname", mediaDescription->cname().ascii().data(),
-            "send-ssrc", mediaDescription->ssrcs()[0],
+    if (!mediaDescription->cname.isEmpty() && mediaDescription->ssrcs.size()) {
+        g_object_set(mediaSession, "cname", mediaDescription->cname.ascii().data(),
+            "send-ssrc", mediaDescription->ssrcs[0],
             nullptr);
     }
 
     g_signal_connect(mediaSession, "on-incoming-source", G_CALLBACK(gotIncomingSource), this);
 
-    for (auto& payload : mediaDescription->payloads()) {
+    for (auto& payload : mediaDescription->payloads) {
         if (payload.encodingName.convertToASCIIUppercase() == "RTX")
             continue;
 
-        auto* rtxPayload = findRtxPayload(mediaDescription->payloads(), payload.type);
+        auto* rtxPayload = findRtxPayload(mediaDescription->payloads, payload.type);
 
         ASSERT(codecTypes.find(payload.encodingName) != notFound);
         OwrCodecType codecType = static_cast<OwrCodecType>(codecTypes.find(payload.encodingName.convertToASCIIUppercase()));
 
         OwrPayload* receivePayload;
-        if (mediaDescription->type() == "audio")
+        if (mediaDescription->type == "audio")
             receivePayload = owr_audio_payload_new(codecType, payload.type, payload.clockRate, payload.channels);
         else {
             receivePayload = owr_video_payload_new(codecType, payload.type, payload.clockRate, payload.ccmfir, payload.nackpli);

@@ -52,17 +52,16 @@ public:
     unsigned sessionVersion() const { return m_sessionVersion; }
     void setSessionVersion(unsigned sessionVersion) { m_sessionVersion = sessionVersion; }
 
-    const Vector<RefPtr<PeerMediaDescription>>& mediaDescriptions() const { return m_mediaDescriptions; }
-    void addMediaDescription(RefPtr<PeerMediaDescription>&& description) { m_mediaDescriptions.append(WTFMove(description)); }
+    Vector<PeerMediaDescription>& mediaDescriptions() { return m_mediaDescriptions; }
+    const Vector<PeerMediaDescription>& mediaDescriptions() const { return m_mediaDescriptions; }
+    void addMediaDescription(PeerMediaDescription&& description) { m_mediaDescriptions.append(WTFMove(description)); }
 
     RefPtr<MediaEndpointSessionConfiguration> clone() const
     {
         RefPtr<MediaEndpointSessionConfiguration> copy = create();
         copy->m_sessionId = m_sessionId;
         copy->m_sessionVersion = m_sessionVersion;
-
-        for (auto& mdesc : m_mediaDescriptions)
-            copy->m_mediaDescriptions.append(mdesc->clone());
+        copy->m_mediaDescriptions = m_mediaDescriptions;
 
         return copy;
     }
@@ -77,7 +76,7 @@ private:
     uint64_t m_sessionId;
     unsigned m_sessionVersion { 0 };
 
-    Vector<RefPtr<PeerMediaDescription>> m_mediaDescriptions;
+    Vector<PeerMediaDescription> m_mediaDescriptions;
 };
 
 } // namespace WebCore

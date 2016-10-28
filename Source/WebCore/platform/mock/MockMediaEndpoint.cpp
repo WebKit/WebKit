@@ -225,8 +225,8 @@ void MockMediaEndpoint::emulatePlatformEvent(const String& action)
 void MockMediaEndpoint::updateConfigurationMids(const MediaEndpointSessionConfiguration& configuration)
 {
     Vector<String> mids;
-    for (const RefPtr<PeerMediaDescription>& mediaDescription : configuration.mediaDescriptions())
-        mids.append(mediaDescription->mid());
+    for (auto& mediaDescription : configuration.mediaDescriptions())
+        mids.append(mediaDescription.mid);
     m_mids.swap(mids);
 }
 

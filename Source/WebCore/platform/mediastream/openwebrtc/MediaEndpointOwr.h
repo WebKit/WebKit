@@ -43,9 +43,10 @@ typedef struct _OwrTransportAgent OwrTransportAgent;
 
 namespace WebCore {
 
-class PeerMediaDescription;
 class RealtimeMediaSourceOwr;
 class RTCConfigurationPrivate;
+
+struct PeerMediaDescription;
 
 class OwrTransceiver : public RefCounted<OwrTransceiver> {
 public:
