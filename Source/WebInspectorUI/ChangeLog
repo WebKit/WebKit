@@ -1,3 +1,12 @@
+2016-10-28  Matt Baker  <mattbaker@apple.com>
+
+        Unreviewed, worker document images added
+
+        * UserInterface/Images/WorkerDocument.png: Added.
+        * UserInterface/Images/WorkerDocument@2x.png: Added.
+        * UserInterface/Images/WorkerDocumentLarge.png: Added.
+        * UserInterface/Images/WorkerDocumentLarge@2x.png: Added.
+
 2016-10-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Create general model object Collection class
