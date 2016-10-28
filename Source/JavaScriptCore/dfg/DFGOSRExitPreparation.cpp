@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "Executable.h"
 #include "JIT.h"
 #include "JITCode.h"
 #include "JITWorklist.h"

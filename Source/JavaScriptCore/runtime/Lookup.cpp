@@ -20,7 +20,6 @@
 #include "config.h"
 #include "Lookup.h"
 
-#include "Executable.h"
 #include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"

@@ -30,7 +30,6 @@
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
-#include "Executable.h"
 #include "FTLForOSREntryJITCode.h"
 #include "JSCInlines.h"
 

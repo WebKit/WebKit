@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ConstructData.h"
 
-#include "Executable.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"

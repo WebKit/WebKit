@@ -27,7 +27,6 @@
 #include "JSModuleRecord.h"
 
 #include "Error.h"
-#include "Executable.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSMap.h"

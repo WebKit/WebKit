@@ -674,13 +674,15 @@ set(JavaScriptCore_SOURCES
     runtime/ErrorHandlingScope.cpp
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
+    runtime/EvalExecutable.cpp
     runtime/Exception.cpp
     runtime/ExceptionEventLocation.cpp
     runtime/ExceptionFuzz.cpp
     runtime/ExceptionHelpers.cpp
     runtime/ExceptionScope.cpp
-    runtime/Executable.cpp
+    runtime/ExecutableBase.cpp
     runtime/FunctionConstructor.cpp
+    runtime/FunctionExecutable.cpp
     runtime/FunctionExecutableDump.cpp
     runtime/FunctionHasExecutedCache.cpp
     runtime/FunctionPrototype.cpp
@@ -785,8 +787,10 @@ set(JavaScriptCore_SOURCES
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp
     runtime/ModuleLoaderPrototype.cpp
+    runtime/ModuleProgramExecutable.cpp
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
+    runtime/NativeExecutable.cpp
     runtime/NativeStdFunctionCell.cpp
     runtime/NullGetterFunction.cpp
     runtime/NullSetterFunction.cpp
@@ -797,6 +801,7 @@ set(JavaScriptCore_SOURCES
     runtime/ObjectPrototype.cpp
     runtime/Operations.cpp
     runtime/Options.cpp
+    runtime/ProgramExecutable.cpp
     runtime/PropertyDescriptor.cpp
     runtime/PropertySlot.cpp
     runtime/PropertyTable.cpp
@@ -818,6 +823,7 @@ set(JavaScriptCore_SOURCES
     runtime/ScopeOffset.cpp
     runtime/ScopedArguments.cpp
     runtime/ScopedArgumentsTable.cpp
+    runtime/ScriptExecutable.cpp
     runtime/SetConstructor.cpp
     runtime/SetIteratorPrototype.cpp
     runtime/SetPrototype.cpp
@@ -840,9 +846,9 @@ set(JavaScriptCore_SOURCES
     runtime/SymbolObject.cpp
     runtime/SymbolPrototype.cpp
     runtime/SymbolTable.cpp
-    runtime/ThrowScope.cpp
     runtime/TemplateRegistry.cpp
     runtime/TestRunnerUtils.cpp
+    runtime/ThrowScope.cpp
     runtime/TypeLocationCache.cpp
     runtime/TypeProfiler.cpp
     runtime/TypeProfilerLog.cpp
@@ -859,6 +865,7 @@ set(JavaScriptCore_SOURCES
     runtime/WeakMapPrototype.cpp
     runtime/WeakSetConstructor.cpp
     runtime/WeakSetPrototype.cpp
+    runtime/WebAssemblyExecutable.cpp
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp

@@ -31,7 +31,6 @@
 #include "BytecodeRewriter.h"
 #include "ClassInfo.h"
 #include "CodeCache.h"
-#include "Executable.h"
 #include "ExecutableInfo.h"
 #include "FunctionOverrides.h"
 #include "JSString.h"

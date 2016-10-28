@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include "Executable.h"
+#include "FunctionExecutable.h"
 #include "JSFunction.h"
+#include "NativeExecutable.h"
+#include "WebAssemblyExecutable.h"
 
 namespace JSC {
 

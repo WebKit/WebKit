@@ -24,7 +24,6 @@
 #include "Frame.h"
 #include "JSNode.h"
 #include "ScriptController.h"
-#include <runtime/Executable.h>
 #include <runtime/FunctionConstructor.h>
 #include <runtime/IdentifierInlines.h>
 #include <wtf/NeverDestroyed.h>

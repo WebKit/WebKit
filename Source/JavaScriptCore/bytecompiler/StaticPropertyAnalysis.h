@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Executable.h"
 #include "JSGlobalObject.h"
 #include <wtf/HashSet.h>
 

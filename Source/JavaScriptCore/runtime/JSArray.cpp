@@ -27,7 +27,6 @@
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "Error.h"
-#include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
 #include "JSArrayInlines.h"

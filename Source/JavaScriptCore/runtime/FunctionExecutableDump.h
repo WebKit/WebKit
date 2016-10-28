@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "Executable.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
+
+class FunctionExecutable;
 
 class FunctionExecutableDump {
 public:

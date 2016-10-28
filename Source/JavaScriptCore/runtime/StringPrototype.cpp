@@ -27,7 +27,6 @@
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
 #include "Error.h"
-#include "Executable.h"
 #include "IntlObject.h"
 #include "JSArray.h"
 #include "JSCBuiltins.h"

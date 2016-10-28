@@ -22,7 +22,6 @@
 #include "StringConstructor.h"
 
 #include "Error.h"
-#include "Executable.h"
 #include "JITCode.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"

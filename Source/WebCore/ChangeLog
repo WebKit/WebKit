@@ -1,3 +1,15 @@
+2016-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        One file per class for Executable.h/.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=164099
+
+        Reviewed by Saam Barati.
+
+        * ForwardingHeaders/runtime/Executable.h: Removed.
+        * ForwardingHeaders/runtime/FunctionExecutable.h: Copied from Source/WebCore/ForwardingHeaders/runtime/Executable.h.
+        * bindings/js/JSLazyEventListener.cpp:
+        * bindings/js/JSMainThreadExecStateInstrumentation.h:
+
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Clean up gradient parsing

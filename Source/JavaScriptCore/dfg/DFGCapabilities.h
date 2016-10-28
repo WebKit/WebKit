@@ -27,7 +27,6 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
-#include "Executable.h"
 #include "Interpreter.h"
 #include "Intrinsic.h"
 #include "Options.h"

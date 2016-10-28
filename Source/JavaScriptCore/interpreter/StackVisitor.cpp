@@ -28,7 +28,6 @@
 
 #include "ClonedArguments.h"
 #include "DebuggerPrimitives.h"
-#include "Executable.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"

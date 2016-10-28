@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DebuggerLocation.h"
 
-#include "Executable.h"
+#include "ScriptExecutable.h"
 
 namespace JSC {
 

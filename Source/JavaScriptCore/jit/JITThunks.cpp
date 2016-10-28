@@ -28,7 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "Executable.h"
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LLIntData.h"

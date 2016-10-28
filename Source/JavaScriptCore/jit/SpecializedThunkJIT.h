@@ -27,7 +27,6 @@
 
 #if ENABLE(JIT)
 
-#include "Executable.h"
 #include "JIT.h"
 #include "JITInlines.h"
 #include "JSInterfaceJIT.h"

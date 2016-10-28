@@ -30,7 +30,6 @@
 #include "ClassInfo.h"
 #include "CodeCache.h"
 #include "Debugger.h"
-#include "Executable.h"
 #include "ExecutableInfo.h"
 #include "FunctionOverrides.h"
 #include "JSCInlines.h"

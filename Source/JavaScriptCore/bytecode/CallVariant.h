@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Executable.h"
+#include "FunctionExecutable.h"
 #include "JSCell.h"
 #include "JSFunction.h"
 

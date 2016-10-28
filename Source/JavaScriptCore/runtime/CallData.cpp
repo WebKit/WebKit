@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CallData.h"
 
-#include "Executable.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
