@@ -98,6 +98,16 @@ inline CCallHelpers::Jump branchIfNotDOMWrapper(CCallHelpers& jit, GPRReg target
         CCallHelpers::TrustedImm32(JSC::JSType(JSDOMWrapperType)));
 }
 
+inline CCallHelpers::Jump branchIfEvent(CCallHelpers& jit, GPRReg target)
+{
+    return jit.branchIfType(target, JSC::JSType(JSEventType));
+}
+
+inline CCallHelpers::Jump branchIfNotEvent(CCallHelpers& jit, GPRReg target)
+{
+    return jit.branchIfNotType(target, JSC::JSType(JSEventType));
+}
+
 inline CCallHelpers::Jump branchIfNode(CCallHelpers& jit, GPRReg target)
 {
     return jit.branch8(

@@ -27,6 +27,7 @@ typedef unsigned long long DOMTimeStamp;
     CustomToJSObject,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
+    JSCustomHeader,
 ] interface Event {
     // PhaseType
     const unsigned short NONE = 0;

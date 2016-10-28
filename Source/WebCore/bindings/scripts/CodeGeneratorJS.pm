@@ -1216,7 +1216,7 @@ sub GenerateDictionariesImplementationContent
 
 sub GetJSTypeForNode
 {
-    my ($codeGenerator, $interface) = @_;
+    my ($interface) = @_;
 
     if ($codeGenerator->InheritsInterface($interface, "Document")) {
         return "JSDocumentWrapperType";
@@ -1446,8 +1446,10 @@ sub GenerateHeader
     if (IsDOMGlobalObject($interface)) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
-        my $type = GetJSTypeForNode($codeGenerator, $interface);
+        my $type = GetJSTypeForNode($interface);
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info());\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info());\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     }
@@ -2488,6 +2490,7 @@ sub GetCastingHelperForThisObject
     return "jsElementCast" if $interfaceName eq "Element";
     return "jsDocumentCast" if $interfaceName eq "Document";
     return "jsEventTargetCast" if $interfaceName eq "EventTarget";
+    return "jsEventCast" if $interfaceName eq "Event";
     return "jsDynamicCast<JS$interfaceName*>";
 }
 

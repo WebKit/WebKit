@@ -1,3 +1,38 @@
+2016-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOM] Add JSEventType
+        https://bugs.webkit.org/show_bug.cgi?id=164096
+
+        Reviewed by Darin Adler.
+
+        Event is inherited by many Event classes. But, Event's accessors and interfaces are
+        frequently called. For example, event.{type, target, srcElement} for accessors. And
+        event.stopPropagation() and event.preventDefault() functions.
+
+        However, since the user-visible event instance is typically the instance of the subclass,
+        jsDynamicCast<JSEvent*>() walks several classes before it succeeds. It is costly.
+
+        In this patch, we add a new WebCore JSType JSEventType for JSEvent and add a new
+        function jsEventCast. That supports a super fast cast operation. And it paves the way
+        for implementing DOM accessors of Event in DOMJIT.
+
+        No behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSEventCustom.h: Added.
+        (WebCore::jsEventCast):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetJSTypeForNode):
+        (GenerateHeader):
+        (GetCastingHelperForThisObject):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::createStructure):
+        * dom/Event.idl:
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::branchIfEvent):
+        (WebCore::DOMJIT::branchIfNotEvent):
+
 2016-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Rename StyleRareNonInheritedData::opacity to m_opacity
