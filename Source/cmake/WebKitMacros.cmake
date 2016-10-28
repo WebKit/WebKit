@@ -106,6 +106,9 @@ function(GENERATE_BINDINGS target)
     set(common_generator_dependencies
         ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl
         ${SCRIPTS_BINDINGS}
+        # Changing enabled features should trigger recompiling all IDL files
+        # because some of them use #if.
+        ${CMAKE_BINARY_DIR}/cmakeconfig.h
     )
     if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
         list(APPEND common_generator_dependencies ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
