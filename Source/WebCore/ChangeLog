@@ -1,3 +1,13 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Allow unknown properties in will-change
+        https://bugs.webkit.org/show_bug.cgi?id=164165
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWillChange):
+
 2016-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Partially revert 207805 after resolution in URL spec issue 87

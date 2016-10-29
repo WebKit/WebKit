@@ -393,7 +393,8 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
             // Need to return nullptr when currentValue is CSSPropertyAll.
             if (propertyID == CSSPropertyWillChange || propertyID == CSSPropertyAll)
                 return nullptr;
-            values->append(CSSCustomIdentValue::create(propertyID));
+            // FIXME-NEWPARSER: Use CSSCustomIdentValue someday.
+            values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
             range.consumeIncludingWhitespace();
         } else {
             switch (range.peek().id()) {
@@ -409,7 +410,8 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
                 values->append(consumeIdent(range).releaseNonNull());
                 break;
             default:
-                range.consumeIncludingWhitespace();
+                // Append properties we don't recognize, but that are legal, as strings.
+                values->append(consumeCustomIdent(range).releaseNonNull());
                 break;
             }
         }
