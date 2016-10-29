@@ -1,5 +1,16 @@
 2016-10-29  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support -webkit-aspect-ratio
+        https://bugs.webkit.org/show_bug.cgi?id=164187
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitAspectRatio):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Support the caps lock indicator appearance
         https://bugs.webkit.org/show_bug.cgi?id=164186
 

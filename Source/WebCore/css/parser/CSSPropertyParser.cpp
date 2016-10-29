@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSPropertyParser.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
@@ -3246,6 +3247,21 @@ static RefPtr<CSSValue> consumeAlt(CSSParserTokenRange& range, const CSSParserCo
     return consumeAttr(consumeFunction(range), context);
 }
 
+static RefPtr<CSSValue> consumeWebkitAspectRatio(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == IdentToken)
+        return consumeIdent<CSSValueAuto, CSSValueFromDimensions, CSSValueFromIntrinsic>(range);
+    
+    RefPtr<CSSPrimitiveValue> leftValue = consumeNumber(range, ValueRangeNonNegative);
+    if (!leftValue || range.atEnd() || !consumeSlashIncludingWhitespace(range))
+        return nullptr;
+    RefPtr<CSSPrimitiveValue> rightValue = consumeNumber(range, ValueRangeNonNegative);
+    if (!rightValue)
+        return nullptr;
+    
+    return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3631,6 +3647,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeWebkitMarqueeSpeed(m_range, m_context.mode);
     case CSSPropertyAlt:
         return consumeAlt(m_range, m_context);
+    case CSSPropertyWebkitAspectRatio:
+        return consumeWebkitAspectRatio(m_range);
     default:
         return nullptr;
     }
