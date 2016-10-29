@@ -3295,6 +3295,14 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeTabSize(m_range, m_context.mode);
 #if ENABLE(TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
+        // FIXME: Support toggling the validation of this property via a runtime setting that is independent of
+        // whether isTextAutosizingEnabled() is true. We want to enable this property on iOS, when simulating
+        // a iOS device in Safari's responsive design mode and when optionally enabled in DRT/WTR. Otherwise,
+        // this property should be disabled by default.
+#if !PLATFORM(IOS)
+        if (!m_context.textAutosizingEnabled)
+            return nullptr;
+#endif
         return consumeTextSizeAdjust(m_range, m_context.mode);
 #endif
     case CSSPropertyFontSize:

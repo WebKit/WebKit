@@ -1,5 +1,15 @@
 2016-10-29  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Disable -webkit-text-size-adjust when the context says to.
+        https://bugs.webkit.org/show_bug.cgi?id=164191
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Match old parser's image-rendering values
         https://bugs.webkit.org/show_bug.cgi?id=164190
 
