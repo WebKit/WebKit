@@ -1,3 +1,39 @@
+2016-10-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][Win] Visual Studio invokes make_settings.pl twice
+        https://bugs.webkit.org/show_bug.cgi?id=163774
+
+        Reviewed by Michael Catanzaro.
+
+        build-webkit recompiles some files just after finishing
+        build-webkit in case of using CMake VisualStudio generator because
+        both WebCoreDerivedSources.vcxproj and WebCoreTestSupport.vcxproj
+        triggers make_settings.pl.
+
+        make_settings.pl generates four files
+        InternalSettingsGenerated.{h,cpp,idl} and SettingsMacros.h.
+        WebCoreDerivedSources depends on SettingsMacros.h, and
+        WebCoreTestSupport depends on InternalSettingsGenerated.cpp.
+
+        This problem is described in CMake documentation:
+        <https://cmake.org/cmake/help/v3.0/command/add_custom_command.html>
+
+        > Do not list the output in more than one independent target that may
+        > build in parallel or the two instances of the rule may conflict
+
+        To solve this problem, only SettingsMacros.h is specified as
+        OUTPUT of add_custom_command, and other generated files are marked
+        as BYPRODUCTS.  As the result, only WebCoreDerivedSources target
+        triggers make_settings.pl. And other targets already have a
+        dependency to WebCoreDerivedSources target.
+
+        To support earlier versions than CMake 3.2, it uses GENERATED
+        source file property instead of BYPRODUCTS option.
+
+        * Source/cmake/WebKitMacros.cmake(GENERATE_SETTINGS_MACROS):
+        Removed extra output files from OUTPUT of add_custom_command and
+        added BYPRODUCTS option.
+
 2016-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Changing enabled features should trigger recompiling all IDL

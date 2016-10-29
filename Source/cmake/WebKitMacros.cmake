@@ -185,12 +185,25 @@ endmacro()
 macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/page/make_settings.pl)
 
+    # Do not list the output in more than one independent target that may
+    # build in parallel or the two instances of the rule may conflict.
+    # <https://cmake.org/cmake/help/v3.0/command/add_custom_command.html>
+    set(_extra_output
+        ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.h
+        ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp
+        ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
+    )
+    set(_args BYPRODUCTS ${_extra_output})
+    if (${CMAKE_VERSION} VERSION_LESS 3.2)
+        set_source_files_properties(${_extra_output} PROPERTIES GENERATED 1)
+        set(_args)
+    endif ()
     add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile} ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.h ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
-        VERBATIM)
+        VERBATIM ${_args})
 endmacro()
 
 
