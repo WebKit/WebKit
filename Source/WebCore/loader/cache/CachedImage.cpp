@@ -96,6 +96,8 @@ void CachedImage::setBodyDataFrom(const CachedResource& resource)
     ASSERT(resource.type() == type());
     const CachedImage& image = static_cast<const CachedImage&>(resource);
 
+    CachedResource::setBodyDataFrom(resource);
+
     m_image = image.m_image;
 
     if (m_image && is<SVGImage>(*m_image))

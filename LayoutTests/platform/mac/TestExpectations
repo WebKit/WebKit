@@ -1456,7 +1456,5 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
 
-webkit.org/b/163922 http/tests/security/svg-image-with-css-cross-domain.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
 webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]

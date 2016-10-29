@@ -282,6 +282,8 @@ protected:
 
     virtual void didReplaceSharedBufferContents() { }
 
+    virtual void setBodyDataFrom(const CachedResource&);
+
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;
     ResourceRequest m_resourceRequest;
@@ -301,7 +303,6 @@ private:
 
     virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const { return false; }
-    virtual void setBodyDataFrom(const CachedResource&);
 
     std::chrono::microseconds freshnessLifetime(const ResourceResponse&) const;
 
