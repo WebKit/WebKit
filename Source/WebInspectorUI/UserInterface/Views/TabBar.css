@@ -119,8 +119,7 @@ body.mavericks .tab-bar > .item:not(.disabled).selected {
     border-top-color: hsl(0, 0%, 68%);
 }
 
-.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
-.tab-bar > .item.new-tab-button:not(.disabled):hover {
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover {
     background-position: 0 100%;
     border-top-color: hsl(0, 0%, 59%);
     border-left-color: hsl(0, 0%, 59%);
@@ -191,7 +190,7 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
     flex: 1;
 }
 
-.tab-bar > .item > .flex-space:last-child {
+.tab-bar > .item:not(.pinned) > .flex-space:last-child {
     margin-right: 16px;
 }
 
@@ -207,6 +206,13 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
     -webkit-user-drag: none;
 }
 
+.tab-bar > .item.pinned > .icon {
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+}
+
 .tab-bar > .item.selected > .icon {
     opacity: 0.7;
 }
@@ -215,15 +221,7 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
     opacity: 0.35;
 }
 
-.tab-bar > .item.new-tab-button > .icon {
-    width: 15px;
-    height: 15px;
-    min-width: 15px;
-    min-height: 15px;
-}
-
-.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon,
-.tab-bar > .item.new-tab-button:not(.disabled):hover > .icon {
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
     opacity: 0.6;
 }
 

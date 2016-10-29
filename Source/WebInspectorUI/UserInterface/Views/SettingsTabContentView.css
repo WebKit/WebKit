@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInspector.ContentBrowserTabContentView
-{
-    constructor(identifier)
-    {
-        let {image, title} = WebInspector.NetworkTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
-        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+.content-view.settings {
+    display: flex;
+    flex-direction: column;
+    font-weight: lighter;
+}
 
-        super(identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanels);
-    }
+.content-view.settings > .header {
+    margin: 70px auto 40px;
+    text-align: center;
+    font-size: 48px;
+}
 
-    static tabInfo()
-    {
-        return {
-            image: "Images/Network.svg",
-            title: WebInspector.UIString("Network"),
-        };
-    }
+.content-view.settings > .setting-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 14px;
+}
 
-    static isTabAllowed()
-    {
-        return !!window.NetworkAgent && !!window.PageAgent;
-    }
+.content-view.settings > .setting-container > .setting-name {
+    width: 50%;
+    margin-right: 2px;
+    text-align: right;
+}
 
-    // Public
+.content-view.settings > .setting-container > .setting-value-controller {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    margin-left: 2px;
+}
 
-    get type()
-    {
-        return WebInspector.NetworkTabContentView.Type;
-    }
-
-    canShowRepresentedObject(representedObject)
-    {
-        return representedObject instanceof WebInspector.Resource;
-    }
-
-    get supportsSplitContentBrowser()
-    {
-        return false;
-    }
-};
-
-WebInspector.NetworkTabContentView.Type = "network";
+.content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+    max-width: 50px;
+    margin: 0 5px;
+    text-align: right;
+}

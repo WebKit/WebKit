@@ -28,7 +28,7 @@ WebInspector.ConsoleTabContentView = class ConsoleTabContentView extends WebInsp
     constructor(identifier)
     {
         let {image, title} = WebInspector.ConsoleTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
 
         super(identifier || "console", "console", tabBarItem, null, null, true);
     }

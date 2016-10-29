@@ -28,7 +28,7 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
     constructor(identifier)
     {
         let {image, title} = WebInspector.ElementsTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel];
 
         if (WebInspector.layerTreeDetailsSidebarPanel)

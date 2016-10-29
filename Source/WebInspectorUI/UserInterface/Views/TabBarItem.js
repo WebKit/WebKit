@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
 
 WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
 {
-    constructor(image, title, pinned, representedObject)
+    constructor(image, title, representedObject)
     {
         super();
 
@@ -35,32 +36,15 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
         this._element.classList.add(WebInspector.TabBarItem.StyleClassName);
         this._element.setAttribute("role", "tab");
         this._element.tabIndex = 0;
-        if (pinned)
-            this._element.classList.add("pinned");
         this._element[WebInspector.TabBarItem.ElementReferenceSymbol] = this;
 
-        if (!pinned) {
-            this._closeButtonElement = document.createElement("div");
-            this._closeButtonElement.classList.add(WebInspector.TabBarItem.CloseButtonStyleClassName);
-            this._closeButtonElement.title = WebInspector.UIString("Click to close this tab");
-            this._element.appendChild(this._closeButtonElement);
-
-            var flexSpaceElement = document.createElement("div");
-            flexSpaceElement.classList.add("flex-space");
-            this._element.appendChild(flexSpaceElement);
-
-            this._element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
-        }
+        this._element.createChild("div", "flex-space");
 
         this._iconElement = document.createElement("img");
         this._iconElement.classList.add("icon");
         this._element.appendChild(this._iconElement);
 
-        if (!pinned) {
-            var flexSpaceElement = document.createElement("div");
-            flexSpaceElement.classList.add("flex-space");
-            this._element.appendChild(flexSpaceElement);
-        }
+        this._element.createChild("div", "flex-space");
 
         this.title = title;
         this.image = image;
@@ -69,30 +53,13 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
+    get element() { return this._element; }
 
-    get representedObject()
-    {
-        return this._representedObject;
-    }
+    get representedObject() { return this._representedObject; }
+    set representedObject(representedObject) { this._representedObject = representedObject || null; }
 
-    set representedObject(representedObject)
-    {
-        this._representedObject = representedObject || null;
-    }
-
-    get parentTabBar()
-    {
-        return this._parentTabBar;
-    }
-
-    set parentTabBar(tabBar)
-    {
-        this._parentTabBar = tabBar || null;
-    }
+    get parentTabBar() { return this._parentTabBar; }
+    set parentTabBar(tabBar){ this._parentTabBar = tabBar || null; }
 
     get selected()
     {
@@ -129,76 +96,11 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
         this._element.classList.toggle("default-tab", isDefaultTab);
     }
 
-    get pinned()
-    {
-        return this._element.classList.contains("pinned");
-    }
+    get image() { return this._iconElement.src; }
+    set image(url) { this._iconElement.src = url || ""; }
 
-    get image()
-    {
-        return this._iconElement.src;
-    }
-
-    set image(url)
-    {
-        this._iconElement.src = url || "";
-    }
-
-    get title()
-    {
-        return this._element.title || "";
-    }
-
-    set title(title)
-    {
-        if (title && !this.pinned) {
-            this._titleElement = document.createElement("span");
-            this._titleElement.classList.add("title");
-
-            this._titleContentElement = document.createElement("span");
-            this._titleContentElement.classList.add("content");
-            this._titleElement.appendChild(this._titleContentElement);
-
-            this._titleContentElement.textContent = title;
-
-            this._element.insertBefore(this._titleElement, this._element.lastChild);
-        } else {
-            if (this._titleElement)
-                this._titleElement.remove();
-
-            this._titleContentElement = null;
-            this._titleElement = null;
-        }
-
-        this._element.title = title || "";
-    }
-
-    // Private
-
-    _handleContextMenuEvent(event)
-    {
-        if (!this._parentTabBar)
-            return;
-
-        let closeTab = () => {
-            this._parentTabBar.removeTabBarItem(this);
-        };
-
-        let closeOtherTabs = () => {
-            let tabBarItems = this._parentTabBar.tabBarItems;
-            for (let i = tabBarItems.length - 1; i >= 0; --i) {
-                let item = tabBarItems[i];
-                if (item === this || item.pinned)
-                    continue;
-                this._parentTabBar.removeTabBarItem(item);
-            }
-        };
-
-        let hasOtherNonPinnedTabs = this._parentTabBar.tabBarItems.some((item) => item !== this && !item.pinned);
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab, this.isDefaultTab);
-        contextMenu.appendItem(WebInspector.UIString("Close Other Tabs"), closeOtherTabs, !hasOtherNonPinnedTabs);
-    }
+    get title() { return this._element.title || ""; }
+    set title(title) { this._element.title = title || ""; }
 };
 
 WebInspector.TabBarItem.StyleClassName = "item";

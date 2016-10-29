@@ -101,3 +101,12 @@ WebInspector.Setting = class Setting extends WebInspector.Object
 WebInspector.Setting.Event = {
     Changed: "setting-changed"
 };
+
+WebInspector.settings = {
+    enableLineWrapping: new WebInspector.Setting("enable-line-wrapping", false),
+    indentUnit: new WebInspector.Setting("indent-unit", 4),
+    tabSize: new WebInspector.Setting("tab-size", 4),
+    indentWithTabs: new WebInspector.Setting("indent-with-tabs", false),
+    showWhitespaceCharacters: new WebInspector.Setting("show-whitespace-characters", false),
+    showInvalidCharacters: new WebInspector.Setting("show-invalid-characters", false),
+};

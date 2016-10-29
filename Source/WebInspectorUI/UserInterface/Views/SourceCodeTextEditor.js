@@ -144,6 +144,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     close()
     {
+        super.close();
+
         if (this._supportsDebugging) {
             WebInspector.Breakpoint.removeEventListener(null, null, this);
             WebInspector.debuggerManager.removeEventListener(null, null, this);
@@ -1646,10 +1648,11 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                 this._popover.update();
             });
 
-            // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
             const isModule = false;
+            const indentString = WebInspector.indentString();
+            const includeSourceMapData = false;
             let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
-            workerProxy.formatJavaScript(data.description, isModule, "    ", false, ({formattedText}) => {
+            workerProxy.formatJavaScript(data.description, isModule, indentString, includeSourceMapData, ({formattedText}) => {
                 codeMirror.setValue(formattedText || data.description);
             });
 

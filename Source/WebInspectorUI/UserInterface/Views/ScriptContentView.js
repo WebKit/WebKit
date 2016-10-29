@@ -107,16 +107,22 @@ WebInspector.ScriptContentView = class ScriptContentView extends WebInspector.Co
 
     shown()
     {
+        super.shown();
+
         this._textEditor.shown();
     }
 
     hidden()
     {
+        super.hidden();
+
         this._textEditor.hidden();
     }
 
     closed()
     {
+        super.closed();
+
         WebInspector.showJavaScriptTypeInformationSetting.removeEventListener(null, null, this);
 
         this._textEditor.close();

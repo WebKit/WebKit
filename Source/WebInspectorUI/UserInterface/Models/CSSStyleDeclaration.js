@@ -302,21 +302,20 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
     generateCSSRuleString()
     {
-        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-        const indentation = "    ";
+        let indentString = WebInspector.indentString();
         let styleText = "";
         let mediaList = this.mediaList;
         let mediaQueriesCount = mediaList.length;
         for (let i = mediaQueriesCount - 1; i >= 0; --i)
-            styleText += indentation.repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
+            styleText += indentString.repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
 
-        styleText += indentation.repeat(mediaQueriesCount) + this.selectorText + " {\n";
+        styleText += indentString.repeat(mediaQueriesCount) + this.selectorText + " {\n";
 
         for (let property of this._properties) {
             if (property.anonymous)
                 continue;
 
-            styleText += indentation.repeat(mediaQueriesCount + 1) + property.text.trim();
+            styleText += indentString.repeat(mediaQueriesCount + 1) + property.text.trim();
 
             if (!styleText.endsWith(";"))
                 styleText += ";";
@@ -325,7 +324,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         }
 
         for (let i = mediaQueriesCount; i > 0; --i)
-            styleText += indentation.repeat(i) + "}\n";
+            styleText += indentString.repeat(i) + "}\n";
 
         styleText += "}";
 

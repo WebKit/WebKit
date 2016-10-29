@@ -28,7 +28,7 @@ WebInspector.StorageTabContentView = class StorageTabContentView extends WebInsp
     constructor(identifier)
     {
         let {image, title} = WebInspector.StorageTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel, WebInspector.indexedDatabaseDetailsSidebarPanel];
 
         super(identifier || "storage", "storage", tabBarItem, WebInspector.StorageSidebarPanel, detailsSidebarPanels);

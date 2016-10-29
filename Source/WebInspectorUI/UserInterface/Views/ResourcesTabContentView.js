@@ -28,7 +28,7 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
     constructor(identifier)
     {
         let {image, title} = WebInspector.ResourcesTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         // FIXME: Until ContentFlows are moved to the Elements tab, these details sidebar panels need to be included.

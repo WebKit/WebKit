@@ -1,3 +1,206 @@
+2016-10-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Preferences for Text Editor behavior
+        https://bugs.webkit.org/show_bug.cgi?id=149120
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector.contentLoaded.setTabSize):
+        (WebInspector.contentLoaded.setInvalidCharacterClassName):
+        (WebInspector.contentLoaded.setWhitespaceCharacterClassName):
+        (WebInspector._tryToRestorePendingTabs):
+        (WebInspector.indentString):
+        (WebInspector._updateNewTabButtonState): Deleted.
+        (WebInspector._newTabItemClicked): Deleted.
+        Removed calls to the New Tab tab bar item on the Tab Bar instance.
+        Added listener to the indentUnit setting to change the tab-size value on <body>.
+        Created helper function to generate the indentString value from settings.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.indentString):
+        Assume indent string is "    " for tests.
+
+        * UserInterface/Base/Setting.js:
+        Added global WebInspector.settings dictionary for holding settings with UI editors.
+
+        * UserInterface/Main.html:
+        Added GeneralTabBarItem, PinnedTabBarItem, and SettingsTabContentView.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.generateCSSRuleString):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._formattedContentFromEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update):
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.generateFormattedTextForNewProperty):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        Now uses WebInspector.indentUnit for indentation values
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Added "showWhitespaceCharacter" option to CodeMirror.  When enabled, it adds an overlay to
+        the editor that will use pseudo-elements to display whitespace characters (unicode 00B7).
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .cm-tab):
+        (.show-whitespace-characters .CodeMirror .cm-tab::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-1::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-2::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-3::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-4::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-5::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-6::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-7::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-8::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-9::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-10::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-11::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-12::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-13::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-14::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-15::before):
+        (.show-whitespace-characters .CodeMirror .cm-whitespace-16::before):
+        (.show-invalid-characters .CodeMirror .cm-invalidchar):
+        (.CodeMirror .cm-invalidchar): Deleted.
+        Use unicode character 00B7 (middle dot) to display a space.  Also uses a grey border for
+        visualizing tab characters.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Views/ClusterContentView.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DatabaseContentView.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        * UserInterface/Views/NetworkGridContentView.js:
+        * UserInterface/Views/ResourceContentView.js:
+        * UserInterface/Views/ScriptContentView.js:
+        * UserInterface/Views/TabContentView.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        Add calls to super.shown(), super.hidden(), and super.closed().
+
+        * UserInterface/Views/ConsoleTabContentView.js:
+        * UserInterface/Views/DebuggerTabContentView.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        * UserInterface/Views/NetworkTabContentView.js:
+        * UserInterface/Views/NewTabContentView.js:
+        * UserInterface/Views/ResourcesTabContentView.js:
+        * UserInterface/Views/SearchTabContentView.js:
+        * UserInterface/Views/StorageTabContentView.js:
+        * UserInterface/Views/TimelineTabContentView.js:
+        Now uses WebInspector.GeneralTabBarItem.
+
+        * UserInterface/Views/GeneralTabBarItem.js: Added.
+        (WebInspector.GeneralTabBarItem):
+        (WebInspector.GeneralTabBarItem.prototype.set title):
+        (WebInspector.GeneralTabBarItem.prototype._handleContextMenuEvent):
+        Split from TabBarItem.js to make pinned tab bar items more distinct.
+
+        * UserInterface/Views/Main.css:
+        (body):
+        Removed tab-size.
+
+        * UserInterface/Views/PinnedTabBarItem.js: Added.
+        (WebInspector.PinnedTabBarItem):
+        Split from TabBarItem.js to make pinned tab bar items more distinct.
+
+        * UserInterface/Views/SettingsTabContentView.css: Added.
+        (.content-view.settings):
+        (.content-view.settings > .header):
+        (.content-view.settings > .setting-container):
+        (.content-view.settings > .setting-container > .setting-name):
+        (.content-view.settings > .setting-container > .setting-value-controller):
+        (.content-view.settings > .setting-container > .setting-value-controller input[type="number"]):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView):
+        (WebInspector.SettingsTabContentView.tabInfo):
+        (WebInspector.SettingsTabContentView.isEphemeral):
+        (WebInspector.SettingsTabContentView.shouldSaveTab):
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        (WebInspector.SettingsTabContentView.isTabAllowed): Deleted.
+        (WebInspector.SettingsTabContentView.prototype.get type): Deleted.
+        Added logic to display an appropriate editor for each item in WebInspector.settings.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        Add call to super.close().
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover):
+        (.tab-bar > .item:not(.pinned) > .flex-space:last-child):
+        (.tab-bar > .item.pinned > .icon):
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon):
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,): Deleted.
+        (.tab-bar > .item > .flex-space:last-child): Deleted.
+        (.tab-bar > .item.new-tab-button > .icon): Deleted.
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon,): Deleted.
+        Removed rules specifically targeting `.new-tab-button`.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.get newTabTabBarItem):
+        (WebInspector.TabBar.prototype.updateNewTabTabBarItemState):
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.removeTabBarItem.animateTabs):
+        (WebInspector.TabBar.prototype.removeTabBarItem):
+        (WebInspector.TabBar.prototype.selectPreviousTab):
+        (WebInspector.TabBar.prototype.selectNextTab):
+        (WebInspector.TabBar.prototype.set selectedTabBarItem):
+        (WebInspector.TabBar.prototype.hasNormalTab):
+        (WebInspector.TabBar.prototype.layout):
+        (WebInspector.TabBar.prototype._hasMoreThanOneNormalTab):
+        (WebInspector.TabBar.prototype._handleMouseDown):
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+        (WebInspector.TabBar.prototype._handleMouseLeave):
+        (WebInspector.TabBar.prototype._handleNewTabClick):
+        (WebInspector.TabBar.prototype._handleNewTabMouseEnter):
+        (WebInspector.TabBar.prototype.get newTabItem): Deleted.
+        (WebInspector.TabBar.prototype.set newTabItem): Deleted.
+        Replaced the newTabItem setter by adding a saved pinned tab bar item (instead of relying
+        upon a different object to give it the pinned tab bar item) that changes modes depending on
+        whether a new tab is able to be created.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WebInspector.TabBarItem):
+        (WebInspector.TabBarItem.prototype.get element):
+        (WebInspector.TabBarItem.prototype.get representedObject):
+        (WebInspector.TabBarItem.prototype.set representedObject):
+        (WebInspector.TabBarItem.prototype.get parentTabBar):
+        (WebInspector.TabBarItem.prototype.set parentTabBar):
+        (WebInspector.TabBarItem.prototype.get image):
+        (WebInspector.TabBarItem.prototype.set image):
+        (WebInspector.TabBarItem.prototype.get title):
+        (WebInspector.TabBarItem.prototype.set title):
+        (WebInspector.TabBarItem.prototype.get pinned): Deleted.
+        (WebInspector.TabBarItem.prototype._handleContextMenuEvent): Deleted.
+        Split into GeneralTabBarItem and PinnedTabBarItem to simplify the logic of the DOM and allow
+        for easier checking of whether a tab bar item is pinned or not.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype.addTabForContentView):
+        (WebInspector.TabBrowser.prototype.closeTabForContentView):
+        (WebInspector.TabBrowser.prototype._tabBarItemSelected):
+        (WebInspector.TabBrowser.prototype._tabBarItemRemoved):
+        Replaced references to newTabItem with a set number (since each TabBar has a specific number
+        of pinned tabs).
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.close):.
+        Remove settings update event listeners to allow garbage collection.
+
+        (WebInspector.TextEditor.prototype._startWorkerPrettyPrint):
+        (WebInspector.TextEditor.prototype._startCodeMirrorPrettyPrint):
+        Now uses the settings values in WebInspector.setting for settings on the CodeMirror
+        instance.  Also updates the CodeMirror instance if any setting changes.
+
 2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include parameter strings for native CustomElementRegistry methods in the console

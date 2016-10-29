@@ -1466,12 +1466,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _formattedContentFromEditor()
     {
-        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-        var indentString = "    ";
-        var builder = new FormatterContentBuilder(indentString);
-        var formatter = new WebInspector.Formatter(this._codeMirror, builder);
-        var start = {line: 0, ch: 0};
-        var end = {line: this._codeMirror.lineCount() - 1};
+        let indentString = WebInspector.indentString();
+        let builder = new FormatterContentBuilder(indentString);
+        let formatter = new WebInspector.Formatter(this._codeMirror, builder);
+        let start = {line: 0, ch: 0};
+        let end = {line: this._codeMirror.lineCount() - 1};
         formatter.format(start, end);
 
         return builder.formattedContent.trim();
@@ -1543,8 +1542,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             let selectionHead = this._codeMirror.getCursor("head");
             let whitespaceRegex = /\s+/g;
 
-            // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-            this._linePrefixWhitespace = "    ";
+            this._linePrefixWhitespace = WebInspector.indentString();
+
             let styleTextPrefixWhitespace = styleText.match(/^\s*/);
 
             // If there is a match and the style text contains a newline, attempt to pull out the prefix whitespace

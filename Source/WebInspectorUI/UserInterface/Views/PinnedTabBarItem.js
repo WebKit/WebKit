@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInspector.ContentBrowserTabContentView
+WebInspector.PinnedTabBarItem = class PinnedTabBarItem extends WebInspector.TabBarItem
 {
-    constructor(identifier)
+    constructor(image, title, representedObject)
     {
-        let {image, title} = WebInspector.NetworkTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
-        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        super(image, title, representedObject);
 
-        super(identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanels);
-    }
-
-    static tabInfo()
-    {
-        return {
-            image: "Images/Network.svg",
-            title: WebInspector.UIString("Network"),
-        };
-    }
-
-    static isTabAllowed()
-    {
-        return !!window.NetworkAgent && !!window.PageAgent;
-    }
-
-    // Public
-
-    get type()
-    {
-        return WebInspector.NetworkTabContentView.Type;
-    }
-
-    canShowRepresentedObject(representedObject)
-    {
-        return representedObject instanceof WebInspector.Resource;
-    }
-
-    get supportsSplitContentBrowser()
-    {
-        return false;
+        this.element.classList.add("pinned");
     }
 };
-
-WebInspector.NetworkTabContentView.Type = "network";

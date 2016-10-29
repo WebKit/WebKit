@@ -28,7 +28,7 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
     constructor(identifier)
     {
         let {image, title} = WebInspector.DebuggerTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         super(identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);

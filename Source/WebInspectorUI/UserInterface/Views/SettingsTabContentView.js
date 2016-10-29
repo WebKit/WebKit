@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +28,25 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Gear.svg", WebInspector.UIString("Settings"), true);
+        let tabBarItem = new WebInspector.PinnedTabBarItem("Images/Gear.svg", WebInspector.UIString("Open Settings"));
 
         super(identifier || "settings", "settings", tabBarItem);
+
+        // Ensures that the Settings tab is displayable from a pinned tab bar item.
+        tabBarItem.representedObject = this;
     }
 
-    static isTabAllowed()
+    static tabInfo()
     {
-        // FIXME (149284): This tab isn't ready to be shown yet.
-        return false;
+        return {
+            image: "Images/Gear.svg",
+            title: WebInspector.UIString("Settings"),
+        };
+    }
+
+    static isEphemeral()
+    {
+        return true;
     }
 
     static shouldSaveTab()
@@ -48,6 +59,95 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
     get type()
     {
         return WebInspector.SettingsTabContentView.Type;
+    }
+
+    initialLayout()
+    {
+        let header = this.element.createChild("div", "header");
+        header.textContent = WebInspector.UIString("Settings");
+
+        let createContainer = (title, createValueController) => {
+            let container = this.element.createChild("div", "setting-container");
+
+            let titleContainer = container.createChild("div", "setting-name");
+            titleContainer.textContent = title;
+
+            let valueControllerContainer = container.createChild("div", "setting-value-controller");
+            if (typeof createValueController === "function")
+                createValueController(valueControllerContainer);
+        };
+
+        let createCheckbox = (setting) => {
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = setting.value;
+            checkbox.addEventListener("change", (event) => {
+                setting.value = checkbox.checked;
+            });
+            return checkbox;
+        };
+
+        createContainer(WebInspector.UIString("Prefer indent using:"), (valueControllerContainer) => {
+            let select = valueControllerContainer.createChild("select");
+            select.addEventListener("change", (event) => {
+                WebInspector.settings.indentWithTabs.value = select.value === "tabs";
+            });
+
+            let tabsOption = select.createChild("option");
+            tabsOption.value = "tabs";
+            tabsOption.textContent = WebInspector.UIString("Tabs");
+            tabsOption.selected = WebInspector.settings.indentWithTabs.value;
+
+            let spacesOption = select.createChild("option");
+            spacesOption.value = "spaces";
+            spacesOption.textContent = WebInspector.UIString("Spaces");
+            spacesOption.selected = !WebInspector.settings.indentWithTabs.value;
+        });
+
+        createContainer(WebInspector.UIString("Tab width:"), (valueControllerContainer) => {
+            let input = valueControllerContainer.createChild("input");
+            input.type = "number";
+            input.min = 1;
+            input.value = WebInspector.settings.tabSize.value;
+            input.addEventListener("change", (event) => {
+                WebInspector.settings.tabSize.value = parseInt(input.value) || 4;
+            });
+
+            valueControllerContainer.append(WebInspector.UIString("spaces"));
+        });
+
+        createContainer(WebInspector.UIString("Indent width:"), (valueControllerContainer) => {
+            let input = valueControllerContainer.createChild("input");
+            input.type = "number";
+            input.min = 1;
+            input.value = WebInspector.settings.indentUnit.value;
+            input.addEventListener("change", (event) => {
+                WebInspector.settings.indentUnit.value = parseInt(input.value) || 4;
+            });
+
+            valueControllerContainer.append(WebInspector.UIString("spaces"));
+        });
+
+        createContainer(WebInspector.UIString("Line wrapping:"), (valueControllerContainer) => {
+            let checkbox = createCheckbox(WebInspector.settings.enableLineWrapping);
+            valueControllerContainer.appendChild(checkbox);
+
+            valueControllerContainer.append(WebInspector.UIString("Wrap lines to editor width"));
+        });
+
+        createContainer(WebInspector.UIString("Whitespace Characters:"), (valueControllerContainer) => {
+            let checkbox = createCheckbox(WebInspector.settings.showWhitespaceCharacters);
+            valueControllerContainer.appendChild(checkbox);
+
+            valueControllerContainer.append(WebInspector.UIString("Visible"));
+        });
+
+        createContainer(WebInspector.UIString("Invalid Characters:"), (valueControllerContainer) => {
+            let checkbox = createCheckbox(WebInspector.settings.showInvalidCharacters);
+            valueControllerContainer.appendChild(checkbox);
+
+            valueControllerContainer.append(WebInspector.UIString("Visible"));
+        });
     }
 };
 

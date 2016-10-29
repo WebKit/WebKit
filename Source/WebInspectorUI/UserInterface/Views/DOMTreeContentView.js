@@ -83,18 +83,24 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     shown()
     {
+        super.shown();
+
         this._domTreeOutline.setVisible(true, WebInspector.isConsoleFocused());
         this._updateCompositingBordersButtonToMatchPageSettings();
     }
 
     hidden()
     {
+        super.hidden();
+
         WebInspector.domTreeManager.hideDOMNodeHighlight();
         this._domTreeOutline.setVisible(false);
     }
 
     closed()
     {
+        super.closed();
+
         WebInspector.showPaintRectsSetting.removeEventListener(null, null, this);
         WebInspector.showShadowDOMSetting.removeEventListener(null, null, this);
         WebInspector.domTreeManager.removeEventListener(null, null, this);

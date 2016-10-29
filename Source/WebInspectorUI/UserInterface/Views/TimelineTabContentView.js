@@ -28,7 +28,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
     constructor(identifier)
     {
         let {image, title} = WebInspector.TimelineTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         super(identifier || "timeline", "timeline", tabBarItem, null, detailsSidebarPanels);

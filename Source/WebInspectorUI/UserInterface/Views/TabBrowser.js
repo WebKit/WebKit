@@ -53,7 +53,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         let showPreviousTab = () => { this._showPreviousTab(); };
         let closeCurrentTab = () => {
             let selectedTabBarItem = this._tabBar.selectedTabBarItem;
-            if (this._tabBar.tabBarItems.length > 2 || !selectedTabBarItem.isDefaultTab)
+            if (this._tabBar.tabBarItems.length > 3 || !selectedTabBarItem.isDefaultTab)
                 this._tabBar.removeTabBarItem(selectedTabBarItem);
         };
 
@@ -68,8 +68,6 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this._showNextTabKeyboardShortcut3.implicitlyPreventsDefault = false;
         this._showPreviousTabKeyboardShortcut3 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Left, this._showPreviousTabCheckingForEditableField.bind(this));
         this._showPreviousTabKeyboardShortcut3.implicitlyPreventsDefault = false;
-
-        this._tabBar.newTabItem = new WebInspector.TabBarItem("Images/NewTabPlus.svg", WebInspector.UIString("Create a new tab"), true);
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);
@@ -129,7 +127,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         if (!(tabContentView instanceof WebInspector.TabContentView))
             return false;
 
-        var tabBarItem = tabContentView.tabBarItem;
+        let tabBarItem = tabContentView.tabBarItem;
 
         console.assert(tabBarItem instanceof WebInspector.TabBarItem);
         if (!(tabBarItem instanceof WebInspector.TabBarItem))
@@ -155,7 +153,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         else
             this._tabBar.addTabBarItem(tabBarItem, doNotAnimate);
 
-        console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
+        console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
 
         return true;
@@ -193,7 +191,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
 
         this._tabBar.removeTabBarItem(tabContentView.tabBarItem, doNotAnimate);
 
-        console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
+        console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
 
         return true;
@@ -214,17 +212,20 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
 
     _tabBarItemSelected(event)
     {
-        var tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
+        let tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
 
         if (tabContentView) {
-            this._recentTabContentViews.remove(tabContentView);
-            this._recentTabContentViews.unshift(tabContentView);
+            let isSettingsTab = tabContentView instanceof WebInspector.SettingsTabContentView;
+            if (!isSettingsTab) {
+                this._recentTabContentViews.remove(tabContentView);
+                this._recentTabContentViews.unshift(tabContentView);
+            }
 
             this._contentViewContainer.showContentView(tabContentView);
 
             console.assert(this.selectedTabContentView);
-            console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
-            console.assert(this.selectedTabContentView === this._recentTabContentViews[0]);
+            console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
+            console.assert(this.selectedTabContentView === this._recentTabContentViews[0] || isSettingsTab);
         } else {
             this._contentViewContainer.closeAllContentViews();
 
@@ -245,7 +246,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
 
     _tabBarItemRemoved(event)
     {
-        var tabContentView = event.data.tabBarItem.representedObject;
+        let tabContentView = event.data.tabBarItem.representedObject;
 
         console.assert(tabContentView);
         if (!tabContentView)
@@ -256,7 +257,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
 
         tabContentView.parentTabBrowser = null;
 
-        console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
+        console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
     }
 

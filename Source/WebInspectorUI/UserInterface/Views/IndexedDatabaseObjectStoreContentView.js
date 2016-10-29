@@ -93,6 +93,8 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
     closed()
     {
+        super.closed();
+
         this._reset();
     }
 

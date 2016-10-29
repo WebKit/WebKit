@@ -28,7 +28,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
     constructor(identifier)
     {
         let {image, title} = WebInspector.NewTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         tabBarItem.isDefaultTab = true;
 
         super(identifier || "new-tab", "new-tab", tabBarItem);

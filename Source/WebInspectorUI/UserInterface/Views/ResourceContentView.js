@@ -76,6 +76,8 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
     closed()
     {
+        super.closed();
+
         if (!this.managesOwnIssues)
             WebInspector.issueManager.removeEventListener(null, null, this);
     }

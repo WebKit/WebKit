@@ -122,8 +122,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         styleText = styleText || "";
 
-        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-        let linePrefixText = "    ";
+        let linePrefixText = WebInspector.indentString();
         let lineSuffixWhitespace = "\n";
         let trimmedText = styleText.trimRight();
         let textHasNewlines = trimmedText.includes("\n");

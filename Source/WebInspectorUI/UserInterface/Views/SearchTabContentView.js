@@ -28,7 +28,7 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
     constructor(identifier)
     {
         let {image, title} = WebInspector.SearchTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel,
             WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel];
 

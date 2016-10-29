@@ -126,6 +126,8 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
 
     shown()
     {
+        super.shown();
+
         if (this._shouldRestoreStateWhenShown)
             this.restoreStateFromCookie(WebInspector.StateRestorationType.Delayed);
     }

@@ -43,6 +43,8 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     shown()
     {
+        super.shown();
+
         // FIXME: remove once <https://webkit.org/b/150741> is fixed.
         this._prompt.shown();
     }

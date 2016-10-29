@@ -157,6 +157,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     closed()
     {
+        super.closed();
+
         this._dataGrid.closed();
     }
 

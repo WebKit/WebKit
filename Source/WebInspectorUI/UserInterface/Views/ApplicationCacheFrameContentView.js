@@ -49,12 +49,16 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
 
     shown()
     {
+        super.shown();
+
         this._maybeUpdate();
     }
 
     closed()
     {
         WebInspector.applicationCacheManager.removeEventListener(null, null, this);
+
+        super.closed();
     }
 
     saveToCookie(cookie)

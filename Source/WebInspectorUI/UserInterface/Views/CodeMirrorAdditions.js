@@ -357,6 +357,33 @@
         codeMirror.on("scrollCursorIntoView", scrollCursorIntoView);
     });
 
+    const maximumNeighboringWhitespaceCharacters = 16;
+    CodeMirror.defineOption("showWhitespaceCharacters", false, function(cm, value, old) {
+        if (!value || (old && old !== CodeMirror.Init)) {
+            cm.removeOverlay("whitespace");
+            return;
+        }
+
+        cm.addOverlay({
+            name: "whitespace",
+            token(stream) {
+                if (stream.peek() === " ") {
+                    let count = 0;
+                    while (count < maximumNeighboringWhitespaceCharacters && stream.peek() === " ") {
+                        ++count;
+                        stream.next();
+                    }
+                    return `whitespace whitespace-${count}`;
+                }
+
+                while (!stream.eol() && stream.peek() !== " ")
+                    stream.next();
+
+                return null;
+            }
+        });
+    });
+
     CodeMirror.defineExtension("hasLineClass", function(line, where, className) {
         // This matches the arguments to addLineClass and removeLineClass.
         var classProperty = (where === "text" ? "textClass" : (where === "background" ? "bgClass" : "wrapClass"));

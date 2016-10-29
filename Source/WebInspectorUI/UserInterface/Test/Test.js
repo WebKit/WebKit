@@ -101,6 +101,8 @@ WebInspector.isDebugUIEnabled = () => false;
 
 WebInspector.UIString = (string) => string;
 
+WebInspector.indentString = () => "    ";
+
 // Add stubs that are called by the frontend API.
 WebInspector.updateDockedState = () => {};
 WebInspector.updateDockingAvailability = () => {};
