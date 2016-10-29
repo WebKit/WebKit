@@ -85,7 +85,7 @@ public:
 
     void setConfiguration(MediaEndpointConfiguration&&) override;
 
-    void generateDtlsInfo() override;
+    void generateDtlsInfo();
     MediaPayloadVector getDefaultAudioPayloads() override;
     MediaPayloadVector getDefaultVideoPayloads() override;
     MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) override;

@@ -64,7 +64,9 @@ static const unsigned short candidateDefaultPort = 9;
 
 static std::unique_ptr<MediaEndpoint> createMediaEndpointOwr(MediaEndpointClient& client)
 {
-    return std::unique_ptr<MediaEndpoint>(new MediaEndpointOwr(client));
+    auto mediaEndpoint =  std::make_unique<MediaEndpointOwr>(client);
+    mediaEndpoint->generateDtlsInfo();
+    return WTFMove(mediaEndpoint);
 }
 
 CreateMediaEndpoint MediaEndpoint::create = createMediaEndpointOwr;

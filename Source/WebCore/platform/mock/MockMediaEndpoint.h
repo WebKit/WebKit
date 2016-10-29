@@ -47,7 +47,6 @@ public:
 
     void setConfiguration(MediaEndpointConfiguration&&) final { };
 
-    void generateDtlsInfo() final;
     MediaPayloadVector getDefaultAudioPayloads() final;
     MediaPayloadVector getDefaultVideoPayloads() final;
     MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) final;

@@ -59,7 +59,6 @@ public:
 
     void setConfiguration(MediaEndpointConfiguration&&) override { }
 
-    void generateDtlsInfo() override { }
     MediaPayloadVector getDefaultAudioPayloads() override { return MediaPayloadVector(); }
     MediaPayloadVector getDefaultVideoPayloads() override { return MediaPayloadVector(); }
     MediaPayloadVector filterPayloads(const MediaPayloadVector&, const MediaPayloadVector&) override { return MediaPayloadVector(); }

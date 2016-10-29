@@ -65,7 +65,6 @@ public:
 
     virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
-    virtual void generateDtlsInfo() = 0;
     virtual MediaPayloadVector getDefaultAudioPayloads() = 0;
     virtual MediaPayloadVector getDefaultVideoPayloads() = 0;
     virtual MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) = 0;

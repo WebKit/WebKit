@@ -1,3 +1,26 @@
+2016-10-29  Youenn Fablet  <youenn@apple.com>
+
+        MediaEndpoint::generateDtlsInfo is not needed
+        https://bugs.webkit.org/show_bug.cgi?id=164130
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        Removing MediaEndpoint::generateDtlsInfo as it can be called directly from createMediaEndpointOwr.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::MediaEndpointPeerConnection):
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::createMediaEndpointOwr):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::generateDtlsInfo): Deleted.
+        * platform/mock/MockMediaEndpoint.h:
+
 2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, add Input Events to the features list.

@@ -56,18 +56,14 @@ MockMediaEndpoint::MockMediaEndpoint(MediaEndpointClient& client)
     , m_iceTransportTimer(*this, &MockMediaEndpoint::iceTransportTimerFired)
     , m_unmuteTimer(*this, &MockMediaEndpoint::unmuteTimerFired)
 {
+    callOnMainThread([this]() {
+        m_client.gotDtlsFingerprint(String(fingerprint), String(fingerprintFunction));
+    });
 }
 
 MockMediaEndpoint::~MockMediaEndpoint()
 {
     stop();
-}
-
-void MockMediaEndpoint::generateDtlsInfo()
-{
-    callOnMainThread([this]() {
-        m_client.gotDtlsFingerprint(String(fingerprint), String(fingerprintFunction));
-    });
 }
 
 MediaPayloadVector MockMediaEndpoint::getDefaultAudioPayloads()

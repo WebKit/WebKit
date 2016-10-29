@@ -89,9 +89,6 @@ MediaEndpointPeerConnection::MediaEndpointPeerConnection(PeerConnectionBackendCl
 
     m_defaultAudioPayloads = m_mediaEndpoint->getDefaultAudioPayloads();
     m_defaultVideoPayloads = m_mediaEndpoint->getDefaultVideoPayloads();
-
-    // Tasks (see runTask()) will be deferred until we get the DTLS fingerprint.
-    m_mediaEndpoint->generateDtlsInfo();
 }
 
 static RTCRtpTransceiver* matchTransceiver(const RtpTransceiverVector& transceivers, const std::function<bool(RTCRtpTransceiver&)>& matchFunction)
