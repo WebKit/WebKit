@@ -1,3 +1,30 @@
+2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS autocorrection does not trigger an input event of inputType "insertReplacementText"
+        https://bugs.webkit.org/show_bug.cgi?id=164077
+        <rdar://problem/28987810>
+
+        Reviewed by Simon Fraser.
+
+        Adds test support for inserting text candidates on iOS in the form of
+        UIScriptController.selectTextCandidateAtIndex(index, callback), which selects the text candidate at a given
+        index (this needs to be a value between 0-2 on iOS) and fires the callback when done.
+
+        To implement this, we wait for the text prediction view to have predictions (we determine this by polling at a
+        given interval) and then tap the center of the text prediction view at the given index.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectTextCandidateAtIndex):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::selectTextCandidateAtIndex):
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIKitSPI.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectTextCandidateAtIndex):
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex):
+
 2016-10-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207700.

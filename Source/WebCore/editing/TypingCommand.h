@@ -53,7 +53,8 @@ public:
         AddsToKillRing = 1 << 1,
         RetainAutocorrectionIndicator = 1 << 2,
         PreventSpellChecking = 1 << 3,
-        SmartDelete = 1 << 4
+        SmartDelete = 1 << 4,
+        IsAutocompletion = 1 << 5,
     };
     typedef unsigned Options;
 
@@ -79,6 +80,7 @@ public:
     void forwardDeleteKeyPressed(TextGranularity, bool shouldAddToKillRing);
     void deleteSelection(bool smartDelete);
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
+    void setIsAutocompletion(bool isAutocompletion) { m_isAutocompletion = isAutocompletion; }
 
 #if PLATFORM(IOS)
     void setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection);
@@ -151,6 +153,7 @@ private:
     TextCompositionType m_compositionType;
     bool m_shouldAddToKillRing;
     bool m_preservesTypingStyle;
+    bool m_isAutocompletion;
     
     // Undoing a series of backward deletes will restore a selection around all of the
     // characters that were deleted, but only if the typing command being undone

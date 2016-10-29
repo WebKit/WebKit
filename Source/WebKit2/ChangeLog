@@ -1,3 +1,16 @@
+2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS autocorrection does not trigger an input event of inputType "insertReplacementText"
+        https://bugs.webkit.org/show_bug.cgi?id=164077
+        <rdar://problem/28987810>
+
+        Reviewed by Simon Fraser.
+
+        Small tweak to mark text insertion when autocorrecting as such, as opposed to regular keyboard input.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::syncApplyAutocorrection):
+
 2016-10-28  Megan Gardner  <megan_gardner@apple.com>
 
         Rename SharedMemoryMac to SharedMemoryCocoa

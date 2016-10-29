@@ -1,3 +1,19 @@
+2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS autocorrection does not trigger an input event of inputType "insertReplacementText"
+        https://bugs.webkit.org/show_bug.cgi?id=164077
+        <rdar://problem/28987810>
+
+        Reviewed by Simon Fraser.
+
+        Adds 2 new unit tests verifying that candidate text insertion can be prevented via beforeinput events, and that
+        beforeinput and input events of type "insertReplacementText" are fired when inserting candidate text on iOS.
+
+        * fast/events/ios/before-input-events-prevent-candidate-insertion-expected.txt: Added.
+        * fast/events/ios/before-input-events-prevent-candidate-insertion.html: Added.
+        * fast/events/ios/input-events-insert-replacement-text-expected.txt: Added.
+        * fast/events/ios/input-events-insert-replacement-text.html: Added.
+
 2016-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Partially revert 207805 after resolution in URL spec issue 87

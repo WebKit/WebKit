@@ -1,0 +1,5 @@
+
+To manually test, type 't' into the contenteditable and try to select a candidate. The replacement text should not be inserted.
+
+PASS: The replacement text was prevented.
+

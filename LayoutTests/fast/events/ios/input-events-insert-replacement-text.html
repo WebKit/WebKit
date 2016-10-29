@@ -1,0 +1,90 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.typeCharacterUsingHardwareKeyboard("t", function() {
+                    uiController.selectTextCandidateAtIndex(1, function() {
+                        uiController.uiScriptComplete();
+                    });
+                });
+            }
+            uiController.singleTapAtPoint($x, $y, function() {});
+        })();
+    </script>
+
+    <script>
+        var progress = 0;
+        let write = (message) => output.innerHTML += (message + "<br>");
+        function getUIScript() {
+            let rect = editable.getBoundingClientRect();
+            let script = document.getElementById("ui-script").text;
+            script = script.replace("$x", rect.left + rect.width / 2);
+            return script.replace("$y", rect.top + rect.height / 2);
+        }
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            internals.settings.setInputEventsEnabled(true);
+        }
+
+        function incrementProgress()
+        {
+            progress++;
+            if (!window.testRunner || progress !== 3)
+                return;
+
+            setTimeout(function() {
+                editable.textContent = "";
+                testRunner.notifyDone();
+            }, 0);
+        }
+
+        function runTest()
+        {
+            editable.addEventListener("input", logInputEvent);
+            editable.addEventListener("beforeinput", logInputEvent);
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                incrementProgress();
+            });
+        }
+
+        function logInputEvent(event)
+        {
+            if (event.inputType !== "insertReplacementText")
+                return;
+
+            if (event.type === "beforeinput") {
+                let firstRange = event.getTargetRanges()[0];
+                write(`PASS: Handled text replacement before input event with range: [${firstRange.startOffset}, ${firstRange.endOffset}].`);
+            } else
+                write(`PASS: Handled text replacement input event.`);
+            incrementProgress();
+        }
+    </script>
+    <style>
+    #editable {
+        width: 200px;
+        height: 200px;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
+    </style>
+</head>
+
+<body style="margin: 0;" onload=runTest()>
+    <div contenteditable id="editable"></div>
+    <p>To manually test, type 't' into the contenteditable and try to select a candidate. The output should indicate that the beforeinput and input events for the text replacement were handled, and that the range of the beforeinput event is from 0 to 1.</p>
+    <div id="output"></div>
+</body>
+
+</html>

@@ -36,6 +36,7 @@
 #include "FindOptions.h"
 #include "FrameSelection.h"
 #include "TextChecking.h"
+#include "TextEventInputType.h"
 #include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
@@ -239,7 +240,7 @@ public:
     Command command(const String& commandName, EditorCommandSource);
     WEBCORE_EXPORT static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
 
-    WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent);
+    WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent, TextEventInputType = TextEventInputKeyboard);
     bool insertTextForConfirmedComposition(const String& text);
     WEBCORE_EXPORT bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
     bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);

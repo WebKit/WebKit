@@ -30,6 +30,7 @@ namespace WebCore {
 
 enum TextEventInputType {
     TextEventInputKeyboard, // any newline characters in the text are line breaks only, not paragraph separators.
+    TextEventInputAutocompletion,
     TextEventInputLineBreak, // any tab characters in the text are backtabs.
     TextEventInputComposition,
     TextEventInputBackTab,

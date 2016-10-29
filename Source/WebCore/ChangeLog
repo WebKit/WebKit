@@ -1,3 +1,49 @@
+2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS autocorrection does not trigger an input event of inputType "insertReplacementText"
+        https://bugs.webkit.org/show_bug.cgi?id=164077
+        <rdar://problem/28987810>
+
+        Reviewed by Simon Fraser.
+
+        Fixes candidate insertion on iOS, so that it fires input events of type "insertReplacementText" and adds two
+        iOS unit tests covering this change as well as the test infrastructure needed to support these tests. See
+        comments below for more details.
+
+        Tests: fast/events/ios/before-input-events-prevent-candidate-insertion.html
+               fast/events/ios/input-events-insert-replacement-text.html
+
+        * dom/TextEvent.h:
+
+        Adds isAutocompletion() to TextEvent, as well as the TextEventInputAutocompletion text input type. When the
+        Editor handles this TextEvent, it will use this information when creating or modifying the corresponding typing
+        command.
+
+        * dom/TextEventInputType.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertText):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionForTypingCommand):
+
+        Now takes whether the command is autocorrection into account. If so, the corresponding edit action should be
+        EditActionInsertReplacement rather than EditActionTypingInsertText.
+
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::inputEventData):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        * editing/TypingCommand.h:
+
+        Adds a new TypingCommand option, IsAutocompletion.
+
 2016-10-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207700.

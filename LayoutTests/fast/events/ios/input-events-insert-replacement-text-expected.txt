@@ -1,0 +1,5 @@
+To manually test, type 't' into the contenteditable and try to select a candidate. The output should indicate that the beforeinput and input events for the text replacement were handled, and that the range of the beforeinput event is from 0 to 1.
+
+PASS: Handled text replacement before input event with range: [0, 1].
+PASS: Handled text replacement input event.
+

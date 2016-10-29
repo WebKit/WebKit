@@ -37,6 +37,11 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIWindow_Private.h>
 
+@interface UIKeyboardPredictionView : UIView
++ (UIKeyboardPredictionView *)activeInstance;
+- (BOOL)hasPredictions;
+@end
+
 #else
 
 #import "IOKitSPI.h"
