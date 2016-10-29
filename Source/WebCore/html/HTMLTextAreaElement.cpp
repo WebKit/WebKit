@@ -205,21 +205,13 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
 
 void HTMLTextAreaElement::maxLengthAttributeChanged(const AtomicString& newValue)
 {
-    if (Optional<unsigned> maxLength = parseHTMLNonNegativeInteger(newValue))
-        setMaxLength(maxLength.value());
-    else
-        setMaxLength(-1);
-
+    internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
     updateValidity();
 }
 
 void HTMLTextAreaElement::minLengthAttributeChanged(const AtomicString& newValue)
 {
-    if (Optional<unsigned> minLength = parseHTMLNonNegativeInteger(newValue))
-        setMinLength(minLength.value());
-    else
-        setMinLength(-1);
-
+    internalSetMinLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
     updateValidity();
 }
 
@@ -563,7 +555,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         m_placeholder = TextControlPlaceholderElement::create(document());
         userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
-    m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);
+    m_placeholder->setInnerText(placeholderText);
 }
 
 bool HTMLTextAreaElement::willRespondToMouseClickEvents()

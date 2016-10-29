@@ -505,7 +505,7 @@ static NSTextField *createTimeTextField(NSRect frame)
         return;
     if ([_delegate videoElement]->muted())
         [_delegate videoElement]->setMuted(false);
-    [_delegate videoElement]->setVolume(volume / [self maxVolume], IGNORE_EXCEPTION);
+    [_delegate videoElement]->setVolume(volume / [self maxVolume]);
     [self updateVolume];
 }
 

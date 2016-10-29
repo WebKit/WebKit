@@ -31,8 +31,6 @@
 #include "config.h"
 #include <WebCore/TimeRanges.h>
 
-#include <WebCore/ExceptionCodePlaceholder.h>
-
 using namespace WebCore;
 
 namespace TestWebKitAPI {
@@ -42,7 +40,7 @@ static std::string ToString(const TimeRanges& ranges)
     std::stringstream ss;
     ss << "{";
     for (unsigned i = 0; i < ranges.length(); ++i)
-        ss << " [" << ranges.start(i, IGNORE_EXCEPTION) << "," << ranges.end(i, IGNORE_EXCEPTION) << ")";
+        ss << " [" << ranges.start(i).releaseReturnValue() << "," << ranges.end(i).releaseReturnValue() << ")";
     ss << " }";
 
     return ss.str();
@@ -74,7 +72,7 @@ TEST(TimeRanges, AddOrder)
 
     // Add the values in rangeA to rangeB in reverse order.
     for (int i = rangeA->length() - 1; i >= 0; --i)
-        rangeB->add(rangeA->start(i, IGNORE_EXCEPTION), rangeA->end(i, IGNORE_EXCEPTION));
+        rangeB->add(rangeA->start(i).releaseReturnValue(), rangeA->end(i).releaseReturnValue());
 
     ASSERT_RANGE(expected, rangeB);
 }

@@ -316,14 +316,11 @@ void WebPlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, 
 void WebPlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges& timeRanges)
 {
     Vector<std::pair<double, double>> rangesVector;
-
     for (unsigned i = 0; i < timeRanges.length(); i++) {
-        ExceptionCode exceptionCode;
-        double start = timeRanges.start(i, exceptionCode);
-        double end = timeRanges.end(i, exceptionCode);
-        rangesVector.append(std::pair<double, double>(start, end));
+        double start = timeRanges.ranges().start(i).toDouble();
+        double end = timeRanges.ranges().end(i).toDouble();
+        rangesVector.append({ start, end });
     }
-
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetSeekableRangesVector(contextId, WTFMove(rangesVector)), m_page->pageID());
 }
 

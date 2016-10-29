@@ -655,14 +655,14 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
         RefPtr<VideoTrackPrivateGStreamer> track = VideoTrackPrivateGStreamer::create(m_pipeline, i, pad);
         m_videoTracks.append(track);
-        m_player->addVideoTrack(track.release());
+        m_player->addVideoTrack(*track);
     }
 
     while (static_cast<gint>(m_videoTracks.size()) > numTracks) {
         RefPtr<VideoTrackPrivateGStreamer> track = m_videoTracks.last();
         track->disconnect();
         m_videoTracks.removeLast();
-        m_player->removeVideoTrack(track.release());
+        m_player->removeVideoTrack(*track);
     }
 #endif
 
@@ -718,14 +718,14 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 
         RefPtr<AudioTrackPrivateGStreamer> track = AudioTrackPrivateGStreamer::create(m_pipeline, i, pad);
         m_audioTracks.insert(i, track);
-        m_player->addAudioTrack(track.release());
+        m_player->addAudioTrack(*track);
     }
 
     while (static_cast<gint>(m_audioTracks.size()) > numTracks) {
         RefPtr<AudioTrackPrivateGStreamer> track = m_audioTracks.last();
         track->disconnect();
         m_audioTracks.removeLast();
-        m_player->removeAudioTrack(track.release());
+        m_player->removeAudioTrack(*track);
     }
 #endif
 
@@ -767,14 +767,14 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
 
         RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, pad);
         m_textTracks.insert(i, track);
-        m_player->addTextTrack(track.release());
+        m_player->addTextTrack(*track);
     }
 
     while (static_cast<gint>(m_textTracks.size()) > numTracks) {
         RefPtr<InbandTextTrackPrivateGStreamer> track = m_textTracks.last();
         track->disconnect();
         m_textTracks.removeLast();
-        m_player->removeTextTrack(track.release());
+        m_player->removeTextTrack(*track);
     }
 }
 
@@ -1129,7 +1129,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
                 track->setInBandMetadataTrackDispatchType(inbandMetadataTrackDispatchType);
 
                 m_metadataTracks.add(pid, track);
-                m_player->addTextTrack(track);
+                m_player->addTextTrack(*track);
             }
         }
     } else {
@@ -1151,10 +1151,10 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
 void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
 {
     if (m_chaptersTrack)
-        m_player->removeTextTrack(m_chaptersTrack);
+        m_player->removeTextTrack(*m_chaptersTrack);
 
     m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Chapters, InbandTextTrackPrivate::Generic);
-    m_player->addTextTrack(m_chaptersTrack);
+    m_player->addTextTrack(*m_chaptersTrack);
 
     GRefPtr<GstToc> toc;
     gboolean updated;

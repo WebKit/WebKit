@@ -39,14 +39,15 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/Page.h>
-#if USE(CA)
-#include <WebCore/PlatformCALayerClient.h>
-#include <WebCore/PlatformCALayerWin.h>
-#endif
 #include <WebCore/TextRun.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
 #include <wtf/StdLibExtras.h>
+
+#if USE(CA)
+#include <WebCore/PlatformCALayerClient.h>
+#include <WebCore/PlatformCALayerWin.h>
+#endif
 
 using namespace std;
 using namespace WebCore;
@@ -347,10 +348,8 @@ float FullscreenVideoController::volume() const
 
 void FullscreenVideoController::setVolume(float volume)
 {
-    if (m_videoElement) {
-        ExceptionCode ec;
-        m_videoElement->setVolume(volume, ec);
-    }
+    if (m_videoElement)
+        m_videoElement->setVolume(volume);
 }
 
 float FullscreenVideoController::currentTime() const

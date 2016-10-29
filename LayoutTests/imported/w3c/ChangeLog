@@ -1,3 +1,14 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/url/url-setters-expected.txt: Updated for progressions that occurred
+        because setting the href attribute on a DOMURL object no longer modifies the URL as a side
+        effect in the cases where it throw an exception.
+
 2016-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Partially revert 207805 after resolution in URL spec issue 87

@@ -35,12 +35,9 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString srcdoc;
     [Reflect] attribute DOMString width;
 
-    // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-    // Extensions
     readonly attribute DOMWindow contentWindow;
 
-    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 };
-

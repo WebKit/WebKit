@@ -76,9 +76,7 @@
 - (void)remove
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->remove(ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->remove());
 }
 
 @end

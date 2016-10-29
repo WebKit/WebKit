@@ -492,9 +492,7 @@ DOMElement *kit(Element* value)
 - (void)remove
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).remove(ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).remove());
 }
 
 - (DOMElement *)querySelector:(NSString *)selectors

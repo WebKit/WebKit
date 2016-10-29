@@ -853,9 +853,11 @@ void Range::insertNode(Ref<Node>&& node, ExceptionCode& ec)
     if (referenceNode == node.ptr())
         referenceNode = referenceNode->nextSibling();
 
-    node->remove(ec);
-    if (ec)
+    auto removeResult = node->remove();
+    if (removeResult.hasException()) {
+        ec = removeResult.releaseException().code();
         return;
+    }
 
     unsigned newOffset = referenceNode ? referenceNode->computeNodeIndex() : parent->countChildNodes();
     if (is<DocumentFragment>(node.get()))
@@ -918,7 +920,12 @@ RefPtr<DocumentFragment> Range::createContextualFragment(const String& markup, E
     if (!element || (is<HTMLDocument>(element->document()) && is<HTMLHtmlElement>(*element)))
         element = HTMLBodyElement::create(node.document());
 
-    return WebCore::createContextualFragment(*element, markup, AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
+    auto result = WebCore::createContextualFragment(*element, markup, AllowScriptingContentAndDoNotMarkAlreadyStarted);
+    if (result.hasException()) {
+        ec = result.releaseException().code();
+        return nullptr;
+    }
+    return result.releaseReturnValue();
 }
 
 

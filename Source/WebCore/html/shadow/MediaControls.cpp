@@ -224,7 +224,7 @@ void MediaControls::updateCurrentTimeDisplay()
     if (!page)
         return;
 
-    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsTime(now), IGNORE_EXCEPTION);
+    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsTime(now));
     m_currentTimeDisplay->setCurrentValue(now);
 }
 

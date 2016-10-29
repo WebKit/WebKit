@@ -76,9 +76,7 @@
 - (void)setLength:(unsigned)newLength
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setLength(newLength, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setLength(newLength));
 }
 
 - (DOMNode *)namedItem:(NSString *)name

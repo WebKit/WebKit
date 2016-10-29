@@ -42,17 +42,12 @@ public:
     WEBCORE_EXPORT unsigned videoWidth() const;
     WEBCORE_EXPORT unsigned videoHeight() const;
 
-    WEBCORE_EXPORT void webkitEnterFullscreen(ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> webkitEnterFullscreen();
     WEBCORE_EXPORT void webkitExitFullscreen();
     WEBCORE_EXPORT bool webkitSupportsFullscreen();
     WEBCORE_EXPORT bool webkitDisplayingFullscreen();
 
     void ancestorWillEnterFullscreen() final;
-    
-    // FIXME: Maintain "FullScreen" capitalization scheme for backwards compatibility.
-    // https://bugs.webkit.org/show_bug.cgi?id=36081
-    void webkitEnterFullScreen(ExceptionCode& ec) { webkitEnterFullscreen(ec); }
-    void webkitExitFullScreen() { webkitExitFullscreen(); }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool webkitWirelessVideoPlaybackDisabled() const;

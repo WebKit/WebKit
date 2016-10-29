@@ -753,27 +753,21 @@ void WebPage::blurAssistedNode()
 
 void WebPage::setAssistedNodeValue(const String& value)
 {
-    if (is<HTMLInputElement>(m_assistedNode.get())) {
-        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
-        element.setValue(value, DispatchInputAndChangeEvent);
-    }
     // FIXME: should also handle the case of HTMLSelectElement.
+    if (is<HTMLInputElement>(m_assistedNode.get()))
+        downcast<HTMLInputElement>(*m_assistedNode).setValue(value, DispatchInputAndChangeEvent);
 }
 
 void WebPage::setAssistedNodeValueAsNumber(double value)
 {
-    if (is<HTMLInputElement>(m_assistedNode.get())) {
-        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
-        element.setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
-    }
+    if (is<HTMLInputElement>(m_assistedNode.get()))
+        downcast<HTMLInputElement>(*m_assistedNode).setValueAsNumber(value, DispatchInputAndChangeEvent);
 }
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!is<HTMLSelectElement>(m_assistedNode.get()))
-        return;
-    HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
-    select.optionSelectedByUser(index, true, allowMultipleSelection);
+    if (is<HTMLSelectElement>(m_assistedNode.get()))
+        downcast<HTMLSelectElement>(*m_assistedNode).optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 void WebPage::showInspectorHighlight(const WebCore::Highlight& highlight)

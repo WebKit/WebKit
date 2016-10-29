@@ -26,13 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageData_h
-#define ImageData_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "IntSize.h"
 #include <runtime/Uint8ClampedArray.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -40,10 +38,10 @@ typedef int ExceptionCode;
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    static RefPtr<ImageData> create(unsigned sw, unsigned sh, ExceptionCode&);
+    static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
     static RefPtr<ImageData> create(const IntSize&);
     static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
-    static RefPtr<ImageData> create(Ref<Uint8ClampedArray>&&, unsigned sw, unsigned sh, ExceptionCode&);
+    static ExceptionOr<RefPtr<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, unsigned sh);
 
     IntSize size() const { return m_size; }
     int width() const { return m_size.width(); }
@@ -60,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ImageData_h

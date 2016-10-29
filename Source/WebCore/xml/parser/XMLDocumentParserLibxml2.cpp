@@ -888,7 +888,7 @@ void XMLDocumentParser::endElementNs()
 
     if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && toScriptElementIfPossible(downcast<Element>(node.get()))) {
         popCurrentNode();
-        node->remove(IGNORE_EXCEPTION);
+        node->remove();
         return;
     }
 

@@ -557,10 +557,9 @@ void webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setInnerText(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setInnerText(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -582,10 +581,9 @@ void webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setOuterText(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setOuterText(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -607,10 +605,9 @@ void webkit_dom_html_element_set_content_editable(WebKitDOMHTMLElement* self, co
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setContentEditable(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setContentEditable(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

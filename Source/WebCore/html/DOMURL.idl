@@ -29,7 +29,7 @@
     Constructor(USVString url),
     Constructor(USVString url, USVString base),
     Constructor(USVString url, DOMURL base),
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=URL,

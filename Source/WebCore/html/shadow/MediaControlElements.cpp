@@ -167,7 +167,7 @@ void MediaControlPanelElement::setPosition(const LayoutPoint& position)
     setInlineStyleProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
     setInlineStyleProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
 
-    classList().add("dragged", IGNORE_EXCEPTION);
+    classList().add("dragged");
 }
 
 void MediaControlPanelElement::resetPosition()
@@ -177,7 +177,7 @@ void MediaControlPanelElement::resetPosition()
     removeInlineStyleProperty(CSSPropertyMarginLeft);
     removeInlineStyleProperty(CSSPropertyMarginTop);
 
-    classList().remove("dragged", IGNORE_EXCEPTION);
+    classList().remove("dragged");
 
     m_cumulativeDragOffset.setX(0);
     m_cumulativeDragOffset.setY(0);
@@ -388,13 +388,13 @@ void MediaControlStatusDisplayElement::update()
 
     switch (m_stateBeingDisplayed) {
     case Nothing:
-        setInnerText(emptyString(), IGNORE_EXCEPTION);
+        setInnerText(emptyString());
         break;
     case Loading:
-        setInnerText(mediaElementLoadingStateText(), IGNORE_EXCEPTION);
+        setInnerText(mediaElementLoadingStateText());
         break;
     case LiveBroadcast:
-        setInnerText(mediaElementLiveBroadcastStateText(), IGNORE_EXCEPTION);
+        setInnerText(mediaElementLiveBroadcastStateText());
         break;
     }
 }
@@ -759,24 +759,24 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 
         if (textTrack == TextTrack::captionMenuAutomaticItem()) {
             if (displayMode == CaptionUserPreferences::Automatic)
-                trackItem->classList().add(selectedClassValue, ASSERT_NO_EXCEPTION);
+                trackItem->classList().add(selectedClassValue);
             else
-                trackItem->classList().remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+                trackItem->classList().remove(selectedClassValue);
             continue;
         }
 
         if (displayMode != CaptionUserPreferences::Automatic && textTrack->mode() == TextTrack::Mode::Showing) {
             trackMenuItemSelected = true;
-            trackItem->classList().add(selectedClassValue, ASSERT_NO_EXCEPTION);
+            trackItem->classList().add(selectedClassValue);
         } else
-            trackItem->classList().remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+            trackItem->classList().remove(selectedClassValue);
     }
 
     if (offMenuItem) {
         if (displayMode == CaptionUserPreferences::ForcedOnly && !trackMenuItemSelected)
-            offMenuItem->classList().add(selectedClassValue, ASSERT_NO_EXCEPTION);
+            offMenuItem->classList().add(selectedClassValue);
         else
-            offMenuItem->classList().remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+            offMenuItem->classList().remove(selectedClassValue);
     }
 #endif
 }
@@ -990,8 +990,7 @@ Ref<MediaControlFullscreenVolumeMinButtonElement> MediaControlFullscreenVolumeMi
 void MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().clickEvent) {
-        ExceptionCode code = 0;
-        mediaController()->setVolume(0, code);
+        mediaController()->setVolume(0);
         event.setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
@@ -1016,8 +1015,7 @@ Ref<MediaControlFullscreenVolumeMaxButtonElement> MediaControlFullscreenVolumeMa
 void MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().clickEvent) {
-        ExceptionCode code = 0;
-        mediaController()->setVolume(1, code);
+        mediaController()->setVolume(1);
         event.setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);

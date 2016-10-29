@@ -42,9 +42,9 @@ public:
     explicit PlatformTimeRanges() { }
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
 
-    MediaTime start(unsigned index) const;
+    WEBCORE_EXPORT MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
-    MediaTime end(unsigned index) const;
+    WEBCORE_EXPORT MediaTime end(unsigned index) const;
     MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
     MediaTime maximumBufferedTime() const;

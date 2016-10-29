@@ -114,7 +114,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         if (style) {
             result = &style->fontCascade().primaryFont();
             if (nodeToRemove)
-                nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+                nodeToRemove->remove();
         }
         return result;
     }
@@ -195,7 +195,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     getTextDecorationAttributesRespectingTypingStyle(*style, result);
 
     if (nodeToRemove)
-        nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+        nodeToRemove->remove();
 
     return result;
 }

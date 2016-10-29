@@ -193,10 +193,9 @@ void webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, 
     while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*))
         convertedTokens.append(WTF::String::fromUTF8(variadicParameter));
     va_end(variadicParameterList);
-    WebCore::ExceptionCode ec = 0;
-    item->add(WTFMove(convertedTokens), ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->add(WTFMove(convertedTokens));
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -213,10 +212,9 @@ void webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** erro
     while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*))
         convertedTokens.append(WTF::String::fromUTF8(variadicParameter));
     va_end(variadicParameterList);
-    WebCore::ExceptionCode ec = 0;
-    item->remove(WTFMove(convertedTokens), ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->remove(WTFMove(convertedTokens));
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -229,13 +227,13 @@ gboolean webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gch
     g_return_val_if_fail(!error || !*error, FALSE);
     WebCore::DOMTokenList* item = WebKit::core(self);
     WTF::String convertedToken = WTF::String::fromUTF8(token);
-    WebCore::ExceptionCode ec = 0;
-    gboolean result = item->toggle(convertedToken, force, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->toggle(convertedToken, force);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return false;
     }
-    return result;
+    return result.releaseReturnValue();
 }
 
 void webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar* token, const gchar* newToken, GError** error)
@@ -248,10 +246,9 @@ void webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar*
     WebCore::DOMTokenList* item = WebKit::core(self);
     WTF::String convertedToken = WTF::String::fromUTF8(token);
     WTF::String convertedNewToken = WTF::String::fromUTF8(newToken);
-    WebCore::ExceptionCode ec = 0;
-    item->replace(convertedToken, convertedNewToken, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->replace(convertedToken, convertedNewToken);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

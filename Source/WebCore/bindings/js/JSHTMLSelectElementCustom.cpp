@@ -27,33 +27,39 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "JSHTMLOptionElement.h"
+#include "JSHTMLSelectElement.h"
 
 namespace WebCore {
 
 using namespace JSC;
 using namespace HTMLNames;
 
-void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned index, JSC::JSValue value)
+void selectElementIndexSetter(JSC::ExecState& state, HTMLSelectElement& element, unsigned index, JSC::JSValue value)
 {
-    if (value.isUndefinedOrNull())
-        select->removeByIndex(index);
-    else {
-        ExceptionCode ec = 0;
-        HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(value);
-        if (!option)
-            ec = TYPE_MISMATCH_ERR;
-        else
-            select->setOption(index, *option, ec);
-        setDOMException(exec, ec);
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    if (value.isUndefinedOrNull()) {
+        element.removeByIndex(index);
+        return;
     }
+
+    auto* option = JSHTMLOptionElement::toWrapped(value);
+    if (!option) {
+        setDOMException(&state, throwScope, TYPE_MISMATCH_ERR);
+        return;
+    }
+
+    propagateException(state, throwScope, element.setOption(index, *option));
 }
 
-void JSHTMLSelectElement::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
+void JSHTMLSelectElement::indexSetter(JSC::ExecState* state, unsigned index, JSC::JSValue value)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
-    selectIndexSetter(&wrapped(), exec, index, value);
+
+    selectElementIndexSetter(*state, wrapped(), index, value);
 }
 
 }

@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateTimeLocalInputType_h
-#define DateTimeLocalInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -41,17 +41,16 @@ public:
     explicit DateTimeLocalInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
-    DateComponents::Type dateType() const override;
-    double valueAsDate() const override;
-    void setValueAsDate(double, ExceptionCode&) const override;
-    StepRange createStepRange(AnyStepHandling) const override;
-    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
-    bool setMillisecondToDateComponents(double, DateComponents*) const override;
-    bool isDateTimeLocalField() const override;
+    const AtomicString& formControlType() const final;
+    DateComponents::Type dateType() const final;
+    double valueAsDate() const final;
+    ExceptionOr<void> setValueAsDate(double) const final;
+    StepRange createStepRange(AnyStepHandling) const final;
+    bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const final;
+    bool setMillisecondToDateComponents(double, DateComponents*) const final;
+    bool isDateTimeLocalField() const final;
 };
 
 } // namespace WebCore
 
 #endif
-#endif // DateTimeLocalInputType_h

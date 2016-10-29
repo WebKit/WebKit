@@ -551,10 +551,16 @@ void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode&
         parent->insertBefore(*node, viableNextSibling.get(), ec);
 }
 
-void Node::remove(ExceptionCode& ec)
+ExceptionOr<void> Node::remove()
 {
-    if (ContainerNode* parent = parentNode())
-        parent->removeChild(*this, ec);
+    auto* parent = parentNode();
+    if (!parent)
+        return { };
+    ExceptionCode ec = 0;
+    parent->removeChild(*this, ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
 void Node::normalize()
@@ -584,7 +590,7 @@ void Node::normalize()
         if (!text->length()) {
             // Care must be taken to get the next node before removing the current node.
             node = NodeTraversal::nextPostOrder(*node);
-            text->remove(IGNORE_EXCEPTION);
+            text->remove();
             continue;
         }
 
@@ -596,7 +602,7 @@ void Node::normalize()
 
             // Remove empty text nodes.
             if (!nextText->length()) {
-                nextText->remove(IGNORE_EXCEPTION);
+                nextText->remove();
                 continue;
             }
 
@@ -604,7 +610,7 @@ void Node::normalize()
             unsigned offset = text->length();
             text->appendData(nextText->data());
             document().textNodesMerged(nextText.get(), offset);
-            nextText->remove(IGNORE_EXCEPTION);
+            nextText->remove();
         }
 
         node = NodeTraversal::nextPostOrder(*node);

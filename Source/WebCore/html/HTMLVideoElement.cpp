@@ -295,19 +295,18 @@ NativeImagePtr HTMLVideoElement::nativeImageForCurrentTime()
     return player()->nativeImageForCurrentTime();
 }
 
-void HTMLVideoElement::webkitEnterFullscreen(ExceptionCode& ec)
+ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
 {
     if (isFullscreen())
-        return;
+        return { };
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen.
-    if (!mediaSession().fullscreenPermitted(*this) || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    if (!mediaSession().fullscreenPermitted(*this) || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard))
+        return Exception { INVALID_STATE_ERR };
 
     enterFullscreen();
+    return { };
 }
 
 void HTMLVideoElement::webkitExitFullscreen()

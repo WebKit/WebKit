@@ -127,9 +127,7 @@
 - (void)setCurrentTime:(double)newCurrentTime
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setCurrentTime(newCurrentTime, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setCurrentTimeForBindings(newCurrentTime));
 }
 
 - (double)duration
@@ -231,9 +229,7 @@
 - (void)setVolume:(double)newVolume
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setVolume(newVolume, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setVolume(newVolume));
 }
 
 - (BOOL)muted

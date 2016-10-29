@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef markup_h
-#define markup_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInterchange.h"
 #include <wtf/Forward.h>
@@ -51,16 +51,15 @@ enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerializatio
 
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text);
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
-RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy, ExceptionCode&);
+ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy);
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, const String& sourceString, const String& sourceMIMEType);
-RefPtr<DocumentFragment> createContextualFragment(Element&, const String& markup, ParserContentPolicy, ExceptionCode&);
+ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, ParserContentPolicy);
 
 bool isPlainTextMarkup(Node*);
 
-// These methods are used by HTMLElement & ShadowRoot to replace the
-// children with respected fragment/text.
-void replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&, ExceptionCode&);
-void replaceChildrenWithText(ContainerNode&, const String&, ExceptionCode&);
+// These methods are used by HTMLElement & ShadowRoot to replace the children with respected fragment/text.
+ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&);
+ExceptionOr<void> replaceChildrenWithText(ContainerNode&, const String&);
 
 String createMarkup(const Range&, Vector<Node*>* = nullptr, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
 String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = nullptr, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
@@ -73,5 +72,3 @@ String urlToMarkup(const URL&, const String& title);
 String documentTypeString(const Document&);
 
 }
-
-#endif // markup_h

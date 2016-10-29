@@ -129,7 +129,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
             if (i < lines.size() - 1)
                 m_messageBody->appendChild(HTMLBRElement::create(document), ASSERT_NO_EXCEPTION);
         } else
-            m_messageHeading->setInnerText(lines[i], ASSERT_NO_EXCEPTION);
+            m_messageHeading->setInnerText(lines[i]);
     }
 
     int magnification = document.page() ? document.page()->settings().validationMessageTimerMagnification() : -1;

@@ -1,3 +1,15 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::setInnerText): Update exception handling.
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::setVolume): Ditto.
+
 2016-10-27  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.

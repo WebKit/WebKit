@@ -36,20 +36,16 @@
 
 namespace WebCore {
 
-RefPtr<ImageData> ImageData::create(unsigned sw, unsigned sh, ExceptionCode& ec)
+ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
 {
-    if (!sw || !sh) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
+    if (!sw || !sh)
+        return Exception { INDEX_SIZE_ERR };
 
     Checked<int, RecordOverflow> dataSize = 4;
     dataSize *= sw;
     dataSize *= sh;
-    if (dataSize.hasOverflowed()) {
-        ec = TypeError;
-        return nullptr;
-    }
+    if (dataSize.hasOverflowed())
+        return Exception { TypeError }; // FIXME: Seems a peculiar choice of exception here.
 
     IntSize size(sw, sh);
     auto data = adoptRef(*new ImageData(size));
@@ -76,37 +72,28 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
     if (dataSize.hasOverflowed())
         return nullptr;
 
-    if (dataSize.unsafeGet() < 0
-        || static_cast<unsigned>(dataSize.unsafeGet()) > byteArray->length())
+    if (dataSize.unsafeGet() < 0 || static_cast<unsigned>(dataSize.unsafeGet()) > byteArray->length())
         return nullptr;
 
     return adoptRef(*new ImageData(size, WTFMove(byteArray)));
 }
 
-RefPtr<ImageData> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, unsigned sh, ExceptionCode& ec)
+ExceptionOr<RefPtr<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, unsigned sh)
 {
     unsigned length = byteArray->length();
-    if (!length || length % 4 != 0) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
+    if (!length || length % 4 != 0)
+        return Exception { INVALID_STATE_ERR };
 
-    if (!sw) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
+    if (!sw)
+        return Exception { INDEX_SIZE_ERR };
 
     length /= 4;
-    if (length % sw != 0) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
+    if (length % sw != 0)
+        return Exception { INVALID_STATE_ERR };
 
     unsigned height = length / sw;
-    if (sh && sh != height) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
+    if (sh && sh != height)
+        return Exception { INDEX_SIZE_ERR };
 
     return create(IntSize(sw, height), WTFMove(byteArray));
 }

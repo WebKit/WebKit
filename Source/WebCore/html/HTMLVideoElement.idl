@@ -37,12 +37,13 @@
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
-    [MayThrowLegacyException] void webkitEnterFullscreen();
+    [MayThrowException] void webkitEnterFullscreen();
     void webkitExitFullscreen();
 
-    // Note the different capitalization of the "S" in FullScreen.
-    [MayThrowLegacyException] void webkitEnterFullScreen();
-    void webkitExitFullScreen();
+    // Maintain "FullScreen" capitalization scheme for backwards compatibility.
+    // https://bugs.webkit.org/show_bug.cgi?id=36081
+    [ImplementedAs=webkitEnterFullscreen, MayThrowException] void webkitEnterFullScreen();
+    [ImplementedAs=webkitExitFullscreen] void webkitExitFullScreen();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
 

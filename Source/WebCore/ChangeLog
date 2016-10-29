@@ -1,3 +1,558 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowAccessToNode): Deleted.
+        (WebCore::BindingSecurity::shouldAllowAccessToFrame): Moved function into the
+        BindingSecurity namespace. Also changed arguments to references.
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindow): Ditto.
+        (WebCore::BindingSecurity::shouldAllowAccessToNode): Changed argument type
+        from pointer to reference.
+
+        * bindings/js/JSDOMBinding.h: Removed top level shouldAllowAccessTo functions,
+        moving all of them into the BindingSecurity namespace. Changed BindingSecurity
+        from a class into a namespace. Added new checkSecurityForNode functions that
+        can be used directly to implement CheckSecurityForNode; they turn the node
+        into a null, which is no change in behavior from what bindings already did.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess): Changed argument
+        type for passed-in string to const String& instead of String&.
+        (WebCore::JSDOMWindow::getOwnPropertySlot): Updated for BindingSecurity changes.
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex): Ditto.
+        (WebCore::JSDOMWindow::put): Ditto.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::attributesFor3DContext): Renamed from get3DContextAttributes and
+        changed to use a return value instead of an out argument.
+        (WebCore::JSHTMLCanvasElement::getContext): Updated for the above.
+        (WebCore::JSHTMLCanvasElement::toDataURL): Rewrote to handle ExceptionOr
+        and also to use Optional<double> instead of const double*.
+
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::JSHTMLFrameElement::setLocation): Moved the logic from
+        allowSettingJavascriptURL in here and updated for BindingSecurity changes.
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength): Use propagateException.
+        Also streamlined the code a bit.
+        (WebCore::JSHTMLOptionsCollection::indexSetter): Updated for new name and
+        argument types for selectElementIndexSetter.
+
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::selectElementIndexSetter): Updated name and argument types and
+        to use propagateException.
+        (WebCore::JSHTMLSelectElement::indexSetter): Updated for above.
+        * bindings/js/JSHTMLSelectElementCustom.h: Ditto.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate): Updated for changes to
+        BindingSecurity.
+        (WebCore::JSLocation::putDelegate): Ditto. Also rearranged logic a bit.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::canAccessFromCurrentOrigin): Updated for
+        changes to BindingSecurity.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Removed old support for CheckSecurityForNode.
+        (NativeToJSValue): Added new support for CheckSecurityForNode, which uses
+        the new checkSecurityForNode function, and works properly with ExceptionOr.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated for change below.
+
+        * dom/ChildNode.idl: Move the remove function to non-legacy exception.
+        Needed now because this needs to match the one in HTMLSelectElement.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin): Refactored a little bit.
+        (WebCore::Element::mergeWithNextTextNode): Support ExceptionOr for remove.
+        (WebCore::Element::setOuterHTML): Support ExceptionOr for
+        createFragmentForInnerOuterHTML.
+        (WebCore::Element::setInnerHTML): Ditto.
+        (WebCore::Element::insertAdjacentHTML): Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::remove): Use ExceptionOr.
+        (WebCore::Node::normalize): Remove use of IGNORE_EXCEPTION.
+        * dom/Node.h: Use ExceptionOr for remove.
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode): Updated for change to remove.
+        (WebCore::Range::createContextualFragment): Updated for change
+        to WebCore::createContextualFragment.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML): Use ExceptionOr for
+        createFragmentForInnerOuterHTML and replaceChildrenWithFragment.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doUnapply): Remove IGNORE_EXCEPTION.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doUnapply): Ditto.
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doApply): Ditto.
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doApply): Ditto.
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doUnapply): Ditto.
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doUnapply): Ditto.
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply): Ditto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertDictationPhrases): Deleted. Moved this
+        iOS-specific function to EditorIOS.mm.
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Ditto.
+        (WebCore::Editor::confirmMarkedText): Ditto.
+        (WebCore::Editor::setTextAsChildOfElement): Ditto.
+        (WebCore::Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping): Ditto.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::fontForSelection): Remove ASSERT_NO_EXCEPTION.
+        (WebCore::Editor::fontAttributesForSelectionStart): Ditto.
+        (WebCore::Editor::insertDictationPhrases): Moved here from Editor.cpp.
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Ditto. Also
+        updated code that used remove to not pass an ExceptionCode.
+        (WebCore::Editor::confirmMarkedText): Ditto.
+        (WebCore::Editor::setTextAsChildOfElement): Ditto.
+        (WebCore::Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping): Ditto.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontForSelection): Remove ASSERT_NO_EXCEPTION.
+        (WebCore::Editor::fontAttributesForSelectionStart): Ditto.
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentForInnerOuterHTML): Use ExceptionOr.
+        (WebCore::createContextualFragment): Ditto.
+        (WebCore::replaceChildrenWithFragment): Ditto.
+        (WebCore::replaceChildrenWithText): Ditto.
+        * editing/markup.h: Updated for above changes.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateAppearance):
+        Removed ASSERT_NO_EXCEPTION.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsDate): Use ExceptionOr.
+        (WebCore::BaseDateAndTimeInputType::setValueAsDecimal): Ditto.
+        * html/BaseDateAndTimeInputType.h: Updated for above changes.
+
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setValueAsDate): Use ExceptionOr.
+        * html/DateTimeLocalInputType.h: Updated for above changes.
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::validateToken): Use ExceptionOr.
+        (WebCore::DOMTokenList::validateTokens): Ditto.
+        (WebCore::DOMTokenList::addInternal): Ditto.
+        (WebCore::DOMTokenList::add): Ditto.
+        (WebCore::DOMTokenList::removeInternal): Ditto.
+        (WebCore::DOMTokenList::remove): Ditto.
+        (WebCore::DOMTokenList::toggle): Ditto.
+        (WebCore::DOMTokenList::replace): Ditto.
+        (WebCore::DOMTokenList::supports): Ditto.
+        * html/DOMTokenList.h: Updated for above changes.
+        * html/DOMTokenList.idl: Use non-legacy exceptions.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::DOMURL): Just take the two URL objects and let
+        the create functions do all the processing.
+        (WebCore::DOMURL::create): Use ExceptionOr, and move the processing
+        of the URLs here out of the constructors.
+        (WebCore::DOMURL::setHref): Use ExceptionOr.
+        * html/DOMURL.h: Updated for above changes.
+        * html/DOMURL.idl: Use non-legacy exceptions.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry): Remove
+        IGNORE_EXCEPTION and use releaseReturnValue().
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL): Use ExceptionOr.
+        * html/HTMLCanvasElement.h: Updated for above changes.
+        * html/HTMLCanvasElement.idl: Use non-legacy exception.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::textToFragment): Use ExceptionOr.
+        (WebCore::HTMLElement::setInnerText): Ditto.
+        (WebCore::HTMLElement::setOuterText): Ditto.
+        (WebCore::HTMLElement::setContentEditable): Ditto.
+        (WebCore::HTMLElement::translateAttributeMode): Deleted.
+        (WebCore::HTMLElement::translate): Moved the logic from the
+        translateAttributeMode function in here.
+        * html/HTMLElement.h: Updated for above changes.
+        * html/HTMLElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLEmbedElement.idl: Use non-legacy exception.
+        * html/HTMLFrameElement.idl: Ditto.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument): Use ExceptionOr.
+        * html/HTMLFrameOwnerElement.h: Updated for above.
+
+        * html/HTMLIFrameElement.idl: Use non-legacy exception.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUp): Use ExceptionOr.
+        (WebCore::HTMLInputElement::stepDown): Ditto.
+        (WebCore::HTMLInputElement::setValue): Ditto.
+        (WebCore::HTMLInputElement::setValueAsDate): Ditto.
+        (WebCore::HTMLInputElement::setValueAsNumber): Ditto.
+        (WebCore::HTMLInputElement::setSize): Ditto.
+        (WebCore::HTMLInputElement::maxLengthAttributeChanged): Use the
+        new internalSetMaxLength function; old code relied on a setMaxLength
+        that was different from the one exposed to bindings.
+        (WebCore::HTMLInputElement::minLengthAttributeChanged): Ditto.
+        (WebCore::HTMLInputElement::setRangeText): Use ExceptionOr.
+        * html/HTMLInputElement.h: Updated for above changes. Also use
+        data member initialization for InputElementClickState instead of
+        a constructor.
+        * html/HTMLInputElement.idl: Use non-legacy exception.
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::setLoop): Use ExceptionOr.
+        (WebCore::HTMLMarqueeElement::renderMarquee): Tweaked.
+        * html/HTMLMarqueeElement.h: Updated for above changes.
+        * html/HTMLMarqueeElement.idl: Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::TrackGroup::TrackGroup):
+        Initialize most data members in class definition rather than
+        the constructor.
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Ditto.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Updated since
+        removeMediaElement now takes a reference.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Use
+        a modern for loop to streamline code.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Updated since
+        track now returns a reference.
+        (WebCore::HTMLMediaElement::setCurrentTimeForBindings): Renamed
+        to prevent ambiguity with the other version that has slightly
+        different semantics and overloading and changed to use ExceptionOr.
+        (WebCore::HTMLMediaElement::playInternal): Updated to use reference.
+        (WebCore::HTMLMediaElement::setVolume): Use ExceptionOr.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack): Take a
+        reference instead of a PassRefPtr.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddVideoTrack): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidRemoveAudioTrack): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidRemoveTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidRemoveVideoTrack): Ditto.
+        (WebCore::HTMLMediaElement::addTextTrack): Use ExceptionOr.
+        (WebCore::HTMLMediaElement::didAddTextTrack): Use a reference.
+        (WebCore::HTMLMediaElement::didRemoveTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::maxBufferedTime): Update to use different
+        interface to time ranges that does not need to deal with exceptions.
+        (WebCore::HTMLMediaElement::setController): Pass references.
+        (WebCore::HTMLMediaElement::outOfBandTrackSources): Use reference.
+        * html/HTMLMediaElement.h: Updated for above.
+        * html/HTMLMediaElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLObjectElement.idl: Use non-legacy exception.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForJSConstructor): Use ExceptionOr.
+        * html/HTMLOptionElement.h: Updated for above change.
+        * html/HTMLOptionElement.idl: Use non-legacy exception.
+
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::setLength): Use ExceptionOr.
+        * html/HTMLOptionsCollection.h: Updated for above change.
+        * html/HTMLOptionsCollection.idl: Use non-legacy exception.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::setValue): Removed non-finite handling
+        because that is now handled by the bindings.
+        (WebCore::HTMLProgressElement::setMax): Ditto.
+        * html/HTMLProgressElement.h: Updated for above.
+        * html/HTMLProgressElement.idl: Changed attributes to be double instead
+        of unrestricted double, and this was able to remove exceptions.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::removeByIndex): Drop IGNORE_EXCEPTION.
+        (WebCore::HTMLSelectElement::remove): Use ExceptionOr.
+        (WebCore::HTMLSelectElement::setOption): Ditto.
+        (WebCore::HTMLSelectElement::setLength): Ditto.
+        * html/HTMLSelectElement.h: Updated for above changes.
+        * html/HTMLSelectElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::setCaption): Use ExceptionOr.
+        (WebCore::HTMLTableElement::setTHead): Ditto.
+        (WebCore::HTMLTableElement::setTFoot): Ditto.
+        (WebCore::HTMLTableElement::createTHead): Streamline a bit.
+        (WebCore::HTMLTableElement::deleteTHead): Ditto.
+        (WebCore::HTMLTableElement::createTFoot): Ditto.
+        (WebCore::HTMLTableElement::deleteTFoot): Ditto.
+        (WebCore::HTMLTableElement::createTBody): Ditto.
+        (WebCore::HTMLTableElement::createCaption): Ditto.
+        (WebCore::HTMLTableElement::insertRow): Use ExceptionOr.
+        (WebCore::HTMLTableElement::deleteRow): Ditto.
+        * html/HTMLTableElement.h: Updated for above changes.
+        * html/HTMLTableElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::findTable): Added.
+        (WebCore::HTMLTableRowElement::rowIndex): Streamline a bit using the
+        findTable function above.
+        (WebCore::findRows): Added.
+        (WebCore::HTMLTableRowElement::sectionRowIndex): Streamline a bit using
+        the findRows function above.
+        (WebCore::HTMLTableRowElement::insertCell): Use ExceptionOr.
+        (WebCore::HTMLTableRowElement::deleteCell): Ditto.
+        (WebCore::HTMLTableRowElement::setCells): Deleted.
+        * html/HTMLTableRowElement.h: Updated for the above. The setCells function
+        was dead code.
+        * html/HTMLTableRowElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalPresentationAttributeStyle):
+        Tweaked a bit to use early return.
+        (WebCore::HTMLTableSectionElement::insertRow): Use ExceptionOr.
+        (WebCore::HTMLTableSectionElement::deleteRow): Ditto.
+        (WebCore::HTMLTableSectionElement::numRows): Use childrenOfType.
+        (WebCore::HTMLTableSectionElement::align): Deleted.
+        (WebCore::HTMLTableSectionElement::setAlign): Deleted.
+        (WebCore::HTMLTableSectionElement::ch): Deleted.
+        (WebCore::HTMLTableSectionElement::setCh): Deleted.
+        (WebCore::HTMLTableSectionElement::chOff): Deleted.
+        (WebCore::HTMLTableSectionElement::setChOff): Deleted.
+        (WebCore::HTMLTableSectionElement::vAlign): Deleted.
+        (WebCore::HTMLTableSectionElement::setVAlign): Deleted.
+        * html/HTMLTableSectionElement.h: Updated for the above.
+        * html/HTMLTableSectionElement.idl: Use non-legacy exception.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLengthAttributeChanged): Use the new
+        internalSetMaxLength function; old code relied on a setMaxLength
+        that was different from the one exposed to bindings.
+        (WebCore::HTMLTextAreaElement::minLengthAttributeChanged): Ditto.
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText): Removed
+        ASSERT_NO_EXCEPTION.
+        * html/HTMLTextAreaElement.idl: Use non-legacy exceptions.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setRangeText): Use ExceptionOr.
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue): Ditto.
+        (WebCore::HTMLTextFormControlElement::setMaxLength): Ditto.
+        (WebCore::HTMLTextFormControlElement::setMinLength): Ditto.
+        * html/HTMLTextFormControlElement.h: Updated for above changes.
+        Also renamed the setMin/MaxLength function overloads for internal use
+        to internSetMin/MaxLength and made them protected.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::~HTMLTrackElement): Call clearElement on the
+        track to break the connection. Before this was done as a side effect of
+        clearClient, but that is called in other cases where we do not want to
+        clear the link back to the track element.
+        (WebCore::HTMLTrackElement::insertedInto): Removed code that uses the
+        track function for its side effect of creating a track; no longer needed.
+        Rewrote this so it's more symmetric with removedFrom.
+        (WebCore::HTMLTrackElement::removedFrom): Pass reference. Also reordered
+        and removed an unnecessary check for null parent.
+        (WebCore::HTMLTrackElement::parseAttribute): Use track.
+        (WebCore::HTMLTrackElement::kind): Ditto.
+        (WebCore::HTMLTrackElement::track): Renamed ensureTrack to this. Also
+        removed the redundant code to call setTrackElement; we no longer change
+        the track element on a track until the track element is destroyed.
+        (WebCore::HTMLTrackElement::scheduleLoad): Use track.
+        (WebCore::HTMLTrackElement::loadTimerFired): Ditto.
+        (WebCore::HTMLTrackElement::setReadyState): Ditto.
+        (WebCore::HTMLTrackElement::readyState): Ditto.
+        (WebCore::HTMLTrackElement::mediaElement): Rearranged to use early return.
+        * html/HTMLTrackElement.h: Updated for above changes.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen): Use ExceptionOr.
+        * html/HTMLVideoElement.h: Removed the functions used just for
+        capitalization reasons; that's now handled in the bindings.
+        * html/HTMLVideoElement.idl: Use non-legacy bindings and ImplementedAs.
+
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create): Return ExceptionOr.
+        * html/ImageData.h: Updated for above changes.
+        * html/ImageData.idl: Use non-legacy exceptions.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::setValueAsDate): Use ExceptionOr.
+        (WebCore::InputType::setValueAsDouble): Ditto.
+        (WebCore::InputType::setValueAsDecimal): Ditto.
+        (WebCore::InputType::applyStep): Ditto.
+        (WebCore::InputType::stepUp): Ditto.
+        (WebCore::InputType::stepUpFromRenderer): Removed IGNORE_EXCEPTION.
+        * html/InputType.h: Updated for the above.
+
+        * html/MediaController.cpp:
+        (MediaController::addMediaElement): Take a reference instead of a pointer.
+        (MediaController::removeMediaElement): Ditto.
+        (MediaController::containsMediaElement): Ditto.
+        (MediaController::setVolume): Use ExceptionOr.
+        (MediaController::bringElementUpToSpeed): Take a reference.
+        * html/MediaController.h: Updated for above changes. Also made lots of
+        function overrides private.
+        * html/MediaController.idl: Use non-legacy exception.
+
+        * html/MediaControllerInterface.h: Use ExceptionOr for setVolume.
+
+        * html/NumberInputType.cpp:
+        (WebCore::RealNumberRenderSize::max): Use aggregate initialization instead
+        of a constructor.
+        (WebCore::calculateRenderSize): Ditto.
+        (WebCore::NumberInputType::setValueAsDouble): Use ExceptionOr.
+        (WebCore::NumberInputType::setValueAsDecimal): Ditto.
+        * html/NumberInputType.h: Updated for above changes.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::RangeInputType): Initialize scalar data member
+        in class definition instead of here.
+        (WebCore::RangeInputType::setValueAsDecimal): Use ExceptionOr.
+        (WebCore::RangeInputType::handleKeydownEvent): Removed IGNORE_EXCEPTION.
+        * html/RangeInputType.h: Updated for above changes.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText): Removed
+        ASSERT_NO_EXCEPTION.
+
+        * html/TimeRanges.cpp:
+        (WebCore::TimeRanges::start): Use ExceptionOr.
+        (WebCore::TimeRanges::end): Ditto.
+        * html/TimeRanges.h: Updated for the above.
+        * html/TimeRanges.idl: Use non-legacy exceptions.
+
+        * html/URLUtils.idl: Use non-legacy exception.
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer): Removed
+        ASSERT_NO_EXCEPTION, IGNORE_EXCEPTION, and other exception-ignoring idioms.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler): Ditto.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition): Ditto.
+        (WebCore::MediaControlPanelElement::resetPosition): Ditto.
+        (WebCore::MediaControlStatusDisplayElement::update): Ditto.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler): Ditto.
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::updateCurrentTimeDisplay): Ditto.
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::updateCurrentTimeDisplay): Ditto.
+
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack): Take reference.
+        (WebCore::LoadableTextTrack::~LoadableTextTrack): Deleted.
+        (WebCore::LoadableTextTrack::clearClient): Deleted override. We no longer
+        want to clear m_trackElement when clearing the client.
+        (WebCore::LoadableTextTrack::setTrackElement): Deleted.
+        (WebCore::LoadableTextTrack::id): Changed to use
+        attributeWithoutSynchronization for better performance and idAttr instead
+        of a string constant.
+        * html/track/LoadableTextTrack.h: Updated for above changes. Added a new
+        clearElement function. Made the element and isDefault functions private.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::~VTTCue): Removed ASSERT_NO_EXCEPTION, IGNORE_EXCEPTION,
+        and other exception-ignoring idioms.
+        (WebCore::VTTCue::removeDisplayTree): Ditto.
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox): Ditto.
+        (WebCore::VTTRegion::willRemoveTextTrackCueBox): Ditto.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodeByBackendIdToFrontend):
+        Rewrote to avoid multiplehash table lookups and added a FIXME about
+        the peculiar code here.
+        (WebCore::InspectorDOMAgent::resolveNode): Streamlined.
+        (WebCore::InspectorDOMAgent::nodeAsScriptValue): Use the new
+        checkSecurityForNode instead of the old shouldAllowAccessToNode.
+
+        * platform/graphics/ImageBuffer.h: Take Optional<double> instead of
+        const double* in toDataURL. Renamed ImageDataToDataURL to just dataURL.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::addAudioTrack): Take a reference instead of PassRefPtr.
+        (WebCore::MediaPlayer::removeAudioTrack): Ditto.
+        (WebCore::MediaPlayer::addTextTrack): Ditto.
+        (WebCore::MediaPlayer::removeTextTrack): Ditto.
+        (WebCore::MediaPlayer::addVideoTrack): Ditto.
+        (WebCore::MediaPlayer::removeVideoTrack): Ditto.
+        * platform/graphics/MediaPlayer.h: Updated for the above.
+
+        * platform/graphics/PlatformTimeRanges.h: Exported a couple of functions
+        that are now used in WebKit.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::clearTextTracks): Use a modern for loop.
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+        Fixed a bug that would cause this function to fail to process half the tracks.
+        Also updated for the change from PassRefPtr to references.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::determineChangedTracksFromNewTracksAndOldItems): Pass references.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::audioSourceProvider): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMetadataTrack): Ditto.
+        (WebCore::assetMetadataKeyNames): Tweaked formatting.
+        (WebCore::itemKVOProperties): Ditto.
+        (WebCore::playerKVOProperties): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::updateTracksOfType): Pass references.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::toDataURL): Use Optional<double>
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createBitmapImageAfterScalingIfNeeded): Use auto.
+        (WebCore::encodeImage): Ditto. Also renamed from CGImageEncodeToData.
+        (WebCore::dataURL): Ditto. Also renamed from CGImageToDataURL and from
+        ImageDataToDataURL.
+        (WebCore::ImageBuffer::toDataURL): Ditto.
+
+        * platform/graphics/efl/ImageBufferEfl.cpp:
+        (WebCore::encodeImageJPEG): Use Optional<double>
+        (WebCore::ImageBuffer::toDataURL): Ditto.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo): Pass
+        a reference instead of pointer.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents): Ditto.
+
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage): Use Optional<double>
+        (WebCore::ImageBuffer::toDataURL): Ditto.
+
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::toDataURL): Use Optional<double>
+
+        * platform/image-encoders/JPEGImageEncoder.cpp:
+        (WebCore::compressRGBABigEndianToJPEG): Use Optional<double>
+        * platform/image-encoders/JPEGImageEncoder.h: Ditto.
+
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm:
+        (WebCore::WebPlaybackSessionInterfaceAVKit::seekableRangesChanged):
+        Updated for change to TimeRanges.
+
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController setVolume:]): Removed IGNORE_EXCEPTION.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::endElementNs): Ditto.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack): Updated for changes to
+        the TimeRanges class.
+
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Allow @font-face src descriptor's format function to contain identifiers

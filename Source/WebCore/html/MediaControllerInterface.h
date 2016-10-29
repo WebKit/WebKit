@@ -23,18 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaControllerInterface_h
-#define MediaControllerInterface_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
+#include "ExceptionOr.h"
 #include "HTMLMediaElementEnums.h"
 
 namespace WebCore {
 
 class TimeRanges;
-
-typedef int ExceptionCode;
 
 class MediaControllerInterface : public HTMLMediaElementEnums {
 public:
@@ -60,7 +58,7 @@ public:
     virtual void setPlaybackRate(double) = 0;
     
     virtual double volume() const = 0;
-    virtual void setVolume(double, ExceptionCode&) = 0;
+    virtual ExceptionOr<void> setVolume(double) = 0;
     
     virtual bool muted() const = 0;
     virtual void setMuted(bool) = 0;
@@ -84,10 +82,7 @@ public:
     virtual void beginScrubbing() = 0;
     virtual void endScrubbing() = 0;
 
-    enum ScanDirection {
-        Backward,
-        Forward,
-    };
+    enum ScanDirection { Backward, Forward };
     virtual void beginScanning(ScanDirection) = 0;
     virtual void endScanning() = 0;
 
@@ -102,5 +97,4 @@ public:
 
 }
 
-#endif
 #endif

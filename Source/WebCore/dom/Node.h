@@ -25,12 +25,13 @@
 #pragma once
 
 #include "EventTarget.h"
-#include "URLHash.h"
+#include "ExceptionOr.h"
 #include "LayoutRect.h"
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "StyleValidity.h"
 #include "TreeScope.h"
+#include "URLHash.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
@@ -195,7 +196,7 @@ public:
     void before(Vector<NodeOrString>&&, ExceptionCode&);
     void after(Vector<NodeOrString>&&, ExceptionCode&);
     void replaceWith(Vector<NodeOrString>&&, ExceptionCode&);
-    WEBCORE_EXPORT void remove(ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
 

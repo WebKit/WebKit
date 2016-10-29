@@ -26,56 +26,49 @@
 #include "config.h"
 #include "DOMURL.h"
 
-#include "SecurityOrigin.h"
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
+#include "ExceptionCode.h"
 #include "MemoryCache.h"
 #include "PublicURLManager.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "URLSearchParams.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-Ref<DOMURL> DOMURL::create(const String& url, const String& base, ExceptionCode& ec)
+inline DOMURL::DOMURL(URL&& completeURL, URL&& baseURL)
+    : m_baseURL(WTFMove(baseURL))
+    , m_url(WTFMove(completeURL))
 {
-    return adoptRef(*new DOMURL(url, base, ec));
 }
 
-Ref<DOMURL> DOMURL::create(const String& url, const DOMURL& base, ExceptionCode& ec)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
 {
-    return adoptRef(*new DOMURL(url, base, ec));
+    URL baseURL { URL { }, base };
+    if (!baseURL.isValid())
+        return Exception { TypeError };
+    URL completeURL { baseURL, url };
+    if (!completeURL.isValid())
+        return Exception { TypeError };
+    return adoptRef(*new DOMURL(WTFMove(completeURL), WTFMove(baseURL)));
 }
 
-Ref<DOMURL> DOMURL::create(const String& url, ExceptionCode& ec)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)
 {
-    return adoptRef(*new DOMURL(url, ec));
+    return create(url, base.href());
 }
 
-inline DOMURL::DOMURL(const String& url, const String& base, ExceptionCode& ec)
-    : m_baseURL(URL(), base)
-    , m_url(m_baseURL, url)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url)
 {
-    if (!m_baseURL.isValid() || !m_url.isValid())
-        ec = TypeError;
-}
-
-inline DOMURL::DOMURL(const String& url, const DOMURL& base, ExceptionCode& ec)
-    : m_baseURL(base.href())
-    , m_url(m_baseURL, url)
-{
-    if (!m_baseURL.isValid() || !m_url.isValid())
-        ec = TypeError;
-}
-
-inline DOMURL::DOMURL(const String& url, ExceptionCode& ec)
-    : m_baseURL(blankURL())
-    , m_url(m_baseURL, url)
-{
-    if (!m_url.isValid())
-        ec = TypeError;
+    URL baseURL { blankURL() };
+    URL completeURL { baseURL, url };
+    if (!completeURL.isValid())
+        return Exception { TypeError };
+    return adoptRef(*new DOMURL(WTFMove(completeURL), WTFMove(baseURL)));
 }
 
 DOMURL::~DOMURL()
@@ -84,23 +77,20 @@ DOMURL::~DOMURL()
         m_searchParams->associatedURLDestroyed();
 }
 
-void DOMURL::setHref(const String& url)
+ExceptionOr<void> DOMURL::setHref(const String& url)
 {
-    m_url = URL(m_baseURL, url);
+    URL completeURL { m_baseURL, url };
+    if (!completeURL.isValid())
+        return Exception { TypeError };
+    m_url = WTFMove(completeURL);
     if (m_searchParams)
         m_searchParams->updateFromAssociatedURL();
+    return { };
 }
 
 void DOMURL::setQuery(const String& query)
 {
     m_url.setQuery(query);
-}
-
-void DOMURL::setHref(const String& url, ExceptionCode& ec)
-{
-    setHref(url);
-    if (!m_url.isValid())
-        ec = TypeError;
 }
 
 String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)

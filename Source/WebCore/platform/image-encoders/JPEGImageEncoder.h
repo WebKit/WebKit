@@ -18,16 +18,15 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef JPEGImageEncoder_h
-#define JPEGImageEncoder_h
+#pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class IntSize;
-bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize&, Vector<char>& jpegData, const double* quality = 0);
+
+bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize&, Vector<char>& jpegData, Optional<double> quality = Nullopt);
 
 }
-
-#endif // JPEGImageEncoder_h

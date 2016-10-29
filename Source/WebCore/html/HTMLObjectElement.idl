@@ -19,9 +19,9 @@
  */
 
 [
+    CustomCall,
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomCall,
 ] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString code;
@@ -47,9 +47,7 @@
     [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
     void setCustomValidity(DOMString? error);
 
-    // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 };
-

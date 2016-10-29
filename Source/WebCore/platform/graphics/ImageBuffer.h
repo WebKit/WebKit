@@ -111,7 +111,7 @@ public:
     
     void convertToLuminanceMask();
     
-    String toDataURL(const String& mimeType, const double* quality = 0, CoordinateSystem = LogicalCoordinateSystem) const;
+    String toDataURL(const String& mimeType, Optional<double> quality = Nullopt, CoordinateSystem = LogicalCoordinateSystem) const;
 #if !USE(CG)
     AffineTransform baseTransform() const { return AffineTransform(); }
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
@@ -180,7 +180,7 @@ private:
 };
 
 #if USE(CG)
-String ImageDataToDataURL(const ImageData&, const String& mimeType, const double* quality);
+String dataURL(const ImageData&, const String& mimeType, Optional<double> quality);
 #endif
 
 } // namespace WebCore

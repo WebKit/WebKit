@@ -22,9 +22,9 @@
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     CustomConstructor(),
 #endif
-    JSGenerateToNativeObject,
-    JSCustomPushEventHandlerScope,
     ExportMacro=WEBCORE_EXPORT,
+    JSCustomPushEventHandlerScope,
+    JSGenerateToNativeObject,
 ] interface HTMLElement : Element {
     [CEReactions, Reflect] attribute DOMString title;
     [CEReactions, Reflect] attribute DOMString lang;
@@ -41,10 +41,10 @@
     [CEReactions, Reflect] attribute boolean hidden;
     [CEReactions, Reflect] attribute DOMString accessKey;
 
-    [CEReactions, SetterMayThrowLegacyException, TreatNullAs=EmptyString] attribute DOMString innerText;
-    [CEReactions, SetterMayThrowLegacyException, TreatNullAs=EmptyString] attribute DOMString outerText;
+    [CEReactions, SetterMayThrowException, TreatNullAs=EmptyString] attribute DOMString innerText;
+    [CEReactions, SetterMayThrowException, TreatNullAs=EmptyString] attribute DOMString outerText;
 
-    [CEReactions, SetterMayThrowLegacyException] attribute DOMString contentEditable;
+    [CEReactions, SetterMayThrowException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;
 
     [CEReactions] attribute boolean spellcheck;

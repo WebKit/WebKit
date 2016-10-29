@@ -236,12 +236,12 @@ public:
     virtual const String& mediaPlayerMediaCacheDirectory() const { return emptyString(); }
 
 #if ENABLE(VIDEO_TRACK)
-    virtual void mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
-    virtual void mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPrivate>) { }
-    virtual void mediaPlayerDidAddVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
-    virtual void mediaPlayerDidRemoveAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
-    virtual void mediaPlayerDidRemoveTextTrack(PassRefPtr<InbandTextTrackPrivate>) { }
-    virtual void mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
+    virtual void mediaPlayerDidAddAudioTrack(AudioTrackPrivate&) { }
+    virtual void mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&) { }
+    virtual void mediaPlayerDidAddVideoTrack(VideoTrackPrivate&) { }
+    virtual void mediaPlayerDidRemoveAudioTrack(AudioTrackPrivate&) { }
+    virtual void mediaPlayerDidRemoveTextTrack(InbandTextTrackPrivate&) { }
+    virtual void mediaPlayerDidRemoveVideoTrack(VideoTrackPrivate&) { }
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
 #if ENABLE(AVF_CAPTIONS)
@@ -528,12 +528,12 @@ public:
     PassRefPtr<PlatformMediaResourceLoader> createResourceLoader();
 
 #if ENABLE(VIDEO_TRACK)
-    void addAudioTrack(PassRefPtr<AudioTrackPrivate>);
-    void addTextTrack(PassRefPtr<InbandTextTrackPrivate>);
-    void addVideoTrack(PassRefPtr<VideoTrackPrivate>);
-    void removeAudioTrack(PassRefPtr<AudioTrackPrivate>);
-    void removeTextTrack(PassRefPtr<InbandTextTrackPrivate>);
-    void removeVideoTrack(PassRefPtr<VideoTrackPrivate>);
+    void addAudioTrack(AudioTrackPrivate&);
+    void addTextTrack(InbandTextTrackPrivate&);
+    void addVideoTrack(VideoTrackPrivate&);
+    void removeAudioTrack(AudioTrackPrivate&);
+    void removeTextTrack(InbandTextTrackPrivate&);
+    void removeVideoTrack(VideoTrackPrivate&);
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);

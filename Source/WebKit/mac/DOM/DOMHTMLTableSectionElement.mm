@@ -100,18 +100,13 @@
 - (DOMHTMLElement *)insertRow:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMHTMLElement *result = kit(WTF::getPtr(IMPL->insertRow(index, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->insertRow(index)).ptr());
 }
 
 - (void)deleteRow:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteRow(index, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteRow(index));
 }
 
 @end

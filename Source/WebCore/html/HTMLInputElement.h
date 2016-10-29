@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef HTMLInputElement_h
-#define HTMLInputElement_h
+#pragma once
 
 #include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
@@ -50,14 +49,9 @@ class URL;
 struct DateTimeChooserParameters;
 
 struct InputElementClickState {
-    InputElementClickState()
-        : stateful(false)
-        , checked(false)
-        , indeterminate(false)
-    { }
-    bool stateful;
-    bool checked;
-    bool indeterminate;
+    bool stateful { false };
+    bool checked { false };
+    bool indeterminate { false };
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
@@ -94,11 +88,9 @@ public:
     Optional<Decimal> findClosestTickMarkValue(const Decimal&);
 #endif
 
-    // Implementations of HTMLInputElement::stepUp() and stepDown().
-    WEBCORE_EXPORT void stepUp(int, ExceptionCode&);
-    WEBCORE_EXPORT void stepDown(int, ExceptionCode&);
-    void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
-    void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
+    WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);
+    WEBCORE_EXPORT ExceptionOr<void> stepDown(int = 1);
+
     // stepUp()/stepDown() for user-interaction.
     bool isSteppable() const;
 
@@ -173,8 +165,7 @@ public:
     WEBCORE_EXPORT void setType(const AtomicString&);
 
     WEBCORE_EXPORT String value() const final;
-    void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
-    WEBCORE_EXPORT void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
+    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValueForUser(const String&);
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
@@ -191,10 +182,10 @@ public:
     WEBCORE_EXPORT void setEditingValue(const String&);
 
     WEBCORE_EXPORT double valueAsDate() const;
-    WEBCORE_EXPORT void setValueAsDate(double, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(double);
 
     WEBCORE_EXPORT double valueAsNumber() const;
-    WEBCORE_EXPORT void setValueAsNumber(double, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
+    WEBCORE_EXPORT ExceptionOr<void> setValueAsNumber(double, TextFieldEventBehavior = DispatchNoEvent);
 
     String valueWithDefault() const;
 
@@ -232,8 +223,7 @@ public:
     String accept() const;
     WEBCORE_EXPORT String alt() const;
 
-    WEBCORE_EXPORT void setSize(unsigned);
-    void setSize(unsigned, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setSize(unsigned);
 
     URL src() const;
 
@@ -318,8 +308,8 @@ public:
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
     bool matchesReadWritePseudoClass() const final;
-    WEBCORE_EXPORT void setRangeText(const String& replacement, ExceptionCode&) final;
-    WEBCORE_EXPORT void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) final;
+    WEBCORE_EXPORT ExceptionOr<void> setRangeText(const String& replacement) final;
+    WEBCORE_EXPORT ExceptionOr<void> setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode) final;
 
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     HTMLImageLoader& ensureImageLoader();
@@ -469,5 +459,4 @@ private:
 #endif
 };
 
-} //namespace
-#endif
+}

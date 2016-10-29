@@ -515,10 +515,9 @@ void webkit_dom_html_select_element_set_length(WebKitDOMHTMLSelectElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
     g_return_if_fail(!error || !*error);
     WebCore::HTMLSelectElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->setLength(value, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setLength(value);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class DOMTokenList {
-    WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMTokenList(Element&, const QualifiedName& attributeName, WTF::Function<bool(StringView)>&& isSupportedToken = { });
 
@@ -43,13 +43,13 @@ public:
     const AtomicString& item(unsigned index) const;
 
     WEBCORE_EXPORT bool contains(const AtomicString&) const;
-    void add(const Vector<String>&, ExceptionCode&);
-    void add(const AtomicString&, ExceptionCode&);
-    void remove(const Vector<String>&, ExceptionCode&);
-    void remove(const AtomicString&, ExceptionCode&);
-    WEBCORE_EXPORT bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
-    void replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode&);
-    bool supports(StringView token, ExceptionCode&);
+    ExceptionOr<void> add(const Vector<String>&);
+    ExceptionOr<void> add(const AtomicString&);
+    ExceptionOr<void> remove(const Vector<String>&);
+    ExceptionOr<void> remove(const AtomicString&);
+    WEBCORE_EXPORT ExceptionOr<bool> toggle(const AtomicString&, Optional<bool> force);
+    ExceptionOr<void> replace(const AtomicString& token, const AtomicString& newToken);
+    ExceptionOr<bool> supports(StringView token);
 
     Element& element() const { return m_element; }
 
@@ -63,10 +63,10 @@ private:
     WEBCORE_EXPORT Vector<AtomicString>& tokens();
     const Vector<AtomicString>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
 
-    static bool validateToken(const String&, ExceptionCode&);
-    static bool validateTokens(const String* tokens, size_t length, ExceptionCode&);
-    void addInternal(const String* tokens, size_t length, ExceptionCode&);
-    void removeInternal(const String* tokens, size_t length, ExceptionCode&);
+    static ExceptionOr<void> validateToken(const String&);
+    static ExceptionOr<void> validateTokens(const String* tokens, size_t length);
+    ExceptionOr<void> addInternal(const String* tokens, size_t length);
+    ExceptionOr<void> removeInternal(const String* tokens, size_t length);
 
     Element& m_element;
     const WebCore::QualifiedName& m_attributeName;

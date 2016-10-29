@@ -31,9 +31,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSLocation::getOwnPropertySlotDelegate(ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Frame* frame = wrapped().frame();
@@ -48,53 +48,51 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
     String message;
-    if (shouldAllowAccessToFrame(exec, frame, message))
+    if (BindingSecurity::shouldAllowAccessToFrame(*state, *frame, message))
         return false;
 
     // We only allow access to Location.replace() cross origin.
-    if (propertyName == exec->propertyNames().replace) {
+    if (propertyName == state->propertyNames().replace) {
         slot.setCustom(this, ReadOnly | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
 
     // Getting location.href cross origin needs to throw. However, getOwnPropertyDescriptor() needs to return
     // a descriptor that has a setter but no getter.
-    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == exec->propertyNames().href) {
+    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == state->propertyNames().href) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
         slot.setCustomGetterSetter(this, DontEnum | CustomAccessor, customGetterSetter);
         return true;
     }
 
-    throwSecurityError(*exec, scope, message);
+    throwSecurityError(*state, scope, message);
     slot.setUndefined();
     return true;
 }
 
-bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
+bool JSLocation::putDelegate(ExecState* state, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     putResult = false;
+
     Frame* frame = wrapped().frame();
     if (!frame)
         return true;
 
-    if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
+    // Silently block access to toString and valueOf.
+    if (propertyName == state->propertyNames().toString || propertyName == state->propertyNames().valueOf)
         return true;
 
-    String errorMessage;
-    if (shouldAllowAccessToFrame(exec, frame, errorMessage))
+    // Always allow assigning to the whole location.
+    // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
+    // So fall through to the access check for those.
+    if (propertyName == state->propertyNames().href)
         return false;
 
-    // Cross-domain access to the location is allowed when assigning the whole location,
-    // but not when assigning the individual pieces, since that might inadvertently
-    // disclose other parts of the original location.
-    if (propertyName != exec->propertyNames().href) {
-        throwSecurityError(*exec, scope, errorMessage);
+    // Block access and throw if there is a security error.
+    if (!BindingSecurity::shouldAllowAccessToFrame(state, frame, ThrowSecurityError))
         return true;
-    }
+
     return false;
 }
 

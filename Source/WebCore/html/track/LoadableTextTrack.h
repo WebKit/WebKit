@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoadableTextTrack_h
-#define LoadableTextTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -39,33 +38,29 @@ class LoadableTextTrack;
 
 class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient {
 public:
-    static Ref<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
+    static Ref<LoadableTextTrack> create(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
     {
         return adoptRef(*new LoadableTextTrack(track, kind, label, language));
     }
-    virtual ~LoadableTextTrack();
 
     void scheduleLoad(const URL&);
 
-    void clearClient() override;
-
-    AtomicString id() const override;
-
     size_t trackElementIndex();
-    HTMLTrackElement* trackElement() { return m_trackElement; }
-    void setTrackElement(HTMLTrackElement*);
-    Element* element() override;
+    HTMLTrackElement* trackElement() const { return m_trackElement; }
+    void clearElement() { m_trackElement = nullptr; }
 
-    bool isDefault() const override { return m_isDefault; }
-    void setIsDefault(bool isDefault) override  { m_isDefault = isDefault; }
+    void setIsDefault(bool isDefault) final  { m_isDefault = isDefault; }
 
 private:
-    // TextTrackLoaderClient
-    void newCuesAvailable(TextTrackLoader*) override;
-    void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) override;
-    void newRegionsAvailable(TextTrackLoader*) override;
+    LoadableTextTrack(HTMLTrackElement&, const String& kind, const String& label, const String& language);
 
-    LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
+    void newCuesAvailable(TextTrackLoader*) final;
+    void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) final;
+    void newRegionsAvailable(TextTrackLoader*) final;
+
+    AtomicString id() const final;
+    bool isDefault() const final { return m_isDefault; }
+    Element* element() final;
 
     void loadTimerFired();
 
@@ -75,6 +70,7 @@ private:
     URL m_url;
     bool m_isDefault;
 };
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LoadableTextTrack)
@@ -82,5 +78,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LoadableTextTrack)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO_TRACK)
-
-#endif // LoadableTextTrack_h

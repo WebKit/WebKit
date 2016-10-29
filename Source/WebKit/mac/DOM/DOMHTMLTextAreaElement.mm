@@ -106,9 +106,7 @@ DOMHTMLTextAreaElement *kit(HTMLTextAreaElement* value)
 - (void)setMaxLength:(int)newMaxLength
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setMaxLength(newMaxLength, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setMaxLength(newMaxLength));
 }
 
 - (NSString *)name
@@ -312,17 +310,13 @@ DOMHTMLTextAreaElement *kit(HTMLTextAreaElement* value)
 - (void)setRangeText:(NSString *)replacement
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setRangeText(replacement, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setRangeText(replacement));
 }
 
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setRangeText(replacement, start, end, selectionMode, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setRangeText(replacement, start, end, selectionMode));
 }
 
 - (void)setSelectionRange:(int)start end:(int)end

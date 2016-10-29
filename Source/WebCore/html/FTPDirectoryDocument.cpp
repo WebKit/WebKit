@@ -101,7 +101,7 @@ FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
 
 void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
 {
-    auto rowElement = m_tableElement->insertRow(-1, IGNORE_EXCEPTION);
+    auto rowElement = m_tableElement->insertRow(-1).releaseReturnValue();
     rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryEntryRow", AtomicString::ConstructFromLiteral));
 
     auto typeElement = document()->createElement(tdTag, false);

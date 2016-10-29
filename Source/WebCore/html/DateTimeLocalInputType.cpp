@@ -29,8 +29,9 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 #include "DateTimeLocalInputType.h"
+
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -61,10 +62,10 @@ double DateTimeLocalInputType::valueAsDate() const
     return DateComponents::invalidMilliseconds();
 }
 
-void DateTimeLocalInputType::setValueAsDate(double value, ExceptionCode& ec) const
+ExceptionOr<void> DateTimeLocalInputType::setValueAsDate(double value) const
 {
     // valueAsDate doesn't work for the datetime-local type according to the standard.
-    InputType::setValueAsDate(value, ec);
+    return InputType::setValueAsDate(value);
 }
 
 StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandling) const

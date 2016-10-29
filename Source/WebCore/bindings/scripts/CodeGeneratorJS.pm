@@ -3228,10 +3228,6 @@ sub GenerateImplementation
 
             if (HasCustomGetter($attribute->signature->extendedAttributes)) {
                 push(@implContent, "    return thisObject.$implGetterFunctionName(state);\n");
-            } elsif ($attribute->signature->extendedAttributes->{CheckSecurityForNode}) {
-                $implIncludes{"JSDOMBinding.h"} = 1;
-                push(@implContent, "    auto& impl = thisObject.wrapped();\n");
-                push(@implContent, "    return shouldAllowAccessToNode(&state, impl." . $attribute->signature->name . "()) ? " . NativeToJSValueUsingReferences($attribute->signature, 0, $interface, "impl.$implGetterFunctionName()", "thisObject") . " : jsNull();\n");
             } elsif ($type->name eq "EventHandler") {
                 $implIncludes{"EventNames.h"} = 1;
                 my $getter = $attribute->signature->extendedAttributes->{WindowEventHandler} ? "windowEventHandlerAttribute"
@@ -3838,12 +3834,6 @@ END
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
                     push(@implContent, "    ExceptionCode ec = 0;\n") if $mayThrowLegacyException;
-
-                    if ($function->signature->extendedAttributes->{CheckSecurityForNode}) {
-                        push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($mayThrowLegacyException ? "ec" : "") .")))\n");
-                        push(@implContent, "        return JSValue::encode(jsNull());\n");
-                        $implIncludes{"JSDOMBinding.h"} = 1;
-                    }
 
                     my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
@@ -5481,6 +5471,8 @@ sub NativeToJSValue
             $value = "${tearOffType}::create($value)";
         }
     }
+
+    $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)" if $signature->extendedAttributes->{CheckSecurityForNode};
 
     my $functionName = "toJS";
     $functionName = "toJSNewlyCreated" if $signature->extendedAttributes->{NewObject};

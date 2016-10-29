@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document& document)
+inline HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document& document)
     : HTMLTablePartElement(tagName, document)
 {
     ASSERT(hasTagName(trTag));
@@ -55,20 +55,24 @@ Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLTableRowElement(tagName, document));
 }
 
+static inline HTMLTableElement* findTable(const HTMLTableRowElement& row)
+{
+    auto* parent = row.parentNode();
+    if (is<HTMLTableElement>(parent))
+        return downcast<HTMLTableElement>(parent);
+    if (is<HTMLTableSectionElement>(parent)) {
+        auto* grandparent = parent->parentNode();
+        if (is<HTMLTableElement>(grandparent))
+            return downcast<HTMLTableElement>(grandparent);
+    }
+    return nullptr;
+}
+
 int HTMLTableRowElement::rowIndex() const
 {
-    auto* parent = parentNode();
-    if (!parent)
+    auto* table = findTable(*this);
+    if (!table)
         return -1;
-
-    HTMLTableElement* table;
-    if (is<HTMLTableElement>(*parent))
-        table = downcast<HTMLTableElement>(parent);
-    else {
-        if (!is<HTMLTableSectionElement>(*parent) || !is<HTMLTableElement>(parent->parentNode()))
-            return -1;
-        table = downcast<HTMLTableElement>(parent->parentNode());
-    }
 
     auto rows = table->rows();
     unsigned length = rows->length();
@@ -80,18 +84,20 @@ int HTMLTableRowElement::rowIndex() const
     return -1;
 }
 
+static inline RefPtr<HTMLCollection> findRows(const HTMLTableRowElement& row)
+{
+    auto* parent = row.parentNode();
+    if (is<HTMLTableSectionElement>(parent))
+        return downcast<HTMLTableSectionElement>(*parent).rows();
+    if (is<HTMLTableElement>(parent))
+        return downcast<HTMLTableElement>(*parent).rows();
+    return nullptr;
+}
+
 int HTMLTableRowElement::sectionRowIndex() const
 {
-    auto* parent = parentNode();
-    if (!parent)
-        return -1;
-
-    RefPtr<HTMLCollection> rows;
-    if (is<HTMLTableSectionElement>(*parent))
-        rows = downcast<HTMLTableSectionElement>(*parent).rows();
-    else if (is<HTMLTableElement>(*parent))
-        rows = downcast<HTMLTableElement>(*parent).rows();
-    else
+    auto rows = findRows(*this);
+    if (!rows)
         return -1;
 
     unsigned length = rows->length();
@@ -103,16 +109,16 @@ int HTMLTableRowElement::sectionRowIndex() const
     return -1;
 }
 
-RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
+ExceptionOr<Ref<HTMLTableCellElement>> HTMLTableRowElement::insertCell(int index)
 {
-    Ref<HTMLCollection> children = cells();
+    if (index < -1)
+        return Exception { INDEX_SIZE_ERR };
+    auto children = cells();
     int numCells = children->length();
-    if (index < -1 || index > numCells) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
-
+    if (index > numCells)
+        return Exception { INDEX_SIZE_ERR };
     auto cell = HTMLTableCellElement::create(tdTag, document());
+    ExceptionCode ec = 0;
     if (index < 0 || index >= numCells)
         appendChild(cell, ec);
     else {
@@ -123,33 +129,32 @@ RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, Exceptio
             n = children->item(index);
         insertBefore(cell, n, ec);
     }
+    if (ec)
+        return Exception { ec };
     return WTFMove(cell);
 }
 
-void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
+ExceptionOr<void> HTMLTableRowElement::deleteCell(int index)
 {
-    Ref<HTMLCollection> children = cells();
+    auto children = cells();
     int numCells = children->length();
     if (index == -1) {
         if (!numCells)
-            return;
-
+            return { };
         index = numCells - 1;
     }
-    if (index >= 0 && index < numCells)
-        HTMLElement::removeChild(*children->item(index), ec);
-    else
-        ec = INDEX_SIZE_ERR;
+    if (index < 0 || index >= numCells)
+        return Exception { INDEX_SIZE_ERR };
+    ExceptionCode ec = 0;
+    removeChild(*children->item(index), ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
 Ref<HTMLCollection> HTMLTableRowElement::cells()
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TRCells>::traversalType>>(*this, TRCells);
-}
-
-void HTMLTableRowElement::setCells(HTMLCollection*, ExceptionCode& ec)
-{
-    ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
 }

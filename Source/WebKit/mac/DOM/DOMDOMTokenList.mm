@@ -84,10 +84,7 @@
 - (BOOL)toggle:(NSString *)token force:(BOOL)force
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->toggle(token, force, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->toggle(token, force));
 }
 
 @end

@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "Chrome.h"
 #include "HTMLDivElement.h"
@@ -77,7 +78,7 @@ void BaseChooserOnlyDateAndTimeInputType::updateAppearance()
         // Need to put something to keep text baseline.
         displayValue = ASCIILiteral(" ");
     }
-    downcast<HTMLElement>(*node).setInnerText(displayValue, ASSERT_NO_EXCEPTION);
+    downcast<HTMLElement>(*node).setInnerText(displayValue);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)

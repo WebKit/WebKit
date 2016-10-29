@@ -54,29 +54,27 @@ void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
     CustomElementReactionStack customElementReactionStack;
 #endif
 
-    ExceptionCode ec = 0;
-    unsigned newLength = 0;
-    double lengthValue = value.toNumber(&state);
-    if (!std::isnan(lengthValue) && !std::isinf(lengthValue)) {
-        if (lengthValue < 0.0)
-            ec = INDEX_SIZE_ERR;
-        else if (lengthValue > static_cast<double>(UINT_MAX))
-            newLength = UINT_MAX;
-        else
-            newLength = static_cast<unsigned>(lengthValue);
-    }
-    if (!ec)
-        wrapped().setLength(newLength, ec);
-    setDOMException(&state, ec);
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    double number = value.toNumber(&state);
+    RETURN_IF_EXCEPTION(throwScope, void());
+    unsigned length;
+    if (!std::isfinite(number))
+        length = 0;
+    else if (number < 0)
+        return setDOMException(&state, throwScope, INDEX_SIZE_ERR);
+    else
+        length = static_cast<unsigned>(std::min<double>(number, UINT_MAX));
+    propagateException(state, throwScope, wrapped().setLength(length));
 }
 
-void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
+void JSHTMLOptionsCollection::indexSetter(ExecState* state, unsigned index, JSValue value)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
 
-    selectIndexSetter(&wrapped().selectElement(), exec, index, value);
+    selectElementIndexSetter(*state, wrapped().selectElement(), index, value);
 }
 
 }

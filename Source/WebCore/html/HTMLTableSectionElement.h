@@ -34,23 +34,10 @@ class HTMLTableSectionElement final : public HTMLTablePartElement {
 public:
     static Ref<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
-    RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
-    WEBCORE_EXPORT RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
-    WEBCORE_EXPORT void deleteRow(int index, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<HTMLElement>> insertRow(int index = -1);
+    WEBCORE_EXPORT ExceptionOr<void> deleteRow(int index);
 
     int numRows() const;
-
-    const AtomicString& align() const;
-    void setAlign(const AtomicString&);
-
-    const AtomicString& ch() const;
-    void setCh(const AtomicString&);
-
-    const AtomicString& chOff() const;
-    void setChOff(const AtomicString&);
-
-    const AtomicString& vAlign() const;
-    void setVAlign(const AtomicString&);
 
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
 

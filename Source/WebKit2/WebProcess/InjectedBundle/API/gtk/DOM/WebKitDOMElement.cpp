@@ -999,10 +999,9 @@ void webkit_dom_element_remove(WebKitDOMElement* self, GError** error)
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
     g_return_if_fail(!error || !*error);
     WebCore::Element* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->remove(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->remove();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

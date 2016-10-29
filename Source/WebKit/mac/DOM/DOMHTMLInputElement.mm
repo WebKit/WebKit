@@ -281,9 +281,7 @@
 - (void)setMaxLength:(int)newMaxLength
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setMaxLength(newMaxLength, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setMaxLength(newMaxLength));
 }
 
 - (NSString *)min
@@ -451,9 +449,7 @@
 - (void)setValueAsDate:(NSTimeInterval)newValueAsDate
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setValueAsDate(core(newValueAsDate), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setValueAsDate(core(newValueAsDate)));
 }
 
 - (double)valueAsNumber
@@ -465,9 +461,7 @@
 - (void)setValueAsNumber:(double)newValueAsNumber
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setValueAsNumber(newValueAsNumber, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setValueAsNumber(newValueAsNumber));
 }
 
 - (unsigned)width
@@ -643,17 +637,13 @@
 - (void)stepUp:(int)n
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->stepUp(n, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->stepUp(n));
 }
 
 - (void)stepDown:(int)n
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->stepDown(n, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->stepDown(n));
 }
 
 - (BOOL)checkValidity
@@ -677,17 +667,13 @@
 - (void)setRangeText:(NSString *)replacement
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setRangeText(replacement, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setRangeText(replacement));
 }
 
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setRangeText(replacement, start, end, selectionMode, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setRangeText(replacement, start, end, selectionMode));
 }
 
 - (void)setSelectionRange:(int)start end:(int)end

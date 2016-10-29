@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLMarqueeElement_h
-#define HTMLMarqueeElement_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "HTMLElement.h"
@@ -36,8 +35,6 @@ public:
 
     int minimumDelay() const;
 
-    // DOM Functions
-
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void stop() final;
     
@@ -51,7 +48,7 @@ public:
     
     // Loop count. -1 means loop indefinitely.
     WEBCORE_EXPORT int loop() const;
-    WEBCORE_EXPORT void setLoop(int, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setLoop(int);
     
 private:
     HTMLMarqueeElement(const QualifiedName&, Document&);
@@ -59,7 +56,6 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    // ActiveDOMObject
     bool canSuspendForDocumentSuspension() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
@@ -69,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLMarqueeElement_h

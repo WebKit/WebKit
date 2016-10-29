@@ -534,8 +534,7 @@ HRESULT DOMHTMLElement::setInnerText(_In_ BSTR text)
     ASSERT(is<HTMLElement>(m_element));
     HTMLElement* htmlElement = downcast<HTMLElement>(m_element);
     WTF::String textString(text, SysStringLen(text));
-    WebCore::ExceptionCode ec = 0;
-    htmlElement->setInnerText(textString, ec);
+    htmlElement->setInnerText(textString);
     return S_OK;
 }
 

@@ -29,10 +29,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BaseDateAndTimeInputType_h
-#define BaseDateAndTimeInputType_h
+#pragma once
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 #include "DateComponents.h"
 #include "InputType.h"
 
@@ -60,9 +60,9 @@ private:
     virtual DateComponents::Type dateType() const = 0;
 #endif
     double valueAsDate() const override;
-    void setValueAsDate(double, ExceptionCode&) const override;
+    ExceptionOr<void> setValueAsDate(double) const override;
     double valueAsDouble() const override;
-    void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const override;
+    ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const override;
     bool typeMismatchFor(const String&) const override;
     bool typeMismatch() const override;
     bool valueMissing(const String&) const override;
@@ -76,5 +76,5 @@ private:
 };
 
 } // namespace WebCore
+
 #endif
-#endif // BaseDateAndTimeInputType_h

@@ -52,7 +52,7 @@ void RemoveNodeCommand::doApply()
     m_parent = parent;
     m_refChild = m_node->nextSibling();
 
-    m_node->remove(IGNORE_EXCEPTION);
+    m_node->remove();
 }
 
 void RemoveNodeCommand::doUnapply()

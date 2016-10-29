@@ -1,3 +1,50 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp:
+        (webkit_dom_dom_token_list_add): Updated exception handling.
+        (webkit_dom_dom_token_list_remove): Ditto.
+        (webkit_dom_dom_token_list_toggle): Ditto.
+        (webkit_dom_dom_token_list_replace): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_remove): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.cpp:
+        (webkit_dom_html_element_set_inner_text): Ditto.
+        (webkit_dom_html_element_set_outer_text): Ditto.
+        (webkit_dom_html_element_set_content_editable): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_set_max_length): Ditto.
+        (webkit_dom_html_input_element_set_size): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_set_length): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.cpp:
+        (webkit_dom_html_table_element_insert_row): Ditto.
+        (webkit_dom_html_table_element_delete_row): Ditto.
+        (webkit_dom_html_table_element_set_caption): Ditto.
+        (webkit_dom_html_table_element_set_t_head): Ditto.
+        (webkit_dom_html_table_element_set_t_foot): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.cpp:
+        (webkit_dom_html_table_row_element_insert_cell): Ditto.
+        (webkit_dom_html_table_row_element_delete_cell): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.cpp:
+        (webkit_dom_html_table_section_element_insert_row): Ditto.
+        (webkit_dom_html_table_section_element_delete_row): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState): Removed ASSERT_NO_EXCEPTION.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setAssistedNodeValueAsNumber): Removed ASSERT_NO_EXCEPTION.
+
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::seekableRangesChanged):
+        Changed the code to use a different interface to TimeRange that does
+        not involve exceptions.
+
 2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         iOS autocorrection does not trigger an input event of inputType "insertReplacementText"

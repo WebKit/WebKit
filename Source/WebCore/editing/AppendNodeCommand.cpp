@@ -59,7 +59,7 @@ void AppendNodeCommand::doUnapply()
     if (!m_parent->hasEditableStyle())
         return;
 
-    m_node->remove(IGNORE_EXCEPTION);
+    m_node->remove();
 }
 
 #ifndef NDEBUG

@@ -98,12 +98,8 @@ double HTMLProgressElement::value() const
     return !std::isfinite(value) || value < 0 ? 0 : std::min(value, max());
 }
 
-void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
+void HTMLProgressElement::setValue(double value)
 {
-    if (!std::isfinite(value)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(valueAttr, AtomicString::number(value >= 0 ? value : 0));
 }
 
@@ -113,12 +109,8 @@ double HTMLProgressElement::max() const
     return !std::isfinite(max) || max <= 0 ? 1 : max;
 }
 
-void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
+void HTMLProgressElement::setMax(double max)
 {
-    if (!std::isfinite(max)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(maxAttr, AtomicString::number(max > 0 ? max : 1));
 }
 

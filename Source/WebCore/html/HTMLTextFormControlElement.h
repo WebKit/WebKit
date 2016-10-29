@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef HTMLTextFormControlElement_h
-#define HTMLTextFormControlElement_h
+#pragma once
 
 #include "HTMLFormControlElementWithState.h"
 
@@ -48,12 +47,10 @@ public:
     void didEditInnerTextValue();
     void forwardEvent(Event&);
 
-    long maxLength() const { return m_maxLength; }
-    WEBCORE_EXPORT void setMaxLength(int, ExceptionCode&);
-    void setMaxLength(int maxLength) { m_maxLength = maxLength; }
-    long minLength() const { return m_minLength; }
-    void setMinLength(int, ExceptionCode&);
-    void setMinLength(int minLength) { m_minLength = minLength; }
+    int maxLength() const { return m_maxLength; }
+    WEBCORE_EXPORT ExceptionOr<void> setMaxLength(int);
+    int minLength() const { return m_minLength; }
+    ExceptionOr<void> setMinLength(int);
 
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
@@ -73,8 +70,8 @@ public:
     WEBCORE_EXPORT void setSelectionEnd(int);
     WEBCORE_EXPORT void setSelectionDirection(const String&);
     WEBCORE_EXPORT void select(const AXTextStateChangeIntent& = AXTextStateChangeIntent());
-    WEBCORE_EXPORT virtual void setRangeText(const String& replacement, ExceptionCode&);
-    WEBCORE_EXPORT virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&);
+    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement);
+    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode);
     void setSelectionRange(int start, int end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     PassRefPtr<Range> selection() const;
@@ -129,6 +126,9 @@ protected:
 
     void adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const;
 
+    void internalSetMaxLength(int maxLength) { m_maxLength = maxLength; }
+    void internalSetMinLength(int minLength) { m_minLength = minLength; }
+
 private:
     TextFieldSelectionDirection cachedSelectionDirection() const { return static_cast<TextFieldSelectionDirection>(m_cachedSelectionDirection); }
 
@@ -172,5 +172,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTextFormControlElement)
     static bool isType(const WebCore::Element& element) { return element.isTextFormControl(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

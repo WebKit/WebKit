@@ -68,7 +68,7 @@ void WrapContentsInDummySpanCommand::doUnapply()
     for (auto& child : children)
         m_element->appendChild(child, IGNORE_EXCEPTION);
 
-    m_dummySpan->remove(IGNORE_EXCEPTION);
+    m_dummySpan->remove();
 }
 
 void WrapContentsInDummySpanCommand::doReapply()

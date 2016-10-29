@@ -380,9 +380,9 @@ void MediaControlsApple::updateCurrentTimeDisplay()
         return;
 
     // Allow the theme to format the time.
-    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
+    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsCurrentTime(now, duration));
     m_currentTimeDisplay->setCurrentValue(now);
-    m_timeRemainingDisplay->setInnerText(page->theme().formatMediaControlsRemainingTime(now, duration), IGNORE_EXCEPTION);
+    m_timeRemainingDisplay->setInnerText(page->theme().formatMediaControlsRemainingTime(now, duration));
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 

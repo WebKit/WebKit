@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaController_h
-#define MediaController_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -32,95 +31,56 @@
 #include "EventTarget.h"
 #include "MediaControllerInterface.h"
 #include "Timer.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Clock;
 class HTMLMediaElement;
-class Event;
-class ScriptExecutionContext;
 
 class MediaController final : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
 public:
     static Ref<MediaController> create(ScriptExecutionContext&);
     virtual ~MediaController();
 
-    void addMediaElement(HTMLMediaElement*);
-    void removeMediaElement(HTMLMediaElement*);
-    bool containsMediaElement(HTMLMediaElement*) const;
+    Ref<TimeRanges> buffered() const final;
+    Ref<TimeRanges> seekable() const final;
+    Ref<TimeRanges> played() final;
 
-    const String& mediaGroup() const { return m_mediaGroup; }
-    
-    Ref<TimeRanges> buffered() const override;
-    Ref<TimeRanges> seekable() const override;
-    Ref<TimeRanges> played() override;
-    
-    double duration() const override;
-    double currentTime() const override;
-    void setCurrentTime(double) override;
-    
-    bool paused() const override { return m_paused; }
-    void play() override;
-    void pause() override;
+    double duration() const final;
+    double currentTime() const final;
+    void setCurrentTime(double) final;
+
+    bool paused() const final { return m_paused; }
+    void play() final;
+    void pause() final;
     void unpause();
-    
-    double defaultPlaybackRate() const override { return m_defaultPlaybackRate; }
-    void setDefaultPlaybackRate(double) override;
-    
-    double playbackRate() const override;
-    void setPlaybackRate(double) override;
-    
-    double volume() const override { return m_volume; }
-    void setVolume(double, ExceptionCode&) override;
-    
-    bool muted() const override { return m_muted; }
-    void setMuted(bool) override;
-    
-    ReadyState readyState() const override { return m_readyState; }
 
-    enum PlaybackState { WAITING, PLAYING, ENDED };
+    double defaultPlaybackRate() const final { return m_defaultPlaybackRate; }
+    void setDefaultPlaybackRate(double) final;
+    
+    double playbackRate() const final;
+    void setPlaybackRate(double) final;
+
+    double volume() const final { return m_volume; }
+    ExceptionOr<void> setVolume(double) final;
+
+    bool muted() const final { return m_muted; }
+    void setMuted(bool) final;
+
     const AtomicString& playbackState() const;
 
-    bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override { return false; }
-    bool isFullscreen() const override { return false; }
-    void enterFullscreen() override { }
-
-    bool hasAudio() const override;
-    bool hasVideo() const override;
-    bool hasClosedCaptions() const override;
-    void setClosedCaptionsVisible(bool) override;
-    bool closedCaptionsVisible() const override { return m_closedCaptionsVisible; }
-    
-    bool supportsScanning() const override;
-    
-    void beginScrubbing() override;
-    void endScrubbing() override;
-    void beginScanning(ScanDirection) override;
-    void endScanning() override;
-    
-    bool canPlay() const override;
-    
-    bool isLiveStream() const override;
-    
-    bool hasCurrentSrc() const override;
-    
-    void returnToRealtime() override;
-
-    bool isBlocked() const;
-
-    // EventTarget
-    using RefCounted<MediaController>::ref;
-    using RefCounted<MediaController>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
     explicit MediaController(ScriptExecutionContext&);
+
     void reportControllerState();
     void updateReadyState();
     void updatePlaybackState();
     void updateMediaElements();
-    void bringElementUpToSpeed(HTMLMediaElement*);
+    void bringElementUpToSpeed(HTMLMediaElement&);
     void scheduleEvent(const AtomicString& eventName);
     void asyncEventTimerFired();
     void clearPositionTimerFired();
@@ -128,14 +88,47 @@ private:
     void scheduleTimeupdateEvent();
     void startTimeupdateTimer();
 
-    // EventTarget
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
-    EventTargetInterface eventTargetInterface() const override { return MediaControllerEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; };
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return MediaControllerEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; };
+
+    void addMediaElement(HTMLMediaElement&);
+    void removeMediaElement(HTMLMediaElement&);
+    bool containsMediaElement(HTMLMediaElement&) const;
+
+    const String& mediaGroup() const { return m_mediaGroup; }
+
+    bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final { return false; }
+    bool isFullscreen() const final { return false; }
+    void enterFullscreen() final { }
+
+    bool hasAudio() const final;
+    bool hasVideo() const final;
+    bool hasClosedCaptions() const final;
+    void setClosedCaptionsVisible(bool) final;
+    bool closedCaptionsVisible() const final { return m_closedCaptionsVisible; }
+
+    bool supportsScanning() const final;
+    void beginScrubbing() final;
+    void endScrubbing() final;
+    void beginScanning(ScanDirection) final;
+    void endScanning() final;
+
+    bool canPlay() const final;
+    bool isLiveStream() const final;
+    bool hasCurrentSrc() const final;
+    bool isBlocked() const;
+
+    void returnToRealtime() final;
+
+    ReadyState readyState() const final { return m_readyState; }
+
+    enum PlaybackState { WAITING, PLAYING, ENDED };
 
     friend class HTMLMediaElement;
     friend class MediaControllerEventListener;
+
     Vector<HTMLMediaElement*> m_mediaElements;
     bool m_paused;
     double m_defaultPlaybackRate;
@@ -158,5 +151,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

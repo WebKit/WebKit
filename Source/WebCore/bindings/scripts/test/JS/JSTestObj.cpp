@@ -2954,7 +2954,8 @@ static inline JSValue jsTestObjContentDocumentGetter(ExecState& state, JSTestObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    return shouldAllowAccessToNode(&state, impl.contentDocument()) ? toJS(&state, thisObject.globalObject(), impl.contentDocument()) : jsNull();
+    JSValue result = toJS(&state, thisObject.globalObject(), BindingSecurity::checkSecurityForNode(state, impl.contentDocument()));
+    return result;
 }
 
 static inline JSValue jsTestObjMutablePointGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
@@ -7578,9 +7579,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentCaller
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    if (!shouldAllowAccessToNode(state, impl.getSVGDocument(ec)))
-        return JSValue::encode(jsNull());
-    JSValue result = toJS(state, castedThis->globalObject(), impl.getSVGDocument(ec));
+    JSValue result = toJS(state, castedThis->globalObject(), BindingSecurity::checkSecurityForNode(*state, impl.getSVGDocument(ec)));
 
     setDOMException(state, throwScope, ec);
     return JSValue::encode(result);

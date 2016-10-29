@@ -24,8 +24,8 @@ interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute DOMString dirName;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    [SetterMayThrowLegacyException] attribute long minLength;
-    [SetterMayThrowLegacyException] attribute long maxLength;
+    [SetterMayThrowException] attribute long minLength;
+    [SetterMayThrowException] attribute long maxLength;
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
@@ -53,19 +53,12 @@ interface HTMLTextAreaElement : HTMLElement {
     attribute long selectionEnd;
     attribute DOMString selectionDirection;
 
-    [MayThrowLegacyException] void setRangeText(DOMString replacement);
-    [MayThrowLegacyException] void setRangeText(DOMString replacement,
-                        unsigned long start,
-                        unsigned long end,
-                        optional DOMString selectionMode);
+    [MayThrowException] void setRangeText(DOMString replacement);
+    [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
-    void setSelectionRange(optional long start = 0,
-                           optional long end = 0,
-                           optional DOMString direction);
+    void setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
-
     attribute DOMString autocomplete;
 };

@@ -45,7 +45,7 @@ inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Docu
 
 Ref<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
 {
-    Ref<HTMLMarqueeElement> marqueeElement = adoptRef(*new HTMLMarqueeElement(tagName, document));
+    auto marqueeElement = adoptRef(*new HTMLMarqueeElement(tagName, document));
     marqueeElement->suspendIfNeeded();
     return marqueeElement;
 }
@@ -112,14 +112,14 @@ void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedNam
 
 void HTMLMarqueeElement::start()
 {
-    if (RenderMarquee* marqueeRenderer = renderMarquee())
-        marqueeRenderer->start();
+    if (auto* renderer = renderMarquee())
+        renderer->start();
 }
 
 void HTMLMarqueeElement::stop()
 {
-    if (RenderMarquee* marqueeRenderer = renderMarquee())
-        marqueeRenderer->stop();
+    if (auto* renderer = renderMarquee())
+        renderer->stop();
 }
 
 unsigned HTMLMarqueeElement::scrollAmount() const
@@ -149,12 +149,12 @@ int HTMLMarqueeElement::loop() const
     return ok && loopValue > 0 ? loopValue : -1;
 }
     
-void HTMLMarqueeElement::setLoop(int loop, ExceptionCode& ec)
+ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)
 {
     if (loop <= 0 && loop != -1)
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(loopAttr, loop);
+        return Exception { INDEX_SIZE_ERR };
+    setIntegralAttribute(loopAttr, loop);
+    return { };
 }
 
 bool HTMLMarqueeElement::canSuspendForDocumentSuspension() const
@@ -176,9 +176,9 @@ void HTMLMarqueeElement::resume()
 
 RenderMarquee* HTMLMarqueeElement::renderMarquee() const
 {
-    if (renderer() && renderer()->hasLayer())
-        return renderBoxModelObject()->layer()->marquee();
-    return 0;
+    if (!renderer() || !renderer()->hasLayer())
+        return nullptr;
+    return renderBoxModelObject()->layer()->marquee();
 }
 
 } // namespace WebCore

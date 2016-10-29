@@ -581,12 +581,12 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
         configureCallback(track, index++);
 
     for (auto& track : removedTracks) {
-        (player->*removedFunction)(track);
+        (player->*removedFunction)(*track);
         track->streamTrack()->removeObserver(*trackObserver);
     }
 
     for (auto& track : addedTracks) {
-        (player->*addedFunction)(track);
+        (player->*addedFunction)(*track);
         track->streamTrack()->addObserver(*trackObserver);
     }
 }

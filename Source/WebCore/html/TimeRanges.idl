@@ -25,11 +25,10 @@
 
 [
     Conditional=VIDEO,
-    ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
+    ImplementationLacksVTable,
 ] interface TimeRanges {
     readonly attribute unsigned long length;
-    [MayThrowLegacyException] unrestricted double start(unsigned long index);
-    [MayThrowLegacyException] unrestricted double end(unsigned long index);
+    [MayThrowException] unrestricted double start(unsigned long index);
+    [MayThrowException] unrestricted double end(unsigned long index);
 };
-

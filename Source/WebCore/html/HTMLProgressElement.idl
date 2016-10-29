@@ -18,9 +18,8 @@
  */
 
 interface HTMLProgressElement : HTMLElement {
-    [SetterMayThrowLegacyException] attribute  unrestricted double value;
-    [SetterMayThrowLegacyException] attribute  unrestricted double max;
-    readonly attribute  unrestricted double                position;
-    readonly attribute  NodeList              labels;
+    attribute double value;
+    attribute double max;
+    readonly attribute double position;
+    readonly attribute NodeList labels;
 };
-

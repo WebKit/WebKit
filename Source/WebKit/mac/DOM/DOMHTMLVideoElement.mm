@@ -117,9 +117,7 @@
 - (void)webkitEnterFullscreen
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->webkitEnterFullscreen(ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->webkitEnterFullscreen());
 }
 
 - (void)webkitExitFullscreen
@@ -130,16 +128,12 @@
 
 - (void)webkitEnterFullScreen
 {
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->webkitEnterFullScreen(ec);
-    raiseOnDOMError(ec);
+    [self webkitEnterFullscreen];
 }
 
 - (void)webkitExitFullScreen
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->webkitExitFullScreen();
+    [self webkitExitFullscreen];
 }
 
 @end

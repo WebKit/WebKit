@@ -881,24 +881,22 @@ String urlToMarkup(const URL& url, const String& title)
     return markup.toString();
 }
 
-RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
+ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, ParserContentPolicy parserContentPolicy)
 {
-    Document* document = &contextElement.document();
+    auto* document = &contextElement.document();
     if (contextElement.hasTagName(templateTag))
         document = &document->ensureTemplateDocument();
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(*document);
+    auto fragment = DocumentFragment::create(*document);
 
     if (document->isHTMLDocument()) {
         fragment->parseHTML(markup, &contextElement, parserContentPolicy);
-        return fragment;
+        return WTFMove(fragment);
     }
 
     bool wasValid = fragment->parseXML(markup, &contextElement, parserContentPolicy);
-    if (!wasValid) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-    return fragment;
+    if (!wasValid)
+        return Exception { SYNTAX_ERR };
+    return WTFMove(fragment);
 }
 
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, const String& sourceString, const String& sourceMIMEType)
@@ -951,31 +949,29 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
     fragment.removeChild(element, ASSERT_NO_EXCEPTION);
 }
 
-RefPtr<DocumentFragment> createContextualFragment(Element& element, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
+ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, const String& markup, ParserContentPolicy parserContentPolicy)
 {
-    if (element.ieForbidsInsertHTML()) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
+    if (element.ieForbidsInsertHTML())
+        return Exception { NOT_SUPPORTED_ERR };
 
     if (element.hasTagName(colTag) || element.hasTagName(colgroupTag) || element.hasTagName(framesetTag)
-        || element.hasTagName(headTag) || element.hasTagName(styleTag) || element.hasTagName(titleTag)) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
+        || element.hasTagName(headTag) || element.hasTagName(styleTag) || element.hasTagName(titleTag))
+        return Exception { NOT_SUPPORTED_ERR };
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(element, markup, parserContentPolicy, ec);
-    if (!fragment)
-        return nullptr;
+    auto result = createFragmentForInnerOuterHTML(element, markup, parserContentPolicy);
+    if (result.hasException())
+        return result.releaseException();
+
+    auto fragment = result.releaseReturnValue();
 
     // We need to pop <html> and <body> elements and remove <head> to
     // accommodate folks passing complete HTML documents to make the
     // child of an element.
-    auto toRemove = collectElementsToRemoveFromFragment(*fragment);
+    auto toRemove = collectElementsToRemoveFromFragment(fragment);
     for (auto& element : toRemove)
-        removeElementFromFragmentPreservingChildren(*fragment, element);
+        removeElementFromFragmentPreservingChildren(fragment, element);
 
-    return fragment;
+    return WTFMove(fragment);
 }
 
 static inline bool hasOneChild(ContainerNode& node)
@@ -1005,14 +1001,14 @@ static inline bool canUseSetDataOptimization(const Text& containerChild, const C
     return !authorScriptMayHaveReference && !mutationScope.canObserve() && !hasMutationEventListeners(containerChild.document());
 }
 
-void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>&& fragment, ExceptionCode& ec)
+ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>&& fragment)
 {
     Ref<ContainerNode> containerNode(container);
     ChildListMutationScope mutation(containerNode);
 
     if (!fragment->firstChild()) {
         containerNode->removeChildren();
-        return;
+        return { };
     }
 
     auto* containerChild = containerNode->firstChild();
@@ -1020,36 +1016,50 @@ void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>
         if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
             ASSERT(!fragment->firstChild()->refCount());
             downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data());
-            return;
+            return { };
         }
 
+        ExceptionCode ec = 0;
         containerNode->replaceChild(fragment, *containerChild, ec);
-        return;
+        if (ec)
+            return Exception { ec };
+        return { };
     }
 
     containerNode->removeChildren();
+    ExceptionCode ec = 0;
     containerNode->appendChild(fragment, ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
-void replaceChildrenWithText(ContainerNode& container, const String& text, ExceptionCode& ec)
+ExceptionOr<void> replaceChildrenWithText(ContainerNode& container, const String& text)
 {
     Ref<ContainerNode> containerNode(container);
     ChildListMutationScope mutation(containerNode);
 
     if (hasOneTextChild(containerNode)) {
         downcast<Text>(*containerNode->firstChild()).setData(text);
-        return;
+        return { };
     }
 
     auto textNode = Text::create(containerNode->document(), text);
 
     if (hasOneChild(containerNode)) {
+        ExceptionCode ec = 0;
         containerNode->replaceChild(textNode, *containerNode->firstChild(), ec);
-        return;
+        if (ec)
+            return Exception { ec };
+        return { };
     }
 
     containerNode->removeChildren();
+    ExceptionCode ec = 0;
     containerNode->appendChild(textNode, ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
 }

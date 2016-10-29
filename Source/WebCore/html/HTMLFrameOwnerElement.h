@@ -49,7 +49,7 @@ public:
     // RenderElement when using fallback content.
     RenderWidget* renderWidget() const;
 
-    Document* getSVGDocument(ExceptionCode&) const;
+    ExceptionOr<Document*> getSVGDocument() const;
 
     virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
 

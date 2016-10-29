@@ -54,7 +54,7 @@ void MergeIdenticalElementsCommand::doApply()
     for (auto& child : children)
         m_element2->insertBefore(child, m_atChild.get(), IGNORE_EXCEPTION);
 
-    m_element1->remove(IGNORE_EXCEPTION);
+    m_element1->remove();
 }
 
 void MergeIdenticalElementsCommand::doUnapply()

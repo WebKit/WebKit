@@ -44,14 +44,12 @@ using namespace JSC;
 namespace WebCore {
 
 #if ENABLE(WEBGL)
-static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttributes>& attrs)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
+static RefPtr<CanvasContextAttributes> attributesFor3DContext(ExecState& state, ThrowScope& scope)
+{
     JSValue initializerValue = state.argument(1);
     if (initializerValue.isUndefinedOrNull())
-        return;
+        return nullptr;
     
     JSObject* initializerObject = initializerValue.toObject(&state);
     ASSERT_UNUSED(scope, !scope.exception());
@@ -67,8 +65,9 @@ static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttribu
     dictionary.tryGetProperty("preserveDrawingBuffer", graphicsAttrs.preserveDrawingBuffer);
     dictionary.tryGetProperty("preferLowPowerToHighPerformance", graphicsAttrs.preferLowPowerToHighPerformance);
 
-    attrs = WebGLContextAttributes::create(graphicsAttrs);
+    return WebGLContextAttributes::create(graphicsAttrs);
 }
+
 #endif
 
 JSValue JSHTMLCanvasElement::getContext(ExecState& state)
@@ -82,15 +81,16 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     HTMLCanvasElement& canvas = wrapped();
     const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
     
-    RefPtr<CanvasContextAttributes> attrs;
+    RefPtr<CanvasContextAttributes> attributes;
+
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
-        get3DContextAttributes(state, attrs);
+        attributes = attributesFor3DContext(state, scope);
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 #endif
     
-    CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
+    auto* context = canvas.getContext(contextId, attributes.get());
     if (!context)
         return jsNull();
 
@@ -104,23 +104,25 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
 {
-    HTMLCanvasElement& canvas = wrapped();
-    ExceptionCode ec = 0;
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto type = convert<IDLNullable<IDLDOMString>>(state, state.argument(0));
-    double quality;
-    double* qualityPtr = 0;
-    if (state.argumentCount() > 1) {
-        JSValue v = state.uncheckedArgument(1);
-        if (v.isNumber()) {
-            quality = v.toNumber(&state);
-            qualityPtr = &quality;
-        }
-    }
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
-    JSValue result = JSC::jsString(&state, canvas.toDataURL(type, qualityPtr, ec));
-    setDOMException(&state, ec);
-    return result;
+    Optional<double> quality;
+    auto qualityValue = state.argument(1);
+    if (qualityValue.isNumber())
+        quality = qualityValue.toNumber(&state);
+
+    // We would use toJS<IDLString> here, but it uses jsStringWithCache and we historically
+    // did not cache here, presumably because results are likely to be differing long strings.
+    auto result = wrapped().toDataURL(type, quality);
+    if (result.hasException()) {
+        propagateException(state, scope, result.releaseException());
+        return { };
+    }
+    return jsString(&state, result.releaseReturnValue());
 }
 
 } // namespace WebCore

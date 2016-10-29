@@ -26,15 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef JSHTMLSelectElementCustom_h
-#define JSHTMLSelectElementCustom_h
+#pragma once
 
-#include "JSHTMLSelectElement.h"
+namespace JSC {
+class ExecState;
+class JSValue;
+}
 
 namespace WebCore {
 
-void selectIndexSetter(HTMLSelectElement*, JSC::ExecState*, unsigned index, JSC::JSValue);
+class HTMLSelectElement;
+
+void selectElementIndexSetter(JSC::ExecState&, HTMLSelectElement&, unsigned index, JSC::JSValue);
 
 }
-
-#endif

@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType> {
 public:
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
@@ -50,7 +48,7 @@ public:
     WEBCORE_EXPORT int selectedIndex() const;
     WEBCORE_EXPORT void setSelectedIndex(int);
 
-    WEBCORE_EXPORT void setLength(unsigned, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setLength(unsigned);
 
     // For CachedHTMLCollection.
     bool elementMatches(Element&) const;

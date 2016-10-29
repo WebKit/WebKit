@@ -24,11 +24,9 @@
  */
 
 #include "config.h"
-
 #include "TimeRanges.h"
 
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 
 namespace WebCore {
 
@@ -61,27 +59,21 @@ TimeRanges::TimeRanges(const PlatformTimeRanges& other)
 {
 }
 
-double TimeRanges::start(unsigned index, ExceptionCode& ec) const
+ExceptionOr<double> TimeRanges::start(unsigned index) const
 {
     bool valid;
     MediaTime result = m_ranges.start(index, valid);
-
-    if (!valid) {
-        ec = INDEX_SIZE_ERR;
-        return 0;
-    }
+    if (!valid)
+        return Exception { INDEX_SIZE_ERR };
     return result.toDouble();
 }
 
-double TimeRanges::end(unsigned index, ExceptionCode& ec) const 
+ExceptionOr<double> TimeRanges::end(unsigned index) const
 { 
     bool valid;
     MediaTime result = m_ranges.end(index, valid);
-
-    if (!valid) {
-        ec = INDEX_SIZE_ERR;
-        return 0;
-    }
+    if (!valid)
+        return Exception { INDEX_SIZE_ERR };
     return result.toDouble();
 }
 

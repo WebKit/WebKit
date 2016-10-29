@@ -58,7 +58,7 @@ shouldBe("a.href", "'really:bad:url'");
 debug("Set a hostname that contains space in it");
 shouldThrow('a.href = "http://www.my domain.com/path/"');
 a.hostname = "www.other domain.com";
-shouldBe("a.href", "'http://www.my domain.com/path/'");
+shouldBe("a.href", "'really:bad:url'");
 
 // IE8 throws an exception "The URL is invalid".
 try {

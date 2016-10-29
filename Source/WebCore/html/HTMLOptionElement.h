@@ -35,8 +35,7 @@ class HTMLOptionElement final : public HTMLElement {
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static RefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
-       bool defaultSelected, bool selected, ExceptionCode&);
+    static ExceptionOr<Ref<HTMLOptionElement>> createForJSConstructor(Document&, const String& data, const String& value, bool defaultSelected, bool selected);
 
     WEBCORE_EXPORT String text() const;
     void setText(const String&);

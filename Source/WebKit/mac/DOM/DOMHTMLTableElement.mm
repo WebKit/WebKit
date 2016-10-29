@@ -56,11 +56,7 @@
 - (void)setCaption:(DOMHTMLTableCaptionElement *)newCaption
 {
     WebCore::JSMainThreadNullState state;
-    ASSERT(newCaption);
-
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setCaption(core(newCaption), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setCaption(core(newCaption)));
 }
 
 - (DOMHTMLTableSectionElement *)tHead
@@ -72,11 +68,7 @@
 - (void)setTHead:(DOMHTMLTableSectionElement *)newTHead
 {
     WebCore::JSMainThreadNullState state;
-    ASSERT(newTHead);
-
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setTHead(core(newTHead), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setTHead(core(newTHead)));
 }
 
 - (DOMHTMLTableSectionElement *)tFoot
@@ -88,11 +80,7 @@
 - (void)setTFoot:(DOMHTMLTableSectionElement *)newTFoot
 {
     WebCore::JSMainThreadNullState state;
-    ASSERT(newTFoot);
-
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setTFoot(core(newTFoot), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setTFoot(core(newTFoot)));
 }
 
 - (DOMHTMLCollection *)rows
@@ -260,18 +248,13 @@
 - (DOMHTMLElement *)insertRow:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMHTMLElement *result = kit(WTF::getPtr(IMPL->insertRow(index, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->insertRow(index)).ptr());
 }
 
 - (void)deleteRow:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteRow(index, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteRow(index));
 }
 
 @end

@@ -31,7 +31,6 @@
 
 #include "Document.h"
 #include "HTMLFrameElement.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSDOMBinding.h"
 
@@ -39,27 +38,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
-static inline bool allowSettingJavascriptURL(ExecState& state, HTMLFrameElement* imp, const String& value)
-{
-    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
-        Document* contentDocument = imp->contentDocument();
-        if (contentDocument && !shouldAllowAccessToNode(&state, contentDocument))
-            return false;
-    }
-    return true;
-}
-
 void JSHTMLFrameElement::setLocation(ExecState& state, JSValue value)
 {
-    HTMLFrameElement& imp = wrapped();
+    HTMLFrameElement& element = wrapped();
     String locationValue = value.isNull() ? String() : value.toWTFString(&state);
-
-    if (!allowSettingJavascriptURL(state, &imp, locationValue))
-        return;
-
-    imp.setLocation(locationValue);
+    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(locationValue))) {
+        if (!BindingSecurity::shouldAllowAccessToNode(state, element.contentDocument()))
+            return;
+    }
+    element.setLocation(locationValue);
 }
 
 } // namespace WebCore

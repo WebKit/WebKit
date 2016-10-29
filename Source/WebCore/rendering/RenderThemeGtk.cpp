@@ -26,7 +26,6 @@
 #include "RenderThemeGtk.h"
 
 #include "CSSValueKeywords.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FontDescription.h"
@@ -2036,8 +2035,8 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
     auto& style = o.style();
     RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
     for (unsigned index = 0; index < timeRanges->length(); ++index) {
-        float start = timeRanges->start(index, IGNORE_EXCEPTION);
-        float end = timeRanges->end(index, IGNORE_EXCEPTION);
+        float start = timeRanges->start(index).releaseReturnValue();
+        float end = timeRanges->end(index).releaseReturnValue();
         float startRatio = start / mediaDuration;
         float lengthRatio = (end - start) / mediaDuration;
         if (!lengthRatio)

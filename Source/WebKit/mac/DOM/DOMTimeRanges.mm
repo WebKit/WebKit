@@ -63,19 +63,13 @@
 - (double)start:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    double result = IMPL->start(index, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->start(index));
 }
 
 - (double)end:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    double result = IMPL->end(index, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->end(index));
 }
 
 @end

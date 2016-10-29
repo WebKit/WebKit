@@ -60,7 +60,7 @@
     readonly attribute boolean seeking;
 
     // playback state
-    [SetterMayThrowLegacyException] attribute unrestricted double currentTime;
+    [ImplementedAs=currentTimeForBindings, SetterMayThrowException] attribute unrestricted double currentTime;
     readonly attribute unrestricted double duration;
     Date getStartDate();
     readonly attribute boolean paused;
@@ -77,7 +77,7 @@
 
     // controls
     attribute boolean controls;
-    [SetterMayThrowLegacyException] attribute double volume;
+    [SetterMayThrowException] attribute double volume;
     attribute boolean muted;
     [Reflect=muted] attribute boolean defaultMuted;
 
@@ -94,7 +94,7 @@
     [Conditional=LEGACY_ENCRYPTED_MEDIA] readonly attribute WebKitMediaKeys webkitKeys;
     [Conditional=LEGACY_ENCRYPTED_MEDIA] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
 
-    [Conditional=VIDEO_TRACK, MayThrowLegacyException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
+    [Conditional=VIDEO_TRACK, MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
     [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;

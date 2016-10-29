@@ -124,18 +124,13 @@
 - (DOMHTMLElement *)insertCell:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMHTMLElement *result = kit(WTF::getPtr(IMPL->insertCell(index, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->insertCell(index)).ptr());
 }
 
 - (void)deleteCell:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteCell(index, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteCell(index));
 }
 
 @end

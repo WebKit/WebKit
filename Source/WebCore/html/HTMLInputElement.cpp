@@ -375,14 +375,14 @@ Optional<Decimal> HTMLInputElement::findClosestTickMarkValue(const Decimal& valu
 }
 #endif
 
-void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::stepUp(int n)
 {
-    m_inputType->stepUp(n, ec);
+    return m_inputType->stepUp(n);
 }
 
-void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::stepDown(int n)
 {
-    m_inputType->stepUp(-n, ec);
+    return m_inputType->stepUp(-n);
 }
 
 void HTMLInputElement::blur()
@@ -1018,19 +1018,13 @@ void HTMLInputElement::setEditingValue(const String& value)
     dispatchInputEvent();
 }
 
-void HTMLInputElement::setValue(const String& value, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
+ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
 {
-    if (isFileUpload() && !value.isEmpty()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    setValue(value.isNull() ? emptyString() : value, eventBehavior);
-}
+    if (isFileUpload() && !value.isEmpty())
+        return Exception { INVALID_STATE_ERR };
 
-void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
-{
     if (!m_inputType->canSetValue(value))
-        return;
+        return { };
 
     Ref<HTMLInputElement> protectedThis(*this);
     EventQueueScope scope;
@@ -1040,6 +1034,7 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
     m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior);
+    return { };
 }
 
 void HTMLInputElement::setValueInternal(const String& sanitizedValue, TextFieldEventBehavior eventBehavior)
@@ -1054,9 +1049,9 @@ double HTMLInputElement::valueAsDate() const
     return m_inputType->valueAsDate();
 }
 
-void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::setValueAsDate(double value)
 {
-    m_inputType->setValueAsDate(value, ec);
+    return m_inputType->setValueAsDate(value);
 }
 
 double HTMLInputElement::valueAsNumber() const
@@ -1064,13 +1059,11 @@ double HTMLInputElement::valueAsNumber() const
     return m_inputType->valueAsDouble();
 }
 
-void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
+ExceptionOr<void> HTMLInputElement::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior)
 {
-    if (!std::isfinite(newValue)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    m_inputType->setValueAsDouble(newValue, eventBehavior, ec);
+    if (!std::isfinite(newValue))
+        return Exception { NOT_SUPPORTED_ERR };
+    return m_inputType->setValueAsDouble(newValue, eventBehavior);
 }
 
 void HTMLInputElement::setValueFromRenderer(const String& value)
@@ -1306,17 +1299,12 @@ bool HTMLInputElement::multiple() const
     return hasAttributeWithoutSynchronization(multipleAttr);
 }
 
-void HTMLInputElement::setSize(unsigned size)
-{
-    setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(size, defaultSize));
-}
-
-void HTMLInputElement::setSize(unsigned size, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::setSize(unsigned size)
 {
     if (!size)
-        ec = INDEX_SIZE_ERR;
-    else
-        setSize(size);
+        return Exception { INDEX_SIZE_ERR };
+    setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(size, defaultSize));
+    return { };
 }
 
 URL HTMLInputElement::src() const
@@ -1777,11 +1765,7 @@ bool HTMLInputElement::isEmptyValue() const
 void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
 {
     unsigned oldEffectiveMaxLength = effectiveMaxLength();
-    if (Optional<unsigned> maxLength = parseHTMLNonNegativeInteger(newValue))
-        setMaxLength(maxLength.value());
-    else
-        setMaxLength(-1);
-
+    internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
     if (oldEffectiveMaxLength != effectiveMaxLength())
         updateValueIfNeeded();
 
@@ -1793,11 +1777,7 @@ void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
 void HTMLInputElement::minLengthAttributeChanged(const AtomicString& newValue)
 {
     int oldMinLength = minLength();
-    if (Optional<unsigned> minLength = parseHTMLNonNegativeInteger(newValue))
-        setMinLength(minLength.value());
-    else
-        setMinLength(-1);
-
+    internalSetMinLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
     if (oldMinLength != minLength())
         updateValueIfNeeded();
 
@@ -1932,24 +1912,20 @@ void ListAttributeTargetObserver::idTargetChanged()
 }
 #endif
 
-void HTMLInputElement::setRangeText(const String& replacement, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::setRangeText(const String& replacement)
 {
-    if (!m_inputType->supportsSelectionAPI()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    if (!m_inputType->supportsSelectionAPI())
+        return Exception { INVALID_STATE_ERR };
 
-    HTMLTextFormControlElement::setRangeText(replacement, ec);
+    return HTMLTextFormControlElement::setRangeText(replacement);
 }
 
-void HTMLInputElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode& ec)
+ExceptionOr<void> HTMLInputElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode)
 {
-    if (!m_inputType->supportsSelectionAPI()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    if (!m_inputType->supportsSelectionAPI())
+        return Exception { INVALID_STATE_ERR };
 
-    HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode, ec);
+    return HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode);
 }
 
 bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const

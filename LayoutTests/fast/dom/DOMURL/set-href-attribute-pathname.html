@@ -56,14 +56,14 @@ shouldBe("a.href", "'https://www.mydomain.com/?key=value'");
 debug("Set pathname that includes illegal characters to URL that contains illegal characters.");
 shouldThrow('a.href = "https://www.my|d[]()omain.com/path/testurl.html?key=value"');
 a.pathname = "p$a|th";
-shouldBe("a.href", "'https://www.my|d[]()omain.com/path/testurl.html?key=value'");
+shouldBe("a.href", "'https://www.mydomain.com/p$a|th?key=value'");
 
 // IE8 throws a security exception. Gecko parses this as a URL with an empty hostname.
 try {
 debug("Set pathname to URL that contains '@' in host");
 shouldThrow('a.href = "http://w@#ww"');
 a.pathname = "path";
-shouldBe("a.href", "'http://w@#ww'");
+shouldBe("a.href", "'https://www.mydomain.com/path?key=value'");
 } catch(e) {
 debug("Exception: " + e.description);
 }

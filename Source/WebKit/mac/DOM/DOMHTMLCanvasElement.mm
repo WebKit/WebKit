@@ -65,10 +65,7 @@
 - (NSString *)toDataURL:(NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->toDataURL(type, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->toDataURL(type));
 }
 
 @end

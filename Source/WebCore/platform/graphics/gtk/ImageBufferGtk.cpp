@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const double* quality, GUniqueOutPtr<gchar>& buffer, gsize& bufferSize)
+static bool encodeImage(cairo_surface_t* surface, const String& mimeType, Optional<double> quality, GUniqueOutPtr<gchar>& buffer, gsize& bufferSize)
 {
     // List of supported image encoding types comes from the GdkPixbuf documentation.
     // http://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save-to-bufferv
@@ -75,7 +75,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const 
     return !error;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
+String ImageBuffer::toDataURL(const String& mimeType, Optional<double> quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

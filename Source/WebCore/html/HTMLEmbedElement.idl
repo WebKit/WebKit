@@ -19,9 +19,9 @@
  */
 
 [
+    CustomCall,
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomCall,
 ] interface HTMLEmbedElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString height;
@@ -30,6 +30,5 @@
     [Reflect] attribute DOMString type;
     [Reflect] attribute DOMString width;
 
-    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 };
-

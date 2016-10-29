@@ -37,22 +37,12 @@
 
 namespace WebCore {
 
-LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
-    : TextTrack(&track->document(), track, kind, emptyString(), label, language, TrackElement)
-    , m_trackElement(track)
+LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
+    : TextTrack(&track.document(), &track, kind, emptyString(), label, language, TrackElement)
+    , m_trackElement(&track)
     , m_loadTimer(*this, &LoadableTextTrack::loadTimerFired)
     , m_isDefault(false)
 {
-}
-
-LoadableTextTrack::~LoadableTextTrack()
-{
-}
-
-void LoadableTextTrack::clearClient()
-{
-    m_trackElement = 0;
-    TextTrack::clearClient();
 }
 
 void LoadableTextTrack::scheduleLoad(const URL& url)
@@ -74,12 +64,6 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
 Element* LoadableTextTrack::element()
 {
     return m_trackElement;
-}
-    
-void LoadableTextTrack::setTrackElement(HTMLTrackElement* element)
-{
-    ASSERT(!m_trackElement || m_trackElement == element);
-    m_trackElement = element;
 }
 
 void LoadableTextTrack::loadTimerFired()
@@ -144,9 +128,9 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 
 AtomicString LoadableTextTrack::id() const
 {
-    if (m_trackElement)
-        return m_trackElement->getAttribute("id");
-    return emptyString();
+    if (!m_trackElement)
+        return emptyAtom;
+    return m_trackElement->attributeWithoutSynchronization(idAttr);
 }
 
 size_t LoadableTextTrack::trackElementIndex()

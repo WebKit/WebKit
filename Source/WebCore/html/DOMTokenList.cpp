@@ -48,28 +48,25 @@ static inline bool tokenContainsHTMLSpace(const String& token)
     return token.find(isHTMLSpace) != notFound;
 }
 
-bool DOMTokenList::validateToken(const String& token, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::validateToken(const String& token)
 {
-    if (token.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return false;
-    }
+    if (token.isEmpty())
+        return Exception { SYNTAX_ERR };
 
-    if (tokenContainsHTMLSpace(token)) {
-        ec = INVALID_CHARACTER_ERR;
-        return false;
-    }
+    if (tokenContainsHTMLSpace(token))
+        return Exception { INVALID_CHARACTER_ERR };
 
-    return true;
+    return { };
 }
 
-bool DOMTokenList::validateTokens(const String* tokens, size_t length, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::validateTokens(const String* tokens, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
-        if (!validateToken(tokens[i], ec))
-            return false;
+        auto result = validateToken(tokens[i]);
+        if (result.hasException())
+            return result;
     }
-    return true;
+    return { };
 }
 
 bool DOMTokenList::contains(const AtomicString& token) const
@@ -77,16 +74,18 @@ bool DOMTokenList::contains(const AtomicString& token) const
     return tokens().contains(token);
 }
 
-inline void DOMTokenList::addInternal(const String* newTokens, size_t length, ExceptionCode& ec)
+inline ExceptionOr<void> DOMTokenList::addInternal(const String* newTokens, size_t length)
 {
     // This is usually called with a single token.
     Vector<AtomicString, 1> uniqueNewTokens;
     uniqueNewTokens.reserveInitialCapacity(length);
 
     auto& tokens = this->tokens();
+
     for (size_t i = 0; i < length; ++i) {
-        if (!validateToken(newTokens[i], ec))
-            return;
+        auto result = validateToken(newTokens[i]);
+        if (result.hasException())
+            return result;
         if (!tokens.contains(newTokens[i]) && !uniqueNewTokens.contains(newTokens[i]))
             uniqueNewTokens.uncheckedAppend(newTokens[i]);
     }
@@ -95,44 +94,50 @@ inline void DOMTokenList::addInternal(const String* newTokens, size_t length, Ex
         tokens.appendVector(uniqueNewTokens);
 
     updateAssociatedAttributeFromTokens();
+
+    return { };
 }
 
-void DOMTokenList::add(const Vector<String>& tokens, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::add(const Vector<String>& tokens)
 {
-    addInternal(tokens.data(), tokens.size(), ec);
+    return addInternal(tokens.data(), tokens.size());
 }
 
-void DOMTokenList::add(const WTF::AtomicString& token, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::add(const AtomicString& token)
 {
-    addInternal(&token.string(), 1, ec);
+    return addInternal(&token.string(), 1);
 }
 
-inline void DOMTokenList::removeInternal(const String* tokensToRemove, size_t length, ExceptionCode& ec)
+inline ExceptionOr<void> DOMTokenList::removeInternal(const String* tokensToRemove, size_t length)
 {
-    if (!validateTokens(tokensToRemove, length, ec))
-        return;
+    auto result = validateTokens(tokensToRemove, length);
+    if (result.hasException())
+        return result;
 
     auto& tokens = this->tokens();
     for (size_t i = 0; i < length; ++i)
         tokens.removeFirst(tokensToRemove[i]);
 
     updateAssociatedAttributeFromTokens();
+
+    return { };
 }
 
-void DOMTokenList::remove(const Vector<String>& tokens, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::remove(const Vector<String>& tokens)
 {
-    removeInternal(tokens.data(), tokens.size(), ec);
+    return removeInternal(tokens.data(), tokens.size());
 }
 
-void DOMTokenList::remove(const WTF::AtomicString& token, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::remove(const AtomicString& token)
 {
-    removeInternal(&token.string(), 1, ec);
+    return removeInternal(&token.string(), 1);
 }
 
-bool DOMTokenList::toggle(const AtomicString& token, Optional<bool> force, ExceptionCode& ec)
+ExceptionOr<bool> DOMTokenList::toggle(const AtomicString& token, Optional<bool> force)
 {
-    if (!validateToken(token, ec))
-        return false;
+    auto result = validateToken(token);
+    if (result.hasException())
+        return result.releaseException();
 
     auto& tokens = this->tokens();
 
@@ -153,22 +158,18 @@ bool DOMTokenList::toggle(const AtomicString& token, Optional<bool> force, Excep
     return true;
 }
 
-void DOMTokenList::replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode& ec)
+ExceptionOr<void> DOMTokenList::replace(const AtomicString& token, const AtomicString& newToken)
 {
-    if (token.isEmpty() || newToken.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    if (token.isEmpty() || newToken.isEmpty())
+        return Exception { SYNTAX_ERR };
 
-    if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken)) {
-        ec = INVALID_CHARACTER_ERR;
-        return;
-    }
+    if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken))
+        return Exception { INVALID_CHARACTER_ERR };
 
     auto& tokens = this->tokens();
     size_t index = tokens.find(token);
     if (index == notFound)
-        return;
+        return { };
 
     if (tokens.find(newToken) != notFound)
         tokens.remove(index);
@@ -176,15 +177,15 @@ void DOMTokenList::replace(const AtomicString& token, const AtomicString& newTok
         tokens[index] = newToken;
 
     updateAssociatedAttributeFromTokens();
+
+    return { };
 }
 
 // https://dom.spec.whatwg.org/#concept-domtokenlist-validation
-bool DOMTokenList::supports(StringView token, ExceptionCode& ec)
+ExceptionOr<bool> DOMTokenList::supports(StringView token)
 {
-    if (!m_isSupportedToken) {
-        ec = TypeError;
-        return false;
-    }
+    if (!m_isSupportedToken)
+        return Exception { TypeError };
     return m_isSupportedToken(token);
 }
 

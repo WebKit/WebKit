@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, Optional<HTMLElementOrInt> before);
 
     using Node::remove;
-    void remove(HTMLOptionElement&);
+    ExceptionOr<void> remove(HTMLOptionElement&);
     WEBCORE_EXPORT void removeByIndex(int); // Should be remove(int) but that conflicts with Node::remove(ExceptionCode&).
 
     WEBCORE_EXPORT String value() const;
@@ -80,8 +80,8 @@ public:
 
     WEBCORE_EXPORT void setSize(unsigned);
 
-    void setOption(unsigned index, HTMLOptionElement&, ExceptionCode&);
-    void setLength(unsigned, ExceptionCode&);
+    ExceptionOr<void> setOption(unsigned index, HTMLOptionElement&);
+    ExceptionOr<void> setLength(unsigned);
 
     WEBCORE_EXPORT HTMLOptionElement* namedItem(const AtomicString& name);
     WEBCORE_EXPORT HTMLOptionElement* item(unsigned index);

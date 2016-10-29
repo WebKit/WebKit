@@ -213,17 +213,15 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-void HTMLTextFormControlElement::setRangeText(const String& replacement, ExceptionCode& ec)
+ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement)
 {
-    setRangeText(replacement, selectionStart(), selectionEnd(), String(), ec);
+    return setRangeText(replacement, selectionStart(), selectionEnd(), String());
 }
 
-void HTMLTextFormControlElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode& ec)
+ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode)
 {
-    if (start > end) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (start > end)
+        return Exception { INDEX_SIZE_ERR };
 
     String text = innerTextValue();
     unsigned textLength = text.length();
@@ -243,7 +241,7 @@ void HTMLTextFormControlElement::setRangeText(const String& replacement, unsigne
 
     // FIXME: What should happen to the value (as in value()) if there's no renderer?
     if (!renderer())
-        return;
+        return { };
 
     subtreeHasChanged();
 
@@ -270,6 +268,8 @@ void HTMLTextFormControlElement::setRangeText(const String& replacement, unsigne
     }
 
     setSelectionRange(newSelectionStart, newSelectionEnd, SelectionHasNoDirection);
+
+    return { };
 }
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end, const String& directionString, const AXTextStateChangeIntent& intent)
@@ -557,7 +557,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
                 cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
         }
 #endif
-        innerText->setInnerText(value, ASSERT_NO_EXCEPTION);
+        innerText->setInnerText(value);
 
         if (value.endsWith('\n') || value.endsWith('\r'))
             innerText->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
@@ -761,20 +761,20 @@ String HTMLTextFormControlElement::directionForFormData() const
     return "ltr";
 }
 
-void HTMLTextFormControlElement::setMaxLength(int maxLength, ExceptionCode& ec)
+ExceptionOr<void> HTMLTextFormControlElement::setMaxLength(int maxLength)
 {
     if (maxLength < 0 || (m_minLength >= 0 && maxLength < m_minLength))
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(maxlengthAttr, maxLength);
+        return Exception { INDEX_SIZE_ERR };
+    setIntegralAttribute(maxlengthAttr, maxLength);
+    return { };
 }
 
-void HTMLTextFormControlElement::setMinLength(int minLength, ExceptionCode& ec)
+ExceptionOr<void> HTMLTextFormControlElement::setMinLength(int minLength)
 {
     if (minLength < 0 || (m_maxLength >= 0 && minLength > m_maxLength))
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(minlengthAttr, minLength);
+        return Exception { INDEX_SIZE_ERR };
+    setIntegralAttribute(minlengthAttr, minLength);
+    return { };
 }
 
 void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const

@@ -25,14 +25,15 @@
     JSGenerateToNativeObject,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;
-    [CEReactions, CustomSetter, SetterMayThrowLegacyException] attribute unsigned long length;
+    [CEReactions, CustomSetter, SetterMayThrowException] attribute unsigned long length;
 
     getter HTMLOptionElement? item(unsigned long index);
     getter HTMLOptionElement? namedItem(DOMString name);
 
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
 
-    [CEReactions] void remove(long index);
-    // FIXME: This overload is not in the specification and has been dropped in Blink.
+    void remove(long index);
+
+    // FIXME: This overload is not in the specification and has been dropped from Blink.
     [CEReactions] void remove(HTMLOptionElement option);
 };

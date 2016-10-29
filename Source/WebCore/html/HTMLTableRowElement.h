@@ -41,12 +41,10 @@ public:
     WEBCORE_EXPORT int sectionRowIndex() const;
     void setSectionRowIndex(int);
 
-    RefPtr<HTMLTableCellElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
-    WEBCORE_EXPORT RefPtr<HTMLTableCellElement> insertCell(int index, ExceptionCode&);
-    WEBCORE_EXPORT void deleteCell(int index, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<HTMLTableCellElement>> insertCell(int index = -1);
+    WEBCORE_EXPORT ExceptionOr<void> deleteCell(int index);
 
     WEBCORE_EXPORT Ref<HTMLCollection> cells();
-    void setCells(HTMLCollection *, ExceptionCode&);
 
 private:
     HTMLTableRowElement(const QualifiedName&, Document&);

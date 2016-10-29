@@ -270,7 +270,7 @@ VTTCue::~VTTCue()
 {
     // FIXME: We should set m_cue in VTTCueBox to nullptr instead.
     if (m_displayTree && m_displayTree->document().refCount())
-        m_displayTree->remove(ASSERT_NO_EXCEPTION);
+        m_displayTree->remove();
 }
 
 void VTTCue::initialize(ScriptExecutionContext& context)
@@ -843,7 +843,7 @@ void VTTCue::removeDisplayTree()
 
     if (!hasDisplayTree())
         return;
-    displayTreeInternal().remove(ASSERT_NO_EXCEPTION);
+    displayTreeInternal().remove();
 }
 
 std::pair<double, double> VTTCue::getPositionCoordinates() const

@@ -435,10 +435,8 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         setAttributeEventListener(eventName, name, value);
 }
 
-Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
+ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& text)
 {
-    ec = 0;
-
     auto fragment = DocumentFragment::create(document());
 
     for (unsigned start = 0, length = text.length(); start < length; ) {
@@ -452,16 +450,17 @@ Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionC
                 break;
         }
 
+        ExceptionCode ec = 0;
         fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
         if (ec)
-            break;
+            return Exception { ec };
 
         if (i == length)
             break;
 
         fragment->appendChild(HTMLBRElement::create(document()), ec);
         if (ec)
-            break;
+            return Exception { ec };
 
         // Make sure \r\n doesn't result in two line breaks.
         if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
@@ -470,7 +469,7 @@ Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionC
         start = i + 1; // Character after line break.
     }
 
-    return fragment;
+    return WTFMove(fragment);
 }
 
 static inline bool shouldProhibitSetInnerOuterText(const HTMLElement& element)
@@ -515,26 +514,21 @@ void HTMLElement::setDir(const AtomicString& value)
     setAttributeWithoutSynchronization(dirAttr, value);
 }
 
-void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
+ExceptionOr<void> HTMLElement::setInnerText(const String& text)
 {
-    if (ieForbidsInsertHTML()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-    if (shouldProhibitSetInnerOuterText(*this)) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
+    if (ieForbidsInsertHTML())
+        return Exception { NO_MODIFICATION_ALLOWED_ERR };
+    if (shouldProhibitSetInnerOuterText(*this))
+        return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
     if (!text.contains('\n') && !text.contains('\r')) {
         if (text.isEmpty()) {
             removeChildren();
-            return;
+            return { };
         }
-        replaceChildrenWithText(*this, text, ec);
-        return;
+        return replaceChildrenWithText(*this, text);
     }
 
     // FIXME: Do we need to be able to detect preserveNewline style even when there's no renderer?
@@ -542,63 +536,67 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     // For example, for the contents of textarea elements that are display:none?
     auto r = renderer();
     if ((r && r->style().preserveNewline()) || (inDocument() && isTextControlInnerTextElement())) {
-        if (!text.contains('\r')) {
-            replaceChildrenWithText(*this, text, ec);
-            return;
-        }
+        if (!text.contains('\r'))
+            return replaceChildrenWithText(*this, text);
         String textWithConsistentLineBreaks = text;
         textWithConsistentLineBreaks.replace("\r\n", "\n");
         textWithConsistentLineBreaks.replace('\r', '\n');
-        replaceChildrenWithText(*this, textWithConsistentLineBreaks, ec);
-        return;
+        return replaceChildrenWithText(*this, textWithConsistentLineBreaks);
     }
 
     // Add text nodes and <br> elements.
-    ec = 0;
-    Ref<DocumentFragment> fragment = textToFragment(text, ec);
-    if (!ec)
-        replaceChildrenWithFragment(*this, WTFMove(fragment), ec);
+    auto fragment = textToFragment(text);
+    if (fragment.hasException())
+        return fragment.releaseException();
+    return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
 }
 
-void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
+ExceptionOr<void> HTMLElement::setOuterText(const String& text)
 {
-    if (ieForbidsInsertHTML()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-    if (shouldProhibitSetInnerOuterText(*this)) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
+    if (ieForbidsInsertHTML())
+        return Exception { NO_MODIFICATION_ALLOWED_ERR };
+    if (shouldProhibitSetInnerOuterText(*this))
+        return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
     RefPtr<ContainerNode> parent = parentNode();
-    if (!parent) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
+    if (!parent)
+        return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
     RefPtr<Node> newChild;
-    ec = 0;
-    
+
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
-    if (text.contains('\r') || text.contains('\n'))
-        newChild = textToFragment(text, ec);
-    else
+    if (text.contains('\r') || text.contains('\n')) {
+        auto result = textToFragment(text);
+        if (result.hasException())
+            return result.releaseException();
+        newChild = result.releaseReturnValue();
+    } else
         newChild = Text::create(document(), text);
 
     if (!parentNode())
-        ec = HIERARCHY_REQUEST_ERR;
-    if (ec)
-        return;
+        return Exception { HIERARCHY_REQUEST_ERR };
+
+    ExceptionCode ec = 0;
     parent->replaceChild(*newChild, *this, ec);
+    if (ec)
+        return Exception { ec };
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && is<Text>(node.get()))
+    if (is<Text>(node.get())) {
+        ExceptionCode ec = 0;
         mergeWithNextTextNode(downcast<Text>(*node), ec);
-    if (!ec && is<Text>(prev.get()))
+        if (ec)
+            return Exception { ec };
+    }
+    if (is<Text>(prev.get())) {
+        ExceptionCode ec = 0;
         mergeWithNextTextNode(downcast<Text>(*prev), ec);
+        if (ec)
+            return Exception { ec };
+    }
+    return { };
 }
 
 void HTMLElement::applyAlignmentAttributeToStyle(const AtomicString& alignment, MutableStyleProperties& style)
@@ -661,7 +659,7 @@ String HTMLElement::contentEditable() const
     return ASCIILiteral("inherit");
 }
 
-void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
+ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 {
     if (equalLettersIgnoringASCIICase(enabled, "true"))
         setAttributeWithoutSynchronization(contenteditableAttr, AtomicString("true", AtomicString::ConstructFromLiteral));
@@ -672,7 +670,8 @@ void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
         removeAttribute(contenteditableAttr);
     else
-        ec = SYNTAX_ERR;
+        return Exception { SYNTAX_ERR };
+    return { };
 }
 
 bool HTMLElement::draggable() const
@@ -721,30 +720,15 @@ int HTMLElement::tabIndex() const
     return -1;
 }
 
-TranslateAttributeMode HTMLElement::translateAttributeMode() const
-{
-    const AtomicString& value = attributeWithoutSynchronization(translateAttr);
-
-    if (value.isNull())
-        return TranslateAttributeInherit;
-    if (equalLettersIgnoringASCIICase(value, "yes") || value.isEmpty())
-        return TranslateAttributeYes;
-    if (equalLettersIgnoringASCIICase(value, "no"))
-        return TranslateAttributeNo;
-
-    return TranslateAttributeInherit;
-}
-
 bool HTMLElement::translate() const
 {
     for (auto& element : lineageOfType<HTMLElement>(*this)) {
-        TranslateAttributeMode mode = element.translateAttributeMode();
-        if (mode == TranslateAttributeInherit)
-            continue;
-        ASSERT(mode == TranslateAttributeYes || mode == TranslateAttributeNo);
-        return mode == TranslateAttributeYes;
+        const AtomicString& value = element.attributeWithoutSynchronization(translateAttr);
+        if (equalLettersIgnoringASCIICase(value, "yes") || (value.isEmpty() && !value.isNull()))
+            return true;
+        if (equalLettersIgnoringASCIICase(value, "no"))
+            return false;
     }
-
     // Default on the root element is translate=yes.
     return true;
 }

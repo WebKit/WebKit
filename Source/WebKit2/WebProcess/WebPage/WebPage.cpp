@@ -893,7 +893,7 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
                     postLayoutData.enclosingListType = NoList;
 
                 if (nodeToRemove)
-                    nodeToRemove->remove(ASSERT_NO_EXCEPTION);
+                    nodeToRemove->remove();
             }
         }
     }

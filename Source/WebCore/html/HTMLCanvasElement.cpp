@@ -458,22 +458,20 @@ String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
     return mimeType.convertToASCIILowercase();
 }
 
-String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionCode& ec)
+ExceptionOr<String> HTMLCanvasElement::toDataURL(const String& mimeType, Optional<double> quality)
 {
-    if (!m_originClean) {
-        ec = SECURITY_ERR;
-        return String();
-    }
+    if (!m_originClean)
+        return Exception { SECURITY_ERR };
 
     if (m_size.isEmpty() || !buffer())
-        return ASCIILiteral("data:,");
+        return String { ASCIILiteral { "data:," } };
 
     String encodingMIMEType = toEncodingMimeType(mimeType);
 
 #if USE(CG)
     // Try to get ImageData first, as that may avoid lossy conversions.
     if (auto imageData = getImageData())
-        return ImageDataToDataURL(*imageData, encodingMIMEType, quality);
+        return dataURL(*imageData, encodingMIMEType, quality);
 #endif
 
     makeRenderingResultsAvailable();

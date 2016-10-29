@@ -161,9 +161,7 @@
 - (void)setInnerText:(NSString *)newInnerText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setInnerText(newInnerText, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setInnerText(newInnerText));
 }
 
 - (NSString *)outerText
@@ -175,9 +173,7 @@
 - (void)setOuterText:(NSString *)newOuterText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setOuterText(newOuterText, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setOuterText(newOuterText));
 }
 
 - (NSString *)contentEditable
@@ -189,9 +185,7 @@
 - (void)setContentEditable:(NSString *)newContentEditable
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setContentEditable(newContentEditable, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setContentEditable(newContentEditable));
 }
 
 - (BOOL)isContentEditable

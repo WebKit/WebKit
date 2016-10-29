@@ -1,3 +1,25 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        * fast/dom/DOMURL/set-href-attribute-hostname-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hostname.html:
+        * fast/dom/DOMURL/set-href-attribute-pathname-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-pathname.html:
+        Updated these tests to expect that if you set href and it raises an exception,
+        then the URL does not change. The old expected results showed the exception being
+        raised but the URL being changed to the invalid href.
+
+        * fast/dom/HTMLProgressElement/script-tests/set-progress-properties.js:
+        * fast/dom/HTMLProgressElement/set-progress-properties-expected.txt:
+        Updated to expect a different exception, TypeError rather than NotSupportedError,
+        for non-finite values.
+
 2016-10-28  Jer Noble  <jer.noble@apple.com>
 
         WebAudio does not resume when moving from background to foreground tab.

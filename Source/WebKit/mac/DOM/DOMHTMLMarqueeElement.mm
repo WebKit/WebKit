@@ -108,9 +108,7 @@
 - (void)setLoop:(int)newLoop
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setLoop(newLoop, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setLoop(newLoop));
 }
 
 - (unsigned)scrollAmount

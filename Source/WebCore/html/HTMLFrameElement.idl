@@ -19,7 +19,6 @@
  */
 
 interface HTMLFrameElement : HTMLElement {
-
     [Reflect] attribute DOMString frameBorder;
     [Reflect, URL] attribute USVString longDesc;
 
@@ -31,19 +30,15 @@ interface HTMLFrameElement : HTMLElement {
     [Reflect] attribute DOMString scrolling;
     [Reflect, URL] attribute USVString src;
 
-    // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-    // Extensions
     readonly attribute DOMWindow contentWindow;
 
-    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 
     // FIXME: No other browser has this attribute.
     [CustomSetter] attribute DOMString location;
 
     readonly attribute long width;
     readonly attribute long height;
-
 };
-

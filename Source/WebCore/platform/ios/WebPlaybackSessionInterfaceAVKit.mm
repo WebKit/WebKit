@@ -154,11 +154,10 @@ void WebPlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbac
 void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges)
 {
     RetainPtr<NSMutableArray> seekableRanges = adoptNS([[NSMutableArray alloc] init]);
-    ExceptionCode exceptionCode;
 
     for (unsigned i = 0; i < timeRanges.length(); i++) {
-        double start = timeRanges.start(i, exceptionCode);
-        double end = timeRanges.end(i, exceptionCode);
+        double start = timeRanges.start(i).releaseReturnValue();
+        double end = timeRanges.end(i).releaseReturnValue();
 
         CMTimeRange range = CMTimeRangeMake(CMTimeMakeWithSeconds(start, 1000), CMTimeMakeWithSeconds(end-start, 1000));
         [seekableRanges addObject:[NSValue valueWithCMTimeRange:range]];

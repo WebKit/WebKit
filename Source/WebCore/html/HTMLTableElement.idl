@@ -19,9 +19,9 @@
  */
 
 interface HTMLTableElement : HTMLElement {
-    [CEReactions, SetterMayThrowLegacyException] attribute HTMLTableCaptionElement? caption;
-    [CEReactions, SetterMayThrowLegacyException] attribute HTMLTableSectionElement? tHead;
-    [CEReactions, SetterMayThrowLegacyException] attribute HTMLTableSectionElement? tFoot;
+    [CEReactions, SetterMayThrowException] attribute HTMLTableCaptionElement? caption;
+    [CEReactions, SetterMayThrowException] attribute HTMLTableSectionElement? tHead;
+    [CEReactions, SetterMayThrowException] attribute HTMLTableSectionElement? tFoot;
 
     readonly attribute HTMLCollection rows;
     readonly attribute HTMLCollection tBodies;
@@ -45,7 +45,6 @@ interface HTMLTableElement : HTMLElement {
     HTMLElement createCaption();
     [CEReactions] void deleteCaption();
 
-    [MayThrowLegacyException] HTMLElement insertRow(optional long index = -1);
-    [CEReactions, MayThrowLegacyException] void deleteRow(long index);
+    [MayThrowException] HTMLElement insertRow(optional long index = -1);
+    [CEReactions, MayThrowException] void deleteRow(long index);
 };
-

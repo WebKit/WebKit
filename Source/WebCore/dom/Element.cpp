@@ -2535,9 +2535,9 @@ void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
     EventDispatcher::dispatchEvent(this, FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
 }
 
-#if ENABLE(MOUSE_FORCE_EVENTS)
 bool Element::dispatchMouseForceWillBegin()
 {
+#if ENABLE(MOUSE_FORCE_EVENTS)
     if (!document().hasListenerType(Document::FORCEWILLBEGIN_LISTENER))
         return false;
 
@@ -2545,32 +2545,29 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtClick, NoTap);
-    Ref<MouseEvent> mouseForceWillBeginEvent =  MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtClick, NoTap };
+    auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(this);
     dispatchEvent(mouseForceWillBeginEvent);
 
     if (mouseForceWillBeginEvent->defaultHandled() || mouseForceWillBeginEvent->defaultPrevented())
         return true;
+#endif
+
     return false;
 }
-#else
-bool Element::dispatchMouseForceWillBegin()
-{
-    return false;
-}
-#endif // #if ENABLE(MOUSE_FORCE_EVENTS)
 
 void Element::mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 {
-    Node* next = node.nextSibling();
+    auto* next = node.nextSibling();
     if (!is<Text>(next))
         return;
+    Ref<Text> textNext { downcast<Text>(*next) };
 
-    Ref<Text> textNode(node);
-    Ref<Text> textNext(downcast<Text>(*next));
-    textNode->appendData(textNext->data());
-    textNext->remove(ec);
+    node.appendData(textNext->data());
+    auto result = textNext->remove();
+    if (result.hasException())
+        ec = result.releaseException().code();
 }
 
 String Element::innerHTML() const
@@ -2594,11 +2591,13 @@ void Element::setOuterHTML(const String& html, ExceptionCode& ec)
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*parent, html, AllowScriptingContent, ec);
-    if (ec)
+    auto fragment = createFragmentForInnerOuterHTML(*parent, html, AllowScriptingContent);
+    if (fragment.hasException()) {
+        ec = fragment.releaseException().code();
         return;
+    }
     
-    parent->replaceChild(*fragment, *this, ec);
+    parent->replaceChild(fragment.releaseReturnValue().get(), *this, ec);
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (!ec && is<Text>(node.get()))
         mergeWithNextTextNode(downcast<Text>(*node), ec);
@@ -2609,14 +2608,21 @@ void Element::setOuterHTML(const String& html, ExceptionCode& ec)
 
 void Element::setInnerHTML(const String& html, ExceptionCode& ec)
 {
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent, ec)) {
-        ContainerNode* container = this;
-
-        if (is<HTMLTemplateElement>(*this))
-            container = &downcast<HTMLTemplateElement>(*this).content();
-
-        replaceChildrenWithFragment(*container, fragment.releaseNonNull(), ec);
+    auto fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent);
+    if (fragment.hasException()) {
+        ec = fragment.releaseException().code();
+        return;
     }
+
+    ContainerNode* container;
+    if (!is<HTMLTemplateElement>(*this))
+        container = this;
+    else
+        container = &downcast<HTMLTemplateElement>(*this).content();
+
+    auto result = replaceChildrenWithFragment(*container, fragment.releaseReturnValue());
+    if (result.hasException())
+        ec = fragment.releaseException().code();
 }
 
 String Element::innerText()
@@ -3747,11 +3753,13 @@ void Element::insertAdjacentHTML(const String& where, const String& markup, Exce
     } else
         contextElement = downcast<Element>(contextNode);
     // Step 3.
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*contextElement, markup, AllowScriptingContent, ec);
-    if (!fragment)
+    auto fragment = createFragmentForInnerOuterHTML(*contextElement, markup, AllowScriptingContent);
+    if (fragment.hasException()) {
+        ec = fragment.releaseException().code();
         return;
+    }
     // Step 4.
-    insertAdjacent(where, fragment.releaseNonNull(), ec);
+    insertAdjacent(where, fragment.releaseReturnValue(), ec);
 }
 
 void Element::insertAdjacentText(const String& where, const String& text, ExceptionCode& ec)

@@ -93,7 +93,7 @@ void SplitElementCommand::doUnapply()
     if (!id.isNull())
         m_element2->setIdAttribute(id);
 
-    m_element1->remove(IGNORE_EXCEPTION);
+    m_element1->remove();
 }
 
 void SplitElementCommand::doReapply()

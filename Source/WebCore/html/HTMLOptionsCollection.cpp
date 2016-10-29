@@ -61,9 +61,9 @@ void HTMLOptionsCollection::setSelectedIndex(int index)
     selectElement().setSelectedIndex(index);
 }
 
-void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
+ExceptionOr<void> HTMLOptionsCollection::setLength(unsigned length)
 {
-    selectElement().setLength(length, ec);
+    return selectElement().setLength(length);
 }
 
 } //namespace

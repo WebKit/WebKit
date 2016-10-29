@@ -32,7 +32,7 @@ debug("'#' in hash value, and illegal characters in hostname");
 // with the URL API, assigning an invalid href throws
 shouldThrow('a.href = "https://ww w.my\\"d(){}|~om?ain#com/path/testurl.html#middle"');
 a.hash = "#hash#value";
-shouldBe("a.href", "'https://ww w.my\\\"d(){}|~om?ain#com/path/testurl.html#middle'");
+shouldBe("a.href", "'http://www.mydomain.com/path/testurl.html#hash#value'");
 
 debug("Set hash to null");
 a.href = "https://www.mydomain.com/path/testurl.html#middle";

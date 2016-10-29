@@ -63,7 +63,7 @@ void InsertNodeBeforeCommand::doUnapply()
     if (!isEditableNode(*m_insertChild))
         return;
 
-    m_insertChild->remove(IGNORE_EXCEPTION);
+    m_insertChild->remove();
 }
 
 #ifndef NDEBUG

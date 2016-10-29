@@ -40,13 +40,13 @@ public:
     static Ref<HTMLTableElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT HTMLTableCaptionElement* caption() const;
-    WEBCORE_EXPORT void setCaption(RefPtr<HTMLTableCaptionElement>&&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setCaption(RefPtr<HTMLTableCaptionElement>&&);
 
     WEBCORE_EXPORT HTMLTableSectionElement* tHead() const;
-    WEBCORE_EXPORT void setTHead(RefPtr<HTMLTableSectionElement>&&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setTHead(RefPtr<HTMLTableSectionElement>&&);
 
     WEBCORE_EXPORT HTMLTableSectionElement* tFoot() const;
-    WEBCORE_EXPORT void setTFoot(RefPtr<HTMLTableSectionElement>&&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setTFoot(RefPtr<HTMLTableSectionElement>&&);
 
     WEBCORE_EXPORT Ref<HTMLTableSectionElement> createTHead();
     WEBCORE_EXPORT void deleteTHead();
@@ -55,9 +55,8 @@ public:
     WEBCORE_EXPORT Ref<HTMLTableSectionElement> createTBody();
     WEBCORE_EXPORT Ref<HTMLTableCaptionElement> createCaption();
     WEBCORE_EXPORT void deleteCaption();
-    RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
-    WEBCORE_EXPORT RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
-    WEBCORE_EXPORT void deleteRow(int index, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<HTMLElement>> insertRow(int index = -1);
+    WEBCORE_EXPORT ExceptionOr<void> deleteRow(int index);
 
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
     WEBCORE_EXPORT Ref<HTMLCollection> tBodies();

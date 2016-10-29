@@ -210,7 +210,7 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event& event)
 
     double volume = value().toDouble();
     if (volume != mediaController()->volume())
-        mediaController()->setVolume(volume, ASSERT_NO_EXCEPTION);
+        mediaController()->setVolume(volume);
     if (m_clearMutedOnUserInteraction)
         mediaController()->setMuted(false);
     event.setDefaultHandled();

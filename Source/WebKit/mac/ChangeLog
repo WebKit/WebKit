@@ -1,3 +1,66 @@
+2016-10-28  Darin Adler  <darin@apple.com>
+
+        Move all classes in the HTML directory from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163876
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMCharacterData.mm:
+        (-[DOMCharacterData remove]): Updated exception handling.
+        * DOM/DOMDOMTokenList.mm:
+        (-[DOMDOMTokenList toggle:force:]): Ditto.
+        * DOM/DOMDocumentType.mm:
+        (-[DOMDocumentType remove]): Ditto.
+        * DOM/DOMElement.mm:
+        (-[DOMElement remove]): Ditto.
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLInputElement setValueAsNumberWithChangeEvent:]): Ditto.
+        * DOM/DOMHTMLCanvasElement.mm:
+        (-[DOMHTMLCanvasElement toDataURL:]): Ditto.
+        * DOM/DOMHTMLElement.mm:
+        (-[DOMHTMLElement setInnerText:]): Ditto.
+        (-[DOMHTMLElement setOuterText:]): Ditto.
+        (-[DOMHTMLElement setContentEditable:]): Ditto.
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement setMaxLength:]): Ditto.
+        (-[DOMHTMLInputElement setValueAsDate:]): Ditto.
+        (-[DOMHTMLInputElement setValueAsNumber:]): Ditto.
+        (-[DOMHTMLInputElement stepUp:]): Ditto.
+        (-[DOMHTMLInputElement stepDown:]): Ditto.
+        (-[DOMHTMLInputElement setRangeText:]): Ditto.
+        (-[DOMHTMLInputElement setRangeText:start:end:selectionMode:]): Ditto.
+        * DOM/DOMHTMLMarqueeElement.mm:
+        (-[DOMHTMLMarqueeElement setLoop:]): Ditto.
+        * DOM/DOMHTMLMediaElement.mm:
+        (-[DOMHTMLMediaElement setCurrentTime:]): Ditto.
+        (-[DOMHTMLMediaElement setVolume:]): Ditto.
+        * DOM/DOMHTMLOptionsCollection.mm:
+        (-[DOMHTMLOptionsCollection setLength:]): Ditto.
+        * DOM/DOMHTMLTableElement.mm:
+        (-[DOMHTMLTableElement setCaption:]): Ditto.
+        (-[DOMHTMLTableElement setTHead:]): Ditto.
+        (-[DOMHTMLTableElement setTFoot:]): Ditto.
+        (-[DOMHTMLTableElement insertRow:]): Ditto.
+        (-[DOMHTMLTableElement deleteRow:]): Ditto.
+        * DOM/DOMHTMLTableRowElement.mm:
+        (-[DOMHTMLTableRowElement insertCell:]): Ditto.
+        (-[DOMHTMLTableRowElement deleteCell:]): Ditto.
+        * DOM/DOMHTMLTableSectionElement.mm:
+        (-[DOMHTMLTableSectionElement insertRow:]): Ditto.
+        (-[DOMHTMLTableSectionElement deleteRow:]): Ditto.
+        * DOM/DOMHTMLTextAreaElement.mm:
+        (-[DOMHTMLTextAreaElement setMaxLength:]): Ditto.
+        (-[DOMHTMLTextAreaElement setRangeText:]): Ditto.
+        (-[DOMHTMLTextAreaElement setRangeText:start:end:selectionMode:]): Ditto.
+        * DOM/DOMHTMLVideoElement.mm:
+        (-[DOMHTMLVideoElement webkitEnterFullscreen]): Ditto.
+        (-[DOMHTMLVideoElement webkitEnterFullScreen]): Changed to call the other named
+        version (lowercase S) instead of repeating the logic from that method.
+        (-[DOMHTMLVideoElement webkitExitFullScreen]): Ditto.
+        * DOM/DOMTimeRanges.mm:
+        (-[DOMTimeRanges start:]): Updated exception handling.
+        (-[DOMTimeRanges end:]): Ditto.
+
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
         Regression(r203601): Caused crashes in iBooks

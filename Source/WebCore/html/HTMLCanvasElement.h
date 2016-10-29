@@ -45,7 +45,7 @@ class ImageBuffer;
 class ImageData;
 
 namespace DisplayList {
-typedef unsigned AsTextFlags;
+using AsTextFlags = unsigned;
 }
 
 class CanvasObserver {
@@ -92,8 +92,8 @@ public:
 #endif
 
     static String toEncodingMimeType(const String& mimeType);
-    WEBCORE_EXPORT String toDataURL(const String& mimeType, const double* quality, ExceptionCode&);
-    String toDataURL(const String& mimeType, ExceptionCode& ec) { return toDataURL(mimeType, nullptr, ec); }
+    WEBCORE_EXPORT ExceptionOr<String> toDataURL(const String& mimeType, Optional<double> quality);
+    ExceptionOr<String> toDataURL(const String& mimeType) { return toDataURL(mimeType, Nullopt); }
 
     // Used for rendering
     void didDraw(const FloatRect&);

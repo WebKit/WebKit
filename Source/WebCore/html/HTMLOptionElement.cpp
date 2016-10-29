@@ -66,17 +66,17 @@ Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLOptionElement(tagName, document));
 }
 
-RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& document, const String& data, const String& value,
-        bool defaultSelected, bool selected, ExceptionCode& ec)
+ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForJSConstructor(Document& document,
+    const String& data, const String& value, bool defaultSelected, bool selected)
 {
     Ref<HTMLOptionElement> element = adoptRef(*new HTMLOptionElement(optionTag, document));
 
     auto text = Text::create(document, data.isNull() ? emptyString() : data);
 
-    ec = 0;
+    ExceptionCode ec = 0;
     element->appendChild(text, ec);
     if (ec)
-        return nullptr;
+        return Exception { ec };
 
     if (!value.isNull())
         element->setValue(value);

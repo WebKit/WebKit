@@ -400,13 +400,13 @@ WebKitDOMHTMLElement* webkit_dom_html_table_element_insert_row(WebKitDOMHTMLTabl
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::HTMLTableElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::HTMLElement> gobjectResult = WTF::getPtr(item->insertRow(index, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->insertRow(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 void webkit_dom_html_table_element_delete_row(WebKitDOMHTMLTableElement* self, glong index, GError** error)
@@ -415,10 +415,9 @@ void webkit_dom_html_table_element_delete_row(WebKitDOMHTMLTableElement* self, g
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self));
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTableElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->deleteRow(index, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->deleteRow(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -440,10 +439,9 @@ void webkit_dom_html_table_element_set_caption(WebKitDOMHTMLTableElement* self, 
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTableElement* item = WebKit::core(self);
     WebCore::HTMLTableCaptionElement* convertedValue = WebKit::core(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setCaption(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setCaption(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -465,10 +463,9 @@ void webkit_dom_html_table_element_set_t_head(WebKitDOMHTMLTableElement* self, W
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTableElement* item = WebKit::core(self);
     WebCore::HTMLTableSectionElement* convertedValue = WebKit::core(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setTHead(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setTHead(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -490,10 +487,9 @@ void webkit_dom_html_table_element_set_t_foot(WebKitDOMHTMLTableElement* self, W
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTableElement* item = WebKit::core(self);
     WebCore::HTMLTableSectionElement* convertedValue = WebKit::core(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setTFoot(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setTFoot(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

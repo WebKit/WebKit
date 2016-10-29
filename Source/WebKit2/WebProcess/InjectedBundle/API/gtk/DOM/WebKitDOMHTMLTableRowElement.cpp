@@ -268,13 +268,13 @@ WebKitDOMHTMLElement* webkit_dom_html_table_row_element_insert_cell(WebKitDOMHTM
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ROW_ELEMENT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::HTMLTableRowElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::HTMLElement> gobjectResult = WTF::getPtr(item->insertCell(index, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->insertCell(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 void webkit_dom_html_table_row_element_delete_cell(WebKitDOMHTMLTableRowElement* self, glong index, GError** error)
@@ -283,10 +283,9 @@ void webkit_dom_html_table_row_element_delete_cell(WebKitDOMHTMLTableRowElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ROW_ELEMENT(self));
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTableRowElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->deleteCell(index, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->deleteCell(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

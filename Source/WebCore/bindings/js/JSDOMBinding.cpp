@@ -346,31 +346,19 @@ bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
     return !applyMethod.isUndefined();
 }
 
-bool shouldAllowAccessToNode(ExecState* exec, Node* node)
+bool BindingSecurity::shouldAllowAccessToFrame(ExecState& state, Frame& frame, String& message)
 {
-    return BindingSecurity::shouldAllowAccessToNode(exec, node);
-}
-
-bool shouldAllowAccessToFrame(ExecState* exec, Frame* target)
-{
-    return BindingSecurity::shouldAllowAccessToFrame(exec, target);
-}
-
-bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame, String& message)
-{
-    if (!frame)
-        return false;
-    if (BindingSecurity::shouldAllowAccessToFrame(exec, frame, DoNotReportSecurityError))
+    if (BindingSecurity::shouldAllowAccessToFrame(&state, &frame, DoNotReportSecurityError))
         return true;
-    message = frame->document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(exec));
+    message = frame.document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(&state));
     return false;
 }
 
-bool shouldAllowAccessToDOMWindow(ExecState* exec, DOMWindow& target, String& message)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(ExecState& state, DOMWindow& globalObject, String& message)
 {
-    if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, target, DoNotReportSecurityError))
+    if (BindingSecurity::shouldAllowAccessToDOMWindow(&state, globalObject, DoNotReportSecurityError))
         return true;
-    message = target.crossDomainAccessErrorMessage(activeDOMWindow(exec));
+    message = globalObject.crossDomainAccessErrorMessage(activeDOMWindow(&state));
     return false;
 }
 
@@ -788,9 +776,9 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* tar
     return target && canAccessDocument(state, target->document(), reportingOption);
 }
 
-bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* target)
+bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState& state, Node* target)
 {
-    return target && canAccessDocument(state, &target->document(), LogSecurityError);
+    return !target || canAccessDocument(&state, &target->document(), LogSecurityError);
 }
     
 static EncodedJSValue throwTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const String& errorMessage)

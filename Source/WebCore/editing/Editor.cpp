@@ -99,12 +99,6 @@
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
 
-#if PLATFORM(IOS)
-#include "DictationCommandIOS.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
-#endif
-
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"
 #endif
@@ -241,17 +235,13 @@ bool Editor::handleTextEvent(TextEvent& event)
         return false;
 
     if (event.isPaste()) {
-        if (event.pastingFragment())
+        if (event.pastingFragment()) {
 #if PLATFORM(IOS)
-        {
             if (client()->performsTwoStepPaste(event.pastingFragment()))
                 return true;
 #endif
             replaceSelectionWithFragment(event.pastingFragment(), false, event.shouldSmartReplace(), event.shouldMatchStyle(), EditActionPaste, event.mailBlockquoteHandling());
-#if PLATFORM(IOS)
-        }
-#endif
-        else 
+        } else
             replaceSelectionWithText(event.data(), false, event.shouldSmartReplace(), EditActionPaste);
         return true;
     }
@@ -424,76 +414,6 @@ void Editor::clearText()
     ClearTextCommand::CreateAndApply(&m_frame);
 }
 
-#if PLATFORM(IOS)
-
-void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
-{
-    if (m_frame.selection().isNone())
-        return;
-
-    if (dictationPhrases.isEmpty())
-        return;
-
-    applyCommand(DictationCommandIOS::create(document(), WTFMove(dictationPhrases), WTFMove(metadata)));
-}
-
-void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, RetainPtr<id> metadata, Element& element)
-{
-    // Clear the composition.
-    clear();
-    
-    // Clear the Undo stack, since the operations that follow are not Undoable, and will corrupt the stack.  Some day
-    // we could make them Undoable, and let callers clear the Undo stack explicitly if they wish.
-    clearUndoRedoOperations();
-    
-    m_frame.selection().clear();
-    
-    element.removeChildren();
-    
-    if (dictationPhrases.isEmpty()) {
-        client()->respondToChangedContents();
-        return;
-    }
-    
-    ExceptionCode ec;    
-    RefPtr<Range> context = document().createRange();
-    context->selectNodeContents(element, ec);
-
-    StringBuilder dictationPhrasesBuilder;
-    for (auto& interpretations : dictationPhrases)
-        dictationPhrasesBuilder.append(interpretations[0]);
-
-    element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()), ec);
-
-    // We need a layout in order to add markers below.
-    document().updateLayout();
-
-    if (!element.firstChild()->isTextNode()) {
-        // Shouldn't happen.
-        ASSERT(element.firstChild()->isTextNode());
-        return;
-    }
-
-    Text& textNode = downcast<Text>(*element.firstChild());
-    int previousDictationPhraseStart = 0;
-    for (auto& interpretations : dictationPhrases) {
-        int dictationPhraseLength = interpretations[0].length();
-        int dictationPhraseEnd = previousDictationPhraseStart + dictationPhraseLength;
-        if (interpretations.size() > 1) {
-            auto dictationPhraseRange = Range::create(document(), &textNode, previousDictationPhraseStart, &textNode, dictationPhraseEnd);
-            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange.ptr(), interpretations);
-        }
-        previousDictationPhraseStart = dictationPhraseEnd;
-    }
-
-    auto resultRange = Range::create(document(), &textNode, 0, &textNode, textNode.length());
-    document().markers().addDictationResultMarker(resultRange.ptr(), metadata);
-
-    client()->respondToChangedContents();
-}
-
-#endif
-
 void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
 {
     Node* target = findEventTargetFromSelection();
@@ -615,85 +535,6 @@ RefPtr<Range> Editor::selectedRange()
 {
     return m_frame.selection().toNormalizedRange();
 }
-
-#if PLATFORM(IOS)
-void Editor::confirmMarkedText()
-{
-    // FIXME: This is a hacky workaround for the keyboard calling this method too late -
-    // after the selection and focus have already changed.  See <rdar://problem/5975559>
-    Element* focused = document().focusedElement();
-    Node* composition = compositionNode();
-    
-    if (composition && focused && focused != composition && !composition->isDescendantOrShadowDescendantOf(focused)) {
-        cancelComposition();
-        document().setFocusedElement(focused);
-    } else
-        confirmComposition();
-}
-
-void Editor::setTextAsChildOfElement(const String& text, Element& element)
-{
-    // Clear the composition
-    clear();
-    
-    // Clear the Undo stack, since the operations that follow are not Undoable, and will corrupt the stack.  Some day
-    // we could make them Undoable, and let callers clear the Undo stack explicitly if they wish.
-    clearUndoRedoOperations();
-    
-    // If the element is empty already and we're not adding text, we can early return and avoid clearing/setting
-    // a selection at [0, 0] and the expense involved in creation VisiblePositions.
-    if (!element.firstChild() && text.isEmpty())
-        return;
-    
-    // As a side effect this function sets a caret selection after the inserted content.  Much of what 
-    // follows is more expensive if there is a selection, so clear it since it's going to change anyway.
-    m_frame.selection().clear();
-    
-    // clear out all current children of element
-    element.removeChildren();
-
-    if (text.length()) {
-        // insert new text
-        // remove element from tree while doing it
-        // FIXME: The element we're inserting into is often the body element.  It seems strange to be removing it
-        // (even if it is only temporary).  ReplaceSelectionCommand doesn't bother doing this when it inserts
-        // content, why should we here?
-        ExceptionCode ec;
-        RefPtr<Node> parent = element.parentNode();
-        RefPtr<Node> siblingAfter = element.nextSibling();
-        if (parent)
-            element.remove(ec);
-            
-        auto context = document().createRange();
-        context->selectNodeContents(element, ec);
-        element.appendChild(createFragmentFromText(context, text), ec);
-    
-        // restore element to document
-        if (parent) {
-            if (siblingAfter)
-                parent->insertBefore(element, siblingAfter.get(), ec);
-            else
-                parent->appendChild(element, ec);
-        }
-    }
-
-    // set the selection to the end
-    VisibleSelection selection;
-
-    Position pos = createLegacyEditingPosition(&element, element.countChildNodes());
-
-    VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
-    if (visiblePos.isNull())
-        return;
-
-    selection.setBase(visiblePos);
-    selection.setExtent(visiblePos);
-     
-    m_frame.selection().setSelection(selection);
-    
-    client()->respondToChangedContents();
-}
-#endif
 
 bool Editor::shouldDeleteRange(Range* range) const
 {
@@ -884,14 +725,6 @@ void Editor::clearLastEditCommand()
 {
     m_lastEditCommand = nullptr;
 }
-#if PLATFORM(IOS)
-// If the selection is adjusted from UIKit without closing the typing, the typing command may
-// have a stale selection.
-void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
-{
-    TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(&m_frame, m_frame.selection().selection());
-}
-#endif
 
 // Returns whether caller should continue with "the default processing", which is the same as 
 // the event handler NOT setting the return value to false
@@ -1497,6 +1330,7 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
 }
 
 #if !PLATFORM(IOS)
+
 void Editor::copyImage(const HitTestResult& result)
 {
     Element* element = result.innerNonSharedElement();
@@ -1513,6 +1347,7 @@ void Editor::copyImage(const HitTestResult& result)
     Pasteboard::createForCopyAndPaste()->writeImage(*element, url, result.altDisplayString());
 #endif
 }
+
 #endif
 
 bool Editor::isContinuousSpellCheckingEnabled() const
@@ -2006,6 +1841,7 @@ void Editor::learnSpelling()
 }
 
 #if !PLATFORM(IOS)
+
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
@@ -2181,6 +2017,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         document().markers().addMarker(misspellingRange.get(), DocumentMarker::Spelling);
     }
 }
+
 #endif // !PLATFORM(IOS)
 
 String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const

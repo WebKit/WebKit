@@ -17,7 +17,7 @@ Set hostname to URL with 2 colons
 PASS a.href is 'really:bad:url'
 Set a hostname that contains space in it
 PASS a.href = "http://www.my domain.com/path/" threw exception TypeError: Type error.
-PASS a.href is 'http://www.my domain.com/path/'
+PASS a.href is 'really:bad:url'
 Set hostname on a local file
 FAIL a.href should be c:/path/testurl.html. Was c://a/path/testurl.html.
 Set hostname to undefined

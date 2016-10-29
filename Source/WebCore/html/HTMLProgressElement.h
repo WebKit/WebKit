@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef HTMLProgressElement_h
-#define HTMLProgressElement_h
+#pragma once
 
 #include "LabelableElement.h"
 
@@ -36,14 +35,12 @@ public:
     static Ref<HTMLProgressElement> create(const QualifiedName&, Document&);
 
     double value() const;
-    void setValue(double, ExceptionCode&);
+    void setValue(double);
 
     double max() const;
-    void setMax(double, ExceptionCode&);
+    void setMax(double);
 
     double position() const;
-
-    bool canContainRangeEndPoint() const final { return false; }
 
 private:
     HTMLProgressElement(const QualifiedName&, Document&);
@@ -64,9 +61,9 @@ private:
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
     bool isDeterminate() const;
 
+    bool canContainRangeEndPoint() const final { return false; }
+
     ProgressValueElement* m_value;
 };
 
 } // namespace
-
-#endif
