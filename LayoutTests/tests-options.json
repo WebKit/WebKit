@@ -2,6 +2,12 @@
     "http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html": [
         "slow"
     ],
+    "http/tests/xmlhttprequest/resetting-timeout-to-zero.html": [
+        "slow"
+    ],
+    "http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm": [
         "slow"
     ],

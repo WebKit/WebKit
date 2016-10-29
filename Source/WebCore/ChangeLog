@@ -1,5 +1,21 @@
 2016-10-29  Youenn Fablet  <youenn@apple.com>
 
+        REGRESSION (Safari 10 / r189445): WKWebView and WebView no longer allow async XMLHttpRequest timeout to exceed 60 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=163814
+        <rdar://problem/28917420>
+
+        Reviewed by Darin Adler.
+
+        Tests: http/tests/xmlhttprequest/resetting-timeout-to-zero.html
+               http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setTimeout): If the XHR timeout is active, resetting the timeout to zero should lead to using the default network timeout.
+        Since it is difficult to update the timeout once the request is sent, we mimic the default network timeout with a 60 seconds XHR timeout.
+        (WebCore::XMLHttpRequest::createRequest): Setting network timeout to infinity if the XHR timeout is active.
+
+2016-10-29  Youenn Fablet  <youenn@apple.com>
+
         MediaEndpoint::generateDtlsInfo is not needed
         https://bugs.webkit.org/show_bug.cgi?id=164130
 
