@@ -115,7 +115,6 @@ TestController& TestController::singleton()
 
 TestController::TestController(int argc, const char* argv[])
 {
-    WebCoreTestSupport::setURLParserEnabled(true);
     initialize(argc, argv);
     controller = this;
     run();

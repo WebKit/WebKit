@@ -56,7 +56,6 @@ void clearWheelEventTestTrigger(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
 void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
-void setURLParserEnabled(bool) TEST_SUPPORT_EXPORT;
 
 void installMockGamepadProvider() TEST_SUPPORT_EXPORT;
 void connectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
