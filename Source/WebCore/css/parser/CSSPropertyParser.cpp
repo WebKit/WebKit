@@ -1030,6 +1030,13 @@ static RefPtr<CSSValue> consumeLocale(CSSParserTokenRange& range)
     return consumeString(range);
 }
 
+static RefPtr<CSSValue> consumeHyphenateLimit(CSSParserTokenRange& range, CSSValueID valueID)
+{
+    if (range.peek().id() == valueID)
+        return consumeIdent(range);
+    return consumeNumber(range, ValueRangeNonNegative);
+}
+
 static RefPtr<CSSValue> consumeColumnWidth(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueAuto)
@@ -3332,6 +3339,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitLocale:
         return consumeLocale(m_range);
+    case CSSPropertyWebkitHyphenateLimitBefore:
+    case CSSPropertyWebkitHyphenateLimitAfter:
+        return consumeHyphenateLimit(m_range, CSSValueAuto);
+    case CSSPropertyWebkitHyphenateLimitLines:
+        return consumeHyphenateLimit(m_range, CSSValueNoLimit);
     case CSSPropertyColumnWidth:
         return consumeColumnWidth(m_range);
     case CSSPropertyColumnCount:
