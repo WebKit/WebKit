@@ -2366,3 +2366,44 @@ PAUSES AT: 112:4
     114    
 
 
+-- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.Unicode
+
+INSERTING AT: 0:0
+PAUSES AT: 0:0
+-=>   0    |var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+
+INSERTING AT: 0:1
+PAUSES AT: 0:34
+-=>   0    v#ar unicodeVariable1 = function(){|};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+
+INSERTING AT: 0:35
+PAUSES AT: 1:0
+ ->   0    var unicodeVariable1 = function(){}#;
+ =>   1    |var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+INSERTING AT: 1:1
+PAUSES AT: 2:0
+      0    var unicodeVariable1 = function(){};
+ ->   1    v#ar unicodeVariableStr = "Non-8-bit '∙' character.";
+ =>   2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+INSERTING AT: 2:1
+PAUSES AT: 3:0
+      0    var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+ ->   2    v#ar unicodeSurrogatePairStr = "Emoji '😍' character.";
+ =>   3    |var unicodeVariable2 = 2;
+      4    
+
+

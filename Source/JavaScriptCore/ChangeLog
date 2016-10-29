@@ -1,3 +1,16 @@
+2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints not working in scripts with unicode characters
+        https://bugs.webkit.org/show_bug.cgi?id=164172
+        <rdar://problem/28895862>
+
+        Reviewed by Ryosuke Niwa.
+
+        * parser/Parser.h:
+        (JSC::parse):
+        Ensure we pass the debuggerParseData struct to get populated in the
+        non 8bit string case!
+
 2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Include identifier name in CallDOMGetter to dump it

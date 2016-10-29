@@ -1,3 +1,18 @@
+2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints not working in scripts with unicode characters
+        https://bugs.webkit.org/show_bug.cgi?id=164172
+        <rdar://problem/28895862>
+
+        Reviewed by Ryosuke Niwa.
+
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt:
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html:
+        * inspector/debugger/breakpoints/resolved-dump-each-line-expected.txt:
+        * inspector/debugger/breakpoints/resolved-dump-each-line.html:
+        * inspector/debugger/breakpoints/resources/dump-unicode.js: Added.
+        Ensure we can set breakpoints and resolve them in non-8bit source code.
+
 2016-10-28  Darin Adler  <darin@apple.com>
 
         Move all classes in the HTML directory from ExceptionCode to Exception

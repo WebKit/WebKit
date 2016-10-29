@@ -4448,3 +4448,43 @@ PRODUCES: Could not resolve breakpoint
 INSERTING AT: 114:0
 PRODUCES: Could not resolve breakpoint
 
+-- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Unicode
+
+INSERTING AT: 0:0
+PAUSES AT: 0:0
+-=>   0    |var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+
+
+INSERTING AT: 1:0
+PAUSES AT: 1:0
+      0    var unicodeVariable1 = function(){};
+-=>   1    |var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 2:0
+PAUSES AT: 2:0
+      0    var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+-=>   2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+-=>   3    |var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 4:0
+PRODUCES: Could not resolve breakpoint
+
