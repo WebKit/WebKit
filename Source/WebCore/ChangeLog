@@ -1,5 +1,16 @@
 2016-10-29  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support the alt property
+        https://bugs.webkit.org/show_bug.cgi?id=164184
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAlt):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Add support for -webkit-hyphenate-limit-* properties
         https://bugs.webkit.org/show_bug.cgi?id=164183
 

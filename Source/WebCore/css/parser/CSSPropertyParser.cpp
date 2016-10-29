@@ -3235,6 +3235,17 @@ static RefPtr<CSSValue> consumeWebkitMarqueeSpeed(CSSParserTokenRange& range, CS
     return consumeTime(range, cssParserMode, ValueRangeNonNegative, UnitlessQuirk::Allow);
 }
 
+static RefPtr<CSSValue> consumeAlt(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (range.peek().type() == StringToken)
+        return consumeString(range);
+    
+    if (range.peek().functionId() != CSSValueAttr)
+        return nullptr;
+    
+    return consumeAttr(consumeFunction(range), context);
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3618,6 +3629,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeWebkitMarqueeRepetition(m_range);
     case CSSPropertyWebkitMarqueeSpeed:
         return consumeWebkitMarqueeSpeed(m_range, m_context.mode);
+    case CSSPropertyAlt:
+        return consumeAlt(m_range, m_context);
     default:
         return nullptr;
     }
