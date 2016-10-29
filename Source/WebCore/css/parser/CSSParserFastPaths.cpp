@@ -566,8 +566,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueItalic || valueID == CSSValueOblique;
     case CSSPropertyFontStretch: // normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
         return valueID == CSSValueNormal || (valueID >= CSSValueUltraCondensed && valueID <= CSSValueUltraExpanded);
-    case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated
-        return valueID == CSSValueAuto || valueID == CSSValueWebkitOptimizeContrast || valueID == CSSValuePixelated;
+    case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated | optimizeSpeed | crispEdges | optimizeQuality | webkit-crispEdges
+        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizequality || valueID == CSSValueWebkitCrispEdges || valueID == CSSValueWebkitOptimizeContrast || valueID == CSSValueCrispEdges || valueID == CSSValuePixelated;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation: // auto | isolate
         return valueID == CSSValueAuto || valueID == CSSValueIsolate;
