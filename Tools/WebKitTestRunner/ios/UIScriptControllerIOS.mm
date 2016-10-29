@@ -38,8 +38,12 @@
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyboardPredictionView)
 
 namespace WTR {
 
@@ -272,7 +276,7 @@ void UIScriptController::selectTextCandidateAtIndex(long index, JSValueRef callb
 void UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex(long index, unsigned callbackID, float interval)
 {
 #if USE(APPLE_INTERNAL_SDK)
-    if (![UIKeyboardPredictionView activeInstance].hasPredictions) {
+    if (![[getUIKeyboardPredictionViewClass() activeInstance] hasPredictions]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, interval * NSEC_PER_SEC), dispatch_get_main_queue(), ^() {
             waitForTextPredictionsViewAndSelectCandidateAtIndex(index, callbackID, interval);
         });
@@ -280,10 +284,10 @@ void UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex(lon
     }
 
     PlatformWKView webView = TestController::singleton().mainWebView()->platformView();
-    CGRect predictionViewFrame = [UIKeyboardPredictionView activeInstance].frame;
+    CGRect predictionViewFrame = [[getUIKeyboardPredictionViewClass() activeInstance] frame];
     // This assumes there are 3 predicted text cells of equal width, which is the case on iOS.
     float offsetX = (index * 2 + 1) * CGRectGetWidth(predictionViewFrame) / 6;
-    float offsetY = CGRectGetHeight(webView.window.frame) - CGRectGetHeight([UIKeyboardPredictionView activeInstance].superview.frame) + CGRectGetHeight(predictionViewFrame) / 2;
+    float offsetY = CGRectGetHeight(webView.window.frame) - CGRectGetHeight([[[getUIKeyboardPredictionViewClass() activeInstance] superview] frame]) + CGRectGetHeight(predictionViewFrame) / 2;
     [[HIDEventGenerator sharedHIDEventGenerator] tap:CGPointMake(offsetX, offsetY) completionBlock:^{
         if (m_context)
             m_context->asyncTaskComplete(callbackID);
