@@ -1542,11 +1542,11 @@
    },
    "Devin Rousso" : {
       "emails" : [
-         "dcrousso+webkit@gmail.com",
-         "drousso@apple.com"
+         "dcrousso+webkit@gmail.com"
       ],
+      "expertise" : "Web Inspector",
       "nicks" : [
-         "drousso"
+         "dcrousso"
       ],
       "status" : "committer"
    },

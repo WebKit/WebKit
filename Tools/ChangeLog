@@ -1,3 +1,9 @@
+2016-10-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Unreviewed, changed Devin Rousso's email and nick.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS build after r208090.
