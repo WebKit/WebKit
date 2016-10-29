@@ -464,6 +464,51 @@ static Color parseHSLParameters(CSSParserTokenRange& range, bool parseAlpha)
     return Color(makeRGBAFromHSLA(colorArray[0], colorArray[1], colorArray[2], alpha));
 }
 
+static Color parseColorFunctionParameters(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().functionId() == CSSValueColor);
+    CSSParserTokenRange args = consumeFunction(range);
+
+    ColorSpace colorSpace;
+    switch (args.peek().id()) {
+    case CSSValueSrgb:
+        colorSpace = ColorSpaceSRGB;
+        break;
+    case CSSValueDisplayP3:
+        colorSpace = ColorSpaceDisplayP3;
+        break;
+    default:
+        return Color();
+    }
+    consumeIdent(args);
+
+    double colorChannels[4] = { 0, 0, 0, 1 };
+    for (int i = 0; i < 3; ++i) {
+        double value;
+        if (consumeNumberRaw(args, value))
+            colorChannels[i] = std::max(0.0, std::min(1.0, value));
+        else
+            break;
+    }
+
+    if (consumeSlashIncludingWhitespace(args)) {
+        auto alphaParameter = consumePercent(args, ValueRangeAll);
+        if (!alphaParameter)
+            alphaParameter = consumeNumber(args, ValueRangeAll);
+        if (!alphaParameter)
+            return Color();
+
+        colorChannels[3] = std::max(0.0, std::min(1.0, alphaParameter->isPercentage() ? (alphaParameter->doubleValue() / 100) : alphaParameter->doubleValue()));
+    }
+
+    // FIXME: Support the comma-separated list of fallback color values.
+
+    if (!args.atEnd())
+        return Color();
+    
+    return Color(colorChannels[0], colorChannels[1], colorChannels[2], colorChannels[3], colorSpace);
+}
+
 static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
 {
     RGBA32 result;
@@ -513,8 +558,8 @@ static Color parseColorFunction(CSSParserTokenRange& range)
         color = parseHSLParameters(colorRange, functionId == CSSValueHsla);
         break;
     case CSSValueColor:
-        // FIXME-NEWPARSER: Add support for color().
-        return Color();
+        color = parseColorFunctionParameters(colorRange);
+        break;
     default:
         return Color();
     }

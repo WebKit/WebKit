@@ -66,9 +66,10 @@ String ExtendedColor::cssText() const
     builder.append(' ');
 
     builder.append(numberToFixedPrecisionString(blue(), 6, buffer, shouldTruncateTrailingZeros));
-    builder.appendLiteral(" / ");
-
-    builder.append(numberToFixedPrecisionString(alpha(), 6, buffer, shouldTruncateTrailingZeros));
+    if (!WTF::areEssentiallyEqual(alpha(), 1.0f)) {
+        builder.appendLiteral(" / ");
+        builder.append(numberToFixedPrecisionString(alpha(), 6, buffer, shouldTruncateTrailingZeros));
+    }
     builder.append(')');
 
     return builder.toString();

@@ -7608,21 +7608,22 @@ bool CSSParser::isCalculation(CSSParserValue& value)
             || equalLettersIgnoringASCIICase(value.function->name, "-webkit-calc("));
 }
 
-inline int CSSParser::colorIntFromValue(ValueWithCalculation& valueWithCalculation)
+static bool isPercent(const CSSParser::ValueWithCalculation& valueWithCalculation)
 {
-    bool isPercent;
-    
     if (valueWithCalculation.calculation())
-        isPercent = valueWithCalculation.calculation()->category() == CalcPercent;
-    else
-        isPercent = valueWithCalculation.value().unit == CSSPrimitiveValue::CSS_PERCENTAGE;
+        return valueWithCalculation.calculation()->category() == CalcPercent;
 
-    const double doubleValue = parsedDouble(valueWithCalculation);
+    return valueWithCalculation.value().unit == CSSPrimitiveValue::CSS_PERCENTAGE;
+}
+
+inline int CSSParser::parseColorInt(ValueWithCalculation& valueWithCalculation)
+{
+    double doubleValue = parsedDouble(valueWithCalculation);
     
     if (doubleValue <= 0.0)
         return 0;
 
-    if (isPercent) {
+    if (isPercent(valueWithCalculation)) {
         if (doubleValue >= 100.0)
             return 255;
         return static_cast<int>(doubleValue * 256.0 / 100.0);
@@ -7632,6 +7633,16 @@ inline int CSSParser::colorIntFromValue(ValueWithCalculation& valueWithCalculati
         return 255;
 
     return static_cast<int>(doubleValue);
+}
+
+inline double CSSParser::parseColorDouble(ValueWithCalculation& valueWithCalculation)
+{
+    double doubleValue = parsedDouble(valueWithCalculation);
+
+    if (isPercent(valueWithCalculation))
+        return doubleValue / 100.0;
+
+    return doubleValue;
 }
 
 bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool parseAlpha)
@@ -7647,7 +7658,7 @@ bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool 
     else
         return false;
     
-    colorArray[0] = colorIntFromValue(firstArgumentWithCalculation);
+    colorArray[0] = parseColorInt(firstArgumentWithCalculation);
     for (int i = 1; i < 3; i++) {
         CSSParserValue& operatorArgument = *args->next();
         if (operatorArgument.unit != CSSParserValue::Operator && operatorArgument.iValue != ',')
@@ -7655,7 +7666,7 @@ bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool 
         ValueWithCalculation argumentWithCalculation(*args->next());
         if (!validateUnit(argumentWithCalculation, unitType, HTMLStandardMode))
             return false;
-        colorArray[i] = colorIntFromValue(argumentWithCalculation);
+        colorArray[i] = parseColorInt(argumentWithCalculation);
     }
     if (parseAlpha) {
         CSSParserValue& operatorArgument = *args->next();
@@ -7667,9 +7678,63 @@ bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool 
         double doubleValue = parsedDouble(argumentWithCalculation);
         // Convert the floating pointer number of alpha to an integer in the range [0, 256),
         // with an equal distribution across all 256 values.
-        colorArray[3] = static_cast<int>(std::max<double>(0, std::min<double>(1, doubleValue)) * nextafter(256.0, 0.0));
+        colorArray[3] = static_cast<int>(std::max(0.0, std::min(1.0, doubleValue)) * nextafter(256.0, 0.0));
     }
     return true;
+}
+
+Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunctionParameters(CSSParserValue& value)
+{
+    CSSParserValueList* args = value.function->args.get();
+    if (!args->size())
+        return Nullopt;
+
+    ColorSpace colorSpace;
+    switch (args->current()->id) {
+    case CSSValueSrgb:
+        colorSpace = ColorSpaceSRGB;
+        break;
+    case CSSValueDisplayP3:
+        colorSpace = ColorSpaceDisplayP3;
+        break;
+    default:
+        return Nullopt;
+    }
+
+    std::array<double, 4> colorValues = { { 0, 0, 0, 1 } };
+
+    for (int i = 0; i < 3; ++i) {
+        auto valueOrNull = args->next();
+        if (valueOrNull) {
+            ValueWithCalculation argumentWithCalculation(*valueOrNull);
+            if (!validateUnit(argumentWithCalculation, FNumber))
+                return Nullopt;
+            colorValues[i] = std::max(0.0, std::min(1.0, parsedDouble(argumentWithCalculation)));
+        }
+    }
+
+    auto slashOrNull = args->next();
+    if (!slashOrNull)
+        return { { colorValues, colorSpace } };
+
+    if (!isForwardSlashOperator(*slashOrNull))
+        return Nullopt;
+
+    // Handle alpha.
+
+    ValueWithCalculation argumentWithCalculation(*args->next());
+    if (!validateUnit(argumentWithCalculation, FNumber | FPercent))
+        return Nullopt;
+    colorValues[3] = std::max(0.0, std::min(1.0, parseColorDouble(argumentWithCalculation)));
+
+    // FIXME: Support the comma-separated list of fallback color values.
+    // If there is another argument, it should be a comma.
+
+    auto commaOrNull = args->next();
+    if (commaOrNull && !isComma(commaOrNull))
+        return Nullopt;
+
+    return { { colorValues, colorSpace } };
 }
 
 // The CSS3 specification defines the format of a HSL color as
@@ -7693,7 +7758,7 @@ bool CSSParser::parseHSLParameters(CSSParserValue& value, double* colorArray, bo
         ValueWithCalculation argumentWithCalculation(*args->next());
         if (!validateUnit(argumentWithCalculation, FPercent, HTMLStandardMode))
             return false;
-        colorArray[i] = std::max<double>(0, std::min<double>(100, parsedDouble(argumentWithCalculation))) / 100.0; // needs to be value between 0 and 1.0
+        colorArray[i] = std::max(0.0, std::min(100.0, parsedDouble(argumentWithCalculation))) / 100.0; // needs to be value between 0 and 1.0
     }
     if (parseAlpha) {
         CSSParserValue& operatorArgument = *args->next();
@@ -7702,7 +7767,7 @@ bool CSSParser::parseHSLParameters(CSSParserValue& value, double* colorArray, bo
         ValueWithCalculation argumentWithCalculation(*args->next());
         if (!validateUnit(argumentWithCalculation, FNumber, HTMLStandardMode))
             return false;
-        colorArray[3] = std::max<double>(0, std::min<double>(1, parsedDouble(argumentWithCalculation)));
+        colorArray[3] = std::max(0.0, std::min(1.0, parsedDouble(argumentWithCalculation)));
     }
     return true;
 }
@@ -7758,6 +7823,13 @@ Color CSSParser::parseColorFromValue(CSSParserValue& value)
         if (!parseHSLParameters(value, colorValues, true))
             return Color();
         return Color(makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]));
+    } else if (value.unit == CSSParserValue::Function
+        && value.function->args
+        && equalLettersIgnoringASCIICase(value.function->name, "color(")) {
+        Optional<std::pair<std::array<double, 4>, ColorSpace>> colorData = parseColorFunctionParameters(value);
+        if (!colorData)
+            return Color();
+        return Color(colorData.value().first[0], colorData.value().first[1], colorData.value().first[2], colorData.value().first[3], colorData.value().second);
     }
 
     return Color();

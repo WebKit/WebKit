@@ -116,28 +116,48 @@ Color::Color(CGColorRef color)
 static CGColorRef leakCGColor(const Color& color)
 {
     CGFloat components[4];
+    if (color.isExtended()) {
+        ExtendedColor& extendedColor = color.asExtended();
+        components[0] = extendedColor.red();
+        components[1] = extendedColor.green();
+        components[2] = extendedColor.blue();
+        components[3] = extendedColor.alpha();
+        switch (extendedColor.colorSpace()) {
+        case ColorSpaceSRGB:
+            return CGColorCreate(sRGBColorSpaceRef(), components);
+        case ColorSpaceDisplayP3:
+            return CGColorCreate(displayP3ColorSpaceRef(), components);
+        case ColorSpaceLinearRGB:
+        case ColorSpaceDeviceRGB:
+            // FIXME: Do we ever create CGColorRefs in these spaces? It may only be ImageBuffers.
+            return CGColorCreate(sRGBColorSpaceRef(), components);
+        }
+    }
+
     color.getRGBA(components[0], components[1], components[2], components[3]);
     return CGColorCreate(sRGBColorSpaceRef(), components);
 }
 
 CGColorRef cachedCGColor(const Color& color)
 {
-    switch (color.rgb()) {
-    case Color::transparent: {
-        static CGColorRef transparentCGColor = leakCGColor(color);
-        return transparentCGColor;
-    }
-    case Color::black: {
-        static CGColorRef blackCGColor = leakCGColor(color);
-        return blackCGColor;
-    }
-    case Color::white: {
-        static CGColorRef whiteCGColor = leakCGColor(color);
-        return whiteCGColor;
-    }
+    if (!color.isExtended()) {
+        switch (color.rgb()) {
+        case Color::transparent: {
+            static CGColorRef transparentCGColor = leakCGColor(color);
+            return transparentCGColor;
+        }
+        case Color::black: {
+            static CGColorRef blackCGColor = leakCGColor(color);
+            return blackCGColor;
+        }
+        case Color::white: {
+            static CGColorRef whiteCGColor = leakCGColor(color);
+            return whiteCGColor;
+        }
+        }
     }
 
-    ASSERT(color.rgb());
+    ASSERT(color.isExtended() || color.rgb());
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color).get();

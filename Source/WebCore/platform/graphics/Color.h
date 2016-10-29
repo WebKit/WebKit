@@ -196,7 +196,7 @@ public:
     // The latter format is not a valid CSS color, and should only be seen in DRT dumps.
     String nameForRenderTreeAsText() const;
 
-    bool isValid() const { return m_colorData.rgbaAndFlags & validRGBAColorBit; }
+    bool isValid() const { return isExtended() || (m_colorData.rgbaAndFlags & validRGBAColorBit); }
 
     bool hasAlpha() const { return alpha() < 255; }
 
@@ -205,7 +205,7 @@ public:
     int blue() const { return blueChannel(rgb()); }
     int alpha() const { return alphaChannel(rgb()); }
     
-    RGBA32 rgb() const { ASSERT(!isExtended()); return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32); }
+    RGBA32 rgb() const;
 
     // FIXME: Like operator==, this will give different values for ExtendedColors that
     // should be identical, since the respective pointer will be different.
@@ -395,6 +395,14 @@ inline uint16_t fastDivideBy255(uint16_t value)
 inline RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha)
 {
     return overrideAlpha ? colorWithOverrideAlpha(color, overrideAlpha.value()) : color;
+}
+
+inline RGBA32 Color::rgb() const
+{
+    // FIXME: We should ASSERT(!isExtended()) here, or produce
+    // an RGBA32 equivalent for an ExtendedColor. Ideally the former,
+    // so we can audit all the rgb() call sites to handle extended.
+    return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32);
 }
 
 inline void Color::setRGB(RGBA32 rgb)

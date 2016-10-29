@@ -1204,6 +1204,7 @@ rgb
 rgba
 hsl
 hsla
+//color
 
 // transform
 matrix
@@ -1309,6 +1310,10 @@ last
 // color-gamut
 p3
 rec2020
+
+// color() function
+sRGB
+display-p3
 
 // prefers-reduced-motion
 reduce

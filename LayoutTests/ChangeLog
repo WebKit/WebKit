@@ -1,3 +1,19 @@
+2016-10-29  Dean Jackson  <dino@apple.com>
+
+        Parse color() function
+        https://bugs.webkit.org/show_bug.cgi?id=164146
+        <rdar://problems/29007218>
+
+        Reviewed by Darin Adler.
+
+        Test that exercises the new color() function in CSS. It checks
+        all valid and invalid input, with the exception of fallback content.
+
+        * css3/color/color-function-computed-style-expected.txt: Added.
+        * css3/color/color-function-computed-style.html: Added.
+        * css3/color/color-function-parsing-expected.txt: Added.
+        * css3/color/color-function-parsing.html: Added.
+
 2016-10-29  Youenn Fablet  <youenn@apple.com>
 
         Remove testharness.js/testharnessreport.js unnecessary copies

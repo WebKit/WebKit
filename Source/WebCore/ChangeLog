@@ -1,3 +1,55 @@
+2016-10-29  Dean Jackson  <dino@apple.com>
+
+        Parse color() function
+        https://bugs.webkit.org/show_bug.cgi?id=164146
+        <rdar://problems/29007218>
+
+        Reviewed by Darin Adler.
+
+        Support the new CSS color() function:
+        https://drafts.csswg.org/css-color/#color-function
+
+        There are separate code paths for the old and new CSS parser.
+
+        Tests: css3/color/color-function-computed-style.html
+               css3/color/color-function-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Use Color directly, not via rgb().
+        (WebCore::ComputedStyleExtractor::currentColorOrValidColor):
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
+        * css/CSSValueKeywords.in: Note that there is a color function, but the
+        keyword is already defined. Also add keywords for the color spaces.
+        * css/SVGCSSValueKeywords.in: sRGB is used outside of SVG now.
+
+        * css/parser/CSSParser.cpp: Old CSS parser code to handle color().
+        (WebCore::isPercent): Helper to tell if a ValueWithCalculation is a percentage or not.
+        (WebCore::CSSParser::parseColorInt): Renamed.
+        (WebCore::CSSParser::parseColorDouble): Helper to get a Number/Percentage into a double
+        (WebCore::CSSParser::parseRGBParameters):
+        (WebCore::CSSParser::parseColorFunctionParameters):
+        (WebCore::CSSParser::parseHSLParameters):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::CSSParser::colorIntFromValue): Deleted.
+        * css/parser/CSSParser.h:
+
+        * css/parser/CSSPropertyParserHelpers.cpp: New CSS parser code to handle color().
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunction):
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::isValid): An extended color is valid.
+        (WebCore::Color::rgb): Move the code to a standalone inline
+        so that I could add a longer comment.
+
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::cssText): Alpha output is only needed if != 1.
+
+        * platform/graphics/cg/ColorCG.cpp: Handle ExtendedColor -> CGColor.
+        (WebCore::leakCGColor):
+        (WebCore::cachedCGColor):
+
 2016-10-29  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Disable -webkit-text-size-adjust when the context says to.
