@@ -657,6 +657,17 @@
         "description": "This property specifies styling for dropped, raised, and sunken initial letters."
     },
     {
+        "name": "Input Events",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://w3c.github.io/input-events",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=163112",
+        "documentation-url": "https://w3c.github.io/input-events",
+        "description": "Allows pages to override default editing behaviors and to monitor DOM changes due to user input."
+    },
+    {
         "name": "Interaction Media Features (pointer, hover, any-pointer, any-hover)",
         "status": {
             "status": "Done",

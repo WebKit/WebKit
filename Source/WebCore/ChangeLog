@@ -1,3 +1,9 @@
+2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add Input Events to the features list.
+
+        * features.json:
+
 2016-10-28  Darin Adler  <darin@apple.com>
 
         Fix mismerge that broke a CEReactions test.
