@@ -2572,25 +2572,28 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (isInvalidDomainCharacter(*iterator))
                 return false;
         }
-        if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
-            serializeIPv4(address.value());
-            m_url.m_hostEnd = currentPosition(iterator);
-            if (iterator.atEnd()) {
-                m_url.m_portEnd = currentPosition(iterator);
-                return true;
+        if (m_urlIsSpecial) {
+            if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
+                serializeIPv4(address.value());
+                m_url.m_hostEnd = currentPosition(iterator);
+                if (iterator.atEnd()) {
+                    m_url.m_portEnd = currentPosition(iterator);
+                    return true;
+                }
+                return parsePort(iterator);
             }
-            return parsePort(iterator);
         }
         for (; hostIterator != iterator; ++hostIterator) {
-            if (LIKELY(!isTabOrNewline(*hostIterator))) {
-                if (m_urlIsSpecial) {
-                    if (UNLIKELY(isASCIIUpper(*hostIterator)))
-                        syntaxViolation(hostIterator);
-                    appendToASCIIBuffer(toASCIILower(*hostIterator));
-                } else
-                    appendToASCIIBuffer(*hostIterator);
-            } else
+            if (UNLIKELY(isTabOrNewline(*hostIterator))) {
                 syntaxViolation(hostIterator);
+                continue;
+            }
+            if (m_urlIsSpecial) {
+                if (UNLIKELY(isASCIIUpper(*hostIterator)))
+                    syntaxViolation(hostIterator);
+                appendToASCIIBuffer(toASCIILower(*hostIterator));
+            } else
+                appendToASCIIBuffer(*hostIterator);
         }
         m_url.m_hostEnd = currentPosition(iterator);
         if (!hostIterator.atEnd())

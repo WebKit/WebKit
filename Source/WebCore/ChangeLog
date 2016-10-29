@@ -1,3 +1,19 @@
+2016-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should not try to interpret host of URLs with unrecognized schemes as IPv4 address
+        https://bugs.webkit.org/show_bug.cgi?id=164154
+
+        Reviewed by Andy Estes.
+
+        This is needed to match behavior of all browsers.
+        This is being discussed in the spec at https://github.com/whatwg/url/issues/148
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseHostAndPort):
+        Only try to parse and canonicalize the host as an IPv4 address if the scheme is special (http, wss, etc.)
+
 2016-10-28  Chris Dumez  <cdumez@apple.com>
 
         DOMStringMap reports properties as non-enumerable

@@ -949,6 +949,14 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.256]",
         {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f::127.0.0.256]"},
         {"http", "", "", "[a:b:c:d:e:f::127.0.0.256]", 0, "/", "", "", "http://[a:b:c:d:e:f::127.0.0.256]/"});
+    checkURLDifferences("http://123456", {"http", "", "", "0.1.226.64", 0, "/", "", "", "http://0.1.226.64/"}, {"http", "", "", "123456", 0, "/", "", "", "http://123456/"});
+    checkURL("asdf://123456", {"asdf", "", "", "123456", 0, "", "", "", "asdf://123456"});
+    checkURLDifferences("http://[0:0:0:0:a:b:c:d]",
+        {"http", "", "", "[::a:b:c:d]", 0, "/", "", "", "http://[::a:b:c:d]/"},
+        {"http", "", "", "[0:0:0:0:a:b:c:d]", 0, "/", "", "", "http://[0:0:0:0:a:b:c:d]/"});
+    checkURLDifferences("asdf://[0:0:0:0:a:b:c:d]",
+        {"asdf", "", "", "[::a:b:c:d]", 0, "", "", "", "asdf://[::a:b:c:d]"},
+        {"asdf", "", "", "[0:0:0:0:a:b:c:d]", 0, "", "", "", "asdf://[0:0:0:0:a:b:c:d]"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
@@ -1105,6 +1113,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[a:b:c:d:e:f:127.0.0.0x11]"); // Chrome treats this as hex, Firefox and the spec fail
     shouldFail("http://[a:b:c:d:e:f:127.0.-0.1]");
     shouldFail("asdf://space InHost");
+    shouldFail("asdf://[0:0:0:0:a:b:c:d");
 }
 
 // These are in the spec but not in the web platform tests.
