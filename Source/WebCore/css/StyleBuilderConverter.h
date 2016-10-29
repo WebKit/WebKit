@@ -147,6 +147,9 @@ public:
     
     static HangingPunctuation convertHangingPunctuation(StyleResolver&, const CSSValue&);
 
+    static Length convertPositionComponentX(StyleResolver&, const CSSValue&);
+    static Length convertPositionComponentY(StyleResolver&, const CSSValue&);
+    
 private:
     friend class StyleBuilderCustom;
 
@@ -321,6 +324,16 @@ inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length
     auto rhs = std::make_unique<CalcExpressionLength>(length);
     auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
+}
+
+inline Length StyleBuilderConverter::convertPositionComponentX(StyleResolver& styleResolver, const CSSValue& value)
+{
+    return convertPositionComponent<CSSValueLeft, CSSValueRight>(styleResolver, downcast<CSSPrimitiveValue>(value));
+}
+
+inline Length StyleBuilderConverter::convertPositionComponentY(StyleResolver& styleResolver, const CSSValue& value)
+{
+    return convertPositionComponent<CSSValueTop, CSSValueBottom>(styleResolver, downcast<CSSPrimitiveValue>(value));
 }
 
 template <CSSValueID cssValueFor0, CSSValueID cssValueFor100>

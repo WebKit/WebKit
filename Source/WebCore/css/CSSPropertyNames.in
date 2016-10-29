@@ -580,9 +580,9 @@ perspective [ConditionalConverter=Perspective]
 -webkit-perspective = perspective
 perspective-origin [Longhands=perspective-origin-x|perspective-origin-y]
 -webkit-perspective-origin = perspective-origin
-perspective-origin-x [Converter=Length]
+perspective-origin-x [Converter=PositionComponentX]
 -webkit-perspective-origin-x = perspective-origin-x
-perspective-origin-y [Converter=Length]
+perspective-origin-y [Converter=PositionComponentY]
 -webkit-perspective-origin-y = perspective-origin-y
 -webkit-print-color-adjust [Inherited]
 -webkit-rtl-ordering [Inherited, Setter=setRTLOrdering, Initial=initialRTLOrdering]
@@ -628,9 +628,9 @@ transform [Converter=Transform]
 -webkit-transform = transform
 transform-origin [Longhands=transform-origin-x|transform-origin-y|transform-origin-z]
 -webkit-transform-origin = transform-origin
-transform-origin-x [Converter=Length]
+transform-origin-x [Converter=PositionComponentX]
 -webkit-transform-origin-x = transform-origin-x
-transform-origin-y [Converter=Length]
+transform-origin-y [Converter=PositionComponentY]
 -webkit-transform-origin-y = transform-origin-y
 transform-origin-z [Converter=ComputedLength<float>]
 -webkit-transform-origin-z = transform-origin-z

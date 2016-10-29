@@ -94,6 +94,9 @@ private:
 
     bool consumeLegacyBreakProperty(CSSPropertyID, bool important);
 
+    bool consumeTransformOrigin(bool important);
+    bool consumePerspectiveOrigin(bool important);
+
 private:
     // Inputs:
     CSSParserTokenRange m_range;

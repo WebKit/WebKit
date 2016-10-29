@@ -358,21 +358,33 @@ bool CSSPropertyParser::consumeCSSWideKeyword(CSSPropertyID propertyID, bool imp
     return true;
 }
 
-static RefPtr<CSSValueList> consumeTransformOrigin(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+bool CSSPropertyParser::consumeTransformOrigin(bool important)
 {
     RefPtr<CSSPrimitiveValue> resultX;
     RefPtr<CSSPrimitiveValue> resultY;
-    if (consumeOneOrTwoValuedPosition(range, cssParserMode, unitless, resultX, resultY)) {
-        RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-        list->append(resultX.releaseNonNull());
-        list->append(resultY.releaseNonNull());
-        RefPtr<CSSPrimitiveValue> resultZ = consumeLength(range, cssParserMode, ValueRangeAll);
+    if (consumeOneOrTwoValuedPosition(m_range, m_context.mode, UnitlessQuirk::Forbid, resultX, resultY)) {
+        RefPtr<CSSPrimitiveValue> resultZ = consumeLength(m_range, m_context.mode, ValueRangeAll);
         if (!resultZ)
-            resultZ = CSSPrimitiveValue::create(0, CSSPrimitiveValue::UnitTypes::CSS_PX);
-        list->append(resultZ.releaseNonNull());
-        return list;
+            resultZ = CSSValuePool::singleton().createValue(0, CSSPrimitiveValue::UnitTypes::CSS_PX);
+        addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, resultX.releaseNonNull(), important);
+        addProperty(CSSPropertyTransformOriginY, CSSPropertyTransformOrigin, resultY.releaseNonNull(), important);
+        addProperty(CSSPropertyTransformOriginZ, CSSPropertyTransformOrigin, resultZ.releaseNonNull(), important);
+        
+        return true;
     }
-    return nullptr;
+    return false;
+}
+
+bool CSSPropertyParser::consumePerspectiveOrigin(bool important)
+{
+    RefPtr<CSSPrimitiveValue> resultX;
+    RefPtr<CSSPrimitiveValue> resultY;
+    if (consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid, resultX, resultY)) {
+        addProperty(CSSPropertyPerspectiveOriginX, CSSPropertyPerspectiveOrigin, resultX.releaseNonNull(), important);
+        addProperty(CSSPropertyPerspectiveOriginY, CSSPropertyPerspectiveOrigin, resultY.releaseNonNull(), important);
+        return true;
+    }
+    return false;
 }
 
 // Methods for consuming non-shorthand properties starts here.
@@ -3312,7 +3324,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeTouchAction(m_range);
 #endif
     case CSSPropertyObjectPosition:
-    case CSSPropertyPerspectiveOrigin:
         return consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid);
     case CSSPropertyWebkitLineClamp:
         return consumeLineClamp(m_range);
@@ -3475,8 +3486,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeRxOrRy(m_range);
     case CSSPropertyCursor:
         return consumeCursor(m_range, m_context, inQuirksMode());
-    case CSSPropertyTransformOrigin:
-        return consumeTransformOrigin(m_range, m_context.mode, UnitlessQuirk::Forbid);
     case CSSPropertyContent:
         return consumeContent(m_range, m_context);
     case CSSPropertyListStyleImage:
@@ -4814,6 +4823,10 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeBackgroundShorthand(backgroundShorthand(), important);
     case CSSPropertyWebkitMask:
         return consumeBackgroundShorthand(webkitMaskShorthand(), important);
+    case CSSPropertyTransformOrigin:
+        return consumeTransformOrigin(important);
+    case CSSPropertyPerspectiveOrigin:
+        return consumePerspectiveOrigin(important);
     case CSSPropertyGridGap: {
         RefPtr<CSSValue> rowGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
         RefPtr<CSSValue> columnGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
