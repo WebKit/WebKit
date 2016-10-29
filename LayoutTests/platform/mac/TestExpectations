@@ -180,9 +180,6 @@ fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Skip ]
 # Directory upload is not enabled.
 fast/forms/file/input-file-directory-upload.html
 
-# webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
-http/tests/w3c/webperf [ Skip ]
-
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 

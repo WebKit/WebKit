@@ -1,5 +1,202 @@
 2016-10-29  Youenn Fablet  <youenn@apple.com>
 
+        Remove testharness.js/testharnessreport.js unnecessary copies
+        https://bugs.webkit.org/show_bug.cgi?id=164112
+
+        Reviewed by Darin Adler.
+
+        Removing http/tests/w3c directory.
+        Contained tests are skipped in Mac, EFL and mark as failing in GTK.
+        These tests have not been modified since more than 3 years and are probably out-of-date compared to W3C wpt.
+
+        Updated other http/tests tests using w3c/tests/resources files to use directly /resources/ URLs.
+        These /resources/ URLs are using an alias to remove the need to have redundant copies.
+
+        Removed imported/blink/http/tests/resources testharness and testharnessreport.js since they are not used.
+        A few test files in imported/blink/http/tests use /resources/... URLs but they will not point to any of the removed files since the tests are run as file based.
+
+        * http/tests/media/media-source/mediasource-play-then-seek-back-with-remote-control.html:
+        * http/tests/media/resources/media-source/generate-config-change-tests.py:
+        * http/tests/preload/single_download_preload_runner.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/form-upgrade.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-site.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/nested-nested-frame.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/nested-window.html:
+        * http/tests/security/cross-origin-css-1.html:
+        * http/tests/security/cross-origin-css-2.html:
+        * http/tests/security/cross-origin-css-3.html:
+        * http/tests/security/cross-origin-css-4.html:
+        * http/tests/security/cross-origin-css-5.html:
+        * http/tests/security/cross-origin-css-6.html:
+        * http/tests/security/cross-origin-css-7.html:
+        * http/tests/security/cross-origin-css-8.html:
+        * http/tests/security/cross-origin-css-9.html:
+        * http/tests/security/cross-origin-css-in-quirks-1.html:
+        * http/tests/security/cross-origin-css-in-quirks-2.html:
+        * http/tests/security/cross-origin-css-in-quirks-3.html:
+        * http/tests/security/cross-origin-css-in-quirks-4.html:
+        * http/tests/security/cross-origin-css-in-quirks-5.html:
+        * http/tests/security/cross-origin-css-in-quirks-6.html:
+        * http/tests/security/cross-origin-css-in-quirks-7.html:
+        * http/tests/security/cross-origin-css-in-quirks-8.html:
+        * http/tests/security/mixedContent/insecure-script-in-data-iframe-in-main-frame-blocked.html:
+        * http/tests/security/resources/post-origin-to-parent.html:
+        * http/tests/security/same-origin-css-1.html:
+        * http/tests/security/same-origin-css-2.html:
+        * http/tests/security/same-origin-css-3.html:
+        * http/tests/security/same-origin-css-4.html:
+        * http/tests/security/same-origin-css-5.html:
+        * http/tests/security/same-origin-css-6.html:
+        * http/tests/security/same-origin-css-7.html:
+        * http/tests/security/same-origin-css-8.html:
+        * http/tests/security/same-origin-css-in-quirks.html:
+        * http/tests/security/set-domain-remove-subdomain-for-ip-address.html:
+        * http/tests/w3c/README: Removed.
+        * http/tests/w3c/resources/WebIDLParser.js: Removed.
+        * http/tests/w3c/resources/canvas-tests.css: Removed.
+        * http/tests/w3c/resources/canvas-tests.js: Removed.
+        * http/tests/w3c/resources/idlharness.js: Removed.
+        * http/tests/w3c/resources/testharness.css: Removed.
+        * http/tests/w3c/resources/testharness.js: Removed.
+        * http/tests/w3c/resources/testharnessreport.js: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/basic-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/basic.html: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/monotonic-clock-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/monotonic-clock.html: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/resources/now_frame.html: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_document_open-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_document_open.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_document_readiness_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_document_readiness_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigate_within_document-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigate_within_document.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_redirectCount_none-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_redirectCount_none.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_backforward-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_backforward.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_enums-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_enums.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_reload-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_reload.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_no_previous_document-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_no_previous_document.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_readwrite-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_readwrite.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_client_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_client_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_reload-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_reload.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_server_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_server_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_unique_performance_objects-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_unique_performance_objects.html: Removed.
+        * http/tests/w3c/webperf/resources/Ahem.ttf: Removed.
+        * http/tests/w3c/webperf/resources/all_resource_types.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_image.png: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_green.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_green_with_allow_timing.php: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_green_with_onunload.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_meta_redirect.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_unload.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_yellow.htm: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_yellow_with_onunload.htm: Removed.
+        * http/tests/w3c/webperf/resources/empty_script.js: Removed.
+        * http/tests/w3c/webperf/resources/generate_resource.php: Removed.
+        * http/tests/w3c/webperf/resources/gray_bg.css: Removed.
+        * http/tests/w3c/webperf/resources/green_frame.htm: Removed.
+        * http/tests/w3c/webperf/resources/inject_resource_test.html: Removed.
+        * http/tests/w3c/webperf/resources/nested.css: Removed.
+        * http/tests/w3c/webperf/resources/pagevistestharness.js: Removed.
+        * http/tests/w3c/webperf/resources/redirect.php: Removed.
+        * http/tests/w3c/webperf/resources/webperftestharness.js: Removed.
+        * http/tests/w3c/webperf/resources/webperftestharnessextension.js: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_attribute_order-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_attribute_order.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_connection_reuse-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_connection_reuse.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_data_url-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_data_url.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_failures-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_ignore_failures.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_reparenting-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_reparenting.html: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_script_types-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_script_types.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_populate_entries-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_populate_entries.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_shrink_buffer_size-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_shrink_buffer_size.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_size_restriction-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_size_restriction.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_clear_resource_timing_functionality-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_clear_resource_timing_functionality.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_on_shrink_buffer_size-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_on_shrink_buffer_size.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_store_and_clear_during_callback-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_store_and_clear_during_callback.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMeasures-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMeasures.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark_exception-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark_exception.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_exception-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_exception.html: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_method_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_method_exist.html: Removed.
+        * http/tests/xmlhttprequest/readystatechange-and-abort.html:
+        * http/tests/xmlhttprequest/response-json-and-readystate.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-open-method-case-insensitive.html:
+        * imported/blink/http/tests/resources/testharness.js: Removed.
+        * imported/blink/http/tests/resources/testharnessreport.js: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2016-10-29  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION (r207754): LayoutTest http/tests/security/svg-image-with-css-cross-domain.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=163922
 

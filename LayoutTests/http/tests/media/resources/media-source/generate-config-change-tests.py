@@ -79,11 +79,11 @@ CODEC_INFO = {
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html>
     <head>
-        <script src="/w3c/resources/testharness.js"></script>
-        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
         <script src="mediasource-util.js"></script>
         <script src="mediasource-config-changes.js"></script>
-        <link rel="stylesheet" href="/w3c/resources/testharness.css">
+        <link rel="stylesheet" href="/resources/testharness.css">
     </head>
     <body>
         <div id="log"></div>
