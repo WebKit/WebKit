@@ -1,3 +1,14 @@
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-background-composite
+        https://bugs.webkit.org/show_bug.cgi?id=164179
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBackgroundComponent):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-10-29  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r207754): LayoutTest http/tests/security/svg-image-with-css-cross-domain.html is a flaky failure

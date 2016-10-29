@@ -2586,6 +2586,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     case CSSPropertyBackgroundOrigin:
         return consumeBackgroundBox(range);
     case CSSPropertyWebkitMaskComposite:
+    case CSSPropertyWebkitBackgroundComposite:
         return consumeBackgroundComposite(range);
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
@@ -3545,6 +3546,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitMaskClip:
     case CSSPropertyWebkitMaskComposite:
     case CSSPropertyWebkitMaskImage:
