@@ -1,3 +1,15 @@
+2016-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        UIScriptControllerIOS.mm should not be soft-linking UIKit
+        https://bugs.webkit.org/show_bug.cgi?id=164171
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r208090. Instead of soft-linking, we can simply grab UIKeyboardPredictionView by name instead.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex):
+
 2016-10-28  Darin Adler  <darin@apple.com>
 
         Move all classes in the HTML directory from ExceptionCode to Exception
