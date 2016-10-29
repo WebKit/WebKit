@@ -1,3 +1,13 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Allow @font-face src descriptor's format function to contain identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=164169
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontFaceSrcURI):
+
 2016-10-28  Jer Noble  <jer.noble@apple.com>
 
         WebAudio does not resume when moving from background to foreground tab.

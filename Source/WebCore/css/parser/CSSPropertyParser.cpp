@@ -3632,9 +3632,12 @@ static RefPtr<CSSValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const 
 
     // FIXME: https://drafts.csswg.org/css-fonts says that format() contains a comma-separated list of strings,
     // but CSSFontFaceSrcValue stores only one format. Allowing one format for now.
+    // FIXME: We're allowing the format to be an identifier as well as a string, because the old
+    // parser did. It's not clear if we need to continue to support this behavior, but we have lots of
+    // layout tests that rely on it.
     CSSParserTokenRange args = consumeFunction(range);
     const CSSParserToken& arg = args.consumeIncludingWhitespace();
-    if ((arg.type() != StringToken) || !args.atEnd())
+    if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
         return nullptr;
     uriValue->setFormat(arg.value().toString());
     return uriValue;
