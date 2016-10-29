@@ -1,3 +1,14 @@
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-text value for background-clip and -webkit-background-clip
+        https://bugs.webkit.org/show_bug.cgi?id=164189
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBackgroundBox):
+        (WebCore::consumePrefixedBackgroundBox):
+
 2016-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove some unnecessary includes

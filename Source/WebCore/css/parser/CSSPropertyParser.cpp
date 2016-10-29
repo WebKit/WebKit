@@ -2535,7 +2535,7 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundAttachment(CSSParserTokenRange
 
 static RefPtr<CSSPrimitiveValue> consumeBackgroundBox(CSSParserTokenRange& range)
 {
-    return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox>(range);
+    return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox, CSSValueWebkitText>(range);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeBackgroundComposite(CSSParserTokenRange& range)
@@ -2548,7 +2548,7 @@ static RefPtr<CSSPrimitiveValue> consumePrefixedBackgroundBox(CSSPropertyID prop
     // The values 'border', 'padding' and 'content' are deprecated and do not apply to the version of the property that has the -webkit- prefix removed.
     if (RefPtr<CSSPrimitiveValue> value = consumeIdentRange(range, CSSValueBorder, CSSValuePaddingBox))
         return value;
-    if ((property == CSSPropertyWebkitBackgroundClip || property == CSSPropertyWebkitMaskClip) && range.peek().id() == CSSValueText)
+    if (range.peek().id() == CSSValueWebkitText || ((property == CSSPropertyWebkitBackgroundClip || property == CSSPropertyWebkitMaskClip) && range.peek().id() == CSSValueText))
         return consumeIdent(range);
     return nullptr;
 }
