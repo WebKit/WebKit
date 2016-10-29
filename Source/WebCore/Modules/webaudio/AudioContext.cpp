@@ -960,6 +960,7 @@ void AudioContext::startRendering()
 void AudioContext::mediaCanStart()
 {
     removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
+    mayResumePlayback(true);
 }
 
 MediaProducer::MediaStateFlags AudioContext::mediaState() const

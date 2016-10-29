@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioContext resume method resolve promises when notified by Page that it can start media playback.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    if (window.internals)
+        internals.settings.setCanStartMedia(false);
+
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    context.resume().then(resumePromiseResolved).catch(resumePromiseRejected);
+
+    setTimeout(allowStartMedia, 100);
+}
+
+function allowStartMedia() {
+    if (window.internals)
+        internals.settings.setCanStartMedia(true);
+}
+
+function resumePromiseResolved() {
+    testPassed('context resolve callback called')
+    finishJSTest();
+}
+
+function resumePromiseRejected() {
+    testFailed('context reject callback called');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2016-10-28  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio does not resume when moving from background to foreground tab.
+        https://bugs.webkit.org/show_bug.cgi?id=164043
+
+        Reviewed by Darin Adler.
+
+        Test: webaudio/page-canstartmedia.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::mediaCanStart):
+
 2016-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         iOS autocorrection does not trigger an input event of inputType "insertReplacementText"
