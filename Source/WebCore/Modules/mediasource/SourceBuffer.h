@@ -42,7 +42,6 @@
 #include "TextTrack.h"
 #include "Timer.h"
 #include "VideoTrack.h"
-#include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
 

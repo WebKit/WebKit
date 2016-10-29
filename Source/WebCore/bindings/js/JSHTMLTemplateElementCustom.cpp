@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-
 #include "JSHTMLTemplateElement.h"
 
 #include "HTMLTemplateElement.h"

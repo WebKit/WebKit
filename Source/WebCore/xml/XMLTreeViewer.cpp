@@ -44,7 +44,6 @@
 #include "Text.h"
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
-#include <bindings/ScriptValue.h>
 
 namespace WebCore {
 

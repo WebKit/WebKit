@@ -42,7 +42,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLAppletElement.h"
-#include "HTMLAudioElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"

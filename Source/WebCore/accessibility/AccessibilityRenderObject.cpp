@@ -54,7 +54,6 @@
 #include "HTMLMapElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
-#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"

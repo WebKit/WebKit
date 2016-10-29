@@ -32,7 +32,6 @@
 #include "PageOverlayController.h"
 #include "PaymentCoordinator.h"
 #include "ScrollLatchingState.h"
-#include "Settings.h"
 #include "WheelEventDeltaFilter.h"
 #include <wtf/NeverDestroyed.h>
 

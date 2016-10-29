@@ -37,7 +37,6 @@
 
 namespace JSC {
 class ArrayBuffer;
-class ArrayBufferView;
 }
 
 namespace WebCore {

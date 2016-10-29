@@ -164,8 +164,6 @@ class Text;
 class TextResourceDecoder;
 class TreeWalker;
 class VisitedLinkState;
-class WebKitNamedFlow;
-class XMLHttpRequest;
 class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;

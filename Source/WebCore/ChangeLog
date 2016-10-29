@@ -1,3 +1,10 @@
+2016-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove some unnecessary includes
+        https://bugs.webkit.org/show_bug.cgi?id=164174
+
+        Reviewed by Darin Adler.
+
 2016-10-29  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support -webkit-aspect-ratio

@@ -38,7 +38,6 @@
 #import "FrameView.h"
 #import "FrameLoaderClient.h"
 #import "HitTestResult.h"
-#import "HTMLAnchorElement.h"
 #import "htmlediting.h"
 #import "HTMLNames.h"
 #import "Image.h"

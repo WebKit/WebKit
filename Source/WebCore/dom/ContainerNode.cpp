@@ -40,6 +40,7 @@
 #include "HTMLSlotElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "InlineTextBox.h"
+#include "InspectorInstrumentation.h"
 #include "JSNode.h"
 #include "LabelsNodeList.h"
 #include "MutationEvent.h"

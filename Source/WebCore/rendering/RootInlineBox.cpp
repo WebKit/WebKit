@@ -40,12 +40,8 @@
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 
-#if PLATFORM(IOS)
-#include "Settings.h"
-#endif
-
 namespace WebCore {
-    
+
 struct SameSizeAsRootInlineBox : public InlineFlowBox {
     unsigned variables[7];
     void* pointers[3];

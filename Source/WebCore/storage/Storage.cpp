@@ -31,7 +31,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "SchemeRegistry.h"
-#include "Settings.h"
+#include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include <wtf/text/WTFString.h>
 

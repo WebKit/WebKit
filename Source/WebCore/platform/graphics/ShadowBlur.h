@@ -30,7 +30,6 @@
 #define ShadowBlur_h
 
 #include "Color.h"
-#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include <wtf/Noncopyable.h>

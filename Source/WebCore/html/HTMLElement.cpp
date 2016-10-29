@@ -58,7 +58,6 @@
 #include "NodeTraversal.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
 #include "SubframeLoader.h"

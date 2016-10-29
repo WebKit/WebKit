@@ -40,7 +40,6 @@
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
-#include <bindings/ScriptValue.h>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>

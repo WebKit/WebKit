@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class HTMLInputElement;
-
 enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
 enum class RangeLimitations {

@@ -27,7 +27,6 @@
 #include "ElementDescendantIterator.h"
 #include "HTMLDocumentParser.h"
 #include "Page.h"
-#include "Settings.h"
 #include "XMLDocumentParser.h"
 
 namespace WebCore {

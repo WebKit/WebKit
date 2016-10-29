@@ -48,7 +48,6 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
-#include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/Ref.h>
 

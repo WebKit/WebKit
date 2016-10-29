@@ -33,7 +33,6 @@
 #include "HTMLInputElement.h"
 #include "MouseEvent.h"
 #include "NoEventDispatchAssertion.h"
-#include "PseudoElement.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "TouchEvent.h"

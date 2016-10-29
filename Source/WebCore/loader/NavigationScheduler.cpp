@@ -48,7 +48,6 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>

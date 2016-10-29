@@ -33,7 +33,6 @@ namespace WebCore {
 class AccessibilityMenuList;
 class AccessibilityMenuListOption;
 class HTMLElement;
-class HTMLSelectElement;
 
 class AccessibilityMenuListPopup final : public AccessibilityMockObject {
 public:

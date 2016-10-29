@@ -56,7 +56,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
-#include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "InputEvent.h"

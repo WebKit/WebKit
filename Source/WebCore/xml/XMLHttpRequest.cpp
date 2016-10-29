@@ -54,7 +54,6 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
-#include <heap/Strong.h>
 #include <mutex>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>

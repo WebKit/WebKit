@@ -33,7 +33,6 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestLocation.h"
 #include "HitTestResult.h"

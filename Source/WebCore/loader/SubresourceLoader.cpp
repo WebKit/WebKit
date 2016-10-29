@@ -43,7 +43,6 @@
 #include "Page.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
-#include "Settings.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

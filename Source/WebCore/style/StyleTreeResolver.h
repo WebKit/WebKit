@@ -37,17 +37,12 @@
 
 namespace WebCore {
 
-class ContainerNode;
 class Document;
 class Element;
-class HTMLSlotElement;
 class Node;
 class RenderStyle;
-class Settings;
 class ShadowRoot;
 class StyleResolver;
-class Text;
-class TreeChange;
 
 namespace Style {
 

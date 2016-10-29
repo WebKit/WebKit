@@ -32,7 +32,6 @@
 #include "EditorClient.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"

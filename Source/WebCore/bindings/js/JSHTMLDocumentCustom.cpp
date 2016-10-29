@@ -27,8 +27,6 @@
 #include "JSHTMLDocument.h"
 
 #include "Frame.h"
-#include "HTMLAllCollection.h"
-#include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"

@@ -39,7 +39,6 @@
 #include "ScriptSourceCode.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
-#include <bindings/ScriptValue.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;

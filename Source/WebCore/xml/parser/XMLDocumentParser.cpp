@@ -29,7 +29,6 @@
 #include "CDATASection.h"
 #include "CachedScript.h"
 #include "Comment.h"
-#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"

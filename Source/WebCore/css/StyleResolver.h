@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSSelector.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "DocumentRuleSets.h"
@@ -52,7 +53,6 @@ class CSSImageValue;
 class CSSPageRule;
 class CSSPrimitiveValue;
 class CSSProperty;
-class CSSSelector;
 class CSSStyleSheet;
 class CSSValue;
 class CSSVariableDependentValue;

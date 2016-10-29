@@ -29,10 +29,8 @@
  */
 
 #include "config.h"
-
 #include "ChildListMutationScope.h"
 
-#include "DocumentFragment.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StaticNodeList.h"

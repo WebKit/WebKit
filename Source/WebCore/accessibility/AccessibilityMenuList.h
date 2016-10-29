@@ -30,9 +30,6 @@
 
 namespace WebCore {
 
-class AccessibilityMenuList;
-class AccessibilityMenuListPopup;
-class HTMLOptionElement;
 class RenderMenuList;
 
 class AccessibilityMenuList final : public AccessibilityRenderObject {

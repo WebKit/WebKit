@@ -36,7 +36,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLFrameOwnerElement.h"

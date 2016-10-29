@@ -55,7 +55,6 @@
 #include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "StyledElement.h"
-#include <bindings/ScriptValue.h>
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 

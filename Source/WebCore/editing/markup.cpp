@@ -29,7 +29,6 @@
 #include "config.h"
 #include "markup.h"
 
-#include "CDATASection.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"

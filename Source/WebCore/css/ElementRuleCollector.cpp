@@ -37,7 +37,6 @@
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
-#include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "RenderRegion.h"
 #include "SVGElement.h"
@@ -47,7 +46,6 @@
 #include "StyleProperties.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
-
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {

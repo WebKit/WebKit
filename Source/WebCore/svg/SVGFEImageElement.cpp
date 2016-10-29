@@ -25,7 +25,6 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "ColorSpace.h"
 #include "Document.h"
 #include "Image.h"
 #include "RenderObject.h"

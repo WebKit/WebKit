@@ -48,7 +48,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "HitTestRequest.h"

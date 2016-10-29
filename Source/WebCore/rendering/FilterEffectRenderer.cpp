@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-
 #include "FilterEffectRenderer.h"
 
 #include "CachedSVGDocument.h"
@@ -43,8 +42,6 @@
 #include "RenderLayer.h"
 #include "SVGElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "Settings.h"
-
 #include <algorithm>
 #include <wtf/MathExtras.h>
 

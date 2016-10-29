@@ -39,7 +39,6 @@
 #include "JSDOMGlobalObject.h"
 #include "Pasteboard.h"
 #include "Storage.h"
-#include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <inspector/agents/InspectorConsoleAgent.h>

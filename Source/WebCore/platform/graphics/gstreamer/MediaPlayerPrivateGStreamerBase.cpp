@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "ColorSpace.h"
 #include "GStreamerUtilities.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"

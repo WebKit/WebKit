@@ -19,18 +19,16 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef FTPDirectoryDocument_h
 #define FTPDirectoryDocument_h
 
 #include "HTMLDocument.h"
 
 namespace WebCore {
-    
-class DOMImplementation;
-    
+
 class FTPDirectoryDocument final : public HTMLDocument {
 public:
     static Ref<FTPDirectoryDocument> create(Frame* frame, const URL& url)
@@ -42,7 +40,7 @@ private:
     FTPDirectoryDocument(Frame*, const URL&);
     Ref<DocumentParser> createParser() override;
 };
-    
+
 } // namespace WebCore
 
 #endif // FTPDirectoryDocument_h

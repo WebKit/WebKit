@@ -39,7 +39,6 @@ class DragData;
 class FileList;
 class HTMLDataListElement;
 class HTMLImageLoader;
-class HTMLOptionElement;
 class Icon;
 class InputType;
 class ListAttributeTargetObserver;

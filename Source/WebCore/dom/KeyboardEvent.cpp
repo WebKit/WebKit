@@ -30,7 +30,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"
-#include "Settings.h"
 #include "WindowsKeyboardCodes.h"
 
 namespace WebCore {

@@ -28,7 +28,6 @@
 #include "CachedImage.h"
 #include "EventNames.h"
 #include "FrameView.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"

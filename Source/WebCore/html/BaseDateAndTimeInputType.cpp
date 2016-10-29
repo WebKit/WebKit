@@ -30,8 +30,9 @@
  */
 
 #include "config.h"
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "BaseDateAndTimeInputType.h"
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

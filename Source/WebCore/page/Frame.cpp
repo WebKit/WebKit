@@ -108,7 +108,6 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include <bindings/ScriptValue.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>

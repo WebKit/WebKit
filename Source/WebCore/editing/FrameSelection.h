@@ -50,7 +50,6 @@ class MutableStyleProperties;
 class RenderBlock;
 class RenderObject;
 class RenderView;
-class Settings;
 class VisiblePosition;
 
 enum EUserTriggered { NotUserTriggered = 0, UserTriggered = 1 };

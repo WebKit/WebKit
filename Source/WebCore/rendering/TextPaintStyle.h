@@ -27,7 +27,6 @@
 #define TextPaintStyle_h
 
 #include "Color.h"
-#include "ColorSpace.h"
 
 namespace WebCore {
 

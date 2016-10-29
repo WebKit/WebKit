@@ -44,7 +44,6 @@
 #import "Page.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
-#import "Settings.h"
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "WebCoreResourceHandleAsDelegate.h"

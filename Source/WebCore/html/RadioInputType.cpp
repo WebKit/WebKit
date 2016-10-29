@@ -31,7 +31,6 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeTraversal.h"
-#include "Settings.h"
 #include "SpatialNavigation.h"
 
 namespace WebCore {

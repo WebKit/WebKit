@@ -39,14 +39,6 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 
-#if ENABLE(WEB_AUDIO)
-#include "JSAudioContext.h"
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-#include "JSWebSocket.h"
-#endif
-
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"
 #endif

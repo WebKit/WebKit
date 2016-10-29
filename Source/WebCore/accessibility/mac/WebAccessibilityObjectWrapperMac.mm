@@ -59,7 +59,6 @@
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
-#import "HTMLTextAreaElement.h"
 #import "LocalizedStrings.h"
 #import "MainFrame.h"
 #import "Page.h"

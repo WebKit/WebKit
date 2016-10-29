@@ -22,29 +22,7 @@
 #include "config.h"
 #include "HitTestLocation.h"
 
-#include "CachedImage.h"
-#include "DocumentMarkerController.h"
-#include "Frame.h"
-#include "FrameSelection.h"
-#include "FrameTree.h"
-#include "HTMLAnchorElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLMediaElement.h"
-#include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
-#include "HTMLPlugInImageElement.h"
-#include "HTMLVideoElement.h"
-#include "RenderBlock.h"
-#include "RenderImage.h"
-#include "RenderInline.h"
-#include "Scrollbar.h"
-#include "SVGNames.h"
-#include "XLinkNames.h"
-
 namespace WebCore {
-
-using namespace HTMLNames;
 
 HitTestLocation::HitTestLocation()
     : m_isRectBased(false)

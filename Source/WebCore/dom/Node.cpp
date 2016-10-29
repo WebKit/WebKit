@@ -63,7 +63,6 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "Settings.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"

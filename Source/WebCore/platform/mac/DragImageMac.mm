@@ -27,6 +27,7 @@
 #import "DragImage.h"
 
 #if ENABLE(DRAG_SUPPORT)
+
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
 #import "FontCascade.h"
@@ -35,7 +36,6 @@
 #import "GraphicsContext.h"
 #import "Image.h"
 #import "URL.h"
-#import "ResourceResponse.h"
 #import "StringTruncator.h"
 #import "TextRun.h"
 #import <wtf/NeverDestroyed.h>

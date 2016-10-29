@@ -33,14 +33,12 @@
 
 #include "c_utility.h"
 #include <runtime/Identifier.h>
-#include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 
 #pragma GCC visibility push(default)
 #include "npruntime_impl.h"
 #pragma GCC visibility pop
 
-using namespace JSC::Bindings;
 using namespace WebCore;
 
 NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)

@@ -75,7 +75,6 @@
 #include "JSDOMBinding.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "StyleResolver.h"
 #include <wtf/text/CString.h>
 

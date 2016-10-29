@@ -48,7 +48,6 @@
 #include "WebCoreJSClientData.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include <bindings/ScriptValue.h>
 #include <debugger/Debugger.h>
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>

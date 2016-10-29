@@ -37,23 +37,8 @@ namespace WebCore {
     
 class AXObjectCache;
 class Element;
-class Frame;
-class FrameView;
-class HitTestResult;
-class HTMLAnchorElement;
-class HTMLAreaElement;
-class HTMLElement;
 class HTMLLabelElement;
-class HTMLMapElement;
-class HTMLSelectElement;
-class IntPoint;
-class IntSize;
 class Node;
-class RenderListBox;
-class RenderTextControl;
-class RenderView;
-class VisibleSelection;
-class Widget;
 
 enum MouseButtonListenerResultFilter {
     ExcludeBodyElement = 1,

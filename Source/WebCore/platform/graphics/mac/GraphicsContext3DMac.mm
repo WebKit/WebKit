@@ -54,11 +54,6 @@
 #include "WebGLLayer.h"
 #include "WebGLObject.h"
 #include "WebGLRenderingContextBase.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/ArrayBufferView.h>
-#include <runtime/Int32Array.h>
-#include <runtime/Float32Array.h>
-#include <runtime/Uint8Array.h>
 #include <sysexits.h>
 #include <wtf/text/CString.h>
 

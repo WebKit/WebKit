@@ -79,7 +79,6 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
-#include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"

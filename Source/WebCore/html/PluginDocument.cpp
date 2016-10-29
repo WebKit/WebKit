@@ -37,7 +37,6 @@
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
-#include "Settings.h"
 
 namespace WebCore {
     

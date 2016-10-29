@@ -31,7 +31,6 @@
 #define HistoryController_h
 
 #include "FrameLoaderTypes.h"
-#include "SerializedScriptValue.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

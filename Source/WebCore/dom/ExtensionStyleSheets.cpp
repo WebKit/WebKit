@@ -30,7 +30,6 @@
 
 #include "CSSStyleSheet.h"
 #include "Element.h"
-#include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
 #include "Page.h"

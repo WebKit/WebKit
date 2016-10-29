@@ -36,13 +36,11 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
-#include "PlatformKeyboardEvent.h"
 #include "PopupMenu.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 

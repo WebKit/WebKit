@@ -37,7 +37,6 @@
 #include "GraphicsContext.h"
 #include "HTMLAppletElement.h"
 #include "HTMLEmbedElement.h"
-#include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"

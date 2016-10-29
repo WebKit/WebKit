@@ -26,7 +26,10 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
+#include "HTMLFrameOwnerElement.h"
+#include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 

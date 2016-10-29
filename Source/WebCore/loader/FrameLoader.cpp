@@ -66,7 +66,6 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GCController.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

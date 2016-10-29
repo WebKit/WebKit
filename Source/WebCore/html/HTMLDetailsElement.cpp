@@ -22,6 +22,7 @@
 #include "HTMLDetailsElement.h"
 
 #if ENABLE(DETAILS_ELEMENT)
+
 #include "AXObjectCache.h"
 #include "ElementIterator.h"
 #include "EventNames.h"

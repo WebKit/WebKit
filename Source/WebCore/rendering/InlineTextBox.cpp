@@ -46,7 +46,6 @@
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"

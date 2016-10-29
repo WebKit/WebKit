@@ -37,12 +37,9 @@ namespace WebCore {
 
 class Event;
 class FormAssociatedElement;
-class FormData;
 class HTMLFormControlElement;
 class HTMLFormControlsCollection;
 class HTMLImageElement;
-class HTMLInputElement;
-class TextEncoding;
 
 class HTMLFormElement final : public HTMLElement {
 public:

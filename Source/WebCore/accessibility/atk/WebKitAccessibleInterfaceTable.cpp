@@ -37,7 +37,6 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
-#include "HTMLSelectElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
 #include "RenderElement.h"

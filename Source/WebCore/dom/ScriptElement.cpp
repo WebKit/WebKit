@@ -50,8 +50,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextNodeTraversal.h"
-#include <bindings/ScriptValue.h>
-#include <inspector/ScriptCallStack.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
