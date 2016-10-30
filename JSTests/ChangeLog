@@ -1,3 +1,14 @@
+2016-10-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] JSON.stringify should handle Proxy which is non JSArray but isArray is true
+        https://bugs.webkit.org/show_bug.cgi?id=164123
+
+        Reviewed by Mark Lam.
+
+        * stress/json-stringify-with-non-jsarray-array.js: Added.
+        (shouldBe):
+        (shouldBe.JSON.stringify.new.Proxy):
+
 2016-10-29  Saam Barati  <sbarati@apple.com>
 
         We should have a way of profiling when a get_by_id is pure and to emit a PureGetById in the DFG/FTL

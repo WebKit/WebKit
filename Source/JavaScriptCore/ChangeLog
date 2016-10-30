@@ -1,3 +1,38 @@
+2016-10-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] JSON.stringify should handle Proxy which is non JSArray but isArray is true
+        https://bugs.webkit.org/show_bug.cgi?id=164123
+
+        Reviewed by Mark Lam.
+
+        When JSON.stringify encounter the undefined value, the result depends
+        on the context. If it is produced under the object property context, we ignore
+        that property. On the other hand, if it is produced under the array element
+        context, we produce "null".
+
+        For example,
+            // https://tc39.github.io/ecma262/#sec-serializejsonobject section 8.b.
+            // Skip the property that value is undefined.
+            JSON.stringify({ value: undefined });  // => "{}"
+
+            // https://tc39.github.io/ecma262/#sec-serializejsonarray section 8.b.
+            // Write "null" when the element is undefined.
+            JSON.stringify([undefined]);           // => "[null]"
+
+        At that time, we decide the context based on the `holder->inherits(JSArray::info())`.
+        But it is not correct since we have a holder that creates the array element context
+        but it is not JSArray subtype. ES6 Proxy to an array is one example. In that case,
+        `isArray(exec, proxy)` returns `true`, but `inherits(JSArray::info())` returns false.
+        Since we already have this `isArray()` value in Stringifier::Holder, we should reuse
+        this here. And this is the correct behavior in the ES6 spec.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::isArray):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::Holder):
+        (JSC::Stringifier::Holder::appendNextProperty):
+
 2016-10-29  Saam Barati  <sbarati@apple.com>
 
         We should have a way of profiling when a get_by_id is pure and to emit a PureGetById in the DFG/FTL
