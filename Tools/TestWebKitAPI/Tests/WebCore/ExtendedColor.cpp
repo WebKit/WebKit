@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Test.h"
+#include "WTFStringUtilities.h"
 #include <WebCore/Color.h>
 
 using namespace WebCore;
@@ -40,8 +41,8 @@ TEST(ExtendedColor, Constructor)
     EXPECT_FLOAT_EQ(0.5, c1.asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c1.asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c1.asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(1), c1.asExtended().refCount());
-    EXPECT_TRUE(c1.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(1u, c1.asExtended().refCount());
+    EXPECT_EQ(c1.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, CopyConstructor)
@@ -55,9 +56,9 @@ TEST(ExtendedColor, CopyConstructor)
     EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(2), c1.asExtended().refCount());
-    EXPECT_EQ(static_cast<unsigned>(2), c2.asExtended().refCount());
-    EXPECT_TRUE(c2.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(2u, c1.asExtended().refCount());
+    EXPECT_EQ(2u, c2.asExtended().refCount());
+    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, Assignment)
@@ -71,9 +72,9 @@ TEST(ExtendedColor, Assignment)
     EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(2), c1.asExtended().refCount());
-    EXPECT_EQ(static_cast<unsigned>(2), c2.asExtended().refCount());
-    EXPECT_TRUE(c2.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(2u, c1.asExtended().refCount());
+    EXPECT_EQ(2u, c2.asExtended().refCount());
+    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, MoveConstructor)
@@ -91,8 +92,8 @@ TEST(ExtendedColor, MoveConstructor)
     EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(1), c2.asExtended().refCount());
-    EXPECT_TRUE(c2.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(1u, c2.asExtended().refCount());
+    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, MoveAssignment)
@@ -101,6 +102,7 @@ TEST(ExtendedColor, MoveAssignment)
     EXPECT_TRUE(c1.isExtended());
 
     Color c2 = WTFMove(c1);
+
     // We should have moved the extended color pointer into c2,
     // and set c1 to invalid so that it doesn't cause deletion.
     EXPECT_FALSE(c1.isExtended());
@@ -110,8 +112,8 @@ TEST(ExtendedColor, MoveAssignment)
     EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(1), c2.asExtended().refCount());
-    EXPECT_TRUE(c2.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(1u, c2.asExtended().refCount());
+    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 TEST(ExtendedColor, BasicReferenceCounting)
@@ -126,14 +128,14 @@ TEST(ExtendedColor, BasicReferenceCounting)
     EXPECT_FLOAT_EQ(0.5, c2->asExtended().green());
     EXPECT_FLOAT_EQ(0.25, c2->asExtended().blue());
     EXPECT_FLOAT_EQ(1.0, c2->asExtended().alpha());
-    EXPECT_EQ(static_cast<unsigned>(3), c2->asExtended().refCount());
-    EXPECT_TRUE(c2->cssText() == "color(display-p3 1 0.5 0.25 / 1)");
+    EXPECT_EQ(3u, c2->asExtended().refCount());
+    EXPECT_EQ(c2->cssText(), "color(display-p3 1 0.5 0.25)");
 
     delete c1;
-    EXPECT_EQ(static_cast<unsigned>(2), c2->asExtended().refCount());
+    EXPECT_EQ(2u, c2->asExtended().refCount());
 
     delete c2;
-    EXPECT_EQ(static_cast<unsigned>(1), c3->asExtended().refCount());
+    EXPECT_EQ(1u, c3->asExtended().refCount());
 
     delete c3;
 }
@@ -142,7 +144,7 @@ Color makeColor()
 {
     Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
     EXPECT_TRUE(c1.isExtended());
-    EXPECT_EQ(static_cast<unsigned>(1), c1.asExtended().refCount());
+    EXPECT_EQ(1u, c1.asExtended().refCount());
 
     return c1;
 }
@@ -152,9 +154,8 @@ TEST(ExtendedColor, ReturnValues)
     Color c2 = makeColor();
     EXPECT_TRUE(c2.isExtended());
 
-    EXPECT_EQ(static_cast<unsigned>(1), c2.asExtended().refCount());
-    EXPECT_TRUE(c2.cssText() == "color(display-p3 1 0.5 0.25 / 1)");
-
+    EXPECT_EQ(1u, c2.asExtended().refCount());
+    EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
 

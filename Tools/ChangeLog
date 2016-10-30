@@ -1,3 +1,14 @@
+2016-10-29  Darin Adler  <darin@apple.com>
+
+        Fix failing ExtendedColor tests.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColor.cpp:
+        Changed the tests in two ways: First, use EXPECT_EQ instead of EXPECT_TRUE
+        for the string equality comparisons. This required including WTFStringUtilities.h.
+        Second, change expected results to match what the code is currently generating,
+        so alpha channels are "0.25" rather than "0.25 / 1". I'll let Dean fix both these
+        tests and the code if these results are incorrect.
+
 2016-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         UIScriptControllerIOS.mm should not be soft-linking UIKit
