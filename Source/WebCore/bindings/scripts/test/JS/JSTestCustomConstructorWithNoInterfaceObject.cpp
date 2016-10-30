@@ -125,7 +125,7 @@ EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), *domObject->globalObject(), domObject->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(domObject->globalObject()));
@@ -139,7 +139,7 @@ bool setJSTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState* state
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -202,7 +202,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCu
 
 TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObject*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

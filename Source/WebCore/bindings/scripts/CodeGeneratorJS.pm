@@ -2474,13 +2474,7 @@ sub GetCastingHelperForThisObject
 {
     my $interface = shift;
     my $interfaceName = $interface->type->name;
-
-    return "jsNodeCast" if $interfaceName eq "Node";
-    return "jsElementCast" if $interfaceName eq "Element";
-    return "jsDocumentCast" if $interfaceName eq "Document";
-    return "jsEventTargetCast" if $interfaceName eq "EventTarget";
-    return "jsEventCast" if $interfaceName eq "Event";
-    return "jsDynamicCast<JS$interfaceName*>";
+    return "jsDynamicDowncast<JS$interfaceName*>";
 }
 
 sub GetIndexedGetterExpression
@@ -3345,7 +3339,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    VM& vm = state->vm();\n");
             push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-            push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
+            push(@implContent, "    ${className}Prototype* domObject = jsDynamicDowncast<${className}Prototype*>(JSValue::decode(thisValue));\n");
             push(@implContent, "    if (UNLIKELY(!domObject))\n");
             push(@implContent, "        return throwVMTypeError(state, throwScope);\n");
 
@@ -3367,7 +3361,7 @@ sub GenerateImplementation
         push(@implContent, "    VM& vm = state->vm();\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
         push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
-        push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
+        push(@implContent, "    ${className}Prototype* domObject = jsDynamicDowncast<${className}Prototype*>(JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!domObject)) {\n");
         push(@implContent, "        throwVMTypeError(state, throwScope);\n");
         push(@implContent, "        return false;\n");

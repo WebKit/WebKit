@@ -143,12 +143,12 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestActiveDOMObject*>(state.thisValue());
+    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.thisValue());
 }
 
 static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState&, JSTestActiveDOMObject&, ThrowScope& throwScope);
@@ -173,7 +173,7 @@ EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestActiveDOMObjectPrototype* domObject = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), domObject->globalObject()));
@@ -184,7 +184,7 @@ bool setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisVa
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestActiveDOMObjectPrototype* domObject = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -295,7 +295,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestAc
 
 TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestActiveDOMObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestActiveDOMObject*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

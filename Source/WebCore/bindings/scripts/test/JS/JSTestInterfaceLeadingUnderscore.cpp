@@ -120,7 +120,7 @@ void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestInterfaceLeadingUnderscore* BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestInterfaceLeadingUnderscore*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(JSValue::decode(thisValue));
 }
 
 static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(ExecState&, JSTestInterfaceLeadingUnderscore&, ThrowScope& throwScope);
@@ -143,7 +143,7 @@ EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(ExecState* state, Enc
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicCast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
+    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(state->vm(), domObject->globalObject()));
@@ -154,7 +154,7 @@ bool setJSTestInterfaceLeadingUnderscoreConstructor(ExecState* state, EncodedJSV
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicCast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
+    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -201,7 +201,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestIn
 
 TestInterfaceLeadingUnderscore* JSTestInterfaceLeadingUnderscore::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestInterfaceLeadingUnderscore*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

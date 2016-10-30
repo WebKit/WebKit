@@ -47,7 +47,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& e
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSReadableStream* stream = jsDynamicCast<JSReadableStream*>(exec.argument(0));
+    JSReadableStream* stream = jsDynamicDowncast<JSReadableStream*>(exec.argument(0));
     if (!stream)
         return throwArgumentTypeError(exec, scope, 0, "stream", "ReadableStreamReader", nullptr, "ReadableStream");
 

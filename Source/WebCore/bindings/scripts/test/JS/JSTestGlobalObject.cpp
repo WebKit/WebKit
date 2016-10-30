@@ -177,12 +177,12 @@ void JSTestGlobalObject::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestGlobalObject* BindingCaller<JSTestGlobalObject>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestGlobalObject*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestGlobalObject* BindingCaller<JSTestGlobalObject>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestGlobalObject*>(state.thisValue());
+    return jsDynamicDowncast<JSTestGlobalObject*>(state.thisValue());
 }
 
 static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState&, JSTestGlobalObject&, ThrowScope& throwScope);
@@ -259,7 +259,7 @@ EncodedJSValue jsTestGlobalObjectConstructor(ExecState* state, EncodedJSValue th
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestGlobalObjectPrototype* domObject = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestGlobalObjectPrototype* domObject = jsDynamicDowncast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestGlobalObject::getConstructor(state->vm(), domObject->globalObject()));
@@ -270,7 +270,7 @@ bool setJSTestGlobalObjectConstructor(ExecState* state, EncodedJSValue thisValue
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestGlobalObjectPrototype* domObject = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestGlobalObjectPrototype* domObject = jsDynamicDowncast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -524,7 +524,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestGl
 
 TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestGlobalObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestGlobalObject*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

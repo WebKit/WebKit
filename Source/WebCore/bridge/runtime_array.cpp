@@ -65,7 +65,7 @@ EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, EncodedJSValue thisVa
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(JSValue::decode(thisValue));
+    RuntimeArray* thisObject = jsDynamicDowncast<RuntimeArray*>(JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(exec, scope);
     return JSValue::encode(jsNumber(thisObject->getLength()));

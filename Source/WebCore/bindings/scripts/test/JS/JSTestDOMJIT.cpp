@@ -182,7 +182,7 @@ JSObject* JSTestDOMJIT::prototype(VM& vm, JSGlobalObject* globalObject)
 
 template<> inline JSTestDOMJIT* BindingCaller<JSTestDOMJIT>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestDOMJIT*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestDOMJIT*>(JSValue::decode(thisValue));
 }
 
 static inline JSValue jsTestDOMJITAnyAttrGetter(ExecState&, JSTestDOMJIT&, ThrowScope& throwScope);
@@ -1134,7 +1134,7 @@ EncodedJSValue jsTestDOMJITConstructor(ExecState* state, EncodedJSValue thisValu
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestDOMJITPrototype* domObject = jsDynamicCast<JSTestDOMJITPrototype*>(JSValue::decode(thisValue));
+    JSTestDOMJITPrototype* domObject = jsDynamicDowncast<JSTestDOMJITPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestDOMJIT::getConstructor(state->vm(), domObject->globalObject()));
@@ -1145,7 +1145,7 @@ bool setJSTestDOMJITConstructor(ExecState* state, EncodedJSValue thisValue, Enco
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestDOMJITPrototype* domObject = jsDynamicCast<JSTestDOMJITPrototype*>(JSValue::decode(thisValue));
+    JSTestDOMJITPrototype* domObject = jsDynamicDowncast<JSTestDOMJITPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;

@@ -137,12 +137,12 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestCEReactions*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestCEReactions*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestCEReactions*>(state.thisValue());
+    return jsDynamicDowncast<JSTestCEReactions*>(state.thisValue());
 }
 
 static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&, JSTestCEReactions&, ThrowScope& throwScope);
@@ -197,7 +197,7 @@ EncodedJSValue jsTestCEReactionsConstructor(ExecState* state, EncodedJSValue thi
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCEReactionsPrototype* domObject = jsDynamicCast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestCEReactions::getConstructor(state->vm(), domObject->globalObject()));
@@ -208,7 +208,7 @@ bool setJSTestCEReactionsConstructor(ExecState* state, EncodedJSValue thisValue,
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCEReactionsPrototype* domObject = jsDynamicCast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -362,7 +362,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCE
 
 TestCEReactions* JSTestCEReactions::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestCEReactions*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCEReactions*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -140,12 +140,12 @@ void JSTestSerialization::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestSerialization*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestSerialization*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestSerialization*>(state.thisValue());
+    return jsDynamicDowncast<JSTestSerialization*>(state.thisValue());
 }
 
 static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState&, JSTestSerialization&, ThrowScope& throwScope);
@@ -232,7 +232,7 @@ EncodedJSValue jsTestSerializationConstructor(ExecState* state, EncodedJSValue t
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestSerializationPrototype* domObject = jsDynamicCast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
+    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerialization::getConstructor(state->vm(), domObject->globalObject()));
@@ -243,7 +243,7 @@ bool setJSTestSerializationConstructor(ExecState* state, EncodedJSValue thisValu
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestSerializationPrototype* domObject = jsDynamicCast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
+    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -438,7 +438,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSe
 
 TestSerialization* JSTestSerialization::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestSerialization*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestSerialization*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

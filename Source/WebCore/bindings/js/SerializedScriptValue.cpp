@@ -1371,7 +1371,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->nextKeyValue(m_exec, key, value)) {
                     mapIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicCast<JSMap*>(object));
+                    ASSERT(jsDynamicDowncast<JSMap*>(object));
                     propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
                     object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonMapPropertiesTag);
@@ -1415,7 +1415,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->next(m_exec, key)) {
                     setIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicCast<JSSet*>(object));
+                    ASSERT(jsDynamicDowncast<JSSet*>(object));
                     propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
                     object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonSetPropertiesTag);

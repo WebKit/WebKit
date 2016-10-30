@@ -246,7 +246,7 @@ void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrap
 {
     ASSERT(wrapper.globalObject());
     auto& document = element.document();
-    auto* documentWrapper = jsDocumentCast(toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
+    auto* documentWrapper = JSC::jsCast<JSDocument*>(toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
     ASSERT(documentWrapper);
     document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *documentWrapper));
 }

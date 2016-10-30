@@ -32,6 +32,7 @@
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDedicatedWorkerGlobalScope.h"
+#include "JSDynamicDowncast.h"
 #include "JSWorkerGlobalScope.h"
 #include "Language.h"
 #include "WorkerGlobalScope.h"
@@ -128,7 +129,7 @@ JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
     if (classInfo == JSDedicatedWorkerGlobalScope::info())
         return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
     if (classInfo == JSProxy::info())
-        return jsDynamicCast<JSDedicatedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
+        return jsDynamicDowncast<JSDedicatedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
     return 0;
 }
 

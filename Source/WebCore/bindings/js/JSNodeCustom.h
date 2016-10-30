@@ -78,11 +78,10 @@ inline void* root(Node& node)
     return root(&node);
 }
 
-ALWAYS_INLINE JSNode* jsNodeCast(JSC::JSValue value)
+template<typename From>
+ALWAYS_INLINE JSDynamicCastResult<JSNode, From> jsNodeCast(From* value)
 {
-    if (UNLIKELY(!value.isCell()))
-        return nullptr;
-    return value.asCell()->type() >= JSNodeType ? JSC::jsCast<JSNode*>(value) : nullptr;
+    return value->type() >= JSNodeType ? JSC::jsCast<JSDynamicCastResult<JSNode, From>>(value) : nullptr;
 }
 
 ALWAYS_INLINE JSC::JSValue JSNode::nodeType(JSC::ExecState&) const

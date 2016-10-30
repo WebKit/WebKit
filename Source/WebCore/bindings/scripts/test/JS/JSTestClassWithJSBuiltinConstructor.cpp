@@ -125,7 +125,7 @@ EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(ExecState* state, 
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
@@ -136,7 +136,7 @@ bool setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, Encoded
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -211,7 +211,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCl
 
 TestClassWithJSBuiltinConstructor* JSTestClassWithJSBuiltinConstructor::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestClassWithJSBuiltinConstructor*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructor*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

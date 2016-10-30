@@ -1,3 +1,13 @@
+2016-10-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOM] Introduce WebCore::jsDynamicDowncast
+        https://bugs.webkit.org/show_bug.cgi?id=164137
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::elementForNodeHandle):
+
 2016-10-29  Darin Adler  <darin@apple.com>
 
         Convert more of DOM from ExceptionCode to Exception

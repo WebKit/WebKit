@@ -1499,7 +1499,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         handler = scriptListener->jsFunction(&node->document());
         if (handler && state) {
             body = handler->toString(state)->value(state);
-            if (auto function = JSC::jsDynamicCast<JSC::JSFunction*>(handler)) {
+            if (auto function = jsDynamicDowncast<JSC::JSFunction*>(handler)) {
                 if (!function->isHostOrBuiltinFunction()) {
                     if (auto executable = function->jsExecutable()) {
                         lineNumber = executable->firstLine() - 1;

@@ -44,7 +44,7 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = state.thisValue();
-    JSApplePaySession* castedThis = jsDynamicCast<JSApplePaySession*>(thisValue);
+    JSApplePaySession* castedThis = jsDynamicDowncast<JSApplePaySession*>(thisValue);
     if (UNLIKELY(!castedThis))
         return JSValue::decode(throwThisTypeError(state, scope, "ApplePaySession", "completeShippingMethodSelection"));
 
@@ -72,7 +72,7 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = state.thisValue();
-    JSApplePaySession* castedThis = jsDynamicCast<JSApplePaySession*>(thisValue);
+    JSApplePaySession* castedThis = jsDynamicDowncast<JSApplePaySession*>(thisValue);
     if (UNLIKELY(!castedThis))
         return JSValue::decode(throwThisTypeError(state, scope, "ApplePaySession", "completeShippingContactSelection"));
 
@@ -104,7 +104,7 @@ JSValue JSApplePaySession::completePaymentMethodSelection(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = state.thisValue();
-    JSApplePaySession* castedThis = jsDynamicCast<JSApplePaySession*>(thisValue);
+    JSApplePaySession* castedThis = jsDynamicDowncast<JSApplePaySession*>(thisValue);
     if (UNLIKELY(!castedThis))
         return JSValue::decode(throwThisTypeError(state, scope, "ApplePaySession", "completePaymentMethodSelection"));
 

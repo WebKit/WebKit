@@ -31,11 +31,10 @@
 
 namespace WebCore {
 
-ALWAYS_INLINE JSElement* jsElementCast(JSC::JSValue value)
+template<typename From>
+ALWAYS_INLINE JSDynamicCastResult<JSElement, From> jsElementCast(From* value)
 {
-    if (UNLIKELY(!value.isCell()))
-        return nullptr;
-    return value.asCell()->type() >= JSElementType ? JSC::jsCast<JSElement*>(value) : nullptr;
+    return value->type() >= JSElementType ? JSC::jsCast<JSDynamicCastResult<JSElement, From>>(value) : nullptr;
 }
 
 } // namespace WebCore

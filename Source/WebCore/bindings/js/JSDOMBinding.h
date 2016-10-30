@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
+#include "JSDynamicDowncast.h"
 #include "ScriptWrappable.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"
@@ -557,7 +558,7 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDO
 template<typename JSClass> inline JSClass& castThisValue(JSC::ExecState& state)
 {
     auto thisValue = state.thisValue();
-    auto castedThis = JSC::jsDynamicCast<JSClass*>(thisValue);
+    auto castedThis = jsDynamicDowncast<JSClass*>(thisValue);
     ASSERT(castedThis);
     return *castedThis;
 }
@@ -679,7 +680,7 @@ inline JSC::JSValue toJSIteratorEnd(JSC::ExecState& state)
 
 inline RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)
 {
-    auto* wrapper = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(value);
+    auto* wrapper = jsDynamicDowncast<JSC::JSArrayBufferView*>(value);
     if (!wrapper)
         return nullptr;
     return wrapper->impl();

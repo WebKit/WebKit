@@ -144,12 +144,12 @@ void JSTestNondeterministic::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestNondeterministic* BindingCaller<JSTestNondeterministic>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestNondeterministic*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestNondeterministic* BindingCaller<JSTestNondeterministic>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestNondeterministic*>(state.thisValue());
+    return jsDynamicDowncast<JSTestNondeterministic*>(state.thisValue());
 }
 
 static inline JSValue jsTestNondeterministicNondeterministicReadonlyAttrGetter(ExecState&, JSTestNondeterministic&, ThrowScope& throwScope);
@@ -340,7 +340,7 @@ EncodedJSValue jsTestNondeterministicConstructor(ExecState* state, EncodedJSValu
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestNondeterministicPrototype* domObject = jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue));
+    JSTestNondeterministicPrototype* domObject = jsDynamicDowncast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNondeterministic::getConstructor(state->vm(), domObject->globalObject()));
@@ -351,7 +351,7 @@ bool setJSTestNondeterministicConstructor(ExecState* state, EncodedJSValue thisV
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestNondeterministicPrototype* domObject = jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue));
+    JSTestNondeterministicPrototype* domObject = jsDynamicDowncast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -532,7 +532,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNo
 
 TestNondeterministic* JSTestNondeterministic::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNondeterministic*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestNondeterministic*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

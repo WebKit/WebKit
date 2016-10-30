@@ -31,11 +31,10 @@
 
 namespace WebCore {
 
-ALWAYS_INLINE JSDocument* jsDocumentCast(JSC::JSValue value)
+template<typename From>
+ALWAYS_INLINE JSDynamicCastResult<JSDocument, From> jsDocumentCast(From* value)
 {
-    if (UNLIKELY(!value.isCell()))
-        return nullptr;
-    return value.asCell()->type() == JSDocumentWrapperType ? JSC::jsCast<JSDocument*>(value) : nullptr;
+    return value->type() == JSDocumentWrapperType ? JSC::jsCast<JSDynamicCastResult<JSDocument, From>>(value) : nullptr;
 }
 
 JSC::JSObject* cachedDocumentWrapper(JSC::ExecState&, JSDOMGlobalObject&, Document&);

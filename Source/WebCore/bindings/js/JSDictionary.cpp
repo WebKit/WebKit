@@ -361,7 +361,7 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Touc
 
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, JSC::JSFunction*& result)
 {
-    result = jsDynamicCast<JSC::JSFunction*>(value);
+    result = jsDynamicDowncast<JSC::JSFunction*>(value);
 }
 
 bool JSDictionary::getWithUndefinedOrNullCheck(const char* propertyName, String& result) const

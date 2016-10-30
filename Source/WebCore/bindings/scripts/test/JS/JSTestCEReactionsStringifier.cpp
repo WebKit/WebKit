@@ -129,12 +129,12 @@ void JSTestCEReactionsStringifier::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestCEReactionsStringifier* BindingCaller<JSTestCEReactionsStringifier>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestCEReactionsStringifier*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestCEReactionsStringifier*>(JSValue::decode(thisValue));
 }
 
 template<> inline JSTestCEReactionsStringifier* BindingCaller<JSTestCEReactionsStringifier>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestCEReactionsStringifier*>(state.thisValue());
+    return jsDynamicDowncast<JSTestCEReactionsStringifier*>(state.thisValue());
 }
 
 static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState&, JSTestCEReactionsStringifier&, ThrowScope& throwScope);
@@ -157,7 +157,7 @@ EncodedJSValue jsTestCEReactionsStringifierConstructor(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCEReactionsStringifierPrototype* domObject = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsStringifierPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(state->vm(), domObject->globalObject()));
@@ -168,7 +168,7 @@ bool setJSTestCEReactionsStringifierConstructor(ExecState* state, EncodedJSValue
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCEReactionsStringifierPrototype* domObject = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsStringifierPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -274,7 +274,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCE
 
 TestCEReactionsStringifier* JSTestCEReactionsStringifier::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestCEReactionsStringifier*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCEReactionsStringifier*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

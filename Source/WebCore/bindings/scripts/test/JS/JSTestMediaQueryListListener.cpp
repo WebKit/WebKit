@@ -125,14 +125,14 @@ void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestMediaQueryListListener* BindingCaller<JSTestMediaQueryListListener>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestMediaQueryListListener*>(state.thisValue());
+    return jsDynamicDowncast<JSTestMediaQueryListListener*>(state.thisValue());
 }
 
 EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestMediaQueryListListenerPrototype* domObject = jsDynamicCast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
+    JSTestMediaQueryListListenerPrototype* domObject = jsDynamicDowncast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestMediaQueryListListener::getConstructor(state->vm(), domObject->globalObject()));
@@ -143,7 +143,7 @@ bool setJSTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestMediaQueryListListenerPrototype* domObject = jsDynamicCast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
+    JSTestMediaQueryListListenerPrototype* domObject = jsDynamicDowncast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -232,7 +232,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestMe
 
 TestMediaQueryListListener* JSTestMediaQueryListListener::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestMediaQueryListListener*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestMediaQueryListListener*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

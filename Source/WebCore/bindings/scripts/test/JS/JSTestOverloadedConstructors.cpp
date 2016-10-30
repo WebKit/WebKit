@@ -225,7 +225,7 @@ EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(state->vm(), domObject->globalObject()));
@@ -236,7 +236,7 @@ bool setJSTestOverloadedConstructorsConstructor(ExecState* state, EncodedJSValue
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -304,7 +304,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestOv
 
 TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestOverloadedConstructors*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestOverloadedConstructors*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

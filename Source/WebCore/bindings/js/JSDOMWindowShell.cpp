@@ -107,7 +107,7 @@ DOMWindow& JSDOMWindowShell::wrapped() const
 
 DOMWindow* JSDOMWindowShell::toWrapped(JSObject* value)
 {
-    auto* wrapper = jsDynamicCast<JSDOMWindowShell*>(value);
+    auto* wrapper = jsDynamicDowncast<JSDOMWindowShell*>(value);
     if (!wrapper)
         return nullptr;
     return &wrapper->window()->wrapped();

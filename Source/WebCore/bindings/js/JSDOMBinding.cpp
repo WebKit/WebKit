@@ -146,7 +146,7 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = jsDynamicCast<JSC::Exception*>(exceptionValue);
+    auto* exception = jsDynamicDowncast<JSC::Exception*>(exceptionValue);
     if (!exception) {
         exception = vm.lastException();
         if (!exception)
@@ -172,7 +172,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
     vm.clearLastException();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
+    if (JSDOMWindow* window = jsDynamicDowncast<JSDOMWindow*>(globalObject)) {
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
     }
@@ -193,7 +193,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
     else {
         // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
         // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-        if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionValue))
+        if (ErrorInstance* error = jsDynamicDowncast<ErrorInstance*>(exceptionValue))
             errorMessage = error->sanitizedToString(exec);
         else
             errorMessage = exceptionValue.toString(exec)->value(exec);

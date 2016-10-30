@@ -159,14 +159,14 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* s
 
 template<> inline JSTestEventTarget* BindingCaller<JSTestEventTarget>::castForOperation(ExecState& state)
 {
-    return jsDynamicCast<JSTestEventTarget*>(state.thisValue());
+    return jsDynamicDowncast<JSTestEventTarget*>(state.thisValue());
 }
 
 EncodedJSValue jsTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestEventTargetPrototype* domObject = jsDynamicCast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
+    JSTestEventTargetPrototype* domObject = jsDynamicDowncast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestEventTarget::getConstructor(state->vm(), domObject->globalObject()));
@@ -177,7 +177,7 @@ bool setJSTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue,
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestEventTargetPrototype* domObject = jsDynamicCast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
+    JSTestEventTargetPrototype* domObject = jsDynamicDowncast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -272,7 +272,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEv
 
 TestEventTarget* JSTestEventTarget::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestEventTarget*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestEventTarget*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

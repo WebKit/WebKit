@@ -6201,6 +6201,7 @@
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
 		E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */; };
 		E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3150EA51DA7218D00194012 /* DOMJITHelpers.h */; };
+		E318039D1DC40099009932C2 /* JSDynamicDowncast.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A5872E1DC3F52600F607A6 /* JSDynamicDowncast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3565B7B1DC2D6C900217DBD /* JSEventCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA14D1DBC3A3F00F83516 /* DOMJITAbstractHeapRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35CA14B1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.cpp */; };
 		E35CA14E1DBC3A4200F83516 /* DOMJITAbstractHeapRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA14C1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.h */; };
@@ -14043,6 +14044,7 @@
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
 		E398FC231DC32A1B003C4684 /* DOMJITHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHelpers.cpp; sourceTree = "<group>"; };
+		E3A5872E1DC3F52600F607A6 /* JSDynamicDowncast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicDowncast.h; sourceTree = "<group>"; };
 		E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeDOMJIT.cpp; sourceTree = "<group>"; };
 		E3B2F0E31D7F35EC00B0C9D1 /* LoadableClassicScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableClassicScript.cpp; sourceTree = "<group>"; };
 		E3B2F0E41D7F35EC00B0C9D1 /* LoadableClassicScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableClassicScript.h; sourceTree = "<group>"; };
@@ -21619,6 +21621,7 @@
 				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */,
 				4170A2E91D8C0CC000318452 /* JSDOMWrapper.cpp */,
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
+				E3A5872E1DC3F52600F607A6 /* JSDynamicDowncast.h */,
 				F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */,
 				F3D461471161D53200CA0D09 /* JSErrorHandler.h */,
 				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
@@ -27608,6 +27611,7 @@
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
 				5C6E65431D5CEFBF00F7862E /* URLParser.h in Headers */,
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
+				E318039D1DC40099009932C2 /* JSDynamicDowncast.h in Headers */,
 				93D437A21D57B3FE00AB85EA /* URLUtils.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
 				868160D618766A130021E79D /* UserActivity.h in Headers */,

@@ -49,7 +49,7 @@ JSC::JSValue JSMediaStreamTrack::getSettings(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = state.thisValue();
-    JSMediaStreamTrack* castedThis = jsDynamicCast<JSMediaStreamTrack*>(thisValue);
+    JSMediaStreamTrack* castedThis = jsDynamicDowncast<JSMediaStreamTrack*>(thisValue);
     if (UNLIKELY(!castedThis))
         return JSValue::decode(throwThisTypeError(state, scope, "MediaStreamTrack", "getSettings"));
 
@@ -113,7 +113,7 @@ JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = state.thisValue();
-    JSMediaStreamTrack* castedThis = jsDynamicCast<JSMediaStreamTrack*>(thisValue);
+    JSMediaStreamTrack* castedThis = jsDynamicDowncast<JSMediaStreamTrack*>(thisValue);
     if (UNLIKELY(!castedThis))
         return JSValue::decode(throwThisTypeError(state, scope, "MediaStreamTrack", "getSettings"));
 

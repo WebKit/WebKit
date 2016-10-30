@@ -29,11 +29,10 @@
 
 namespace WebCore {
 
-ALWAYS_INLINE JSEvent* jsEventCast(JSC::JSValue value)
+template<typename From>
+ALWAYS_INLINE JSDynamicCastResult<JSEvent, From> jsEventCast(From* value)
 {
-    if (UNLIKELY(!value.isCell()))
-        return nullptr;
-    return value.asCell()->type() == JSEventType ? JSC::jsCast<JSEvent*>(value) : nullptr;
+    return value->type() == JSEventType ? JSC::jsCast<JSDynamicCastResult<JSEvent, From>>(value) : nullptr;
 }
 
 } // namespace WebCore

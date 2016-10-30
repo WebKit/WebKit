@@ -136,7 +136,7 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestSerializedScriptValueInterface* BindingCaller<JSTestSerializedScriptValueInterface>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
@@ -229,7 +229,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* state,
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
+    JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicDowncast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(state->vm(), domObject->globalObject()));
@@ -240,7 +240,7 @@ bool setJSTestSerializedScriptValueInterfaceConstructor(ExecState* state, Encode
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
+    JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicDowncast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -355,7 +355,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSe
 
 TestSerializedScriptValueInterface* JSTestSerializedScriptValueInterface::toWrapped(JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestSerializedScriptValueInterface*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestSerializedScriptValueInterface*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

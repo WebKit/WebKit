@@ -205,7 +205,7 @@ WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& fram
     if (!element)
         return nullptr;
 
-    auto elementWrapper = JSC::jsDynamicCast<WebCore::JSElement*>(toJS(element));
+    auto elementWrapper = WebCore::jsDynamicDowncast<WebCore::JSElement*>(toJS(element));
     if (!elementWrapper)
         return nullptr;
 
