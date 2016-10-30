@@ -1,3 +1,9 @@
+2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening. Mark some tests to Timeout.
+
+        * platform/efl/TestExpectations: Urgent fix to run layout test.
+
 2016-10-29  Dean Jackson  <dino@apple.com>
 
         Parse color() function
