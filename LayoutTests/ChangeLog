@@ -1,5 +1,17 @@
 2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Remove duplicated media/media-source tests in TestExpectations
+
+        Unreviewed EFL gardening.
+
+        Tests of media/media-source have caused timeout on EFL layout test. However
+        it hasn't been marked to *Skip* because some tests are multiple marked.
+        So this patch cleans up it, and skip media/media-source for a while.
+
+        * platform/efl/TestExpectations:
+
+2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         Unreviewed EFL gardening. Mark some tests to Timeout.
 
         * platform/efl/TestExpectations: Urgent fix to run layout test.
