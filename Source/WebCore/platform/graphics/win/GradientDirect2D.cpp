@@ -28,7 +28,6 @@
 
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "RenderTargetScopedDrawing.h"
 #include <d2d1.h>
 #include <wtf/RetainPtr.h>
 
@@ -120,8 +119,6 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 
     if (!m_cachedHash || !m_gradient)
         generateGradient(d2dContext);
-
-    RenderTargetScopedDrawing scopedDraw(*context);
 
     d2dContext->SetTags(GRADIENT_DRAWING, __LINE__);
 

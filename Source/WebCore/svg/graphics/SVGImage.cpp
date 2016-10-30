@@ -56,7 +56,6 @@
 
 #if USE(DIRECT2D)
 #include "COMPtr.h"
-#include "RenderTargetScopedDrawing.h"
 #include <d2d1.h>
 #endif
 
@@ -227,10 +226,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
 
     GraphicsContext localContext(nativeImageTarget.get());
 
-    {
-        RenderTargetScopedDrawing scopedDraw(localContext);
-        draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
-    }
+    draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
 
     COMPtr<ID2D1Bitmap> nativeImage;
     hr = nativeImageTarget->GetBitmap(&nativeImage);
