@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Frederic Wang (fred.wang@free.fr). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OpenTypeMathData_h
-#define OpenTypeMathData_h
+#pragma once
 
 #include "Glyph.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+
+#if !ENABLE(OPENTYPE_MATH) && USE(HARFBUZZ)
+#include <hb-ot.h>
+#endif
 
 namespace WebCore {
 
@@ -45,7 +49,13 @@ public:
     }
     ~OpenTypeMathData();
 
+#if ENABLE(OPENTYPE_MATH)
     bool hasMathData() const { return m_mathBuffer; }
+#elif USE(HARFBUZZ)
+    bool hasMathData() const { return m_mathFont.get(); }
+#else
+    bool hasMathData() const { return false; }
+#endif
 
     // These constants are defined in the MATH table.
     // The implementation of OpenTypeMathData::getMathConstant assumes that they correspond to the indices of the MathContant table.
@@ -119,9 +129,18 @@ public:
 
 private:
     explicit OpenTypeMathData(const FontPlatformData&);
+
+#if ENABLE(OPENTYPE_MATH)
     RefPtr<SharedBuffer> m_mathBuffer;
+#elif USE(HARFBUZZ)
+    struct HbFontDeleter {
+        void operator()(hb_font_t* font)
+        {
+            hb_font_destroy(font);
+        }
+    };
+    std::unique_ptr<hb_font_t, HbFontDeleter> m_mathFont;
+#endif
 };
 
 } // namespace WebCore
-
-#endif // OpenTypeMathData_h

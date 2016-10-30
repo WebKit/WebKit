@@ -1,3 +1,15 @@
+2016-10-30  Frederic Wang  <fwang@igalia.com>
+
+        Use HarfBuzz ot-math API to parse the OpenType MATH table
+        https://bugs.webkit.org/show_bug.cgi?id=162671
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline one test for large operators due to small rendering changes.
+
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt:
+
 2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Remove duplicated media/media-source tests in TestExpectations

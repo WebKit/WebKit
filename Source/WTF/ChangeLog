@@ -1,3 +1,12 @@
+2016-10-30  Frederic Wang  <fwang@igalia.com>
+
+        Use HarfBuzz ot-math API to parse the OpenType MATH table
+        https://bugs.webkit.org/show_bug.cgi?id=162671
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h: By default, do not enable internal OpenType MATH parsing on GTK.
+
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
         String.prototype.replace() should throw an OutOfMemoryError when using too much memory.

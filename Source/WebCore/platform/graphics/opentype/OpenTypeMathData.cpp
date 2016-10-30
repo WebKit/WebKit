@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Frederic Wang (fred.wang@free.fr). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -253,6 +254,15 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
     const OpenType::MathVariants* mathVariants = math->mathVariants(*m_mathBuffer);
     if (!mathVariants)
         m_mathBuffer = nullptr;
+#elif USE(HARFBUZZ)
+OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
+{
+    HarfBuzzFace* face = font.harfBuzzFace();
+    if (face) {
+        m_mathFont.reset(face->createFont());
+        if (!hb_ot_math_has_data(hb_font_get_face(m_mathFont.get())))
+            m_mathFont.release();
+    }
 #else
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
 {
@@ -287,6 +297,14 @@ float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant)
         return value / 100.0;
 
     return value * font.sizePerUnit();
+#elif USE(HARFBUZZ)
+float OpenTypeMathData::getMathConstant(const Font&, MathConstant constant) const
+{
+    hb_position_t value = hb_ot_math_get_constant(m_mathFont.get(), static_cast<hb_ot_math_constant_t>(constant));
+    if (constant == ScriptPercentScaleDown || constant == ScriptScriptPercentScaleDown || constant == RadicalDegreeBottomRaisePercent)
+        return value / 100.0;
+
+    return value / 65536.0;
 #else
 float OpenTypeMathData::getMathConstant(const Font&, MathConstant) const
 {
@@ -309,6 +327,10 @@ float OpenTypeMathData::getItalicCorrection(const Font& font, Glyph glyph) const
         return 0;
 
     return mathItalicsCorrectionInfo->getItalicCorrection(*m_mathBuffer, glyph) * font.sizePerUnit();
+#elif USE(HARFBUZZ)
+float OpenTypeMathData::getItalicCorrection(const Font&, Glyph glyph) const
+{
+    return hb_ot_math_get_glyph_italics_correction(m_mathFont.get(), glyph) / 65536.0;
 #else
 float OpenTypeMathData::getItalicCorrection(const Font&, Glyph) const
 {
@@ -333,6 +355,39 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
 
     mathGlyphConstruction->getSizeVariants(*m_mathBuffer, sizeVariants);
     mathGlyphConstruction->getAssemblyParts(*m_mathBuffer, assemblyParts);
+#elif USE(HARFBUZZ)
+void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const
+{
+    hb_direction_t direction = isVertical ? HB_DIRECTION_BTT : HB_DIRECTION_LTR;
+
+    sizeVariants.clear();
+    hb_ot_math_glyph_variant_t variants[10];
+    unsigned variantsSize = WTF_ARRAY_LENGTH(variants);
+    unsigned count;
+    unsigned offset = 0;
+    do {
+        count = variantsSize;
+        hb_ot_math_get_glyph_variants(m_mathFont.get(), glyph, direction, offset, &count, variants);
+        offset += count;
+        for (unsigned i = 0; i < count; i++)
+            sizeVariants.append(variants[i].glyph);
+    } while (count == variantsSize);
+
+    assemblyParts.clear();
+    hb_ot_math_glyph_part_t parts[10];
+    unsigned partsSize = WTF_ARRAY_LENGTH(parts);
+    offset = 0;
+    do {
+        count = partsSize;
+        hb_ot_math_get_glyph_assembly(m_mathFont.get(), glyph, direction, offset, &count, parts, nullptr);
+        offset += count;
+        for (unsigned i = 0; i < count; i++) {
+            AssemblyPart assemblyPart;
+            assemblyPart.glyph = parts[i].glyph;
+            assemblyPart.isExtender = parts[i].flags & HB_MATH_GLYPH_PART_FLAG_EXTENDER;
+            assemblyParts.append(assemblyPart);
+        }
+    } while (count == partsSize);
 #else
 void OpenTypeMathData::getMathVariants(Glyph, bool, Vector<Glyph>&, Vector<AssemblyPart>&) const
 {

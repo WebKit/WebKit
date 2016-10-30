@@ -57,6 +57,12 @@ WEBKIT_OPTION_BEGIN()
 
 set(USE_WOFF2 ON)
 
+# For old versions of HarfBuzz that do not expose an API for the OpenType MATH
+# table, we enable our own code to parse that table.
+if ("${PC_HARFBUZZ_VERSION}" VERSION_LESS "1.3.3")
+    add_definitions(-DENABLE_OPENTYPE_MATH=1)
+endif ()
+
 # Set the default value for ENABLE_GLES2 automatically.
 # We are not enabling or disabling automatically a feature here, because
 # the feature is by default always on (ENABLE_OPENGL=ON).
