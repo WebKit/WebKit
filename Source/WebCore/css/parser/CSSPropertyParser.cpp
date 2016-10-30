@@ -3262,6 +3262,53 @@ static RefPtr<CSSValue> consumeWebkitAspectRatio(CSSParserTokenRange& range)
     return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
 }
 
+static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
+{
+    bool foundOverOrUnder = false;
+    CSSValueID overUnderValueID = CSSValueOver;
+    bool foundLeftOrRight = false;
+    CSSValueID leftRightValueID = CSSValueRight;
+    while (!range.atEnd()) {
+        switch (range.peek().id()) {
+        case CSSValueOver:
+            if (foundOverOrUnder)
+                return nullptr;
+            foundOverOrUnder = true;
+            overUnderValueID = CSSValueOver;
+            break;
+        case CSSValueUnder:
+            if (foundOverOrUnder)
+                return nullptr;
+            foundOverOrUnder = true;
+            overUnderValueID = CSSValueUnder;
+            break;
+        case CSSValueLeft:
+            if (foundLeftOrRight)
+                return nullptr;
+            foundLeftOrRight = true;
+            leftRightValueID = CSSValueLeft;
+            break;
+        case CSSValueRight:
+            if (foundLeftOrRight)
+                return nullptr;
+            foundLeftOrRight = true;
+            leftRightValueID = CSSValueRight;
+            break;
+        default:
+            return nullptr;
+        }
+        
+        range.consumeIncludingWhitespace();
+    }
+    if (!foundOverOrUnder)
+        return nullptr;
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(CSSValuePool::singleton().createIdentifierValue(overUnderValueID));
+    if (foundLeftOrRight)
+        list->append(CSSValuePool::singleton().createIdentifierValue(leftRightValueID));
+    return list;
+}
+    
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3657,6 +3704,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeAlt(m_range, m_context);
     case CSSPropertyWebkitAspectRatio:
         return consumeWebkitAspectRatio(m_range);
+    case CSSPropertyWebkitTextEmphasisPosition:
+        return consumeTextEmphasisPosition(m_range);
     default:
         return nullptr;
     }

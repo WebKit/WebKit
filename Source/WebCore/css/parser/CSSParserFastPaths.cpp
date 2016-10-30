@@ -735,8 +735,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueBefore || valueID == CSSValueAfter || valueID == CSSValueInterCharacter;
     case CSSPropertyWebkitTextCombine:
         return valueID == CSSValueNone || valueID == CSSValueHorizontal;
-    case CSSPropertyWebkitTextEmphasisPosition:
-        return valueID == CSSValueOver || valueID == CSSValueUnder;
     case CSSPropertyWebkitTextSecurity: // disc | circle | square | none
         return valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone;
     case CSSPropertyTransformStyle:
@@ -925,7 +923,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // FIXME-NEWPARSER: Treat the following properties as keyword properties:
     // case CSSPropertyBackgroundRepeatX:
     // case CSSPropertyBackgroundRepeatY:
-    // case CSSPropertyWebkitTextEmphasisPosition:
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
     // case CSSPropertyBackfaceVisibility:
