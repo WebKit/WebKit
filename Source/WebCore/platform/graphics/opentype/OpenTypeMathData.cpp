@@ -266,7 +266,6 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
 #else
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
 {
-    m_mathBuffer = nullptr;
 #endif
 }
 

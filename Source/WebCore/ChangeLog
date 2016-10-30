@@ -1,5 +1,13 @@
 2016-10-30  Frederic Wang  <fwang@igalia.com>
 
+        Unreviewed gardening
+
+        Fix build error on WinCairo.
+
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+
+2016-10-30  Frederic Wang  <fwang@igalia.com>
+
         Use HarfBuzz ot-math API to parse the OpenType MATH table
         https://bugs.webkit.org/show_bug.cgi?id=162671
 
