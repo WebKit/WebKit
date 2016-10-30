@@ -31,7 +31,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(GEOCLUE2 geoclue-2.0)
+pkg_check_modules(GEOCLUE2 libgeoclue-2.0)
 
 set(VERSION_OK FALSE)
 if (GEOCLUE2_VERSION)
