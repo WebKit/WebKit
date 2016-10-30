@@ -69,10 +69,10 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
 {
     if (DebugAnnotationsActive())
     {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
         static std::vector<char> buffer(512);
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
         size_t len = FormatStringIntoVector(format, vararg, buffer);
         std::wstring formattedWideMessage(buffer.begin(), buffer.begin() + len);
 
