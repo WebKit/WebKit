@@ -23,21 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatasetDOMStringMap_h
-#define DatasetDOMStringMap_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Element;
-typedef int ExceptionCode;
 
 class DatasetDOMStringMap final : public ScriptWrappable {
-    WTF_MAKE_NONCOPYABLE(DatasetDOMStringMap); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DatasetDOMStringMap(Element& element)
         : m_element(element)
@@ -47,9 +43,9 @@ public:
     void ref();
     void deref();
 
-    void getNames(Vector<String>&);
-    const AtomicString& item(const String& name, bool& isValid);
-    void setItem(const String& name, const String& value, ExceptionCode&);
+    Vector<String> names() const;
+    const AtomicString& item(const String& name, bool& isValid) const;
+    ExceptionOr<void> setItem(const String& name, const String& value);
     bool deleteItem(const String& name);
 
     Element& element() { return m_element; }
@@ -59,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatasetDOMStringMap_h

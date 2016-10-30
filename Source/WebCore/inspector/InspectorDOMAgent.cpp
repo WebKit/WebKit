@@ -198,13 +198,18 @@ void RevalidateStyleAttributeTask::timerFired()
     m_elements.clear();
 }
 
-String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
+String InspectorDOMAgent::toErrorString(ExceptionCode ec)
 {
     if (ec) {
         ExceptionCodeDescription description(ec);
         return description.name;
     }
     return emptyString();
+}
+
+String InspectorDOMAgent::toErrorString(Exception&& exception)
+{
+    return ExceptionCodeDescription { exception.code() }.name;
 }
 
 InspectorDOMAgent::InspectorDOMAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
@@ -660,11 +665,10 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elemen
     if (!element)
         return;
 
-    RefPtr<HTMLElement> parsedElement = createHTMLElement(element->document(), spanTag);
-    ExceptionCode ec = 0;
-    parsedElement.get()->setInnerHTML("<span " + text + "></span>", ec);
-    if (ec) {
-        errorString = toErrorString(ec);
+    auto parsedElement = createHTMLElement(element->document(), spanTag);
+    auto result = parsedElement.get().setInnerHTML("<span " + text + "></span>");
+    if (result.hasException()) {
+        errorString = toErrorString(result.releaseException());
         return;
     }
 

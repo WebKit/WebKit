@@ -235,26 +235,19 @@
     WebCore::JSMainThreadNullState state;
     if (!element)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    DOMElement *result = kit(WTF::getPtr(IMPL->insertAdjacentElement(where, *core(element), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->insertAdjacentElement(where, *core(element))));
 }
 
 - (void)insertAdjacentHTML:(NSString *)where html:(NSString *)html
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->insertAdjacentHTML(where, html, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->insertAdjacentHTML(where, html));
 }
 
 - (void)insertAdjacentText:(NSString *)where text:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->insertAdjacentText(where, text, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->insertAdjacentText(where, text));
 }
 
 - (void)click

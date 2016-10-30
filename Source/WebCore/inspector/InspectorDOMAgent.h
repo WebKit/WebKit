@@ -60,6 +60,7 @@ class DOMEditor;
 class Document;
 class Element;
 class Event;
+class Exception;
 class FloatQuad;
 class Frame;
 class InspectorHistory;
@@ -107,7 +108,8 @@ public:
     InspectorDOMAgent(WebAgentContext&, InspectorPageAgent*, InspectorOverlay*);
     virtual ~InspectorDOMAgent();
 
-    static String toErrorString(const ExceptionCode&);
+    static String toErrorString(ExceptionCode);
+    static String toErrorString(Exception&&);
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

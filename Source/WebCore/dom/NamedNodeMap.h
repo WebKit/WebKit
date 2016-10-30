@@ -24,39 +24,36 @@
 
 #pragma once
 
-#include "Attr.h"
+#include "ExceptionOr.h"
+#include "ScriptWrappable.h"
 
 namespace WebCore {
 
+class Attr;
+class Element;
+
 class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class Element;
 public:
     explicit NamedNodeMap(Element& element)
         : m_element(element)
     {
-        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
     }
 
     WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
 
-    // Public DOM interface.
-
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(const AtomicString&) const;
-    WEBCORE_EXPORT RefPtr<Attr> removeNamedItem(const AtomicString& name, ExceptionCode&);
-    Vector<String> supportedPropertyNames();
-
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
-    WEBCORE_EXPORT RefPtr<Attr> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode&);
-
-    RefPtr<Attr> setNamedItem(Attr&, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<Attr> setNamedItem(Node&, ExceptionCode&); // for legacy bindings.
-
-    WEBCORE_EXPORT RefPtr<Attr> item(unsigned index) const;
     WEBCORE_EXPORT unsigned length() const;
+    WEBCORE_EXPORT RefPtr<Attr> item(unsigned index) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(const AtomicString&) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
+    WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setNamedItem(Attr&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItem(const AtomicString& name);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
-    Element& element() const { return m_element; }
+    Vector<String> supportedPropertyNames() const;
+
+    Element& element() { return m_element; }
 
 private:
     Element& m_element;

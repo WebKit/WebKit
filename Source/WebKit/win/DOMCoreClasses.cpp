@@ -31,6 +31,7 @@
 #include "DOMHTMLClasses.h"
 #include "WebKitGraphics.h"
 
+#include <WebCore/Attr.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DOMWindow.h>
@@ -1070,9 +1071,8 @@ HRESULT DOMElement::setAttribute(_In_ BSTR name, _In_ BSTR value)
 
     WTF::String nameString(name, SysStringLen(name));
     WTF::String valueString(value, SysStringLen(value));
-    WebCore::ExceptionCode ec = 0;
-    m_element->setAttribute(nameString, valueString, ec);
-    return ec ? E_FAIL : S_OK;
+    auto result = m_element->setAttribute(nameString, valueString);
+    return result.hasException() ? E_FAIL : S_OK;
 }
     
 HRESULT DOMElement::removeAttribute(_In_ BSTR /*name*/)

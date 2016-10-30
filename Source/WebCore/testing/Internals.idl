@@ -100,9 +100,7 @@ enum UserInterfaceLayoutDirection {
 
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 
-    [MayThrowException] Node ensureShadowRoot(Element host);
     Node ensureUserAgentShadowRoot(Element host);
-    [MayThrowException] Node createShadowRoot(Element host);
     Node shadowRoot(Element host);
 
     [MayThrowException] DOMString shadowRootType(Node root);

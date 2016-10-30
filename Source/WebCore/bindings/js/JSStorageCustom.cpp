@@ -111,7 +111,7 @@ bool JSStorage::putDelegate(ExecState* state, PropertyName propertyName, JSValue
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
-    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    PropertySlot slot { this, PropertySlot::InternalMethodType::GetOwnProperty };
 
     JSValue prototype = this->getPrototypeDirect();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))
@@ -120,19 +120,16 @@ bool JSStorage::putDelegate(ExecState* state, PropertyName propertyName, JSValue
     if (propertyName.isSymbol())
         return false;
 
-    String stringValue = value.toString(state)->value(state);
-    if (UNLIKELY(scope.exception())) {
-        // The return value indicates whether putDelegate() should handle the put operation (which
-        // if true, tells the caller not to execute the generic put). It does not indicate whether
-        // putDelegate() did successfully complete the operation or not (which it didn't in this
-        // case due to the exception).
-        putResult = false;
+    String stringValue = value.toWTFString(state);
+    RETURN_IF_EXCEPTION(scope, true);
+
+    auto setItemResult = wrapped().setItem(propertyNameToString(propertyName), stringValue);
+    if (setItemResult.hasException()) {
+        propagateException(*state, scope, setItemResult.releaseException());
         return true;
     }
 
-    auto setItemResult = wrapped().setItem(propertyNameToString(propertyName), stringValue);
-    putResult = !setItemResult.hasException();
-    propagateException(*state, scope, WTFMove(setItemResult));
+    putResult = true;
     return true;
 }
 

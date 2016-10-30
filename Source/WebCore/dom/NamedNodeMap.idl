@@ -24,12 +24,11 @@
     ImplementationLacksVTable,
 ] interface NamedNodeMap {
     readonly attribute unsigned long length;
-
-    getter Attr? getNamedItem(DOMString name);
-    [CEReactions, MayThrowLegacyException] Attr? setNamedItem(Attr attr);
-    [CEReactions, MayThrowLegacyException] Attr removeNamedItem(DOMString name);
     getter Attr? item(unsigned long index);
+    getter Attr? getNamedItem(DOMString name);
     Attr? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowLegacyException, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
-    [CEReactions, MayThrowLegacyException] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] Attr? setNamedItem(Attr attr);
+    [CEReactions, MayThrowException, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
+    [CEReactions, MayThrowException] Attr removeNamedItem(DOMString name);
+    [CEReactions, MayThrowException] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
 };

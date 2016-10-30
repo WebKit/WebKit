@@ -514,8 +514,7 @@ HRESULT DOMHTMLElement::setInnerHTML(_In_ BSTR html)
     ASSERT(is<HTMLElement>(m_element));
     HTMLElement* htmlElement = downcast<HTMLElement>(m_element);
     String htmlString(html, SysStringLen(html));
-    ExceptionCode ec = 0;
-    htmlElement->setInnerHTML(htmlString, ec);
+    htmlElement->setInnerHTML(htmlString);
     return S_OK;
 }
         

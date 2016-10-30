@@ -1,3 +1,12 @@
+2016-10-30  Darin Adler  <darin@apple.com>
+
+        Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164206
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/resources/shadow-test-driver.js: Deleted. Unused.
+
 2016-10-30  Frederic Wang  <fwang@igalia.com>
 
         Use HarfBuzz ot-math API to parse the OpenType MATH table

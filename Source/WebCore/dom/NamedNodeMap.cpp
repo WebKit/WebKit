@@ -26,7 +26,6 @@
 #include "NamedNodeMap.h"
 
 #include "Attr.h"
-#include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
@@ -55,55 +54,50 @@ RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, cons
     return m_element.getAttributeNodeNS(namespaceURI, localName);
 }
 
-RefPtr<Attr> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCode& ec)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomicString& name)
 {
-    unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element)) : ElementData::attributeNotFound;
-    if (index == ElementData::attributeNotFound) {
-        ec = NOT_FOUND_ERR;
-        return nullptr;
-    }
+    if (!m_element.hasAttributes())
+        return Exception { NOT_FOUND_ERR };
+    auto index = m_element.findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element));
+    if (index == ElementData::attributeNotFound)
+        return Exception { NOT_FOUND_ERR };
     return m_element.detachAttribute(index);
 }
 
-Vector<String> NamedNodeMap::supportedPropertyNames()
+Vector<String> NamedNodeMap::supportedPropertyNames() const
 {
     Vector<String> names = m_element.getAttributeNames();
     if (is<HTMLElement>(m_element) && is<HTMLDocument>(m_element.document())) {
         names.removeAllMatching([](String& name) {
-            return name.convertToASCIILowercase() != name;
+            for (auto character : StringView { name }.codeUnits()) {
+                if (isASCIIUpper(character))
+                    return true;
+            }
+            return false;
         });
     }
     return names;
 }
 
-RefPtr<Attr> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
-    unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;
-    if (index == ElementData::attributeNotFound) {
-        ec = NOT_FOUND_ERR;
-        return nullptr;
-    }
+    if (!m_element.hasAttributes())
+        return Exception { NOT_FOUND_ERR };
+    auto index = m_element.findAttributeIndexByName(QualifiedName { nullAtom, localName, namespaceURI });
+    if (index == ElementData::attributeNotFound)
+        return Exception { NOT_FOUND_ERR };
     return m_element.detachAttribute(index);
 }
 
-RefPtr<Attr> NamedNodeMap::setNamedItem(Attr& attr, ExceptionCode& ec)
+ExceptionOr<RefPtr<Attr>> NamedNodeMap::setNamedItem(Attr& attr)
 {
-    return m_element.setAttributeNode(attr, ec);
-}
-
-RefPtr<Attr> NamedNodeMap::setNamedItem(Node& node, ExceptionCode& ec)
-{
-    if (!is<Attr>(node)) {
-        ec = TypeError;
-        return nullptr;
-    }
-    return setNamedItem(downcast<Attr>(node), ec);
+    return m_element.setAttributeNode(attr);
 }
 
 RefPtr<Attr> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
-        return 0;
+        return nullptr;
     return m_element.ensureAttr(m_element.attributeAt(index).name());
 }
 

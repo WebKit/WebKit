@@ -780,30 +780,9 @@ RefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo
     return CSSComputedStyleDeclaration::create(element, allowVisitedStyle);
 }
 
-ExceptionOr<Node*> Internals::ensureShadowRoot(Element& host)
-{
-    if (ShadowRoot* shadowRoot = host.shadowRoot())
-        return shadowRoot;
-
-    ExceptionCode ec = 0;
-    auto result = host.createShadowRoot(ec);
-    if (ec)
-        return Exception { ec };
-    return result;
-}
-
 Node* Internals::ensureUserAgentShadowRoot(Element& host)
 {
     return &host.ensureUserAgentShadowRoot();
-}
-
-ExceptionOr<Node*> Internals::createShadowRoot(Element& host)
-{
-    ExceptionCode ec = 0;
-    auto result = host.createShadowRoot(ec);
-    if (ec)
-        return Exception { ec };
-    return result;
 }
 
 Node* Internals::shadowRoot(Element& host)

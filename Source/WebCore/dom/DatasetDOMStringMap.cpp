@@ -31,7 +31,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -152,18 +151,21 @@ void DatasetDOMStringMap::deref()
     m_element.deref();
 }
 
-void DatasetDOMStringMap::getNames(Vector<String>& names)
+Vector<String> DatasetDOMStringMap::names() const
 {
-    if (!m_element.hasAttributes())
-        return;
+    Vector<String> names;
 
-    for (const Attribute& attribute : m_element.attributesIterator()) {
-        if (isValidAttributeName(attribute.localName()))
-            names.append(convertAttributeNameToPropertyName(attribute.localName()));
+    if (m_element.hasAttributes()) {
+        for (auto& attribute : m_element.attributesIterator()) {
+            if (isValidAttributeName(attribute.localName()))
+                names.append(convertAttributeNameToPropertyName(attribute.localName()));
+        }
     }
+
+    return names;
 }
 
-const AtomicString& DatasetDOMStringMap::item(const String& propertyName, bool& isValid)
+const AtomicString& DatasetDOMStringMap::item(const String& propertyName, bool& isValid) const
 {
     isValid = false;
     if (m_element.hasAttributes()) {
@@ -191,14 +193,11 @@ const AtomicString& DatasetDOMStringMap::item(const String& propertyName, bool& 
     return nullAtom;
 }
 
-void DatasetDOMStringMap::setItem(const String& name, const String& value, ExceptionCode& ec)
+ExceptionOr<void> DatasetDOMStringMap::setItem(const String& name, const String& value)
 {
-    if (!isValidPropertyName(name)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
-
-    m_element.setAttribute(convertPropertyNameToAttributeName(name), value, ec);
+    if (!isValidPropertyName(name))
+        return Exception { SYNTAX_ERR };
+    return m_element.setAttribute(convertPropertyNameToAttributeName(name), value);
 }
 
 bool DatasetDOMStringMap::deleteItem(const String& name)

@@ -1,3 +1,92 @@
+2016-10-30  Darin Adler  <darin@apple.com>
+
+        Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164206
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertyNames): Use modern for loop, and
+        updates since the names function now returns a vector.
+        (WebCore::JSDOMStringMap::putDelegate): Use propagateException. Also return
+        true any time an exception is raised. Since true tells the caller to return
+        without doing any work, we always want to return that on an exception.
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::names): Renamed from getNames and made this
+        return a Vector instead of populating a passed-in vector.
+        (WebCore::DatasetDOMStringMap::setItem): Use ExceptionOr.
+        * dom/DatasetDOMStringMap.h: Updated for above.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): Updated to use ExceptionOr for
+        removeAttributeNode. Changed to use remove rather than removeChild for
+        better clarity.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Use ExceptionOr.
+        (WebCore::Element::createShadowRoot): Deleted. Unused.
+        (WebCore::Element::attachShadow): Use ExceptionOr.
+        (WebCore::Element::shadowRootForBindings): Tweaked a bit.
+        (WebCore::Element::userAgentShadowRoot): Removed unneeded if statemment.
+        (WebCore::Element::ensureUserAgentShadowRoot): Tweaked a bit.
+        (WebCore::Element::setAttributeNode): Use ExceptionOr.
+        (WebCore::Element::setAttributeNodeNS): Ditto.
+        (WebCore::Element::removeAttributeNode): Ditto.
+        (WebCore::Element::parseAttributeName): Ditto. Also changed return result
+        to be a QualifiedName instead of using an out argument.
+        (WebCore::Element::setAttributeNS): Ditto.
+        (WebCore::Element::mergeWithNextTextNode): Ditto.
+        (WebCore::Element::setOuterHTML): Ditto.
+        (WebCore::Element::setInnerHTML): Ditto.
+        (WebCore::Element::matches): Ditto.
+        (WebCore::Element::closest): Ditto.
+        (WebCore::Element::insertAdjacent): Ditto.
+        (WebCore::Element::insertAdjacentElement): Ditto.
+        (WebCore::contextNodeForInsertion): Ditto.
+        (WebCore::contextElementForInsertion): Added. Helper for the
+        insertAdjacentHTML function to eliminate a local variable.
+        (WebCore::Element::insertAdjacentHTML): Use ExceptionOr.
+        (WebCore::Element::insertAdjacentText): Ditto.
+        * dom/Element.h: Updated for above.
+        * dom/Element.idl: Use non-legacy exceptions.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::removeNamedItem): Use ExceptionOr.
+        (WebCore::NamedNodeMap::supportedPropertyNames): Updated to check
+        which strings should be removed without copying the strings.
+        (WebCore::NamedNodeMap::removeNamedItemNS): Use ExceptionOr.
+        (WebCore::NamedNodeMap::setNamedItem): Ditto. Removed overload for
+        legacy bindings; move that to the bindings themselves.
+        * dom/NamedNodeMap.h: Updated for above.
+        * dom/NamedNodeMap.idl: Use non-legacy exceptions.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterText): Updated since mergeWithNextTextNode
+        now uses ExceptionOr.
+
+        * inspector/DOMEditor.cpp: Updated to use ExceptionOr.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::toErrorString): Added an overload for
+        Exception.
+        (WebCore::InspectorDOMAgent::setAttributesAsText): Updated to use ExceptionOr.
+        * inspector/InspectorDOMAgent.h: Updated for above.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::setStyleText): Updated to
+        use the correct version of setAttribute; there was never a risk that there
+        would be an exception, but now that's clearer.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot): Deleted. Was unused.
+        (WebCore::Internals::createShadowRoot): Ditto.
+        * testing/Internals.idl: Updated for above.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::handleNamespaceAttributes): Use updated parseAttributeName,
+        which uses ExceptionOr and a return value instead of an out argument.
+        (WebCore::handleElementAttributes): Ditto.
+
 2016-10-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Restructure IDLParser structs to better match modern WebIDL concepts

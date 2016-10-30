@@ -1301,13 +1301,15 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
 
     {
         InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->document());
-        m_element->setAttribute("style", text, ec);
+        m_element->setAttribute(HTMLNames::styleAttr, text);
     }
 
     m_styleText = text;
     m_isStyleTextValid = true;
     m_ruleSourceData = nullptr;
-    return !ec;
+
+    ec = 0;
+    return true;
 }
 
 std::unique_ptr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const

@@ -20,16 +20,17 @@
 #include "config.h"
 #include "WebKitDOMNamedNodeMap.h"
 
-#include <WebCore/CSSImportRule.h>
+#include "ConvertToUTF8String.h"
 #include "DOMObjectCache.h"
+#include "WebKitDOMNamedNodeMapPrivate.h"
+#include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMPrivate.h"
+#include <WebCore/Attr.h>
+#include <WebCore/CSSImportRule.h>
 #include <WebCore/Document.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
-#include "WebKitDOMNamedNodeMapPrivate.h"
-#include "WebKitDOMNodePrivate.h"
-#include "WebKitDOMPrivate.h"
-#include "ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -152,13 +153,18 @@ WebKitDOMNode* webkit_dom_named_node_map_set_named_item(WebKitDOMNamedNodeMap* s
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
     WebCore::Node* convertedNode = WebKit::core(node);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->setNamedItem(*convertedNode, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    if (!is<WebCore::Attr>(*convertedNode)) {
+        WebCore::ExceptionCodeDescription ecdesc(WebCore::TypeError);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    auto result = item->setNamedItem(downcast<WebCore::Attr>(*convertedNode));
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
+    }
+    return WebKit::kit(result.releaseReturnValue().get());
 }
 
 WebKitDOMNode* webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap* self, const gchar* name, GError** error)
@@ -169,13 +175,13 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
     WTF::String convertedName = WTF::String::fromUTF8(name);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->removeNamedItem(convertedName, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->removeNamedItem(convertedName);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 WebKitDOMNode* webkit_dom_named_node_map_item(WebKitDOMNamedNodeMap* self, gulong index)
@@ -202,19 +208,7 @@ WebKitDOMNode* webkit_dom_named_node_map_get_named_item_ns(WebKitDOMNamedNodeMap
 
 WebKitDOMNode* webkit_dom_named_node_map_set_named_item_ns(WebKitDOMNamedNodeMap* self, WebKitDOMNode* node, GError** error)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_NAMED_NODE_MAP(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(node), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::NamedNodeMap* item = WebKit::core(self);
-    WebCore::Node* convertedNode = WebKit::core(node);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->setNamedItem(*convertedNode, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
+    return webkit_dom_named_node_map_set_named_item(self, node, error);
 }
 
 WebKitDOMNode* webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNodeMap* self, const gchar* namespaceURI, const gchar* localName, GError** error)
@@ -227,13 +221,13 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNode
     WebCore::NamedNodeMap* item = WebKit::core(self);
     WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
     WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->removeNamedItemNS(convertedNamespaceURI, convertedLocalName, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->removeNamedItemNS(convertedNamespaceURI, convertedLocalName);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 gulong webkit_dom_named_node_map_get_length(WebKitDOMNamedNodeMap* self)

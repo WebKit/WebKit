@@ -1,3 +1,15 @@
+2016-10-30  Darin Adler  <darin@apple.com>
+
+        Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164206
+
+        Reviewed by Chris Dumez.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::setAttribute): Updated exception handling.
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::setInnerHTML): Ditto.
+
 2016-10-30  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix (Direct2D)

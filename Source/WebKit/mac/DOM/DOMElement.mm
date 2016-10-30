@@ -177,9 +177,7 @@ DOMElement *kit(Element* value)
 - (void)setInnerHTML:(NSString *)newInnerHTML
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setInnerHTML(newInnerHTML, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setInnerHTML(newInnerHTML));
 }
 
 - (NSString *)outerHTML
@@ -191,9 +189,7 @@ DOMElement *kit(Element* value)
 - (void)setOuterHTML:(NSString *)newOuterHTML
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setOuterHTML(newOuterHTML, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setOuterHTML(newOuterHTML));
 }
 
 - (NSString *)className
@@ -285,9 +281,7 @@ DOMElement *kit(Element* value)
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setAttribute(name, value, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setAttribute(name, value));
 }
 
 - (void)removeAttribute:(NSString *)name
@@ -307,10 +301,7 @@ DOMElement *kit(Element* value)
     JSMainThreadNullState state;
     if (!newAttr)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    DOMAttr *result = kit(unwrap(*self).setAttributeNode(*core(newAttr), ec).get());
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).setAttributeNode(*core(newAttr))).get());
 }
 
 - (DOMAttr *)removeAttributeNode:(DOMAttr *)oldAttr
@@ -318,10 +309,7 @@ DOMElement *kit(Element* value)
     JSMainThreadNullState state;
     if (!oldAttr)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    DOMAttr *result = kit(unwrap(*self).removeAttributeNode(*core(oldAttr), ec).get());
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).removeAttributeNode(*core(oldAttr))).ptr());
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)name
@@ -343,9 +331,7 @@ DOMElement *kit(Element* value)
 - (void)setAttributeNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName value:(NSString *)value
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setAttributeNS(namespaceURI, qualifiedName, value, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setAttributeNS(namespaceURI, qualifiedName, value));
 }
 
 - (void)removeAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName
@@ -375,10 +361,7 @@ DOMElement *kit(Element* value)
     JSMainThreadNullState state;
     if (!newAttr)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    DOMAttr *result = kit(unwrap(*self).setAttributeNodeNS(*core(newAttr), ec).get());
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).setAttributeNodeNS(*core(newAttr))).get());
 }
 
 - (BOOL)hasAttribute:(NSString *)name
@@ -439,28 +422,19 @@ DOMElement *kit(Element* value)
 - (BOOL)matches:(NSString *)selectors
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    BOOL result = unwrap(*self).matches(selectors, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(unwrap(*self).matches(selectors));
 }
 
 - (DOMElement *)closest:(NSString *)selectors
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    DOMElement *result = kit(unwrap(*self).closest(selectors, ec));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).closest(selectors)));
 }
 
 - (BOOL)webkitMatchesSelector:(NSString *)selectors
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    BOOL result = unwrap(*self).matches(selectors, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(unwrap(*self).matches(selectors));
 }
 
 #if ENABLE(FULLSCREEN_API)

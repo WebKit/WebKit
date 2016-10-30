@@ -739,11 +739,13 @@ static inline void handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
 
-        QualifiedName parsedName = anyName;
-        if (!Element::parseAttributeName(parsedName, XMLNSNames::xmlnsNamespaceURI, namespaceQName, ec))
+        auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
+        if (result.hasException()) {
+            ec = result.releaseException().code();
             return;
-        
-        prefixedAttributes.append(Attribute(parsedName, namespaceURI));
+        }
+
+        prefixedAttributes.append(Attribute(result.releaseReturnValue(), namespaceURI));
     }
 }
 
@@ -766,11 +768,13 @@ static inline void handleElementAttributes(Vector<Attribute>& prefixedAttributes
         AtomicString attrURI = attrPrefix.isEmpty() ? nullAtom : toAtomicString(attributes[i].uri);
         AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
-        QualifiedName parsedName = anyName;
-        if (!Element::parseAttributeName(parsedName, attrURI, attrQName, ec))
+        auto result = Element::parseAttributeName(attrURI, attrQName);
+        if (result.hasException()) {
+            ec = result.releaseException().code();
             return;
+        }
 
-        prefixedAttributes.append(Attribute(parsedName, attrValue));
+        prefixedAttributes.append(Attribute(result.releaseReturnValue(), attrValue));
     }
 }
 

@@ -1,3 +1,32 @@
+2016-10-30  Darin Adler  <darin@apple.com>
+
+        Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164206
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp:
+        (webkit_dom_named_node_map_set_named_item): Updated exception handling.
+        (webkit_dom_named_node_map_remove_named_item): Ditto.
+        (webkit_dom_named_node_map_set_named_item_ns): Ditto.
+        (webkit_dom_named_node_map_remove_named_item_ns): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_set_attribute): Ditto.
+        (webkit_dom_element_set_attribute_node): Ditto.
+        (webkit_dom_element_remove_attribute_node): Ditto.
+        (webkit_dom_element_set_attribute_ns): Ditto.
+        (webkit_dom_element_set_attribute_node_ns): Ditto.
+        (webkit_dom_element_matches): Ditto.
+        (webkit_dom_element_closest): Ditto.
+        (webkit_dom_element_webkit_matches_selector): Ditto.
+        (webkit_dom_element_insert_adjacent_element): Ditto.
+        (webkit_dom_element_insert_adjacent_html): Ditto.
+        (webkit_dom_element_insert_adjacent_text): Ditto.
+        (webkit_dom_element_set_inner_html): Ditto.
+        (webkit_dom_element_set_outer_html): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm:
+        (-[WKDOMElement setAttribute:value:]): Ditto.
+
 2016-10-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOM] Introduce WebCore::jsDynamicDowncast

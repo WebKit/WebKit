@@ -584,16 +584,14 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (is<Text>(node.get())) {
-        ExceptionCode ec = 0;
-        mergeWithNextTextNode(downcast<Text>(*node), ec);
-        if (ec)
-            return Exception { ec };
+        auto result = mergeWithNextTextNode(downcast<Text>(*node));
+        if (result.hasException())
+            return result.releaseException();
     }
     if (is<Text>(prev.get())) {
-        ExceptionCode ec = 0;
-        mergeWithNextTextNode(downcast<Text>(*prev), ec);
-        if (ec)
-            return Exception { ec };
+        auto result = mergeWithNextTextNode(downcast<Text>(*prev));
+        if (result.hasException())
+            return result.releaseException();
     }
     return { };
 }

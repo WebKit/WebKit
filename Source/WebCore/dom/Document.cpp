@@ -1013,10 +1013,15 @@ RefPtr<Node> Document::adoptNode(Node& source, ExceptionCode& ec)
     case DOCUMENT_NODE:
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
-    case ATTRIBUTE_NODE: {                   
+    case ATTRIBUTE_NODE: {
         auto& attr = downcast<Attr>(source);
-        if (attr.ownerElement())
-            attr.ownerElement()->removeAttributeNode(attr, ec);
+        if (auto* element = attr.ownerElement()) {
+            auto result = element->removeAttributeNode(attr);
+            if (result.hasException()) {
+                ec = result.releaseException().code();
+                // FIXME: Why fall through here instead of returning early?
+            }
+        }
         break;
     }       
     default:
@@ -1032,10 +1037,10 @@ RefPtr<Node> Document::adoptNode(Node& source, ExceptionCode& ec)
                 return nullptr;
             }
         }
-        if (source.parentNode()) {
-            source.parentNode()->removeChild(source, ec);
-            if (ec)
-                return nullptr;
+        auto result = source.remove();
+        if (result.hasException()) {
+            ec = result.releaseException().code();
+            return nullptr;
         }
     }
 

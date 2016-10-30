@@ -68,19 +68,16 @@
     WebCore::JSMainThreadNullState state;
     if (!node)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->setNamedItem(*core(node), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    auto& coreNode = *core(node);
+    if (!is<WebCore::Attr>(coreNode))
+        raiseTypeErrorException();
+    return kit(raiseOnDOMError(IMPL->setNamedItem(downcast<WebCore::Attr>(coreNode))).get());
 }
 
 - (DOMNode *)removeNamedItem:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->removeNamedItem(name, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->removeNamedItem(name)).ptr());
 }
 
 - (DOMNode *)item:(unsigned)index
@@ -97,22 +94,13 @@
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)node
 {
-    WebCore::JSMainThreadNullState state;
-    if (!node)
-        raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->setNamedItem(*core(node), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return [self setNamedItem:node];
 }
 
 - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->removeNamedItemNS(namespaceURI, localName, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->removeNamedItemNS(namespaceURI, localName)).ptr());
 }
 
 @end

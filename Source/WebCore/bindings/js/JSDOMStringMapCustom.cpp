@@ -37,51 +37,45 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
     if (propertyName.isSymbol())
         return false;
     bool nameIsValid;
     const AtomicString& item = wrapped().item(propertyNameToString(propertyName), nameIsValid);
     if (nameIsValid) {
-        slot.setValue(this, 0, toJS<IDLDOMString>(*exec, item));
+        slot.setValue(this, 0, toJS<IDLDOMString>(*state, item));
         return true;
     }
     return false;
 }
 
-void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(object);
-    Vector<String> names;
-    thisObject->wrapped().getNames(names);
-    size_t length = names.size();
-    for (size_t i = 0; i < length; ++i)
-        propertyNames.add(Identifier::fromString(exec, names[i]));
-
-    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    for (auto& name : jsCast<JSDOMStringMap*>(object)->wrapped().names())
+        propertyNames.add(Identifier::fromString(state, name));
+    Base::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
 
-    JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(cell);
     if (propertyName.isSymbol())
-        return Base::deleteProperty(thisObject, exec, propertyName);
-    return thisObject->wrapped().deleteItem(propertyNameToString(propertyName));
+        return Base::deleteProperty(cell, state, propertyName);
+    return jsCast<JSDOMStringMap*>(cell)->wrapped().deleteItem(propertyNameToString(propertyName));
 }
 
-bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned index)
+bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* state, unsigned index)
 {
-    return deleteProperty(cell, exec, Identifier::from(exec, index));
+    return deleteProperty(cell, state, Identifier::from(state, index));
 }
 
-bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
+bool JSDOMStringMap::putDelegate(ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
-    VM& vm = exec->vm();
+    VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (propertyName.isSymbol())
@@ -91,14 +85,17 @@ bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSV
     CustomElementReactionStack customElementReactionStack;
 #endif
 
-    String stringValue = value.toString(exec)->value(exec);
-    RETURN_IF_EXCEPTION(scope, false);
+    String stringValue = value.toWTFString(state);
+    RETURN_IF_EXCEPTION(scope, true);
 
-    ExceptionCode ec = 0;
-    wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);
-    setDOMException(exec, ec);
-    putResult = !ec;
-    return !ec;
+    auto result = wrapped().setItem(propertyNameToString(propertyName), WTFMove(stringValue));
+    if (result.hasException()) {
+        propagateException(*state, scope, result.releaseException());
+        return true;
+    }
+
+    putResult = true;
+    return true;
 }
 
 } // namespace WebCore

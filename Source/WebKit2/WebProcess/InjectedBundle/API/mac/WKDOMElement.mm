@@ -45,9 +45,7 @@
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec;
-    downcast<WebCore::Element>(*_impl).setAttribute(name, value, ec);
+    downcast<WebCore::Element>(*_impl).setAttribute(name, value);
 }
 
 - (NSString *)tagName

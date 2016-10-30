@@ -28,13 +28,13 @@
 
     DOMString? getAttribute(DOMString name);
 
-    [CEReactions, MayThrowLegacyException] void setAttribute(DOMString name, DOMString value);
+    [CEReactions, MayThrowException] void setAttribute(DOMString name, DOMString value);
 
     [CEReactions] void removeAttribute(DOMString name);
     Attr? getAttributeNode(DOMString name);
 
-    [CEReactions, MayThrowLegacyException] Attr? setAttributeNode(Attr newAttr);
-    [CEReactions, MayThrowLegacyException] Attr removeAttributeNode(Attr oldAttr);
+    [CEReactions, MayThrowException] Attr? setAttributeNode(Attr newAttr);
+    [CEReactions, MayThrowException] Attr removeAttributeNode(Attr oldAttr);
 
     HTMLCollection getElementsByTagName(DOMString name);
 
@@ -43,13 +43,13 @@
 
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-    [CEReactions, MayThrowLegacyException] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [CEReactions, MayThrowException] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
     [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowLegacyException] Attr? setAttributeNodeNS(Attr newAttr);
+    [CEReactions, MayThrowException] Attr? setAttributeNodeNS(Attr newAttr);
     boolean hasAttribute(DOMString name);
 
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
@@ -97,15 +97,15 @@
     sequence<DOMString> getAttributeNames();
 
     HTMLCollection getElementsByClassName(DOMString name);
-    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
-    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString outerHTML;
+    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowException] attribute DOMString innerHTML;
+    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowException] attribute DOMString outerHTML;
 
     [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
 
-    [MayThrowLegacyException] boolean matches(DOMString selectors);
-    [MayThrowLegacyException] Element closest(DOMString selectors);    
-    [ImplementedAs=matches, MayThrowLegacyException] boolean webkitMatchesSelector(DOMString selectors);
+    [MayThrowException] boolean matches(DOMString selectors);
+    [MayThrowException] Element closest(DOMString selectors);
+    [ImplementedAs=matches, MayThrowException] boolean webkitMatchesSelector(DOMString selectors);
 
     // CSSOM View Module API
     ClientRectList getClientRects();
@@ -124,9 +124,9 @@
     [CEReactions, Reflect] attribute DOMString uiactions;
 #endif
 
-    [CEReactions, MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);
-    [CEReactions, MayThrowLegacyException] void insertAdjacentHTML(DOMString where, DOMString html);
-    [MayThrowLegacyException] void insertAdjacentText(DOMString where, DOMString text);
+    [CEReactions, MayThrowException] Element insertAdjacentElement(DOMString where, Element element);
+    [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString where, DOMString html);
+    [MayThrowException] void insertAdjacentText(DOMString where, DOMString text);
 
     [Conditional=POINTER_LOCK] void requestPointerLock();
 
@@ -135,7 +135,7 @@
     [Conditional=CSS_REGIONS] sequence<Range> webkitGetRegionFlowRanges();
 
     // Shadow DOM API
-    [EnabledAtRuntime=ShadowDOM, MayThrowLegacyException] ShadowRoot attachShadow(ShadowRootInit init);
+    [EnabledAtRuntime=ShadowDOM, MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
     [CEReactions, EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
 
