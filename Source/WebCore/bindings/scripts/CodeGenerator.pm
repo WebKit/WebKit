@@ -91,8 +91,6 @@ my %typedArrayTypes = (
     "Uint8ClampedArray" => 1,
 );
 
-my %nonPointerTypeHash = ( "DOMTimeStamp" => 1 );
-
 my %svgAttributesInHTMLHash = (
     "class" => 1,
     "id" => 1,
@@ -288,22 +286,6 @@ sub ForAllParents
     &$recurse($interface, $interface);
 }
 
-sub FindSuperMethod
-{
-    my ($object, $interface, $functionName) = @_;
-    my $indexer;
-    $object->ForAllParents($interface, undef, sub {
-        my $currentInterface = shift;
-        foreach my $function (@{$currentInterface->functions}) {
-            if ($function->signature->name eq $functionName) {
-                $indexer = $function->signature;
-                return 'prune';
-            }
-        }
-    });
-    return $indexer;
-}
-
 sub IDLFileForInterface
 {
     my $object = shift;
@@ -332,7 +314,7 @@ sub GetAttributeFromInterface
 
     my $interface = $object->ParseInterface($outerInterface, $interfaceName);
     for my $attribute (@{$interface->attributes}) {
-        return $attribute if $attribute->signature->name eq $attributeName;
+        return $attribute if $attribute->name eq $attributeName;
     }
     die("Could not find attribute '$attributeName' on interface '$interfaceName'.");
 }
@@ -395,7 +377,7 @@ sub IsNumericType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $integerTypeHash{$type->name};
     return 1 if $floatingPointTypeHash{$type->name};
@@ -406,7 +388,7 @@ sub IsStringOrEnumType
 {
     my ($object, $type) = @_;
     
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $object->IsStringType($type);
     return 1 if $object->IsEnumType($type);
@@ -417,7 +399,7 @@ sub IsIntegerType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $integerTypeHash{$type->name};
     return 0;
@@ -427,7 +409,7 @@ sub IsFloatingPointType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $floatingPointTypeHash{$type->name};
     return 0;
@@ -437,7 +419,7 @@ sub IsPrimitiveType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $primitiveTypeHash{$type->name};
     return 1 if $object->IsNumericType($type);
@@ -449,7 +431,7 @@ sub IsStringType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $type->name eq "DOMString";
     return 1 if $type->name eq "USVString";
@@ -460,7 +442,7 @@ sub IsEnumType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return defined($object->GetEnumByType($type));
 }
@@ -469,7 +451,7 @@ sub GetEnumByType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     my $name = $type->name;
 
@@ -509,7 +491,7 @@ sub IsExternalEnumType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $object->IsEnumType($type) && defined($cachedExternalEnumerations->{$type->name});
 }
@@ -518,7 +500,7 @@ sub HasEnumImplementationNameOverride
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if exists $enumTypeImplementationNameOverrides{$type->name};
     return 0;
@@ -528,7 +510,7 @@ sub GetEnumImplementationNameOverride
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $enumTypeImplementationNameOverrides{$type->name};
 }
@@ -537,7 +519,7 @@ sub GetDictionaryByType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     my $name = $type->name;
 
@@ -576,7 +558,7 @@ sub IsDictionaryType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name =~ /^[A-Z]/ && defined($object->GetDictionaryByType($type));
 }
@@ -586,7 +568,7 @@ sub IsExternalDictionaryType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $object->IsDictionaryType($type) && defined($cachedExternalDictionaries->{$type->name});
 }
@@ -595,7 +577,7 @@ sub HasDictionaryImplementationNameOverride
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if exists $dictionaryTypeImplementationNameOverrides{$type->name};
     return 0;
@@ -605,7 +587,7 @@ sub GetDictionaryImplementationNameOverride
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $dictionaryTypeImplementationNameOverrides{$type->name};
 }
@@ -614,9 +596,8 @@ sub IsNonPointerType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
-    return 1 if $nonPointerTypeHash{$type->name};
     return 1 if $object->IsPrimitiveType($type);
     return 0;
 }
@@ -625,7 +606,7 @@ sub IsSVGTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if exists $svgTypeNeedingTearOff{$type->name};
     return 0;
@@ -635,7 +616,7 @@ sub IsSVGTypeWithWritablePropertiesNeedingTearOff
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $svgTypeWithWritablePropertiesNeedingTearOff{$type->name};
     return 0;
@@ -645,7 +626,7 @@ sub IsTypedArrayType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $typedArrayTypes{$type->name};
     return 0;
@@ -655,7 +636,7 @@ sub IsRefPtrType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 0 if $object->IsPrimitiveType($type);
     return 0 if $object->IsDictionaryType($type);
@@ -671,7 +652,7 @@ sub GetSVGTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $svgTypeNeedingTearOff{$type->name} if exists $svgTypeNeedingTearOff{$type->name};
     return undef;
@@ -681,7 +662,7 @@ sub GetSVGWrappedTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     my $svgTypeNeedingTearOff = $object->GetSVGTypeNeedingTearOff($type);
     return $svgTypeNeedingTearOff if not $svgTypeNeedingTearOff;
@@ -711,7 +692,7 @@ sub IsSVGAnimatedType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $object->IsSVGAnimatedTypeName($type->name);
 }
@@ -720,7 +701,7 @@ sub IsConstructorType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name =~ /Constructor$/;
 }
@@ -729,7 +710,7 @@ sub IsSequenceType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name eq "sequence";
 }
@@ -738,7 +719,7 @@ sub GetSequenceInnerType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return @{$type->subtypes}[0];
 }
@@ -747,7 +728,7 @@ sub IsFrozenArrayType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name eq "FrozenArray";
 }
@@ -756,7 +737,7 @@ sub GetFrozenArrayInnerType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return @{$type->subtypes}[0];
 }
@@ -765,7 +746,7 @@ sub IsSequenceOrFrozenArrayType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $object->IsSequenceType($type) || $object->IsFrozenArrayType($type);
 }
@@ -774,7 +755,7 @@ sub GetSequenceOrFrozenArrayInnerType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return @{$type->subtypes}[0];
 }
@@ -853,7 +834,7 @@ sub LinkOverloadedFunctions
 
     my %nameToFunctionsMap = ();
     foreach my $function (@{$interface->functions}) {
-        my $name = $function->signature->name;
+        my $name = $function->name;
         $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
         push(@{$nameToFunctionsMap{$name}}, $function);
         $function->{overloads} = $nameToFunctionsMap{$name};
@@ -872,11 +853,11 @@ sub AttributeNameForGetterAndSetter
 {
     my ($generator, $attribute) = @_;
 
-    my $attributeName = $attribute->signature->name;
-    if ($attribute->signature->extendedAttributes->{"ImplementedAs"}) {
-        $attributeName = $attribute->signature->extendedAttributes->{"ImplementedAs"};
+    my $attributeName = $attribute->name;
+    if ($attribute->extendedAttributes->{"ImplementedAs"}) {
+        $attributeName = $attribute->extendedAttributes->{"ImplementedAs"};
     }
-    my $attributeType = $attribute->signature->type;
+    my $attributeType = $attribute->type;
 
     # SVG animated types need to use a special attribute name.
     # The rest of the special casing for SVG animated types is handled in the language-specific code generators.
@@ -889,7 +870,7 @@ sub ContentAttributeName
 {
     my ($generator, $implIncludes, $interfaceName, $attribute) = @_;
 
-    my $contentAttributeName = $attribute->signature->extendedAttributes->{"Reflect"};
+    my $contentAttributeName = $attribute->extendedAttributes->{"Reflect"};
     return undef if !$contentAttributeName;
 
     $contentAttributeName = lc $generator->AttributeNameForGetterAndSetter($attribute) if $contentAttributeName eq "VALUE_IS_MISSING";
@@ -910,10 +891,10 @@ sub GetterExpression
         return ($generator->WK_lcfirst($generator->AttributeNameForGetterAndSetter($attribute)));
     }
 
-    my $attributeType = $attribute->signature->type;
+    my $attributeType = $attribute->type;
 
     my $functionName;
-    if ($attribute->signature->extendedAttributes->{"URL"}) {
+    if ($attribute->extendedAttributes->{"URL"}) {
         $functionName = "getURLAttribute";
     } elsif ($attributeType->name eq "boolean") {
         $functionName = "hasAttributeWithoutSynchronization";
@@ -948,7 +929,7 @@ sub SetterExpression
         return ("set" . $generator->WK_ucfirst($generator->AttributeNameForGetterAndSetter($attribute)));
     }
 
-    my $attributeType = $attribute->signature->type;
+    my $attributeType = $attribute->type;
 
     my $functionName;
     if ($attributeType->name eq "boolean") {
@@ -970,7 +951,7 @@ sub IsWrapperType
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 0 if !$object->IsRefPtrType($type);
     return 0 if $object->IsTypedArrayType($type);
@@ -1017,7 +998,7 @@ sub ComputeIsCallbackInterface
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 0 unless $object->IsWrapperType($type);
 
@@ -1042,7 +1023,7 @@ sub IsCallbackInterface
 
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $isCallbackInterface{$type->name} if exists $isCallbackInterface{$type->name};
     my $result = $object->ComputeIsCallbackInterface($type);
@@ -1057,7 +1038,7 @@ sub ComputeIsFunctionOnlyCallbackInterface
 {
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return 0 unless $object->IsCallbackInterface($type);
 
@@ -1095,7 +1076,7 @@ sub IsFunctionOnlyCallbackInterface
 
     my ($object, $type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
+    assert("Not a type") if ref($type) ne "IDLType";
 
     return $isFunctionOnlyCallbackInterface{$type->name} if exists $isFunctionOnlyCallbackInterface{$type->name};
     my $result = $object->ComputeIsFunctionOnlyCallbackInterface($type);
@@ -1220,12 +1201,11 @@ sub InheritsExtendedAttribute
 
 sub ShouldPassWrapperByReference
 {
-    my ($object, $parameter, $interface) = @_;
+    my ($object, $argument) = @_;
 
-    return 0 if $parameter->isVariadic;
-    return 0 if $parameter->type->isNullable;
-    return 0 if !$object->IsWrapperType($parameter->type) && !$object->IsTypedArrayType($parameter->type);
-    return 0 if $object->IsSVGTypeNeedingTearOff($parameter->type);
+    return 0 if $argument->type->isNullable;
+    return 0 if !$object->IsWrapperType($argument->type) && !$object->IsTypedArrayType($argument->type);
+    return 0 if $object->IsSVGTypeNeedingTearOff($argument->type);
 
     return 1;
 }

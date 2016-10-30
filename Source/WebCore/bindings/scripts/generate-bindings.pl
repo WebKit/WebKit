@@ -157,28 +157,28 @@ foreach my $idlFile (@supplementedIdlFiles) {
 
             # Support for attributes of partial interfaces.
             foreach my $attribute (@{$interface->attributes}) {
-                next unless shouldPropertyBeExposed($attribute->signature, \@targetGlobalContexts);
+                next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
 
                 # Record that this attribute is implemented by $interfaceName.
-                $attribute->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each attribute.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $attribute->signature->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
                 push(@{$targetDataNode->attributes}, $attribute);
             }
 
             # Support for methods of partial interfaces.
             foreach my $function (@{$interface->functions}) {
-                next unless shouldPropertyBeExposed($function->signature, \@targetGlobalContexts);
+                next unless shouldPropertyBeExposed($function, \@targetGlobalContexts);
 
                 # Record that this method is implemented by $interfaceName.
-                $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                $function->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each method.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $function->signature->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    $function->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
                 push(@{$targetDataNode->functions}, $function);
             }
@@ -210,9 +210,9 @@ $codeGen->ProcessDocument($targetDocument, $defines);
 # on which global contexts they should be exposed.
 sub shouldPropertyBeExposed
 {
-    my ($signature, $targetGlobalContexts) = @_;
+    my ($context, $targetGlobalContexts) = @_;
 
-    my $exposed = $signature->extendedAttributes->{Exposed};
+    my $exposed = $context->extendedAttributes->{Exposed};
 
     return 1 unless $exposed;
 
@@ -289,13 +289,13 @@ sub checkIDLAttributes
         checkIfIDLAttributesExists($idlAttributes, $interface->extendedAttributes, $idlFile);
 
         foreach my $attribute (@{$interface->attributes}) {
-            checkIfIDLAttributesExists($idlAttributes, $attribute->signature->extendedAttributes, $idlFile);
+            checkIfIDLAttributesExists($idlAttributes, $attribute->extendedAttributes, $idlFile);
         }
 
         foreach my $function (@{$interface->functions}) {
-            checkIfIDLAttributesExists($idlAttributes, $function->signature->extendedAttributes, $idlFile);
-            foreach my $parameter (@{$function->parameters}) {
-                checkIfIDLAttributesExists($idlAttributes, $parameter->extendedAttributes, $idlFile);
+            checkIfIDLAttributesExists($idlAttributes, $function->extendedAttributes, $idlFile);
+            foreach my $argument (@{$function->arguments}) {
+                checkIfIDLAttributesExists($idlAttributes, $argument->extendedAttributes, $idlFile);
             }
         }
     }

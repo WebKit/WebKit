@@ -1,3 +1,46 @@
+2016-10-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Restructure IDLParser structs to better match modern WebIDL concepts
+        https://bugs.webkit.org/show_bug.cgi?id=164208
+
+        Reviewed by Darin Adler.
+
+        Restructure IDLParsers structs to match modern WebIDL conventions:
+        - Rename structs to have more WebCore like naming, consistently using
+          the prefix IDL.
+        - Remove domSignature. Sinking it's properties into the structs that
+          contained it.
+        - Add IDLArgument, replacing the use of domSignatures for arguments.
+          IDLArgument is the subset of domSignatures needed for arguments.
+        - Rename domFunction to IDLOperation (matching WebILD nomenclature),
+          replace signature with its own name, type (for returnType), specials,
+          and extended attributes properties.
+        - Give IDLAttribute it's own name, type and extended attributes properties.
+        - Add IDLDictionaryMember, replacing the use of domSignature as the
+          type of members in IDLDictionary. Give it name, type, isRequired,
+          default and extendedAttributes properties.
+        - Renamed Typedef to be IDLTypedef. Remove the extended attributes 
+          property as those are not allowed in typedefs per-PebIDL.
+
+        Also fix some parsing issues:
+        - Stop parsing 'in' directives in function arguments.
+        - Stop parsing extended attributes in typedefs.
+        - Support applying typedefs to types deep in aggregate types
+          (e.g. (sequence<(LONG or STRING)> or DOMString)?).
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/generate-bindings.pl:
+        Update for new struct types.
+
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/TestTypedefs.idl:
+        Remove test which tested extended attributes in typedefs,
+        and add a test which tests typedefs used in deep type structures.
+
+        * page/make_settings.pl:
+        Don't generate the 'in' prefix for arguments in IDL files.
+
 2016-10-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix nth-child serialization

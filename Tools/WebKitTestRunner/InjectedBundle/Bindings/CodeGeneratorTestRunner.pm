@@ -71,8 +71,6 @@ sub _className
 {
     my ($type) = @_;
 
-    assert("Not a type") if ref($type) ne "domType";
-
     return "JS" . _implementationClassName($type);
 }
 
@@ -191,7 +189,7 @@ EOF
     if (my @functions = @{$interface->functions}) {
         push(@contents, "\n    // Functions\n\n");
         foreach my $function (@functions) {
-            push(@contents, "    static JSValueRef @{[$function->signature->name]}(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);\n");
+            push(@contents, "    static JSValueRef @{[$function->name]}(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);\n");
         }
     }
 
@@ -285,7 +283,7 @@ EOF
         foreach my $function (@functions) {
             push(@contents, <<EOF);
 
-JSValueRef ${className}::@{[$function->signature->name]}(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+JSValueRef ${className}::@{[$function->name]}(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
     if (!impl)
@@ -293,40 +291,40 @@ JSValueRef ${className}::@{[$function->signature->name]}(JSContextRef context, J
 
 EOF
             my $functionCall;
-            if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                $functionCall = "impl->" . $function->signature->name . "(context, argumentCount, arguments, exception)";
+            if ($function->extendedAttributes->{"CustomArgumentHandling"}) {
+                $functionCall = "impl->" . $function->name . "(context, argumentCount, arguments, exception)";
             } else {
-                my @parameters = ();
-                my @specifiedParameters = @{$function->parameters};
+                my @arguments = ();
+                my @specifiedArguments = @{$function->arguments};
 
-                $self->_includeHeaders(\%contentsIncludes, $function->signature->type, $function->signature);
+                $self->_includeHeaders(\%contentsIncludes, $function->type);
 
-                if ($function->signature->extendedAttributes->{"PassContext"}) {
-                    push(@parameters, "context");
+                if ($function->extendedAttributes->{"PassContext"}) {
+                    push(@arguments, "context");
                 }
 
-                foreach my $i (0..$#specifiedParameters) {
-                    my $parameter = $specifiedParameters[$i];
+                foreach my $i (0..$#specifiedArguments) {
+                    my $argument = $specifiedArguments[$i];
 
-                    $self->_includeHeaders(\%contentsIncludes, $type, $parameter);
+                    $self->_includeHeaders(\%contentsIncludes, $type);
 
-                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[$i]", "argumentCount > $i") . "\n");
+                    push(@contents, "    " . $self->_platformTypeVariableDeclaration($argument->type, $argument->name, "arguments[$i]", "argumentCount > $i") . "\n");
                     
-                    push(@parameters, $self->_parameterExpression($parameter));
+                    push(@arguments, $self->_argumentExpression($argument));
                 }
 
-                $functionCall = "impl->" . $function->signature->name . "(" . join(", ", @parameters) . ")";
+                $functionCall = "impl->" . $function->name . "(" . join(", ", @arguments) . ")";
             }
             
-            push(@contents, "    ${functionCall};\n\n") if $function->signature->type->name eq "void";
-            push(@contents, "    return " . $self->_returnExpression($function->signature, $functionCall) . ";\n}\n");
+            push(@contents, "    ${functionCall};\n\n") if $function->type->name eq "void";
+            push(@contents, "    return " . $self->_returnExpression($function->type, $functionCall) . ";\n}\n");
         }
     }
 
     if (my @attributes = @{$interface->attributes}) {
         push(@contents, "\n// Attributes\n");
         foreach my $attribute (@attributes) {
-            $self->_includeHeaders(\%contentsIncludes, $attribute->signature->type, $attribute->signature);
+            $self->_includeHeaders(\%contentsIncludes, $attribute->type);
 
             my $getterName = $self->_getterName($attribute);
             my $getterExpression = "impl->${getterName}()";
@@ -339,7 +337,7 @@ JSValueRef ${className}::${getterName}(JSContextRef context, JSObjectRef object,
     if (!impl)
         return JSValueMakeUndefined(context);
 
-    return @{[$self->_returnExpression($attribute->signature, $getterExpression)]};
+    return @{[$self->_returnExpression($attribute->type, $getterExpression)]};
 }
 EOF
 
@@ -354,7 +352,7 @@ bool ${className}::@{[$self->_setterName($attribute)]}(JSContextRef context, JSO
 
 EOF
 
-                my $platformValue = $self->_platformTypeConstructor($attribute->signature, "value");
+                my $platformValue = $self->_platformTypeConstructor($attribute->type, "value");
 
                 push(@contents, <<EOF);
     impl->@{[$self->_setterName($attribute)]}(${platformValue});
@@ -383,12 +381,12 @@ sub _getterName
 {
     my ($self, $attribute) = @_;
 
-    return $attribute->signature->name;
+    return $attribute->name;
 }
 
 sub _includeHeaders
 {
-    my ($self, $headers, $type, $signature) = @_;
+    my ($self, $headers, $type) = @_;
 
     return unless defined $type;
     return if $type->name eq "boolean";
@@ -431,7 +429,7 @@ sub _parentInterface
 
 sub _platformType
 {
-    my ($self, $type, $signature) = @_;
+    my ($self, $type) = @_;
 
     return undef unless defined $type;
 
@@ -444,9 +442,7 @@ sub _platformType
 
 sub _platformTypeConstructor
 {
-    my ($self, $signature, $argumentName) = @_;
-
-    my $type = $signature->type;
+    my ($self, $type, $argumentName) = @_;
 
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
@@ -457,10 +453,10 @@ sub _platformTypeConstructor
 
 sub _platformTypeVariableDeclaration
 {
-    my ($self, $signature, $variableName, $argumentName, $condition) = @_;
+    my ($self, $type, $variableName, $argumentName, $condition) = @_;
 
-    my $platformType = $self->_platformType($signature->type, $signature);
-    my $constructor = $self->_platformTypeConstructor($signature, $argumentName);
+    my $platformType = $self->_platformType($type);
+    my $constructor = $self->_platformTypeConstructor($type, $argumentName);
 
     my %nonPointerTypes = (
         "bool" => 1,
@@ -485,9 +481,7 @@ sub _platformTypeVariableDeclaration
 
 sub _returnExpression
 {
-    my ($self, $signature, $expression) = @_;
-
-    my $returnType = $signature->type;
+    my ($self, $returnType, $expression) = @_;
 
     return "JSValueMakeUndefined(context)" if $returnType->name eq "void";
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
@@ -497,12 +491,12 @@ sub _returnExpression
     return "toJS(context, WTF::getPtr(${expression}))";
 }
 
-sub _parameterExpression
+sub _argumentExpression
 {
-    my ($self, $parameter) = @_;
+    my ($self, $argument) = @_;
 
-    my $type = $parameter->type;
-    my $name = $parameter->name;
+    my $type = $argument->type;
+    my $name = $argument->name;
 
     return "${name}.get()" if $$self{codeGenerator}->IsStringType($type);
     return $name;
@@ -512,7 +506,7 @@ sub _setterName
 {
     my ($self, $attribute) = @_;
 
-    my $name = $attribute->signature->name;
+    my $name = $attribute->name;
 
     return "set" . $$self{codeGenerator}->WK_ucfirst($name);
 }
@@ -522,9 +516,9 @@ sub _staticFunctionsGetterImplementation
     my ($self, $interface) = @_;
 
     my $mapFunction = sub {
-        my $name = $_->signature->name;
+        my $name = $_->name;
         my @attributes = qw(kJSPropertyAttributeDontDelete kJSPropertyAttributeReadOnly);
-        push(@attributes, "kJSPropertyAttributeDontEnum") if $_->signature->extendedAttributes->{"DontEnum"};
+        push(@attributes, "kJSPropertyAttributeDontEnum") if $_->extendedAttributes->{"DontEnum"};
 
         return  "{ \"$name\", $name, " . join(" | ", @attributes) . " }";
     };
@@ -562,14 +556,14 @@ sub _staticValuesGetterImplementation
     my ($self, $interface) = @_;
 
     my $mapFunction = sub {
-        return if $_->signature->extendedAttributes->{"NoImplementation"};
+        return if $_->extendedAttributes->{"NoImplementation"};
 
-        my $attributeName = $_->signature->name;
+        my $attributeName = $_->name;
         my $getterName = $self->_getterName($_);
         my $setterName = $_->isReadOnly ? "0" : $self->_setterName($_);
         my @attributes = qw(kJSPropertyAttributeDontDelete);
         push(@attributes, "kJSPropertyAttributeReadOnly") if $_->isReadOnly;
-        push(@attributes, "kJSPropertyAttributeDontEnum") if $_->signature->extendedAttributes->{"DontEnum"};
+        push(@attributes, "kJSPropertyAttributeDontEnum") if $_->extendedAttributes->{"DontEnum"};
 
         return "{ \"$attributeName\", $getterName, $setterName, " . join(" | ", @attributes) . " }";
     };

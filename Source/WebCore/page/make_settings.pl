@@ -370,7 +370,7 @@ sub generateInternalSettingsIdlFile($)
         my $type = $parsedItems{$settingName}{"type"};
         my $idlType = $webcoreTypeToIdlType{$type};
         my $setterFunctionName = setterFunctionName($settingName);
-        print $file "    void $setterFunctionName(in $idlType $settingName);\n";
+        print $file "    void $setterFunctionName($idlType $settingName);\n";
     };
 
     enumerateParsedItems($file, $parsedItemsRef, \&writeIdlSetter);

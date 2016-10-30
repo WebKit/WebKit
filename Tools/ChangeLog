@@ -1,3 +1,14 @@
+2016-10-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Restructure IDLParser structs to better match modern WebIDL concepts
+        https://bugs.webkit.org/show_bug.cgi?id=164208
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        Update for new struct types.
+
 2016-10-29  Darin Adler  <darin@apple.com>
 
         Fix failing ExtendedColor tests.
