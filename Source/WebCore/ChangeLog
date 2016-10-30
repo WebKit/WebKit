@@ -1,3 +1,40 @@
+2016-10-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Clean up the two types of descendant relations in CSSSelector
+        https://bugs.webkit.org/show_bug.cgi?id=164203
+
+        Reviewed by Zalan Bujtas.
+
+        This patch gets rid of the separate boolean for double child and allows it
+        to be a unique relation type. Rename Descendant to DescendantSpace and
+        name the new relation DescendantDoubleChild.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::hasDescendantRelation):
+        (WebCore::CSSSelector::hasDescendantOrChildRelation):
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::setDescendantUseDoubleChildSyntax): Deleted.
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::recursivelyCollectFeaturesFromSelector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::appendTagHistory):
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setDescendantUseDoubleChildSyntax): Deleted.
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isDescendantCombinator):
+        (WebCore::CSSSelectorParser::consumeComplexSelector):
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+
 2016-10-30  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed gardening

@@ -142,7 +142,10 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
             // Disable fastRejectSelector.
             *identifierHashes = 0;
             return;
-        case CSSSelector::Descendant:
+        case CSSSelector::DescendantSpace:
+#if ENABLE_CSS_SELECTORS_LEVEL4
+        case CSSSelector::DescendantDoubleChild:
+#endif
         case CSSSelector::Child:
         case CSSSelector::ShadowPseudo:
         case CSSSelector::ShadowDeep:

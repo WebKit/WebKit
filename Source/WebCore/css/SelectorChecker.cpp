@@ -320,7 +320,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             return MatchResult::fails(Match::SelectorFailsCompletely);
 
         // Disable :visited matching when we try to match anything else than an ancestors.
-        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
+        if (!context.selector->hasDescendantOrChildRelation())
             nextContext.visitedMatchType = VisitedMatchType::Disabled;
 
         nextContext.pseudoId = NOPSEUDO;
@@ -330,7 +330,10 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     }
 
     switch (relation) {
-    case CSSSelector::Descendant:
+    case CSSSelector::DescendantSpace:
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    case CSSSelector::DescendantDoubleChild:
+#endif
         nextContext = localContextForParent(nextContext);
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         for (; nextContext.element; nextContext = localContextForParent(nextContext)) {
@@ -1197,7 +1200,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
         auto relation = selector->relation();
         if (relation == CSSSelector::Subselector)
             continue;
-        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
+        if (!selector->hasDescendantOrChildRelation())
             return linkMatchType;
         if (linkMatchType != MatchAll)
             return linkMatchType;

@@ -401,7 +401,10 @@ SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::
 static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
 {
     switch (relation) {
-    case CSSSelector::Descendant:
+    case CSSSelector::DescendantSpace:
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    case CSSSelector::DescendantDoubleChild:
+#endif
         return FragmentRelation::Descendant;
     case CSSSelector::Child:
         return FragmentRelation::Child;

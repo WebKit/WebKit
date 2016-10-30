@@ -481,11 +481,11 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
         selectorRelation = CSSSelector::Child;
         break;
     case CSSParserSelectorCombinator::DescendantSpace:
-        selectorRelation = CSSSelector::Descendant;
+        selectorRelation = CSSSelector::DescendantSpace;
         break;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSParserSelectorCombinator::DescendantDoubleChild:
-        selectorRelation = CSSSelector::Descendant;
+        selectorRelation = CSSSelector::DescendantDoubleChild;
         break;
 #endif
     case CSSParserSelectorCombinator::DirectAdjacent:
@@ -505,12 +505,6 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
         break;
     }
     end->setRelation(selectorRelation);
-
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    if (relation == CSSParserSelectorCombinator::DescendantDoubleChild)
-        end->setDescendantUseDoubleChildSyntax();
-#endif
-
     end->setTagHistory(WTFMove(selector));
 }
 

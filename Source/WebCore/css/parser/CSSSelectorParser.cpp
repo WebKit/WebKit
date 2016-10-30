@@ -149,6 +149,14 @@ unsigned extractCompoundFlags(const CSSParserSelector& simpleSelector, CSSParser
 
 } // namespace
 
+static bool isDescendantCombinator(CSSSelector::RelationType relation)
+{
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    return relation == CSSSelector::DescendantSpace || relation == CSSSelector::DescendantDoubleChild;
+#else
+    return relation == CSSSelector::DescendantSpace;
+#endif
+}
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSSParserTokenRange& range)
 {
     std::unique_ptr<CSSParserSelector> selector = consumeCompoundSelector(range);
@@ -163,7 +171,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
     while (auto combinator = consumeCombinator(range)) {
         std::unique_ptr<CSSParserSelector> nextSelector = consumeCompoundSelector(range);
         if (!nextSelector)
-            return combinator == CSSSelector::Descendant ? WTFMove(selector) : nullptr;
+            return isDescendantCombinator(combinator) ? WTFMove(selector) : nullptr;
         if (previousCompoundFlags & HasPseudoElementForRightmostCompound)
             return nullptr;
         CSSParserSelector* end = nextSelector.get();
@@ -648,7 +656,7 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
     auto fallbackResult = CSSSelector::Subselector;
     while (range.peek().type() == WhitespaceToken) {
         range.consume();
-        fallbackResult = CSSSelector::Descendant;
+        fallbackResult = CSSSelector::DescendantSpace;
     }
 
     if (range.peek().type() != DelimiterToken)
@@ -663,10 +671,9 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
         if (delimiter == '~')
             return CSSSelector::IndirectAdjacent;
 #if ENABLE_CSS_SELECTORS_LEVEL4
-        // FIXME-NEWPARSER: Need to set that this was a >> so serialization is correct
         if (delimiter == '>' && range.peek().type() == DelimiterToken && range.peek().delimiter() == '>') {
             range.consumeIncludingWhitespace();
-            return CSSSelector::Descendant;
+            return CSSSelector::DescendantDoubleChild;
         }
 #endif
         return CSSSelector::Child;

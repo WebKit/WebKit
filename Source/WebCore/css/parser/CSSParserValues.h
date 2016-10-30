@@ -275,10 +275,6 @@ public:
     std::unique_ptr<CSSParserSelector> releaseTagHistory();
 
 private:
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    void setDescendantUseDoubleChildSyntax() { m_selector->setDescendantUseDoubleChildSyntax(); }
-#endif
-
     std::unique_ptr<CSSSelector> m_selector;
     std::unique_ptr<CSSParserSelector> m_tagHistory;
 };

@@ -77,7 +77,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, matchesAncestor);
             }
         }
-        if (selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::Descendant)
+        if (selector->hasDescendantOrChildRelation())
             matchesAncestor = true;
 
         selector = selector->tagHistory();

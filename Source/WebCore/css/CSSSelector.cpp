@@ -50,7 +50,7 @@ static_assert(CSSSelector::RelationType::Subselector == 0, "Subselector must be 
 static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(Descendant)
+    : m_relation(DescendantSpace)
     , m_match(Tag)
     , m_pseudoType(0)
     , m_parsedNth(false)
@@ -60,9 +60,6 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     , m_hasNameWithCase(false)
     , m_isForPage(false)
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    , m_descendantDoubleChildSyntax(false)
-#endif
     , m_caseInsensitiveAttributeValueMatching(false)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     , m_destructorHasBeenCalled(false)
@@ -728,11 +725,7 @@ String CSSSelector::selectorText(const String& rightSide) const
 
     if (const CSSSelector* tagHistory = cs->tagHistory()) {
         switch (cs->relation()) {
-        case CSSSelector::Descendant:
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-            if (cs->m_descendantDoubleChildSyntax)
-                return tagHistory->selectorText(" >> " + str.toString() + rightSide);
-#endif
+        case CSSSelector::DescendantSpace:
             return tagHistory->selectorText(" " + str.toString() + rightSide);
         case CSSSelector::Child:
             return tagHistory->selectorText(" > " + str.toString() + rightSide);
@@ -742,6 +735,10 @@ String CSSSelector::selectorText(const String& rightSide) const
             return tagHistory->selectorText(" + " + str.toString() + rightSide);
         case CSSSelector::IndirectAdjacent:
             return tagHistory->selectorText(" ~ " + str.toString() + rightSide);
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        case CSSSelector::DescendantDoubleChild:
+            return tagHistory->selectorText(" >> " + str.toString() + rightSide);
+#endif
         case CSSSelector::Subselector:
             ASSERT_NOT_REACHED();
 #if ASSERT_DISABLED
