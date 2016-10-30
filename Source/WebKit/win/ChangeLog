@@ -1,3 +1,11 @@
+2016-10-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix (Direct2D)
+
+        * WebView.cpp:
+        (WebView::paintWithDirect2D): Update for revised GraphicsContext
+        begin/end draw behavior.
+
 2016-10-28  Darin Adler  <darin@apple.com>
 
         Move all classes in the HTML directory from ExceptionCode to Exception

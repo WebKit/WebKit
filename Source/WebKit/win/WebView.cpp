@@ -197,10 +197,6 @@
 #include <WebCore/FullScreenController.h>
 #endif
 
-#if USE(DIRECT2D)
-#include <WebCore/RenderTargetScopedDrawing.h>
-#endif
-
 #include <ShlObj.h>
 #include <comutil.h>
 #include <dimm.h>
@@ -1251,8 +1247,6 @@ void WebView::paintWithDirect2D()
     GraphicsContext gc(m_renderTarget.get());
 
     {
-        WebCore::RenderTargetScopedDrawing scopedDraw(gc);
-
         m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
         m_renderTarget->Clear();
 
