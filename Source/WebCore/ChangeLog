@@ -1,3 +1,27 @@
+2016-10-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix nth-child serialization
+        https://bugs.webkit.org/show_bug.cgi?id=164210
+
+        Reviewed by Darin Adler.
+
+        Our nth-child serialization preserves what the author originally
+        typed. Even though this is not spec-compliant (the latest CSS Syntax
+        spec has a dumbed down serialization process that doesn't preserve what
+        the author originally typed), I think it's better behavior to preserve
+        this text.
+
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize):
+        Fix a bug in the serialization of number tokens that started with
+        a plus sign. Make sure the plus sign is preserved.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Grab the range of tokens from after the ( and up to the ) or the "of"
+        and then serialize them. Strip whitepsace from the ends and set that
+        as the selector argument.
+
 2016-10-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Correct bookkeeping for begin/end draw pairs

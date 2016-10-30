@@ -540,7 +540,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     block.consumeWhitespace();
     if (token.type() != FunctionToken)
         return nullptr;
-
+    
+    const auto& argumentStart = block.peek();
+    
     if (selector->match() == CSSSelector::PseudoClass) {
         switch (selector->pseudoClassType()) {
         case CSSSelector::PseudoClassNot: {
@@ -560,6 +562,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (!consumeANPlusB(block, ab))
                 return nullptr;
             block.consumeWhitespace();
+            const auto& argumentEnd = block.peek();
+            auto rangeOfANPlusB = block.makeSubRange(&argumentStart, &argumentEnd);
+            auto argument = rangeOfANPlusB.serialize();
+            selector->setArgument(argument.stripWhiteSpace());
             if (!block.atEnd()) {
                 if (block.peek().type() != IdentToken)
                     return nullptr;
