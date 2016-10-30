@@ -1,3 +1,21 @@
+2016-10-29  Saam Barati  <sbarati@apple.com>
+
+        We should have a way of profiling when a get_by_id is pure and to emit a PureGetById in the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=163305
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/pure-get-by-id-cse-2.js: Added.
+        (foo):
+        * microbenchmarks/pure-get-by-id-cse.js: Added.
+        (foo):
+        * stress/pure-get-by-id-cse-correctness.js: Added.
+        (assert):
+        (foo):
+        * stress/pure-get-by-id-on-non-object.js: Added.
+        (assert):
+        (foo):
+
 2016-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Skip JSTests/microbenchmarks/dense-set.js on memory limited devices

@@ -152,10 +152,11 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
 
 static bool canBecomeGetArrayLength(Graph& graph, Node* node)
 {
-    if (node->op() != GetById)
-        return false;
-    auto uid = graph.identifiers()[node->identifierNumber()];
-    return uid == graph.m_vm.propertyNames->length.impl();
+    if (node->op() == GetById || node->op() == PureGetById) {
+        auto uid = graph.identifiers()[node->identifierNumber()];
+        return uid == graph.m_vm.propertyNames->length.impl();
+    }
+    return false;
 }
 
 ArrayMode ArrayMode::refine(

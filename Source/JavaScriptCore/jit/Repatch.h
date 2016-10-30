@@ -36,6 +36,7 @@ namespace JSC {
 
 enum class GetByIDKind {
     Normal,
+    Try,
     Pure
 };
 

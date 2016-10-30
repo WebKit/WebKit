@@ -176,6 +176,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewArrayWithSize:
     case TryGetById:
     case GetById:
+    case PureGetById:
     case GetByIdFlush:
     case GetByIdWithThis:
     case ToThis:

@@ -2119,6 +2119,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
 
+    case PureGetById:
     case GetById:
     case GetByIdFlush: {
         if (!node->prediction()) {
@@ -2150,7 +2151,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
 
-        clobberWorld(node->origin.semantic, clobberLimit);
+        if (node->op() == PureGetById)
+            clobberStructures(clobberLimit);
+        else
+            clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;
     }

@@ -682,6 +682,7 @@ private:
         case RegExpTest:
         case StringReplace:
         case StringReplaceRegExp:
+        case PureGetById:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:

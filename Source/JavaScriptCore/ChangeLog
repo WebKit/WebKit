@@ -1,3 +1,102 @@
+2016-10-29  Saam Barati  <sbarati@apple.com>
+
+        We should have a way of profiling when a get_by_id is pure and to emit a PureGetById in the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=163305
+
+        Reviewed by Keith Miller.
+
+        This creates a new GetById node in the DFG called PureGetById. We emit a
+        PureGetById when we profile that a get_by_id in the baseline never does
+        side effects. PureGetById speculates on the fact that it won't do side
+        effects. If it realizes that it must perform side effects, it will perform
+        the side effect, but also invalidate the CodeBlock that compiled it,
+        which will cause us to exit once we return back to the compiled code.
+        This allows us to have stricter clobberize rules for PureGetById which
+        model how getOwnPropertySlot(VMInquiry) behaves. This means that PureGetByIds
+        can be CSEd with each other, and that other things are more likely to
+        be CSEd around a PureGetById. To profile if a get_by_id does side
+        effects, I've added an extra bit into StructureStubInfo that we write
+        to when performing a get_by_id slow path call. If we notice that we
+        never do effects, inside the ByteCodeParser, we will emit a PureGetById
+        instead of a GetById.
+
+        To justify the performance benefit of this patch, I ran the suite of
+        benchmarks with useAccessInlining=false. This meant that we don't compile
+        any (Multi)GetByOffset/(Multi)PutByOffset. This was just to try to see if
+        this patch is worth anything at all in a world where we emit many
+        PureGetByIds. Running the benchmarks under this mode showed a 3.5% octane
+        improvement and a 15% kraken improvement. However, when running benchmarks
+        with useAccessInlining=true (the default JSC state), this patch is neutral.
+        I think the main reason for this is that the DFG is good at knowing when to
+        emit (Multi)GetByOffset, and most benchmarks that would benefit from
+        PureGetById are already emitting (Multi)GetByOffset. However, PureGetById can be
+        profitable when we encounter code that is too polymorphic for (Multi)GetByOffset.
+        It's reasonable to expect that JS code in the wild will fall into this use
+        case even though it might not be represented in some of the major JS benchmarks.
+        I wrote some microbenchmarks to demonstrate the benefits of PureGetById CSE,
+        and they were 30% (eliminating a few PureGetById from an add expression)
+        to 10x faster (eliminating a PureGetById in a loop).
+
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::canBecomeGetArrayLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTryGetById):
+        (JSC::DFG::SpeculativeJIT::compilePureGetById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        * jit/JITOperations.cpp:
+        (JSC::pureGetByIdCommon):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGenericGetByIdFunction):
+        (JSC::tryCacheGetByID):
+        * jit/Repatch.h:
+        * profiler/ProfilerJettisonReason.cpp:
+        (WTF::printInternal):
+        * profiler/ProfilerJettisonReason.h:
+
 2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints not working in scripts with unicode characters

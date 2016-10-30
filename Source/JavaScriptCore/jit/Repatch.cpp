@@ -134,16 +134,34 @@ static bool forceICFailure(ExecState*)
 
 inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(GetByIDKind kind)
 {
-    if (kind == GetByIDKind::Normal)
+    switch (kind) {
+    case GetByIDKind::Normal:
         return operationGetByIdOptimize;
-    return operationTryGetByIdOptimize;
+    case GetByIDKind::Try:
+        return operationTryGetByIdOptimize;
+    case GetByIDKind::Pure:
+        return operationPureGetByIdOptimize;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return operationGetByIdOptimize;
 }
 
 inline J_JITOperation_ESsiJI appropriateGenericGetByIdFunction(GetByIDKind kind)
 {
-    if (kind == GetByIDKind::Normal)
+    switch (kind) {
+    case GetByIDKind::Normal:
         return operationGetById;
-    return operationTryGetById;
+    case GetByIDKind::Try:
+        return operationTryGetById;
+    case GetByIDKind::Pure:
+        return operationPureGetById;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return operationGetById;
 }
 
 static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByIDKind kind)
@@ -266,6 +284,16 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             domJIT = slot.domJIT();
 
         if (kind == GetByIDKind::Pure) {
+            AccessCase::AccessType type;
+            if (slot.isCacheableValue())
+                type = AccessCase::Load;
+            else if (slot.isUnset())
+                type = AccessCase::Miss;
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+
+            newCase = AccessCase::tryGet(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
+        } else if (kind == GetByIDKind::Try) {
             AccessCase::AccessType type;
             if (slot.isCacheableValue())
                 type = AccessCase::Load;

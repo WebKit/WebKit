@@ -264,6 +264,7 @@ bool doesGC(Graph& graph, Node* node)
     case ResolveScope:
         return false;
 
+    case PureGetById: // We are modeling getOwnPropertySlot here, which may GC because it is allowed to allocate things.
     case CreateActivation:
     case CreateDirectArguments:
     case CreateScopedArguments:

@@ -1167,6 +1167,7 @@ private:
             break;
         }
 
+        case PureGetById:
         case GetById:
         case GetByIdFlush: {
             // FIXME: This should be done in the ByteCodeParser based on reading the

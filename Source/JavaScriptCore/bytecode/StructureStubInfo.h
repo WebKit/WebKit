@@ -46,7 +46,8 @@ class PolymorphicAccess;
 
 enum class AccessType : int8_t {
     Get,
-    GetPure,
+    TryGet,
+    PureGet,
     Put,
     In
 };
@@ -205,6 +206,7 @@ public:
     bool resetByGC : 1;
     bool tookSlowPath : 1;
     bool everConsidered : 1;
+    bool didSideEffects : 1;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

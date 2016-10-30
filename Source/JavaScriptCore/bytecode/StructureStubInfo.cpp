@@ -48,6 +48,7 @@ StructureStubInfo::StructureStubInfo(AccessType accessType)
     , resetByGC(false)
     , tookSlowPath(false)
     , everConsidered(false)
+    , didSideEffects(false)
 {
 }
 
@@ -216,7 +217,10 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
     }
 
     switch (accessType) {
-    case AccessType::GetPure:
+    case AccessType::TryGet:
+        resetGetByID(codeBlock, *this, GetByIDKind::Try);
+        break;
+    case AccessType::PureGet:
         resetGetByID(codeBlock, *this, GetByIDKind::Pure);
         break;
     case AccessType::Get:

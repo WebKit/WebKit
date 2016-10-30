@@ -199,6 +199,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case TryGetById:
     case DeleteById:
     case DeleteByVal:
+    case PureGetById:
     case GetById:
     case GetByIdWithThis:
     case GetByValWithThis:

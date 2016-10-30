@@ -35,6 +35,7 @@ enum JettisonReason {
     JettisonDueToBaselineLoopReoptimizationTrigger,
     JettisonDueToBaselineLoopReoptimizationTriggerOnOSREntryFail,
     JettisonDueToOSRExit,
+    JettisonDueToPureGetByIdEffects,
     JettisonDueToProfiledWatchpoint,
     JettisonDueToUnprofiledWatchpoint,
     JettisonDueToOldAge

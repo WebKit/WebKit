@@ -721,6 +721,7 @@ public:
     void compileDeleteById(Node*);
     void compileDeleteByVal(Node*);
     void compileTryGetById(Node*);
+    void compilePureGetById(Node*);
     void compileIn(Node*);
     
     void nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand);

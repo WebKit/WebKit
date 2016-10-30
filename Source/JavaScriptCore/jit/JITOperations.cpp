@@ -70,6 +70,35 @@
 
 namespace JSC {
 
+ALWAYS_INLINE static EncodedJSValue pureGetByIdCommon(VM& vm, ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid, const std::function<void (const PropertySlot&, const Identifier&)>& function = [] (const PropertySlot&, const Identifier&) { })
+{
+    Identifier ident = Identifier::fromUid(&vm, uid);
+    JSValue baseValue = JSValue::decode(base);
+
+    ASSERT(JITCode::isOptimizingJIT(exec->codeBlock()->jitType()));
+
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    return JSValue::encode(baseValue.getPropertySlot(exec, ident, slot, [&] (bool, PropertySlot&) -> JSValue {
+        bool willDoSideEffects = !(slot.isValue() || slot.isUnset()) || slot.isTaintedByOpaqueObject();
+        if (UNLIKELY(willDoSideEffects)) {
+            {
+                CodeOrigin codeOrigin = exec->codeOrigin();
+                CodeBlock* currentBaseline = baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, exec->codeBlock()->alternative());
+                CodeOrigin originBytecodeIndex = CodeOrigin(codeOrigin.bytecodeIndex); // Since we're searching in the baseline, we just care about bytecode index.
+                ConcurrentJITLocker locker(currentBaseline->m_lock);
+                if (StructureStubInfo* stub = currentBaseline->findStubInfo(originBytecodeIndex))
+                    stub->didSideEffects = true;
+            }
+
+            exec->codeBlock()->jettison(Profiler::JettisonDueToPureGetByIdEffects);
+            return baseValue.get(exec, uid);
+        }
+
+        function(slot, ident);
+        return slot.isValue() ? slot.getValue(exec, ident) : jsUndefined();
+    }));
+}
+
 extern "C" {
 
 #if COMPILER(MSVC)
@@ -165,6 +194,38 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
     return missingArgCount;
 }
 
+EncodedJSValue JIT_OPERATION operationPureGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return pureGetByIdCommon(*vm, exec, base, uid);
+}
+
+EncodedJSValue JIT_OPERATION operationPureGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    stubInfo->tookSlowPath = true;
+
+    return pureGetByIdCommon(*vm, exec, base, uid);
+}
+
+EncodedJSValue JIT_OPERATION operationPureGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return pureGetByIdCommon(*vm, exec, base, uid, 
+        [&] (const PropertySlot& slot, const Identifier& ident) {
+            ASSERT((slot.isValue() || slot.isUnset()) && !slot.isTaintedByOpaqueObject());
+            JSValue baseValue = JSValue::decode(base);
+            if (stubInfo->considerCaching(baseValue.structureOrNull()))
+                repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
+        });
+}
+
 EncodedJSValue JIT_OPERATION operationTryGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     VM* vm = &exec->vm();
@@ -178,7 +239,6 @@ EncodedJSValue JIT_OPERATION operationTryGetById(ExecState* exec, StructureStubI
 
     return JSValue::encode(slot.getPureResult());
 }
-
 
 EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
 {
@@ -207,7 +267,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (stubInfo->considerCaching(baseValue.structureOrNull()) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
-        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Try);
 
     return JSValue::encode(slot.getPureResult());
 }
@@ -226,7 +286,10 @@ EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo
     Identifier ident = Identifier::fromUid(vm, uid);
     
     LOG_IC((ICEvent::OperationGetById, baseValue.classInfoOrNull(), ident));
-    return JSValue::encode(baseValue.get(exec, ident, slot));
+    JSValue result = baseValue.get(exec, ident, slot);
+    bool willDoSideEffects = !(slot.isValue() || slot.isUnset()) || slot.isTaintedByOpaqueObject();
+    stubInfo->didSideEffects |= willDoSideEffects;
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
@@ -255,6 +318,9 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(), ident));
 
     return JSValue::encode(baseValue.getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        bool willDoSideEffects = !(slot.isValue() || slot.isUnset()) || slot.isTaintedByOpaqueObject();
+        stubInfo->didSideEffects |= willDoSideEffects;
+
         if (stubInfo->considerCaching(baseValue.structureOrNull()))
             repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Normal);
         return found ? slot.getValue(exec, ident) : jsUndefined();
