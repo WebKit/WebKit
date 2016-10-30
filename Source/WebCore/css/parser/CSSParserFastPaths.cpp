@@ -795,6 +795,12 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
             || valueID == CSSValueUp || valueID == CSSValueAuto;
     case CSSPropertyWebkitMarqueeStyle:
         return valueID == CSSValueNone || valueID == CSSValueSlide || valueID == CSSValueScroll || valueID == CSSValueAlternate;
+    case CSSPropertyFontVariantPosition: // normal | sub | super
+        return valueID == CSSValueNormal || valueID == CSSValueSub || valueID == CSSValueSuper;
+    case CSSPropertyFontVariantCaps: // normal | small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps
+        return valueID == CSSValueNormal || valueID == CSSValueSmallCaps || valueID == CSSValueAllSmallCaps || valueID == CSSValuePetiteCaps || valueID == CSSValueAllPetiteCaps || valueID == CSSValueUnicase || valueID == CSSValueTitlingCaps;
+    case CSSPropertyFontVariantAlternates: // We only support the normal and historical-forms values.
+        return valueID == CSSValueNormal || valueID == CSSValueHistoricalForms;
     default:
         ASSERT_NOT_REACHED();
         return false;
