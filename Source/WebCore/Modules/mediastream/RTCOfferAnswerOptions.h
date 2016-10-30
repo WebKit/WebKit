@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCOfferAnswerOptions_h
-#define RTCOfferAnswerOptions_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -38,47 +37,46 @@ namespace WebCore {
 
 class Dictionary;
 
-class RTCOfferAnswerOptions : public RefCounted<RTCOfferAnswerOptions> {
+class RTCOfferAnswerOptions {
 public:
-    virtual ~RTCOfferAnswerOptions() { }
-
     bool voiceActivityDetection() const { return m_voiceActivityDetection; }
 
 protected:
-    virtual bool initialize(const Dictionary&);
-    RTCOfferAnswerOptions();
+    RTCOfferAnswerOptions() = default;
+    bool initialize(const Dictionary&);
 
-    bool m_voiceActivityDetection;
+private:
+    bool m_voiceActivityDetection { true };
 };
 
-class RTCOfferOptions : public RTCOfferAnswerOptions {
+// FIXME: Why is this reference counted?
+class RTCOfferOptions : public RefCounted<RTCOfferOptions>, public RTCOfferAnswerOptions {
 public:
-    static RefPtr<RTCOfferOptions> create(const Dictionary&, ExceptionCode&);
+    static ExceptionOr<Ref<RTCOfferOptions>> create(const Dictionary&);
 
     int64_t offerToReceiveVideo() const { return m_offerToReceiveVideo; }
     int64_t offerToReceiveAudio() const { return m_offerToReceiveAudio; }
     bool iceRestart() const { return m_iceRestart; }
 
 private:
-    bool initialize(const Dictionary&) override;
-    RTCOfferOptions();
+    RTCOfferOptions() = default;
+    bool initialize(const Dictionary&);
 
-    int64_t m_offerToReceiveVideo;
-    int64_t m_offerToReceiveAudio;
-    bool m_iceRestart;
+    int64_t m_offerToReceiveVideo { 0 };
+    int64_t m_offerToReceiveAudio { 0 };
+    bool m_iceRestart { false };
 };
 
-class RTCAnswerOptions : public RTCOfferAnswerOptions {
+// FIXME: Why is this reference counted?
+class RTCAnswerOptions : public RefCounted<RTCAnswerOptions>, public RTCOfferAnswerOptions {
 public:
-    static RefPtr<RTCAnswerOptions> create(const Dictionary&, ExceptionCode&);
+    static ExceptionOr<Ref<RTCAnswerOptions>> create(const Dictionary&);
 
 private:
-    bool initialize(const Dictionary&) override;
-    RTCAnswerOptions() { }
+    RTCAnswerOptions() = default;
+    bool initialize(const Dictionary&);
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCOfferAnswerOptions_h

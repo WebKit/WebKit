@@ -260,15 +260,15 @@ public:
         return redo(ec);
     }
 
-    bool undo(ExceptionCode& ec) override
+    bool undo(ExceptionCode&) override
     {
-        m_textNode->replaceWholeText(m_oldText, ec);
+        m_textNode->replaceWholeText(m_oldText);
         return true;
     }
 
-    bool redo(ExceptionCode& ec) override
+    bool redo(ExceptionCode&) override
     {
-        m_textNode->replaceWholeText(m_text, ec);
+        m_textNode->replaceWholeText(m_text);
         return true;
     }
 

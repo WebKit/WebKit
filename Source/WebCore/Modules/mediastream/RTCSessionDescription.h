@@ -28,16 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCSessionDescription_h
-#define RTCSessionDescription_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -52,9 +48,8 @@ public:
         Rollback
     };
 
-    static RefPtr<RTCSessionDescription> create(const Dictionary&, ExceptionCode&);
+    static ExceptionOr<Ref<RTCSessionDescription>> create(const Dictionary&);
     static Ref<RTCSessionDescription> create(SdpType, const String& sdp);
-    virtual ~RTCSessionDescription() { }
 
     SdpType type() const { return m_type; }
 
@@ -71,5 +66,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCSessionDescription_h

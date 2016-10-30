@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ExceptionCode.h"
 #include "SDPProcessor.h"
 #include <wtf/NeverDestroyed.h>
 

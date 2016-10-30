@@ -1,3 +1,167 @@
+2016-10-29  Darin Adler  <darin@apple.com>
+
+        Convert more of DOM from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164173
+
+        Reviewed by Ryosuke Niwa.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::getUserMedia): Use ExceptionOr.
+        (WebCore::MediaDevices::enumerateDevices): Ditto.
+        * Modules/mediastream/MediaDevices.h: Updated for above.
+        * Modules/mediastream/MediaDevices.idl: Use non-legacy exceptions.
+
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp:
+        Added now-needed include of ExceptionCode.h.
+
+        * Modules/mediastream/RTCConfiguration.cpp:
+        (WebCore::parseIceServer): Use ExceptionOr.
+        (WebCore::RTCConfiguration::create): Ditto.
+        (WebCore::RTCConfiguration::initialize): Ditto.
+        * Modules/mediastream/RTCConfiguration.h: Updated for above.
+        * Modules/mediastream/RTCConfiguration.idl: Use non-legacy exceptions.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::create): Use ExceptionOr.
+        (WebCore::RTCDTMFSender::insertDTMF): Ditto.
+        * Modules/mediastream/RTCDTMFSender.h: Updated for above.
+        * Modules/mediastream/RTCDTMFSender.idl: Use non-legacy exceptions.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create): Use ExceptionOr.
+        (WebCore::RTCDataChannel::setBinaryType): Ditto.
+        (WebCore::RTCDataChannel::send): Ditto.
+        (WebCore::RTCDataChannel::didReceiveRawData): Ditto.
+        * Modules/mediastream/RTCDataChannel.h: Updated for above.
+        Also fhcanged resturn values to use const AtomicString& and
+        unsigned instead of unsigned long. Also made more private.
+        Also changed BinaryType into an enum class.
+        * Modules/mediastream/RTCDataChannel.idl: Use non-legacy exceptions.
+
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create): Use ExceptionOr.
+        * Modules/mediastream/RTCIceCandidate.h: Updated for above.
+        * Modules/mediastream/RTCIceCandidate.idl: Use non-legacy exception.
+
+        * Modules/mediastream/RTCOfferAnswerOptions.cpp:
+        (WebCore::RTCOfferOptions::create): Use ExceptionOr.
+        (WebCore::RTCAnswerOptions::create): Ditto.
+        * Modules/mediastream/RTCOfferAnswerOptions.h: Updated for above.
+        Also removed all virtual functions since nothing here is polymorphic
+        and initalized data members in the header.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::initializeWith): Use ExceptionOr.
+        (WebCore::RTCPeerConnection::addTrack): Ditto.
+        (WebCore::RTCPeerConnection::removeTrack): Ditto.
+        (WebCore::RTCPeerConnection::addTransceiver): Ditto.
+        (WebCore::RTCPeerConnection::completeAddTransceiver): Ditto.
+        (WebCore::RTCPeerConnection::queuedCreateOffer): Ditto.
+        (WebCore::RTCPeerConnection::queuedCreateAnswer): Ditto.
+        (WebCore::RTCPeerConnection::setConfiguration): Ditto.
+        (WebCore::RTCPeerConnection::createDataChannel): Ditto.
+        * Modules/mediastream/RTCPeerConnection.h: Updated for above.
+        * Modules/mediastream/RTCPeerConnection.idl: Use non-legacy exceptions.
+
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack): Use ExceptionOr.
+        * Modules/mediastream/RTCRtpSender.h: Updated for above.
+        * Modules/mediastream/RTCRtpSender.idl: Use non-legacy exception.
+
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::RTCSessionDescription::create): Use ExceptoinOr.
+        * Modules/mediastream/RTCSessionDescription.h: Updated for above.
+        (WebCore::RTCSessionDescription::~RTCSessionDescription):
+        * Modules/mediastream/RTCSessionDescription.idl: Use non-legacy exceptions.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::verifyCustomHandlerURL): Just return a boolean, no exception.
+        (WebCore::verifyProtocolHandlerScheme): Ditto.
+        (WebCore::NavigatorContentUtils::registerProtocolHandler): Use ExceptionOr.
+        (WebCore::NavigatorContentUtils::isProtocolHandlerRegistered): Ditto.
+        (WebCore::NavigatorContentUtils::unregisterProtocolHandler): Ditto.
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h: Updated for above.
+        * Modules/navigatorcontentutils/NavigatorContentUtils.idl: Use non-legacy exceptions.
+
+        * bindings/js/JSMediaDevicesCustom.cpp:
+        (WebCore::JSMediaDevicesGetUserMediaPromiseFunction): Use propagateException.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsExplicitPropagateExceptionCall): Added. Helper function to decide whether
+        we need to call propagateException explicitly, if return value processing is not
+        going to propagate the exception for us.
+        (GenerateParametersCheck): Moved the code from GenerateReturnParameters inline
+        because it's almost as short as the function call. Use the newly created
+        NeedsExplicitPropagateExceptionCall function, which properly handles the case
+        where the return value is a promise.
+        (GenerateReturnParameters): Deleted.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::substringData): Use ExceptionOr.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        * dom/CharacterData.h: Updated for above.
+        * dom/CharacterData.idl: Use non-legacy exceptions.
+
+        * dom/DataTransferItemList.h: Tried to use ExceptionOr, but this seems
+        like dead code that doesn't compile.
+        * dom/DataTransferItemList.idl: Use non-legacy exceptions.
+
+        * dom/MessagePort.idl: Use non-legacy exceptions, except this has
+        already been converted and was a custom binding.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observe): Use ExceptionOr.
+        * dom/MutationObserver.h: Updated for above.
+        * dom/MutationObserver.idl: Use non-legacy exception.
+
+        * dom/Range.cpp:
+        (WebCore::deleteCharacterData): Updated use of calls that now use
+        ExceptionOr.
+        (WebCore::Range::processContentsBetweenOffsets): Ditto.
+        (WebCore::Range::insertNode): Ditto.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML): Use ExceptionOr.
+        * dom/ShadowRoot.h: Updated for above.
+        * dom/ShadowRoot.idl: Use non-legacy exception.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Use ExceptionOr.
+        (WebCore::Text::replaceWholeText): Removed unused ExceptionCode&.
+        * dom/Text.h: Updated for above.
+        * dom/Text.idl: Use non-legacy exception.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::isNewLineAtPosition): Rewrote to use data rather than
+        substringData; more efficient.
+
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply): Updated to work with
+        functions that return ExceptionOr.
+        (WebCore::DeleteFromTextNodeCommand::doUnapply): Removed IGNORE_EXCEPTION.
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        Use WTFMove to avoid a little bit of reference count churn.
+        (WebCore::InsertIntoTextNodeCommand::doApply): Removed IGNORE_EXCEPTION.
+        (WebCore::InsertIntoTextNodeCommand::doReapply): Removed ExceptionCode.
+        (WebCore::InsertIntoTextNodeCommand::doUnapply): Removed IGNORE_EXCEPTION.
+
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply): Updated to work with functions
+        that return ExceptionCode.
+        (WebCore::SplitTextNodeCommand::doUnapply): Removed ASSERT_NO_EXCEPTION.
+        (WebCore::SplitTextNodeCommand::insertText1AndTrimText2): Updated to work
+        with functions that return ExceptionCode.
+
+        * html/HTMLTextFormControlElement.cpp:
+        Added now-needed include of ExceptionCode.h.
+
+        * inspector/DOMEditor.cpp: Removed ExceptionCode out argument from calls
+        to replaceWholeText, which never throws an exception.
+
 2016-10-29  Dean Jackson  <dino@apple.com>
 
         Parse color() function

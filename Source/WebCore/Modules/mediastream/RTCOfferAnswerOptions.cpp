@@ -33,11 +33,6 @@
 
 namespace WebCore {
 
-RTCOfferAnswerOptions::RTCOfferAnswerOptions()
-    : m_voiceActivityDetection(true)
-{
-}
-
 bool RTCOfferAnswerOptions::initialize(const Dictionary& options)
 {
     bool voiceActivityDetection;
@@ -47,24 +42,15 @@ bool RTCOfferAnswerOptions::initialize(const Dictionary& options)
     return true;
 }
 
-RefPtr<RTCOfferOptions> RTCOfferOptions::create(const Dictionary& options, ExceptionCode& ec)
+ExceptionOr<Ref<RTCOfferOptions>> RTCOfferOptions::create(const Dictionary& options)
 {
-    RefPtr<RTCOfferOptions> offerOptions = adoptRef(new RTCOfferOptions());
-    if (!offerOptions->initialize(options)) {
+    auto result = adoptRef(*new RTCOfferOptions);
+    if (!result->initialize(options)) {
         // FIXME: https://webkit.org/b/129800
         // According to the spec, the error is going to be defined yet, so let's use TYPE_MISMATCH_ERR for now.
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
+        return Exception { TYPE_MISMATCH_ERR };
     }
-
-    return offerOptions;
-}
-
-RTCOfferOptions::RTCOfferOptions()
-    : m_offerToReceiveVideo(0)
-    , m_offerToReceiveAudio(0)
-    , m_iceRestart(false)
-{
+    return WTFMove(result);
 }
 
 bool RTCOfferOptions::initialize(const Dictionary& options)
@@ -99,17 +85,15 @@ bool RTCOfferOptions::initialize(const Dictionary& options)
     return RTCOfferAnswerOptions::initialize(options);
 }
 
-RefPtr<RTCAnswerOptions> RTCAnswerOptions::create(const Dictionary& options, ExceptionCode& ec)
+ExceptionOr<Ref<RTCAnswerOptions>> RTCAnswerOptions::create(const Dictionary& options)
 {
-    RefPtr<RTCAnswerOptions> offerOptions = adoptRef(new RTCAnswerOptions());
-    if (!offerOptions->initialize(options)) {
+    auto result = adoptRef(*new RTCAnswerOptions);
+    if (!result->initialize(options)) {
         // FIXME: https://webkit.org/b/129800
         // According to the spec, the error is going to be defined yet, so let's use TYPE_MISMATCH_ERR for now.
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
+        return Exception { TYPE_MISMATCH_ERR };
     }
-
-    return offerOptions;
+    return WTFMove(result);
 }
 
 bool RTCAnswerOptions::initialize(const Dictionary& options)

@@ -27,11 +27,11 @@
 #include "InsertIntoTextNodeCommand.h"
 
 #include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "RenderText.h"
 #include "Settings.h"
 #include "Text.h"
+
 #if PLATFORM(IOS)
 #include "RenderText.h"
 #endif
@@ -40,7 +40,7 @@ namespace WebCore {
 
 InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
-    , m_node(node)
+    , m_node(WTFMove(node))
     , m_offset(offset)
     , m_text(text)
 {
@@ -63,15 +63,19 @@ void InsertIntoTextNodeCommand::doApply()
             renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length());
     }
 
-    m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
+    m_node->insertData(m_offset, m_text);
 }
 
 #if PLATFORM(IOS)
+
+// FIXME: Why would reapply be iOS-specific?
 void InsertIntoTextNodeCommand::doReapply()
 {
-    ExceptionCode ec;
-    m_node->insertData(m_offset, m_text, ec);
+    // FIXME: Shouldn't this have a hasEditableStyle check?
+
+    m_node->insertData(m_offset, m_text);
 }
+
 #endif
     
 void InsertIntoTextNodeCommand::doUnapply()
@@ -79,14 +83,16 @@ void InsertIntoTextNodeCommand::doUnapply()
     if (!m_node->hasEditableStyle())
         return;
 
-    m_node->deleteData(m_offset, m_text.length(), IGNORE_EXCEPTION);
+    m_node->deleteData(m_offset, m_text.length());
 }
 
 #ifndef NDEBUG
+
 void InsertIntoTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
     addNodeAndDescendants(m_node.get(), nodes);
 }
+
 #endif
 
 } // namespace WebCore

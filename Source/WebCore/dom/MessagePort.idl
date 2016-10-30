@@ -31,7 +31,7 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface MessagePort : EventTarget {
-    [Custom, MayThrowLegacyException] void postMessage(any message, optional Array messagePorts);
+    [Custom, MayThrowException] void postMessage(any message, optional Array messagePorts);
 
     void start();
     void close();

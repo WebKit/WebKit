@@ -140,13 +140,13 @@ WebKitDOMText* webkit_dom_text_split_text(WebKitDOMText* self, gulong offset, GE
     g_return_val_if_fail(WEBKIT_DOM_IS_TEXT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Text* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Text> gobjectResult = WTF::getPtr(item->splitText(offset, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->splitText(offset);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 gchar* webkit_dom_text_get_whole_text(WebKitDOMText* self)

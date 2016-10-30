@@ -73,10 +73,7 @@
 - (NSString *)substringData:(unsigned)offset length:(unsigned)inLength
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->substringData(offset, inLength, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->substringData(offset, inLength));
 }
 
 - (void)appendData:(NSString *)inData
@@ -88,25 +85,19 @@
 - (void)insertData:(unsigned)offset data:(NSString *)inData
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->insertData(offset, inData, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->insertData(offset, inData));
 }
 
 - (void)deleteData:(unsigned)offset length:(unsigned)inLength
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteData(offset, inLength, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteData(offset, inLength));
 }
 
 - (void)replaceData:(unsigned)offset length:(unsigned)inLength data:(NSString *)inData
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->replaceData(offset, inLength, inData, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->replaceData(offset, inLength, inData));
 }
 
 - (void)remove

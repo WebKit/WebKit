@@ -28,6 +28,7 @@ enum RTCBundlePolicy { "balanced", "max-compat", "max-bundle" };
 
 [
     Conditional=WEB_RTC,
+    ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface RTCConfiguration {
     readonly attribute sequence<RTCIceServer> iceServers;

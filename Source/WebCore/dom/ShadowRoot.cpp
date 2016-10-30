@@ -30,6 +30,7 @@
 
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
+#include "ExceptionCode.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SlotAssignment.h"
@@ -106,21 +107,14 @@ String ShadowRoot::innerHTML() const
     return createMarkup(*this, ChildrenOnly);
 }
 
-void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
+ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)
 {
-    if (isOrphan()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
+    if (isOrphan())
+        return Exception { INVALID_ACCESS_ERR };
     auto fragment = createFragmentForInnerOuterHTML(*host(), markup, AllowScriptingContent);
-    if (fragment.hasException()) {
-        ec = fragment.releaseException().code();
-        return;
-    }
-    auto result = replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
-    if (result.hasException())
-        ec = result.releaseException().code();
+    if (fragment.hasException())
+        return fragment.releaseException();
+    return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const

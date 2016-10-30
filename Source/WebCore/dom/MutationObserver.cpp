@@ -72,7 +72,7 @@ bool MutationObserver::validateOptions(MutationObserverOptions options)
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void MutationObserver::observe(Node& node, const Init& init, ExceptionCode& ec)
+ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
 {
     MutationObserverOptions options = 0;
 
@@ -98,12 +98,12 @@ void MutationObserver::observe(Node& node, const Init& init, ExceptionCode& ec)
     if (init.characterData ? init.characterData.value() : (options & CharacterDataOldValue))
         options |= CharacterData;
 
-    if (!validateOptions(options)) {
-        ec = TypeError;
-        return;
-    }
+    if (!validateOptions(options))
+        return Exception { TypeError };
 
     node.registerMutationObserver(this, options, attributeFilter);
+
+    return { };
 }
 
 Vector<Ref<MutationRecord>> MutationObserver::takeRecords()

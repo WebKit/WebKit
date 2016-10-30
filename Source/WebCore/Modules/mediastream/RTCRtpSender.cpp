@@ -67,19 +67,19 @@ void RTCRtpSender::setTrack(RefPtr<MediaStreamTrack>&& track)
     m_track = WTFMove(track);
 }
 
-void RTCRtpSender::replaceTrack(Ref<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise, ExceptionCode& ec)
+ExceptionOr<void> RTCRtpSender::replaceTrack(Ref<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise)
 {
     if (isStopped()) {
         promise.reject(INVALID_STATE_ERR);
-        return;
+        return { };
     }
 
-    if (m_trackKind != withTrack->kind()) {
-        ec = TypeError;
-        return;
-    }
+    if (m_trackKind != withTrack->kind())
+        return Exception { TypeError };
 
     m_client->replaceTrack(*this, WTFMove(withTrack), WTFMove(promise));
+
+    return { };
 }
 
 } // namespace WebCore

@@ -33,7 +33,7 @@
     CustomIsReachable,
     ImplementationLacksVTable,
 ] interface MutationObserver {
-    [MayThrowLegacyException] void observe(Node target, optional MutationObserverInit options);
+    [MayThrowException] void observe(Node target, optional MutationObserverInit options);
     sequence<MutationRecord> takeRecords();
     void disconnect();
 };

@@ -28,17 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCIceCandidate_h
-#define RTCIceCandidate_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionBase.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/Optional.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -47,9 +43,8 @@ class RTCIceCandidateDescriptor;
 
 class RTCIceCandidate : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
 public:
-    static RefPtr<RTCIceCandidate> create(const Dictionary&, ExceptionCode&);
+    static ExceptionOr<Ref<RTCIceCandidate>> create(const Dictionary&);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
-    virtual ~RTCIceCandidate() { }
 
     const String& candidate() const { return m_candidate; }
     const String& sdpMid() const { return m_sdpMid; }
@@ -66,5 +61,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCIceCandidate_h

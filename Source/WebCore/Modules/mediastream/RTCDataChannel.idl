@@ -36,12 +36,12 @@
     readonly attribute DOMString readyState;
     readonly attribute unsigned long bufferedAmount;
 
-    [SetterMayThrowLegacyException] attribute DOMString binaryType;
+    [SetterMayThrowException] attribute DOMString binaryType;
 
-    [MayThrowLegacyException] void send(ArrayBuffer data);
-    [MayThrowLegacyException] void send(ArrayBufferView data);
-    [MayThrowLegacyException] void send(Blob data);
-    [MayThrowLegacyException] void send(DOMString data);
+    [MayThrowException] void send(ArrayBuffer data);
+    [MayThrowException] void send(ArrayBufferView data);
+    [MayThrowException] void send(Blob data);
+    [MayThrowException] void send(DOMString data);
 
     void close();
 

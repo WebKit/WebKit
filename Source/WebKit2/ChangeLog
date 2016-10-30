@@ -1,3 +1,21 @@
+2016-10-29  Darin Adler  <darin@apple.com>
+
+        Convert more of DOM from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164173
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp:
+        (webkit_dom_character_data_substring_data): Updated since this
+        now uses ExceptionOr.
+        (webkit_dom_character_data_insert_data): Ditto.
+        (webkit_dom_character_data_delete_data): Ditto.
+        (webkit_dom_character_data_replace_data): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp:
+        (webkit_dom_text_replace_whole_text): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.cpp:
+        (webkit_dom_text_split_text): Ditto.
+
 2016-10-28  Darin Adler  <darin@apple.com>
 
         Move all classes in the HTML directory from ExceptionCode to Exception

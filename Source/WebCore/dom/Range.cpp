@@ -652,10 +652,16 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
 
 static inline void deleteCharacterData(CharacterData& data, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
 {
-    if (data.length() - endOffset)
-        data.deleteData(endOffset, data.length() - endOffset, ec);
-    if (startOffset)
-        data.deleteData(0, startOffset, ec);
+    if (data.length() - endOffset) {
+        auto result = data.deleteData(endOffset, data.length() - endOffset);
+        if (result.hasException())
+            ec = result.releaseException().code();
+    }
+    if (startOffset) {
+        auto result = data.deleteData(0, startOffset);
+        if (result.hasException())
+            ec = result.releaseException().code();
+    }
 }
 
 RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<DocumentFragment> fragment, Node* container, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
@@ -680,8 +686,11 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
             } else
                 result = WTFMove(characters);
         }
-        if (action == Extract || action == Delete)
-            downcast<CharacterData>(*container).deleteData(startOffset, endOffset - startOffset, ec);
+        if (action == Extract || action == Delete) {
+            auto result = downcast<CharacterData>(*container).deleteData(startOffset, endOffset - startOffset);
+            if (result.hasException())
+                ec = result.releaseException().code();
+        }
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
         endOffset = std::min(endOffset, static_cast<ProcessingInstruction*>(container)->data().length());
@@ -845,9 +854,12 @@ void Range::insertNode(Ref<Node>&& node, ExceptionCode& ec)
 
     EventQueueScope scope;
     if (startIsText) {
-        referenceNode = downcast<Text>(startContainer()).splitText(startOffset(), ec);
-        if (ec)
+        auto result = downcast<Text>(startContainer()).splitText(startOffset());
+        if (result.hasException()) {
+            ec = result.releaseException().code();
             return;
+        }
+        referenceNode = result.releaseReturnValue();
     }
 
     if (referenceNode == node.ptr())

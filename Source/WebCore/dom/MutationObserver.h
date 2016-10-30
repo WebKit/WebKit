@@ -28,13 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MutationObserver_h
-#define MutationObserver_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,10 +43,8 @@ class MutationObserverRegistration;
 class MutationRecord;
 class Node;
 
-typedef int ExceptionCode;
-
-typedef unsigned char MutationObserverOptions;
-typedef unsigned char MutationRecordDeliveryOptions;
+using MutationObserverOptions = unsigned char;
+using MutationRecordDeliveryOptions = unsigned char;
 
 class MutationObserver : public RefCounted<MutationObserver> {
     friend class MutationObserverMicrotask;
@@ -85,7 +81,7 @@ public:
         Optional<Vector<String>> attributeFilter;
     };
 
-    void observe(Node&, const Init&, ExceptionCode&);
+    ExceptionOr<void> observe(Node&, const Init&);
     Vector<Ref<MutationRecord>> takeRecords();
     void disconnect();
 
@@ -113,5 +109,3 @@ private:
 };
 
 }
-
-#endif // MutationObserver_h

@@ -38,18 +38,18 @@
     JSBuiltinConstructor,
 ] interface RTCPeerConnection : EventTarget {
     // Private initializer
-    [PrivateIdentifier, CallWith=Document, MayThrowLegacyException] void initializeWith(Dictionary parameters);
+    [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(Dictionary parameters);
 
     // RTP Media API extensions
     [PrivateIdentifier, PublicIdentifier] sequence<RTCRtpSender> getSenders();
     sequence<RTCRtpReceiver> getReceivers();
     sequence<RTCRtpTransceiver> getTransceivers();
 
-    [PrivateIdentifier, PublicIdentifier, MayThrowLegacyException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [PrivateIdentifier, PublicIdentifier, MayThrowLegacyException] void removeTrack(RTCRtpSender sender);
+    [PrivateIdentifier, PublicIdentifier, MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
+    [PrivateIdentifier, PublicIdentifier, MayThrowException] void removeTrack(RTCRtpSender sender);
 
-    [MayThrowLegacyException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
-    [MayThrowLegacyException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
+    [MayThrowException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
+    [MayThrowException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
 
     // Legacy MediaSream-based API (implemented on top of the RTP Media API)
     [JSBuiltin] sequence<MediaStream> getLocalStreams();
@@ -98,7 +98,7 @@
     readonly attribute DOMString iceConnectionState;
 
     RTCConfiguration getConfiguration();
-    [MayThrowLegacyException] void setConfiguration(Dictionary configuration);
+    [MayThrowException] void setConfiguration(Dictionary configuration);
 
     [JSBuiltin] Promise getStats(optional MediaStreamTrack? selector = null);
     // Legacy signature: Promise getStats(MediaStreamTrack? selector
@@ -114,7 +114,7 @@
     [PrivateIdentifier] Promise queuedAddIceCandidate(RTCIceCandidate candidate);
     [PrivateIdentifier] Promise privateGetStats(MediaStreamTrack? selector);
 
-    [MayThrowLegacyException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional Dictionary options);
+    [MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional Dictionary options);
 
     void close();
 

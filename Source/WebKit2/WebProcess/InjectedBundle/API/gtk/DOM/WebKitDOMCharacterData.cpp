@@ -169,9 +169,10 @@ gchar* webkit_dom_character_data_substring_data(WebKitDOMCharacterData* self, gu
     g_return_val_if_fail(WEBKIT_DOM_IS_CHARACTER_DATA(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::CharacterData* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    gchar* result = convertToUTF8String(item->substringData(offset, length, ec));
-    return result;
+    auto result = item->substringData(offset, length);
+    if (result.hasException())
+        return nullptr;
+    return convertToUTF8String(result.releaseReturnValue());
 }
 
 void webkit_dom_character_data_append_data(WebKitDOMCharacterData* self, const gchar* data, GError** error)
@@ -193,10 +194,9 @@ void webkit_dom_character_data_insert_data(WebKitDOMCharacterData* self, gulong 
     g_return_if_fail(!error || !*error);
     WebCore::CharacterData* item = WebKit::core(self);
     WTF::String convertedData = WTF::String::fromUTF8(data);
-    WebCore::ExceptionCode ec = 0;
-    item->insertData(offset, convertedData, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->insertData(offset, convertedData);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -207,10 +207,9 @@ void webkit_dom_character_data_delete_data(WebKitDOMCharacterData* self, gulong 
     g_return_if_fail(WEBKIT_DOM_IS_CHARACTER_DATA(self));
     g_return_if_fail(!error || !*error);
     WebCore::CharacterData* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->deleteData(offset, length, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->deleteData(offset, length);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -223,10 +222,9 @@ void webkit_dom_character_data_replace_data(WebKitDOMCharacterData* self, gulong
     g_return_if_fail(!error || !*error);
     WebCore::CharacterData* item = WebKit::core(self);
     WTF::String convertedData = WTF::String::fromUTF8(data);
-    WebCore::ExceptionCode ec = 0;
-    item->replaceData(offset, length, convertedData, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->replaceData(offset, length, convertedData);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

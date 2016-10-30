@@ -4261,6 +4261,18 @@ sub WillConvertUndefinedToDefaultParameterValue
     return 0;
 }
 
+sub NeedsExplicitPropagateExceptionCall
+{
+    my ($function) = @_;
+
+    return 0 unless $function->signature->extendedAttributes->{MayThrowException};
+
+    return 1 if $function->signature->type && $function->signature->type->name eq "void";
+    return 1 if IsReturningPromise($function);
+
+    return 0;
+}
+
 sub GenerateParametersCheck
 {
     my ($outputArray, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType) = @_;
@@ -4486,21 +4498,13 @@ sub GenerateParametersCheck
         $argumentIndex++;
     }
 
-    push @arguments, GenerateReturnParameters($function);
-    my $functionString = "$functionName(" . join(", ", @arguments) . ")";
-    $functionString = "propagateException(*state, throwScope, $functionString)" if $function->signature->type && $function->signature->type->name eq "void" && $function->signature->extendedAttributes->{MayThrowException};
-
-    return ($functionString, scalar @arguments);
-}
-
-sub GenerateReturnParameters
-{
-    my $function = shift;
-
-    my @arguments;
     push(@arguments, "WTFMove(promise)") if IsReturningPromise($function);
     push(@arguments, "ec") if $function->signature->extendedAttributes->{MayThrowLegacyException};
-    return @arguments;
+
+    my $functionString = "$functionName(" . join(", ", @arguments) . ")";
+    $functionString = "propagateException(*state, throwScope, $functionString)" if NeedsExplicitPropagateExceptionCall($function);
+
+    return ($functionString, scalar @arguments);
 }
 
 sub GenerateDictionaryHeader

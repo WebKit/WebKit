@@ -30,12 +30,12 @@
  */
 
 #include "config.h"
+#include "RTCSessionDescription.h"
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCSessionDescription.h"
-
 #include "Dictionary.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -55,25 +55,21 @@ static bool parseTypeString(const String& string, RTCSessionDescription::SdpType
     return true;
 }
 
-RefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary& dictionary, ExceptionCode& ec)
+ExceptionOr<Ref<RTCSessionDescription>> RTCSessionDescription::create(const Dictionary& dictionary)
 {
     String typeString;
     // Dictionary member type is required.
-    if (!dictionary.get("type", typeString)) {
-        ec = TypeError;
-        return nullptr;
-    }
+    if (!dictionary.get("type", typeString))
+        return Exception { TypeError };
 
     SdpType type;
-    if (!parseTypeString(typeString, type)) {
-        ec = TypeError;
-        return nullptr;
-    }
+    if (!parseTypeString(typeString, type))
+        return Exception { TypeError };
 
     String sdp;
     dictionary.get("sdp", sdp);
 
-    return adoptRef(new RTCSessionDescription(type, sdp));
+    return adoptRef(*new RTCSessionDescription(type, sdp));
 }
 
 Ref<RTCSessionDescription> RTCSessionDescription::create(SdpType type, const String& sdp)

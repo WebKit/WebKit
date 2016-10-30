@@ -359,7 +359,6 @@ static void JSMediaDevicesGetUserMediaPromiseFunction(ExecState& state, Ref<Defe
         return;
     }
 
-    ExceptionCode ec = 0;
     auto constraintsDictionary = Dictionary(&state, state.uncheckedArgument(0));
 
     MediaTrackConstraintSetMap mandatoryAudioConstraints;
@@ -386,8 +385,7 @@ static void JSMediaDevicesGetUserMediaPromiseFunction(ExecState& state, Ref<Defe
 
     auto audioConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryAudioConstraints), WTFMove(advancedAudioConstraints), areAudioConstraintsValid);
     auto videoConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryVideoConstraints), WTFMove(advancedVideoConstraints), areVideoConstraintsValid);
-    castThisValue<JSMediaDevices>(state).wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise), ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, castThisValue<JSMediaDevices>(state).wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)));
 }
 
 JSValue JSMediaDevices::getUserMedia(ExecState& state)

@@ -39,12 +39,12 @@ public:
 
     virtual ~Text();
 
-    WEBCORE_EXPORT RefPtr<Text> splitText(unsigned offset, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Text>> splitText(unsigned offset);
 
     // DOM Level 3: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1312295772
 
     WEBCORE_EXPORT String wholeText() const;
-    WEBCORE_EXPORT RefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Text> replaceWholeText(const String&);
     
     RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     

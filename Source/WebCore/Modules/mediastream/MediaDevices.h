@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaDevices_h
-#define MediaDevices_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -38,8 +37,6 @@
 #include "MediaDeviceInfo.h"
 #include "ScriptWrappable.h"
 #include <functional>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -48,8 +45,6 @@ class Document;
 class MediaConstraintsImpl;
 class MediaStream;
 class MediaTrackSupportedConstraints;
-
-typedef int ExceptionCode;
 
 class MediaDevices : public ScriptWrappable, public RefCounted<MediaDevices>, public ContextDestructionObserver {
 public:
@@ -61,8 +56,8 @@ public:
     typedef DOMPromise<MediaStream> Promise;
     typedef DOMPromise<MediaDeviceInfoVector> EnumerateDevicesPromise;
 
-    void getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&&, ExceptionCode&) const;
-    void enumerateDevices(EnumerateDevicesPromise&&, ExceptionCode&) const;
+    ExceptionOr<void> getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&&) const;
+    ExceptionOr<void> enumerateDevices(EnumerateDevicesPromise&&) const;
     RefPtr<MediaTrackSupportedConstraints> getSupportedConstraints();
 
 private:
@@ -72,5 +67,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaDevices_h

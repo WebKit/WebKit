@@ -51,7 +51,7 @@ static bool validateIceServerURL(const String& iceURL)
     return true;
 }
 
-static RefPtr<RTCIceServer> parseIceServer(const Dictionary& iceServer, ExceptionCode& ec)
+static ExceptionOr<Ref<RTCIceServer>> parseIceServer(const Dictionary& iceServer)
 {
     String credential, username;
     iceServer.get("credential", credential);
@@ -67,76 +67,65 @@ static RefPtr<RTCIceServer> parseIceServer(const Dictionary& iceServer, Exceptio
     // So we convert to a string always, which converts a sequence to a string in the format: "foo, bar, ..",
     // then checking for a comma in the string assures that a string was a sequence and then we convert
     // it to a sequence safely.
-    if (urlString.isEmpty()) {
-        ec = INVALID_ACCESS_ERR;
-        return nullptr;
-    }
+    if (urlString.isEmpty())
+        return Exception { INVALID_ACCESS_ERR };
 
     if (urlString.find(',') != notFound && iceServer.get("urls", urlsList) && urlsList.size()) {
         for (auto iter = urlsList.begin(); iter != urlsList.end(); ++iter) {
-            if (!validateIceServerURL(*iter)) {
-                ec = INVALID_ACCESS_ERR;
-                return nullptr;
-            }
+            if (!validateIceServerURL(*iter))
+                return Exception { INVALID_ACCESS_ERR };
         }
     } else {
-        if (!validateIceServerURL(urlString)) {
-            ec = INVALID_ACCESS_ERR;
-            return nullptr;
-        }
-
+        if (!validateIceServerURL(urlString))
+            return Exception { INVALID_ACCESS_ERR };
         urlsList.append(urlString);
     }
 
     return RTCIceServer::create(urlsList, credential, username);
 }
 
-RefPtr<RTCConfiguration> RTCConfiguration::create(const Dictionary& configuration, ExceptionCode& ec)
+ExceptionOr<RefPtr<RTCConfiguration>> RTCConfiguration::create(const Dictionary& configuration)
 {
     if (configuration.isUndefinedOrNull())
         return nullptr;
 
-    RefPtr<RTCConfiguration> rtcConfiguration = adoptRef(new RTCConfiguration());
-    rtcConfiguration->initialize(configuration, ec);
-    if (ec)
-        return nullptr;
+    auto result = adoptRef(*new RTCConfiguration);
+    auto initializeResult = result->initialize(configuration);
+    if (initializeResult.hasException())
+        return initializeResult.releaseException();
 
-    return rtcConfiguration;
+    return RefPtr<RTCConfiguration> { WTFMove(result) };
 }
 
 RTCConfiguration::RTCConfiguration()
 {
 }
 
-void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode& ec)
+ExceptionOr<void> RTCConfiguration::initialize(const Dictionary& configuration)
 {
     ArrayValue iceServers;
     bool ok = configuration.get("iceServers", iceServers);
-    if (!ok || iceServers.isUndefinedOrNull()) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
+    if (!ok || iceServers.isUndefinedOrNull())
+        return Exception { TYPE_MISMATCH_ERR };
 
     size_t numberOfServers;
     ok = iceServers.length(numberOfServers);
-    if (!ok || !numberOfServers) {
-        ec = !ok ? TYPE_MISMATCH_ERR : INVALID_ACCESS_ERR;
-        return;
-    }
+    if (!ok)
+        return Exception { TYPE_MISMATCH_ERR };
+    if (!numberOfServers)
+        return Exception { INVALID_ACCESS_ERR };
 
     for (size_t i = 0; i < numberOfServers; ++i) {
         Dictionary iceServerDict;
         ok = iceServers.get(i, iceServerDict);
-        if (!ok) {
-            ec = TYPE_MISMATCH_ERR;
-            return;
-        }
+        if (!ok)
+            return Exception { TYPE_MISMATCH_ERR };
 
-        RefPtr<RTCIceServer> iceServer = parseIceServer(iceServerDict, ec);
-        if (!iceServer)
-            return;
+        auto server = parseIceServer(iceServerDict);
+        if (server.hasException())
+            return server.releaseException();
 
-        m_iceServers.append(WTFMove(iceServer));
+        m_iceServers.append(server.releaseReturnValue());
     }
 
     String iceTransportPolicy;
@@ -145,10 +134,8 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
             m_iceTransportPolicy = IceTransportPolicy::Relay;
         else if (iceTransportPolicy == "all")
             m_iceTransportPolicy = IceTransportPolicy::All;
-        else {
-            ec = TypeError;
-            return;
-        }
+        else
+            return Exception { TypeError };
     }
 
     String bundlePolicy;
@@ -160,8 +147,10 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
         else if (bundlePolicy == "max-bundle")
             m_bundlePolicy = BundlePolicy::MaxBundle;
         else
-            ec = TypeError;
+            return Exception { TypeError };
     }
+
+    return { };
 }
 
 } // namespace WebCore

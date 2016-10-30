@@ -47,19 +47,13 @@
 - (DOMText *)splitText:(unsigned)offset
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMText *result = kit(WTF::getPtr(IMPL->splitText(offset, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->splitText(offset)).ptr());
 }
 
 - (DOMText *)replaceWholeText:(NSString *)content
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMText *result = kit(WTF::getPtr(IMPL->replaceWholeText(content, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(IMPL->replaceWholeText(content).get());
 }
 
 @end

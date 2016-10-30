@@ -51,12 +51,11 @@ void DeleteFromTextNodeCommand::doApply()
     if (!isEditableNode(*m_node))
         return;
 
-    ExceptionCode ec = 0;
-    m_text = m_node->substringData(m_offset, m_count, ec);
-    if (ec)
+    auto result = m_node->substringData(m_offset, m_count);
+    if (result.hasException())
         return;
-
-    m_node->deleteData(m_offset, m_count, ec);
+    m_text = result.releaseReturnValue();
+    m_node->deleteData(m_offset, m_count);
 }
 
 void DeleteFromTextNodeCommand::doUnapply()
@@ -66,7 +65,7 @@ void DeleteFromTextNodeCommand::doUnapply()
     if (!m_node->hasEditableStyle())
         return;
 
-    m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
+    m_node->insertData(m_offset, m_text);
 }
 
 #ifndef NDEBUG

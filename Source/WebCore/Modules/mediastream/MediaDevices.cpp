@@ -63,16 +63,24 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void MediaDevices::getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&& promise, ExceptionCode& ec) const
+ExceptionOr<void> MediaDevices::getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&& promise) const
 {
+    ExceptionCode ec = 0;
     UserMediaRequest::start(document(), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise), ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
-void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise, ExceptionCode& ec) const
+ExceptionOr<void> MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
 {
-    RefPtr<MediaDevicesRequest> request = MediaDevicesRequest::create(document(), WTFMove(promise), ec);
+    ExceptionCode ec = 0;
+    auto request = MediaDevicesRequest::create(document(), WTFMove(promise), ec);
+    if (ec)
+        return Exception { ec };
     if (request)
         request->start();
+    return { };
 }
 
 RefPtr<MediaTrackSupportedConstraints> MediaDevices::getSupportedConstraints()

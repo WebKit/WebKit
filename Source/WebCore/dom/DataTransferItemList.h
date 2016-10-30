@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItemList_h
-#define DataTransferItemList_h
+#pragma once
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
@@ -41,22 +40,19 @@ namespace WebCore {
 
 class File;
 
-typedef int ExceptionCode;
-
+// FIXME: Unclear why this need to be an abstract base class.
 class DataTransferItemList : public RefCounted<DataTransferItemList> {
 public:
     virtual ~DataTransferItemList() { }
 
-    virtual size_t length() const = 0;
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index) = 0;
-    virtual void deleteItem(unsigned long index, ExceptionCode&) = 0;
+    virtual unsigned length() const = 0;
+    virtual DataTransferItem* item(unsigned index) = 0;
+    virtual ExceptionOr<void> deleteItem(unsigned index) = 0;
     virtual void clear() = 0;
-    virtual void add(const String& data, const String& type, ExceptionCode&) = 0;
-    virtual void add(PassRefPtr<File>) = 0;
+    virtual ExceptionOr<void> add(const String& data, const String& type) = 0;
+    virtual void add(RefPtr<File>&&) = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
-
-#endif // DataTransferItemList_h

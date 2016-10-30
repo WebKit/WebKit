@@ -28,28 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCConfiguration_h
-#define RTCConfiguration_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
+#include "ExceptionOr.h"
 #include "PeerConnectionStates.h"
 #include "RTCIceServer.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Dictionary;
 
-typedef int ExceptionCode;
-
+// FIXME: Why reference count this?
 class RTCConfiguration : public RefCounted<RTCConfiguration> {
 public:
-    static RefPtr<RTCConfiguration> create(const Dictionary& configuration, ExceptionCode&);
-    virtual ~RTCConfiguration() { }
+    static ExceptionOr<RefPtr<RTCConfiguration>> create(const Dictionary& configuration);
 
     using IceTransportPolicy = PeerConnectionStates::IceTransportPolicy;
     IceTransportPolicy iceTransportPolicy() const { return m_iceTransportPolicy; }
@@ -62,7 +57,7 @@ public:
 private:
     RTCConfiguration();
 
-    void initialize(const Dictionary& configuration, ExceptionCode&);
+    ExceptionOr<void> initialize(const Dictionary& configuration);
 
     Vector<RefPtr<RTCIceServer>> m_iceServers;
     IceTransportPolicy m_iceTransportPolicy { IceTransportPolicy::All };
@@ -72,5 +67,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCConfiguration_h

@@ -32,7 +32,8 @@
 [
     Conditional=WEB_RTC,
     Constructor(Dictionary dictionary),
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
+    ImplementationLacksVTable,
     PrivateIdentifier,
     PublicIdentifier
 ] interface RTCIceCandidate {
@@ -42,4 +43,3 @@
 
     serializer = {candidate, sdpMid, sdpMLineIndex};
 };
-

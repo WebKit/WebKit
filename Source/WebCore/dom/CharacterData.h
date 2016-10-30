@@ -23,7 +23,6 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -34,11 +33,11 @@ public:
 
     WEBCORE_EXPORT void setData(const String&);
     unsigned length() const { return m_data.length(); }
-    WEBCORE_EXPORT String substringData(unsigned offset, unsigned count, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<String> substringData(unsigned offset, unsigned count);
     WEBCORE_EXPORT void appendData(const String&);
-    WEBCORE_EXPORT void insertData(unsigned offset, const String&, ExceptionCode&);
-    WEBCORE_EXPORT void deleteData(unsigned offset, unsigned count, ExceptionCode&);
-    WEBCORE_EXPORT void replaceData(unsigned offset, unsigned count, const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> insertData(unsigned offset, const String&);
+    WEBCORE_EXPORT ExceptionOr<void> deleteData(unsigned offset, unsigned count);
+    WEBCORE_EXPORT ExceptionOr<void> replaceData(unsigned offset, unsigned count, const String&);
 
     bool containsOnlyWhitespace() const;
 
@@ -68,7 +67,6 @@ private:
     int maxCharacterOffset() const final;
     bool offsetInCharacters() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
-    void checkCharDataOperation(unsigned offset, ExceptionCode&);
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 
     String m_data;

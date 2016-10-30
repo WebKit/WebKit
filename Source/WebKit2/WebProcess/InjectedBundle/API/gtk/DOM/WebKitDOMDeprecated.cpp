@@ -155,13 +155,7 @@ WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gch
     g_return_val_if_fail(!error || !*error, nullptr);
 
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Text> gobjectResult = WTF::getPtr(WebKit::core(self)->replaceWholeText(WTF::String::fromUTF8(content), ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(WebKit::core(self)->replaceWholeText(WTF::String::fromUTF8(content)).get());
 }
 
 gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self)
