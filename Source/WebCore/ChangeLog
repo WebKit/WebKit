@@ -1,3 +1,14 @@
+2016-10-29  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support unprefixed image-sets
+        https://bugs.webkit.org/show_bug.cgi?id=164198
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeImage):
+
 2016-10-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOM] Introduce WebCore::jsDynamicDowncast

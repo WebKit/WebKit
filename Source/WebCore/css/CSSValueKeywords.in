@@ -1150,6 +1150,7 @@ isolate
 scale-down
 
 // background-image, etc.
+image-set
 linear-gradient
 radial-gradient
 repeating-linear-gradient

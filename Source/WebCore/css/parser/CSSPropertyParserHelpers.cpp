@@ -1158,7 +1158,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext conte
         return CSSImageValue::create(completeURL(context, uri));
     if (range.peek().type() == FunctionToken) {
         CSSValueID id = range.peek().functionId();
-        if (id == CSSValueWebkitImageSet)
+        if (id == CSSValueWebkitImageSet || id == CSSValueImageSet)
             return consumeImageSet(range, context);
         if (generatedImage == ConsumeGeneratedImage::Allow && isGeneratedImage(id))
             return consumeGeneratedImage(range, context);
