@@ -42,8 +42,8 @@
 
 /* Positions the "Style" text almost exactly over the radio-button-item */
 .scope-radio-button-navigation-item > .scope-radio-button-item-select:focus {
-    top: -3px;
-    left: -3px;
+    top: -2px;
+    left: 0px;
     border: none;
 }
 
@@ -51,6 +51,7 @@
     width: 5px;
     height: 11px;
     margin-left: 4px;
+    transform: translateY(1px);
 }
 
 .scope-radio-button-navigation-item.selected > .arrows {

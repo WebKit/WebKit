@@ -1,5 +1,16 @@
 2016-10-31  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Arrows for Styles scope bar item are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=164159
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css:
+        (.scope-radio-button-navigation-item > .scope-radio-button-item-select:focus):
+        (.scope-radio-button-navigation-item > .arrows):
+
+2016-10-31  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Entering ":n" in Open Resource Dialog, where n > number of lines, should jump to the last line
         https://bugs.webkit.org/show_bug.cgi?id=160840
 
