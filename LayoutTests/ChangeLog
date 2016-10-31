@@ -1,3 +1,15 @@
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r207639. rdar://problem/29007088
+
+    2016-10-20  Zalan Bujtas  <zalan@apple.com>
+
+            Unreviewed gardening.
+
+            Update expected results.
+
+            * imported/blink/fast/pagination/first-letter-inherit-all-crash-expected.txt:
+
 2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix merge r207229. rdar://problem/29007278
