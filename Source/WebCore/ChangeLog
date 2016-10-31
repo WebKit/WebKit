@@ -1,3 +1,16 @@
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Simplify background-position-x/y style mapping
+        https://bugs.webkit.org/show_bug.cgi?id=164223
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontSynthesis):
+
 2016-10-31  Darin Adler  <darin@apple.com>
 
         Move ChildNode and ParentNode from ExceptionCode to Exception, add support for ExceptionOr<T&>

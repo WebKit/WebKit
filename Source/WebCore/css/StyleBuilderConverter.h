@@ -1378,7 +1378,7 @@ inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& 
     return Nullopt;
 }
 
-FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&, const CSSValue& value)
+inline FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
