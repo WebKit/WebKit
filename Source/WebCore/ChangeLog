@@ -1,5 +1,37 @@
 2016-10-31  Jer Noble  <jer.noble@apple.com>
 
+        Opt-out of AVPlayer automatic sleep disabling
+        https://bugs.webkit.org/show_bug.cgi?id=163983
+
+        Reviewed by Eric Carlson.
+
+        In addition to the DisplaySleepDisabler, notify the MediaPlayerPrivateAVFoundationObjC object whether
+        it should disable display sleep.  Provide all the necessary boilerplate to allow the media player private
+        to query the HTMLMediaPlayer so that the correct value can be set on AVPlayer upon creation.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateSleepDisabling):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setShouldDisableSleep):
+        (WebCore::MediaPlayer::shouldDisableSleep):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerShouldDisableSleep):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setShouldDisableSleep):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+
+        Drive-by fix: Re-organize the contents of AVFoundationSPI.h so that there's a single top-level
+        #if USE(APPLE_INTERNAL_SDK) statement, rather than that conditional being sprinkled about the
+        file.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
+2016-10-31  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION (r206300): LayoutTest media/media-source/media-source-duplicate-seeked.html timing out
         https://bugs.webkit.org/show_bug.cgi?id=162496
 

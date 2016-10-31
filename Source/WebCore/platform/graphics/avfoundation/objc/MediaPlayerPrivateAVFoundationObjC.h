@@ -330,6 +330,8 @@ private:
 
     Vector<String> preferredAudioCharacteristics() const;
 
+    void setShouldDisableSleep(bool) override;
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;

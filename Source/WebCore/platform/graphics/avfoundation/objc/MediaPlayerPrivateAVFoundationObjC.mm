@@ -1049,6 +1049,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
+#if PLATFORM(IOS)
+    setShouldDisableSleep(player()->shouldDisableSleep());
+#endif
+
     if (m_muted) {
         // Clear m_muted so setMuted doesn't return without doing anything.
         m_muted = false;
@@ -3173,6 +3177,16 @@ URL MediaPlayerPrivateAVFoundationObjC::resolvedURL() const
         return MediaPlayerPrivateAVFoundation::resolvedURL();
 
     return URL([m_avAsset resolvedURL]);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
+{
+#if PLATFORM(IOS)
+    if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(_setPreventsSleepDuringVideoPlayback:)])
+        [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
+#else
+    UNUSED_PARAM(flag);
+#endif
 }
 
 NSArray* assetMetadataKeyNames()
