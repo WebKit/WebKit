@@ -2829,8 +2829,10 @@ void FrameView::setNeedsLayout()
         return;
     }
 
-    if (RenderView* renderView = this->renderView())
+    if (auto* renderView = this->renderView()) {
+        ASSERT(!renderView->inHitTesting());
         renderView->setNeedsLayout();
+    }
 }
 
 void FrameView::unscheduleRelayout()

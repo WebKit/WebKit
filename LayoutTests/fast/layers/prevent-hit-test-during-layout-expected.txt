@@ -1,0 +1,11 @@
+This tests makes sure that hit tests are not processed while laying out the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+   
+
+This test passes if it did not crash.

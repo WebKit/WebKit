@@ -3347,3 +3347,6 @@ fast/loader/iframe-src-invalid-url.html [ Skip ]
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+
+# Only Mac has implemented DictionaryLookup
+fast/layers/prevent-hit-test-during-layout.html [ Skip ]

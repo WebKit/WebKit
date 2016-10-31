@@ -1,3 +1,22 @@
+2016-10-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208003. rdar://problem/28811878
+
+    2016-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+            Prevent hit tests from being performed on an invalid render tree
+            https://bugs.webkit.org/show_bug.cgi?id=163877
+            <rdar://problem/28675761>
+
+            Reviewed by Simon Fraser.
+
+            * fast/layers/prevent-hit-test-during-layout-expected.txt: Added.
+            * fast/layers/prevent-hit-test-during-layout.html: Added.
+            * platform/efl/TestExpectations: Skip on this platform.
+            * platform/gtk/TestExpectations: Skip on this platform.
+            * platform/ios-simulator/TestExpectations: Skip on this platform.
+            * platform/win/TestExpectations: Skip on this platform.
+
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Merge r207639. rdar://problem/29007088

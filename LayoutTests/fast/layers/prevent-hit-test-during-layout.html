@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    var fixedDiv;
+    var target;
+
+    if (window.testRunner) {
+        description("This tests makes sure that hit tests are not processed while laying out the page.");
+        testRunner.waitUntilDone();
+    }
+
+    function triggerHitTest() {
+        var spanRects = target.getClientRects();
+
+        if (spanRects.count > 1) {
+            document.body.innerHTML += "<br/>ERROR: More than one rect for hit word."
+            testRunner.notifyDone();
+            return;
+        }
+
+        var rect = spanRects[0];
+        var x = rect.left + rect.width / 2;
+        var y = rect.top + rect.height / 2;
+
+        // This internal test call is used because it is guaranteed to trigger
+        // a recursive hit test. Dictionary lookup itself is not required for this test.
+        var lookupRange = internals.rangeForDictionaryLookupAtLocation(x, y);
+
+        document.body.innerHTML += "<br/>This test passes if it did not crash.";
+        testRunner.notifyDone();
+    }
+    
+    function runTest() {
+        fixedDiv = window.frames['fixedFrame'].document.getElementById('fixedDiv');
+        target = document.getElementById('target');
+
+        setTimeout(function() {
+            fixedDiv.style.position = "relative";
+            triggerHitTest();
+        }, 0);
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+    	<iframe id="fixedFrame" src='data:text/html,
+            <div id="fixedDiv" style="position:fixed; left:10px; top:10px">Fixed Frame.</div>'>
+        </iframe>
+    	<iframe id="target" src='data:text/html,<div>Second Frame.</div>'></iframe>
+    	<iframe src='data:text/html,<div>Third Frame.</div>'></iframe>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
