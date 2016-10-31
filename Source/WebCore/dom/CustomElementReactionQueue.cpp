@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
+#include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "Microtasks.h"
@@ -188,6 +189,11 @@ void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
 
     if (element.inDocument() && queue->m_interface->hasConnectedCallback())
         queue->m_items.append({CustomElementReactionQueueItem::Type::Connected});
+}
+
+bool CustomElementReactionQueue::observesStyleAttribute() const
+{
+    return m_interface->observesAttribute(HTMLNames::styleAttr.localName());
 }
 
 void CustomElementReactionQueue::invokeAll(Element& element)

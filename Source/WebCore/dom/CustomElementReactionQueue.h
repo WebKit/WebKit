@@ -53,6 +53,7 @@ public:
     static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
     static void enqueuePostUpgradeReactions(Element&);
 
+    bool observesStyleAttribute() const;
     void invokeAll(Element&);
     void clear();
 

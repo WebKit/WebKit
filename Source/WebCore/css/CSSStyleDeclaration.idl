@@ -28,15 +28,15 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface CSSStyleDeclaration {
-    [SetterMayThrowException] attribute DOMString cssText;
+    [CEReactions, SetterMayThrowException] attribute DOMString cssText;
 
     DOMString getPropertyValue(DOMString propertyName);
     [Custom] CSSValue? getPropertyCSSValue(DOMString propertyName);
 
-    [MayThrowException] DOMString removeProperty(DOMString propertyName);
+    [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
     DOMString? getPropertyPriority(DOMString propertyName);
 
-    [MayThrowException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
+    [CEReactions, MayThrowException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
 
     readonly attribute unsigned long length;
     getter DOMString item(unsigned long index);

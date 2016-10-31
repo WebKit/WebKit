@@ -26,6 +26,7 @@
 #include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
+#include "CustomElementReactionQueue.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
@@ -53,7 +54,8 @@ public:
         ASSERT(!s_currentDecl);
         s_currentDecl = decl;
 
-        if (!s_currentDecl->parentElement())
+        auto* element = s_currentDecl->parentElement();
+        if (!element)
             return;
 
         bool shouldReadOldValue = false;
@@ -62,14 +64,18 @@ public:
         if (m_mutationRecipients && m_mutationRecipients->isOldValueRequested())
             shouldReadOldValue = true;
 
-        AtomicString oldValue;
-        if (shouldReadOldValue)
-            oldValue = s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr);
-
-        if (m_mutationRecipients) {
-            AtomicString requestedOldValue = m_mutationRecipients->isOldValueRequested() ? oldValue : nullAtom;
-            m_mutation = MutationRecord::createAttributes(*s_currentDecl->parentElement(), HTMLNames::styleAttr, requestedOldValue);
+#if ENABLE(CUSTOM_ELEMENTS)
+        if (UNLIKELY(element->isDefinedCustomElement())) {
+            auto* reactionQueue = element->reactionQueue();
+            if (reactionQueue && reactionQueue->observesStyleAttribute()) {
+                m_customElement = element;
+                shouldReadOldValue = true;
+            }
         }
+#endif
+
+        if (shouldReadOldValue)
+            m_oldValue = s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr);
     }
 
     ~StyleAttributeMutationScope()
@@ -78,8 +84,16 @@ public:
         if (s_scopeCount)
             return;
 
-        if (m_mutation && s_shouldDeliver)
-            m_mutationRecipients->enqueueMutationRecord(m_mutation.releaseNonNull());
+        if (s_shouldDeliver) {
+            if (m_mutationRecipients) {
+                auto mutation = MutationRecord::createAttributes(*s_currentDecl->parentElement(), HTMLNames::styleAttr, m_oldValue);
+                m_mutationRecipients->enqueueMutationRecord(WTFMove(mutation));
+            }
+            if (m_customElement) {
+                AtomicString newValue = m_customElement->getAttribute(HTMLNames::styleAttr);
+                CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*m_customElement, HTMLNames::styleAttr, m_oldValue, newValue);
+            }
+        }
 
         s_shouldDeliver = false;
         if (!s_shouldNotifyInspector) {
@@ -111,7 +125,8 @@ private:
     static bool s_shouldDeliver;
 
     std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
-    RefPtr<MutationRecord> m_mutation;
+    AtomicString m_oldValue;
+    RefPtr<Element> m_customElement;
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;

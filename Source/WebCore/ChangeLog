@@ -1,3 +1,27 @@
+2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CSSStyleDeclaration should be annotated with CEReactions
+        https://bugs.webkit.org/show_bug.cgi?id=163968
+
+        Reviewed by Antti Koivisto.
+
+        Added CEReactions to CSSStyleDeclaration.idl.
+
+        Test: fast/custom-elements/reactions/CSSStyleDeclaration.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * css/CSSStyleDeclaration.idl:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleAttributeMutationScope::StyleAttributeMutationScope): Remember the old value when this is
+        an inline style declaration for a custom element. Also store m_oldValue and m_customElement instead of
+        a mutation record so that we don't create a superfluous mutation record for custom elements.
+        (WebCore::StyleAttributeMutationScope::~StyleAttributeMutationScope): Enqueue attributeChangedCallback
+        when m_customElement is not null.
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::observesStyleAttribute):
+        * dom/CustomElementReactionQueue.h:
+
 2016-10-31  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix for the build fix; AVStreamDataParser not defined on iOS.
