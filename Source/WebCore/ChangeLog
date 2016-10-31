@@ -1,3 +1,9 @@
+2016-10-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix for the build fix; AVStreamDataParser not defined on iOS.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-10-31  Zalan Bujtas  <zalan@apple.com>
 
         LayoutTests/fast/frames/invalid-frameset.html is not clean by the end of FrameView::layout().
