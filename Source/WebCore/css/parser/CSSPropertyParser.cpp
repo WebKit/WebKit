@@ -2566,16 +2566,18 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundSize(CSSPropertyID property, C
     if (identMatches<CSSValueContain, CSSValueCover>(range.peek().id()))
         return consumeIdent(range);
 
+    // FIXME: We're allowing the unitless quirk on this property because our
+    // tests assume that. Other browser engines don't allow it though.
     RefPtr<CSSPrimitiveValue> horizontal = consumeIdent<CSSValueAuto>(range);
     if (!horizontal)
-        horizontal = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+        horizontal = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
 
     RefPtr<CSSPrimitiveValue> vertical;
     if (!range.atEnd()) {
         if (range.peek().id() == CSSValueAuto) // `auto' is the default
             range.consumeIncludingWhitespace();
         else
-            vertical = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+            vertical = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
     } else if (!vertical && property == CSSPropertyWebkitBackgroundSize) {
         // Legacy syntax: "-webkit-background-size: 10px" is equivalent to "background-size: 10px 10px".
         vertical = horizontal;
