@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <input id="editable" onbeforeinput=logInputEvent(event) oninput=logInputEvent(event)></input>
+    <div id="output"></div>
+    <script type="text/javascript">
+        let write = s => output.innerHTML += s + "<br>";
+        var progress = 0;
+        editable.focus();
+
+        if (window.internals && window.testRunner) {
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            if (window.eventSender && testRunner.runUIScript) {
+                write("Typing 'a'...");
+                eventSender.keyDown("a");
+                write(`The value of the input is now: ${editable.value}`);
+                write("");
+                write("Replacing 'a' with 'b'...");
+                testRunner.runUIScript(getUIScript(), (result) => incrementProgress());
+            }
+        } else {
+            write("To manually test, press and hold down 'a' and select one of the accented characters.");
+            write("You should observe a pair of beforeinput/input events for both 'a' and the replacement accented character.");
+            write("Importantly, the inputType of the last two events should be 'insertReplacementText'.");
+        }
+
+        function incrementProgress()
+        {
+            progress++;
+            if (progress != 5)
+                return;
+
+            write(`The value of the input is now: ${editable.value}`);
+            testRunner.notifyDone();
+        }
+
+        function logInputEvent(event)
+        {
+            write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=\`${event.data}\`, dataTransfer=\`${event.dataTransfer}\``);
+            incrementProgress();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.insertText("b", 0, 1);
+                uiController.uiScriptComplete();
+            })();`
+        }
+    </script>
+</body>
+</html>

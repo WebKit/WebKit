@@ -1,3 +1,24 @@
+2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Holding down a key to choose an accented character should fire "insertReplacementText" input events
+        https://bugs.webkit.org/show_bug.cgi?id=164209
+        <rdar://problem/29019305>
+
+        Reviewed by Darin Adler.
+
+        For TypingCommands that correspond to "insertReplacementText" inputTypes, vend dataTransfers for resulting
+        beforeinput and input events if the edited area is not an input field or textarea. To do this, convert the plain
+        text representation of the content to be inserted to HTML text using a helper function,
+        MarkupAccumulator::appendCharactersReplacingEntities, that is used when creating markup for Text nodes.
+
+        Tests: fast/events/before-input-prevent-insert-replacement.html
+               fast/events/input-event-insert-replacement.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::inputEventData):
+        (WebCore::TypingCommand::inputEventDataTransfer):
+        * editing/TypingCommand.h:
+
 2016-10-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Miscellaneous bug fixes

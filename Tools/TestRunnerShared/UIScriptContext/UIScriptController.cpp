@@ -317,6 +317,14 @@ void UIScriptController::platformClearAllCallbacks()
 }
 #endif
 
+#if !PLATFORM(MAC)
+
+void UIScriptController::insertText(JSStringRef, int, int)
+{
+}
+
+#endif
+
 void UIScriptController::uiScriptComplete(JSStringRef result)
 {
     m_context->requestUIScriptCompletion(result);

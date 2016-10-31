@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="editable" onbeforeinput=handleInputEvent(event) oninput=handleInputEvent(event) contenteditable></div>
+    <div id="output"></div>
+    <script type="text/javascript">
+        let write = s => output.innerHTML += s + "<br>";
+        var progress = 0;
+        editable.focus();
+
+        if (window.internals && window.testRunner) {
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            if (window.eventSender && testRunner.runUIScript) {
+                write("Typing 'a'...");
+                eventSender.keyDown("a");
+                write("Attempting to replace 'a' with 'b'...");
+                testRunner.runUIScript(getUIScript(), (result) => incrementProgress());
+            }
+        } else {
+            write("To manually test, press and hold down 'a' and select one of the accented characters.");
+            write("You should observe that the replacement accented character does not replace 'a'.");
+        }
+
+        function incrementProgress()
+        {
+            progress++;
+            if (progress == 2)
+                testRunner.notifyDone();
+        }
+
+        function handleInputEvent(event)
+        {
+            write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=\`${event.data}\`, dataTransfer=\`${dataTransferAsString(event.dataTransfer)}\``);
+            if (event.inputType === "insertReplacementText") {
+                event.preventDefault();
+                incrementProgress();
+            }
+        }
+
+        function dataTransferAsString(dataTransfer)
+        {
+            if (!dataTransfer)
+                return "null";
+
+            return `plain:"${dataTransfer.getData('text/plain')}", html:"${dataTransfer.getData('text/html')}"`;
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.insertText("b", 0, 1);
+                uiController.uiScriptComplete();
+            })();`
+        }
+    </script>
+</body>
+</html>

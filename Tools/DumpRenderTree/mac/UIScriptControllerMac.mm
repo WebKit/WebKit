@@ -43,6 +43,10 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
     });
 }
 
+void UIScriptController::insertText(JSStringRef, int, int)
+{
+}
+
 }
 
 #endif // PLATFORM(MAC)

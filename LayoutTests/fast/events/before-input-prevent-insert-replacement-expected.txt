@@ -1,0 +1,7 @@
+a
+Typing 'a'...
+(editable): type=beforeinput, inputType=insertText, data=`a`, dataTransfer=`null`
+(editable): type=input, inputType=insertText, data=`a`, dataTransfer=`null`
+Attempting to replace 'a' with 'b'...
+(editable): type=beforeinput, inputType=insertReplacementText, data=`null`, dataTransfer=`plain:"b", html:"b"`
+

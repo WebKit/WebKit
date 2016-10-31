@@ -1,3 +1,23 @@
+2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Holding down a key to choose an accented character should fire "insertReplacementText" input events
+        https://bugs.webkit.org/show_bug.cgi?id=164209
+        <rdar://problem/29019305>
+
+        Reviewed by Darin Adler.
+
+        Adds 2 new layout tests to verify that inserting replacement text fires input events of inputType
+        "insertReplacementText" instead of the generic "insertText", and that calling preventDefault() on the
+        beforeinput event prevents text from being inserted. Also checks that inserting replacement text in
+        contenteditable areas causes the dataTransfer attribute to be populated, and that the data attribute is null.
+
+        * fast/events/before-input-prevent-insert-replacement-expected.txt: Added.
+        * fast/events/before-input-prevent-insert-replacement.html: Added.
+        * fast/events/input-event-insert-replacement-expected.txt: Added.
+        * fast/events/input-event-insert-replacement.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Skip media tests because timeout happens on many media tests.

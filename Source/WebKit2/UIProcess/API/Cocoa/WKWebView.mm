@@ -4650,6 +4650,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     // Overridden by subclasses.
 }
+
+- (void)_insertText:(id)string replacementRange:(NSRange)replacementRange
+{
+    [self insertText:string replacementRange:replacementRange];
+}
 #endif // PLATFORM(MAC)
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin

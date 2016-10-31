@@ -156,5 +156,7 @@ interface UIScriptController {
 
     readonly attribute object selectionRangeViewRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
 
+    void insertText(DOMString text, long location, long length);
+
     void uiScriptComplete(DOMString result);
 };

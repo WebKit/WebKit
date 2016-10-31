@@ -1,3 +1,31 @@
+2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Holding down a key to choose an accented character should fire "insertReplacementText" input events
+        https://bugs.webkit.org/show_bug.cgi?id=164209
+        <rdar://problem/29019305>
+
+        Reviewed by Darin Adler.
+
+        Adds test support for inserting replacement text on Mac. This is equivalent to holding down a vowel key (e.g.
+        'a') to bring up the menu containing accented version of the character, then selecting an accented character to
+        insert in place of the typed character. This is exposed via UIScriptController.insertText, which takes a string
+        and an insertion range.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::insertText):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+
+        Note that there is no callback argument to insertText, since UIScriptController::insertText is synchronous in
+        the UI process. The tests end when corresponding input events fired as a result of insertText have been received
+        in the web process. Please see the new layout tests for more detail.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::insertText):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::nsStringFromJSString):
+        (WTR::UIScriptController::insertText):
+
 2016-10-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Restructure IDLParser structs to better match modern WebIDL concepts

@@ -117,6 +117,8 @@ public:
     
     JSObjectRef selectionRangeViewRects() const;
 
+    void insertText(JSStringRef, int location, int length);
+
     void uiScriptComplete(JSStringRef result);
 
 private:

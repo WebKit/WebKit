@@ -120,6 +120,7 @@ private:
 
     String inputEventTypeName() const final;
     String inputEventData() const final;
+    RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool isBeforeInputEventCancelable() const final;
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);

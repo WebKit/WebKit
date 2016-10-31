@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "BreakBlockquoteCommand.h"
+#include "DataTransfer.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editor.h"
@@ -39,6 +40,7 @@
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
 #include "Logging.h"
+#include "MarkupAccumulator.h"
 #include "MathMLElement.h"
 #include "RenderElement.h"
 #include "StaticRange.h"
@@ -406,13 +408,24 @@ String TypingCommand::inputEventData() const
 {
     switch (m_currentTypingEditAction) {
     case EditActionTypingInsertText:
-    case EditActionInsertReplacement:
     case EditActionTypingInsertPendingComposition:
     case EditActionTypingInsertFinalComposition:
         return m_currentTextToInsert;
+    case EditActionInsertReplacement:
+        return isEditingTextAreaOrTextInput() ? m_currentTextToInsert : String();
     default:
         return CompositeEditCommand::inputEventData();
     }
+}
+
+RefPtr<DataTransfer> TypingCommand::inputEventDataTransfer() const
+{
+    if (m_currentTypingEditAction != EditActionInsertReplacement || isEditingTextAreaOrTextInput())
+        return nullptr;
+
+    StringBuilder htmlText;
+    MarkupAccumulator::appendCharactersReplacingEntities(htmlText, m_currentTextToInsert, 0, m_currentTextToInsert.length(), EntityMaskInHTMLPCDATA);
+    return DataTransfer::createForInputEvent(m_currentTextToInsert, htmlText.toString());
 }
 
 void TypingCommand::didApplyCommand()
