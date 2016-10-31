@@ -420,6 +420,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
 {
     ASSERT(range.peek().type() == LeftBracketToken);
     CSSParserTokenRange block = range.consumeBlock();
+    if (block.end() == range.end())
+        return nullptr; // No ] was found. Be strict about this.
+
     block.consumeWhitespace();
 
     AtomicString namespacePrefix;
@@ -572,6 +575,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
                 const CSSParserToken& ident = block.consume();
                 if (!equalIgnoringASCIICase(ident.value(), "of"))
                     return nullptr;
+                if (block.peek().type() != WhitespaceToken)
+                    return nullptr;
                 DisallowPseudoElementsScope scope(this);
                 block.consumeWhitespace();
                 std::unique_ptr<CSSSelectorList> selectorList = std::unique_ptr<CSSSelectorList>(new CSSSelectorList());
@@ -671,16 +676,25 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
     UChar delimiter = range.peek().delimiter();
 
     if (delimiter == '+' || delimiter == '~' || delimiter == '>') {
-        range.consumeIncludingWhitespace();
-        if (delimiter == '+')
+        if (delimiter == '+') {
+            range.consumeIncludingWhitespace();
             return CSSSelector::DirectAdjacent;
-        if (delimiter == '~')
+        }
+        
+        if (delimiter == '~') {
+            range.consumeIncludingWhitespace();
             return CSSSelector::IndirectAdjacent;
+        }
+        
 #if ENABLE_CSS_SELECTORS_LEVEL4
-        if (delimiter == '>' && range.peek().type() == DelimiterToken && range.peek().delimiter() == '>') {
+        range.consume();
+        if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '>') {
             range.consumeIncludingWhitespace();
             return CSSSelector::DescendantDoubleChild;
         }
+        range.consumeWhitespace();
+#else
+        range.consumeIncludingWhitespace();
 #endif
         return CSSSelector::Child;
     }

@@ -364,7 +364,11 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
     RefPtr<CSSPrimitiveValue> resultX;
     RefPtr<CSSPrimitiveValue> resultY;
     if (consumeOneOrTwoValuedPosition(m_range, m_context.mode, UnitlessQuirk::Forbid, resultX, resultY)) {
+        m_range.consumeWhitespace();
+        bool atEnd = m_range.atEnd();
         RefPtr<CSSPrimitiveValue> resultZ = consumeLength(m_range, m_context.mode, ValueRangeAll);
+        if (!resultZ && !atEnd)
+            return false;
         if (!resultZ)
             resultZ = CSSValuePool::singleton().createValue(0, CSSPrimitiveValue::UnitTypes::CSS_PX);
         addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, resultX.releaseNonNull(), important);

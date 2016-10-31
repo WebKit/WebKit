@@ -1,3 +1,28 @@
+2016-10-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Miscellaneous bug fixes
+        https://bugs.webkit.org/show_bug.cgi?id=164211
+
+        Reviewed by Darin Adler.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+        Make sure to properly reject invalid transform-origin-z values.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeAttribute):
+        Make attribute selector parsing strict about requiring a ] to end
+        the selector.
+
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Force the nth-child "of" syntax to have whitespace after "of" but
+        before the selector. It is unclear if this should be a requirement
+        or not (spec is ambiguous), but for now we match the old parser.
+
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        Fix a bug that caused the double child combinator to match even
+        when there was whitespace between the two > symbols.
+
 2016-10-31  Youenn Fablet  <youenn@apple.com>
 
         RTCOfferAnswerOptions does not need to be refcounted
