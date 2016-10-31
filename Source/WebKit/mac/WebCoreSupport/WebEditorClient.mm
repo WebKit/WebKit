@@ -341,6 +341,9 @@ void WebEditorClient::respondToChangedContents()
 
 void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
+    if (frame->editor().isGettingDictionaryPopupInfo())
+        return;
+
     NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)documentView _selectionChanged];

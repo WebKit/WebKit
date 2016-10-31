@@ -476,6 +476,9 @@ public:
     RefPtr<Range> rangeForTextCheckingResult(const TextCheckingResult&) const;
     bool isHandlingAcceptedCandidate() const { return m_isHandlingAcceptedCandidate; }
 
+    void setIsGettingDictionaryPopupInfo(bool b) { m_isGettingDictionaryPopupInfo = b; }
+    bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
+
 private:
     class WebContentReader;
 
@@ -551,6 +554,8 @@ private:
     Timer m_telephoneNumberDetectionUpdateTimer;
     Vector<RefPtr<Range>> m_detectedTelephoneNumberRanges;
 #endif
+
+    bool m_isGettingDictionaryPopupInfo { false };
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

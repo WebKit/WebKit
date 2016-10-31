@@ -4855,10 +4855,11 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
 
 void WebPage::didChangeSelection()
 {
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
     // The act of getting Dictionary Popup info can make selection changes that we should not propagate to the UIProcess.
     // Specifically, if there is a caret selection, it will change to a range selection of the word around the caret. And
     // then it will change back.
-    if (m_isGettingDictionaryPopupInfo)
+    if (frame.editor().isGettingDictionaryPopupInfo())
         return;
 
     // Similarly, we don't want to propagate changes to the web process when inserting text asynchronously, since we will
@@ -4866,7 +4867,6 @@ void WebPage::didChangeSelection()
     if (m_isSelectingTextWhileInsertingAsynchronously)
         return;
 
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
     FrameView* view = frame.view();
 
     // If there is a layout pending, we should avoid populating EditorState that require layout to be done or it will

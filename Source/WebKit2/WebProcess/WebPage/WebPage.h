@@ -1499,7 +1499,6 @@ private:
     bool m_mainFrameProgressCompleted;
     bool m_shouldDispatchFakeMouseMoveEvents;
     bool m_isEditorStateMissingPostLayoutData { false };
-    bool m_isGettingDictionaryPopupInfo { false };
     bool m_isSelectingTextWhileInsertingAsynchronously { false };
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };

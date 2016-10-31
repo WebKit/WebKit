@@ -1,3 +1,22 @@
+2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK1] Candidate visibility should not update as a result of selection during a dictionary lookup
+        https://bugs.webkit.org/show_bug.cgi?id=164236
+        <rdar://problem/28747712>
+
+        Reviewed by Beth Dakin.
+
+        Moves state that keeps track of whether or not a dictionary lookup is active from the WebPage to the Editor, so
+        that when clicking a text field or contenteditable in WK1 or WK2, we are able to avoid notifying the
+        WebEditorClient of the selection change.
+
+        Changes to WK2 are covered by existing unit tests in WKWebViewCandidateTests which verify that clicking does not
+        thrash candidate list visibility. A similar test will be added in the future for the WK1 case in CandidateTests.
+
+        * editing/Editor.h:
+        (WebCore::Editor::setIsGettingDictionaryPopupInfo):
+        (WebCore::Editor::isGettingDictionaryPopupInfo):
+
 2016-10-31  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Placard support
