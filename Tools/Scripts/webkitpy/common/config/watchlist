@@ -224,7 +224,7 @@
                         r"|Source/JavaScriptCore/Scripts/generate-js-builtins\.py",
         },
         "WasmJSON": {
-            "filename": r"|Source/JavaScriptCore/wasm/wasm\.json"
+            "filename": r"Source/JavaScriptCore/wasm/wasm\.json"
                         r"|JSTests/wasm/wasm\.json",
         },
         "MediaStream": {
