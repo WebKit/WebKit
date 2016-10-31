@@ -1,5 +1,15 @@
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fully support prefixed background-size and box-shadows
+        https://bugs.webkit.org/show_bug.cgi?id=164228
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Get rid of CSSCustomIdentValue::creates
         https://bugs.webkit.org/show_bug.cgi?id=164225
 
