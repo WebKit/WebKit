@@ -1,7 +1,7 @@
 
 Test tab with <video> moving to background when playback is not allowed in background.
 
-RUN(internals.setMediaSessionRestrictions('video', 'BackgroundTabPlaybackRestricted'))
+RUN(internals.setMediaSessionRestrictions('videoaudio', 'BackgroundTabPlaybackRestricted'))
 
 EVENT(canplaythrough)
 

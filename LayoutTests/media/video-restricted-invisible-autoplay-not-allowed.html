@@ -3,6 +3,9 @@
         <script src="media-file.js"></script>
         <script src="video-test.js"></script>
         <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+
             function start()
             {
                 findMediaElement();
@@ -10,7 +13,6 @@
                 video.src = findMediaFile('video', 'content/test');
 
                 waitForEventOnce('play', play1);
-                run('internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted")');
                 consoleWrite('');
             }
 

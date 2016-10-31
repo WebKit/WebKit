@@ -54,6 +54,7 @@ public:
     void unregisterWithDocument(Document&);
 
     bool playbackPermitted(const HTMLMediaElement&) const;
+    bool autoplayPermitted() const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
     bool fullscreenPermitted(const HTMLMediaElement&) const;
     bool pageAllowsDataLoading(const HTMLMediaElement&) const;

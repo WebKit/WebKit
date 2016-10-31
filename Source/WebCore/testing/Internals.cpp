@@ -2682,6 +2682,8 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
         mediaType = PlatformMediaSession::Video;
     else if (equalLettersIgnoringASCIICase(mediaTypeString, "audio"))
         mediaType = PlatformMediaSession::Audio;
+    else if (equalLettersIgnoringASCIICase(mediaTypeString, "videoaudio"))
+        mediaType = PlatformMediaSession::VideoAudio;
     else if (equalLettersIgnoringASCIICase(mediaTypeString, "webaudio"))
         mediaType = PlatformMediaSession::WebAudio;
     else

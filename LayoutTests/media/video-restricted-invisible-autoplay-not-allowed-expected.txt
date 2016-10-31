@@ -2,7 +2,6 @@
 Test that "invisible autoplay not allowed restriction" pauses media when scrolled out of view.
 
 ** setting video.src
-RUN(internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted"))
 
 EVENT(play)
 RUN(video.style.display = "none")

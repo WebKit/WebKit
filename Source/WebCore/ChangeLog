@@ -1,3 +1,38 @@
+2016-10-31  Jer Noble  <jer.noble@apple.com>
+
+        Allow multiple playing videos on a page with 'autoplay' and 'playsinline' attributes
+        https://bugs.webkit.org/show_bug.cgi?id=162366
+        <rdar://problem/28639600>
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/video-concurrent-visible-playback.html
+               media/video-multiple-concurrent-playback.html
+
+        Separate out the concept of "video-only" from "video-with-audio" in PlatformMediaSession::MediaType,
+        and only set the ConcurrentPlaybackNotPermitted restriction for "video-with-audio".  This allows multiple
+        silent video elements to play back simultaneously.
+
+        However, the bug in question also shows bad behavior when both concurrent playback and invisible playback
+        are not allowed. Namely, an invisible element will attempt to autoplay, interrupt visible elements, and
+        then fail to play due to it's non-visibility.  Add an extra check to canTransitionFromAutoplayToPlay()
+        which asks the session if autoplay is allowed (which will return false if the element is not visible).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay):
+        (WebCore::HTMLMediaElement::mediaType):
+        (WebCore::HTMLMediaElement::presentationType):
+        (WebCore::HTMLMediaElement::updateShouldAutoplay):
+        (WebCore::mediaElementIsAllowedToAutoplay): Deleted.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::autoplayPermitted):
+        * html/MediaElementSession.h:
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions):
+
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support unprefixed cross-fade

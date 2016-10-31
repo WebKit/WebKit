@@ -1,0 +1,42 @@
+     
+Test play() of multiple video elements when some are of a type that allows concurrent playback and others are not.
+
+RUN(internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted'))
+RUN(internals.setMediaSessionRestrictions('video', ''))
+RUN(videos[0].src = findMediaFile("video", "content/test-video-only"))
+RUN(videos[1].src = findMediaFile("video", "content/test-video-only"))
+RUN(videos[2].src = findMediaFile("video", "content/test"))
+RUN(videos[3].src = findMediaFile("video", "content/test"))
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+
+EXPECTED (videos[0].audioTracks.length == '0') OK
+EXPECTED (videos[1].audioTracks.length == '0') OK
+EXPECTED (videos[2].audioTracks.length == '1') OK
+EXPECTED (videos[3].audioTracks.length == '1') OK
+
+*** Play the first video ***
+RUN(videos[0].play())
+EVENT(playing)
+
+*** Play the second video ***
+RUN(videos[1].play())
+EVENT(playing)
+
+*** Play the third video ***
+RUN(videos[2].play())
+EVENT(playing)
+
+*** Play the fourth video, the third should pause ***
+RUN(videos[3].play())
+EVENT(pause)
+
+EXPECTED (videos[0].paused == 'false') OK
+EXPECTED (videos[1].paused == 'false') OK
+EXPECTED (videos[2].paused == 'true') OK
+EXPECTED (videos[3].paused == 'false') OK
+END OF TEST
+

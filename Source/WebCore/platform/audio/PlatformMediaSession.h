@@ -55,6 +55,7 @@ public:
     enum MediaType {
         None = 0,
         Video,
+        VideoAudio,
         Audio,
         WebAudio,
     };

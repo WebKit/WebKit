@@ -1,7 +1,7 @@
   
 Test play() when concurrent playback not allowed.
 
-RUN(internals.setMediaSessionRestrictions('video', 'ConcurrentPlaybackNotPermitted'))
+RUN(internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted'))
 
 EVENT(canplaythrough)
 EVENT(canplaythrough)

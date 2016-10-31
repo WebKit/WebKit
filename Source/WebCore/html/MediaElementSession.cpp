@@ -174,6 +174,29 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
     return true;
 }
 
+bool MediaElementSession::autoplayPermitted() const
+{
+    const Document& document = m_element.document();
+    if (document.pageCacheState() != Document::NotInPageCache)
+        return false;
+    if (document.activeDOMObjectsAreSuspended())
+        return false;
+
+    if (!hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
+        return true;
+
+    auto* renderer = m_element.renderer();
+    if (!renderer)
+        return false;
+    if (renderer->style().visibility() != VISIBLE)
+        return false;
+    if (renderer->view().frameView().isOffscreen())
+        return false;
+    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
+        return false;
+    return true;
+}
+
 bool MediaElementSession::dataLoadingPermitted(const HTMLMediaElement&) const
 {
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())

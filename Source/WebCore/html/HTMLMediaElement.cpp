@@ -2231,6 +2231,7 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
 bool HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
     return isAutoplaying()
+        && mediaSession().autoplayPermitted()
         && paused()
         && autoplay()
         && !pausedForUserInteraction()
@@ -6722,8 +6723,11 @@ unsigned long long HTMLMediaElement::fileSize() const
 
 PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 {
-    if (m_player && m_readyState >= HAVE_METADATA)
+    if (m_player && m_readyState >= HAVE_METADATA) {
+        if (hasVideo() && hasAudio() && !muted())
+            return PlatformMediaSession::VideoAudio;
         return hasVideo() ? PlatformMediaSession::Video : PlatformMediaSession::Audio;
+    }
 
     return presentationType();
 }
@@ -6731,7 +6735,7 @@ PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 PlatformMediaSession::MediaType HTMLMediaElement::presentationType() const
 {
     if (hasTagName(HTMLNames::videoTag))
-        return PlatformMediaSession::Video;
+        return PlatformMediaSession::VideoAudio;
 
     return PlatformMediaSession::Audio;
 }
@@ -7107,26 +7111,6 @@ bool HTMLMediaElement::isVideoTooSmallForInlinePlayback()
     return (videoBox.width() <= 1 || videoBox.height() <= 1);
 }
 
-static bool mediaElementIsAllowedToAutoplay(const HTMLMediaElement& element)
-{
-    const Document& document = element.document();
-    if (document.pageCacheState() != Document::NotInPageCache)
-        return false;
-    if (document.activeDOMObjectsAreSuspended())
-        return false;
-
-    auto* renderer = element.renderer();
-    if (!renderer)
-        return false;
-    if (renderer->style().visibility() != VISIBLE)
-        return false;
-    if (renderer->view().frameView().isOffscreen())
-        return false;
-    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
-        return false;
-    return true;
-}
-
 void HTMLMediaElement::isVisibleInViewportChanged()
 {
     updateShouldAutoplay();
@@ -7141,7 +7125,7 @@ void HTMLMediaElement::updateShouldAutoplay()
     if (!m_mediaSession->hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
         return;
 
-    bool canAutoplay = mediaElementIsAllowedToAutoplay(*this);
+    bool canAutoplay = mediaSession().autoplayPermitted();
     if (canAutoplay
         && m_mediaSession->state() == PlatformMediaSession::Interrupted
         && m_mediaSession->interruptionType() == PlatformMediaSession::InvisibleAutoplay)

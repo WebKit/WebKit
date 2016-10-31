@@ -28,7 +28,7 @@ function runTest()
         return;
     }
     findMediaElement();
-    run('internals.setMediaSessionRestrictions("video", "InterruptedPlaybackNotPermitted")');
+    run('internals.setMediaSessionRestrictions("videoaudio", "InterruptedPlaybackNotPermitted")');
     run('video.src = findMediaFile("video", "content/test")');
     testExpected("video.paused", true);
     run('internals.beginMediaSessionInterruption("System")');

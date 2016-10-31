@@ -1,5 +1,5 @@
 
-RUN(internals.setMediaSessionRestrictions("video", "InterruptedPlaybackNotPermitted"))
+RUN(internals.setMediaSessionRestrictions("videoaudio", "InterruptedPlaybackNotPermitted"))
 RUN(video.src = findMediaFile("video", "content/test"))
 EXPECTED (video.paused == 'true') OK
 RUN(internals.beginMediaSessionInterruption("System"))

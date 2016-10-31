@@ -153,8 +153,11 @@ void MediaSessionManageriOS::resetRestrictions()
         addRestriction(PlatformMediaSession::Video, BackgroundTabPlaybackRestricted);
     }
 
-    addRestriction(PlatformMediaSession::Video, ConcurrentPlaybackNotPermitted);
+    removeRestriction(PlatformMediaSession::Video, ConcurrentPlaybackNotPermitted);
     addRestriction(PlatformMediaSession::Video, BackgroundProcessPlaybackRestricted);
+
+    addRestriction(PlatformMediaSession::VideoAudio, ConcurrentPlaybackNotPermitted);
+    addRestriction(PlatformMediaSession::VideoAudio, BackgroundProcessPlaybackRestricted);
 
     removeRestriction(PlatformMediaSession::Audio, ConcurrentPlaybackNotPermitted);
     removeRestriction(PlatformMediaSession::Audio, BackgroundProcessPlaybackRestricted);
