@@ -278,6 +278,7 @@ variationFontsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1, conditiona
 
 # Runtime-enabled features
 visualViewportEnabled initial=false
+intersectionObserverEnabled initial=false
 
 inputEventsEnabled initial=false
 

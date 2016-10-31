@@ -1,3 +1,61 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement IntersectionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=159475
+
+        Reviewed by Ryosuke Niwa.
+        
+        Add bindings support for Intersection Observer
+        <https://wicg.github.io/IntersectionObserver/>
+        
+        Code is wrapped in ENABLE(INTERSECTION_OBSERVER), and controlled by a runtime
+        Setting (off by default for now).
+        
+        A minor bindings change was required to fix the callback code.
+        
+        IntersectionObserver is just a shell for now.
+
+        Tests: intersection-observer/intersection-observer-entry-interface.html
+               intersection-observer/intersection-observer-interface.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldPassWrapperByReference):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * page/IntersectionObserver.cpp: Added.
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::observe):
+        (WebCore::IntersectionObserver::unobserve):
+        (WebCore::IntersectionObserver::disconnect):
+        (WebCore::IntersectionObserver::takeRecords):
+        * page/IntersectionObserver.h: Added.
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::root):
+        (WebCore::IntersectionObserver::rootMargin):
+        (WebCore::IntersectionObserver::thresholds):
+        * page/IntersectionObserver.idl: Added.
+        * page/IntersectionObserverCallback.h: Added.
+        (WebCore::IntersectionObserverCallback::~IntersectionObserverCallback):
+        * page/IntersectionObserverCallback.idl: Added.
+        * page/IntersectionObserverEntry.cpp: Added.
+        (WebCore::IntersectionObserverEntry::IntersectionObserverEntry):
+        * page/IntersectionObserverEntry.h: Added.
+        (WebCore::IntersectionObserverEntry::create):
+        (WebCore::IntersectionObserverEntry::time):
+        (WebCore::IntersectionObserverEntry::rootBounds):
+        (WebCore::IntersectionObserverEntry::boundingClientRect):
+        (WebCore::IntersectionObserverEntry::intersectionRect):
+        (WebCore::IntersectionObserverEntry::target):
+        (WebCore::IntersectionObserverEntry::intersectionRatio):
+        * page/IntersectionObserverEntry.idl: Added.
+        * page/Settings.in:
+
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the shadow DOM

@@ -584,6 +584,9 @@ set(WebCore_NON_SVG_IDL_FILES
     page/EventSource.idl
     page/GlobalCrypto.idl
     page/History.idl
+    page/IntersectionObserver.idl
+    page/IntersectionObserverCallback.idl
+    page/IntersectionObserverEntry.idl
     page/Location.idl
     page/Navigator.idl
     page/NavigatorConcurrentHardware.idl
@@ -2039,6 +2042,8 @@ set(WebCore_SOURCES
     page/FrameTree.cpp
     page/FrameView.cpp
     page/History.cpp
+    page/IntersectionObserver.cpp
+    page/IntersectionObserverEntry.cpp
     page/Location.cpp
     page/MainFrame.cpp
     page/MouseEventWithHitTestResults.cpp

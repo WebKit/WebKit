@@ -1416,7 +1416,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
         return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestObject");
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
-    auto object = TestObj::create(document, *testCallback, *testCallbackFunction);
+    auto object = TestObj::create(document, WTFMove(testCallback), WTFMove(testCallbackFunction));
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 

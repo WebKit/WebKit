@@ -5145,6 +5145,8 @@ sub ShouldPassWrapperByReference
 {
     my ($parameter, $interface) = @_;
 
+    return 0 if $codeGenerator->IsCallbackInterface($parameter->type);
+
     my $nativeType = GetNativeType($interface, $parameter->type);
     return $codeGenerator->ShouldPassWrapperByReference($parameter) && (substr($nativeType, -1) eq '*' || $nativeType =~ /^RefPtr/);
 }

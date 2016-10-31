@@ -1,3 +1,17 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement IntersectionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=159475
+
+        Reviewed by Ryosuke Niwa.
+        
+        Basic interface tests.
+
+        * intersection-observer/intersection-observer-entry-interface-expected.txt: Added.
+        * intersection-observer/intersection-observer-entry-interface.html: Added.
+        * intersection-observer/intersection-observer-interface-expected.txt: Added.
+        * intersection-observer/intersection-observer-interface.html: Added.
+
 2016-10-31  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Airplay support

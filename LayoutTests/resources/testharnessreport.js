@@ -88,6 +88,8 @@ if (self.testRunner) {
         }, 0);
     });
 
-    if (window.internals)
-        window.internals.setResourceTimingSupport(true);
+    if (window.internals) {
+        internals.setResourceTimingSupport(true);
+        internals.settings.setIntersectionObserverEnabled(true);
+    }
 }
