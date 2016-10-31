@@ -1,3 +1,12 @@
+2016-10-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r208151; _setPreventsSleepDuringVideoPlayback: only defined in non-simulator SDKs.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-10-31  Nan Wang  <n_wang@apple.com>
 
         AX: iOS Voiceover does not announce previously selected value from input type="date" form field
