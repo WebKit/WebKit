@@ -1,3 +1,21 @@
+2016-10-31  Saam Barati  <sbarati@apple.com>
+
+        GetByOffset rule is has incorrect assumptions inside arguments elimination phase
+        https://bugs.webkit.org/show_bug.cgi?id=164239
+        <rdar://problem/29032041>
+
+        Reviewed by Keith Miller.
+
+        The rule for GetByOffset assumes that a child will always be transformed before 
+        the user of a child is by assuming its child will already be a phantom allocation.
+        This will almost certainly be true because of how we generate bytecode for
+        arguments allocation and how traversal of the graph works using blocksInNaturalOrder.
+        However, there is no guarantee that blocksInNaturalOrder must first traverse a
+        block's dominator before the block being dominated. Since it's unlikely that this
+        bug will ever be seen by real code, this fix is mostly for maintaining good hygiene.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Implement IntersectionObserver

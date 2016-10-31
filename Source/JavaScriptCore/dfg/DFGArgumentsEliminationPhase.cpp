@@ -441,7 +441,7 @@ private:
                     if (!m_candidates.contains(candidate))
                         break;
 
-                    if (node->child2()->op() != PhantomClonedArguments)
+                    if (node->child2()->op() != PhantomClonedArguments && node->child2()->op() != CreateClonedArguments)
                         break;
 
                     ASSERT(node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset);
