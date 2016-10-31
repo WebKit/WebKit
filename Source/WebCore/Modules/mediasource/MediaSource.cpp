@@ -343,7 +343,7 @@ const MediaTime& MediaSource::currentTimeFudgeFactor()
 
 bool MediaSource::hasBufferedTime(const MediaTime& time)
 {
-    if (time >= duration())
+    if (time > duration())
         return false;
 
     auto ranges = buffered();
