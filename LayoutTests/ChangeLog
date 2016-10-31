@@ -1,3 +1,13 @@
+2016-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Skip media tests because timeout happens on many media tests.
+
+        Unreviewed EFL gardening.
+
+        Treat the media folder to *Skip* temporarily.
+
+        * platform/efl/TestExpectations:
+
 2016-10-30  Darin Adler  <darin@apple.com>
 
         Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
