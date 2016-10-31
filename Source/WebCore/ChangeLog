@@ -1,3 +1,15 @@
+2016-10-31  Youenn Fablet  <youenn@apple.com>
+
+        fast/mediastream/RTCPeerConnection-* tests crashing under ASan
+        https://bugs.webkit.org/show_bug.cgi?id=164215
+
+        Reviewed by Philippe Normand.
+
+        Covered by ASAN bot tests.
+
+        * platform/mediastream/SDPProcessorScriptResource.cpp:
+        (WebCore::SDPProcessorScriptResource::scriptString):
+
 2016-10-28  Philippe Normand  <pnormand@igalia.com>
 
         [OpenWebRTC] Initialize library one time only

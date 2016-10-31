@@ -42,7 +42,7 @@ namespace SDPProcessorScriptResource {
 
 const String& scriptString()
 {
-    static NeverDestroyed<const String> script = String(sdpJavaScript);
+    static NeverDestroyed<const String> script(sdpJavaScript, sizeof(sdpJavaScript));
     return script;
 }
 
