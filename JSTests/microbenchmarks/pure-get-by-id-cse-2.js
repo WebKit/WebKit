@@ -20,9 +20,9 @@ for (let i = 0; i < objectCount; i++) {
     objects.push(obj);
 }
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < 10000; i++) {
     let obj = objects[i % objects.length];
-    foo(obj, 150);
+    foo(obj, 25);
 }
 
 const verbose = false;
