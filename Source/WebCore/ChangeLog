@@ -1,3 +1,9 @@
+2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ and EFL build fixes after r208176.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Fix #include case.

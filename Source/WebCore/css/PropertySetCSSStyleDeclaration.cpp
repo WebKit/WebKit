@@ -89,10 +89,12 @@ public:
                 auto mutation = MutationRecord::createAttributes(*s_currentDecl->parentElement(), HTMLNames::styleAttr, m_oldValue);
                 m_mutationRecipients->enqueueMutationRecord(WTFMove(mutation));
             }
+#if ENABLE(CUSTOM_ELEMENTS)
             if (m_customElement) {
                 AtomicString newValue = m_customElement->getAttribute(HTMLNames::styleAttr);
                 CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*m_customElement, HTMLNames::styleAttr, m_oldValue, newValue);
             }
+#endif
         }
 
         s_shouldDeliver = false;
@@ -126,7 +128,9 @@ private:
 
     std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
     AtomicString m_oldValue;
+#if ENABLE(CUSTOM_ELEMENTS)
     RefPtr<Element> m_customElement;
+#endif
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
