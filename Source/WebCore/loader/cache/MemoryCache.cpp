@@ -71,6 +71,7 @@ MemoryCache::MemoryCache()
     , m_deadSize(0)
     , m_pruneTimer(*this, &MemoryCache::prune)
 {
+    static_assert(sizeof(long long) > sizeof(unsigned), "Numerical overflow can happen when adjusting the size of the cached memory.");
 }
 
 auto MemoryCache::sessionResourceMap(SessionID sessionID) const -> CachedResourceMap*
@@ -148,7 +149,7 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     resource.setInCache(true);
     resource.updateResponseAfterRevalidation(response);
     insertInLRUList(resource);
-    int delta = resource.size();
+    long long delta = resource.size();
     if (resource.decodedSize() && resource.hasClients())
         insertInLiveDecodedResourcesList(resource);
     if (delta)
@@ -448,7 +449,7 @@ void MemoryCache::remove(CachedResource& resource)
             // Remove from the appropriate LRU list.
             removeFromLRUList(resource);
             removeFromLiveDecodedResourcesList(resource);
-            adjustSize(resource.hasClients(), -static_cast<int>(resource.size()));
+            adjustSize(resource.hasClients(), -static_cast<long long>(resource.size()));
         } else
             ASSERT(resources->get(key) != &resource);
     }
@@ -641,13 +642,13 @@ void MemoryCache::removeFromLiveResourcesSize(CachedResource& resource)
     m_deadSize += resource.size();
 }
 
-void MemoryCache::adjustSize(bool live, int delta)
+void MemoryCache::adjustSize(bool live, long long delta)
 {
     if (live) {
-        ASSERT(delta >= 0 || ((int)m_liveSize + delta >= 0));
+        ASSERT(delta >= 0 || (static_cast<long long>(m_liveSize) + delta >= 0));
         m_liveSize += delta;
     } else {
-        ASSERT(delta >= 0 || ((int)m_deadSize + delta >= 0));
+        ASSERT(delta >= 0 || (static_cast<long long>(m_deadSize) + delta >= 0));
         m_deadSize += delta;
     }
 }

@@ -174,7 +174,7 @@ void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSo
     }
 
     if (frameBytesCleared && imageObserver())
-        imageObserver()->decodedSizeChanged(this, -safeCast<int>(frameBytesCleared));
+        imageObserver()->decodedSizeChanged(this, -safeCast<long long>(frameBytesCleared));
 }
 
 void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, ImageFrameCaching frameCaching)
@@ -186,8 +186,13 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
         m_frames.grow(numFrames);
 
     if (frameCaching == CacheMetadataAndFrame) {
-        m_frames[index].m_image = m_source.createFrameImageAtIndex(index, subsamplingLevel);
-        m_frames[index].m_subsamplingLevel = subsamplingLevel;
+        size_t frameBytes = size().area() * sizeof(RGBA32);
+
+        // Do not create the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
+        if (WTF::isInBounds<unsigned>(frameBytes + decodedSize())) {
+            m_frames[index].m_image = m_source.createFrameImageAtIndex(index, subsamplingLevel);
+            m_frames[index].m_subsamplingLevel = subsamplingLevel;
+        }
     }
 
     m_frames[index].m_orientation = m_source.orientationAtIndex(index);
@@ -203,11 +208,11 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     LOG(Images, "BitmapImage %p cacheFrame %lu (%s%u bytes, complete %d)", this, index, frameCaching == CacheMetadataOnly ? "metadata only, " : "", m_frames[index].m_frameBytes, m_frames[index].m_isComplete);
 
     if (m_frames[index].m_image) {
-        int deltaBytes = safeCast<int>(m_frames[index].m_frameBytes);
-        m_decodedSize += deltaBytes;
+        unsigned decodedSize = m_frames[index].m_frameBytes;
+        m_decodedSize += decodedSize;
         // The fully-decoded frame will subsume the partially decoded data used
         // to determine image properties.
-        deltaBytes -= m_decodedPropertiesSize;
+        long long deltaBytes = static_cast<long long>(decodedSize) - m_decodedPropertiesSize;
         m_decodedPropertiesSize = 0;
         if (imageObserver())
             imageObserver()->decodedSizeChanged(this, deltaBytes);
@@ -219,17 +224,17 @@ void BitmapImage::didDecodeProperties() const
     if (m_decodedSize)
         return;
 
-    size_t updatedSize = m_source.bytesDecodedToDetermineProperties();
-    if (m_decodedPropertiesSize == updatedSize)
+    size_t decodedPropertiesSize = m_source.bytesDecodedToDetermineProperties();
+    if (m_decodedPropertiesSize == decodedPropertiesSize)
         return;
 
-    int deltaBytes = updatedSize - m_decodedPropertiesSize;
+    long long deltaBytes = static_cast<long long>(decodedPropertiesSize) - m_decodedPropertiesSize;
 #if !ASSERT_DISABLED
-    bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
-    bool underflow = updatedSize < m_decodedPropertiesSize && deltaBytes > 0;
+    bool overflow = decodedPropertiesSize > m_decodedPropertiesSize && deltaBytes < 0;
+    bool underflow = decodedPropertiesSize < m_decodedPropertiesSize && deltaBytes > 0;
     ASSERT(!overflow && !underflow);
 #endif
-    m_decodedPropertiesSize = updatedSize;
+    m_decodedPropertiesSize = decodedPropertiesSize;
     if (imageObserver())
         imageObserver()->decodedSizeChanged(this, deltaBytes);
 }
@@ -390,12 +395,12 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
     // re-decode with a lower level.
     if (index < m_frames.size() && m_frames[index].m_image && subsamplingLevel < m_frames[index].m_subsamplingLevel) {
         // If the image is already cached, but at too small a size, re-decode a larger version.
-        int sizeChange = -m_frames[index].m_frameBytes;
+        unsigned decodedSize = m_frames[index].m_frameBytes;
         m_frames[index].clear(true);
         invalidatePlatformData();
-        m_decodedSize += sizeChange;
+        m_decodedSize -= decodedSize;
         if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, sizeChange);
+            imageObserver()->decodedSizeChanged(this, -static_cast<long long>(decodedSize));
     }
 
     // If we haven't fetched a frame yet, do so.
