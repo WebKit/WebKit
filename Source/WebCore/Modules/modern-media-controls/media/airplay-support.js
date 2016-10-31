@@ -23,59 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class AirplaySupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new AirplaySupport(this);
-        new ElapsedTimeSupport(this);
-        new MuteSupport(this);
-        new PlaybackSupport(this);
-        new RemainingTimeSupport(this);
-        new ScrubbingSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-        new VolumeSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.airplayButton;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        return ["webkitplaybacktargetavailabilitychanged", "webkitcurrentplaybacktargetiswirelesschanged"];
+    }
+
+    buttonWasClicked(control)
+    {
+        this.mediaController.media.webkitShowPlaybackTargetPicker();
     }
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        if (event.type === "webkitplaybacktargetavailabilitychanged")
+            this._routesAvailable = event.availability === "available";
+
+        super.handleEvent(event);
     }
 
-    // Private
-
-    _updateControlsSize()
+    syncControl()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        this.control.enabled = !!this._routesAvailable;
+        this.control.on = this.mediaController.media.webkitCurrentPlaybackTargetIsWireless;
     }
 
 }
