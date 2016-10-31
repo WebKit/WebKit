@@ -43,10 +43,8 @@ class Event;
 class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
-class RTCAnswerOptions;
 class RTCConfiguration;
 class RTCIceCandidate;
-class RTCOfferOptions;
 class RTCRtpReceiver;
 class RTCRtpSender;
 class RTCRtpSenderClient;
@@ -54,6 +52,9 @@ class RTCRtpTransceiver;
 class RTCSessionDescription;
 class RTCStatsResponse;
 class ScriptExecutionContext;
+
+struct RTCAnswerOptions;
+struct RTCOfferOptions;
 
 namespace PeerConnection {
 typedef DOMPromise<RTCSessionDescription> SessionDescriptionPromise;
@@ -89,8 +90,8 @@ public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
     virtual ~PeerConnectionBackend() { }
 
-    virtual void createOffer(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&&) = 0;
-    virtual void createAnswer(RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&&) = 0;
+    virtual void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&) = 0;
+    virtual void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&) = 0;
 
     virtual void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) = 0;
     virtual RefPtr<RTCSessionDescription> localDescription() const = 0;

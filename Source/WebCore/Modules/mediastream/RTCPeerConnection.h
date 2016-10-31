@@ -39,6 +39,7 @@
 #include "EventTarget.h"
 #include "MediaStream.h"
 #include "PeerConnectionBackend.h"
+#include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
 #include "ScriptWrappable.h"
 #include <wtf/HashMap.h>
@@ -59,6 +60,10 @@ class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public Pee
 public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     ~RTCPeerConnection();
+
+    using OfferAnswerOptions = RTCOfferAnswerOptions;
+    using OfferOptions = RTCOfferOptions;
+    using AnswerOptions = RTCAnswerOptions;
 
     ExceptionOr<void> initializeWith(Document&, const Dictionary&);
 
@@ -82,8 +87,8 @@ public:
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RtpTransceiverInit&);
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String& kind, const RtpTransceiverInit&);
 
-    void queuedCreateOffer(const Dictionary& offerOptions, PeerConnection::SessionDescriptionPromise&&);
-    void queuedCreateAnswer(const Dictionary& answerOptions, PeerConnection::SessionDescriptionPromise&&);
+    void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
+    void queuedCreateAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
 
     void queuedSetLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
     RefPtr<RTCSessionDescription> localDescription() const;

@@ -203,36 +203,24 @@ void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, c
     m_backend->markAsNeedingNegotiation();
 }
 
-void RTCPeerConnection::queuedCreateOffer(const Dictionary& offerOptions, SessionDescriptionPromise&& promise)
+void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
 
-    auto options = RTCOfferOptions::create(offerOptions);
-    if (options.hasException()) {
-        promise.reject(OperationError, "Invalid createOffer argument");
-        return;
-    }
-
-    m_backend->createOffer(options.releaseReturnValue(), WTFMove(promise));
+    m_backend->createOffer(WTFMove(options), WTFMove(promise));
 }
 
-void RTCPeerConnection::queuedCreateAnswer(const Dictionary& answerOptions, SessionDescriptionPromise&& promise)
+void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDescriptionPromise&& promise)
 {
     if (m_signalingState == SignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
 
-    auto options = RTCAnswerOptions::create(answerOptions);
-    if (options.hasException()) {
-        promise.reject(OperationError, "Invalid createAnswer argument");
-        return;
-    }
-
-    m_backend->createAnswer(options.releaseReturnValue(), WTFMove(promise));
+    m_backend->createAnswer(WTFMove(options), WTFMove(promise));
 }
 
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, PeerConnection::VoidPromise&& promise)

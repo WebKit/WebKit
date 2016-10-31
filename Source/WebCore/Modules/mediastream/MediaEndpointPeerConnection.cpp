@@ -133,14 +133,14 @@ void MediaEndpointPeerConnection::startRunningTasks()
     m_initialDeferredTask = nullptr;
 }
 
-void MediaEndpointPeerConnection::createOffer(RTCOfferOptions& options, SessionDescriptionPromise&& promise)
+void MediaEndpointPeerConnection::createOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
 {
-    runTask([this, protectedOptions = RefPtr<RTCOfferOptions>(&options), protectedPromise = WTFMove(promise)]() mutable {
-        createOfferTask(*protectedOptions, protectedPromise);
+    runTask([this, protectedOptions = WTFMove(options), protectedPromise = WTFMove(promise)]() mutable {
+        createOfferTask(protectedOptions, protectedPromise);
     });
 }
 
-void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescriptionPromise& promise)
+void MediaEndpointPeerConnection::createOfferTask(const RTCOfferOptions&, SessionDescriptionPromise& promise)
 {
     ASSERT(!m_dtlsFingerprint.isEmpty());
 
@@ -204,14 +204,14 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
     promise.resolve(*description->toRTCSessionDescription(*m_sdpProcessor));
 }
 
-void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions& options, SessionDescriptionPromise&& promise)
+void MediaEndpointPeerConnection::createAnswer(RTCAnswerOptions&& options, SessionDescriptionPromise&& promise)
 {
-    runTask([this, protectedOptions = RefPtr<RTCAnswerOptions>(&options), protectedPromise = WTFMove(promise)]() mutable {
-        createAnswerTask(*protectedOptions, protectedPromise);
+    runTask([this, protectedOptions = WTFMove(options), protectedPromise = WTFMove(promise)]() mutable {
+        createAnswerTask(protectedOptions, protectedPromise);
     });
 }
 
-void MediaEndpointPeerConnection::createAnswerTask(RTCAnswerOptions&, SessionDescriptionPromise& promise)
+void MediaEndpointPeerConnection::createAnswerTask(const RTCAnswerOptions&, SessionDescriptionPromise& promise)
 {
     ASSERT(!m_dtlsFingerprint.isEmpty());
 

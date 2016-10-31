@@ -28,53 +28,19 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Dictionary.h"
-#include "ExceptionCode.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Dictionary;
-
-class RTCOfferAnswerOptions {
-public:
-    bool voiceActivityDetection() const { return m_voiceActivityDetection; }
-
-protected:
-    RTCOfferAnswerOptions() = default;
-    bool initialize(const Dictionary&);
-
-private:
-    bool m_voiceActivityDetection { true };
+struct RTCOfferAnswerOptions {
+    bool voiceActivityDetection { true };
 };
 
-// FIXME: Why is this reference counted?
-class RTCOfferOptions : public RefCounted<RTCOfferOptions>, public RTCOfferAnswerOptions {
-public:
-    static ExceptionOr<Ref<RTCOfferOptions>> create(const Dictionary&);
-
-    int64_t offerToReceiveVideo() const { return m_offerToReceiveVideo; }
-    int64_t offerToReceiveAudio() const { return m_offerToReceiveAudio; }
-    bool iceRestart() const { return m_iceRestart; }
-
-private:
-    RTCOfferOptions() = default;
-    bool initialize(const Dictionary&);
-
-    int64_t m_offerToReceiveVideo { 0 };
-    int64_t m_offerToReceiveAudio { 0 };
-    bool m_iceRestart { false };
+struct RTCOfferOptions : RTCOfferAnswerOptions {
+    int64_t offerToReceiveVideo { 0 };
+    int64_t offerToReceiveAudio { 0 };
+    bool iceRestart { false };
 };
 
-// FIXME: Why is this reference counted?
-class RTCAnswerOptions : public RefCounted<RTCAnswerOptions>, public RTCOfferAnswerOptions {
-public:
-    static ExceptionOr<Ref<RTCAnswerOptions>> create(const Dictionary&);
-
-private:
-    RTCAnswerOptions() = default;
-    bool initialize(const Dictionary&);
+struct RTCAnswerOptions : RTCOfferAnswerOptions {
 };
 
 } // namespace WebCore

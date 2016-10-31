@@ -1,5 +1,35 @@
 2016-10-31  Youenn Fablet  <youenn@apple.com>
 
+        RTCOfferAnswerOptions does not need to be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=164216
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        Making RTCOffer/Answer options dictionaries as per specification.
+        Removing code that handles RTCOffer/Answer options dictionary since this is done by the binding generator.
+        Updated users of the options accordingly.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOffer):
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::createAnswer):
+        (WebCore::MediaEndpointPeerConnection::createAnswerTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCOfferAnswerOptions.cpp: Removed.
+        * Modules/mediastream/RTCOfferAnswerOptions.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::queuedCreateOffer):
+        (WebCore::RTCPeerConnection::queuedCreateAnswer):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2016-10-31  Youenn Fablet  <youenn@apple.com>
+
         fast/mediastream/RTCPeerConnection-* tests crashing under ASan
         https://bugs.webkit.org/show_bug.cgi?id=164215
 

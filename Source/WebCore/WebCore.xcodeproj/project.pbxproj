@@ -145,7 +145,6 @@
 		072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */; };
 		07367DDF172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */; };
 		07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */; };
-		073794DD19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */; };
 		073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */; };
 		073794E119EE2D1B00E5A045 /* MediaConstraintsMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */; };
 		073794E219EE2D1B00E5A045 /* MediaConstraintsMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */; };
@@ -7079,7 +7078,6 @@
 		072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionUserPreferences.cpp; sourceTree = "<group>"; };
 		07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateLegacyAVFObjC.h; sourceTree = "<group>"; };
 		07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InbandTextTrackPrivateLegacyAVFObjC.mm; sourceTree = "<group>"; };
-		073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCOfferAnswerOptions.cpp; sourceTree = "<group>"; };
 		073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCOfferAnswerOptions.h; sourceTree = "<group>"; };
 		073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsMock.cpp; sourceTree = "<group>"; };
 		073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsMock.h; sourceTree = "<group>"; };
@@ -14883,7 +14881,6 @@
 				07AB996718DA3C010018771E /* RTCIceServer.h */,
 				07AB996818DA3C010018771E /* RTCIceServer.idl */,
 				5E6653091DA437BF00FDD84C /* RTCIceTransport.h */,
-				073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */,
 				073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */,
 				07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */,
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
@@ -30567,7 +30564,6 @@
 				073BE34F17D18183002BD431 /* RTCIceCandidateDescriptor.cpp in Sources */,
 				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
 				073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */,
-				073794DD19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp in Sources */,
 				078E090B17D14CEE00420AA1 /* RTCPeerConnection.cpp in Sources */,
 				073BE35017D181A6002BD431 /* RTCPeerConnectionHandler.cpp in Sources */,
 				073794F119EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp in Sources */,

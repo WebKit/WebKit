@@ -55,8 +55,8 @@ class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEn
 public:
     MediaEndpointPeerConnection(PeerConnectionBackendClient*);
 
-    void createOffer(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&&) override;
-    void createAnswer(RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&&) override;
+    void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&) override;
+    void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&) override;
 
     void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) override;
     RefPtr<RTCSessionDescription> localDescription() const override;
@@ -90,8 +90,8 @@ private:
     void runTask(Function<void ()>&&);
     void startRunningTasks();
 
-    void createOfferTask(RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
-    void createAnswerTask(RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&);
+    void createOfferTask(const RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
+    void createAnswerTask(const RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&);
 
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
     void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
