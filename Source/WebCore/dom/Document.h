@@ -347,7 +347,7 @@ public:
     void removeImageElementByCaseFoldedUsemap(const AtomicStringImpl&, HTMLImageElement&);
     HTMLImageElement* imageElementByCaseFoldedUsemap(const AtomicStringImpl&) const;
 
-    SelectorQuery* selectorQueryForString(const String&, ExceptionCode&);
+    ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
     void clearSelectorQueryCache();
 
     // DOM methods & attributes for Document

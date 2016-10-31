@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectorQuery_h
-#define SelectorQuery_h
+#pragma once
 
 #include "CSSSelectorList.h"
+#include "ExceptionOr.h"
 #include "NodeList.h"
 #include "SelectorCompiler.h"
 #include <wtf/HashMap.h>
@@ -36,21 +36,17 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-    
 class CSSSelector;
 class ContainerNode;
 class Document;
 class Element;
-class Node;
-class NodeList;
 
 class SelectorDataList {
 public:
     explicit SelectorDataList(const CSSSelectorList&);
     bool matches(Element&) const;
     Element* closest(Element&) const;
-    RefPtr<NodeList> queryAll(ContainerNode& rootNode) const;
+    Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
 
 private:
@@ -120,7 +116,7 @@ public:
     explicit SelectorQuery(CSSSelectorList&&);
     bool matches(Element&) const;
     Element* closest(Element&) const;
-    RefPtr<NodeList> queryAll(ContainerNode& rootNode) const;
+    Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
 
 private:
@@ -130,10 +126,8 @@ private:
 
 class SelectorQueryCache {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    SelectorQuery* add(const String&, Document&, ExceptionCode&);
-
+    ExceptionOr<SelectorQuery&> add(const String&, Document&);
 private:
     HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;
 };
@@ -148,7 +142,7 @@ inline Element* SelectorQuery::closest(Element& element) const
     return m_selectors.closest(element);
 }
 
-inline RefPtr<NodeList> SelectorQuery::queryAll(ContainerNode& rootNode) const
+inline Ref<NodeList> SelectorQuery::queryAll(ContainerNode& rootNode) const
 {
     return m_selectors.queryAll(rootNode);
 }
@@ -159,5 +153,3 @@ inline Element* SelectorQuery::queryFirst(ContainerNode& rootNode) const
 }
 
 }
-
-#endif

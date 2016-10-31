@@ -45,8 +45,8 @@ class FetchRequest final : public FetchBodyOwner {
 public:
     static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
 
-    ExceptionOr<Ref<FetchHeaders>> initializeWith(FetchRequest&, const Dictionary&);
-    ExceptionOr<Ref<FetchHeaders>> initializeWith(const String&, const Dictionary&);
+    ExceptionOr<FetchHeaders&> initializeWith(FetchRequest&, const Dictionary&);
+    ExceptionOr<FetchHeaders&> initializeWith(const String&, const Dictionary&);
     ExceptionOr<void> setBody(JSC::ExecState&, JSC::JSValue, FetchRequest*);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
@@ -95,7 +95,7 @@ public:
 private:
     FetchRequest(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
 
-    ExceptionOr<Ref<FetchHeaders>> initializeOptions(const Dictionary&);
+    ExceptionOr<FetchHeaders&> initializeOptions(const Dictionary&);
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;

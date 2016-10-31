@@ -49,9 +49,9 @@ private:
     bool matchesAttribute(const Attribute&);
     bool matchesElement(const Element&);
 
-    void searchUsingDOMTreeTraversal(Node*);
-    void searchUsingXPath(Node*);
-    void searchUsingCSSSelectors(Node*);
+    void searchUsingDOMTreeTraversal(Node&);
+    void searchUsingXPath(Node&);
+    void searchUsingCSSSelectors(Node&);
 
     bool m_startTagFound;
     bool m_endTagFound;

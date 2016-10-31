@@ -1832,7 +1832,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     return tagNames.get().contains(localName) || Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid;
 }
 
-ExceptionOr<Ref<ShadowRoot>> Element::attachShadow(const ShadowRootInit& init)
+ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 {
     if (!canAttachAuthorShadowRoot(*this))
         return Exception { NOT_SUPPORTED_ERR };
@@ -1841,8 +1841,9 @@ ExceptionOr<Ref<ShadowRoot>> Element::attachShadow(const ShadowRootInit& init)
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
     auto shadow = ShadowRoot::create(document(), init.mode);
-    addShadowRoot(shadow.copyRef());
-    return WTFMove(shadow);
+    auto& result = shadow.get();
+    addShadowRoot(WTFMove(shadow));
+    return result;
 }
 
 ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
@@ -2952,22 +2953,18 @@ bool Element::matchesDefaultPseudoClass() const
 
 ExceptionOr<bool> Element::matches(const String& selector)
 {
-    ExceptionCode ec = 0;
-    auto* query = document().selectorQueryForString(selector, ec);
-    if (ec)
-        return Exception { ec };
-    return query && query->matches(*this);
+    auto query = document().selectorQueryForString(selector);
+    if (query.hasException())
+        return query.releaseException();
+    return query.releaseReturnValue().matches(*this);
 }
 
 ExceptionOr<Element*> Element::closest(const String& selector)
 {
-    ExceptionCode ec = 0;
-    auto* query = document().selectorQueryForString(selector, ec);
-    if (ec)
-        return Exception { ec };
-    if (!query)
-        return nullptr;
-    return query->closest(*this);
+    auto query = document().selectorQueryForString(selector);
+    if (query.hasException())
+        return query.releaseException();
+    return query.releaseReturnValue().closest(*this);
 }
 
 bool Element::shouldAppearIndeterminate() const
@@ -3707,16 +3704,16 @@ ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Elemen
 }
 
 // Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
-static ExceptionOr<ContainerNode*> contextNodeForInsertion(const String& where, Element& element)
+static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, Element& element)
 {
     if (equalLettersIgnoringASCIICase(where, "beforebegin") || equalLettersIgnoringASCIICase(where, "afterend")) {
         auto* parent = element.parentNode();
         if (!parent || is<Document>(*parent))
             return Exception { NO_MODIFICATION_ALLOWED_ERR };
-        return parent;
+        return *parent;
     }
     if (equalLettersIgnoringASCIICase(where, "afterbegin") || equalLettersIgnoringASCIICase(where, "beforeend"))
-        return &element;
+        return element;
     return Exception { SYNTAX_ERR };
 }
 
@@ -3726,7 +3723,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
     auto contextNodeResult = contextNodeForInsertion(where, element);
     if (contextNodeResult.hasException())
         return contextNodeResult.releaseException();
-    auto& contextNode = *contextNodeResult.releaseReturnValue();
+    auto& contextNode = contextNodeResult.releaseReturnValue();
     if (!is<Element>(contextNode) || (contextNode.document().isHTMLDocument() && is<HTMLHtmlElement>(contextNode)))
         return Ref<Element> { HTMLBodyElement::create(contextNode.document()) };
     return Ref<Element> { downcast<Element>(contextNode) };

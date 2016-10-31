@@ -104,7 +104,7 @@
     [PutForwards=value] readonly attribute DOMTokenList classList;
 
     [MayThrowException] boolean matches(DOMString selectors);
-    [MayThrowException] Element closest(DOMString selectors);
+    [MayThrowException] Element? closest(DOMString selectors);
     [ImplementedAs=matches, MayThrowException] boolean webkitMatchesSelector(DOMString selectors);
 
     // CSSOM View Module API
@@ -124,7 +124,7 @@
     [CEReactions, Reflect] attribute DOMString uiactions;
 #endif
 
-    [CEReactions, MayThrowException] Element insertAdjacentElement(DOMString where, Element element);
+    [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element);
     [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString where, DOMString html);
     [MayThrowException] void insertAdjacentText(DOMString where, DOMString text);
 

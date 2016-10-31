@@ -109,9 +109,7 @@ public:
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
-    ExceptionOr<Node*> ensureShadowRoot(Element& host);
     Node* ensureUserAgentShadowRoot(Element& host);
-    ExceptionOr<Node*> createShadowRoot(Element& host);
     Node* shadowRoot(Element& host);
     ExceptionOr<String> shadowRootType(const Node&) const;
     String shadowPseudoId(Element&);

@@ -962,18 +962,18 @@ String CSSPrimitiveValue::stringValue() const
     }
 }
 
-ExceptionOr<Counter*> CSSPrimitiveValue::getCounterValue() const
+ExceptionOr<Counter&> CSSPrimitiveValue::getCounterValue() const
 {
     if (m_primitiveUnitType != CSS_COUNTER)
         return Exception { INVALID_ACCESS_ERR };
-    return m_value.counter;
+    return *m_value.counter;
 }
 
-ExceptionOr<Rect*> CSSPrimitiveValue::getRectValue() const
+ExceptionOr<Rect&> CSSPrimitiveValue::getRectValue() const
 {
     if (m_primitiveUnitType != CSS_RECT)
         return Exception { INVALID_ACCESS_ERR };
-    return m_value.rect;
+    return *m_value.rect;
 }
 
 ExceptionOr<Ref<RGBColor>> CSSPrimitiveValue::getRGBColorValue() const

@@ -193,9 +193,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    void before(Vector<NodeOrString>&&, ExceptionCode&);
-    void after(Vector<NodeOrString>&&, ExceptionCode&);
-    void replaceWith(Vector<NodeOrString>&&, ExceptionCode&);
+    ExceptionOr<void> before(Vector<NodeOrString>&&);
+    ExceptionOr<void> after(Vector<NodeOrString>&&);
+    ExceptionOr<void> replaceWith(Vector<NodeOrString>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
@@ -652,7 +652,7 @@ protected:
     void invalidateStyle(Style::Validity, Style::InvalidationMode = Style::InvalidationMode::Normal);
     void updateAncestorsForStyleRecalc();
 
-    RefPtr<Node> convertNodesOrStringsIntoNode(Vector<NodeOrString>&&, ExceptionCode&);
+    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(Vector<NodeOrString>&&);
 
 private:
     virtual PseudoId customPseudoId() const

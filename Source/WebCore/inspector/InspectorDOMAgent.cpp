@@ -533,15 +533,14 @@ void InspectorDOMAgent::querySelector(ErrorString& errorString, int nodeId, cons
         return;
     }
 
-    ExceptionCode ec = 0;
-    RefPtr<Element> element = downcast<ContainerNode>(*node).querySelector(selectors, ec);
-    if (ec) {
+    auto queryResult = downcast<ContainerNode>(*node).querySelector(selectors);
+    if (queryResult.hasException()) {
         errorString = ASCIILiteral("DOM Error while querying");
         return;
     }
 
-    if (element)
-        *elementId = pushNodePathToFrontend(element.get());
+    if (auto* element = queryResult.releaseReturnValue())
+        *elementId = pushNodePathToFrontend(element);
 }
 
 void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, const String& selectors, RefPtr<Inspector::Protocol::Array<int>>& result)
@@ -554,15 +553,14 @@ void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, c
         return;
     }
 
-    ExceptionCode ec = 0;
-    RefPtr<NodeList> nodes = downcast<ContainerNode>(*node).querySelectorAll(selectors, ec);
-    if (ec) {
+    auto queryResult = downcast<ContainerNode>(*node).querySelectorAll(selectors);
+    if (queryResult.hasException()) {
         errorString = ASCIILiteral("DOM Error while querying");
         return;
     }
 
+    auto nodes = queryResult.releaseReturnValue();
     result = Inspector::Protocol::Array<int>::create();
-
     for (unsigned i = 0; i < nodes->length(); ++i)
         result->addItem(pushNodePathToFrontend(nodes->item(i)));
 }
@@ -905,7 +903,7 @@ void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& wh
             }
             finder.performSearch(node);
         }
-    } else if (m_document) {
+    } else {
         // There's no need to iterate the frames tree because
         // the search helper will go inside the frame owner elements.
         finder.performSearch(m_document.get());
@@ -1115,19 +1113,18 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const Inspec
         return;
     }
 
-    ExceptionCode ec = 0;
-    RefPtr<NodeList> nodes = document->querySelectorAll(selectorString, ec);
+    auto queryResult = document->querySelectorAll(selectorString);
     // FIXME: <https://webkit.org/b/146161> Web Inspector: DOM.highlightSelector should work for "a:visited"
-    if (ec) {
+    if (queryResult.hasException()) {
         errorString = ASCIILiteral("DOM Error while querying");
         return;
     }
 
-    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
+    auto highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
     if (!highlightConfig)
         return;
 
-    m_overlay->highlightNodeList(WTFMove(nodes), *highlightConfig);
+    m_overlay->highlightNodeList(queryResult.releaseReturnValue(), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const int* nodeId, const String* objectId)

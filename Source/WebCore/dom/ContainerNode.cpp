@@ -809,18 +809,20 @@ void ContainerNode::updateTreeAfterInsertion(Node& child)
     dispatchChildInsertionEvents(child);
 }
 
-Element* ContainerNode::querySelector(const String& selectors, ExceptionCode& ec)
+ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 {
-    if (SelectorQuery* selectorQuery = document().selectorQueryForString(selectors, ec))
-        return selectorQuery->queryFirst(*this);
-    return nullptr;
+    auto query = document().selectorQueryForString(selectors);
+    if (query.hasException())
+        return query.releaseException();
+    return query.releaseReturnValue().queryFirst(*this);
 }
 
-RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, ExceptionCode& ec)
+ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)
 {
-    if (SelectorQuery* selectorQuery = document().selectorQueryForString(selectors, ec))
-        return selectorQuery->queryAll(*this);
-    return nullptr;
+    auto query = document().selectorQueryForString(selectors);
+    if (query.hasException())
+        return query.releaseException();
+    return query.releaseReturnValue().queryAll(*this);
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qualifiedName)
@@ -878,22 +880,38 @@ unsigned ContainerNode::childElementCount() const
     return std::distance(children.begin(), children.end());
 }
 
-void ContainerNode::append(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+ExceptionOr<void> ContainerNode::append(Vector<NodeOrString>&& vector)
 {
-    RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
-    if (ec || !node)
-        return;
+    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    if (result.hasException())
+        return result.releaseException();
 
+    auto node = result.releaseReturnValue();
+    if (!node)
+        return { };
+
+    ExceptionCode ec = 0;
     appendChild(*node, ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
-void ContainerNode::prepend(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+ExceptionOr<void> ContainerNode::prepend(Vector<NodeOrString>&& vector)
 {
-    RefPtr<Node> node = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector), ec);
-    if (ec || !node)
-        return;
+    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    if (result.hasException())
+        return result.releaseException();
 
+    auto node = result.releaseReturnValue();
+    if (!node)
+        return { };
+
+    ExceptionCode ec = 0;
     insertBefore(*node, firstChild(), ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
 HTMLCollection* ContainerNode::cachedHTMLCollection(CollectionType type)

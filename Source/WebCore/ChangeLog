@@ -1,5 +1,117 @@
 2016-10-31  Darin Adler  <darin@apple.com>
 
+        Move ChildNode and ParentNode from ExceptionCode to Exception, add support for ExceptionOr<T&>
+        https://bugs.webkit.org/show_bug.cgi?id=164214
+
+        Reviewed by Alex Christensen.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeOptions): Use FetchHeaders& instead of
+        Ref<FetchHeaders> for return value.
+        (WebCore::FetchRequest::initializeWith): Ditto.
+        * Modules/fetch/FetchRequest.h: Updated for above.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer): Use SourceBuffer& instead of
+        SourceBuffer* for return value.
+        * Modules/mediasource/MediaSource.h: Updated for above.
+
+        * bindings/js/JSDOMBinding.h: Added overloads of checkSecurityForNode so
+        it works with a function returning a reference.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getCounterValue): Use Counter& instead of
+        Counter* for return value.
+        (WebCore::CSSPrimitiveValue::getRectValue): Use Rect& instead of
+        Rect* for return value.
+        * css/CSSPrimitiveValue.h: Updated for above.
+
+        * dom/ChildNode.idl: Use non-legacy exceptions.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::querySelector): Use ExceptionOr.
+        (WebCore::ContainerNode::querySelectorAll): Ditto.
+        (WebCore::ContainerNode::append): Ditto.
+        (WebCore::ContainerNode::prepend): Ditto.
+        * dom/ContainerNode.h: Updated for above.
+
+        * dom/Document.cpp:
+        (WebCore::Document::selectorQueryForString): Use ExceptionOr.
+        * dom/Document.h: Updated for above.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attachShadow): Return ShadowRoot& instead of
+        Ref<ShadowRoot> since the shadow root is owned by the element, not
+        the caller.
+        (WebCore::Element::matches): Updated for change to make the
+        selectorQueryForString function use ExceptionOr.
+        (WebCore::Element::closest): Ditto.
+        (WebCore::contextNodeForInsertion): Return ContainerNode& instead of
+        ContainerNode*.
+        (WebCore::contextElementForInsertion): Updated for above.
+        * dom/Element.h: Updated for above.
+        * dom/Element.idl: Changed return type for closest and for
+        insertAdjacentElement to be nullable since both can return null.
+
+        * dom/ExceptionOr.h: Added a specialization for ExceptionOr<T&>.
+
+        * dom/Node.cpp:
+        (WebCore::Node::convertNodesOrStringsIntoNode): Use ExceptionOr.
+        (WebCore::Node::before): Ditto.
+        (WebCore::Node::after): Ditto.
+        (WebCore::Node::replaceWith): Ditto.
+        * dom/Node.h: Updated for above changes.
+
+        * dom/ParentNode.idl: Use non-legacy exceptions.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::queryAll): Changed return type to Ref.
+        (WebCore::SelectorQueryCache::add): Use ExceptionOr.
+        * dom/SelectorQuery.h: Updated for above changes.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument): Return
+        Document& instead of Document*.
+        * html/HTMLFrameOwnerElement.h: Updated for above change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack): Return TextTrack&
+        instead of Ref<TextTrack>.
+        * html/HTMLMediaElement.h: Updated for above.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay):
+        Updated for new exceptions.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::querySelector): Ditto.
+        (WebCore::InspectorDOMAgent::querySelectorAll): Ditto.
+        (WebCore::InspectorDOMAgent::performSearch): Ditto.
+        (WebCore::InspectorDOMAgent::highlightSelector): Ditto.
+
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::performSearch): Put a null check
+        here so callers don't have to do it. Pass references to the
+        individual functions since the pointer can't be null.
+        (WebCore::InspectorNodeFinder::searchUsingDOMTreeTraversal):
+        Updated to use reference and streamlined code a bit, using
+        containsIgnoringASCIICase instead of findIgnoringCase.
+        (WebCore::InspectorNodeFinder::matchesAttribute): Ditto.
+        (WebCore::InspectorNodeFinder::matchesElement): Ditto.
+        (WebCore::InspectorNodeFinder::searchUsingXPath): Ditto.
+        (WebCore::InspectorNodeFinder::searchUsingCSSSelectors): Ditto.
+        Also updated  for new exceptions in querySelectorAll.
+        * inspector/InspectorNodeFinder.h: Updated for above.
+
+        * page/Crypto.cpp:
+        (WebCore::Crypto::webkitSubtle): Return WebKitSubtleCrypto&
+        insetad of WebKitSubtleCrypto*.
+        * page/Crypto.h: Updated for above.
+
+        * testing/Internals.h: Removed declarations for functions already
+        removed: ensureShadowRoot and createShadowRoot.
+
+2016-10-31  Darin Adler  <darin@apple.com>
+
         Convert Document from ExceptionCode to Exception
         https://bugs.webkit.org/show_bug.cgi?id=164212
 

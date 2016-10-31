@@ -3594,7 +3594,7 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
         removeVideoTrack(*m_videoTracks->lastItem());
 }
 
-ExceptionOr<Ref<TextTrack>> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language)
+ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language)
 {
     // 4.8.10.12.4 Text track API
     // The addTextTrack(kind, label, language) method of media elements, when invoked, must run the following steps:
@@ -3609,21 +3609,22 @@ ExceptionOr<Ref<TextTrack>> HTMLMediaElement::addTextTrack(const String& kind, c
 
     // 5. Create a new text track corresponding to the new object, and set its text track kind to kind, its text 
     // track label to label, its text track language to language...
-    auto textTrack = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, emptyString(), label, language);
+    auto track = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, emptyString(), label, language);
+    auto& trackReference = track.get();
 
     // Note, due to side effects when changing track parameters, we have to
     // first append the track to the text track list.
 
     // 6. Add the new text track to the media element's list of text tracks.
-    addTextTrack(textTrack.copyRef());
+    addTextTrack(WTFMove(track));
 
     // ... its text track readiness state to the text track loaded state ...
-    textTrack->setReadinessState(TextTrack::Loaded);
+    trackReference.setReadinessState(TextTrack::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
-    textTrack->setMode(TextTrack::Mode::Hidden);
+    trackReference.setMode(TextTrack::Mode::Hidden);
 
-    return WTFMove(textTrack);
+    return trackReference;
 }
 
 AudioTrackList& HTMLMediaElement::audioTracks()

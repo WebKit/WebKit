@@ -762,16 +762,13 @@ HTMLImageElement* Document::imageElementByCaseFoldedUsemap(const AtomicStringImp
     return m_imagesByUsemap.getElementByCaseFoldedUsemap(name, *this);
 }
 
-SelectorQuery* Document::selectorQueryForString(const String& selectorString, ExceptionCode& ec)
+ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
 {
-    if (selectorString.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
+    if (selectorString.isEmpty())
+        return Exception { SYNTAX_ERR };
     if (!m_selectorQueryCache)
         m_selectorQueryCache = std::make_unique<SelectorQueryCache>();
-    return m_selectorQueryCache->add(selectorString, *this, ec);
+    return m_selectorQueryCache->add(selectorString, *this);
 }
 
 void Document::clearSelectorQueryCache()

@@ -52,7 +52,7 @@ public:
     SubtleCrypto& subtle();
 
     // Will be deprecated.
-    ExceptionOr<WebKitSubtleCrypto*> webkitSubtle();
+    ExceptionOr<WebKitSubtleCrypto&> webkitSubtle();
 #endif
 
 private:

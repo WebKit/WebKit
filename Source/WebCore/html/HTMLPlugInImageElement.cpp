@@ -429,8 +429,13 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
     ShadowRoot* shadow = userAgentShadowRoot();
     if (!shadow)
         return false;
-    RefPtr<Element> snapshotLabel = shadow->querySelector(selector.get(), ASSERT_NO_EXCEPTION);
-    return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
+    if (!node)
+        return false;
+    auto queryResult = shadow->querySelector(selector.get());
+    if (queryResult.hasException())
+        return false;
+    auto* snapshotLabel = queryResult.releaseReturnValue();
+    return snapshotLabel && snapshotLabel->contains(node);
 }
 
 void HTMLPlugInImageElement::removeSnapshotTimerFired()

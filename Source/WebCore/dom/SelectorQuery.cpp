@@ -169,7 +169,7 @@ struct AllElementExtractorSelectorQueryTrait {
     ALWAYS_INLINE static void appendOutputForElement(OutputType& output, Element* element) { ASSERT(element); output.append(*element); }
 };
 
-RefPtr<NodeList> SelectorDataList::queryAll(ContainerNode& rootNode) const
+Ref<NodeList> SelectorDataList::queryAll(ContainerNode& rootNode) const
 {
     Vector<Ref<Element>> result;
     execute<AllElementExtractorSelectorQueryTrait>(rootNode, result);
@@ -616,31 +616,27 @@ SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
 {
 }
 
-SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& document, ExceptionCode& ec)
+ExceptionOr<SelectorQuery&> SelectorQueryCache::add(const String& selectors, Document& document)
 {
     auto it = m_entries.find(selectors);
     if (it != m_entries.end())
-        return it->value.get();
+        return *it->value;
 
     CSSParser parser(document);
     CSSSelectorList selectorList;
     parser.parseSelector(selectors, selectorList);
 
-    if (!selectorList.first() || selectorList.hasInvalidSelector()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
+    if (!selectorList.first() || selectorList.hasInvalidSelector())
+        return Exception { SYNTAX_ERR };
 
-    if (selectorList.selectorsNeedNamespaceResolution()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
+    if (selectorList.selectorsNeedNamespaceResolution())
+        return Exception { SYNTAX_ERR };
 
     const int maximumSelectorQueryCacheSize = 256;
     if (m_entries.size() == maximumSelectorQueryCacheSize)
         m_entries.remove(m_entries.begin());
 
-    return m_entries.add(selectors, std::make_unique<SelectorQuery>(WTFMove(selectorList))).iterator->value.get();
+    return *m_entries.add(selectors, std::make_unique<SelectorQuery>(WTFMove(selectorList))).iterator->value;
 }
 
 }

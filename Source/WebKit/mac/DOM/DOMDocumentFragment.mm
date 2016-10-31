@@ -78,19 +78,13 @@
 - (DOMElement *)querySelector:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMElement *result = kit(WTF::getPtr(IMPL->querySelector(selectors, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->querySelector(selectors)));
 }
 
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNodeList *result = kit(WTF::getPtr(IMPL->querySelectorAll(selectors, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->querySelectorAll(selectors)).ptr());
 }
 
 @end

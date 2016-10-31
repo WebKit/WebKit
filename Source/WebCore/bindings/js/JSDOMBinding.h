@@ -285,8 +285,10 @@ WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 enum SecurityReportingOption { DoNotReportSecurityError, LogSecurityError, ThrowSecurityError };
 namespace BindingSecurity {
+    template<typename T> T* checkSecurityForNode(JSC::ExecState&, T&);
     template<typename T> T* checkSecurityForNode(JSC::ExecState&, T*);
     template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::ExecState&, ExceptionOr<T*>&&);
+    template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::ExecState&, ExceptionOr<T&>&&);
     bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = LogSecurityError);
     bool shouldAllowAccessToDOMWindow(JSC::ExecState&, DOMWindow&, String& message);
     bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = LogSecurityError);
@@ -774,6 +776,11 @@ template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state,
     return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
 }
 
+template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecState& state, T& node)
+{
+    return shouldAllowAccessToNode(state, &node) ? &node : nullptr;
+}
+
 template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecState& state, T* node)
 {
     return shouldAllowAccessToNode(state, node) ? node : nullptr;
@@ -782,7 +789,14 @@ template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecSt
 template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::ExecState& state, ExceptionOr<T*>&& value)
 {
     if (value.hasException())
-        return WTFMove(value);
+        return value.releaseException();
+    return checkSecurityForNode(state, value.releaseReturnValue());
+}
+
+template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::ExecState& state, ExceptionOr<T&>&& value)
+{
+    if (value.hasException())
+        return value.releaseException();
     return checkSecurityForNode(state, value.releaseReturnValue());
 }
 

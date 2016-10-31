@@ -69,7 +69,7 @@ SubtleCrypto& Crypto::subtle()
     return m_subtle;
 }
 
-ExceptionOr<WebKitSubtleCrypto*> Crypto::webkitSubtle()
+ExceptionOr<WebKitSubtleCrypto&> Crypto::webkitSubtle()
 {
     if (!isMainThread())
         return Exception { NOT_SUPPORTED_ERR };
@@ -77,7 +77,7 @@ ExceptionOr<WebKitSubtleCrypto*> Crypto::webkitSubtle()
     if (!m_webkitSubtle)
         m_webkitSubtle = WebKitSubtleCrypto::create(*downcast<Document>(scriptExecutionContext()));
 
-    return m_webkitSubtle.get();
+    return *m_webkitSubtle;
 }
 
 #endif

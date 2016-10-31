@@ -277,7 +277,7 @@ public:
     double percentLoaded() const;
 
 #if ENABLE(VIDEO_TRACK)
-    ExceptionOr<Ref<TextTrack>> addTextTrack(const String& kind, const String& label, const String& language);
+    ExceptionOr<TextTrack&> addTextTrack(const String& kind, const String& label, const String& language);
 
     AudioTrackList& audioTracks();
     TextTrackList& textTracks();

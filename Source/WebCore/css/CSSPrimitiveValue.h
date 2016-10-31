@@ -251,8 +251,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;
     WEBCORE_EXPORT ExceptionOr<void> setStringValue(unsigned short stringType, const String& stringValue);
     WEBCORE_EXPORT ExceptionOr<String> getStringValue() const;
-    WEBCORE_EXPORT ExceptionOr<Counter*> getCounterValue() const;
-    WEBCORE_EXPORT ExceptionOr<Rect*> getRectValue() const;
+    WEBCORE_EXPORT ExceptionOr<Counter&> getCounterValue() const;
+    WEBCORE_EXPORT ExceptionOr<Rect&> getRectValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<RGBColor>> getRGBColorValue() const;
 
     double computeDegrees() const;

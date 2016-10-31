@@ -1386,13 +1386,13 @@ WebKitDOMElement* webkit_dom_document_query_selector(WebKitDOMDocument* self, co
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Document* item = WebKit::core(self);
     WTF::String convertedSelectors = WTF::String::fromUTF8(selectors);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->querySelector(convertedSelectors, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->querySelector(convertedSelectors);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue());
 }
 
 WebKitDOMNodeList* webkit_dom_document_query_selector_all(WebKitDOMDocument* self, const gchar* selectors, GError** error)
@@ -1403,13 +1403,13 @@ WebKitDOMNodeList* webkit_dom_document_query_selector_all(WebKitDOMDocument* sel
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Document* item = WebKit::core(self);
     WTF::String convertedSelectors = WTF::String::fromUTF8(selectors);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::NodeList> gobjectResult = WTF::getPtr(item->querySelectorAll(convertedSelectors, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->querySelectorAll(convertedSelectors);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 WebKitDOMDocumentType* webkit_dom_document_get_doctype(WebKitDOMDocument* self)

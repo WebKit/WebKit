@@ -273,7 +273,7 @@ public:
     struct ShadowRootInit {
         ShadowRootMode mode;
     };
-    ExceptionOr<Ref<ShadowRoot>> attachShadow(const ShadowRootInit&);
+    ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();

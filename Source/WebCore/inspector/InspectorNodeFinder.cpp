@@ -65,38 +65,33 @@ InspectorNodeFinder::InspectorNodeFinder(const String& whitespaceTrimmedQuery)
 
 void InspectorNodeFinder::performSearch(Node* parentNode)
 {
-    searchUsingXPath(parentNode);
-    searchUsingCSSSelectors(parentNode);
+    if (!parentNode)
+        return;
+
+    searchUsingXPath(*parentNode);
+    searchUsingCSSSelectors(*parentNode);
 
     // Keep the DOM tree traversal last. This way iframe content will come after their parents.
-    searchUsingDOMTreeTraversal(parentNode);
+    searchUsingDOMTreeTraversal(*parentNode);
 }
 
-void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
+void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
 {
     // Manual plain text search.
-    for (auto* node = parentNode; node; node = NodeTraversal::next(*node, parentNode)) {
+    for (auto* node = &parentNode; node; node = NodeTraversal::next(*node, &parentNode)) {
         switch (node->nodeType()) {
         case Node::TEXT_NODE:
         case Node::COMMENT_NODE:
-        case Node::CDATA_SECTION_NODE: {
-            if (node->nodeValue().findIgnoringCase(m_whitespaceTrimmedQuery) != notFound)
+        case Node::CDATA_SECTION_NODE:
+            if (node->nodeValue().containsIgnoringASCIICase(m_whitespaceTrimmedQuery))
                 m_results.add(node);
             break;
-        }
-        case Node::ELEMENT_NODE: {
+        case Node::ELEMENT_NODE:
             if (matchesElement(downcast<Element>(*node)))
                 m_results.add(node);
-
-            // Search inside frame elements.
-            if (is<HTMLFrameOwnerElement>(*node)) {
-                HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(*node);
-                if (Document* document = frameOwner.contentDocument())
-                    performSearch(document);
-            }
-
+            if (is<HTMLFrameOwnerElement>(downcast<Element>(*node)))
+                performSearch(downcast<HTMLFrameOwnerElement>(*node).contentDocument());
             break;
-        }
         default:
             break;
         }
@@ -105,15 +100,15 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
 
 bool InspectorNodeFinder::matchesAttribute(const Attribute& attribute)
 {
-    if (attribute.localName().string().findIgnoringCase(m_whitespaceTrimmedQuery) != notFound)
+    if (attribute.localName().string().containsIgnoringASCIICase(m_whitespaceTrimmedQuery))
         return true;
-    return m_exactAttributeMatch ? attribute.value() == m_attributeQuery : attribute.value().string().findIgnoringCase(m_attributeQuery) != notFound;
+    return m_exactAttributeMatch ? attribute.value() == m_attributeQuery : attribute.value().string().containsIgnoringASCIICase(m_attributeQuery);
 }
 
 bool InspectorNodeFinder::matchesElement(const Element& element)
 {
     String nodeName = element.nodeName();
-    if ((!m_startTagFound && !m_endTagFound && (nodeName.findIgnoringCase(m_tagNameQuery) != notFound))
+    if ((!m_startTagFound && !m_endTagFound && nodeName.containsIgnoringASCIICase(m_tagNameQuery))
         || (m_startTagFound && m_endTagFound && equalIgnoringASCIICase(nodeName, m_tagNameQuery))
         || (m_startTagFound && !m_endTagFound && nodeName.startsWith(m_tagNameQuery, false))
         || (!m_startTagFound && m_endTagFound && nodeName.endsWith(m_tagNameQuery, false)))
@@ -130,9 +125,9 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
     return false;
 }
 
-void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
+void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
 {
-    auto evaluateResult = parentNode->document().evaluate(m_whitespaceTrimmedQuery, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
+    auto evaluateResult = parentNode.document().evaluate(m_whitespaceTrimmedQuery, &parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
     if (evaluateResult.hasException())
         return;
     auto result = evaluateResult.releaseReturnValue();
@@ -152,22 +147,21 @@ void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
             node = downcast<Attr>(*node).ownerElement();
 
         // XPath can get out of the context node that we pass as the starting point to evaluate, so we need to filter for just the nodes we care about.
-        if (node == parentNode || node->isDescendantOf(parentNode))
+        if (parentNode.contains(node))
             m_results.add(node);
     }
 }
 
-void InspectorNodeFinder::searchUsingCSSSelectors(Node* parentNode)
+void InspectorNodeFinder::searchUsingCSSSelectors(Node& parentNode)
 {
-    ASSERT(parentNode);
-    if (!is<ContainerNode>(*parentNode))
+    if (!is<ContainerNode>(parentNode))
         return;
 
-    ExceptionCode ec = 0;
-    RefPtr<NodeList> nodeList = downcast<ContainerNode>(*parentNode).querySelectorAll(m_whitespaceTrimmedQuery, ec);
-    if (ec || !nodeList)
+    auto queryResult = downcast<ContainerNode>(parentNode).querySelectorAll(m_whitespaceTrimmedQuery);
+    if (queryResult.hasException())
         return;
 
+    auto nodeList = queryResult.releaseReturnValue();
     unsigned size = nodeList->length();
     for (unsigned i = 0; i < size; ++i)
         m_results.add(nodeList->item(i));

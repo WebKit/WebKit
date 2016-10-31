@@ -1,5 +1,22 @@
 2016-10-31  Darin Adler  <darin@apple.com>
 
+        Move ChildNode and ParentNode from ExceptionCode to Exception, add support for ExceptionOr<T&>
+        https://bugs.webkit.org/show_bug.cgi?id=164214
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_query_selector): Updated exception handling.
+        (webkit_dom_document_query_selector_all): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp:
+        (webkit_dom_document_fragment_query_selector): Ditto.
+        (webkit_dom_document_fragment_query_selector_all): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_query_selector): Ditto.
+        (webkit_dom_element_query_selector_all): Ditto.
+
+2016-10-31  Darin Adler  <darin@apple.com>
+
         Convert Document from ExceptionCode to Exception
         https://bugs.webkit.org/show_bug.cgi?id=164212
 

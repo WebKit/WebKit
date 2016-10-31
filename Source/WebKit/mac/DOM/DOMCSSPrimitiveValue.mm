@@ -78,13 +78,13 @@
 - (DOMCounter *)getCounterValue
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->getCounterValue()));
+    return kit(&raiseOnDOMError(IMPL->getCounterValue()));
 }
 
 - (DOMRect *)getRectValue
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->getRectValue()));
+    return kit(&raiseOnDOMError(IMPL->getRectValue()));
 }
 
 - (DOMRGBColor *)getRGBColorValue

@@ -472,19 +472,13 @@ DOMElement *kit(Element* value)
 - (DOMElement *)querySelector:(NSString *)selectors
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    DOMElement *result = kit(unwrap(*self).querySelector(selectors, ec));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).querySelector(selectors)));
 }
 
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    DOMNodeList *result = kit(unwrap(*self).querySelectorAll(selectors, ec).get());
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).querySelectorAll(selectors)).ptr());
 }
 
 @end
