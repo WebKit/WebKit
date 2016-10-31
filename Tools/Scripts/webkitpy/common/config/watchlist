@@ -223,6 +223,10 @@
             "filename": r"Source/JavaScriptCore/Scripts/builtins"
                         r"|Source/JavaScriptCore/Scripts/generate-js-builtins\.py",
         },
+        "WasmJSON": {
+            "filename": r"|Source/JavaScriptCore/wasm/wasm\.json"
+                        r"|JSTests/wasm/wasm\.json",
+        },
         "MediaStream": {
             "filename": r"Source/WebCore/Modules/mediastream"
                         r"|Source/WebCore/platform/mediastream"
@@ -429,5 +433,6 @@
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
         "WebReplayGenerator": [ "This patch modifies the WEB_REPLAY inputs generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-input-generator-tests --reset-results`)" ],
         "JSBuiltinsGenerator": [ "This patch modifies the JS builtins code generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-builtins-generator-tests --reset-results`)" ],
+        "WasmJSON": [ "This patch modifies one of the wasm.json files. Please ensure that any changes in one have been mirrored to the other. You can find the wasm.json files at \"Source/JavaScriptCore/wasm/wasm.json\" and \"JSTests/wasm/wasm.json\"." ],
     },
 }
