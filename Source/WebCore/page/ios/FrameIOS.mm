@@ -39,8 +39,9 @@
 #import "FrameSelection.h"
 #import "FrameView.h"
 #import "HTMLAreaElement.h"
+#import "HTMLBodyElement.h"
 #import "HTMLDocument.h"
-#import "HTMLElement.h"
+#import "HTMLHtmlElement.h"
 #import "HTMLNames.h"
 #import "HTMLObjectElement.h"
 #import "HitTestRequest.h"
@@ -84,15 +85,15 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
     document->createDOMWindow();
     setDocument(document);
 
-    ExceptionCode ec;
-    auto rootElement = document->createElementNS(xhtmlNamespaceURI, ASCIILiteral("html"), ec);
+    auto rootElement = HTMLHtmlElement::create(*document);
 
-    auto body = document->createElementNS(xhtmlNamespaceURI, ASCIILiteral("body"), ec);
+    auto body = HTMLBodyElement::create(*document);
     if (!style.isEmpty())
         body->setAttribute(HTMLNames::styleAttr, style);
 
-    rootElement->appendChild(*body, ec);
-    document->appendChild(*rootElement, ec);
+    ExceptionCode ec;
+    rootElement->appendChild(body, ec);
+    document->appendChild(rootElement, ec);
 }
 
 const ViewportArguments& Frame::viewportArguments() const

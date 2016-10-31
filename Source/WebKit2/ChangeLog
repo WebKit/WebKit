@@ -1,3 +1,27 @@
+2016-10-31  Darin Adler  <darin@apple.com>
+
+        Convert Document from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164212
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_create_element): Updated exception handling.
+        (webkit_dom_document_create_cdata_section): Ditto.
+        (webkit_dom_document_create_processing_instruction): Ditto.
+        (webkit_dom_document_create_attribute): Ditto.
+        (webkit_dom_document_import_node): Ditto.
+        (webkit_dom_document_create_element_ns): Ditto.
+        (webkit_dom_document_create_attribute_ns): Ditto.
+        (webkit_dom_document_adopt_node): Ditto.
+        (webkit_dom_document_create_event): Ditto.
+        (webkit_dom_document_set_xml_version): Ditto.
+        (webkit_dom_document_get_cookie): Ditto.
+        (webkit_dom_document_set_cookie): Ditto.
+        (webkit_dom_document_set_body): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocument createElement:]): Ditto.
+
 2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Holding down a key to choose an accented character should fire "insertReplacementText" input events

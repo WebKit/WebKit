@@ -639,9 +639,11 @@ HRESULT DOMDocument::createElement(_In_ BSTR tagName, _COM_Outptr_opt_ IDOMEleme
         return E_FAIL;
 
     String tagNameString(tagName);
-    ExceptionCode ec;
-    *result = DOMElement::createInstance(m_document->createElementForBindings(tagNameString, ec).get());
-    return *result ? S_OK : E_FAIL;
+    auto createElementResult = m_document->createElementForBindings(tagNameString);
+    if (createElementResult.hasException())
+        return E_FAIL;
+    *result = DOMElement::createInstance(createElementResult.releaseReturnValue().ptr());
+    return S_OK;
 }
 
 HRESULT DOMDocument::createDocumentFragment(_COM_Outptr_opt_ IDOMDocumentFragment** result)
@@ -818,8 +820,11 @@ HRESULT DOMDocument::createEvent(_In_ BSTR eventType, _COM_Outptr_opt_ IDOMEvent
 
     String eventTypeString(eventType, SysStringLen(eventType));
     WebCore::ExceptionCode ec = 0;
-    *result = DOMEvent::createInstance(m_document->createEvent(eventTypeString, ec));
-    return *result ? S_OK : E_FAIL;
+    auto createEventResult = m_document->createEvent(eventTypeString);
+    if (createEventResult.hasException())
+        return E_FAIL;
+    *result = DOMEvent::createInstance(createEventResult.releaseReturnValue());
+    return S_OK;
 }
 
 // DOMDocument - DOMDocument --------------------------------------------------

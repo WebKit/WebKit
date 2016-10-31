@@ -31,35 +31,35 @@
     readonly attribute DOMImplementation implementation;
     [DOMJIT] readonly attribute Element? documentElement;
 
-    [NewObject, MayThrowLegacyException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
+    [NewObject, MayThrowException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
     [NewObject] DocumentFragment createDocumentFragment();
 
     [NewObject] Text createTextNode(DOMString data);
     [NewObject] Comment createComment(DOMString data);
-    [NewObject, MayThrowLegacyException] CDATASection createCDATASection(DOMString data);
-    [NewObject, MayThrowLegacyException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
-    [NewObject, MayThrowLegacyException] Attr createAttribute(DOMString name);
+    [NewObject, MayThrowException] CDATASection createCDATASection(DOMString data);
+    [NewObject, MayThrowException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+    [NewObject, MayThrowException] Attr createAttribute(DOMString name);
 
     HTMLCollection getElementsByTagName(DOMString tagname);
 
-    [CEReactions, MayThrowLegacyException, NewObject] Node importNode(Node importedNode, optional boolean deep = false);
+    [CEReactions, MayThrowException, NewObject] Node importNode(Node importedNode, optional boolean deep = false);
 
-    [NewObject, MayThrowLegacyException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
-    [NewObject, MayThrowLegacyException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, MayThrowException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, MayThrowException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding;
 
     readonly attribute DOMString? xmlEncoding;
-    [SetterMayThrowLegacyException] attribute DOMString? xmlVersion;
+    [SetterMayThrowException] attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    [CEReactions, MayThrowLegacyException] Node adoptNode(Node source);
+    [CEReactions, MayThrowException] Node adoptNode(Node source);
 
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
 
-    [MayThrowLegacyException, NewObject] Event createEvent(DOMString eventType);
+    [MayThrowException, NewObject] Event createEvent(DOMString eventType);
 
     [NewObject] Range createRange();
 
@@ -96,12 +96,12 @@
     attribute DOMString designMode;
 
     readonly attribute USVString referrer;
-    [SetterMayThrowLegacyException] attribute USVString domain;
+    [SetterMayThrowException] attribute USVString domain;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
 
-    [GetterMayThrowLegacyException, SetterMayThrowLegacyException] attribute USVString cookie;
+    [GetterMayThrowException, SetterMayThrowException] attribute USVString cookie;
 
-    [CEReactions, ImplementedAs=bodyOrFrameset, SetterMayThrowLegacyException] attribute HTMLElement? body;
+    [CEReactions, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images;
@@ -162,7 +162,7 @@
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>
 #elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [NewObject, MayThrowLegacyException] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
+    [NewObject] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
         optional long identifier = 0,
         optional long pageX = 0, optional long pageY = 0, optional long screenX = 0, optional long screenY = 0,
         optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,

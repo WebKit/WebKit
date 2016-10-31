@@ -1000,12 +1000,10 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
     if (!updateLeafTextNode())
         return;
 
-    // ### handle exceptions
-    ExceptionCode ec = 0;
-    Ref<ProcessingInstruction> pi = *m_currentNode->document().createProcessingInstruction(
-        toString(target), toString(data), ec);
-    if (ec)
+    auto result = m_currentNode->document().createProcessingInstruction(toString(target), toString(data));
+    if (result.hasException())
         return;
+    auto pi = result.releaseReturnValue();
 
     pi->setCreatedByParser(true);
 
@@ -1015,6 +1013,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     if (pi->isCSS())
         m_sawCSS = true;
+
 #if ENABLE(XSLT)
     m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
     if (m_sawXSLTransform && !document()->transformSourceDocument())
@@ -1070,7 +1069,7 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
     }
 
     if (version)
-        document()->setXMLVersion(toString(version), ASSERT_NO_EXCEPTION);
+        document()->setXMLVersion(toString(version));
     if (standalone != StandaloneUnspecified)
         document()->setXMLStandalone(standaloneInfo == StandaloneYes);
     if (encoding)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGSMILElement_h
-#define SVGSMILElement_h
+#pragma once
 
 #include "SMILTime.h"
 #include "SVGElement.h"
@@ -32,13 +31,13 @@
 
 namespace WebCore {
 
+class ConditionEventListener;
+class SMILTimeContainer;
 class SVGSMILElement;
 
 template<typename T> class EventSender;
-typedef EventSender<SVGSMILElement> SMILEventSender;
 
-class ConditionEventListener;
-class SMILTimeContainer;
+using SMILEventSender = EventSender<SVGSMILElement>;
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
@@ -62,19 +61,10 @@ public:
 
     void beginByLinkActivation();
 
-    enum Restart {
-        RestartAlways,
-        RestartWhenNotActive,
-        RestartNever
-    };
-
+    enum Restart { RestartAlways, RestartWhenNotActive, RestartNever };
     Restart restart() const;
 
-    enum FillMode {
-        FillRemove,
-        FillFreeze
-    };
-
+    enum FillMode { FillRemove, FillFreeze };
     FillMode fill() const;
 
     SMILTime dur() const;
@@ -141,9 +131,10 @@ private:
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
 
     static bool isSupportedAttribute(const QualifiedName&);
+    QualifiedName constructAttributeName() const;
+    void updateAttributeName();
 
     enum BeginOrEnd { Begin, End };
-    
     SMILTime findInstanceTime(BeginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const;
     void resolveFirstInterval();
     void resolveNextInterval(bool notifyDependents);
@@ -157,19 +148,14 @@ private:
     // This represents conditions on elements begin or end list that need to be resolved on runtime
     // for example <animate begin="otherElement.begin + 8s; button.click" ... />
     struct Condition {
-        enum Type {
-            EventBase,
-            Syncbase,
-            AccessKey
-        };
-
+        enum Type { EventBase, Syncbase, AccessKey };
         Condition(Type, BeginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats = -1);
         Type m_type;
         BeginOrEnd m_beginOrEnd;
         String m_baseID;
         String m_name;
         SMILTime m_offset;
-        int m_repeats;
+        int m_repeats { -1 };
         RefPtr<Element> m_syncbase;
         RefPtr<ConditionEventListener> m_eventListener;
     };
@@ -183,29 +169,20 @@ private:
     void handleConditionEvent(Event*, Condition*);
 
     // Syncbase timing
-    enum NewOrExistingInterval {
-        NewInterval,
-        ExistingInterval
-    };
-
+    enum NewOrExistingInterval { NewInterval, ExistingInterval };
     void notifyDependentsIntervalChanged(NewOrExistingInterval);
     void createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, NewOrExistingInterval);
     void addTimeDependent(SVGSMILElement*);
     void removeTimeDependent(SVGSMILElement*);
 
-    enum ActiveState {
-        Inactive,
-        Active,
-        Frozen
-    };
-
-    QualifiedName m_attributeName;
-
+    enum ActiveState { Inactive, Active, Frozen };
     ActiveState determineActiveState(SMILTime elapsed) const;
     float calculateAnimationPercentAndRepeat(SMILTime elapsed, unsigned& repeat) const;
     SMILTime calculateNextProgressTime(SMILTime elapsed) const;
 
     bool isSMILElement() const final { return true; }
+
+    QualifiedName m_attributeName;
 
     SVGElement* m_targetElement;
 
@@ -215,8 +192,7 @@ private:
 
     bool m_isWaitingForFirstInterval;
 
-    typedef HashSet<SVGSMILElement*> TimeDependentSet;
-    TimeDependentSet m_timeDependents;
+    HashSet<SVGSMILElement*> m_timeDependents;
 
     // Instance time lists
     Vector<SMILTimeWithOrigin> m_beginTimes;
@@ -252,5 +228,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGSMILElement)
     static bool isType(const WebCore::SVGElement& element) { return element.isSMILElement(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // SVGSMILElement_h

@@ -38,8 +38,10 @@
 - (WKDOMElement *)createElement:(NSString *)tagName
 {
     // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).createElementForBindings(tagName, ec).get());
+    auto result = downcast<WebCore::Document>(*_impl).createElementForBindings(tagName);
+    if (result.hasException())
+        return nil;
+    return WebKit::toWKDOMElement(result.releaseReturnValue().ptr());
 }
 
 - (WKDOMText *)createTextNode:(NSString *)data

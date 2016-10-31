@@ -1,3 +1,14 @@
+2016-10-31  Darin Adler  <darin@apple.com>
+
+        Convert Document from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164212
+
+        Reviewed by Alex Christensen.
+
+        * DOMCoreClasses.cpp:
+        (DOMDocument::createElement): Updated exception handling.
+        (DOMDocument::createEvent): Ditto.
+
 2016-10-30  Darin Adler  <darin@apple.com>
 
         Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception

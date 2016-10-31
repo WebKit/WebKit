@@ -207,24 +207,28 @@ void SVGSMILElement::buildPendingResource()
     }
 }
 
-static inline QualifiedName constructQualifiedName(const SVGElement* svgElement, const String& attributeName)
+inline QualifiedName SVGSMILElement::constructAttributeName() const
 {
-    ASSERT(svgElement);
-    if (attributeName.isEmpty())
+    auto parseResult = Document::parseQualifiedName(attributeWithoutSynchronization(SVGNames::attributeNameAttr));
+    if (parseResult.hasException())
         return anyQName();
-    if (!attributeName.contains(':'))
-        return QualifiedName(nullAtom, attributeName, nullAtom);
-    
-    String prefix;
-    String localName;
-    if (!Document::parseQualifiedName(attributeName, prefix, localName, IGNORE_EXCEPTION))
-        return anyQName();
-    
-    String namespaceURI = svgElement->lookupNamespaceURI(prefix);    
+
+    AtomicString prefix, localName;
+    std::tie(prefix, localName) = parseResult.releaseReturnValue();
+
+    if (prefix.isNull())
+        return { nullAtom, localName, nullAtom };
+
+    auto namespaceURI = lookupNamespaceURI(prefix);
     if (namespaceURI.isEmpty())
         return anyQName();
-    
-    return QualifiedName(nullAtom, localName, namespaceURI);
+
+    return { nullAtom, localName, namespaceURI };
+}
+
+inline void SVGSMILElement::updateAttributeName()
+{
+    setAttributeName(constructAttributeName());
 }
 
 static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& timeList)
@@ -258,7 +262,8 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& r
     // Verify we are not in <use> instance tree.
     ASSERT(!isInShadowTree());
 
-    setAttributeName(constructQualifiedName(this, attributeWithoutSynchronization(SVGNames::attributeNameAttr)));
+    updateAttributeName();
+
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
         return InsertionDone;
@@ -514,7 +519,7 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
     else if (attrName == SVGNames::maxAttr)
         m_cachedMax = invalidCachedTime;
     else if (attrName == SVGNames::attributeNameAttr)
-        setAttributeName(constructQualifiedName(this, attributeWithoutSynchronization(SVGNames::attributeNameAttr)));
+        updateAttributeName();
     else if (attrName.matches(XLinkNames::hrefAttr)) {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();

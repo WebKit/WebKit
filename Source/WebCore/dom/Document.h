@@ -376,16 +376,16 @@ public:
 
     bool hasManifest() const;
     
-    WEBCORE_EXPORT RefPtr<Element> createElementForBindings(const AtomicString& tagName, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomicString& tagName);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
     WEBCORE_EXPORT Ref<Text> createTextNode(const String& data);
     WEBCORE_EXPORT Ref<Comment> createComment(const String& data);
-    WEBCORE_EXPORT RefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
-    WEBCORE_EXPORT RefPtr<Node> importNode(Node& nodeToImport, bool deep, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<CDATASection>> createCDATASection(const String& data);
+    WEBCORE_EXPORT ExceptionOr<Ref<ProcessingInstruction>> createProcessingInstruction(const String& target, const String& data);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttribute(const String& name);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttributeNS(const AtomicString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks = false);
+    WEBCORE_EXPORT ExceptionOr<Ref<Node>> importNode(Node& nodeToImport, bool deep);
+    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementNS(const AtomicString& namespaceURI, const String& qualifiedName);
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomicString&);
@@ -434,7 +434,7 @@ public:
     bool hasXMLDeclaration() const { return m_hasXMLDeclaration; }
 
     void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
-    WEBCORE_EXPORT void setXMLVersion(const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setXMLVersion(const String&);
     WEBCORE_EXPORT void setXMLStandalone(bool);
     void setHasXMLDeclaration(bool hasXMLDeclaration) { m_hasXMLDeclaration = hasXMLDeclaration ? 1 : 0; }
 
@@ -453,7 +453,7 @@ public:
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
-    WEBCORE_EXPORT RefPtr<Node> adoptNode(Node& source, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Node>> adoptNode(Node& source);
 
     WEBCORE_EXPORT Ref<HTMLCollection> images();
     WEBCORE_EXPORT Ref<HTMLCollection> embeds();
@@ -773,7 +773,7 @@ public:
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
 
-    WEBCORE_EXPORT RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Event>> createEvent(const String& eventType);
 
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
@@ -842,15 +842,15 @@ public:
     void titleElementRemoved(Element& titleElement);
     void titleElementTextChanged(Element& titleElement);
 
-    WEBCORE_EXPORT String cookie(ExceptionCode&);
-    WEBCORE_EXPORT void setCookie(const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<String> cookie();
+    WEBCORE_EXPORT ExceptionOr<void> setCookie(const String&);
 
     WEBCORE_EXPORT String referrer() const;
 
     WEBCORE_EXPORT String origin() const;
 
     WEBCORE_EXPORT String domain() const;
-    void setDomain(const String& newDomain, ExceptionCode&);
+    ExceptionOr<void> setDomain(const String& newDomain);
 
     WEBCORE_EXPORT String lastModified();
 
@@ -887,8 +887,9 @@ public:
 
     // The following breaks a qualified name into a prefix and a local name.
     // It also does a validity check, and returns false if the qualified name
-    // is invalid.  It also sets ExceptionCode when name is invalid.
-    static bool parseQualifiedName(const String& qualifiedName, String& prefix, String& localName, ExceptionCode&);
+    // is invalid. It also sets ExceptionCode when name is invalid.
+    static ExceptionOr<std::pair<AtomicString, AtomicString>> parseQualifiedName(const String& qualifiedName);
+    static ExceptionOr<QualifiedName> parseQualifiedName(const AtomicString& namespaceURI, const String& qualifiedName);
 
     // Checks to make sure prefix and namespace do not conflict (per DOM Core 3)
     static bool hasValidNamespaceForElements(const QualifiedName&);
@@ -896,7 +897,7 @@ public:
 
     HTMLBodyElement* body() const;
     WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
-    WEBCORE_EXPORT void setBodyOrFrameset(RefPtr<HTMLElement>&&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setBodyOrFrameset(RefPtr<HTMLElement>&&);
 
     Location* location() const;
 
@@ -1133,7 +1134,7 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
-    RefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
+    Ref<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force) const;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)

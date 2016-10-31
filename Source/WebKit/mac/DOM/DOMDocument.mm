@@ -132,9 +132,7 @@
 - (void)setXmlVersion:(NSString *)newXmlVersion
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setXMLVersion(newXmlVersion, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setXMLVersion(newXmlVersion));
 }
 
 - (BOOL)xmlStandalone
@@ -224,18 +222,13 @@
 - (NSString *)cookie
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->cookie(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->cookie());
 }
 
 - (void)setCookie:(NSString *)newCookie
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setCookie(newCookie, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setCookie(newCookie));
 }
 
 - (DOMHTMLElement *)body
@@ -247,11 +240,7 @@
 - (void)setBody:(DOMHTMLElement *)newBody
 {
     WebCore::JSMainThreadNullState state;
-    ASSERT(newBody);
-
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setBodyOrFrameset(core(newBody), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setBodyOrFrameset(core(newBody)));
 }
 
 - (DOMHTMLHeadElement *)head
@@ -356,6 +345,7 @@
 }
 
 #if ENABLE(FULLSCREEN_API)
+
 - (BOOL)webkitIsFullScreen
 {
     WebCore::JSMainThreadNullState state;
@@ -385,14 +375,17 @@
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->webkitFullscreenElement()));
 }
+
 #endif
 
 #if ENABLE(POINTER_LOCK)
+
 - (DOMElement *)pointerLockElement
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->pointerLockElement()));
 }
+
 #endif
 
 - (NSString *)visibilityState
@@ -452,10 +445,7 @@
 - (DOMElement *)createElement:(NSString *)tagName
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMElement *result = kit(WTF::getPtr(IMPL->createElementForBindings(tagName, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createElementForBindings(tagName)).ptr());
 }
 
 - (DOMDocumentFragment *)createDocumentFragment
@@ -479,36 +469,25 @@
 - (DOMCDATASection *)createCDATASection:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMCDATASection *result = kit(WTF::getPtr(IMPL->createCDATASection(data, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createCDATASection(data)).ptr());
 }
 
 - (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target data:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMProcessingInstruction *result = kit(WTF::getPtr(IMPL->createProcessingInstruction(target, data, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createProcessingInstruction(target, data)).ptr());
 }
 
 - (DOMAttr *)createAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMAttr *result = kit(WTF::getPtr(IMPL->createAttribute(name, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createAttribute(name)).ptr());
 }
 
 - (DOMEntityReference *)createEntityReference:(NSString *)name
 {
     UNUSED_PARAM(name);
-
-    raiseOnDOMError(WebCore::NOT_SUPPORTED_ERR);
-    return nil;
+    raiseDOMException(WebCore::NOT_SUPPORTED_ERR);
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname
@@ -525,35 +504,25 @@
     WebCore::JSMainThreadNullState state;
     if (!importedNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->importNode(*core(importedNode), deep, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->importNode(*core(importedNode), deep)).ptr());
 }
 
 - (DOMElement *)createElementNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMElement *result = kit(WTF::getPtr(IMPL->createElementNS(namespaceURI, qualifiedName, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createElementNS(namespaceURI, qualifiedName)).ptr());
 }
 
 - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMAttr *result = kit(WTF::getPtr(IMPL->createAttributeNS(namespaceURI, qualifiedName, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createAttributeNS(namespaceURI, qualifiedName)).ptr());
 }
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     if (!localName)
         return nullptr;
-
     WebCore::JSMainThreadNullState state;
     return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagNameNS(namespaceURI, localName))));
 }
@@ -563,19 +532,13 @@
     WebCore::JSMainThreadNullState state;
     if (!source)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->adoptNode(*core(source), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->adoptNode(*core(source))).ptr());
 }
 
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMEvent *result = kit(WTF::getPtr(IMPL->createEvent(eventType, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createEvent(eventType)).ptr());
 }
 
 - (DOMRange *)createRange

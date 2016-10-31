@@ -728,10 +728,10 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     if (!is<Element>(oldNode.get()))
         return;
 
-    ExceptionCode ec = 0;
-    auto newElement = oldNode->document().createElementForBindings(tagName, ec);
-    if (ec)
+    auto createElementResult = oldNode->document().createElementForBindings(tagName);
+    if (createElementResult.hasException())
         return;
+    auto newElement = createElementResult.releaseReturnValue();
 
     // Copy over the original node's attributes.
     newElement->cloneAttributesFromElement(downcast<Element>(*oldNode));
@@ -739,18 +739,18 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     // Copy over the original node's children.
     RefPtr<Node> child;
     while ((child = oldNode->firstChild())) {
-        if (!m_domEditor->insertBefore(*newElement, *child, 0, errorString))
+        if (!m_domEditor->insertBefore(newElement, *child, 0, errorString))
             return;
     }
 
     // Replace the old node with the new node
     RefPtr<ContainerNode> parent = oldNode->parentNode();
-    if (!m_domEditor->insertBefore(*parent, *newElement, oldNode->nextSibling(), errorString))
+    if (!m_domEditor->insertBefore(*parent, newElement.copyRef(), oldNode->nextSibling(), errorString))
         return;
     if (!m_domEditor->removeChild(*parent, *oldNode, errorString))
         return;
 
-    *newId = pushNodePathToFrontend(newElement.get());
+    *newId = pushNodePathToFrontend(newElement.ptr());
     if (m_childrenRequested.contains(nodeId))
         pushChildNodesToFrontend(*newId);
 }

@@ -446,7 +446,7 @@ bool WebSocketChannel::processBuffer()
             if (!m_handshake->serverSetCookie().isEmpty()) {
                 if (m_document && cookiesEnabled(*m_document)) {
                     // Exception (for sandboxed documents) ignored.
-                    m_document->setCookie(m_handshake->serverSetCookie(), IGNORE_EXCEPTION);
+                    m_document->setCookie(m_handshake->serverSetCookie());
                 }
             }
             // FIXME: handle set-cookie2.

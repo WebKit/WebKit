@@ -137,7 +137,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         destroyRenderTreeIfNeeded(child);
 
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> adoptedChild = document().adoptNode(child, ASSERT_NO_EXCEPTION);
+        RefPtr<Node> adoptedChild = document().adoptNode(child).releaseReturnValue();
         parserAppendChild(*adoptedChild);
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
@@ -374,7 +374,7 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
         return;
 
     if (&document() != &newChild.document())
-        document().adoptNode(newChild, ASSERT_NO_EXCEPTION);
+        document().adoptNode(newChild);
 
     insertBeforeCommon(nextChild, newChild);
 
@@ -703,7 +703,7 @@ void ContainerNode::parserAppendChild(Node& newChild)
     ASSERT(!hasTagName(HTMLNames::templateTag));
 
     if (&document() != &newChild.document())
-        document().adoptNode(newChild, ASSERT_NO_EXCEPTION);
+        document().adoptNode(newChild);
 
     {
         NoEventDispatchAssertion assertNoEventDispatch;

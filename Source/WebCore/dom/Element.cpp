@@ -2228,18 +2228,13 @@ ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
 
 ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& namespaceURI, const AtomicString& qualifiedName)
 {
-    ExceptionCode ec = 0;
-    String prefix, localName;
-    if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))
-        return Exception { ec };
-    ASSERT(!ec);
-
-    QualifiedName result { prefix, localName, namespaceURI };
-
-    if (!Document::hasValidNamespaceForAttributes(result))
+    auto parseResult = Document::parseQualifiedName(namespaceURI, qualifiedName);
+    if (parseResult.hasException())
+        return parseResult.releaseException();
+    QualifiedName parsedAttributeName { parseResult.releaseReturnValue() };
+    if (!Document::hasValidNamespaceForAttributes(parsedAttributeName))
         return Exception { NAMESPACE_ERR };
-
-    return WTFMove(result);
+    return WTFMove(parsedAttributeName);
 }
 
 ExceptionOr<void> Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value)

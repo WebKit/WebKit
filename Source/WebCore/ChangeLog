@@ -1,3 +1,80 @@
+2016-10-31  Darin Adler  <darin@apple.com>
+
+        Convert Document from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164212
+
+        Reviewed by Alex Christensen.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processBuffer): Removed IGNORE_EXCEPTION.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom): Use releaseReturnValue
+        instead of ASSERT_NO_EXCEPTION.
+        (WebCore::ContainerNode::parserInsertBefore): Removed ASSERT_NO_EXCEPTION.
+        (WebCore::ContainerNode::parserAppendChild): Ditto.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocumentType): Updated for new
+        exception handling.
+        (WebCore::DOMImplementation::createDocument): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation): Return ExceptionOr.
+        (WebCore::Document::createElementForBindings): Ditto.
+        (WebCore::Document::createCDATASection): Ditto.
+        (WebCore::Document::createProcessingInstruction): Ditto.
+        (WebCore::Document::importNode): Ditto.
+        (WebCore::Document::adoptNode): Ditto.
+        (WebCore::Document::createElementNS): Ditto.
+        (WebCore::Document::setXMLVersion): Ditto.
+        (WebCore::Document::setBodyOrFrameset): Ditto.
+        (WebCore::Document::processHttpEquiv): Ditto.
+        (WebCore::Document::createEvent): Ditto.
+        (WebCore::Document::cookie): Ditto.
+        (WebCore::Document::setCookie): Ditto.
+        (WebCore::Document::setDomain): Ditto.
+        (WebCore::Document::parseQualifiedName): Ditto. Also added an overload
+        that constructs a QualifiedName directly that most call sites can use.
+        (WebCore::Document::createAttribute): Return ExceptionOr.
+        (WebCore::Document::createAttributeNS): Ditto.
+        (WebCore::Document::createTouch): Removed unneeded ExceptionCode&.
+        * dom/Document.h: Updated for above.
+        * dom/Document.idl: Use non-legacy exceptions. Removed exception
+        entirely from createTouch.
+
+        * dom/Element.cpp:
+        (WebCore::Element::parseAttributeName): Updated to use the new
+        Document::parseQualifiedName.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeFormatBlock): Ditto.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setNodeName): Updated for the new
+        exception handling.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies): Ditto.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument): Use the
+        HTMLHtmlElement::create and HTMLBodyElement::create instead of using
+        createElementNS to make the simple document.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::constructAttributeName): Renamed, made this
+        a member function, updated to use the new Document::parseQualifiedName,
+        and also moved the code to get the attribute in here.
+        (WebCore::SVGSMILElement::constructAttributeName): Added. Helper function
+        for the two places we update the attribute name from attributeNameAttr.
+        (WebCore::SVGSMILElement::insertedInto): Use updateAttributeName.
+        (WebCore::SVGSMILElement::svgAttributeChanged): Ditto.
+        * svg/animation/SVGSMILElement.h: Updated for the above.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::processingInstruction): Updated to understand
+        ExceptionOr rather than an out argument.
+        (WebCore::XMLDocumentParser::startDocument): Removed ASSERT_NO_EXCEPTION.
+
 2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Holding down a key to choose an accented character should fire "insertReplacementText" input events

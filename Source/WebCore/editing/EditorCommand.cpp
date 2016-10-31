@@ -412,14 +412,13 @@ static bool executeFormatBlock(Frame& frame, Event*, EditorCommandSource, const 
     if (tagName[0] == '<' && tagName[tagName.length() - 1] == '>')
         tagName = tagName.substring(1, tagName.length() - 2);
 
-    String localName, prefix;
-    if (!Document::parseQualifiedName(tagName, prefix, localName, IGNORE_EXCEPTION))
+    auto qualifiedTagName = Document::parseQualifiedName(xhtmlNamespaceURI, tagName);
+    if (qualifiedTagName.hasException())
         return false;
-    QualifiedName qualifiedTagName(prefix, localName, xhtmlNamespaceURI);
 
     ASSERT(frame.document());
-    RefPtr<FormatBlockCommand> command = FormatBlockCommand::create(*frame.document(), qualifiedTagName);
-    applyCommand(command);
+    auto command = FormatBlockCommand::create(*frame.document(), qualifiedTagName.releaseReturnValue());
+    applyCommand(command.copyRef());
     return command->didApply();
 }
 

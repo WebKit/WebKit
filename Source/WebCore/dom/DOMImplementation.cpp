@@ -92,13 +92,9 @@ DOMImplementation::DOMImplementation(Document& document)
 
 ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId)
 {
-    ExceptionCode ec = 0;
-    String prefix;
-    String localName;
-    Document::parseQualifiedName(qualifiedName, prefix, localName, ec);
-    if (ec)
-        return Exception { ec };
-
+    auto parseResult = Document::parseQualifiedName(qualifiedName);
+    if (parseResult.hasException())
+        return parseResult.releaseException();
     return DocumentType::create(m_document, qualifiedName, publicId, systemId);
 }
 
@@ -119,10 +115,10 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& na
 
     RefPtr<Element> documentElement;
     if (!qualifiedName.isEmpty()) {
-        ExceptionCode ec = 0;
-        documentElement = document->createElementNS(namespaceURI, qualifiedName, ec);
-        if (ec)
-            return Exception { ec };
+        auto result = document->createElementNS(namespaceURI, qualifiedName);
+        if (result.hasException())
+            return result.releaseException();
+        documentElement = result.releaseReturnValue();
     }
 
     if (documentType)

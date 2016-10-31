@@ -1,3 +1,27 @@
+2016-10-31  Darin Adler  <darin@apple.com>
+
+        Convert Document from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=164212
+
+        Reviewed by Alex Christensen.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument setXmlVersion:]): Updated exception handling.
+        (-[DOMDocument cookie]): Ditto.
+        (-[DOMDocument setCookie:]): Ditto.
+        (-[DOMDocument setBody:]): Ditto.
+        (-[DOMDocument createElement:]): Ditto.
+        (-[DOMDocument createCDATASection:]): Ditto.
+        (-[DOMDocument createProcessingInstruction:data:]): Ditto.
+        (-[DOMDocument createAttribute:]): Ditto.
+        (-[DOMDocument createEntityReference:]): Ditto.
+        (-[DOMDocument importNode:deep:]): Ditto.
+        (-[DOMDocument createElementNS:qualifiedName:]): Ditto.
+        (-[DOMDocument createAttributeNS:qualifiedName:]): Ditto.
+        (-[DOMDocument getElementsByTagNameNS:localName:]): Ditto.
+        (-[DOMDocument adoptNode:]): Ditto.
+        (-[DOMDocument createEvent:]): Ditto.
+
 2016-10-30  Darin Adler  <darin@apple.com>
 
         Move Element, NamedNodeMap, and DOMStringMap from ExceptionCode to Exception
