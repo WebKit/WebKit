@@ -1453,6 +1453,3 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip 
 
 webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
 webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
-
-# window.internals.setMockMediaPlaybackTargetPickerEnabled() is only available in El Capitan and up.
-[ Yosemite ] media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
