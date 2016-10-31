@@ -27,7 +27,7 @@
 
 #if ENABLE(INTERSECTION_OBSERVER)
 
-#include "DOMRectReadonly.h"
+#include "DOMRectReadOnly.h"
 #include "Element.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
