@@ -31,6 +31,7 @@ media/media-controller-support.js
 media/airplay-support.js
 media/elapsed-time-support.js
 media/mute-support.js
+media/placard-support.js
 media/playback-support.js
 media/remaining-time-support.js
 media/scrubbing-support.js

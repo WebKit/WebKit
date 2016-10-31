@@ -23,60 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class PlacardSupport extends MediaControllerSupport
 {
 
-    constructor(shadowRoot, media, host)
+    constructor(mediaController)
     {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new AirplaySupport(this);
-        new ElapsedTimeSupport(this);
-        new MuteSupport(this);
-        new PlacardSupport(this);
-        new PlaybackSupport(this);
-        new RemainingTimeSupport(this);
-        new ScrubbingSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-        new VolumeSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
+        super(mediaController);
+        this._updatePlacard();
     }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
-    }
-
-    set usesLTRUserInterfaceLayoutDirection(flag)
-    {
-        // FIXME: To be implemented.
+        return ["webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        this._updatePlacard();
     }
 
     // Private
 
-    _updateControlsSize()
+    _updatePlacard()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        const controls = this.mediaController.controls;
+        if (controls.showsStartButton)
+            return;
+
+        const media = this.mediaController.media;
+        if (media.webkitPresentationMode === "picture-in-picture")
+            controls.showPlacard(controls.pipPlacard);
+        else if (media.webkitCurrentPlaybackTargetIsWireless)
+            controls.showPlacard(controls.airplayPlacard);
+        else
+            controls.hidePlacard();    
     }
 
 }

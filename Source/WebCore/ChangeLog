@@ -1,3 +1,27 @@
+2016-10-31  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: Placard support
+        https://bugs.webkit.org/show_bug.cgi?id=163731
+        <rdar://problem/28869598>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the PlacardSupport class which brings support for showing the
+        appropriate placard when the media is played via AirPlay or in picture-in-picture.
+
+        Tests: media/modern-media-controls/placard-support/placard-support-airplay.html
+               media/modern-media-controls/placard-support/placard-support-pip.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/placard-support.js: Added.
+        (PlacardSupport):
+        (PlacardSupport.prototype.get mediaEvents):
+        (PlacardSupport.prototype.handleEvent):
+        (PlacardSupport.prototype._updatePlacard):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Implement IntersectionObserver
