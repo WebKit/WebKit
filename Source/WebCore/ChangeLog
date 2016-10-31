@@ -1,3 +1,18 @@
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Get rid of CSSCustomIdentValue::creates
+        https://bugs.webkit.org/show_bug.cgi?id=164225
+
+        Reviewed by Zalan Bujtas.
+
+        Get rid of all instances of CSSCustomIdent::create, since our style
+        resolution code isn't prepared to handle that value type yet.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAnimationName):
+        (WebCore::consumeTransitionProperty):
+        (WebCore::consumeAttr):
+
 2016-10-31  Jer Noble  <jer.noble@apple.com>
 
         Opt-out of AVPlayer automatic sleep disabling

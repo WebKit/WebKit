@@ -1103,7 +1103,8 @@ static RefPtr<CSSValue> consumeAnimationName(CSSParserTokenRange& range)
         const CSSParserToken& token = range.consumeIncludingWhitespace();
         if (equalIgnoringASCIICase(token.value(), "none"))
             return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-        return CSSCustomIdentValue::create(token.value().toString());
+        // FIXME-NEWPARSER: Want to use a CSSCustomIdentValue here eventually.
+        return CSSValuePool::singleton().createValue(token.value().toString(), CSSPrimitiveValue::UnitTypes::CSS_STRING);
     }
 
     return consumeCustomIdent(range);
@@ -1119,7 +1120,9 @@ static RefPtr<CSSValue> consumeTransitionProperty(CSSParserTokenRange& range)
 
     if (CSSPropertyID property = token.parseAsCSSPropertyID()) {
         range.consumeIncludingWhitespace();
-        return CSSCustomIdentValue::create(property);
+        
+        // FIXME-NEWPARSER: Want to use a CSSCustomIdentValue here eventually.
+        return CSSValuePool::singleton().createIdentifierValue(property);
     }
     return consumeCustomIdent(range);
 }
@@ -1918,9 +1921,10 @@ static RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSSParserContext c
     if (!args.atEnd())
         return nullptr;
 
-    RefPtr<CSSFunctionValue> attrValue = CSSFunctionValue::create(CSSValueAttr);
-    attrValue->append(CSSCustomIdentValue::create(attrName));
-    return attrValue;
+    // FIXME-NEWPARSER: We want to use a CSSCustomIdentValue here eventually for the attrName.
+    // FIXME-NEWPARSER: We want to use a CSSFunctionValue rather than relying on a custom
+    // attr() primitive value.
+    return CSSValuePool::singleton().createValue(attrName, CSSPrimitiveValue::CSS_ATTR);
 }
 
 static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters)
