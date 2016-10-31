@@ -1,3 +1,27 @@
+2016-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: Network process crash when converting main resource to download
+        https://bugs.webkit.org/show_bug.cgi?id=164220
+
+        Reviewed by Alex Christensen.
+
+        Right after the main resource load is converted to a download, the web process deletes the ResourceLoader which
+        sends the RemoveLoadIdentifier to the network process and the load is aborted. Sometimes it happens that
+        NetworkResourceLoader::abort() is called while the NetworkLoad is still deciding the destination of the
+        download. In such case, NetworkResourceLoader::didConvertToDownload() has already been called, but not
+        NetworkResourceLoader::didBecomeDownload(). In NetworkResourceLoader::abort() we already handle the case of
+        having a NetworkLoad after NetworkResourceLoader::didConvertToDownload() has been called, to avoid canceling the
+        load in such case, however cleanup() is always called unconditionally and the NetworkLoad is deleted before
+        NetworkResourceLoader::didBecomeDownload() is called. When the NetworkLoad is destroyed the NetworkDataTask
+        client becomes nullptr, leaving it in a state where both the client is nullptr and the download hasn't been
+        created yet. That's not expected to happen and when the response completion handler is called in the
+        NetworkDataTask it tries to use either the client or the download and it crashes.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didBecomeDownload): Call cleanup() instead of just deleting the network load.
+        (WebKit::NetworkResourceLoader::abort): If we still have a network load that was converted to a download, do not
+        call cleanup() because it will be called by didBecomeDownload() later.
+
 2016-10-31  Darin Adler  <darin@apple.com>
 
         Move ChildNode and ParentNode from ExceptionCode to Exception, add support for ExceptionOr<T&>
