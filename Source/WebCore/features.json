@@ -845,6 +845,16 @@
         "documentation-url": "https://drafts.csswg.org/css-fonts-4/",
         "specification": "CSS Fonts Level 4",
         "description": "Allows selection of variation values along fonts' exposed axes."
+    },
+    {
+        "name": "requestIdleCallback",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://w3c.github.io/requestidlecallback/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164193",
+        "keywords": ["requestIdleCallback", "idle callback"],
+        "description": "An API that can be used to cooperatively schedule background tasks."
     }
     ]
 }

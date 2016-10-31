@@ -1,3 +1,9 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Add requestIdleCallback to features.json.
+
+        * features.json:
+
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fully support prefixed background-size and box-shadows
