@@ -534,10 +534,10 @@ void RenderFrameSet::positionFrames()
     }
 
     // all the remaining frames are hidden to avoid ugly spurious unflowed frames
-    for (; child; child = child->nextSiblingBox()) {
-        child->setWidth(0);
-        child->setHeight(0);
-        child->clearNeedsLayout();
+    for (auto* descendant = child; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, this))) {
+        descendant->setWidth(0);
+        descendant->setHeight(0);
+        descendant->clearNeedsLayout();
     }
 }
 
