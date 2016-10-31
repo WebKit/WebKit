@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBError.h"
+#include "IDBGetAllRecordsData.h"
 #include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
@@ -113,6 +114,7 @@ public:
 
     Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBGetRecordData&);
+    Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
     Ref<IDBRequest> requestDeleteRecord(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(JSC::ExecState&, IDBObjectStore&);
     Ref<IDBRequest> requestCount(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
@@ -184,6 +186,9 @@ private:
 
     void getRecordOnServer(IDBClient::TransactionOperation&, const IDBGetRecordData&);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
+
+    void getAllRecordsOnServer(IDBClient::TransactionOperation&, const IDBGetAllRecordsData&);
+    void didGetAllRecordsOnServer(IDBRequest&, const IDBResultData&);
 
     void getCountOnServer(IDBClient::TransactionOperation&, const IDBKeyRangeData&);
     void didGetCountOnServer(IDBRequest&, const IDBResultData&);

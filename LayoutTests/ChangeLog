@@ -1,3 +1,20 @@
+2016-10-31  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBObjectStore getAll/getAllKeys.
+        <rdar://problem/28806934> and https://bugs.webkit.org/show_bug.cgi?id=164097
+
+        Reviewed by Darin Adler.
+
+        * storage/indexeddb/modern/idbobjectstore-getall-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getall-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getall-1-private.html: Added.
+        * storage/indexeddb/modern/idbobjectstore-getall-1.html: Added.
+        * storage/indexeddb/modern/idbobjectstore-getallkeys-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getallkeys-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getallkeys-1-private.html: Added.
+        * storage/indexeddb/modern/idbobjectstore-getallkeys-1.html: Added.
+        * storage/indexeddb/modern/resources/idbobjectstore-getall-1.js: Added.
+
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking two http/tests/websocket/tests/hybi tests as flaky.

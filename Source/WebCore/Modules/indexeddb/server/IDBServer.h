@@ -74,6 +74,7 @@ public:
     WEBCORE_EXPORT void renameIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
     WEBCORE_EXPORT void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode);
     WEBCORE_EXPORT void getRecord(const IDBRequestData&, const IDBGetRecordData&);
+    WEBCORE_EXPORT void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&);
     WEBCORE_EXPORT void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void openCursor(const IDBRequestData&, const IDBCursorInfo&);

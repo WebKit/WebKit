@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class IDBCursorInfo;
+class IDBGetAllResult;
 class IDBGetResult;
 class IDBIndexInfo;
 class IDBKeyData;
@@ -43,6 +44,7 @@ class IDBTransactionInfo;
 class IDBValue;
 class ThreadSafeDataBuffer;
 
+struct IDBGetAllRecordsData;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
@@ -79,6 +81,7 @@ public:
     virtual IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&) = 0;
     virtual IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&) = 0;
     virtual IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetResult& outValue) = 0;
+    virtual IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue) = 0;
     virtual IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue) = 0;
     virtual IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount) = 0;
     virtual IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber) = 0;

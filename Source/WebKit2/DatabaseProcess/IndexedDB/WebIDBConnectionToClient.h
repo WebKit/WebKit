@@ -40,6 +40,7 @@ class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
 class SerializedScriptValue;
+struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 struct IDBKeyRangeData;
 struct SecurityOriginData;
@@ -71,6 +72,7 @@ public:
     void didRenameIndex(const WebCore::IDBResultData&) final;
     void didPutOrAdd(const WebCore::IDBResultData&) final;
     void didGetRecord(const WebCore::IDBResultData&) final;
+    void didGetAllRecords(const WebCore::IDBResultData&) final;
     void didGetCount(const WebCore::IDBResultData&) final;
     void didDeleteRecord(const WebCore::IDBResultData&) final;
     void didOpenCursor(const WebCore::IDBResultData&) final;
@@ -101,6 +103,7 @@ public:
     void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
     void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, unsigned overwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
+    void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);

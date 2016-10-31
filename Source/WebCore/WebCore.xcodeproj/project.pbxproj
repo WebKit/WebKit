@@ -2206,6 +2206,10 @@
 		5198F7AD1BBDD3EB00E2CC5F /* IDBTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7AB1BBDD3E300E2CC5F /* IDBTransactionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5198F7C01BC4856700E2CC5F /* IDBConnectionToServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5185FCBC1BB5CB770012898F /* IDBConnectionToServer.cpp */; };
 		5198F7C11BC4856700E2CC5F /* IDBConnectionToServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58FD1BB07A9600C19282 /* IDBConnectionToServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		519DBC6E1DC011A200329BF5 /* IDBGetAllRecordsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519DBC6D1DC00FB900329BF5 /* IDBGetAllRecordsData.cpp */; };
+		519DBC6F1DC011A700329BF5 /* IDBGetAllRecordsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 519DBC6C1DC00FA000329BF5 /* IDBGetAllRecordsData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 519DBC711DC10D3300329BF5 /* IDBGetAllResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		519DBC731DC10F5600329BF5 /* IDBGetAllResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519DBC701DC10D3300329BF5 /* IDBGetAllResult.cpp */; };
 		51A052331058774F00CC9E95 /* CredentialStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A052311058774F00CC9E95 /* CredentialStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A052341058774F00CC9E95 /* CredentialStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A052321058774F00CC9E95 /* CredentialStorage.cpp */; };
 		51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A052551058874000CC9E95 /* ProtectionSpaceHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9314,6 +9318,10 @@
 		5198F7A71BBDD38100E2CC5F /* UniqueIDBDatabaseTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseTransaction.h; sourceTree = "<group>"; };
 		5198F7AA1BBDD3E300E2CC5F /* IDBTransactionInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionInfo.cpp; sourceTree = "<group>"; };
 		5198F7AB1BBDD3E300E2CC5F /* IDBTransactionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionInfo.h; sourceTree = "<group>"; };
+		519DBC6C1DC00FA000329BF5 /* IDBGetAllRecordsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetAllRecordsData.h; sourceTree = "<group>"; };
+		519DBC6D1DC00FB900329BF5 /* IDBGetAllRecordsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBGetAllRecordsData.cpp; sourceTree = "<group>"; };
+		519DBC701DC10D3300329BF5 /* IDBGetAllResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBGetAllResult.cpp; sourceTree = "<group>"; };
+		519DBC711DC10D3300329BF5 /* IDBGetAllResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetAllResult.h; sourceTree = "<group>"; };
 		519FE0A10DAD446E00A08F21 /* HTMLAttributeNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAttributeNames.in; sourceTree = "<group>"; };
 		519FE0A20DAD446E00A08F21 /* HTMLTagNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTagNames.in; sourceTree = "<group>"; };
 		51A052311058774F00CC9E95 /* CredentialStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialStorage.h; sourceTree = "<group>"; };
@@ -16844,6 +16852,8 @@
 				51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */,
 				5148453C1BB9D076006A72ED /* IDBError.cpp */,
 				5148453D1BB9D076006A72ED /* IDBError.h */,
+				519DBC6D1DC00FB900329BF5 /* IDBGetAllRecordsData.cpp */,
+				519DBC6C1DC00FA000329BF5 /* IDBGetAllRecordsData.h */,
 				5105F06A1D4BB0BC00FB80BC /* IDBGetRecordData.cpp */,
 				5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */,
 				51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */,
@@ -18901,6 +18911,8 @@
 				51645B461B9F889B00F789CE /* IDBFactory.cpp */,
 				51645B471B9F889B00F789CE /* IDBFactory.h */,
 				51D7198A181106DF0016DC51 /* IDBFactory.idl */,
+				519DBC701DC10D3300329BF5 /* IDBGetAllResult.cpp */,
+				519DBC711DC10D3300329BF5 /* IDBGetAllResult.h */,
 				512F1A771C07EA0D00908239 /* IDBGetResult.cpp */,
 				5123AF1C18918AE40031CDC9 /* IDBGetResult.h */,
 				51645B481B9F889B00F789CE /* IDBIndex.cpp */,
@@ -24821,6 +24833,7 @@
 				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
 				49AE2D8F134EE50C0072920A /* CSSCalculationValue.h in Headers */,
+				519DBC6F1DC011A700329BF5 /* IDBGetAllRecordsData.h in Headers */,
 				BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */,
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
 				9DAC7C551AF2CAA200437C44 /* CSSContentDistributionValue.h in Headers */,
@@ -26287,6 +26300,7 @@
 				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				FFDBC047183D27B700407109 /* LineWidth.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
+				519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */,
 				1A4DA4221CDD3A8300F4473C /* LinkIconCollector.h in Headers */,
 				1A250E0D1CDD632000D0BE63 /* LinkIconType.h in Headers */,
 				98CE432A129E00E5005821DC /* LinkLoader.h in Headers */,
@@ -28500,6 +28514,7 @@
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,
 				9BD8A95A18BEFC7600987E9A /* CollectionIndexCache.cpp in Sources */,
+				519DBC6E1DC011A200329BF5 /* IDBGetAllRecordsData.cpp in Sources */,
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
 				1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */,
@@ -29094,6 +29109,7 @@
 				A8EA7D320A19385500A8EF5F /* HTMLMapElement.cpp in Sources */,
 				A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */,
 				E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */,
+				519DBC731DC10F5600329BF5 /* IDBGetAllResult.cpp in Sources */,
 				C968B2E81B1E778100EF1F81 /* HTMLMediaElementMediaSession.cpp in Sources */,
 				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,

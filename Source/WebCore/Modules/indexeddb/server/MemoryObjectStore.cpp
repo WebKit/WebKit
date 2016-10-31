@@ -31,6 +31,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
+#include "IDBGetAllResult.h"
 #include "IDBKeyRangeData.h"
 #include "IDBValue.h"
 #include "IndexKey.h"
@@ -405,6 +406,35 @@ ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& 
 
     ASSERT(m_keyValueStore);
     return m_keyValueStore->get(key);
+}
+
+void MemoryObjectStore::getAllRecords(const IDBKeyRangeData& keyRangeData, Optional<uint32_t> count, IndexedDB::GetAllType type, IDBGetAllResult& result) const
+{
+    result = { type };
+
+    uint32_t targetCount;
+    if (count && count.value())
+        targetCount = count.value();
+    else
+        targetCount = std::numeric_limits<uint32_t>::max();
+
+    IDBKeyRangeData range = keyRangeData;
+    uint32_t currentCount = 0;
+    while (currentCount < targetCount) {
+        IDBKeyData key = lowestKeyWithRecordInRange(range);
+        if (key.isNull())
+            return;
+
+        range.lowerKey = key;
+        range.lowerOpen = true;
+
+        if (type == IndexedDB::GetAllType::Keys)
+            result.addKey(WTFMove(key));
+        else
+            result.addValue(valueForKey(key));
+
+        ++currentCount;
+    }
 }
 
 IDBGetResult MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const

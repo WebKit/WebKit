@@ -1,3 +1,30 @@
+2016-10-31  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBObjectStore getAll/getAllKeys.
+        <rdar://problem/28806934> and https://bugs.webkit.org/show_bug.cgi?id=164097
+
+        Reviewed by Darin Adler.
+
+        - Handle moving "Get All" requests to and from the DatabaseProcess.
+        - Handle the additional task of creating/passing Sandbox Extensions for
+          referenced files when necessary. 
+          
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::handleGetResult):
+        (WebKit::WebIDBConnectionToClient::didGetAllRecords):
+        (WebKit::WebIDBConnectionToClient::getAllRecords):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+        
+        * Shared/WebCoreArgumentCoders.h:
+        
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::getAllRecords):
+        (WebKit::preregisterSandboxExtensionsIfNecessary):
+        (WebKit::WebIDBConnectionToServer::didGetAllRecords):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
 2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK1] Candidate visibility should not update as a result of selection during a dictionary lookup

@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/IndexedDB.h>
 #include <WebCore/PaymentHeaders.h>
 
 namespace WebCore {
@@ -573,5 +574,15 @@ template<> struct EnumTraits<WebCore::HasInsecureContent> {
         WebCore::HasInsecureContent::Yes
     >;
 };
+
+#if ENABLE(INDEXED_DATABASE)
+template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
+    using values = EnumValues<
+        WebCore::IndexedDB::GetAllType,
+        WebCore::IndexedDB::GetAllType::Keys,
+        WebCore::IndexedDB::GetAllType::Values
+    >;
+};
+#endif
 
 } // namespace WTF

@@ -34,6 +34,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace IPC {

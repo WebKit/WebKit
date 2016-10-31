@@ -40,6 +40,7 @@ class IDBResourceIdentifier;
 class IDBTransactionInfo;
 class IDBValue;
 
+struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 struct SecurityOriginData;
 
@@ -70,6 +71,7 @@ public:
     virtual void renameIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName) = 0;
     virtual void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBGetRecordData&) = 0;
+    virtual void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) = 0;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void openCursor(const IDBRequestData&, const IDBCursorInfo&) = 0;

@@ -29,6 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorInfo.h"
+#include "IDBGetAllRecordsData.h"
+#include "IDBGetAllResult.h"
 #include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
@@ -97,6 +99,7 @@ bool UniqueIDBDatabase::hasAnyPendingCallbacks() const
     return !m_errorCallbacks.isEmpty()
         || !m_keyDataCallbacks.isEmpty()
         || !m_getResultCallbacks.isEmpty()
+        || !m_getAllResultsCallbacks.isEmpty()
         || !m_countCallbacks.isEmpty();
 }
 
@@ -405,6 +408,19 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetResultCallback callback)
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_getResultCallbacks.contains(identifier));
     m_getResultCallbacks.add(identifier, callback);
+    return identifier;
+}
+
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetAllResultsCallback callback)
+{
+    if (m_hardClosedForUserDelete) {
+        callback(IDBError::userDeleteError(), { });
+        return 0;
+    }
+
+    uint64_t identifier = generateUniqueCallbackIdentifier();
+    ASSERT(!m_getAllResultsCallbacks.contains(identifier));
+    m_getAllResultsCallbacks.add(identifier, callback);
     return identifier;
 }
 
@@ -1028,6 +1044,18 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
         postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), getRecordData.keyRangeData));
 }
 
+void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData, GetAllResultsCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::getAllRecords");
+
+    uint64_t callbackID = storeCallbackOrFireError(callback);
+    if (!callbackID)
+        return;
+
+    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetAllRecords, callbackID, requestData.transactionIdentifier(), getAllRecordsData));
+}
+
 void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData)
 {
     ASSERT(!isMainThread());
@@ -1060,6 +1088,27 @@ void UniqueIDBDatabase::didPerformGetRecord(uint64_t callbackIdentifier, const I
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetRecord");
 
     performGetResultCallback(callbackIdentifier, error, result);
+}
+
+void UniqueIDBDatabase::performGetAllRecords(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performGetAllRecords");
+
+    ASSERT(m_backingStore);
+
+    IDBGetAllResult result;
+    IDBError error = m_backingStore->getAllRecords(transactionIdentifier, getAllRecordsData, result);
+
+    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetAllRecords, callbackIdentifier, error, WTFMove(result)));
+}
+
+void UniqueIDBDatabase::didPerformGetAllRecords(uint64_t callbackIdentifier, const IDBError& error, const IDBGetAllResult& result)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetAllRecords");
+
+    performGetAllResultsCallback(callbackIdentifier, error, result);
 }
 
 void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range, CountCallback callback)
@@ -1796,6 +1845,14 @@ void UniqueIDBDatabase::performKeyDataCallback(uint64_t callbackIdentifier, cons
 void UniqueIDBDatabase::performGetResultCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& resultData)
 {
     auto callback = m_getResultCallbacks.take(callbackIdentifier);
+    ASSERT(callback || m_hardClosedForUserDelete);
+    if (callback)
+        callback(error, resultData);
+}
+
+void UniqueIDBDatabase::performGetAllResultsCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBGetAllResult& resultData)
+{
+    auto callback = m_getAllResultsCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
     if (callback)
         callback(error, resultData);

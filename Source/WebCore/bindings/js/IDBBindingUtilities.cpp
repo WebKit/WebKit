@@ -301,7 +301,7 @@ bool canInjectIDBKeyIntoScriptValue(ExecState& exec, const JSValue& scriptValue,
     return canInjectNthValueOnKeyPath(exec, scriptValue, keyPathElements, keyPathElements.size() - 1);
 }
 
-JSValue deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& value)
+static JSValue deserializeIDBValueToJSValue(ExecState& state, JSC::JSGlobalObject& globalObject, const IDBValue& value)
 {
     // FIXME: I think it's peculiar to use undefined to mean "null data" and null to mean "empty data".
     // But I am not changing this at the moment because at least some callers are specifically checking isUndefined.
@@ -315,12 +315,23 @@ JSValue deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& value)
 
     auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
-    exec.vm().apiLock().lock();
+    state.vm().apiLock().lock();
     Vector<RefPtr<MessagePort>> messagePorts;
-    JSValue result = serializedValue->deserialize(exec, exec.lexicalGlobalObject(), messagePorts, value.blobURLs(), value.blobFilePaths(), NonThrowing);
-    exec.vm().apiLock().unlock();
+    JSValue result = serializedValue->deserialize(state, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), NonThrowing);
+    state.vm().apiLock().unlock();
 
     return result;
+}
+
+JSValue deserializeIDBValueToJSValue(ExecState& state, const IDBValue& value)
+{
+    return deserializeIDBValueToJSValue(state, *state.lexicalGlobalObject(), value);
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, const IDBValue& value)
+{
+    ASSERT(state);
+    return deserializeIDBValueToJSValue(*state, *globalObject, value);
 }
 
 Ref<IDBKey> scriptValueToIDBKey(ExecState& exec, const JSValue& scriptValue)
@@ -332,6 +343,14 @@ JSC::JSValue idbKeyDataToScriptValue(JSC::ExecState& exec, const IDBKeyData& key
 {
     RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
     return toJS(exec, *exec.lexicalGlobalObject(), key.get());
+}
+
+JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, const IDBKeyData& keyData)
+{
+    ASSERT(state);
+    ASSERT(globalObject);
+
+    return toJS(*state, *globalObject, keyData.maybeCreateIDBKey().get());
 }
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)

@@ -41,12 +41,14 @@ namespace WebCore {
 
 class IDBCursorInfo;
 class IDBError;
+class IDBGetAllResult;
 class IDBKeyData;
 class IDBValue;
 
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
+enum class GetAllType;
 enum class IndexRecordType;
 }
 
@@ -86,6 +88,8 @@ public:
     ThreadSafeDataBuffer valueForKeyRange(const IDBKeyRangeData&) const;
     IDBGetResult indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
     uint64_t countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData&) const;
+
+    void getAllRecords(const IDBKeyRangeData&, Optional<uint32_t> count, IndexedDB::GetAllType, IDBGetAllResult&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }
 

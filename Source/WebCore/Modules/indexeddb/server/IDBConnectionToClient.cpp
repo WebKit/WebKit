@@ -108,6 +108,11 @@ void IDBConnectionToClient::didGetRecord(const IDBResultData& result)
     m_delegate->didGetRecord(result);
 }
 
+void IDBConnectionToClient::didGetAllRecords(const IDBResultData& result)
+{
+    m_delegate->didGetAllRecords(result);
+}
+
 void IDBConnectionToClient::didGetCount(const IDBResultData& result)
 {
     m_delegate->didGetCount(result);

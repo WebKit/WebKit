@@ -215,6 +215,20 @@ void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
+void IDBConnectionToServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::getAllRecords");
+    ASSERT(isMainThread());
+
+    m_delegate->getAllRecords(requestData, getAllRecordsData);
+}
+
+void IDBConnectionToServer::didGetAllRecords(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didGetAllRecords");
+    m_proxy->completeOperation(resultData);
+}
+
 void IDBConnectionToServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::getCount");

@@ -64,6 +64,8 @@ IDBResultData::IDBResultData(const IDBResultData& other)
         m_resultKey = std::make_unique<IDBKeyData>(*other.m_resultKey);
     if (other.m_getResult)
         m_getResult = std::make_unique<IDBGetResult>(*other.m_getResult);
+    if (other.m_getAllResult)
+        m_getAllResult = std::make_unique<IDBGetAllResult>(*other.m_getAllResult);
 }
 
 IDBResultData::IDBResultData(const IDBResultData& that, IsolatedCopyTag)
@@ -178,6 +180,13 @@ IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& reque
     return result;
 }
 
+IDBResultData IDBResultData::getAllRecordsSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetAllResult& getAllResult)
+{
+    IDBResultData result(IDBResultType::GetAllRecordsSuccess, requestIdentifier);
+    result.m_getAllResult = std::make_unique<IDBGetAllResult>(getAllResult);
+    return result;
+}
+
 IDBResultData IDBResultData::getCountSuccess(const IDBResourceIdentifier& requestIdentifier, uint64_t count)
 {
     IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
@@ -220,6 +229,12 @@ const IDBGetResult& IDBResultData::getResult() const
 {
     RELEASE_ASSERT(m_getResult);
     return *m_getResult;
+}
+
+const IDBGetAllResult& IDBResultData::getAllResult() const
+{
+    RELEASE_ASSERT(m_getAllResult);
+    return *m_getAllResult;
 }
 
 } // namespace WebCore

@@ -73,6 +73,7 @@ public:
     void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
     void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(TransactionOperation&, const IDBGetRecordData&);
+    void getAllRecords(TransactionOperation&, const IDBGetAllRecordsData&);
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
     void openCursor(TransactionOperation&, const IDBCursorInfo&);

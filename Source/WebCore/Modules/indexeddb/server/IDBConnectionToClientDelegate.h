@@ -60,6 +60,7 @@ public:
     virtual void didRenameIndex(const IDBResultData&) = 0;
     virtual void didPutOrAdd(const IDBResultData&) = 0;
     virtual void didGetRecord(const IDBResultData&) = 0;
+    virtual void didGetAllRecords(const IDBResultData&) = 0;
     virtual void didGetCount(const IDBResultData&) = 0;
     virtual void didDeleteRecord(const IDBResultData&) = 0;
     virtual void didOpenCursor(const IDBResultData&) = 0;

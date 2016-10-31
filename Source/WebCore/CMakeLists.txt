@@ -824,6 +824,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBDatabaseIdentifier.cpp
     Modules/indexeddb/IDBEventDispatcher.cpp
     Modules/indexeddb/IDBFactory.cpp
+    Modules/indexeddb/IDBGetAllResult.cpp
     Modules/indexeddb/IDBGetResult.cpp
     Modules/indexeddb/IDBIndex.cpp
     Modules/indexeddb/IDBKey.cpp
@@ -867,6 +868,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/shared/IDBCursorInfo.cpp
     Modules/indexeddb/shared/IDBDatabaseInfo.cpp
     Modules/indexeddb/shared/IDBError.cpp
+    Modules/indexeddb/shared/IDBGetAllRecordsData.cpp
     Modules/indexeddb/shared/IDBGetRecordData.cpp
     Modules/indexeddb/shared/IDBIndexInfo.cpp
     Modules/indexeddb/shared/IDBObjectStoreInfo.cpp

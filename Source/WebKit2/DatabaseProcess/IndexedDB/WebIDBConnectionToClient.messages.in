@@ -37,6 +37,7 @@ messages -> WebIDBConnectionToClient {
     RenameIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, String newName);
     PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, WebCore::IDBValue value, unsigned overwriteMode);
     GetRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBGetRecordData getRecordData);
+    GetAllRecords(WebCore::IDBRequestData requestData, struct WebCore::IDBGetAllRecordsData getAllRecordsData);
     GetCount(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range);
     DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range);
     OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info);

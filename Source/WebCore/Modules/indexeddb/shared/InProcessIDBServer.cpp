@@ -195,6 +195,13 @@ void InProcessIDBServer::didGetRecord(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didGetAllRecords(const IDBResultData& resultData)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
+        m_connectionToServer->didGetAllRecords(resultData);
+    });
+}
+
 void InProcessIDBServer::didGetCount(const IDBResultData& resultData)
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
@@ -304,6 +311,13 @@ void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBG
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, getRecordData] {
         m_server->getRecord(requestData, getRecordData);
+    });
+}
+
+void InProcessIDBServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, getAllRecordsData] {
+        m_server->getAllRecords(requestData, getAllRecordsData);
     });
 }
 

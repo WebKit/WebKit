@@ -1,14 +1,14 @@
 
-FAIL Single item get store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Single item get (generated key) store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL getAll on empty object store store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get all values store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Test maxCount store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get bound range store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get bound range with maxCount store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get upper excluded store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get lower excluded store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Get bound range (generated) with maxCount store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL Non existent key store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
-FAIL zero maxCount store.getAll is not a function. (In 'store.getAll(range, maxCount)', 'store.getAll' is undefined)
+PASS Single item get 
+PASS Single item get (generated key) 
+PASS getAll on empty object store 
+PASS Get all values 
+PASS Test maxCount 
+PASS Get bound range 
+PASS Get bound range with maxCount 
+PASS Get upper excluded 
+PASS Get lower excluded 
+PASS Get bound range (generated) with maxCount 
+PASS Non existent key 
+PASS zero maxCount 
 

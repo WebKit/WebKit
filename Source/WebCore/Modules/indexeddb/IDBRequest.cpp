@@ -42,11 +42,14 @@
 #include "IDBKeyData.h"
 #include "IDBObjectStore.h"
 #include "IDBResultData.h"
+#include "JSDOMConvert.h"
 #include "Logging.h"
 #include "ScopeGuard.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/NeverDestroyed.h>
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -328,6 +331,42 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
 
     clearResult();
     m_scriptResult = { context->vm(), idbKeyDataToScriptValue(*exec, keyData) };
+}
+
+void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
+{
+    ASSERT(currentThread() == originThreadID());
+
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    auto* state = context->execState();
+    if (!state)
+        return;
+
+    clearResult();
+
+    Locker<JSLock> locker(context->vm().apiLock());
+    m_scriptResult = { context->vm(), toJS(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) };
+}
+
+void IDBRequest::setResult(const Vector<IDBValue>& values)
+{
+    ASSERT(currentThread() == originThreadID());
+
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    auto* exec = context->execState();
+    if (!exec)
+        return;
+
+    clearResult();
+
+    Locker<JSLock> locker(context->vm().apiLock());
+    m_scriptResult = { context->vm(), toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), values) };
 }
 
 void IDBRequest::setResult(uint64_t number)

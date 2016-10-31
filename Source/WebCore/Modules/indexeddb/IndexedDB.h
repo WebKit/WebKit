@@ -91,6 +91,11 @@ enum class RequestType {
     Other,
 };
 
+enum class GetAllType {
+    Keys,
+    Values,
+};
+
 } // namespace IndexedDB
 
 } // namespace WebCore

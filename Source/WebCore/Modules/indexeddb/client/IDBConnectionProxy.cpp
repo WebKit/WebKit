@@ -189,6 +189,14 @@ void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBGet
     callConnectionOnMainThread(&IDBConnectionToServer::getRecord, requestData, getRecordData);
 }
 
+void IDBConnectionProxy::getAllRecords(TransactionOperation& operation, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    const IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    callConnectionOnMainThread(&IDBConnectionToServer::getAllRecords, requestData, getAllRecordsData);
+}
+
 void IDBConnectionProxy::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
 {
     const IDBRequestData requestData(operation);

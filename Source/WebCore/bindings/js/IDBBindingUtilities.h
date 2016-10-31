@@ -62,6 +62,9 @@ JSC::JSValue deserializeIDBValueToJSValue(JSC::ExecState&, const IDBValue&);
 
 Ref<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const IDBKeyData&);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const IDBValue&);
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

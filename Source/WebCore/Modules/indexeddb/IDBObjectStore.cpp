@@ -548,6 +548,52 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(ExecState& execState, const
     return m_transaction->requestCount(execState, *this, range);
 }
 
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(ExecState& execState, RefPtr<IDBKeyRange> range, Optional<uint32_t> count)
+{
+    LOG(IndexedDB, "IDBObjectStore::getAll");
+    ASSERT(currentThread() == m_transaction->database().originThreadID());
+
+    if (m_deleted)
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'getAll' on 'IDBObjectStore': The object store has been deleted.") };
+
+    if (!m_transaction->isActive())
+        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'getAll' on 'IDBObjectStore': The transaction is inactive or finished.") };
+
+    return m_transaction->requestGetAllObjectStoreRecords(execState, *this, range.get(), IndexedDB::GetAllType::Values, count);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(ExecState& execState, JSValue key, Optional<uint32_t> count)
+{
+    auto onlyResult = IDBKeyRange::only(execState, key);
+    if (onlyResult.hasException())
+        return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to execute 'getAll' on 'IDBObjectStore': The parameter is not a valid key.") };
+
+    return getAll(execState, onlyResult.releaseReturnValue(), count);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(ExecState& execState, RefPtr<IDBKeyRange> range, Optional<uint32_t> count)
+{
+    LOG(IndexedDB, "IDBObjectStore::getAllKeys");
+    ASSERT(currentThread() == m_transaction->database().originThreadID());
+
+    if (m_deleted)
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'getAllKeys' on 'IDBObjectStore': The object store has been deleted.") };
+
+    if (!m_transaction->isActive())
+        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'getAllKeys' on 'IDBObjectStore': The transaction is inactive or finished.") };
+
+    return m_transaction->requestGetAllObjectStoreRecords(execState, *this, range.get(), IndexedDB::GetAllType::Keys, count);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(ExecState& execState, JSValue key, Optional<uint32_t> count)
+{
+    auto onlyResult = IDBKeyRange::only(execState, key);
+    if (onlyResult.hasException())
+        return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to execute 'getAllKeys' on 'IDBObjectStore': The parameter is not a valid key.") };
+
+    return getAllKeys(execState, onlyResult.releaseReturnValue(), count);
+}
+
 void IDBObjectStore::markAsDeleted()
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());

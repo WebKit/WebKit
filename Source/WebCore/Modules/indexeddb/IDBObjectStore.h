@@ -88,6 +88,10 @@ public:
     ExceptionOr<void> deleteIndex(const String& name);
     ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> getAll(JSC::ExecState&, RefPtr<IDBKeyRange>, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAll(JSC::ExecState&, JSC::JSValue key, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::ExecState&, RefPtr<IDBKeyRange>, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::ExecState&, JSC::JSValue key, Optional<uint32_t> count);
 
     ExceptionOr<Ref<IDBRequest>> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
 

@@ -88,6 +88,8 @@ public:
     void requestCompleted(const IDBResultData&);
 
     void setResult(const IDBKeyData&);
+    void setResult(const Vector<IDBKeyData>&);
+    void setResult(const Vector<IDBValue>&);
     void setResult(uint64_t);
     void setResultToStructuredClone(const IDBValue&);
     void setResultToUndefined();

@@ -44,6 +44,7 @@ class IDBResultData;
 class IDBValue;
 class SecurityOrigin;
 
+struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 
 namespace IDBClient {
@@ -88,6 +89,9 @@ public:
 
     void getRecord(const IDBRequestData&, const IDBGetRecordData&);
     WEBCORE_EXPORT void didGetRecord(const IDBResultData&);
+
+    void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&);
+    WEBCORE_EXPORT void didGetAllRecords(const IDBResultData&);
 
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void didGetCount(const IDBResultData&);

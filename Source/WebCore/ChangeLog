@@ -1,3 +1,128 @@
+2016-10-31  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBObjectStore getAll/getAllKeys.
+        <rdar://problem/28806934> and https://bugs.webkit.org/show_bug.cgi?id=164097
+
+        Reviewed by Darin Adler.
+
+        Tests: storage/indexeddb/modern/idbobjectstore-getall-1-private.html
+               storage/indexeddb/modern/idbobjectstore-getall-1.html
+               storage/indexeddb/modern/idbobjectstore-getallkeys-1-private.html
+               storage/indexeddb/modern/idbobjectstore-getallkeys-1.html
+               Existing imported W3C tests.
+
+        - Add new objects for "IDBGetAllRequestData" and "IDBGetAllResult" to represent these
+          new requests and responses.
+        - Add lots of boilerplate code to move these new objects around in the IDB machinery.
+        - Update "GetRecord" code to be shared with "GetAll" code where necessary.
+        - Other tweaks here and there.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+
+        * Modules/indexeddb/IDBGetAllResult.cpp: Added.
+        (WebCore::isolatedCopyOfVariant):
+        (WebCore::IDBGetAllResult::isolatedCopy):
+        (WebCore::IDBGetAllResult::addKey):
+        (WebCore::IDBGetAllResult::addValue):
+        (WebCore::IDBGetAllResult::keys):
+        (WebCore::IDBGetAllResult::values):
+        (WebCore::IDBGetAllResult::allBlobFilePaths):
+        * Modules/indexeddb/IDBGetAllResult.h: Added.
+        (WebCore::IDBGetAllResult::IDBGetAllResult):
+        (WebCore::IDBGetAllResult::type):
+        (WebCore::IDBGetAllResult::encode):
+        (WebCore::IDBGetAllResult::decode):
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::getAll):
+        (WebCore::IDBObjectStore::getAllKeys):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::getAllRecordsOnServer):
+        (WebCore::IDBTransaction::didGetAllRecordsOnServer):
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/IndexedDB.h:
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::getAllRecords):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::getAllRecords):
+        (WebCore::IDBClient::IDBConnectionToServer::didGetAllRecords):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllRecords):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllRecords):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::getAllRecords):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::getAllRecords):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::queryForGetAllRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllRecords):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::hasAnyPendingCallbacks):
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformGetAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllResultsCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp: Added.
+        (WebCore::IDBGetAllRecordsData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h: Added.
+        (WebCore::IDBGetAllRecordsData::encode):
+        (WebCore::IDBGetAllRecordsData::decode):
+
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::IDBResultData):
+        (WebCore::IDBResultData::getAllRecordsSuccess):
+        (WebCore::IDBResultData::getAllResult):
+        * Modules/indexeddb/shared/IDBResultData.h:
+        (WebCore::IDBResultData::encode):
+        (WebCore::IDBResultData::decode):
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didGetAllRecords):
+        (WebCore::InProcessIDBServer::getAllRecords):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueToJSValue):
+        (WebCore::toJS):
+        * bindings/js/IDBBindingUtilities.h:
+
 2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK+ and EFL build fixes after r208176.

@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorInfo.h"
+#include "IDBGetAllRecordsData.h"
 #include "IDBGetResult.h"
 #include "IDBIndexInfo.h"
 #include "IDBKeyRangeData.h"
@@ -363,6 +364,23 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
     outValue = objectStore->valueForKeyRange(range);
     return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::getAllRecords");
+
+    ASSERT(getAllRecordsData.objectStoreIdentifier);
+
+    if (!m_transactions.contains(transactionIdentifier))
+        return IDBError(IDBDatabaseException::UnknownError, ASCIILiteral("No backing store transaction found to get all records"));
+
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(getAllRecordsData.objectStoreIdentifier);
+    if (!objectStore)
+        return IDBError(IDBDatabaseException::UnknownError, ASCIILiteral("No backing store object store found"));
+
+    objectStore->getAllRecords(getAllRecordsData.keyRangeData, getAllRecordsData.count, getAllRecordsData.getAllType, result);
+    return { };
 }
 
 IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range, IDBGetResult& outValue)

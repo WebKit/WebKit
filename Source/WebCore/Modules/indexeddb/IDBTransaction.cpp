@@ -737,6 +737,58 @@ void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResu
     request.didOpenOrIterateCursor(resultData);
 }
 
+Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::ExecState& state, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
+{
+    LOG(IndexedDB, "IDBTransaction::requestGetAllObjectStoreRecords");
+    ASSERT(isActive());
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
+
+    Ref<IDBRequest> request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
+    addRequest(request.get());
+
+    IDBGetAllRecordsData getAllRecordsData { keyRangeData, getAllType, count, objectStore.info().identifier(), 0 };
+
+    auto operation = IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetAllRecordsOnServer, &IDBTransaction::getAllRecordsOnServer, getAllRecordsData);
+    scheduleOperation(WTFMove(operation));
+
+    return request;
+}
+
+void IDBTransaction::getAllRecordsOnServer(IDBClient::TransactionOperation& operation, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    LOG(IndexedDB, "IDBTransaction::getAllRecordsOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    m_database->connectionProxy().getAllRecords(operation, getAllRecordsData);
+}
+
+void IDBTransaction::didGetAllRecordsOnServer(IDBRequest& request, const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didGetAllRecordsOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    if (resultData.type() == IDBResultType::Error) {
+        request.requestCompleted(resultData);
+        return;
+    }
+
+    ASSERT(resultData.type() == IDBResultType::GetAllRecordsSuccess);
+
+    auto& getAllResult = resultData.getAllResult();
+    switch (getAllResult.type()) {
+    case IndexedDB::GetAllType::Keys:
+        request.setResult(getAllResult.keys());
+        break;
+    case IndexedDB::GetAllType::Values:
+        request.setResult(getAllResult.values());
+        break;
+    }
+
+    request.requestCompleted(resultData);
+}
+
 Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& execState, IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
