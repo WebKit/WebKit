@@ -1,5 +1,14 @@
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking two http/tests/websocket/tests/hybi tests as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164080
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping media/modern-media-controls/volume-support/volume-support-media-api.html on ios-simulator.
         https://bugs.webkit.org/show_bug.cgi?id=164250
 
