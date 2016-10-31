@@ -1,5 +1,14 @@
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping media/modern-media-controls/volume-support/volume-support-media-api.html on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=164250
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Changing expectation from Failure to Skip for two insertReplacementText tests on ios-simulator.
 
         Unreviewed test gardening.
