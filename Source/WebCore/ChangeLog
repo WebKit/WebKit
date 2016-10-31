@@ -1,3 +1,60 @@
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=164240
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        Remove ShadowDeep, ShadowSlot and ShadowPseudo in favor of our
+        ShadowDescendant combinator.
+
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        Remove ShadowDeep, ShadowSlot and ShadowPseudo in favor of our
+        ShadowDescendant combinator.
+
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        Remove ShadowDeep, ShadowSlot and ShadowPseudo in favor of our
+        ShadowDescendant combinator.
+
+        * css/SelectorPseudoElementTypeMap.in:
+        Add support for slotted.
+
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::appendTagHistory):
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching):
+        Remove ShadowDeep, ShadowSlot and ShadowPseudo in favor of our
+        ShadowDescendant combinator. Take :slotted out of
+        needsImplicitShadowCombinatorForMatching(), since our code doesn't do
+        this for :slotted.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isPseudoClassFunction):
+        :host can be both an id and a function, so don't restrict it.
+
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Put in a hack for :host (inside the hack we already plan on removing
+        once we turn on).
+
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        Remove deep shadow combinator support, as we don't support matching
+        on it.
+
+        (WebCore::CSSSelectorParser::prependTypeSelectorIfNeeded):
+        (WebCore::CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator):
+        Make the split use our combinator, ShadowDescendant, and no longer do anything
+        special with :slotted.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+        Remove ShadowDeep, ShadowSlot and ShadowPseudo in favor of our
+        ShadowDescendant combinator.
+
 2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use #pragma once in WebCore
