@@ -1,3 +1,13 @@
+2016-10-28  Philippe Normand  <pnormand@igalia.com>
+
+        [OpenWebRTC] Initialize library one time only
+        https://bugs.webkit.org/show_bug.cgi?id=164118
+
+        Reviewed by Darin Adler.
+
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp:
+        (WebCore::initializeOpenWebRTC): Prevent multiple initialisations of the library.
+
 2016-10-30  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed fix: Correct ChangeLog after my bad merge.
