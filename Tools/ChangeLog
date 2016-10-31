@@ -1,3 +1,17 @@
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208154.
+
+        This change caused an assertion failure during API tests on
+        macOS.
+
+        Reverted changeset:
+
+        "NetworkSession: Network process crash when converting main
+        resource to download"
+        https://bugs.webkit.org/show_bug.cgi?id=164220
+        http://trac.webkit.org/changeset/208154
+
 2016-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, change my status to be a WebKit reviewer
