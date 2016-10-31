@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -317,6 +317,8 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
 {
     if (AlternativeTextClient* client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
+
+    Ref<Frame> protector(m_frame);
     m_frame.document()->updateLayout();
     m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);
     RefPtr<Range> range = Range::create(*m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());

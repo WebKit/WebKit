@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2010, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009-2010, 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -433,6 +433,7 @@ DragOperation DragController::operationForLoad(DragData& dragData)
 
 static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
 {
+    Ref<Frame> protector(*frame);
     frame->selection().setSelection(dragCaret);
     if (frame->selection().selection().isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
@@ -753,6 +754,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     if (!src.view() || !src.contentRenderer() || !state.source)
         return false;
 
+    Ref<Frame> protector(src);
     HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);
 
     // FIXME(136836): Investigate whether all elements should use the containsIncludingShadowDOM() path here.

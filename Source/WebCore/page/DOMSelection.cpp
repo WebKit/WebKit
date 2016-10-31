@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -169,6 +169,8 @@ void DOMSelection::collapse(Node* node, unsigned offset)
 {
     if (!isValidForPosition(node))
         return;
+
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
@@ -179,6 +181,8 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
     auto& selection = m_frame->selection();
     if (selection.isNone())
         return Exception { INVALID_STATE_ERR };
+
+    Ref<Frame> protector(*m_frame);
     selection.moveTo(selection.selection().end(), DOWNSTREAM);
     return { };
 }
@@ -190,6 +194,8 @@ ExceptionOr<void> DOMSelection::collapseToStart()
     auto& selection = m_frame->selection();
     if (selection.isNone())
         return Exception { INVALID_STATE_ERR };
+
+    Ref<Frame> protector(*m_frame);
     selection.moveTo(selection.selection().start(), DOWNSTREAM);
     return { };
 }
@@ -205,6 +211,8 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* e
 {
     if (!isValidForPosition(baseNode) || !isValidForPosition(extentNode))
         return;
+
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(baseNode, baseOffset), createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
 }
 
@@ -212,6 +220,8 @@ void DOMSelection::setPosition(Node* node, unsigned offset)
 {
     if (!isValidForPosition(node))
         return;
+
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
@@ -262,6 +272,7 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     else
         return;
 
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().modify(alter, direction, granularity);
 }
 
@@ -273,6 +284,8 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         return Exception { INDEX_SIZE_ERR };
     if (!isValidForPosition(&node))
         return { };
+
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
     return { };
 }
@@ -305,6 +318,8 @@ void DOMSelection::addRange(Range& range)
 {
     if (!m_frame)
         return;
+
+    Ref<Frame> protector(*m_frame);
 
     auto& selection = m_frame->selection();
     if (selection.isNone()) {
@@ -355,6 +370,7 @@ void DOMSelection::deleteFromDocument()
     if (!selectedRange)
         return;
 
+    Ref<Frame> protector(*m_frame);
     selectedRange->deleteContents(ASSERT_NO_EXCEPTION);
     setBaseAndExtent(&selectedRange->startContainer(), selectedRange->startOffset(), &selectedRange->startContainer(), selectedRange->startOffset());
 }

@@ -1,3 +1,42 @@
+2016-10-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Do a better job of protecting Frame objects in the context of JavaScript calls
+        https://bugs.webkit.org/show_bug.cgi?id=164163
+        <rdar://problem/28955249>
+
+        Reviewed by Darin Adler.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection): Protected the Frame.
+        * editing/Editor.cpp:
+        (WebCore::Editor::setTextAsChildOfElement): Ditto.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeSwapWithMark): Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Ditto.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::replaceNodeFromPasteboard): Ditto.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse): Ditto.
+        (WebCore::DOMSelection::collapseToEnd): Ditto.
+        (WebCore::DOMSelection::collapseToStart): Ditto.
+        (WebCore::DOMSelection::setBaseAndExtent): Ditto.
+        (WebCore::DOMSelection::setPosition): Ditto.
+        (WebCore::DOMSelection::modify): Ditto.
+        (WebCore::DOMSelection::extend): Ditto.
+        (WebCore::DOMSelection::addRange): Ditto.
+        (WebCore::DOMSelection::deleteFromDocument): Ditto.
+        * page/DragController.cpp:
+        (WebCore::setSelectionToDragCaret): Ditto.
+        (WebCore::DragController::startDrag): Ditto.
+        * page/Frame.cpp:
+        (WebCore::Frame::checkOverflowScroll): Ditto.
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange): Ditto.
+
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure to fail on :role(a,b) and :dir(a,b)
