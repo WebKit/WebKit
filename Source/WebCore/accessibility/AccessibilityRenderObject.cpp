@@ -776,6 +776,11 @@ String AccessibilityRenderObject::stringValue() const
     if (isTextControl())
         return text();
     
+#if PLATFORM(IOS)
+    if (isInputTypePopupButton())
+        return textUnderElement();
+#endif
+    
     if (is<RenderFileUploadControl>(*m_renderer))
         return downcast<RenderFileUploadControl>(*m_renderer).fileTextValue();
     

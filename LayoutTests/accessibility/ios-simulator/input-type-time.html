@@ -8,7 +8,8 @@ var successfullyParsed = false;
 </head>
 <body id="body">
 
-<input id="timeinput" type="time" aria-label="(Between: 07:00 AM-09:00 AM)" min="07:00" max="09:00" step="300" placeholder="00:00 AM">
+<input id="timeinput" type="time" aria-label="(Between: 07:00 AM-09:00 AM)" min="07:00" max="09:00" step="300" placeholder="00:00 AM" value="08:00">
+<input id="timeinput2" type="time" min="07:00" max="09:00" step="300" value="08:00">
 
 <p id="description"></p>
 <div id="console"></div>
@@ -20,8 +21,14 @@ var successfullyParsed = false;
     if (window.accessibilityController) {
 
         var timeinput = accessibilityController.accessibleElementById("timeinput");
+        var timeinput2 = accessibilityController.accessibleElementById("timeinput2");
         shouldBe("timeinput.description", "'AXLabel: (Between: 07:00 AM-09:00 AM)'");
         shouldBeFalse("timeinput.isIgnored");
+        
+        // Test value is exposed in AXValue.
+        shouldBe("timeinput.stringValue", "'AXValue: 8:00 AM'");
+        shouldBe("timeinput2.description", "'AXLabel: '");
+        shouldBe("timeinput2.stringValue", "'AXValue: 8:00 AM'");
     }
 
     successfullyParsed = true;

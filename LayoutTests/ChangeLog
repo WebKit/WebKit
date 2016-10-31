@@ -1,3 +1,13 @@
+2016-10-31  Nan Wang  <n_wang@apple.com>
+
+        AX: iOS Voiceover does not announce previously selected value from input type="date" form field
+        https://bugs.webkit.org/show_bug.cgi?id=164176
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/input-type-time-expected.txt:
+        * accessibility/ios-simulator/input-type-time.html:
+
 2016-10-31  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r206300): LayoutTest media/media-source/media-source-duplicate-seeked.html timing out

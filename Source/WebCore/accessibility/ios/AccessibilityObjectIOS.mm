@@ -90,6 +90,13 @@ bool AccessibilityObject::hasTouchEventListener() const
     }
     return false;
 }
+    
+bool AccessibilityObject::isInputTypePopupButton() const
+{
+    if (is<HTMLInputElement>(node()))
+        return roleValue() == PopUpButtonRole;
+    return false;
+}
 
 } // WebCore
 

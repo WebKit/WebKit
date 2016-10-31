@@ -997,6 +997,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     NSString *axTitle = [self baseAccessibilityTitle];
     NSString *axDescription = [self baseAccessibilityDescription];
     NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
+    
+    // We should expose the value of the input type date or time through AXValue instead of AXTitle.
+    if (m_object->isInputTypePopupButton() && [axTitle isEqualToString:[self accessibilityValue]])
+        axTitle = nil;
 
     // Footer is not considered a landmark, but we want the role description.
     if (m_object->roleValue() == FooterRole)
