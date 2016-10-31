@@ -1045,7 +1045,7 @@ RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, CSSParserContext
     return consumeImage(range, context);
 }
 
-static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserContext context)
+static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserContext context, bool prefixed)
 {
     RefPtr<CSSValue> fromImageValue = consumeImageOrNone(args, context);
     if (!fromImageValue || !consumeCommaIncludingWhitespace(args))
@@ -1063,7 +1063,7 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserCon
 
     if (!percentage)
         return nullptr;
-    return CSSCrossfadeValue::create(fromImageValue.releaseNonNull(), toImageValue.releaseNonNull(), percentage.releaseNonNull());
+    return CSSCrossfadeValue::create(fromImageValue.releaseNonNull(), toImageValue.releaseNonNull(), percentage.releaseNonNull(), prefixed);
 }
 
 static RefPtr<CSSValue> consumeWebkitCanvas(CSSParserTokenRange& args)
@@ -1100,8 +1100,8 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeDeprecatedRadialGradient(args, context.mode, NonRepeating);
     else if (id == CSSValueWebkitRepeatingRadialGradient)
         result = consumeDeprecatedRadialGradient(args, context.mode, Repeating);
-    else if (id == CSSValueWebkitCrossFade)
-        result = consumeCrossFade(args, context);
+    else if (id == CSSValueWebkitCrossFade || id == CSSValueCrossFade)
+        result = consumeCrossFade(args, context, id == CSSValueWebkitCrossFade);
     else if (id == CSSValueWebkitCanvas)
         result = consumeWebkitCanvas(args);
 

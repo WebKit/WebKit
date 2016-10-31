@@ -1,5 +1,17 @@
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support unprefixed cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=164224
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+        (WebCore::CSSPropertyParserHelpers::consumeGeneratedImage):
+
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Simplify background-position-x/y style mapping
         https://bugs.webkit.org/show_bug.cgi?id=164223
 
