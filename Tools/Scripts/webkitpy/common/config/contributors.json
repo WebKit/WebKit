@@ -4779,10 +4779,11 @@
          "sabouhallawa@apple.com",
          "said@apple.com"
       ],
+      "expertise" : "SVG/Graphics, Image Decoders",
       "nicks" : [
          "sabouhallawa"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Sam Weinig" : {
       "emails" : [
