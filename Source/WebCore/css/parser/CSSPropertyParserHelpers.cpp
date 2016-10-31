@@ -36,6 +36,7 @@
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSNamedImageValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 #include "Pair.h"
@@ -1075,6 +1076,16 @@ static RefPtr<CSSValue> consumeWebkitCanvas(CSSParserTokenRange& args)
         return nullptr;
     return CSSCanvasValue::create(canvasName);
 }
+
+static RefPtr<CSSValue> consumeWebkitNamedImage(CSSParserTokenRange& args)
+{
+    if (args.peek().type() != IdentToken)
+        return nullptr;
+    auto imageName = args.consumeIncludingWhitespace().value().toString();
+    if (!args.atEnd())
+        return nullptr;
+    return CSSNamedImageValue::create(imageName);
+}
     
 static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSParserContext context)
 {
@@ -1104,6 +1115,8 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeCrossFade(args, context, id == CSSValueWebkitCrossFade);
     else if (id == CSSValueWebkitCanvas)
         result = consumeWebkitCanvas(args);
+    else if (id == CSSValueWebkitNamedImage)
+        result = consumeWebkitNamedImage(args);
 
     if (!result || !args.atEnd())
         return nullptr;
@@ -1148,7 +1161,7 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueWebkitLinearGradient || id == CSSValueWebkitRadialGradient
         || id == CSSValueWebkitRepeatingLinearGradient || id == CSSValueWebkitRepeatingRadialGradient
         || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValueWebkitCanvas
-        || id == CSSValuePaint;
+        || id == CSSValueCrossFade || id == CSSValueWebkitNamedImage;
 }
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, ConsumeGeneratedImage generatedImage)
