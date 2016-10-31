@@ -139,15 +139,17 @@ public:
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return nullptr; }
     virtual ImageOrientation orientationForCurrentFrame() { return ImageOrientation(); }
+    virtual Vector<NativeImagePtr> framesNativeImages() { return { }; }
 
     // Accessors for native image formats.
 
 #if USE(APPKIT)
-    virtual NSImage* getNSImage() { return nullptr; }
+    virtual NSImage *nsImage() { return nullptr; }
+    virtual RetainPtr<NSImage> snapshotNSImage() { return nullptr; }
 #endif
 
 #if PLATFORM(COCOA)
-    virtual CFDataRef getTIFFRepresentation() { return nullptr; }
+    virtual CFDataRef tiffRepresentation() { return nullptr; }
 #endif
 
 #if USE(CG)

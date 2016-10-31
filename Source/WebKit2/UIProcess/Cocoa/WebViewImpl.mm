@@ -3032,7 +3032,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
     // FIXME: need to support NSRTFDPboardType
 
     if ([type isEqual:NSTIFFPboardType] && m_promisedImage) {
-        [pasteboard setData:(NSData *)m_promisedImage->getTIFFRepresentation() forType:NSTIFFPboardType];
+        [pasteboard setData:(NSData *)m_promisedImage->tiffRepresentation() forType:NSTIFFPboardType];
         m_promisedImage = nullptr;
     }
 }

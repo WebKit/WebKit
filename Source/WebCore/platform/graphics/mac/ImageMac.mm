@@ -80,55 +80,65 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     return Image::nullImage();
 }
 
-CFDataRef BitmapImage::getTIFFRepresentation()
+RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<NativeImagePtr>& nativeImages)
 {
-    if (m_tiffRep)
-        return m_tiffRep.get();
-
-    unsigned numFrames = frameCount();
-
-    // If numFrames is zero, we know for certain this image doesn't have valid data
+    // If nativeImages.size() is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
     // in certain circumstances that call will spam the console with an error message
-    if (!numFrames)
-        return 0;
-
-    Vector<CGImageRef> images;
-    for (unsigned i = 0; i < numFrames; ++i ) {
-        CGImageRef cgImage = frameImageAtIndex(i).get();
-        if (cgImage)
-            images.append(cgImage);
-    }
-
-    unsigned numValidFrames = images.size();
+    if (!nativeImages.size())
+        return nullptr;
 
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, numValidFrames, 0));
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, nativeImages.size(), 0));
 
     if (!destination)
         return 0;
 
-    for (unsigned i = 0; i < numValidFrames; ++i)
-        CGImageDestinationAddImage(destination.get(), images[i], 0);
+    for (auto nativeImage : nativeImages)
+        CGImageDestinationAddImage(destination.get(), nativeImage.get(), 0);
 
     CGImageDestinationFinalize(destination.get());
+    return data;
+}
+
+CFDataRef BitmapImage::tiffRepresentation()
+{
+    if (m_tiffRep)
+        return m_tiffRep.get();
+
+    auto data = tiffRepresentation(framesNativeImages());
+    if (!data)
+        return nullptr;
 
     m_tiffRep = data;
     return m_tiffRep.get();
 }
 
 #if USE(APPKIT)
-NSImage* BitmapImage::getNSImage()
+NSImage* BitmapImage::nsImage()
 {
     if (m_nsImage)
         return m_nsImage.get();
 
-    CFDataRef data = getTIFFRepresentation();
+    CFDataRef data = tiffRepresentation();
     if (!data)
-        return 0;
+        return nullptr;
     
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage.get();
+}
+
+RetainPtr<NSImage> BitmapImage::snapshotNSImage()
+{
+    auto nativeImage = this->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return nullptr;
+
+    auto data = tiffRepresentation({ nativeImage });
+    if (!data)
+        return nullptr;
+
+    return adoptNS([[NSImage alloc] initWithData:(NSData *)data.get()]);
 }
 #endif
 

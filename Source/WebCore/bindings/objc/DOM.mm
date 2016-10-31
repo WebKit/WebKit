@@ -713,7 +713,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->getNSImage();
+    return cachedImage->imageForRenderer(renderer)->nsImage();
 }
 #endif
 
@@ -739,7 +739,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (NSData *)cachedImage->imageForRenderer(renderer)->getTIFFRepresentation();
+    return (NSData *)cachedImage->imageForRenderer(renderer)->tiffRepresentation();
 }
 #endif
 

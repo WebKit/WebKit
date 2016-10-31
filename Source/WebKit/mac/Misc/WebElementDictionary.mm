@@ -204,7 +204,7 @@ static NSString* NSStringOrNil(String coreString)
 - (NSImage *)_image
 {
     Image* image = _result->image();
-    return image ? image->getNSImage() : nil;
+    return image ? image->nsImage() : nil;
 }
 
 - (NSValue *)_imageRect

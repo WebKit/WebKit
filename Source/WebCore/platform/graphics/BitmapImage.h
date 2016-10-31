@@ -148,11 +148,12 @@ public:
     // Accessors for native image formats.
 
 #if USE(APPKIT)
-    NSImage* getNSImage() override;
+    NSImage *nsImage() override;
+    RetainPtr<NSImage> snapshotNSImage() override;
 #endif
 
 #if PLATFORM(COCOA)
-    CFDataRef getTIFFRepresentation() override;
+    CFDataRef tiffRepresentation() override;
 #endif
 
 #if USE(CG)
@@ -176,6 +177,9 @@ public:
 
     NativeImagePtr nativeImageForCurrentFrame() override;
     ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
+#if USE(CG)
+    Vector<NativeImagePtr> framesNativeImages() override;
+#endif
 
     bool currentFrameKnownToBeOpaque() override;
 
@@ -281,6 +285,10 @@ protected:
     bool notSolidColor() override;
 #endif
 
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> tiffRepresentation(const Vector<NativeImagePtr>&);
+#endif
+
 private:
     void clearTimer();
     void startTimer(double delay);
@@ -301,10 +309,10 @@ private:
     double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().
 
 #if USE(APPKIT)
-    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
+    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.
 #endif
 #if USE(CG)
-    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0. Only built lazily if someone queries for one.
+    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
 
     // The value of this data member is a missing value if we haven’t analyzed to check for a solid color or not, but an invalid
