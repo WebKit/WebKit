@@ -1,3 +1,19 @@
+2016-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !m_trailingWhitespaceWidth in WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace
+        https://bugs.webkit.org/show_bug.cgi?id=164076
+
+        Reviewed by Antti Koivisto.
+
+        FontCascade's text measure methods return NaN for zero sized fonts. We could actually early return and not
+        measure text with zero font size at all.
+
+        Test: fast/text/simple-line-layout-with-zero-sized-font.html
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::runWidth):
+
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support -webkit-named-image

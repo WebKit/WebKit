@@ -149,6 +149,8 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
     auto& segment = *m_currentSegment;
     ASSERT(segment.start <= from && from <= segment.end && segment.start <= to && to <= segment.end);
     ASSERT(is<RenderText>(segment.renderer));
+    if (!m_style.font.size())
+        return 0;
     if (m_style.font.isFixedPitch() || (from == segment.start && to == segment.end))
         return downcast<RenderText>(segment.renderer).width(from - segment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
     return segment.text.is8Bit() ? runWidth<LChar>(segment, from, to, xPosition) : runWidth<UChar>(segment, from, to, xPosition);
@@ -196,6 +198,7 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
 template <typename CharacterType>
 float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsigned startPosition, unsigned endPosition, float xPosition) const
 {
+    ASSERT(m_style.font.size());
     ASSERT(startPosition <= endPosition);
     if (startPosition == endPosition)
         return 0;
