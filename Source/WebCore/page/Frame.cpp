@@ -603,6 +603,8 @@ int Frame::checkOverflowScroll(OverflowScrollAction action)
         }
     }
 
+    Ref<Frame> protectedThis(*this);
+
     if (action == PerformOverflowScroll && (deltaX || deltaY)) {
         layer->scrollToOffset(layer->scrollOffset() + IntSize(deltaX, deltaY));
 
