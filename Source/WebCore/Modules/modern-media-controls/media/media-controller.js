@@ -41,7 +41,6 @@ class MediaController
         new AirplaySupport(this);
         new ElapsedTimeSupport(this);
         new MuteSupport(this);
-        new PlacardSupport(this);
         new PlaybackSupport(this);
         new RemainingTimeSupport(this);
         new ScrubbingSupport(this);

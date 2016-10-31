@@ -2741,6 +2741,3 @@ webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
-
-# Internal APIs to test PiP and AirPlay are not available on iOS.
-[ Yosemite ] media/modern-media-controls/placard-support [ Skip ]

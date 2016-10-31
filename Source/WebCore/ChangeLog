@@ -1,3 +1,16 @@
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208182.
+
+        Both of the tests added with this change time out on macOS
+        Release.
+
+        Reverted changeset:
+
+        "[Modern Media Controls] Media Controller: Placard support"
+        https://bugs.webkit.org/show_bug.cgi?id=163731
+        http://trac.webkit.org/changeset/208182
+
 2016-10-31  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBObjectStore getAll/getAllKeys.
