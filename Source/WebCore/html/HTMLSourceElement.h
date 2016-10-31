@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLSourceElement_h
-#define HTMLSourceElement_h
+#pragma once
 
 #include "HTMLElement.h"
 #include "MediaList.h"
@@ -70,7 +69,4 @@ private:
     RefPtr<MediaQuerySet> m_mediaQuerySet;
 };
 
-} //namespace
-
-#endif
-
+} // namespace WebCore

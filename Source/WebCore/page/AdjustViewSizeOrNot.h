@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AdjustViewSizeOrNot_h
-#define AdjustViewSizeOrNot_h
+#pragma once
 
 namespace WebCore {
 
@@ -34,5 +33,3 @@ enum AdjustViewSizeOrNot {
 };
 
 } // namespace WebCore
-
-#endif // AdjustViewSizeOrNot_h

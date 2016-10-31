@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DocumentOrderedMap_h
-#define DocumentOrderedMap_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -109,5 +108,3 @@ inline bool DocumentOrderedMap::containsMultiple(const AtomicStringImpl& id) con
 }
 
 } // namespace WebCore
-
-#endif // DocumentOrderedMap_h

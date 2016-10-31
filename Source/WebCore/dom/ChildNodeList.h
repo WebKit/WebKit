@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef ChildNodeList_h
-#define ChildNodeList_h
+#pragma once
 
 #include "CollectionIndexCache.h"
 #include "NodeList.h"
@@ -90,5 +89,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChildNodeList_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANGLEInstancedArrays_h
-#define ANGLEInstancedArrays_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -47,5 +46,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ANGLEInstancedArrays_h

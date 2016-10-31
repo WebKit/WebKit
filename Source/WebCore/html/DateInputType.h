@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateInputType_h
-#define DateInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_DATE)
+
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -52,4 +52,3 @@ private:
 } // namespace WebCore
 
 #endif
-#endif // DateInputType_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFABytecodeCompiler_h
-#define DFABytecodeCompiler_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -116,9 +115,6 @@ private:
 };
 
 } // namespace ContentExtensions
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFABytecodeCompiler_h

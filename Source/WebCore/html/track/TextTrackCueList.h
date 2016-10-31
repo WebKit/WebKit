@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackCueList_h
-#define TextTrackCueList_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -65,10 +64,8 @@ private:
 
     Vector<RefPtr<TextTrackCue>> m_list;
     RefPtr<TextTrackCueList> m_activeCues;
-
 };
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RadioInputType_h
-#define RadioInputType_h
+#pragma once
 
 #include "BaseCheckableInputType.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RadioInputType_h

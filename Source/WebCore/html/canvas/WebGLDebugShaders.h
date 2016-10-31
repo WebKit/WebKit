@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLDebugShaders_h
-#define WebGLDebugShaders_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -45,5 +44,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLDebugShaders_h

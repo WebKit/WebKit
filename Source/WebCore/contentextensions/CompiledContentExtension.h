@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CompiledContentExtension_h
-#define CompiledContentExtension_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -53,4 +52,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // CompiledContentExtension_h

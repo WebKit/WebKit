@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementIterator_h
-#define ElementIterator_h
+#pragma once
 
 #include "ElementTraversal.h"
 
@@ -394,10 +393,8 @@ inline bool ElementConstIterator<ElementType>::operator!=(const ElementConstIter
     return !(*this == other);
 }
 
-}
+} // namespace WebCore
 
 #include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
 #include "TypedElementDescendantIterator.h"
-
-#endif

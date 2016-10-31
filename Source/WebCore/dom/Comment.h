@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef Comment_h
-#define Comment_h
+#pragma once
 
 #include "CharacterData.h"
 
@@ -45,5 +44,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Comment)
     static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::COMMENT_NODE; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // Comment_h

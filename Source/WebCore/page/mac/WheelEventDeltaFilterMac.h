@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WheelEventDeltaFilterMac_h
-#define WheelEventDeltaFilterMac_h
+#pragma once
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
@@ -48,8 +47,6 @@ private:
     double m_beginFilteringDeltasTime { 0 };
 };
 
-}
+} // namespace WebCore
 
-#endif /* PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 */
-
-#endif /* WheelEventDeltaFilterMac_h */
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100

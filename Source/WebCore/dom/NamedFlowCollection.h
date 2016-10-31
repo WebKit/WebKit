@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef NamedFlowCollection_h
-#define NamedFlowCollection_h
+#pragma once
 
 #include "ContextDestructionObserver.h"
 #include "WebKitNamedFlow.h"
@@ -70,5 +69,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // NamedFlowCollection_h

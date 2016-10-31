@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLContextEvent_h
-#define WebGLContextEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLContextEvent_h

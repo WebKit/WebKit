@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLShaderPrecisionFormat_h
-#define WebGLShaderPrecisionFormat_h
+#pragma once
 
 #include "GraphicsContext3D.h"
 #include <wtf/RefCounted.h>
@@ -48,6 +47,4 @@ private:
     GC3Dint m_precision;
 };
 
-}
-
-#endif // WebGLShaderPrecisionFormat_h
+} // namespace WebCore

@@ -18,9 +18,7 @@
  *
  */
 
-
-#ifndef InputTypeNames_h
-#define InputTypeNames_h
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 
@@ -55,5 +53,3 @@ const AtomicString& week();
 }
 
 } // namespace WebCore
-
-#endif // InputTypeNames_h

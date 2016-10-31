@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVTTTokenizer_h
-#define WebVTTTokenizer_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -51,7 +50,6 @@ private:
     InputStreamPreprocessor<WebVTTTokenizer> m_preprocessor;
 };
 
-}
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

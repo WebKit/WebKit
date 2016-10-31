@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLBuffer_h
-#define WebGLBuffer_h
+#pragma once
 
 #include "WebGLSharedObject.h"
-
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -105,5 +103,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLBuffer_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDictionary_h
-#define JSDictionary_h
+#pragma once
 
 #include "MessagePort.h"
 #include <heap/Strong.h>
@@ -228,5 +227,3 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char
 }
 
 } // namespace WebCore
-
-#endif // JSDictionary_h

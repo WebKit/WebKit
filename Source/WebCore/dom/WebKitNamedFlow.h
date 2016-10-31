@@ -27,18 +27,15 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WebKitNamedFlow_h
-#define WebKitNamedFlow_h
+#pragma once
 
 #include "EventTarget.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class Document;
 class NamedFlowCollection;
 class Node;
 class NodeList;
@@ -93,6 +90,4 @@ private:
     RenderNamedFlowThread* m_parentFlowThread;
 };
 
-}
-
-#endif
+} // namespace WebCore

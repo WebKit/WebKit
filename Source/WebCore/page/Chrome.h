@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef Chrome_h
-#define Chrome_h
+#pragma once
 
 #include "Cursor.h"
 #include "FocusDirection.h"
@@ -198,6 +197,4 @@ private:
 #endif
 };
 
-}
-
-#endif // Chrome_h
+} // namespace WebCore

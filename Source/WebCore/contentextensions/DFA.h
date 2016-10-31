@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFA_h
-#define DFA_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -82,10 +81,7 @@ inline void DFANode::RangeIterator::resetTarget(uint32_t newTarget)
     dfa.transitionDestinations[position] = newTarget;
 }
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFA_h

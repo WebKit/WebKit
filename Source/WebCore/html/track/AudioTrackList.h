@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AudioTrackList_h
-#define AudioTrackList_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -57,5 +56,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

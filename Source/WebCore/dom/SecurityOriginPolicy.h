@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityOriginPolicy_h
-#define SecurityOriginPolicy_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +46,4 @@ private:
     Ref<SecurityOrigin> m_securityOrigin;
 };
 
-}
-
-#endif // SecurityOriginPolicy_h
+} // namespace WebCore

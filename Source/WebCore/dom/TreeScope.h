@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TreeScope_h
-#define TreeScope_h
+#pragma once
 
 #include "DocumentOrderedMap.h"
 #include <memory>
@@ -151,5 +150,3 @@ inline bool TreeScope::containsMultipleElementsWithName(const AtomicString& name
 TreeScope* commonTreeScope(Node*, Node*);
 
 } // namespace WebCore
-
-#endif // TreeScope_h

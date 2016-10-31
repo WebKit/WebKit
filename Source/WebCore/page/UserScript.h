@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef UserScript_h
-#define UserScript_h
+#pragma once
 
 #include "URL.h"
 #include "UserContentTypes.h"
@@ -69,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // UserScript_h

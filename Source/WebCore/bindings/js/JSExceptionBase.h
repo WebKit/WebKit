@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSExceptionBase_h
-#define JSExceptionBase_h
+#pragma once
 
 namespace JSC {
-
 class JSValue;
-
-}   // namespace JSC
+}
 
 namespace WebCore {
 
@@ -39,5 +36,3 @@ class ExceptionBase;
 ExceptionBase* toExceptionBase(JSC::JSValue);
 
 } // namespace WebCore
-
-#endif // JSExceptionBase_h

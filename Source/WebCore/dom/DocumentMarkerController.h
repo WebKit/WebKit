@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef DocumentMarkerController_h
-#define DocumentMarkerController_h
+#pragma once
 
 #include "DocumentMarker.h"
 #include "IntRect.h"
@@ -118,5 +117,3 @@ private:
 #if ENABLE(TREE_DEBUGGING)
 void showDocumentMarkers(const WebCore::DocumentMarkerController*);
 #endif
-
-#endif // DocumentMarkerController_h

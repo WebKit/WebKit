@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RequestAnimationFrameCallback_h
-#define RequestAnimationFrameCallback_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -45,6 +44,4 @@ public:
     bool m_useLegacyTimeBase;
 };
 
-}
-
-#endif // RequestAnimationFrameCallback_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HTMLTableCaptionElement_h
-#define HTMLTableCaptionElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -41,6 +40,4 @@ private:
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

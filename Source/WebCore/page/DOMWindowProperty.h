@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowProperty_h
-#define DOMWindowProperty_h
+#pragma once
 
 namespace WebCore {
 
@@ -50,6 +49,4 @@ protected:
     DOMWindow* m_associatedDOMWindow;
 };
 
-}
-
-#endif
+} // namespace WebCore

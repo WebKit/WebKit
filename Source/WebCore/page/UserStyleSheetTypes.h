@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef UserStyleSheetTypes_h
-#define UserStyleSheetTypes_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -41,5 +40,3 @@ typedef Vector<std::unique_ptr<UserStyleSheet>> UserStyleSheetVector;
 typedef HashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserStyleSheetVector>> UserStyleSheetMap;
 
 } // namespace WebCore
- 
-#endif // UserStyleSheetTypes_h

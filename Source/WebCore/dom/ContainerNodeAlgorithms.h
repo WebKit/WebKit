@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef ContainerNodeAlgorithms_h
-#define ContainerNodeAlgorithms_h
+#pragma once
 
 #include "Document.h"
 #include "ElementIterator.h"
@@ -49,5 +48,3 @@ inline void disconnectSubframesIfNeeded(ContainerNode& root, SubframeDisconnectP
 }
 
 } // namespace WebCore
-
-#endif // ContainerNodeAlgorithms_h

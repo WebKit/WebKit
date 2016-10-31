@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLInputType_h
-#define URLInputType_h
+#pragma once
 
 #include "BaseTextInputType.h"
 
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // URLInputType_h

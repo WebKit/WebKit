@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageVisibilityState_h
-#define PageVisibilityState_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -46,5 +45,3 @@ enum PageVisibilityState {
 String pageVisibilityStateString(PageVisibilityState);
 
 } // namespace WebCore
-
-#endif // ifndef PageVisibilityState_h

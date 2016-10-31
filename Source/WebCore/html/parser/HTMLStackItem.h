@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLStackItem_h
-#define HTMLStackItem_h
+#pragma once
 
 #include "AtomicHTMLToken.h"
 #include "DocumentFragment.h"
@@ -303,5 +302,3 @@ inline bool isSpecialNode(const HTMLStackItem& item)
 }
 
 } // namespace WebCore
-
-#endif // HTMLStackItem_h

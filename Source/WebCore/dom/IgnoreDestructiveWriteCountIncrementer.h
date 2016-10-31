@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IgnoreDestructiveWriteCountIncrementer_h
-#define IgnoreDestructiveWriteCountIncrementer_h
+#pragma once
 
 #include "Document.h"
 
@@ -52,6 +51,4 @@ private:
     unsigned* m_count;
 };
 
-}
-
-#endif
+} // namespace WebCore

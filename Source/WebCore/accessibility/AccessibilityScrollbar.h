@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef AccessibilityScrollbar_h
-#define AccessibilityScrollbar_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
 
@@ -65,5 +64,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollbar, isAccessibilityScrollbar())
-
-#endif // AccessibilityScrollbar_h

@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArrayValue_h
-#define ArrayValue_h
+#pragma once
 
 #include <interpreter/CallFrame.h>
 
@@ -50,6 +49,4 @@ private:
     JSC::JSValue m_value;
 };
 
-}
-
-#endif // ArrayValue_h
+} // namespace WebCore

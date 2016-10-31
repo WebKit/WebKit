@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLTimeElement_h
-#define HTMLTimeElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -39,5 +38,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLTimeElement_h

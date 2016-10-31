@@ -1,3 +1,28 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use #pragma once in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=164194
+
+        Rubber-stamped by Sam Weinig.
+
+        * accessibility/*.h:
+        * bindings/*.h:
+        * contentextensions/*.h:
+        * dom/*.h:
+        * html/*.h:
+        * page/*.h:
+        Use #pragma once in headers.
+
+        * html/parser/ParsingUtilities.h:
+        Add missing namespace.
+
+        * html/track/VTTScanner.h:
+        (WebCore::VTTScanner::skipWhile):
+        (WebCore::VTTScanner::skipUntil):
+        (WebCore::VTTScanner::collectWhile):
+        (WebCore::VTTScanner::collectUntil):
+        Include namespace.
+
 2016-10-31  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Airplay support

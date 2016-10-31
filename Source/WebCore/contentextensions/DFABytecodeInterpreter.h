@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFABytecodeInterpreter_h
-#define DFABytecodeInterpreter_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -64,10 +63,7 @@ private:
     const DFABytecodeInterpreter::Actions* m_domainActions { nullptr };
 };
 
-} // namespace ContentExtensions
-    
+} // namespace ContentExtensions    
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFABytecodeInterpreter_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GCController_h

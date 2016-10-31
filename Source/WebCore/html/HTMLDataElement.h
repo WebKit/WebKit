@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLDataElement_h
-#define HTMLDataElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -38,6 +37,4 @@ private:
     HTMLDataElement(const QualifiedName&, Document&);
 };
 
-}
-
-#endif // HTMLDataElement_h
+} // namespace WebCore

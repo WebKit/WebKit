@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingCoordinator_h
-#define ScrollingCoordinator_h
+#pragma once
 
 #include "EventTrackingRegions.h"
 #include "IntRect.h"
@@ -239,5 +238,3 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::ScrollingCoordinator& value) { return value.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ScrollingCoordinator_h

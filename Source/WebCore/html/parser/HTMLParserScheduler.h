@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLParserScheduler_h
-#define HTMLParserScheduler_h
+#pragma once
 
 #include "NestingLevelIncrementer.h"
 #include "Timer.h"
@@ -116,6 +115,4 @@ private:
 #endif
 };
 
-}
-
-#endif
+} // namespace WebCore

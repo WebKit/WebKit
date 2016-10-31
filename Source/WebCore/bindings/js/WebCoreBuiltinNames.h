@@ -24,8 +24,7 @@
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreBuiltinNames_h
-#define WebCoreBuiltinNames_h
+#pragma once
 
 #include <builtins/BuiltinUtils.h>
 
@@ -129,5 +128,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebCoreBuiltinNames_h

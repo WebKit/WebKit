@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef EventPath_h
-#define EventPath_h
+#pragma once
 
 #include "EventContext.h"
 #include "PseudoElement.h"
@@ -72,6 +71,4 @@ private:
     Vector<std::unique_ptr<EventContext>, 32> m_path;
 };
 
-}
-
-#endif /* EventPath_h */
+} // namespace WebCore

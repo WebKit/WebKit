@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef ElementRareData_h
-#define ElementRareData_h
+#pragma once
 
 #include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
@@ -234,6 +233,4 @@ inline void ElementRareData::resetDynamicRestyleObservations()
     setChildrenAffectedByPropertyBasedBackwardPositionalRules(false);
 }
 
-} // namespace
-
-#endif // ElementRareData_h
+} // namespace WebCore

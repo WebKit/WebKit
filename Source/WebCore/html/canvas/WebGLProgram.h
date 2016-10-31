@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLProgram_h
-#define WebGLProgram_h
-
-#include "WebGLSharedObject.h"
+#pragma once
 
 #include "WebGLShader.h"
-
+#include "WebGLSharedObject.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -86,5 +83,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLProgram_h

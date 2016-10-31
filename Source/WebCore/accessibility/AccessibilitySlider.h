@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilitySlider_h
-#define AccessibilitySlider_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
@@ -83,5 +82,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySliderThumb, isSliderThumb())
-
-#endif // AccessibilitySlider_h

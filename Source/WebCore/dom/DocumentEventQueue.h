@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef DocumentEventQueue_h
-#define DocumentEventQueue_h
+#pragma once
 
 #include "EventQueue.h"
 #include <memory>
@@ -63,6 +62,4 @@ private:
     bool m_isClosed;
 };
 
-}
-
-#endif // DocumentEventQueue_h
+} // namespace WebCore

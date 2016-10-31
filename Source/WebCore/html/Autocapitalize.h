@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Autocapitalize_h
-#define Autocapitalize_h
+#pragma once
 
 #include "WebAutocapitalize.h"
-
-// FIXME: Forward declare AtomicString instead of including AtomicString.h once we upstream the iOS port.
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -36,6 +33,4 @@ namespace WebCore {
 WebAutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString&);
 const AtomicString& stringForAutocapitalizeType(WebAutocapitalizeType);
 
-}
-
-#endif // Autocapitalize_h
+} // namespace WebCore

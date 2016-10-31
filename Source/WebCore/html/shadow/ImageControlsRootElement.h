@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageControlsRootElement_h
-#define ImageControlsRootElement_h
+#pragma once
 
 #if ENABLE(SERVICE_CONTROLS)
 
@@ -50,4 +49,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_CONTROLS)
-#endif // ImageControlsRootElement_h

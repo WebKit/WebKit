@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HashableActionList_h
-#define HashableActionList_h
+#pragma once
 
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
@@ -91,7 +90,4 @@ struct HashableActionListHashTraits : public WTF::CustomHashTraits<HashableActio
 };
 
 } // namespace ContentExtensions
-
 } // namespace WebCore
-
-#endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementChildIterator_h
-#define ElementChildIterator_h
+#pragma once
 
 #include "ElementIterator.h"
 
@@ -240,6 +239,4 @@ inline ElementChildConstIteratorAdapter<ElementType> childrenOfType(const Contai
     return ElementChildConstIteratorAdapter<ElementType>(parent);
 }
 
-}
-
-#endif
+} // namespace WebCore

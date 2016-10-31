@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RawDataDocumentParser_h
-#define RawDataDocumentParser_h
+#pragma once
 
 #include "DocumentParser.h"
 
@@ -62,6 +61,4 @@ private:
     }
 };
 
-};
-
-#endif // RawDataDocumentParser_h
+} // namespace WebCore

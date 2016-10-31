@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFAMinimizer_h
-#define DFAMinimizer_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -42,5 +41,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFAMinimizer_h

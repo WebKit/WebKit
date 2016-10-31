@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilitySVGElement_h
-#define AccessibilitySVGElement_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 
@@ -58,9 +57,6 @@ private:
     Element* childElementWithMatchingLanguage(ChildrenType&) const;
 };
 
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySVGElement, isAccessibilitySVGElement())
-
-#endif // AccessibilitySVGElement_h

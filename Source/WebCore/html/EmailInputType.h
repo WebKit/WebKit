@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EmailInputType_h
-#define EmailInputType_h
+#pragma once
 
 #include "BaseTextInputType.h"
 
@@ -50,5 +49,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ButtonInputType_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef ContainerNode_h
-#define ContainerNode_h
+#pragma once
 
 #include "CollectionType.h"
 #include "ExceptionCodePlaceholder.h"
@@ -255,5 +254,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ContainerNode)
     static bool isType(const WebCore::Node& node) { return node.isContainerNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ContainerNode_h

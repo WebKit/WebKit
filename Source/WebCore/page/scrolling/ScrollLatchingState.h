@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollLatchingState_h
-#define ScrollLatchingState_h
+#pragma once
 
 #include <wtf/RefPtr.h>
 
@@ -68,6 +67,4 @@ private:
     bool m_startedGestureAtScrollLimit;
 };
     
-}
-
-#endif
+} // namespace WebCore

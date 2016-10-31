@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BarProp_h
-#define BarProp_h
+#pragma once
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BarProp_h

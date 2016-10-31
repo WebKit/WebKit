@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef SpaceSplitString_h
-#define SpaceSplitString_h
+#pragma once
 
 #include <wtf/MainThread.h>
 #include <wtf/text/AtomicString.h>
@@ -130,5 +129,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SpaceSplitString_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMessageHandlersNamespace_h
-#define UserMessageHandlersNamespace_h
+#pragma once
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
@@ -67,4 +66,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
-#endif // UserMessageHandlersNamespace_h

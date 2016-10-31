@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateTimeInputType_h
-#define DateTimeInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
+
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 #include "BaseDateAndTimeInputType.h"
 
@@ -55,4 +55,3 @@ private:
 } // namespace WebCore
 
 #endif
-#endif // DateTimeInputType_h

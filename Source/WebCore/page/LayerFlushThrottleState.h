@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerFlushThrottleState_h
-#define LayerFlushThrottleState_h
+#pragma once
 
 namespace WebCore {
 
@@ -37,5 +36,3 @@ struct LayerFlushThrottleState {
 };
 
 } // namespace WebCore
-
-#endif // LayerFlushThrottleState_h

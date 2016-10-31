@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementDescendantIterator_h
-#define ElementDescendantIterator_h
+#pragma once
 
 #include "Element.h"
 #include "ElementIteratorAssertions.h"
@@ -355,7 +354,7 @@ inline ElementDescendantConstIteratorAdapter elementDescendants(const ContainerN
     return ElementDescendantConstIteratorAdapter(root);
 }
 
-}
+} // namespace WebCore
 
 namespace std {
 template <> struct iterator_traits<WebCore::ElementDescendantIterator> {
@@ -365,4 +364,3 @@ template <> struct iterator_traits<WebCore::ElementDescendantConstIterator> {
     typedef const WebCore::Element value_type;
 };
 }
-#endif

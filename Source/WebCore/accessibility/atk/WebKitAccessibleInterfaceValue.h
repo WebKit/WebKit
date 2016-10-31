@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAccessibleInterfaceValue_h
-#define WebKitAccessibleInterfaceValue_h
+#pragma once
 
 #if HAVE(ACCESSIBILITY)
 
@@ -26,5 +25,4 @@
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface*);
 
-#endif
-#endif // WebKitAccessibleInterfaceValue_h
+#endif // HAVE(ACCESSIBILITY)

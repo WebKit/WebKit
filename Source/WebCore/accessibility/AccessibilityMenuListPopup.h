@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityMenuListPopup_h
-#define AccessibilityMenuListPopup_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
 
@@ -63,5 +62,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuListPopup, isMenuListPopup())
-
-#endif // AccessibilityMenuListPopup_h

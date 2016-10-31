@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IdTargetObserver_h
-#define IdTargetObserver_h
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // IdTargetObserver_h

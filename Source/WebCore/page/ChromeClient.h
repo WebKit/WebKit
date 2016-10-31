@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef ChromeClient_h
-#define ChromeClient_h
+#pragma once
 
 #include "AXObjectCache.h"
 #include "Cursor.h"
@@ -44,12 +43,6 @@
 #include <runtime/ConsoleTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(MEDIA_SESSION)
-namespace WebCore {
-class MediaSessionMetadata;
-}
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"
@@ -88,6 +81,7 @@ class HTMLMediaElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
+class MediaSessionMetadata;
 class NavigationAction;
 class Node;
 class Page;
@@ -470,5 +464,4 @@ protected:
     virtual ~ChromeClient() { }
 };
 
-}
-#endif // ChromeClient_h
+} // namespace WebCore

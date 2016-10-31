@@ -25,8 +25,7 @@
 
 // FIXME: Move this file to ParserContentPolicy.h.
 
-#ifndef ParserContentPolicy_h
-#define ParserContentPolicy_h
+#pragma once
 
 namespace WebCore {
 
@@ -62,5 +61,3 @@ static inline ParserContentPolicy allowPluginContent(ParserContentPolicy parserC
 }
 
 } // namespace WebCore
-
-#endif // ParserContentPolicy_h

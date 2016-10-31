@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeOverflowScrollingNode_h
-#define ScrollingTreeOverflowScrollingNode_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -36,7 +35,6 @@ class ScrollingTreeOverflowScrollingNode : public ScrollingTreeScrollingNode {
 public:
     WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollingNode();
 
-    
 protected:
     WEBCORE_EXPORT ScrollingTreeOverflowScrollingNode(ScrollingTree&, ScrollingNodeID);
 };
@@ -46,5 +44,3 @@ protected:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeOverflowScrollingNode, isOverflowScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTreeOverflowScrollingNode_h

@@ -25,13 +25,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityMathMLElement_h
-#define AccessibilityMathMLElement_h
+#pragma once
 
 #if ENABLE(MATHML)
 
 #include "AccessibilityRenderObject.h"
-
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFraction.h"
 #include "RenderMathMLMath.h"
@@ -110,10 +108,8 @@ private:
     bool m_isAnonymousOperator;
 };
 
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMathMLElement, isMathElement())
 
 #endif // ENABLE(MATHML)
-#endif // AccessibilityMathMLElement_h

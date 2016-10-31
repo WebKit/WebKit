@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMError_h
-#define DOMError_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMError_h

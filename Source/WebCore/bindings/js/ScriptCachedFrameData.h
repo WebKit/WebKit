@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCachedFrameData_h
-#define ScriptCachedFrameData_h
+#pragma once
 
 #include <heap/Strong.h>
 #include <wtf/HashMap.h>
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptCachedFrameData_h

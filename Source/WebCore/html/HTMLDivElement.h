@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLDivElement_h
-#define HTMLDivElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -41,5 +40,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLDivElement_h

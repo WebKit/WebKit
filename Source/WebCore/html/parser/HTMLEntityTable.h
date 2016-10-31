@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLEntityTable_h
-#define HTMLEntityTable_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -48,6 +47,4 @@ public:
     static const HTMLEntityTableEntry* lastEntryStartingWith(UChar);
 };
 
-}
-
-#endif
+} // namespace WebCore

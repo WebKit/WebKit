@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FocusController_h
-#define FocusController_h
+#pragma once
 
 #include "FocusDirection.h"
 #include "LayoutRect.h"
@@ -127,5 +126,3 @@ private:
 };
 
 } // namespace WebCore
-    
-#endif // FocusController_h

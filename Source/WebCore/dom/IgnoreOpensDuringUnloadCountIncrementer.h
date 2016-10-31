@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IgnoreOpensDuringUnloadCountIncrementer_h
-#define IgnoreOpensDuringUnloadCountIncrementer_h
+#pragma once
 
 #include "Document.h"
 
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // IgnoreOpensDuringUnloadCountIncrementer_h

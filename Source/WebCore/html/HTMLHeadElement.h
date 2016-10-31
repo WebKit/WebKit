@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLHeadElement_h
-#define HTMLHeadElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -37,6 +36,4 @@ private:
     HTMLHeadElement(const QualifiedName&, Document&);
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

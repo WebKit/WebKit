@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OriginAccessEntry_h
-#define OriginAccessEntry_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -80,5 +79,3 @@ inline bool operator!=(const OriginAccessEntry& a, const OriginAccessEntry& b)
 }
 
 } // namespace WebCore
-
-#endif // OriginAccessEntry_h

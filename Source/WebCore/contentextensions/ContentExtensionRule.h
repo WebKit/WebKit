@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionRule_h
-#define ContentExtensionRule_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -187,9 +186,6 @@ private:
 };
 
 } // namespace ContentExtensions
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionRule_h

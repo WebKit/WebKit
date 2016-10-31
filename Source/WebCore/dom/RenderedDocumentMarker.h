@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderedDocumentMarker_h
-#define RenderedDocumentMarker_h
+#pragma once
 
 #include "DocumentMarker.h"
 #include <wtf/Vector.h>
@@ -74,7 +73,4 @@ private:
     bool m_isValid { false };
 };
 
-
-} // namespace
-
-#endif
+} // namespace WebCore

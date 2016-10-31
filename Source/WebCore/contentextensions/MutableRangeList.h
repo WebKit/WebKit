@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MutableRangeList_h
-#define MutableRangeList_h
+#pragma once
 
 #include "MutableRange.h"
 
@@ -261,10 +260,7 @@ private:
     }
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // MutableRangeList_h

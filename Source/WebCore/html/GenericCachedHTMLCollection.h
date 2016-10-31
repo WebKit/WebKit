@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GenericCachedHTMLCollection_h
-#define GenericCachedHTMLCollection_h
+#pragma once
 
 #include "CachedHTMLCollection.h"
 
@@ -47,6 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GenericCachedHTMLCollection_h
-

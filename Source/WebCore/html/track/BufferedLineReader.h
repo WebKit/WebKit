@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BufferedLineReader_h
-#define BufferedLineReader_h
+#pragma once
 
 #include "SegmentedString.h"
 #include <wtf/text/StringBuilder.h>
@@ -86,5 +85,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

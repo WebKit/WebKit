@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAccessibilityObjectWrapper_h
-#define WebAccessibilityObjectWrapper_h
+#pragma once
 
 #import "WebAccessibilityObjectWrapperBase.h"
 
@@ -37,5 +36,3 @@
 - (id)textMarkerForVisiblePosition:(const WebCore::VisiblePosition&)visiblePos;
 
 @end
-
-#endif // WebAccessibilityObjectWrapper_h

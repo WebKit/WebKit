@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewState_h
-#define ViewState_h
+#pragma once
 
 namespace WebCore {
 
@@ -45,5 +44,3 @@ struct ViewState {
 };
 
 } // namespace WebCore
-
-#endif // ViewState_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiagnosticLoggingResultType_h
-#define DiagnosticLoggingResultType_h
+#pragma once
 
 namespace WebCore {
 
@@ -35,6 +34,3 @@ enum DiagnosticLoggingResultType {
 };
 
 } // namespace WebCore
-
-#endif // DiagnosticLoggingResultType_h
-

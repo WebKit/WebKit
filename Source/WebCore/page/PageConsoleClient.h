@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageConsoleClient_h
-#define PageConsoleClient_h
+#pragma once
 
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleClient.h>
@@ -73,5 +72,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PageConsoleClient_h

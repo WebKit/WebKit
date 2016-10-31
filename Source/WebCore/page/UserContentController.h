@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserContentController_h
-#define UserContentController_h
+#pragma once
 
 #include "UserContentProvider.h"
 
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // UserContentController_h

@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserActionElementSet_h
-#define UserActionElementSet_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -66,6 +65,4 @@ private:
     ElementFlagMap m_elements;
 };
 
-} // namespace
-
-#endif // UserActionElementSet_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLDepthTexture_h
-#define WebGLDepthTexture_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLDepthTexture_h

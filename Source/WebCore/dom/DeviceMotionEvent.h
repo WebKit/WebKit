@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DeviceMotionEvent_h
-#define DeviceMotionEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DeviceMotionEvent_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef UserContentURLPattern_h
-#define UserContentURLPattern_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -70,7 +69,4 @@ private:
     bool m_matchSubdomains;
 };
 
-
 } // namespace WebCore
-
-#endif // UserContentURLPattern_h

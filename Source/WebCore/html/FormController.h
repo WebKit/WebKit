@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef FormController_h
-#define FormController_h
+#pragma once
 
 #include "RadioButtonGroups.h"
 #include <wtf/Forward.h>
@@ -109,4 +108,3 @@ private:
 };
 
 } // namespace WebCore
-#endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLMediaElementEnums_h
-#define HTMLMediaElementEnums_h
+#pragma once
 
 #include "MediaPlayerEnums.h"
 
@@ -59,6 +58,4 @@ public:
     } SeekType;
 };
 
-}
-
-#endif
+} // namespace WebCore

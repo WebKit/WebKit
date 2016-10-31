@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionCompiler_h
-#define ContentExtensionCompiler_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -54,4 +53,3 @@ WEBCORE_EXPORT std::error_code compileRuleList(ContentExtensionCompilationClient
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // ContentExtensionCompiler_h

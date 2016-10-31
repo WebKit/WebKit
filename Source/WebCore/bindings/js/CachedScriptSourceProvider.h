@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachedScriptSourceProvider_h
-#define CachedScriptSourceProvider_h
+#pragma once
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -64,5 +63,3 @@ inline JSC::SourceCode makeSource(CachedScript* cachedScript)
 }
 
 } // namespace WebCore
-
-#endif // CachedScriptSourceProvider_h

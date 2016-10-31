@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityScrollView_h
-#define AccessibilityScrollView_h
+#pragma once
 
 #include "AccessibilityObject.h"
 
@@ -86,5 +85,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollView, isAccessibilityScrollView())
-
-#endif // AccessibilityScrollView_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewportConfiguration_h
-#define ViewportConfiguration_h
+#pragma once
 
 #include "FloatSize.h"
 #include "IntSize.h"
@@ -132,5 +131,3 @@ private:
 TextStream& operator<<(TextStream&, const ViewportConfiguration::Parameters&);
 
 } // namespace WebCore
-
-#endif // ViewportConfiguration_h

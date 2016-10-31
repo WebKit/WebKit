@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLCollection_h
-#define HTMLCollection_h
+#pragma once
 
 #include "CollectionIndexCache.h"
 #include "HTMLNames.h"
@@ -230,5 +229,3 @@ inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() cons
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
     static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::Type; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // HTMLCollection_h

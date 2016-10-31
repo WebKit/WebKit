@@ -23,8 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TypeAhead_h
-#define TypeAhead_h
+#pragma once
 
 #include "DOMTimeStamp.h"
 #include <wtf/text/StringBuilder.h>
@@ -65,5 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TypeAhead_h

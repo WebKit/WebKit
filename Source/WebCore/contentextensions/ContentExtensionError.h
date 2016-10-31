@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionError_h
-#define ContentExtensionError_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -78,4 +77,3 @@ namespace std {
 }
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // ContentExtensionError_h

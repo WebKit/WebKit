@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLPreloadScanner_h
-#define HTMLPreloadScanner_h
+#pragma once
 
 #include "CSSPreloadScanner.h"
 #include "HTMLTokenizer.h"
@@ -98,6 +97,4 @@ private:
 
 WEBCORE_EXPORT bool testPreloadScannerViewportSupport(Document*);
 
-}
-
-#endif
+} // namespace WebCore

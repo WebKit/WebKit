@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NestingLevelIncrementer_h
-#define NestingLevelIncrementer_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 
@@ -48,6 +47,4 @@ private:
     unsigned* m_nestingLevel;
 };
 
-}
-
-#endif
+} // namespace WebCore

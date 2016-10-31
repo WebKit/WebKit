@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLPlugInElement_h
-#define HTMLPlugInElement_h
+#pragma once
 
 #include "HTMLFrameOwnerElement.h"
 #include "Image.h"
@@ -130,5 +129,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLPlugInElement)
     static bool isType(const WebCore::Node& node) { return node.isPluginElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // HTMLPlugInElement_h

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CallbackFunction_h
-#define CallbackFunction_h
+#pragma once
 
 #include <runtime/JSObject.h>
 
@@ -54,5 +53,3 @@ RefPtr<JSCallbackType> createFunctionOnlyCallback(JSC::ExecState* exec, JSDOMGlo
 }
 
 } // namespace WebCore
-
-#endif // CallbackFunction_h

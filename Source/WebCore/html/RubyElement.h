@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RubyElement_h
-#define RubyElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -39,6 +38,4 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };
 
-}
-
-#endif
+} // namespace WebCore

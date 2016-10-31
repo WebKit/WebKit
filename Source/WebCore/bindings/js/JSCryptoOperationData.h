@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCryptoOperationData_h
-#define JSCryptoOperationData_h
+#pragma once
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -42,4 +41,3 @@ bool cryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, CryptoOperati
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // JSCryptoOperationData_h

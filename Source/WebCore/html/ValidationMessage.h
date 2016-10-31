@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ValidationMessage_h
-#define ValidationMessage_h
+#pragma once
 
 #include "Timer.h"
 #include <memory>
@@ -73,5 +72,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ValidationMessage_h

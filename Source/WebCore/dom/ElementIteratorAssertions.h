@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementIteratorAssertions_h
-#define ElementIteratorAssertions_h
+#pragma once
 
 #include "Element.h"
 #include "NoEventDispatchAssertion.h"
@@ -71,7 +70,4 @@ inline void ElementIteratorAssertions::clear()
     m_eventDispatchAssertion = Nullopt;
 }
 
-
-}
-
-#endif
+} // namespace WebCore

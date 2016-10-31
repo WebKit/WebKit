@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLVertexArrayObjectOES_h
-#define WebGLVertexArrayObjectOES_h
+#pragma once
 
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
@@ -42,5 +41,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLVertexArrayObjectOES_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextFieldInputType_h
-#define TextFieldInputType_h
+#pragma once
 
 #include "AutoFillButtonElement.h"
 #include "InputType.h"
@@ -120,5 +119,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TextFieldInputType_h

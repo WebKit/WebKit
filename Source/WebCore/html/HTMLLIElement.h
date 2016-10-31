@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLLIElement_h
-#define HTMLLIElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -44,6 +43,4 @@ private:
     void parseValue(const AtomicString&);
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

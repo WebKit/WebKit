@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PageGroupLoadDeferrer_h
-#define PageGroupLoadDeferrer_h
+#pragma once
 
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -37,6 +36,5 @@ namespace WebCore {
     private:
         Vector<RefPtr<Frame>, 16> m_deferredFrames;
     };
-}
 
-#endif // PageGroupLoadDeferrer_h
+} // namespace WebCore

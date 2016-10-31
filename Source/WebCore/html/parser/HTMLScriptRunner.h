@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLScriptRunner_h
-#define HTMLScriptRunner_h
+#pragma once
 
 #include "PendingScript.h"
 #include <wtf/Deque.h>
@@ -88,6 +87,4 @@ private:
     bool m_hasScriptsWaitingForStylesheets;
 };
 
-}
-
-#endif
+} // namespace WebCore

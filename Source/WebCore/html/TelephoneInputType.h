@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TelephoneInputType_h
-#define TelephoneInputType_h
+#pragma once
 
 #include "BaseTextInputType.h"
 
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TelephoneInputType_h

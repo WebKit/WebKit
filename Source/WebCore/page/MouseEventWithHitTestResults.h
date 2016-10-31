@@ -18,8 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef MouseEventWithHitTestResults_h
-#define MouseEventWithHitTestResults_h
+#pragma once
 
 #include "HitTestResult.h"
 #include "PlatformMouseEvent.h"
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MouseEventWithHitTestResults_h

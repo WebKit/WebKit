@@ -16,9 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
-#ifndef DOMConstructorWithDocument_h
-#define DOMConstructorWithDocument_h
+#pragma once
 
 #include "Document.h"
 #include "JSDOMBinding.h"
@@ -49,5 +47,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // DOMConstructorWithDocument_h

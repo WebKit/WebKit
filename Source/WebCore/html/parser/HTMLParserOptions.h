@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLParserOptions_h
-#define HTMLParserOptions_h
+#pragma once
 
 namespace WebCore {
 
@@ -41,6 +40,4 @@ public:
     unsigned maximumDOMTreeDepth;
 };
 
-}
-
-#endif
+} // namespace WebCore

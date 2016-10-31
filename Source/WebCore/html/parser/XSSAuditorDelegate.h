@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XSSAuditorDelegate_h
-#define XSSAuditorDelegate_h
+#pragma once
 
 #include "URL.h"
 #include <wtf/text/TextPosition.h>
@@ -67,6 +66,4 @@ private:
     URL m_reportURL;
 };
 
-}
-
-#endif
+} // namespace WebCore

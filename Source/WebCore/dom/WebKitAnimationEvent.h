@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebKitAnimationEvent_h
-#define WebKitAnimationEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebKitAnimationEvent_h

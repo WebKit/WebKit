@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AtomicHTMLToken_h
-#define AtomicHTMLToken_h
+#pragma once
 
 #include "HTMLToken.h"
 
@@ -241,6 +240,4 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomicString
     ASSERT(type == HTMLToken::StartTag || type == HTMLToken::EndTag);
 }
 
-}
-
-#endif
+} // namespace WebCore

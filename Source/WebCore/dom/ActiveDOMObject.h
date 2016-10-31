@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef ActiveDOMObject_h
-#define ActiveDOMObject_h
+#pragma once
 
 #include "ContextDestructionObserver.h"
 #include <wtf/Assertions.h>
@@ -104,5 +103,3 @@ inline void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 #endif
 
 } // namespace WebCore
-
-#endif // ActiveDOMObject_h

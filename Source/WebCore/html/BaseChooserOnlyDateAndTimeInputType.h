@@ -23,10 +23,10 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BaseChooserOnlyDateAndTimeInputType_h
-#define BaseChooserOnlyDateAndTimeInputType_h
+#pragma once
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 #include "BaseClickableWithKeyInputType.h"
 #include "BaseDateAndTimeInputType.h"
 #include "DateTimeChooser.h"
@@ -61,6 +61,6 @@ private:
     RefPtr<DateTimeChooser> m_dateTimeChooser;
 };
 
-}
-#endif
+} // namespace WebCore
+
 #endif

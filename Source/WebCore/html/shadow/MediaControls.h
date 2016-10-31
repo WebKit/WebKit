@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControls_h
-#define MediaControls_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -152,8 +151,6 @@ inline MediaControls* toMediaControls(Node* node)
 // This will catch anyone doing an unneccessary cast.
 void toMediaControls(const MediaControls*);
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(VIDEO)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CombinedURLFilters_h
-#define CombinedURLFilters_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -68,5 +67,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // CombinedURLFilters_h

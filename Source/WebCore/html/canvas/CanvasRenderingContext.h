@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasRenderingContext_h
-#define CanvasRenderingContext_h
+#pragma once
 
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
@@ -85,5 +84,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::CanvasRenderingContext& context) { return context.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

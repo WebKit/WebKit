@@ -23,11 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilitySpinButton_h
-#define AccessibilitySpinButton_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
-
 #include "SpinButtonElement.h"
 
 namespace WebCore {
@@ -79,5 +77,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySpinButton, isNativeSpinButton())
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySpinButtonPart, isSpinButtonPart())
-
-#endif // AccessibilitySpinButton_h

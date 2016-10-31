@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BaseClickableWithKeyInputType_h
-#define BaseClickableWithKeyInputType_h
+#pragma once
 
 #include "InputType.h"
 
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BaseClickableWithKeyInputType_h

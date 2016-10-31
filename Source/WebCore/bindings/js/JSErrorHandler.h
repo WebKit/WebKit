@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSErrorHandler_h
-#define JSErrorHandler_h
+#pragma once
 
 #include "JSEventListener.h"
 
@@ -60,5 +59,3 @@ inline RefPtr<JSErrorHandler> createJSErrorHandler(JSC::ExecState* exec, JSC::JS
 }
 
 } // namespace WebCore
-
-#endif // JSErrorHandler_h

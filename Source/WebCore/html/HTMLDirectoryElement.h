@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLDirectoryElement_h
-#define HTMLDirectoryElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -35,6 +34,4 @@ private:
     HTMLDirectoryElement(const QualifiedName&, Document&);
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

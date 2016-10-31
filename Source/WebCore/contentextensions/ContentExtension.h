@@ -23,17 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtension_h
-#define ContentExtension_h
-
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "DFABytecodeInterpreter.h"
 #include "StyleSheetContents.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -75,4 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // ContentExtension_h

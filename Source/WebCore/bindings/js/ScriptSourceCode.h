@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptSourceCode_h
-#define ScriptSourceCode_h
+#pragma once
 
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
@@ -71,15 +70,9 @@ public:
     
 private:
     RefPtr<JSC::SourceProvider> m_provider;
-    
     JSC::SourceCode m_code;
-
     CachedResourceHandle<CachedScript> m_cachedScript;
-
     URL m_url;
-
 };
 
 } // namespace WebCore
-
-#endif // ScriptSourceCode_h

@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CSSPreloadScanner_h
-#define CSSPreloadScanner_h
+#pragma once
 
 #include "HTMLResourcePreloader.h"
 #include "HTMLToken.h"
@@ -68,6 +67,4 @@ private:
     PreloadRequestStream* m_requests;
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringCallback_h
-#define StringCallback_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -48,5 +47,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // StringCallback_h

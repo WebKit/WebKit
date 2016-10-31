@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MutationObserverInterestGroup_h
-#define MutationObserverInterestGroup_h
+#pragma once
 
 #include "Document.h"
 #include "MutationObserver.h"
@@ -81,6 +80,4 @@ private:
     MutationRecordDeliveryOptions m_oldValueFlag;
 };
 
-}
-
-#endif // MutationObserverInterestGroup_h
+} // namespace WebCore

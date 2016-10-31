@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AutoscrollController_h
-#define AutoscrollController_h
+#pragma once
 
 #include "IntPoint.h"
 #include "Timer.h"
@@ -87,5 +86,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AutoscrollController_h

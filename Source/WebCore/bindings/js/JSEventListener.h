@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef JSEventListener_h
-#define JSEventListener_h
+#pragma once
 
 #include "DOMWrapperWorld.h"
 #include "EventListener.h"
@@ -139,5 +138,3 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* script
 }
 
 } // namespace WebCore
-
-#endif // JSEventListener_h

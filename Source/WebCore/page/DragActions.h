@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DragActions_h
-#define DragActions_h
+#pragma once
 
 #include <limits.h>
 
@@ -64,6 +63,4 @@ namespace WebCore {
         DragOperationEvery   = UINT_MAX
     } DragOperation;
     
-}
-
-#endif // !DragActions_h
+} // namespace WebCore

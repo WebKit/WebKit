@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptGlobalObject_h
-#define ScriptGlobalObject_h
+#pragma once
 
 namespace JSC {
 class ExecState;
@@ -50,5 +49,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptGlobalObject_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NFANode_h
-#define NFANode_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -51,10 +50,7 @@ public:
     ActionList finalRuleIds;
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // NFANode_h

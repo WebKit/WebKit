@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLSpanElement_h
-#define HTMLSpanElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -39,6 +38,4 @@ private:
     HTMLSpanElement(const QualifiedName&, Document&);
 };
 
-}
-
-#endif
+} // namespace WebCore

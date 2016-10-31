@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef FormDataList_h
-#define FormDataList_h
+#pragma once
 
 #include "Blob.h"
 #include "TextEncoding.h"
@@ -85,5 +84,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FormDataList_h

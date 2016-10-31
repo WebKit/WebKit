@@ -19,8 +19,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ScriptController_h
-#define ScriptController_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "JSDOMWindowShell.h"
@@ -193,5 +192,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptController_h

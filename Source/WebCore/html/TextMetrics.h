@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextMetrics_h
-#define TextMetrics_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TextMetrics_h

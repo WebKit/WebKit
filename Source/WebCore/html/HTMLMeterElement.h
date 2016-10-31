@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef HTMLMeterElement_h
-#define HTMLMeterElement_h
+#pragma once
 
 #if ENABLE(METER_ELEMENT)
+
 #include "LabelableElement.h"
 
 namespace WebCore {
@@ -80,7 +80,6 @@ private:
     RefPtr<HTMLElement> m_value;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(METER_ELEMENT)

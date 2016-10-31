@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControlsApple_h
-#define MediaControlsApple_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -118,7 +117,6 @@ private:
     RefPtr<MediaControlsAppleEventListener> m_eventListener;
 };
 
-}
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO)

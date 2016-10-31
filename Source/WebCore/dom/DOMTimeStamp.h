@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMTimeStamp_h
-#define DOMTimeStamp_h
+#pragma once
 
 namespace WebCore {
 
@@ -46,5 +45,3 @@ inline double convertDOMTimeStampToSeconds(DOMTimeStamp milliseconds)
 }
 
 } // namespace WebCore
-
-#endif // DOMTimeStamp_h

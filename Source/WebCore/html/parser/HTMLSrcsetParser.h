@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLSrcsetParser_h
-#define HTMLSrcsetParser_h
+#pragma once
 
 #include <wtf/text/StringView.h>
 
@@ -107,6 +106,4 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
 
-}
-
-#endif
+} // namespace WebCore

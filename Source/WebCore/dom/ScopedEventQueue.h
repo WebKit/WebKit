@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScopedEventQueue_h
-#define ScopedEventQueue_h
+#pragma once
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
@@ -70,6 +69,4 @@ public:
     ~EventQueueScope() { ScopedEventQueue::singleton().decrementScopingLevel(); }
 };
 
-}
-
-#endif // ScopedEventQueue_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXTFragDepth_h
-#define EXTFragDepth_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // EXTFragDepth_h

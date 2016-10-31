@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#pragma once
 
 #include "WebGLRenderingContextBase.h"
 
@@ -71,5 +70,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // WebGLExtension_h

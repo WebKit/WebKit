@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef NodeRareData_h
-#define NodeRareData_h
+#pragma once
 
 #include "ChildNodeList.h"
 #include "ClassCollection.h"
@@ -326,5 +325,3 @@ inline NodeRareData& Node::ensureRareData()
 static_assert(Page::maxNumberOfFrames < 1024, "Frame limit should fit in rare data count");
 
 } // namespace WebCore
-
-#endif // NodeRareData_h

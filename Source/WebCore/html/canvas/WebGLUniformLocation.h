@@ -24,11 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLUniformLocation_h
-#define WebGLUniformLocation_h
+#pragma once
 
 #include "WebGLProgram.h"
-
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -56,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLUniformLocation_h

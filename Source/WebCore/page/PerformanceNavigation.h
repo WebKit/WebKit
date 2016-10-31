@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceNavigation_h
-#define PerformanceNavigation_h
+#pragma once
 
 #if ENABLE(WEB_TIMING)
 
@@ -59,7 +58,6 @@ private:
     explicit PerformanceNavigation(Frame*);
 };
 
-}
+} // namespace WebCore
 
 #endif // !ENABLE(WEB_TIMING)
-#endif // !defined(PerformanceNavigation_h)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceUsageData_h
-#define ResourceUsageData_h
+#pragma once
 
 #if ENABLE(RESOURCE_USAGE)
 
@@ -76,5 +75,3 @@ struct ResourceUsageData {
 } // namespace WebCore
 
 #endif // ResourceUsageData_h
-
-#endif // ENABLE(RESOURCE_USAGE)

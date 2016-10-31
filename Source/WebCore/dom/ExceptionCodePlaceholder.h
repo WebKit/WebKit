@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExceptionCodePlaceholder_h
-#define ExceptionCodePlaceholder_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <wtf/Assertions.h>
@@ -82,6 +81,4 @@ private:
 
 #endif
 
-}
-
-#endif
+} // namespace WebCore

@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef ScriptedAnimationController_h
-#define ScriptedAnimationController_h
+#pragma once
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
+
 #include "DOMTimeStamp.h"
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -101,8 +101,6 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(REQUEST_ANIMATION_FRAME)
-
-#endif // ScriptedAnimationController_h

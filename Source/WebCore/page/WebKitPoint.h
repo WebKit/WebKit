@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebKitPoint_h
-#define WebKitPoint_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebKitPoint_h

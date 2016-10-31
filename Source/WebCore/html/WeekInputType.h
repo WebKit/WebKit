@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeekInputType_h
-#define WeekInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_WEEK)
+
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -51,5 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif // WeekInputType_h
+#endif // ENABLE(INPUT_TYPE_WEEK)

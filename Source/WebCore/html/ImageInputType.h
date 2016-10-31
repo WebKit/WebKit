@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageInputType_h
-#define ImageInputType_h
+#pragma once
 
 #include "BaseButtonInputType.h"
 #include "IntPoint.h"
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ImageInputType_h

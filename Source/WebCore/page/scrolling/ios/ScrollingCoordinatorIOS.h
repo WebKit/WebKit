@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingCoordinatorIOS_h
-#define ScrollingCoordinatorIOS_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -61,5 +60,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingCoordinatorIOS_h

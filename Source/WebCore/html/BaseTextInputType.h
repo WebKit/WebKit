@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BaseTextInputType_h
-#define BaseTextInputType_h
+#pragma once
 
 #include "TextFieldInputType.h"
 
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BaseTextInputType_h

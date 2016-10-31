@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PasswordInputType_h
-#define PasswordInputType_h
+#pragma once
 
 #include "BaseTextInputType.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PasswordInputType_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ActiveDOMCallback_h
-#define ActiveDOMCallback_h
+#pragma once
 
 #include "ContextDestructionObserver.h"
 
@@ -51,5 +50,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ActiveDOMCallback_h

@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SearchInputType_h
-#define SearchInputType_h
+#pragma once
 
 #include "BaseTextInputType.h"
 #include "Timer.h"
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SearchInputType_h

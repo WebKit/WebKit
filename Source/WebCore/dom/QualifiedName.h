@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef QualifiedName_h
-#define QualifiedName_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
@@ -144,7 +143,7 @@ struct QualifiedNameHash {
 void createQualifiedName(void* targetAddress, StringImpl* name);
 void createQualifiedName(void* targetAddress, StringImpl* name, const AtomicString& nameNamespace);
 
-}
+} // namespace WebCore
 
 namespace WTF {
     
@@ -158,6 +157,5 @@ namespace WTF {
         static const bool emptyValueIsZero = false;
         static WebCore::QualifiedName emptyValue() { return WebCore::nullQName(); }
     };
-}
 
-#endif
+} // namespace WTF

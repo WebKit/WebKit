@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaElementSession_h
-#define MediaElementSession_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -163,12 +162,10 @@ private:
     Timer m_mainContentCheckTimer;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaElementSession)
 static bool isType(const WebCore::PlatformMediaSession& session) { return session.mediaType() == WebCore::PlatformMediaSession::Video || session.mediaType() == WebCore::PlatformMediaSession::Audio; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)
-
-#endif // MediaElementSession_h

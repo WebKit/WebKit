@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFACombiner_h
-#define DFACombiner_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -50,10 +49,7 @@ inline void DFACombiner::addDFA(DFA&& dfa)
     m_dfas.append(WTFMove(dfa));
 }
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(CONTENT_EXTENSIONS)

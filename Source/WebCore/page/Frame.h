@@ -25,8 +25,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef Frame_h
-#define Frame_h
+#pragma once
 
 #include "AdjustViewSizeOrNot.h"
 #include "FrameLoader.h"
@@ -411,5 +410,3 @@ namespace WebCore {
     }
 
 } // namespace WebCore
-
-#endif // Frame_h

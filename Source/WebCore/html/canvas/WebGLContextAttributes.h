@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLContextAttributes_h
-#define WebGLContextAttributes_h
+#pragma once
 
 #include "CanvasContextAttributes.h"
 #include "GraphicsContext3D.h"
@@ -92,5 +91,3 @@ class WebGLContextAttributes final : public CanvasContextAttributes {
 };
 
 } // namespace WebCore
-
-#endif // WebGLContextAttributes_h

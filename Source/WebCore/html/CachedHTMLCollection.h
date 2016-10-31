@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedHTMLCollection_h
-#define CachedHTMLCollection_h
+#pragma once
 
 #include "CollectionTraversal.h"
 #include "HTMLCollection.h"
@@ -156,6 +155,3 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
 }
 
 } // namespace WebCore
-
-#endif // CachedHTMLCollection_h
-

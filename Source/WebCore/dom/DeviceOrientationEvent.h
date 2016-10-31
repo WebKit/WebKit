@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientationEvent_h
-#define DeviceOrientationEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DeviceOrientationEvent_h

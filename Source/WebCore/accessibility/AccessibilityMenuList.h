@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityMenuList_h
-#define AccessibilityMenuList_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 
@@ -55,5 +54,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuList, isMenuList())
-
-#endif // AccessibilityMenuList_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLKeygenElement_h
-#define HTMLKeygenElement_h
+#pragma once
 
 #include "HTMLFormControlElementWithState.h"
 
@@ -60,6 +59,4 @@ private:
     HTMLSelectElement* shadowSelect() const;
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

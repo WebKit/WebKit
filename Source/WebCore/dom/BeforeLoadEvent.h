@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef BeforeLoadEvent_h
-#define BeforeLoadEvent_h
+#pragma once
 
 #include "Event.h"
 #include "EventNames.h"
@@ -69,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BeforeLoadEvent_h

@@ -29,7 +29,6 @@
 #include "WebElementPropertyBag.h"
 #include "WebLocalizableStrings.h"
 #include "WebView.h"
-#include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/Event.h>
@@ -93,10 +92,4 @@ bool WebContextMenuClient::isSpeaking()
 {
     notImplemented();
     return false;
-}
-
-ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult&)
-{
-    notImplemented();
-    return ContextMenuItem();
 }

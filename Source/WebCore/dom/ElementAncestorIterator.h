@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementAncestorIterator_h
-#define ElementAncestorIterator_h
+#pragma once
 
 #include "ElementIterator.h"
 
@@ -211,6 +210,4 @@ inline ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const No
     return ElementAncestorConstIteratorAdapter<ElementType>(first);
 }
 
-}
-
-#endif
+} // namespace WebCore

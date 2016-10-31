@@ -23,19 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FocusDirection_h
-#define FocusDirection_h
+#pragma once
 
 namespace WebCore {
-    enum FocusDirection {
-        FocusDirectionNone = 0,
-        FocusDirectionForward,
-        FocusDirectionBackward,
-        FocusDirectionUp,
-        FocusDirectionDown,
-        FocusDirectionLeft,
-        FocusDirectionRight
-    };
-}
 
-#endif // FocusDirection_h
+enum FocusDirection {
+    FocusDirectionNone = 0,
+    FocusDirectionForward,
+    FocusDirectionBackward,
+    FocusDirectionUp,
+    FocusDirectionDown,
+    FocusDirectionLeft,
+    FocusDirectionRight
+};
+
+} // namespace WebCore

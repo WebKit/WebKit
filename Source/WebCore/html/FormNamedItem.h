@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef FormNamedItem_h
-#define FormNamedItem_h
+#pragma once
 
 namespace WebCore {
 
@@ -33,6 +32,4 @@ public:
     virtual bool isFormAssociatedElement() const = 0;
 };
 
-}
-
-#endif /* FormNamedItem_h */
+} // namespace WebCore

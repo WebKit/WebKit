@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef ClientRect_h
-#define ClientRect_h
+#pragma once
 
 #include "FloatRect.h"
 #include "ScriptWrappable.h"
@@ -58,5 +57,3 @@ namespace WebCore {
     }; 
 
 } // namespace WebCore
-
-#endif // ClientRect_h

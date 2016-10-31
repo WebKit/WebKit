@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ClassCollection_h
-#define ClassCollection_h
+#pragma once
 
 #include "CachedHTMLCollection.h"
 #include "Element.h"
@@ -70,5 +69,3 @@ inline bool ClassCollection::elementMatches(Element& element) const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassCollection, ByClass)
-
-#endif // ClassCollection_h

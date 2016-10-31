@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVTTToken_h
-#define WebVTTToken_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -94,7 +93,6 @@ private:
     AtomicString m_classes;
 };
 
-}
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

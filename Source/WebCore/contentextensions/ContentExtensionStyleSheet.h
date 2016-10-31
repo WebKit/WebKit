@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ContentExtensionStyleSheet_h
-#define ContentExtensionStyleSheet_h
+
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -62,4 +62,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // ContentExtensionStyleSheet_h

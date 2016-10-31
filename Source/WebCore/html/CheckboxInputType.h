@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CheckboxInputType_h
-#define CheckboxInputType_h
+#pragma once
 
 #include "BaseCheckableInputType.h"
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CheckboxInputType_h

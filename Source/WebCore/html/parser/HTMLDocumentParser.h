@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLDocumentParser_h
-#define HTMLDocumentParser_h
+#pragma once
 
 #include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
@@ -39,6 +38,7 @@
 namespace WebCore {
 
 class DocumentFragment;
+class Element;
 class HTMLDocument;
 class HTMLParserScheduler;
 class HTMLPreloadScanner;
@@ -161,6 +161,4 @@ inline HTMLTreeBuilder& HTMLDocumentParser::treeBuilder()
     return *m_treeBuilder;
 }
 
-}
-
-#endif
+} // namespace WebCore

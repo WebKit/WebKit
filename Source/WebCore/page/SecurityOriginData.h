@@ -28,6 +28,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 class Frame;
 class SecurityOrigin;
 

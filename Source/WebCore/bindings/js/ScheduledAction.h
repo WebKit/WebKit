@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ScheduledAction_h
-#define ScheduledAction_h
+#pragma once
 
 #include "JSDOMBinding.h"
 #include <heap/Strong.h>
@@ -70,5 +69,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ScheduledAction_h

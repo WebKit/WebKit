@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCSSRuleCustom_h
-#define JSCSSRuleCustom_h
+#pragma once
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
@@ -43,5 +42,3 @@ inline void* root(CSSRule* rule)
 }
 
 } // namespace WebCore
-
-#endif // JSCSSRuleCustom_h

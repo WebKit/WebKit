@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef HTMLSummaryElement_h
-#define HTMLSummaryElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -49,6 +48,4 @@ private:
     bool supportsFocus() const final;
 };
 
-}
-
-#endif // HTMLSummaryElement_h
+} // namespace WebCore

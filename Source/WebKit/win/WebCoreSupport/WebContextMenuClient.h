@@ -42,8 +42,6 @@ public:
     virtual void stopSpeaking();
     virtual bool isSpeaking();
 
-    virtual WebCore::ContextMenuItem shareMenuItem(const WebCore::HitTestResult&);
-
 private:
     WebView* m_webView;
 };

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItem_h
-#define DataTransferItem_h
+#pragma once
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
@@ -39,9 +38,7 @@
 namespace WebCore {
 
 class Blob;
-class File;
 class StringCallback;
-class ScriptExecutionContext;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
@@ -60,5 +57,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
-
-#endif // DataTransferItem_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeMac_h
-#define ScrollingTreeMac_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
@@ -37,7 +36,6 @@ public:
     static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator*);
 
     PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
-
     
 private:
     explicit ScrollingTreeMac(AsyncScrollingCoordinator*);
@@ -46,5 +44,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-
-#endif // ScrollingTreeMac_h

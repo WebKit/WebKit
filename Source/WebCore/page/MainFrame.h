@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MainFrame_h
-#define MainFrame_h
+#pragma once
 
 #include "EventHandler.h"
 #include "Frame.h"
@@ -89,6 +88,4 @@ private:
 #endif
 };
 
-}
-
-#endif
+} // namespace WebCore

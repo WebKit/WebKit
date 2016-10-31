@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include "ElementAndTextDescendantIterator.h"
 #include "ShadowRoot.h"
-
-#ifndef ComposedTreeIterator_h
-#define ComposedTreeIterator_h
 
 namespace WebCore {
 
@@ -200,6 +199,4 @@ inline ComposedTreeChildAdapter composedTreeChildren(ContainerNode& parent)
 enum class ComposedTreeAsTextMode { Normal, WithPointers };
 WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode = ComposedTreeAsTextMode::Normal);
 
-}
-
-#endif
+} // namespace WebCore

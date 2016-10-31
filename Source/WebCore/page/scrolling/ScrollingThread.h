@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingThread_h
-#define ScrollingThread_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -92,5 +91,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingThread_h

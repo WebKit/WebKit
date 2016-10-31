@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLQuery_h
-#define WebGLQuery_h
+#pragma once
 
 #include "WebGLSharedObject.h"
 
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLQuery_h

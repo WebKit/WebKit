@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransitionEvent_h
-#define TransitionEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -67,6 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TransitionEvent_h
-

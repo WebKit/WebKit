@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SessionID_h
-#define SessionID_h
+#pragma once
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
@@ -51,7 +50,7 @@ private:
     uint64_t m_sessionID;
 };
 
-}
+} // namespace WebCore
 
 namespace WTF {
 
@@ -72,6 +71,4 @@ template<> struct DefaultHash<WebCore::SessionID> {
     typedef SessionIDHash Hash;
 };
 
-}
-
-#endif // SessionID_h
+} // namespace WTF

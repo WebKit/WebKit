@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CombinedFiltersAlphabet_h
-#define CombinedFiltersAlphabet_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -62,5 +61,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // CombinedFiltersAlphabet_h

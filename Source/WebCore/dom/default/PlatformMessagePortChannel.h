@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformMessagePortChannel_h
-#define PlatformMessagePortChannel_h
+#pragma once
 
 #include "MessagePortChannel.h"
-
 #include <wtf/MessageQueue.h>
 #include <wtf/Threading.h>
 
@@ -109,5 +107,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // PlatformMessagePortChannel_h

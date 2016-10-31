@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImmutableNFA_h
-#define ImmutableNFA_h
-
-#include <wtf/Vector.h>
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -177,10 +176,7 @@ struct ImmutableNFA {
     }
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ImmutableNFA_h

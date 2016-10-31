@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceUsageOverlay_h
-#define ResourceUsageOverlay_h
+#pragma once
 
 #if ENABLE(RESOURCE_USAGE)
 
@@ -85,8 +84,6 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(RESOURCE_USAGE)

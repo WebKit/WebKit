@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasStyle_h
-#define CanvasStyle_h
+#pragma once
 
 #include "Color.h"
 #include <wtf/Assertions.h>
@@ -159,5 +158,3 @@ namespace WebCore {
     }
 
 } // namespace WebCore
-
-#endif

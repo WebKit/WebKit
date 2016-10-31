@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AXTextStateChangeIntent_h
-#define AXTextStateChangeIntent_h
+#pragma once
 
 namespace WebCore {
     
@@ -92,6 +91,4 @@ struct AXTextStateChangeIntent {
     { }
 };
 
-}
-
-#endif // AXTextStateChangeIntent_h
+} // namespace WebCore

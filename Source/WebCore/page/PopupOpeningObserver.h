@@ -23,8 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef PopupOpeningObserver_h
-#define PopupOpeningObserver_h
+#pragma once
 
 namespace WebCore {
 
@@ -36,5 +35,4 @@ protected:
     virtual ~PopupOpeningObserver() { }
 };
     
-}
-#endif
+} // namespace WebCore

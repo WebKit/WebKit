@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef CollectionType_h
-#define CollectionType_h
+#pragma once
 
 namespace WebCore {
 
@@ -94,5 +93,3 @@ struct CollectionTypeTraits<FormControls> {
 };
 
 } // namespace WebCore
-
-#endif

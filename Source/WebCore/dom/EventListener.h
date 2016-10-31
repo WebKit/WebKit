@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef EventListener_h
-#define EventListener_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -69,6 +68,4 @@ private:
     Type m_type;
 };
 
-}
-
-#endif
+} // namespace WebCore

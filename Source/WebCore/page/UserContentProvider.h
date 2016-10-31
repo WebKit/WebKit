@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserContentProvider_h
-#define UserContentProvider_h
+#pragma once
 
 #include "UserScriptTypes.h"
 #include "UserStyleSheetTypes.h"
@@ -106,5 +105,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // UserContentProvider_h

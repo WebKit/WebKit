@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLDocument_h
-#define XMLDocument_h
+#pragma once
 
 #include "Document.h"
 
@@ -54,5 +53,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XMLDocument)
     static bool isType(const WebCore::Document& document) { return document.isXMLDocument(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // XMLDocument_h

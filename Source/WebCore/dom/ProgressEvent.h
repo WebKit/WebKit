@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProgressEvent_h
-#define ProgressEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -63,6 +62,5 @@ private:
     unsigned long long m_loaded;
     unsigned long long m_total;
 };
-}
 
-#endif // ProgressEvent_h
+} // namespace WebCore

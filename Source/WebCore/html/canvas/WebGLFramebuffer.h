@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLFramebuffer_h
-#define WebGLFramebuffer_h
+#pragma once
 
 #include "WebGLContextObject.h"
 #include "WebGLSharedObject.h"
@@ -129,5 +128,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLFramebuffer_h

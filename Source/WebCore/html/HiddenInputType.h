@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HiddenInputType_h
-#define HiddenInputType_h
+#pragma once
 
 #include "InputType.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HiddenInputType_h

@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLMenuElement_h
-#define HTMLMenuElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -35,6 +34,4 @@ private:
     HTMLMenuElement(const QualifiedName&, Document&);
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

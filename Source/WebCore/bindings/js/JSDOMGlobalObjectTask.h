@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDOMGlobalObjectTask_h
-#define JSDOMGlobalObjectTask_h
+#pragma once
 
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
@@ -37,5 +36,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // JSDOMGlobalObjectTask_h

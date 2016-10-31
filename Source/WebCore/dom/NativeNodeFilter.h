@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeNodeFilter_h
-#define NativeNodeFilter_h
+#pragma once
 
 #include "NodeFilter.h"
 #include "NodeFilterCondition.h"
@@ -57,6 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // NativeNodeFilter_h
-

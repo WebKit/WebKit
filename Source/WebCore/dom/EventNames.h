@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef EventNames_h
-#define EventNames_h
+#pragma once
 
 #include "ThreadGlobalData.h"
 #include <array>
@@ -364,6 +363,4 @@ inline bool EventNames::isGamepadEventType(const AtomicString& eventType) const
 
 #endif
 
-}
-
-#endif
+} // namespace WebCore

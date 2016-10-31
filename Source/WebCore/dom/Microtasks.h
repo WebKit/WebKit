@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef Microtasks_h
-#define Microtasks_h
+#pragma once
 
 #include "Timer.h"
 #include <wtf/NeverDestroyed.h>
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Microtask_h

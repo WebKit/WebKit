@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ServicesOverlayController_h
-#define ServicesOverlayController_h
+#pragma once
 
 #if (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
 
@@ -37,12 +36,10 @@
 typedef struct __DDHighlight *DDHighlightRef;
 
 namespace WebCore {
+    
 class LayoutRect;
 class MainFrame;
 struct GapRects;
-}
-
-namespace WebCore {
 
 class ServicesOverlayController : private PageOverlay::Client {
     WTF_MAKE_FAST_ALLOCATED;
@@ -165,7 +162,6 @@ private:
     Timer m_buildHighlightsTimer;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
-#endif // ServicesOverlayController_h

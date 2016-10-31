@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef NoEventDispatchAssertion_h
-#define NoEventDispatchAssertion_h
+#pragma once
 
 #include <wtf/MainThread.h>
 
@@ -90,6 +89,4 @@ private:
 #endif
 };
 
-}
-
-#endif
+} // namespace WebCore

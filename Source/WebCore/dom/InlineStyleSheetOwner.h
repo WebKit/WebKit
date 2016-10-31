@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef InlineStyleSheetOwner_h
-#define InlineStyleSheetOwner_h
+#pragma once
 
 #include "CSSStyleSheet.h"
 #include <wtf/text/TextPosition.h>
@@ -68,6 +67,4 @@ private:
     Style::Scope* m_styleScope { nullptr };
 };
 
-}
-
-#endif
+} // namespace WebCore

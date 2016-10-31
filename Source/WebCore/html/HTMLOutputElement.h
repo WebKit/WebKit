@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLOutputElement_h
-#define HTMLOutputElement_h
+#pragma once
 
 #include "DOMTokenList.h"
 #include "HTMLFormControlElement.h"
@@ -68,6 +67,4 @@ private:
     std::unique_ptr<DOMTokenList> m_tokens;
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

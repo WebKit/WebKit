@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLDrawBuffers_h
-#define WebGLDrawBuffers_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLDrawBuffers_h

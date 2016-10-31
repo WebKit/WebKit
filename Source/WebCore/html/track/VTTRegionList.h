@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VTTRegionList_h
-#define VTTRegionList_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -57,10 +56,9 @@ private:
     VTTRegionList();
     void clear();
 
-    Vector<RefPtr<VTTRegion> > m_list;
+    Vector<RefPtr<VTTRegion>> m_list;
 };
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

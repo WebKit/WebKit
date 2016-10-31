@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExceptionBase_h
-#define ExceptionBase_h
+#pragma once
 
 #include "ExceptionCode.h"
 #include <wtf/RefCounted.h>
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ExceptionBase_h

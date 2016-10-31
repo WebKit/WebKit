@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextEventInputType_h
-#define TextEventInputType_h
+#pragma once
 
 namespace WebCore {
 
@@ -41,5 +40,3 @@ enum TextEventInputType {
 };
 
 } // namespace WebCore
-
-#endif // TextEventInputType_h

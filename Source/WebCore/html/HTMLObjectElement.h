@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLObjectElement_h
-#define HTMLObjectElement_h
+#pragma once
 
 #include "FormAssociatedElement.h"
 #include "HTMLPlugInImageElement.h"
@@ -109,6 +108,4 @@ private:
     bool m_useFallbackContent : 1;
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef RegisteredEventListener_h
-#define RegisteredEventListener_h
+#pragma once
 
 #include "EventListener.h"
 #include <wtf/RefPtr.h>
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RegisteredEventListener_h

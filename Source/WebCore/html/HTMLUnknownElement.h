@@ -27,8 +27,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLUnknownElement_h
-#define HTMLUnknownElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -50,6 +49,4 @@ private:
     bool isHTMLUnknownElement() const final { return true; }
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

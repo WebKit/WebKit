@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXTsRGB_h
-#define EXTsRGB_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // EXTsRGB_h

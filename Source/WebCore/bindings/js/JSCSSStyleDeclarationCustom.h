@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCSSStyleDeclarationCustom_h
-#define JSCSSStyleDeclarationCustom_h
+#pragma once
 
 namespace WebCore {
 
@@ -32,6 +31,4 @@ class CSSStyleDeclaration;
 
 void* root(CSSStyleDeclaration*);
 
-}
-
-#endif // JSCSSStyleDeclarationCustom_h
+} // namespace WebCore

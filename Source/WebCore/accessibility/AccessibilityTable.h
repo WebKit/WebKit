@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityTable_h
-#define AccessibilityTable_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 #include <wtf/Forward.h>
@@ -107,5 +106,3 @@ private:
 } // namespace WebCore 
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTable, isTable())
-
-#endif // AccessibilityTable_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ButtonInputType_h
-#define ButtonInputType_h
+#pragma once
 
 #include "BaseButtonInputType.h"
 
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ButtonInputType_h

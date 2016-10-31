@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef HashChangeEvent_h
-#define HashChangeEvent_h
+#pragma once
 
 #include "Event.h"
 #include "EventNames.h"
@@ -88,5 +87,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HashChangeEvent_h

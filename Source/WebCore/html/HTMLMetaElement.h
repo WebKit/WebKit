@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLMetaElement_h
-#define HTMLMetaElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

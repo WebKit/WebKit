@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptWrappable_h
-#define ScriptWrappable_h
+#pragma once
 
 #include <heap/Weak.h>
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptWrappable_h

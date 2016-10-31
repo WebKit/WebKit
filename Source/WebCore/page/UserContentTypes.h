@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef UserContentTypes_h
-#define UserContentTypes_h
+#pragma once
 
 namespace WebCore {
 
 enum UserContentInjectedFrames { InjectInAllFrames, InjectInTopFrameOnly };
 
 } // namespace WebCore
- 
-#endif // UserContentTypes_h

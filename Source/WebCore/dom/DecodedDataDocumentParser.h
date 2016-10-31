@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef DecodedDataDocumentParser_h
-#define DecodedDataDocumentParser_h
+#pragma once
 
 #include "DocumentParser.h"
 
@@ -48,6 +47,4 @@ private:
     void flush(DocumentWriter&) override;
 };
 
-}
-
-#endif // DecodedDataDocumentParser_h
+} // namespace WebCore

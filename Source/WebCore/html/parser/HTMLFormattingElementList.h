@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLFormattingElementList_h
-#define HTMLFormattingElementList_h
+#pragma once
 
 #include "HTMLStackItem.h"
 #include <wtf/Forward.h>
@@ -134,6 +133,4 @@ private:
     Vector<Entry> m_entries;
 };
 
-}
-
-#endif // HTMLFormattingElementList_h
+} // namespace WebCore

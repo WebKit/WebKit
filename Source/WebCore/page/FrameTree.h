@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FrameTree_h
-#define FrameTree_h
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 
@@ -114,5 +113,3 @@ namespace WebCore {
 // Outside the WebCore namespace for ease of invocation from gdb.
 WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
 #endif
-
-#endif // FrameTree_h

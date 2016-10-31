@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientationClient_h
-#define DeviceOrientationClient_h
+#pragma once
 
 #include "DeviceClient.h"
 #include "PlatformExportMacros.h"
@@ -50,5 +49,3 @@ public:
 WEBCORE_EXPORT void provideDeviceOrientationTo(Page*, DeviceOrientationClient*);
 
 } // namespace WebCore
-
-#endif // DeviceOrientationClient_h

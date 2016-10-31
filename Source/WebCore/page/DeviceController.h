@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceController_h
-#define DeviceController_h
+#pragma once
 
 #include "DOMWindow.h"
 #include "Event.h"
@@ -65,5 +64,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // DeviceController_h

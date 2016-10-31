@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ErrorEvent_h
-#define ErrorEvent_h
+#pragma once
 
 #include "Event.h"
 #include "SerializedScriptValue.h"
@@ -90,5 +89,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(ErrorEvent)
-
-#endif // ErrorEvent_h

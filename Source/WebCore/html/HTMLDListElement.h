@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLDListElement_h
-#define HTMLDListElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -35,6 +34,4 @@ private:
     HTMLDListElement(const QualifiedName&, Document&);
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

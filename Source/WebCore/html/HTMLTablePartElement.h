@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HTMLTablePartElement_h
-#define HTMLTablePartElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -45,6 +44,4 @@ protected:
     HTMLTableElement* findParentTable() const;
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

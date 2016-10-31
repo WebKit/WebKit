@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCoreException_h
+#pragma once
 
 #include "ExceptionBase.h"
 
@@ -52,5 +51,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // DOMCoreException_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebKitTransitionEvent_h
-#define WebKitTransitionEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebKitTransitionEvent_h

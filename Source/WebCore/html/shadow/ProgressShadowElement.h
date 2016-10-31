@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProgressShadowElement_h
-#define ProgressShadowElement_h
+#pragma once
 
 #include "HTMLDivElement.h"
 #include <wtf/Forward.h>
@@ -99,5 +98,4 @@ inline Ref<ProgressValueElement> ProgressValueElement::create(Document& document
     return result;
 }
 
-}
-#endif // ProgressShadowElement_h
+} // namespace WebCore

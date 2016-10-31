@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef AccessibilityProgressIndicator_h
-#define AccessibilityProgressIndicator_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 
@@ -63,9 +62,6 @@ private:
     bool computeAccessibilityIsIgnored() const override;
 };
 
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityProgressIndicator, isProgressIndicator())
-
-#endif // AccessibilityProgressIndicator_h

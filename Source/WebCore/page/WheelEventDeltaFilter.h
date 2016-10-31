@@ -23,15 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WheelEventDeltaFilter_h
-#define WheelEventDeltaFilter_h
+#pragma once
 
 #include "FloatSize.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
-
-class PlatformWheelEvent;
 
 class WheelEventDeltaFilter {
 public:
@@ -69,6 +66,4 @@ private:
     Deque<FloatSize> m_recentWheelEventDeltas;
 };
 
-}
-
-#endif
+} // namespace WebCore

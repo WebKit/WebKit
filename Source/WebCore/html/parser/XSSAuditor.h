@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XSSAuditor_h
-#define XSSAuditor_h
+#pragma once
 
 #include "HTMLToken.h"
 #include "HTTPParsers.h"
@@ -119,6 +118,4 @@ private:
     TextEncoding m_encoding;
 };
 
-}
-
-#endif
+} // namespace WebCore

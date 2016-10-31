@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCustomElementInterface_h
-#define JSCustomElementInterface_h
+#pragma once
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
@@ -41,10 +40,8 @@
 #include <wtf/text/AtomicStringHash.h>
 
 namespace JSC {
-
 class JSObject;
 class PrivateName;
-
 }
 
 namespace WebCore {
@@ -114,6 +111,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(CUSTOM_ELEMENTS)

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLFormControlElementWithState_h
-#define HTMLFormControlElementWithState_h
+#pragma once
 
 #include "HTMLFormControlElement.h"
 
@@ -51,6 +50,4 @@ protected:
     bool isFormControlElementWithState() const override;
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

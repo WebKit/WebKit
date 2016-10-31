@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaProducer_h
-#define MediaProducer_h
+#pragma once
 
 namespace WebCore {
 
@@ -63,6 +62,4 @@ protected:
     virtual ~MediaProducer() { }
 };
 
-}
-
-#endif
+} // namespace WebCore

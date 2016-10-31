@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityAttachment_h
-#define AccessibilityAttachment_h
+#pragma once
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
@@ -58,5 +57,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityAttachment, isAttachmentElement())
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
-#endif // AccessibilityAttachment_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MutableRange_h
-#define MutableRange_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -91,10 +90,7 @@ public:
     CharacterType last;
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // MutableRange_h

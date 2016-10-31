@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVTTElement_h
-#define WebVTTElement_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -90,6 +89,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTElement)
     static bool isType(const WebCore::Node& node) { return node.isWebVTTElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
-
-#endif // WebVTTElement_h
+#endif // ENABLE(VIDEO_TRACK)

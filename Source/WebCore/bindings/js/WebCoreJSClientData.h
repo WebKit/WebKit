@@ -19,8 +19,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebCoreJSClientData_h
-#define WebCoreJSClientData_h
+#pragma once
 
 #include "DOMWrapperWorld.h"
 #include "WebCoreBuiltinNames.h"
@@ -95,5 +94,3 @@ inline void initNormalWorldClientData(JSC::VM* vm)
 }
 
 } // namespace WebCore
-
-#endif // WebCoreJSClientData_h

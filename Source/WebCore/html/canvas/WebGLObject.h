@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLObject_h
-#define WebGLObject_h
+#pragma once
 
 #include "GraphicsContext3D.h"
-
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -80,5 +78,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLObject_h

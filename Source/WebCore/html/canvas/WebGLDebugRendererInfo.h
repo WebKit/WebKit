@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLDebugRendererInfo_h
-#define WebGLDebugRendererInfo_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLDebugRendererInfo_h

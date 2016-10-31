@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef SuspendableTimer_h
-#define SuspendableTimer_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "Timer.h"
@@ -80,6 +79,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SuspendableTimer_h
-

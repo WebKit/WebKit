@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingCoordinatorCoordinatedGraphics_h
-#define ScrollingCoordinatorCoordinatedGraphics_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -59,5 +58,3 @@ private:
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
-
-#endif // ScrollingCoordinatorCoordinatedGraphics_h

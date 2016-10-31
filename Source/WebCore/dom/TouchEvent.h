@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TouchEvent_h
-#define TouchEvent_h
+#pragma once
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/TouchEventIOS.h>
@@ -103,5 +102,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_EVENT(TouchEvent)
 
 #endif // ENABLE(TOUCH_EVENTS)
-
-#endif // TouchEvent_h

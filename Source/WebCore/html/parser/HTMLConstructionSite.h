@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLConstructionSite_h
-#define HTMLConstructionSite_h
+#pragma once
 
 #include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
@@ -225,5 +224,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

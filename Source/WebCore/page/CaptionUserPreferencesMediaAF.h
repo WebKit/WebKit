@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CaptionUserPreferencesMediaAF_h
-#define CaptionUserPreferencesMediaAF_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -92,7 +91,6 @@ private:
 #endif
 };
 
-}
-#endif
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO_TRACK)

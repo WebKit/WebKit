@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ElementAndTextDescendantIterator_h
-#define ElementAndTextDescendantIterator_h
+#pragma once
 
 #include "Element.h"
 #include "ElementIteratorAssertions.h"
@@ -319,5 +318,4 @@ inline ElementAndTextDescendantIteratorAdapter elementAndTextDescendants(Contain
     return ElementAndTextDescendantIteratorAdapter(root);
 }
 
-}
-#endif
+} // namespace WebCore

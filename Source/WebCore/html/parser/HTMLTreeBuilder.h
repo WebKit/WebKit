@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLTreeBuilder_h
-#define HTMLTreeBuilder_h
+#pragma once
 
 #include "HTMLConstructionSite.h"
 #include "HTMLParserOptions.h"
@@ -265,6 +264,4 @@ inline DocumentFragment* HTMLTreeBuilder::FragmentParsingContext::fragment() con
     return m_fragment;
 }
 
-}
-
-#endif
+} // namespace WebCore

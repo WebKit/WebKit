@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DebugPageOverlays_h
-#define DebugPageOverlays_h
+#pragma once
 
 #include "Frame.h"
 #include "Settings.h"
@@ -100,6 +99,4 @@ inline void DebugPageOverlays::didChangeEventHandlers(Frame& frame)
     sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);
 }
 
-}
-
-#endif
+} // namespace WebCore

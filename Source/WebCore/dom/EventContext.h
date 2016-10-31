@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef EventContext_h
-#define EventContext_h
+#pragma once
 
 #include "EventTarget.h"
 #include "Node.h"
@@ -143,7 +142,7 @@ inline void MouseOrFocusEventContext::setRelatedTarget(PassRefPtr<EventTarget> r
     m_relatedTarget = relatedTarget;
 }
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MouseOrFocusEventContext)
 static bool isType(const WebCore::EventContext& context) { return context.isMouseOrFocusEventContext(); }
@@ -154,5 +153,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TouchEventContext)
 static bool isType(const WebCore::EventContext& context) { return context.isTouchEventContext(); }
 SPECIALIZE_TYPE_TRAITS_END()
 #endif
-
-#endif // EventContext_h

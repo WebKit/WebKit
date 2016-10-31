@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAccessibleUtil_h
-#define WebKitAccessibleUtil_h
+#pragma once
 
 #if HAVE(ACCESSIBILITY)
 
@@ -69,5 +68,4 @@ String accessibilityDescription(WebCore::AccessibilityObject*);
 
 bool selectionBelongsToObject(WebCore::AccessibilityObject*, WebCore::VisibleSelection&);
 
-#endif
-#endif // WebKitAccessibleUtil_h
+#endif // HAVE(ACCESSIBILITY)

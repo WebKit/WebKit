@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCallbackData_h
-#define JSCallbackData_h
+#pragma once
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
@@ -123,5 +122,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // JSCallbackData_h

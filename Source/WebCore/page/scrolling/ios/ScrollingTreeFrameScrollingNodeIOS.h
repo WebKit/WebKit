@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeFrameScrollingNodeIOS_h
-#define ScrollingTreeFrameScrollingNodeIOS_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
@@ -73,5 +72,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
-
-#endif // ScrollingTreeFrameScrollingNodeIOS_h

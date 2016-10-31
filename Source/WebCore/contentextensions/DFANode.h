@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFANode_h
-#define DFANode_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -171,10 +170,7 @@ private:
 
 COMPILE_ASSERT(sizeof(DFANode) <= 16, Keep the DFANodes small);
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFANode_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowExtension_h
-#define DOMWindowExtension_h
+#pragma once
 
 #include "DOMWindowProperty.h"
 #include <wtf/RefCounted.h>
@@ -59,6 +58,4 @@ private:
     bool m_wasDetached;
 };
 
-}
-
-#endif // DOMWindowExtension_h
+} // namespace WebCore

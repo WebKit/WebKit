@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AnimationEvent_h
-#define AnimationEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AnimationEvent_h

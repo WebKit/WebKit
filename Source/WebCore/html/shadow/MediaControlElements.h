@@ -27,10 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControlElements_h
-#define MediaControlElements_h
+#pragma once
 
 #if ENABLE(VIDEO)
+
 #include "MediaControlElementTypes.h"
 #include "TextTrackRepresentation.h"
 
@@ -477,5 +477,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)
-
-#endif // MediaControlElements_h

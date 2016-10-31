@@ -28,8 +28,7 @@
  *
  */
 
-#ifndef FileIconLoader_h
-#define FileIconLoader_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

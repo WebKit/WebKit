@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityListBoxOption_h
-#define AccessibilityListBoxOption_h
+#pragma once
 
 #include "AccessibilityObject.h"
 #include "HTMLElement.h"
@@ -37,7 +36,6 @@ namespace WebCore {
 
 class AccessibilityListBox;
 class Element;
-class HTMLElement;
 class HTMLSelectElement;
     
 class AccessibilityListBoxOption final : public AccessibilityObject {
@@ -77,5 +75,3 @@ private:
 } // namespace WebCore 
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBoxOption, isListBoxOption())
-
-#endif // AccessibilityListBoxOption_h

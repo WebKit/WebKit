@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityPolicyViolationEvent_h
-#define SecurityPolicyViolationEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -121,5 +120,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SecurityPolicyViolationEvent_h

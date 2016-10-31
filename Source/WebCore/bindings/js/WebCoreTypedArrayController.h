@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCoreTypedArrayController_h
-#define WebCoreTypedArrayController_h
+#pragma once
 
 #include <runtime/JSGlobalObject.h>
 #include <runtime/TypedArrayController.h>
@@ -56,6 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebCoreTypedArrayController_h
-

@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AsyncScrollingCoordinator_h
-#define AsyncScrollingCoordinator_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingCoordinator.h"
-
 #include "ScrollingTree.h"
 #include "Timer.h"
 #include <wtf/PassRefPtr.h>
@@ -168,5 +166,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_COORDINATOR(WebCore::AsyncScrollingCoordinator, isAsyncScrollingCoordinator());
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // AsyncScrollingCoordinator_h

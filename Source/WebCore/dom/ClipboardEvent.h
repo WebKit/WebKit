@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef ClipboardEvent_h
-#define ClipboardEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ClipboardEvent_h

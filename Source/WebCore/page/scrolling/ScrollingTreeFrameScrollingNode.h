@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeFrameScrollingNode_h
-#define ScrollingTreeFrameScrollingNode_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -89,5 +88,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeFrameScrollingNode, isFrameScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTreeScrollingNode_h

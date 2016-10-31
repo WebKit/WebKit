@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLInputStream_h
-#define HTMLInputStream_h
+#pragma once
 
 #include "InputStreamPreprocessor.h"
 #include "SegmentedString.h"
@@ -155,6 +154,4 @@ private:
     OrdinalNumber m_column;
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLAppletElement_h
-#define HTMLAppletElement_h
+#pragma once
 
 #include "HTMLPlugInImageElement.h"
 
@@ -46,6 +45,4 @@ private:
     bool canEmbedJava() const;
 };
 
-}
-
-#endif
+} // namespace WebCore

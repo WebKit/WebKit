@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventSender_h
-#define EventSender_h
+#pragma once
 
 #include "Timer.h"
 #include <wtf/Vector.h>
@@ -107,5 +106,3 @@ template<typename T> void EventSender<T>::dispatchPendingEvents()
 }
 
 } // namespace WebCore
-
-#endif // EventSender_h

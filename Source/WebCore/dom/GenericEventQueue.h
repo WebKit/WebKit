@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GenericEventQueue_h
-#define GenericEventQueue_h
+#pragma once
 
 #include "GenericTaskQueue.h"
 #include <wtf/Deque.h>
@@ -62,6 +61,4 @@ private:
     bool m_isSuspended { false };
 };
 
-}
-
-#endif
+} // namespace WebCore

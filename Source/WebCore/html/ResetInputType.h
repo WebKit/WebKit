@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResetInputType_h
-#define ResetInputType_h
+#pragma once
 
 #include "BaseButtonInputType.h"
 
@@ -48,5 +47,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ResetInputType_h

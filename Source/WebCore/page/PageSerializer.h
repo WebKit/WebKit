@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageSerializer_h
-#define PageSerializer_h
+#pragma once
 
 #include "URL.h"
 #include "URLHash.h"
@@ -87,6 +86,4 @@ private:
     unsigned m_blankFrameCounter;
 };
 
-}
-
-#endif
+} // namespace WebCore

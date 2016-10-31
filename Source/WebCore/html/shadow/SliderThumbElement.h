@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SliderThumbElement_h
-#define SliderThumbElement_h
+#pragma once
 
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
@@ -141,6 +140,4 @@ private:
     AtomicString m_shadowPseudoId;
 };
 
-}
-
-#endif
+} // namespace WebCore

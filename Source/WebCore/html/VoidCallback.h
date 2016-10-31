@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VoidCallback_h
-#define VoidCallback_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -37,5 +36,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

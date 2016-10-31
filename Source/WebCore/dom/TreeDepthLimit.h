@@ -28,13 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TreeDepthLimit_h
-#define TreeDepthLimit_h
+#pragma once
 
 #ifndef MAX_DOM_TREE_DEPTH
 #define MAX_DOM_TREE_DEPTH 5000
 #endif
+
+namespace WebCore {
+
 const unsigned maxDOMTreeDepth = MAX_DOM_TREE_DEPTH;
 
-#endif // TreeDepthLimit.h
-
+} // namespace WebCore

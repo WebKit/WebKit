@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityTableHeaderContainer_h
-#define AccessibilityTableHeaderContainer_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
 #include "AccessibilityTable.h"
@@ -55,5 +54,3 @@ private:
 }; 
     
 } // namespace WebCore 
-
-#endif // AccessibilityTableHeaderContainer_h

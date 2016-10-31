@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImmutableNFANodeBuilder_h
-#define ImmutableNFANodeBuilder_h
+#pragma once
 
 #include "ImmutableNFA.h"
 #include "MutableRangeList.h"
@@ -224,10 +223,7 @@ private:
     bool m_finalized { true };
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ImmutableNFANodeBuilder_h

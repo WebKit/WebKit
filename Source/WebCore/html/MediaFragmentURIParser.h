@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaFragmentURIParser_h
-#define MediaFragmentURIParser_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -62,5 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO)

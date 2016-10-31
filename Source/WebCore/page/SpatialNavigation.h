@@ -18,14 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SpatialNavigation_h
-#define SpatialNavigation_h
+#pragma once
 
 #include "FocusDirection.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LayoutRect.h"
 #include "Node.h"
-
 #include <limits>
 
 namespace WebCore {
@@ -146,5 +144,3 @@ LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirectio
 HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate&);
 
 } // namspace WebCore
-
-#endif // SpatialNavigation_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventRegion_h
-#define WebEventRegion_h
+#pragma once
 
 #import <CoreGraphics/CGGeometry.h>
 #import <Foundation/NSObject.h>
@@ -40,5 +39,3 @@ WEBCORE_EXPORT @interface WebEventRegion : NSObject <NSCopying>
 - (CGPoint)p3;
 - (CGPoint)p4;
 @end
-
-#endif // WebEventRegion_h

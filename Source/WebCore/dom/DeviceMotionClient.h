@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceMotionClient_h
-#define DeviceMotionClient_h
+#pragma once
 
 #include "DeviceClient.h"
 #include <wtf/Noncopyable.h>
@@ -49,5 +48,3 @@ public:
 void provideDeviceMotionTo(Page*, DeviceMotionClient*);
 
 } // namespace WebCore
-
-#endif // DeviceMotionClient_h

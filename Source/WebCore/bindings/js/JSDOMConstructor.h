@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef JSDOMConstructor_h
-#define JSDOMConstructor_h
+#pragma once
 
 #include "DOMConstructorWithDocument.h"
 #include "JSDOMBinding.h"
@@ -274,5 +273,3 @@ template<typename JSClass> inline JSC::ConstructType JSBuiltinConstructor<JSClas
 }
 
 } // namespace WebCore
-
-#endif // JSDOMConstructor_h

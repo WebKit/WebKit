@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLContextGroup_h
-#define WebGLContextGroup_h
+#pragma once
 
 #include "WebGLRenderingContextBase.h"
 #include <wtf/HashSet.h>
@@ -66,5 +65,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLContextGroup_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IdTargetObserverRegistry_h
-#define IdTargetObserverRegistry_h
+#pragma once
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -72,5 +71,3 @@ inline void IdTargetObserverRegistry::notifyObservers(const AtomicStringImpl& id
 }
 
 } // namespace WebCore
-
-#endif // IdTargetObserverRegistry_h

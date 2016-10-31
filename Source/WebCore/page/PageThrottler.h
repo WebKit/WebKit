@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageThrottler_h
-#define PageThrottler_h
+#pragma once
 
 #include "Timer.h"
 
@@ -75,5 +74,4 @@ private:
     PageActivityCounter m_pageLoadActivityCounter;
 };
 
-}
-#endif
+} // namespace WebCore

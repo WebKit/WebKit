@@ -22,8 +22,8 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-#ifndef TreeScopeAdopter_h
-#define TreeScopeAdopter_h
+
+#pragma once
 
 #include "Node.h"
 
@@ -62,6 +62,4 @@ inline TreeScopeAdopter::TreeScopeAdopter(Node* toAdopt, TreeScope& newScope)
 {
 }
 
-}
-
-#endif
+} // namespace WebCore

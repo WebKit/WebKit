@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimulatedClick_h
-#define SimulatedClick_h
+#pragma once
 
 #include "SimulatedClickOptions.h"
 
@@ -41,5 +40,3 @@ enum class SimulatedClickSource {
 void simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickSource);
 
 } // namespace WebCore
-
-#endif /* SimulatedClick_h */

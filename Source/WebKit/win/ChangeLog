@@ -1,3 +1,16 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use #pragma once in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=164194
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::isSpeaking):
+        (WebContextMenuClient::shareMenuItem): Deleted.
+        * WebCoreSupport/WebContextMenuClient.h:
+        Remove this dead code since r192333.
+
 2016-10-31  Darin Adler  <darin@apple.com>
 
         Convert Document from ExceptionCode to Exception

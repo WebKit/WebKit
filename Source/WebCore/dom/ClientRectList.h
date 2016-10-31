@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef ClientRectList_h
-#define ClientRectList_h
+#pragma once
 
 #include "FloatQuad.h"
 #include <wtf/Ref.h>
@@ -53,5 +52,3 @@ namespace WebCore {
     }; 
 
 } // namespace WebCore
-
-#endif // ClientRectList_h

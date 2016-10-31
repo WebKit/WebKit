@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLLegendElement_h
-#define HTMLLegendElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -45,6 +44,4 @@ private:
     HTMLFormElement* virtualForm() const final;
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

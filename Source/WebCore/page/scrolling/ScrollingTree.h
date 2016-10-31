@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTree_h
-#define ScrollingTree_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -192,5 +191,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::ScrollingTree& tree) { return tree.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTree_h

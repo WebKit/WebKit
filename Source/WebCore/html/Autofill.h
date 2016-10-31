@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Autofill_h
-#define Autofill_h
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
@@ -113,6 +112,4 @@ public:
     String idlExposedValue;
 };
 
-} // namespace
-
-#endif // Autofill_h
+} // namespace WebCore

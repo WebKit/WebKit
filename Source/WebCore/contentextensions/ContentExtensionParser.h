@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionParser_h
-#define ContentExtensionParser_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -44,5 +43,3 @@ std::error_code parseRuleList(const String& rules, Vector<ContentExtensionRule>&
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionParser_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef NodeWithIndex_h
-#define NodeWithIndex_h
+#pragma once
 
 #include "Node.h"
 
@@ -59,6 +58,4 @@ private:
     mutable int m_index;
 };
 
-}
-
-#endif
+} // namespace WebCore

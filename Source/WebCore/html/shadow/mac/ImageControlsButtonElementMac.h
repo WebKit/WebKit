@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageControlsButtonElementMac_h
-#define ImageControlsButtonElementMac_h
+#pragma once
 
 #include "HTMLDivElement.h"
 
@@ -50,5 +49,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_CONTROLS)
-
-#endif // ImageControlsButtonElementMac_h

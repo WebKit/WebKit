@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutocompleteErrorEvent_h
-#define AutocompleteErrorEvent_h
+#pragma once
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
 
@@ -78,5 +77,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(REQUEST_AUTOCOMPLETE)
-
-#endif // AutocompleteErrorEvent_h

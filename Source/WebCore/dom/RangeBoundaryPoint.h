@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RangeBoundaryPoint_h
-#define RangeBoundaryPoint_h
+#pragma once
 
 #include "Node.h"
 #include "Position.h"
@@ -195,6 +194,4 @@ inline bool operator==(const RangeBoundaryPoint& a, const RangeBoundaryPoint& b)
     return true;
 }
 
-}
-
-#endif
+} // namespace WebCore

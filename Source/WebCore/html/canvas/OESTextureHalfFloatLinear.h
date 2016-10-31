@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OESTextureHalfFloatLinear_h
-#define OESTextureHalfFloatLinear_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // OESTextureHalfFloatLinear_h

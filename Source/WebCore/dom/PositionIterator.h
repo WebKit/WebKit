@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PositionIterator_h
-#define PositionIterator_h
+#pragma once
 
 #include "Node.h"
 #include "Position.h"
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PositionIterator_h

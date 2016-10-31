@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsDebugging_h
-#define ContentExtensionsDebugging_h
-
-#include <wtf/Vector.h>
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
+
+#include <wtf/Vector.h>
 
 #define CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING 0
 
@@ -50,5 +49,3 @@ typedef UnsafeVectorOverflow ContentExtensionsOverflowHandler;
 #endif
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionsDebugging_h

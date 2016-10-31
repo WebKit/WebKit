@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilitySVGRoot_h
-#define AccessibilitySVGRoot_h
+#pragma once
 
 #include "AccessibilitySVGElement.h"
 
@@ -53,5 +52,3 @@ private:
 } // namespace WebCore 
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySVGRoot, isAccessibilitySVGRoot())
-
-#endif // AccessibilitySVGRoot_h

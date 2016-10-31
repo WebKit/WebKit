@@ -22,8 +22,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FTPDirectoryDocument_h
-#define FTPDirectoryDocument_h
+#pragma once
 
 #include "HTMLDocument.h"
 
@@ -42,5 +41,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FTPDirectoryDocument_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef NameNodeList_h
-#define NameNodeList_h
+#pragma once
 
 #include "LiveNodeList.h"
 #include <wtf/Forward.h>
@@ -55,5 +54,3 @@ inline bool NameNodeList::elementMatches(Element& element) const
 }
 
 } // namespace WebCore
-
-#endif // NameNodeList_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameDestructionObserver_h
-#define FrameDestructionObserver_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 
@@ -48,6 +47,4 @@ protected:
     Frame* m_frame;
 };
 
-}
-
-#endif
+} // namespace WebCore

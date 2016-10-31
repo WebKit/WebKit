@@ -152,4 +152,4 @@ inline Element* SelectorQuery::queryFirst(ContainerNode& rootNode) const
     return m_selectors.queryFirst(rootNode);
 }
 
-}
+} // namespace WebCore

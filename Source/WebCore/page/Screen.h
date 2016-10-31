@@ -27,8 +27,7 @@
  */
 
 
-#ifndef Screen_h
-#define Screen_h
+#pragma once
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Screen_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaCanStartListener_h
-#define MediaCanStartListener_h
+#pragma once
 
 namespace WebCore {
 
@@ -35,6 +34,4 @@ protected:
     virtual ~MediaCanStartListener() { }
 };
 
-}
-
-#endif
+} // namespace WebCore

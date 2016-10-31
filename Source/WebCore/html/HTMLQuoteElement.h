@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLQuoteElement_h
-#define HTMLQuoteElement_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include "HTMLElement.h"
@@ -39,6 +38,4 @@ private:
     bool isURLAttribute(const Attribute&) const final;
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

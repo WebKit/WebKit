@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLGetInfo_h
-#define WebGLGetInfo_h
+#pragma once
 
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
@@ -155,5 +154,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLGetInfo_h

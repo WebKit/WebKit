@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceClient_h
-#define DeviceClient_h
+#pragma once
 
 namespace WebCore {
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // DeviceClient_h

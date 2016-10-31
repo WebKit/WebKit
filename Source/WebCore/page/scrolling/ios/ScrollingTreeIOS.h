@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeIOS_h
-#define ScrollingTreeIOS_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -70,5 +69,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebCore::ScrollingTreeIOS, isScrollingTreeIOS())
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTreeIOS_h

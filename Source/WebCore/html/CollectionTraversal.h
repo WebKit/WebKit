@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CollectionTraversal_h
-#define CollectionTraversal_h
+#pragma once
 
 #include "CollectionType.h"
 #include "ElementChildIterator.h"
@@ -244,5 +243,3 @@ inline void CollectionTraversal<CollectionTraversalType::CustomForwardOnly>::tra
 }
 
 } // namespace WebCore
-
-#endif // CollectionTraversal_h

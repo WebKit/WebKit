@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef Event_h
-#define Event_h
+#pragma once
 
 #include "DOMTimeStamp.h"
 #include "EventInit.h"
@@ -239,5 +238,3 @@ inline void Event::resetPropagationFlags()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::Event& event) { return event.is##ToValueTypeName(); } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // Event_h

@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OESTextureFloat_h
-#define OESTextureFloat_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // OESTextureFloat_h

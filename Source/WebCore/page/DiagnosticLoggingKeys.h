@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiagnosticLoggingKeys_h
-#define DiagnosticLoggingKeys_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -149,6 +148,4 @@ public:
     static String failureKey();
 };
 
-}
-
-#endif // DiagnosticLoggingKeys_h
+} // namespace WebCore

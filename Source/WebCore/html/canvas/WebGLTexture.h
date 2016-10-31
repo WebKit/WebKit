@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLTexture_h
-#define WebGLTexture_h
+#pragma once
 
 #include "WebGLSharedObject.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -138,5 +136,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLTexture_h

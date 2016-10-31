@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VideoTrackList_h
-#define VideoTrackList_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -54,10 +53,8 @@ public:
 
 private:
     VideoTrackList(HTMLMediaElement*, ScriptExecutionContext*);
-
 };
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)

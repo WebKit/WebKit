@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSElementCustom_h
-#define JSElementCustom_h
+#pragma once
 
 #include "JSDOMBinding.h"
 #include "JSElement.h"
@@ -38,5 +37,3 @@ ALWAYS_INLINE JSDynamicCastResult<JSElement, From> jsElementCast(From* value)
 }
 
 } // namespace WebCore
-
-#endif // JSElementCustom_h

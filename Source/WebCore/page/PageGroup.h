@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PageGroup_h
-#define PageGroup_h
+#pragma once
 
 #include "Supplementable.h"
 #include <wtf/HashSet.h>
@@ -72,5 +71,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-    
-#endif // PageGroup_h

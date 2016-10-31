@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLCompressedTexturePVRTC_h
-#define WebGLCompressedTexturePVRTC_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -40,5 +39,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLCompressedTexturePVRTC_h

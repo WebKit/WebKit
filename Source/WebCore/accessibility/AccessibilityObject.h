@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityObject_h
-#define AccessibilityObject_h
+#pragma once
 
 #include "FloatQuad.h"
 #include "HTMLTextFormControlElement.h"
@@ -1120,5 +1119,3 @@ inline void AccessibilityObject::updateBackingStore() { }
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::AccessibilityObject& object) { return object.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // AccessibilityObject_h

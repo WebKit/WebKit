@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypedElementDescendantIterator_h
-#define TypedElementDescendantIterator_h
+#pragma once
 
 #include "ElementIterator.h"
 
@@ -320,6 +319,4 @@ template<typename ElementType> inline DoubleTypedElementDescendantIteratorAdapte
     return { descendantsOfType<ElementType>(firstRoot), descendantsOfType<ElementType>(secondRoot) };
 }
 
-}
-
-#endif
+} // namespace WebCore

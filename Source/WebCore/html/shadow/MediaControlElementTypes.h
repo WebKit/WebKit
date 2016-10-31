@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControlElementTypes_h
-#define MediaControlElementTypes_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -194,5 +193,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)
-
-#endif // MediaControlElementTypes_h

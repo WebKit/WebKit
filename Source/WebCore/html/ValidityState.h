@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef ValidityState_h
-#define ValidityState_h
+#pragma once
 
 #include "FormAssociatedElement.h"
 
@@ -42,5 +41,3 @@ inline ValidityState* FormAssociatedElement::validity()
 }
 
 } // namespace WebCore
-
-#endif // ValidityState_h

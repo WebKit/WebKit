@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PointerLockController_h
-#define PointerLockController_h
+#pragma once
 
 #if ENABLE(POINTER_LOCK)
 
@@ -68,5 +67,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(POINTER_LOCK)
-
-#endif // PointerLockController_h

@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef StepRange_h
-#define StepRange_h
+#pragma once
 
 #include "Decimal.h"
 #include <wtf/Forward.h>
@@ -122,6 +121,4 @@ private:
     const bool m_hasStep { false };
 };
 
-}
-
-#endif // StepRange_h
+} // namespace WebCore

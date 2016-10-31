@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLTokenizer_h
-#define HTMLTokenizer_h
+#pragma once
 
 #include "HTMLParserOptions.h"
 #include "HTMLToken.h"
@@ -353,6 +352,4 @@ inline bool HTMLTokenizer::neverSkipNullCharacters() const
     return m_forceNullCharacterReplacement;
 }
 
-}
-
-#endif
+} // namespace WebCore

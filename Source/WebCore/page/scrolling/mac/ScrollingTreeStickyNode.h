@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeStickyNode_h
-#define ScrollingTreeStickyNode_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -59,5 +58,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeStickyNode, isStickyNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTreeStickyNode_h

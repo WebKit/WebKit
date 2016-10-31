@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLModElement_h
-#define HTMLModElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -38,6 +37,4 @@ private:
     bool isURLAttribute(const Attribute&) const final;
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

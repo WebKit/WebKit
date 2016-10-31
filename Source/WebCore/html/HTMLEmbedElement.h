@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLEmbedElement_h
-#define HTMLEmbedElement_h
+#pragma once
 
 #include "HTMLPlugInImageElement.h"
 
@@ -52,6 +51,4 @@ private:
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 };
 
-}
-
-#endif
+} // namespace WebCore

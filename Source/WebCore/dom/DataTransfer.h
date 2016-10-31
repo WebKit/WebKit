@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef DataTransfer_h
-#define DataTransfer_h
+#pragma once
 
 #include "CachedResourceHandle.h"
 #include "DataTransferAccessPolicy.h"
@@ -124,5 +123,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // DataTransfer_h

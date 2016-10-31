@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OverflowEvent_h
-#define OverflowEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -77,6 +76,4 @@ private:
     bool m_verticalOverflow;
 };
 
-}
-
-#endif // OverflowEvent_h
+} // namespace WebCore

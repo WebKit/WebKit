@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef UIEventWithKeyState_h
-#define UIEventWithKeyState_h
+#pragma once
 
 #include "EventModifierInit.h"
 #include "UIEvent.h"
@@ -85,5 +84,3 @@ protected:
 WEBCORE_EXPORT UIEventWithKeyState* findEventWithKeyState(Event*);
 
 } // namespace WebCore
-
-#endif // UIEventWithKeyState_h

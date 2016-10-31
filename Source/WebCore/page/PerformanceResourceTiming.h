@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceResourceTiming_h
-#define PerformanceResourceTiming_h
+#pragma once
 
 #if ENABLE(WEB_TIMING)
 
@@ -84,11 +83,10 @@ private:
     RefPtr<Document> m_requestingDocument;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceResourceTiming)
     static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isResource(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_TIMING)
-#endif // !defined(PerformanceResourceTiming_h)

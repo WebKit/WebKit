@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemplateContentDocumentFragment_h
-#define TemplateContentDocumentFragment_h
+#pragma once
 
 #include "DocumentFragment.h"
 
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TemplateContentDocumentFragment_h

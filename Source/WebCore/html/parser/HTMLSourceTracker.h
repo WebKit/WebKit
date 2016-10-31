@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLSourceTracker_h
-#define HTMLSourceTracker_h
+#pragma once
 
 #include "SegmentedString.h"
 
@@ -57,6 +56,4 @@ private:
     String m_cachedSourceForToken;
 };
 
-}
-
-#endif
+} // namespace WebCore

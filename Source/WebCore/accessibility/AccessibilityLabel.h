@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityLabel_h
-#define AccessibilityLabel_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 
@@ -56,5 +55,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityLabel, isLabel())
-
-#endif // AccessibilityLabel_h

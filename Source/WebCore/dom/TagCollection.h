@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef TagCollection_h
-#define TagCollection_h
+#pragma once
 
 #include "CachedHTMLCollection.h"
 #include <wtf/text/AtomicString.h>
@@ -105,5 +104,3 @@ inline bool HTMLTagCollection::elementMatches(Element& element) const
 }
 
 } // namespace WebCore
-
-#endif // TagCollection_h

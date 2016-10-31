@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCustomXPathNSResolver_h
-#define JSCustomXPathNSResolver_h
+#pragma once
 
 #include "XPathNSResolver.h"
 #include <heap/Strong.h>
@@ -61,5 +60,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // JSCustomXPathNSResolver_h

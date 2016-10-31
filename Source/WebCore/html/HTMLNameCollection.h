@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLNameCollection_h
-#define HTMLNameCollection_h
+#pragma once
 
 #include "CachedHTMLCollection.h"
 #include "NodeRareData.h"
@@ -108,5 +107,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(WindowNameCollection, WindowNamedItems)
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(DocumentNameCollection, DocumentNamedItems)
-
-#endif // HTMLNameCollection_h

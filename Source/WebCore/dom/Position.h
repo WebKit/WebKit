@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Position_h
-#define Position_h
+#pragma once
 
 #include "ContainerNode.h"
 #include "EditingBoundary.h"
@@ -354,5 +353,3 @@ TextStream& operator<<(TextStream&, const Position&);
 void showTree(const WebCore::Position&);
 void showTree(const WebCore::Position*);
 #endif
-
-#endif // Position_h

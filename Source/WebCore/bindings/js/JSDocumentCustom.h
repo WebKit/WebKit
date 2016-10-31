@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDocumentCustom_h
-#define JSDocumentCustom_h
+#pragma once
 
 #include "JSDOMBinding.h"
 #include "JSDocument.h"
@@ -41,5 +40,3 @@ JSC::JSObject* cachedDocumentWrapper(JSC::ExecState&, JSDOMGlobalObject&, Docume
 void reportMemoryForDocumentIfFrameless(JSC::ExecState&, Document&);
 
 } // namespace WebCore
-
-#endif // JSDocumentCustom_h

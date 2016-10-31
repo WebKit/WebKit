@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef JSDOMGlobalObject_h
-#define JSDOMGlobalObject_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include "WebCoreJSBuiltinInternals.h"
@@ -124,5 +123,3 @@ namespace WebCore {
     JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*, DOMWrapperWorld&);
 
 } // namespace WebCore
-
-#endif // JSDOMGlobalObject_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStyleSheetCustom_h
-#define JSStyleSheetCustom_h
+#pragma once
 
 #include "CSSImportRule.h"
 #include "CSSStyleSheet.h"
@@ -43,5 +42,3 @@ inline void* root(StyleSheet* styleSheet)
 }
 
 } // namespace WebCore
-
-#endif // JSStyleSheetCustom_h

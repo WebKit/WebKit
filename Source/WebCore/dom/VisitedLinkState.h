@@ -26,8 +26,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef VisitedLinkState_h
-#define VisitedLinkState_h
+#pragma once
 
 #include "Element.h"
 #include "LinkHash.h"
@@ -61,7 +60,4 @@ inline EInsideLink VisitedLinkState::determineLinkState(const Element& element)
     return determineLinkStateSlowCase(element);
 }
 
-}
-
-#endif
-
+} // namespace WebCore

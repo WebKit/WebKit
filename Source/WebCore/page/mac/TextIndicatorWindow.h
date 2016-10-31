@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextIndicatorWindow_h
-#define TextIndicatorWindow_h
+#pragma once
 
 #import "TextIndicator.h"
 #import <wtf/Noncopyable.h>
@@ -79,6 +78,4 @@ private:
 
 #endif // PLATFORM(MAC)
 
-} // namespace WebKit
-
-#endif // TextIndicatorWindow_h
+} // namespace WebCore

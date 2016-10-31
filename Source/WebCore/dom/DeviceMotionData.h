@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceMotionData_h
-#define DeviceMotionData_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DeviceMotionData_h

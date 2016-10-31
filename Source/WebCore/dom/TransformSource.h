@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef TransformSource_h
-#define TransformSource_h
+#pragma once
 
 #if ENABLE(XSLT)
 
@@ -45,6 +44,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif
-
-#endif // TransformSource_h
+#endif // ENABLE(XSLT)

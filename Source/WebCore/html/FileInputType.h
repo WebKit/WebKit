@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileInputType_h
-#define FileInputType_h
+#pragma once
 
 #include "BaseClickableWithKeyInputType.h"
 #include "FileChooser.h"
@@ -107,5 +106,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FileInputType_h

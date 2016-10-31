@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutoFillButtonElement_h
-#define AutoFillButtonElement_h
+#pragma once
 
 #include "HTMLDivElement.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AutoFillButtonElement_h

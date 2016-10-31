@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef EventQueue_h
-#define EventQueue_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -41,6 +40,4 @@ public:
     virtual void close() = 0; // Discard accumulated events and all future events. No events will be dispatched after this.
 };
 
-}
-
-#endif // EventQueue_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef ScriptableDocumentParser_h
-#define ScriptableDocumentParser_h
+#pragma once
 
 #include "DecodedDataDocumentParser.h"
 #include "FragmentScriptingPermission.h"
@@ -66,6 +65,4 @@ private:
     ParserContentPolicy m_parserContentPolicy;
 };
 
-}
-
-#endif // ScriptableDocumentParser_h
+} // namespace WebCore

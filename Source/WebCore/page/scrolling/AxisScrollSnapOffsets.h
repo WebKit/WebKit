@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AxisScrollSnapOffsets_h
-#define AxisScrollSnapOffsets_h
+#pragma once
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
@@ -84,6 +83,4 @@ LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, LayoutType s
 
 } // namespace WebCore
 
-#endif // CSS_SCROLL_SNAP
-
-#endif // AxisScrollSnapOffsets_h
+#endif // ENABLE(CSS_SCROLL_SNAP)

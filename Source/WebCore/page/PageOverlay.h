@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlay_h
-#define PageOverlay_h
+#pragma once
 
 #include "Color.h"
 #include "FloatPoint.h"
@@ -151,5 +150,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PageOverlay_h

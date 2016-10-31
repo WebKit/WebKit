@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLFormControlsCollection_h
-#define HTMLFormControlsCollection_h
+#pragma once
 
 #include "CachedHTMLCollection.h"
 #include "HTMLElement.h"
@@ -65,5 +64,3 @@ inline HTMLElement* HTMLFormControlsCollection::item(unsigned offset) const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFormControlsCollection, FormControls)
-
-#endif // HTMLFormControlsCollection_h

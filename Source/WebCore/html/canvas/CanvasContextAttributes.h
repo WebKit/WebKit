@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CanvasContextAttributes_h
-#define CanvasContextAttributes_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -36,13 +35,11 @@ namespace WebCore {
 // WebGLRenderingContext uses this mechanism.
 
 class CanvasContextAttributes : public RefCounted<CanvasContextAttributes> {
-  public:
+public:
     virtual ~CanvasContextAttributes();
 
-  protected:
+protected:
     CanvasContextAttributes();
 };
 
 } // namespace WebCore
-
-#endif // CanvasContextAttributes_h

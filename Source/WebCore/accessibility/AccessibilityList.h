@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityList_h
-#define AccessibilityList_h
+#pragma once
 
 #include "AccessibilityRenderObject.h"
 
@@ -55,5 +54,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityList, isList())
-
-#endif // AccessibilityList_h

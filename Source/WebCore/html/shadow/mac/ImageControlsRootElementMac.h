@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageControlsRootElementMac_h
-#define ImageControlsRootElementMac_h
+#pragma once
 
 #include "ImageControlsRootElement.h"
 
@@ -46,4 +45,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_CONTROLS)
-#endif // ImageControlsRootElementMac_h

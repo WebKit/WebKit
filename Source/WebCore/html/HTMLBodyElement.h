@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLBodyElement_h
-#define HTMLBodyElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -68,5 +67,3 @@ private:
 };
 
 } //namespace
-
-#endif

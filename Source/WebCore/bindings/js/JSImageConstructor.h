@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef JSImageConstructor_h
-#define JSImageConstructor_h
+#pragma once
 
 namespace JSC {
 class JSValue;
@@ -32,5 +31,3 @@ class JSDOMGlobalObject;
 JSC::JSValue createImageConstructor(JSC::VM&, const JSDOMGlobalObject&);
 
 } // namespace WebCore
-
-#endif // JSImageConstructor_h

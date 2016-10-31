@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityImageMapLink_h
-#define AccessibilityImageMapLink_h
+#pragma once
 
 #include "AccessibilityMockObject.h"
 #include "HTMLAreaElement.h"
@@ -82,5 +81,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityImageMapLink, isImageMapLink())
-
-#endif // AccessibilityImageMapLink_h

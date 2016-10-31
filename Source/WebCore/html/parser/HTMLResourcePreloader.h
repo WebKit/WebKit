@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLResourcePreloader_h
-#define HTMLResourcePreloader_h
+#pragma once
 
 #include "CachedResource.h"
 #include "CachedResourceRequest.h"
@@ -84,6 +83,4 @@ private:
     WeakPtrFactory<HTMLResourcePreloader> m_weakFactory;
 };
 
-}
-
-#endif
+} // namespace WebCore

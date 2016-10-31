@@ -28,8 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParsingUtilities_h
-#define ParsingUtilities_h
+#pragma once
+
+namespace WebCore {
 
 template<typename CharType>
 bool skipExactly(const CharType*& position, const CharType* end, CharType delimiter)
@@ -79,5 +80,4 @@ void reverseSkipWhile(const CharType*& position, const CharType* start)
         --position;
 }
 
-#endif
-
+} // namespace WebCore

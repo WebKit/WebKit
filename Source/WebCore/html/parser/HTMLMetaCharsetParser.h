@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLMetaCharsetParser_h
-#define HTMLMetaCharsetParser_h
+#pragma once
 
 #include "HTMLTokenizer.h"
 #include "SegmentedString.h"
@@ -59,5 +58,4 @@ private:
     TextEncoding m_encoding;
 };
 
-}
-#endif
+} // namespace WebCore

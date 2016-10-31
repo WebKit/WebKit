@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceMark_h
-#define PerformanceMark_h
+#pragma once
 
 #if ENABLE(USER_TIMING)
 
@@ -44,12 +43,10 @@ private:
     ~PerformanceMark() { }
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceMark)
     static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isMark(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(USER_TIMING)
-
-#endif // !defined(PerformanceMark_h)

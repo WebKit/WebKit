@@ -26,9 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef AccessibilityMediaControls_h
-#define AccessibilityMediaControls_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -38,7 +36,6 @@
 namespace WebCore {
 
 class AccessibilityMediaControl : public AccessibilityRenderObject {
-
 public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControl() { }
@@ -61,7 +58,6 @@ private:
 
 
 class AccessibilityMediaTimeline final : public AccessibilitySlider {
-
 public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeline() { }
@@ -78,7 +74,6 @@ private:
 
 
 class AccessibilityMediaControlsContainer final : public AccessibilityMediaControl {
-
 public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControlsContainer() { }
@@ -97,7 +92,6 @@ private:
 
 
 class AccessibilityMediaTimeDisplay final : public AccessibilityMediaControl {
-
 public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeDisplay() { }
@@ -113,9 +107,6 @@ private:
     bool computeAccessibilityIsIgnored() const override;
 };
 
-
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)
-
-#endif // AccessibilityMediaControls_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef FormAssociatedElement_h
-#define FormAssociatedElement_h
+#pragma once
 
 #include "FormNamedItem.h"
 #include <wtf/text/WTFString.h>
@@ -122,5 +121,3 @@ private:
 };
 
 } // namespace
-
-#endif // FormAssociatedElement_h

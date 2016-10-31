@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef JSWorkerGlobalScopeBase_h
-#define JSWorkerGlobalScopeBase_h
+#pragma once
 
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
@@ -82,5 +81,3 @@ namespace WebCore {
     JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::JSValue);
 
 } // namespace WebCore
-
-#endif // JSWorkerGlobalScopeBase_h

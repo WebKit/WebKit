@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessagePortChannel_h
-#define MessagePortChannel_h
+#pragma once
 
 #include "SerializedScriptValue.h"
 #include <memory>
@@ -87,5 +86,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // MessagePortChannel_h

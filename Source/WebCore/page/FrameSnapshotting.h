@@ -27,8 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameSnapshotting_h
-#define FrameSnapshotting_h
+#pragma once
 
 #include <memory>
 #include <wtf/Vector.h>
@@ -57,5 +56,3 @@ std::unique_ptr<ImageBuffer> snapshotNode(Frame&, Node&);
 WEBCORE_EXPORT std::unique_ptr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions = SnapshotOptionsNone);
 
 } // namespace WebCore
-
-#endif // FrameSnapshotting_h

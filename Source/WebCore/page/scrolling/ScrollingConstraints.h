@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingConstraints_h
-#define ScrollingConstraints_h
+#pragma once
 
 #include "FloatRect.h"
 
@@ -200,5 +199,3 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FixedPositionViewportCo
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StickyPositionViewportConstraints&);
 
 } // namespace WebCore
-
-#endif // ScrollingConstraints_h

@@ -25,8 +25,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DOMPath_h
-#define DOMPath_h
+#pragma once
 
 #include "CanvasPath.h"
 #include "SVGMatrix.h"
@@ -70,5 +69,4 @@ private:
     { }
 };
 
-}
-#endif
+} // namespace WebCore

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef LabelsNodeList_h
-#define LabelsNodeList_h
+#pragma once
 
 #include "LabelableElement.h"
 #include "LiveNodeList.h"
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // LabelsNodeList_h

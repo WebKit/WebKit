@@ -19,8 +19,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef DOMWrapperWorld_h
-#define DOMWrapperWorld_h
+#pragma once
 
 #include "JSDOMGlobalObject.h"
 #include <wtf/Forward.h>
@@ -83,5 +82,3 @@ inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject* object)
 }
     
 } // namespace WebCore
-
-#endif // DOMWrapperWorld_h

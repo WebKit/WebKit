@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLTemplateElement_h
-#define HTMLTemplateElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLTemplateElement_h

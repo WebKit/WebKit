@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlayController_h
-#define PageOverlayController_h
+#pragma once
 
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
@@ -101,5 +100,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PageOverlayController_h

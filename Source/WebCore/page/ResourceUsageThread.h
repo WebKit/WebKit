@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceUsageThread_h
-#define ResourceUsageThread_h
+#pragma once
 
 #if ENABLE(RESOURCE_USAGE)
 
@@ -88,5 +87,3 @@ void logFootprintComparison(const std::array<TagInfo, 256>&, const std::array<Ta
 } // namespace WebCore
 
 #endif // ENABLE(RESOURCE_USAGE)
-
-#endif // ResourceUsageThread_h

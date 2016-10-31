@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMessageHandlerDescriptor_h
-#define UserMessageHandlerDescriptor_h
+#pragma once
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
@@ -57,4 +56,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
-#endif // UserMessageHandlerDescriptor_h

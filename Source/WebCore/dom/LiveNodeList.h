@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef LiveNodeList_h
-#define LiveNodeList_h
+#pragma once
 
 #include "CollectionIndexCache.h"
 #include "CollectionTraversal.h"
@@ -162,5 +161,3 @@ void CachedLiveNodeList<NodeListType>::invalidateCache(Document& document) const
 }
 
 } // namespace WebCore
-
-#endif // LiveNodeList_h

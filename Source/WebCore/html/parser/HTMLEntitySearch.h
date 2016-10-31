@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLEntitySearch_h
-#define HTMLEntitySearch_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -67,6 +66,4 @@ private:
     const HTMLEntityTableEntry* m_last;
 };
 
-}
-
-#endif
+} // namespace WebCore

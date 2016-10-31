@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceTiming_h
-#define PerformanceTiming_h
+#pragma once
 
 #if ENABLE(WEB_TIMING)
 
@@ -39,11 +38,10 @@
 
 namespace WebCore {
 
-class LoadTiming;
 class DocumentLoader;
-struct DocumentTiming;
 class Frame;
-class NetworkLoadTiming;
+class LoadTiming;
+struct DocumentTiming;
 
 class PerformanceTiming : public RefCounted<PerformanceTiming>, public DOMWindowProperty {
 public:
@@ -81,7 +79,6 @@ private:
     unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
 };
 
-}
+} // namespace WebCore
 
 #endif // !ENABLE(WEB_TIMING)
-#endif // !defined(PerformanceTiming_h)

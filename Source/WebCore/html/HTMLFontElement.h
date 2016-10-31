@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLFontElement_h
-#define HTMLFontElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -41,6 +40,4 @@ private:
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

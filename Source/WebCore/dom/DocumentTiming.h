@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DocumentTiming_h
-#define DocumentTiming_h
+#pragma once
 
 #if ENABLE(WEB_TIMING)
 
@@ -47,8 +46,6 @@ struct DocumentTiming {
     double domComplete;
 };
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(WEB_TIMING)

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLParserIdioms_h
-#define HTMLParserIdioms_h
+#pragma once
 
 #include <unicode/uchar.h>
 #include <wtf/Forward.h>
@@ -159,6 +158,4 @@ inline unsigned limitToOnlyHTMLNonNegative(StringView stringValue, unsigned defa
     return value;
 }
 
-}
-
-#endif
+} // namespace WebCore

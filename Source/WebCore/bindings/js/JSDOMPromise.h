@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDOMPromise_h
-#define JSDOMPromise_h
+#pragma once
 
 #include "ActiveDOMCallback.h"
 #include "JSDOMBinding.h"
@@ -337,6 +336,4 @@ inline void DeferredPromise::reject(const String& result)
     reject(*exec, jsString(exec, result));
 }
 
-}
-
-#endif // JSDOMPromise_h
+} // namespace WebCore

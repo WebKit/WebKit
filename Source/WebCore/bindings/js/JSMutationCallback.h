@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSMutationCallback_h
-#define JSMutationCallback_h
+#pragma once
 
 #include "ActiveDOMCallback.h"
 #include "DOMWrapperWorld.h"
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

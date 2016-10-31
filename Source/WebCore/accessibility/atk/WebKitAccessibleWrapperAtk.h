@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAccessibleWrapperAtk_h
-#define WebKitAccessibleWrapperAtk_h
+#pragma once
 
 #if HAVE(ACCESSIBILITY)
 
@@ -85,5 +84,4 @@ const char* cacheAndReturnAtkProperty(AtkObject*, AtkCachedProperty, String valu
 
 G_END_DECLS
 
-#endif
-#endif // WebKitAccessibleWrapperAtk_h
+#endif // HAVE(ACCESSIBILITY)

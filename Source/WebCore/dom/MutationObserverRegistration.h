@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MutationObserverRegistration_h
-#define MutationObserverRegistration_h
+#pragma once
 
 #include "MutationObserver.h"
 #include <wtf/HashSet.h>
@@ -73,5 +72,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MutationObserverRegistration_h

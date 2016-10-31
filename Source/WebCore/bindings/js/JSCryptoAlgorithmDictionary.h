@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCryptoAlgorithmDictionary_h
-#define JSCryptoAlgorithmDictionary_h
+#pragma once
+
+#if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmIdentifier.h"
 #include <wtf/RefPtr.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace JSC {
 class ExecState;
@@ -56,7 +55,6 @@ public:
     static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForExportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // JSCryptoAlgorithmDictionary_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMessageHandlerDescriptorTypes_h
-#define UserMessageHandlerDescriptorTypes_h
+#pragma once
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
@@ -43,4 +42,3 @@ typedef HashMap<std::pair<AtomicString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMes
 } // namespace WebCore
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
-#endif // UserMessageHandlerDescriptorTypes_h

@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef SecurityContext_h
-#define SecurityContext_h
+#pragma once
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -101,5 +100,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SecurityContext_h

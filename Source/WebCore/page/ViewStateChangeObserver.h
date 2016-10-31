@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewStateChangeObserver_h
-#define ViewStateChangeObserver_h
+#pragma once
 
 #include "ViewState.h"
 
@@ -40,5 +39,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ViewStateChangeObserver_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityARIAGrid_h
-#define AccessibilityARIAGrid_h
+#pragma once
 
 #include "AccessibilityTable.h"
 #include <wtf/Forward.h>
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore 
-
-#endif // AccessibilityARIAGrid_h

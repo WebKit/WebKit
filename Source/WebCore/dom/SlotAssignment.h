@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SlotAssignment_h
-#define SlotAssignment_h
-
+#pragma once
 
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
@@ -130,7 +128,4 @@ inline void ShadowRoot::innerSlotDidChange(const AtomicString& name)
         m_slotAssignment->didChangeSlot(name, SlotAssignment::ChangeType::InnerSlot, *this);
 }
 
-}
-
-
-#endif /* SlotAssignment_h */
+} // namespace WebCore

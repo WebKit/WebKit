@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLFrameSetElement_h
-#define HTMLFrameSetElement_h
+#pragma once
 
 #include "HTMLElement.h"
 #include <memory>
@@ -82,5 +81,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLFrameSetElement_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientationData_h
-#define DeviceOrientationData_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <wtf/Ref.h>
@@ -86,5 +85,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DeviceOrientationData_h

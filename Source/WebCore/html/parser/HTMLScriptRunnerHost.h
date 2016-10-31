@@ -23,17 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLScriptRunnerHost_h
-#define HTMLScriptRunnerHost_h
-
-#include <wtf/Forward.h>
+#pragma once
 
 namespace WebCore {
 
-class Element;
 class HTMLInputStream;
 class PendingScript;
-class ScriptSourceCode;
 
 class HTMLScriptRunnerHost {
 public:
@@ -47,10 +42,7 @@ public:
     virtual HTMLInputStream& inputStream() = 0;
 
     virtual bool hasPreloadScanner() const = 0;
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;
-    
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;    
 };
 
-}
-
-#endif
+} // namespace WebCore

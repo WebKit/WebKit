@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DetailsMarkerControl_h
-#define DetailsMarkerControl_h
+#pragma once
 
 #include "HTMLDivElement.h"
 
@@ -47,6 +46,4 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
 };
 
-}
-
-#endif
+} // namespace WebCore

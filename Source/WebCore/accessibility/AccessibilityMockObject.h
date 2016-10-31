@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityMockObject_h
-#define AccessibilityMockObject_h
+#pragma once
 
 #include "AccessibilityObject.h"
 
@@ -57,5 +56,3 @@ private:
 } // namespace WebCore 
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMockObject, isMockObject())
-
-#endif // AccessibilityMockObject_h

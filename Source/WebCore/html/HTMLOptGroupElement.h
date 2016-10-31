@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef HTMLOptGroupElement_h
-#define HTMLOptGroupElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -54,6 +53,4 @@ private:
     void recalcSelectOptions();
 };
 
-} //namespace
-
-#endif
+} // namespace WebCore

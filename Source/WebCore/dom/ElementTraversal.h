@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef ElementTraversal_h
-#define ElementTraversal_h
+#pragma once
 
 #include "Element.h"
 #include "NodeTraversal.h"
@@ -287,6 +286,4 @@ inline Element* ElementTraversal::pseudoAwarePreviousSibling(const Node& current
     return downcast<Element>(node);
 }
 
-}
-
-#endif
+} // namespace WebCore

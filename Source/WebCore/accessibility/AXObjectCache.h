@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AXObjectCache_h
-#define AXObjectCache_h
+#pragma once
 
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
@@ -520,6 +519,4 @@ inline AXAttributeCacheEnabler::~AXAttributeCacheEnabler() { }
 
 #endif
 
-}
-
-#endif
+} // namespace WebCore

@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef CompositionEvent_h
-#define CompositionEvent_h
+#pragma once
 
 #include "UIEvent.h"
 
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CompositionEvent_h

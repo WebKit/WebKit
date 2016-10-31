@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PrintContext_h
-#define PrintContext_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -104,6 +103,4 @@ private:
     bool m_isPrinting;
 };
 
-}
-
-#endif
+} // namespace WebCore

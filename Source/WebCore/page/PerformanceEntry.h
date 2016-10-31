@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceEntry_h
-#define PerformanceEntry_h
+#pragma once
 
 #if ENABLE(WEB_TIMING)
 
@@ -70,7 +69,6 @@ private:
     const double m_duration;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEB_TIMING)
-#endif // !defined(PerformanceEntry_h)

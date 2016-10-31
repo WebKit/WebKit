@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InputStreamPreprocessor_h
-#define InputStreamPreprocessor_h
+#pragma once
 
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
@@ -134,7 +133,4 @@ private:
     bool m_skipNextNewLine;
 };
 
-}
-
-#endif // InputStreamPreprocessor_h
-
+} // namespace WebCore

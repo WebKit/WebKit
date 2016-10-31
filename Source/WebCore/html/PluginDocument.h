@@ -22,8 +22,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginDocument_h
-#define PluginDocument_h
+#pragma once
 
 #include "HTMLDocument.h"
 
@@ -67,5 +66,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PluginDocument)
     static bool isType(const WebCore::Document& document) { return document.isPluginDocument(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // PluginDocument_h

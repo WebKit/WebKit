@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AlternativeTextClient_h
-#define AlternativeTextClient_h
+#pragma once
 
 #include "FloatRect.h"
 #include "TextChecking.h"
@@ -34,7 +33,7 @@
 #if PLATFORM(MAC)
 // Some platforms provide UI for suggesting alternative dictation text.
 #define USE_DICTATION_ALTERNATIVES 1
-#endif // PLATFORM(MAC)
+#endif
 
 namespace WebCore {
 
@@ -73,6 +72,4 @@ public:
 #endif
 };
     
-}
-
-#endif // AlternativeTextClient_h
+} // namespace WebCore

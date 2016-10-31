@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutMilestones_h
-#define LayoutMilestones_h
+#pragma once
 
 namespace WebCore {
 
@@ -44,5 +43,3 @@ enum LayoutMilestoneFlag {
 typedef unsigned LayoutMilestones;
 
 } // namespace WebCore
-
-#endif // LayoutMilestones_h

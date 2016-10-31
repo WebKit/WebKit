@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChildListMutationScope_h
-#define ChildListMutationScope_h
+#pragma once
 
 #include "Document.h"
 #include "MutationObserver.h"
@@ -100,5 +99,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChildListMutationScope_h

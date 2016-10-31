@@ -108,4 +108,4 @@ private:
     unsigned m_priority;
 };
 
-}
+} // namespace WebCore

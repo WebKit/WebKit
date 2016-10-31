@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkStore_h
-#define VisitedLinkStore_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // VisitedLinkStore_h

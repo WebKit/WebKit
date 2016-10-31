@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAccessibleHyperlink_h
-#define WebKitAccessibleHyperlink_h
+#pragma once
 
 #if HAVE(ACCESSIBILITY)
 
@@ -60,6 +59,4 @@ WebCore::AccessibilityObject* webkitAccessibleHyperlinkGetAccessibilityObject(We
 
 G_END_DECLS
 
-#endif // WebKitAccessibleHyperlink_h
-
-#endif
+#endif // HAVE(ACCESSIBILITY)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FocusEvent_h
-#define FocusEvent_h
+#pragma once
 
 #include "EventTarget.h"
 #include "UIEvent.h"
@@ -66,5 +65,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(FocusEvent)
-
-#endif // FocusEvent_h

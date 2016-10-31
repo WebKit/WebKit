@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCryptoKeySerializationJWK_h
-#define JSCryptoKeySerializationJWK_h
+#pragma once
+
+#if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeySerialization.h"
 #include <heap/Strong.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace JSC {
 class ExecState;
@@ -69,7 +68,6 @@ private:
     mutable String m_jwkAlgorithmName; // Stored when reconcileAlgorithm is called, and used later.
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // JSCryptoKeySerializationJWK_h

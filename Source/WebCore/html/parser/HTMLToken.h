@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLToken_h
-#define HTMLToken_h
+#pragma once
 
 #include "Attribute.h"
 
@@ -452,6 +451,4 @@ inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList&
     return nullptr;
 }
 
-}
-
-#endif
+} // namespace WebCore

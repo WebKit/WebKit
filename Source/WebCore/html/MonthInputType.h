@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MonthInputType_h
-#define MonthInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_MONTH)
+
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -55,5 +55,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif // MonthInputType_h
+#endif // ENABLE(INPUT_TYPE_MONTH)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLRenderbuffer_h
-#define WebGLRenderbuffer_h
+#pragma once
 
 #include "WebGLSharedObject.h"
 
@@ -78,5 +77,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLRenderbuffer_h

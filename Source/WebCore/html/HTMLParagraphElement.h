@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLParagraphElement_h
-#define HTMLParagraphElement_h
+#pragma once
 
 #include "HTMLElement.h"
 
@@ -40,5 +39,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HTMLParagraphElement_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLRegistry_h
-#define URLRegistry_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -57,5 +56,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // URLRegistry_h

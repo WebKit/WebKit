@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitNamespace_h
-#define WebKitNamespace_h
+#pragma once
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
@@ -58,4 +57,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
-#endif // WebKitNamespace_h

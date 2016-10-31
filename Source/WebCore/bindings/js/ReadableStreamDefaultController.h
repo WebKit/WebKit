@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReadableStreamDefaultController_h
-#define ReadableStreamDefaultController_h
+#pragma once
 
 #if ENABLE(READABLE_STREAM_API)
 
@@ -118,5 +117,3 @@ inline void ReadableStreamDefaultController::error<String>(const String& errorMe
 } // namespace WebCore
 
 #endif // ENABLE(READABLE_STREAM_API)
-
-#endif // ReadableStreamDefaultController_h

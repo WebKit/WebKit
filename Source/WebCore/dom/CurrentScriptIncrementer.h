@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CurrentScriptIncrementer_h
-#define CurrentScriptIncrementer_h
+#pragma once
 
 #include "Document.h"
 #include "HTMLScriptElement.h"
@@ -56,6 +55,4 @@ private:
     bool m_isHTMLScriptElementOutsideShadowTree;
 };
 
-}
-
-#endif
+} // namespace WebCore

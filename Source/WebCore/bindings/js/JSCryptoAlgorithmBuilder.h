@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCryptoAlgorithmBuilder_h
-#define JSCryptoAlgorithmBuilder_h
+#pragma once
+
+#if ENABLE(SUBTLE_CRYPTO)
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace JSC {
 class ExecState;
@@ -61,4 +60,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // JSCryptoAlgorithmBuilder_h

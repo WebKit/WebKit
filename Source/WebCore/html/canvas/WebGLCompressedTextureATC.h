@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLCompressedTextureATC_h
-#define WebGLCompressedTextureATC_h
+#pragma once
 
 #include "WebGLExtension.h"
 
@@ -43,5 +42,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // WebGLCompressedTextureATC_h

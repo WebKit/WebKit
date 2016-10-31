@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlugInClient_h
-#define PlugInClient_h
+#pragma once
 
 #include "SessionID.h"
 #include <wtf/Forward.h>
@@ -41,5 +40,4 @@ protected:
     virtual ~PlugInClient() { }
 };
 
-}
-#endif // PlugInClient_h
+} // namespace WebCore

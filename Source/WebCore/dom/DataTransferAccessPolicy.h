@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataTransferAccessPolicy_h
-#define DataTransferAccessPolicy_h
+#pragma once
 
 namespace WebCore {
 
@@ -32,6 +31,4 @@ enum class DataTransferAccessPolicy {
     Numb, ImageWritable, Writable, TypesReadable, Readable
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

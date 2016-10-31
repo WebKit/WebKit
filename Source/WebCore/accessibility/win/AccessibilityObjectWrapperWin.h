@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
-#ifndef AccessibilityObjectWrapperWin_h
-#define AccessibilityObjectWrapperWin_h
+#pragma once
 
 #include <unknwn.h>
 #include <wtf/text/AtomicString.h>
@@ -55,5 +53,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // AccessibilityObjectWrapperWin_h

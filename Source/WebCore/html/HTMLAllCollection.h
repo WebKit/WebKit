@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLAllCollection_h
-#define HTMLAllCollection_h
+#pragma once
 
 #include "AllDescendantsCollection.h"
 
@@ -44,5 +43,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection, DocAll)
-
-#endif // HTMLAllCollection_h

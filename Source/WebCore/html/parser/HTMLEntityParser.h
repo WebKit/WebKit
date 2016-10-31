@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLEntityParser_h
-#define HTMLEntityParser_h
+#pragma once
 
 #include "SegmentedString.h"
 
@@ -36,6 +35,4 @@ bool consumeHTMLEntity(SegmentedString&, StringBuilder& decodedEntity, bool& not
 // Used by the XML parser.  Not suitable for use in HTML parsing.  Use consumeHTMLEntity instead.
 size_t decodeNamedEntityToUCharArray(const char*, UChar result[4]);
 
-}
-
-#endif
+} // namespace WebCore

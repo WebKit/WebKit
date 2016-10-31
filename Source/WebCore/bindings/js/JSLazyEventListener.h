@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef JSLazyEventListener_h
-#define JSLazyEventListener_h
+#pragma once
 
 #include "JSEventListener.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // JSLazyEventListener_h

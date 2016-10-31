@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NFAToDFA_h
-#define NFAToDFA_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -42,10 +41,7 @@ public:
     WEBCORE_EXPORT static DFA convert(NFA&);
 };
 
-}
-
+} // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // NFAToDFA_h

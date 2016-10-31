@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef DocumentMarker_h
-#define DocumentMarker_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -212,8 +211,7 @@ inline void DocumentMarker::setMetadata(id metadata)
 }
 #endif
 
-class DocumentMarkerDetails : public RefCounted<DocumentMarkerDetails>
-{
+class DocumentMarkerDetails : public RefCounted<DocumentMarkerDetails> {
 public:
     DocumentMarkerDetails() { }
     virtual ~DocumentMarkerDetails();
@@ -222,5 +220,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // DocumentMarker_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef DocumentParser_h
-#define DocumentParser_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -116,5 +115,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DocumentParser_h

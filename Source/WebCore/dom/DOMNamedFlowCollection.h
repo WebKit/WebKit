@@ -26,8 +26,8 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef DOMNamedFlowCollection_h
-#define DOMNamedFlowCollection_h
+
+#pragma once
 
 #include "NamedFlowCollection.h"
 #include <wtf/ListHashSet.h>
@@ -61,5 +61,3 @@ private:
 };
 
 } // namespace WebCore
-#endif
-

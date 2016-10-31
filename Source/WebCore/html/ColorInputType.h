@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ColorInputType_h
-#define ColorInputType_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
@@ -76,5 +75,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
-
-#endif // ColorInputType_h

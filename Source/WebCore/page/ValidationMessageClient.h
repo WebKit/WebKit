@@ -23,8 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ValidationMessageClient_h
-#define ValidationMessageClient_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -50,6 +49,4 @@ public:
     virtual bool isValidationMessageVisible(const Element& anchor) = 0;
 };
 
-}
-
-#endif
+} // namespace WebCore

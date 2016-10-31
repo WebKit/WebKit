@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiagnosticLoggingClient_h
-#define DiagnosticLoggingClient_h
+#pragma once
 
 #include "DiagnosticLoggingResultType.h"
 #include <wtf/FastMalloc.h>
@@ -56,6 +55,4 @@ inline bool DiagnosticLoggingClient::shouldLogAfterSampling(ShouldSample shouldS
     return randomNumber() <= selectionProbability;
 }
 
-}
-
-#endif
+} // namespace WebCore

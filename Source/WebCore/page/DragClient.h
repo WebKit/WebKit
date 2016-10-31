@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
-#ifndef DragClient_h
-#define DragClient_h
+#pragma once
 
 #include "DragActions.h"
 #include "DragImage.h"
@@ -64,6 +62,3 @@ public:
 };
     
 } // namespace WebCore
-
-#endif // DragClient_h
-

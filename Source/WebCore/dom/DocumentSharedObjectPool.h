@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef DocumentSharedObjectPool_h
-#define DocumentSharedObjectPool_h
+#pragma once
 
 #include <memory>
 #include <wtf/HashMap.h>
@@ -47,6 +46,4 @@ private:
     ShareableElementDataCache m_shareableElementDataCache;
 };
 
-}
-
-#endif
+} // namespace WebCore

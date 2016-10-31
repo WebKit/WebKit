@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef SimulatedClickOptions_h
-#define SimulatedClickOptions_h
+#pragma once
 
 namespace WebCore {
 
@@ -35,5 +34,3 @@ enum SimulatedClickVisualOptions {
 };
 
 } // namespace WebCore
-
-#endif // SimulatedClickOptions_h

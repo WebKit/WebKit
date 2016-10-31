@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLSharedObject_h
-#define WebGLSharedObject_h
+#pragma once
 
 #include "WebGLObject.h"
 
@@ -75,5 +74,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebGLSharedObject_h

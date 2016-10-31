@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef BeforeUnloadEvent_h
-#define BeforeUnloadEvent_h
+#pragma once
 
 #include "Event.h"
 
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(BeforeUnloadEvent)
-
-#endif // BeforeUnloadEvent_h

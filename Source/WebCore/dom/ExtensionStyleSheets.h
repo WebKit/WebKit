@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef ExtensionStyleSheets_h
-#define ExtensionStyleSheets_h
+#pragma once
 
 #include "Timer.h"
 #include <memory>
@@ -94,7 +93,4 @@ private:
 #endif
 };
 
-}
-
-#endif
-
+} // namespace WebCore
