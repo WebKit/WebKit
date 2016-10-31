@@ -1,3 +1,25 @@
+2016-10-31  Mark Lam  <mark.lam@apple.com>
+
+        Add $vm.codeBlockFor() debugging utility.
+        https://bugs.webkit.org/show_bug.cgi?id=164192
+
+        Reviewed by Saam Barati.
+
+        Sometimes, while debugging, it would be nice if we can get the codeBlock info for
+        a function.  Amongst other uses, this is useful for checking what optimization
+        level the function is currently at.  With $vm.codeBlockFor(), we can now do this.
+        For example, when JS_useDollarVM=true:
+
+            print("test's codeBlock = " + $vm.codeBlockFor(test)); // prints function test's codeBlock.
+
+        Also added some comments to clarify some pre-existing code.
+
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::functionCodeBlockFor):
+        (JSC::JSDollarVMPrototype::finishCreation):
+
 2016-10-31  Saam Barati  <sbarati@apple.com>
 
         GetByOffset rule is has incorrect assumptions inside arguments elimination phase
