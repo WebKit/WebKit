@@ -619,7 +619,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassDir:
         case CSSSelector::PseudoClassRole: {
             const CSSParserToken& ident = block.consumeIncludingWhitespace();
-            if (ident.type() != IdentToken)
+            if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
             selector->setArgument(ident.value().toAtomicString());
             return selector;

@@ -1,5 +1,15 @@
 2016-10-31  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Make sure to fail on :role(a,b) and :dir(a,b)
+        https://bugs.webkit.org/show_bug.cgi?id=164233
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+
+2016-10-31  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Allow unitless values on background-size in quirks mode
         https://bugs.webkit.org/show_bug.cgi?id=164232
 
