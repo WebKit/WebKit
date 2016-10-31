@@ -471,8 +471,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         if (!(position instanceof WebInspector.SourceCodePosition))
             return;
 
-        let lineHandle = this._codeMirror.getLineHandle(position.lineNumber);
-        if (!lineHandle || !this._visible || this._initialStringNotSet || this._deferReveal) {
+        if (!this._visible || this._initialStringNotSet || this._deferReveal) {
             // If we can't get a line handle or are not visible then we wait to do the reveal.
             this._positionToReveal = position;
             this._textRangeToSelect = textRangeToSelect;
@@ -495,8 +494,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         }
 
         let line = Number.constrain(position.lineNumber, 0, this._codeMirror.lineCount() - 1);
-        if (line !== position.lineNumber)
-            lineHandle = this._codeMirror.getLineHandle(line);
+        let lineHandle = this._codeMirror.getLineHandle(line);
 
         if (!textRangeToSelect) {
             let column = Number.constrain(position.columnNumber, 0, this._codeMirror.getLine(line).length - 1);

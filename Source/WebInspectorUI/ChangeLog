@@ -1,3 +1,16 @@
+2016-10-31  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Entering ":n" in Open Resource Dialog, where n > number of lines, should jump to the last line
+        https://bugs.webkit.org/show_bug.cgi?id=160840
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.revealPosition):
+        Since it is possible for the given position to be outside the bounds of the CodeMirror
+        instance, wait to get the line handler for the highlight animation until we have constrained
+        the position value.
+
 2016-10-28  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Preferences for Text Editor behavior
