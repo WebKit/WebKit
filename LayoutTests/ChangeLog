@@ -1,5 +1,16 @@
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Changing expectation from Failure to Skip for two insertReplacementText tests on ios-simulator.
+
+        Unreviewed test gardening.
+
+        These tests will always time out on ios-simulator due to reliance upon
+        testRunner.waitUntilDone().
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking three modern-media-controls tests as flaky.
 
         Unreviewed test gardening.
