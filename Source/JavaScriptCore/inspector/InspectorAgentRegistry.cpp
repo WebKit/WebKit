@@ -40,7 +40,7 @@ AgentRegistry::~AgentRegistry()
     // Allow agents to remove cross-references to other agents that would otherwise
     // make it difficult to establish a correct destruction order for all agents.
     for (auto& agent : m_agents)
-        agent->discardAgent();    
+        agent->discardAgent();
 }
 
 void AgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
@@ -69,5 +69,10 @@ void AgentRegistry::willDestroyFrontendAndBackend(DisconnectReason reason)
         agent->willDestroyFrontendAndBackend(reason);
 }
 
-} // namespace Inspector
+void AgentRegistry::discardValues()
+{
+    for (auto& agent : m_agents)
+        agent->discardValues();
+}
 
+} // namespace Inspector

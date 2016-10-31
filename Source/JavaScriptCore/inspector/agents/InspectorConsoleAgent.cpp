@@ -66,6 +66,11 @@ void InspectorConsoleAgent::willDestroyFrontendAndBackend(DisconnectReason)
     disable(errorString);
 }
 
+void InspectorConsoleAgent::discardValues()
+{
+    m_consoleMessages.clear();
+}
+
 void InspectorConsoleAgent::enable(ErrorString&)
 {
     if (m_enabled)

@@ -107,6 +107,8 @@ void WorkerInspectorController::workerTerminating()
     m_injectedScriptManager->disconnect();
 
     disconnectFrontend(Inspector::DisconnectReason::InspectedTargetDestroyed);
+
+    m_agents.discardValues();
 }
 
 void WorkerInspectorController::connectFrontend()

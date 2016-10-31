@@ -70,6 +70,7 @@ public:
 
     virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) = 0;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) = 0;
+    virtual void discardValues() { }
     virtual void discardAgent() { }
 
 protected:

@@ -211,6 +211,8 @@ void InspectorController::inspectedPageDestroyed()
 
     // Clean up resources and disconnect local and remote frontends.
     disconnectAllFrontends();
+
+    m_agents.discardValues();
 }
 
 void InspectorController::setInspectorFrontendClient(InspectorFrontendClient* inspectorFrontendClient)

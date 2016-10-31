@@ -119,6 +119,8 @@ void JSGlobalObjectInspectorController::globalObjectDestroyed()
     ASSERT(!m_frontendRouter->hasFrontends());
 
     m_injectedScriptManager->disconnect();
+
+    m_agents.discardValues();
 }
 
 void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel* frontendChannel, bool isAutomaticInspection)
