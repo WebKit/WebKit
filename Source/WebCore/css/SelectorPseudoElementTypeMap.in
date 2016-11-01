@@ -15,4 +15,3 @@ placeholder, PseudoElementWebKitCustom
 -webkit-scrollbar-track
 -webkit-scrollbar-track-piece
 selection
-slotted

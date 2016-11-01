@@ -494,6 +494,15 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
     case CSSParserSelectorCombinator::IndirectAdjacent:
         selectorRelation = CSSSelector::IndirectAdjacent;
         break;
+    case CSSParserSelectorCombinator::ShadowDeep:
+        selectorRelation = CSSSelector::ShadowDeep;
+        break;
+    case CSSParserSelectorCombinator::ShadowPseudo:
+        selectorRelation = CSSSelector::ShadowPseudo;
+        break;
+    case CSSParserSelectorCombinator::ShadowSlot:
+        selectorRelation = CSSSelector::ShadowSlot;
+        break;
     }
     end->setRelation(selectorRelation);
     end->setTagHistory(WTFMove(selector));

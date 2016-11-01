@@ -472,6 +472,7 @@ static bool isPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassType)
     case CSSSelector::PseudoClassNthLastOfType:
     case CSSSelector::PseudoClassLang:
     case CSSSelector::PseudoClassAny:
+    case CSSSelector::PseudoClassHost:
 #if ENABLE_CSS_SELECTORS_LEVEL4
     case CSSSelector::PseudoClassDir:
     case CSSSelector::PseudoClassRole:
@@ -517,12 +518,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     // uses without breaking it; this hack allows function selectors to work. When the new
     // parser turns on, we can patch the map and remove this code.
     String newValue;
-    if (token.type() == FunctionToken && colons == 1) {
-        String tokenString = value.toString();
-        if (!tokenString.startsWithIgnoringASCIICase("host")) {
-            newValue = value.toString() + "(";
-            value = newValue;
-        }
+    if (token.type() == FunctionToken) {
+        newValue = value.toString() + "(";
+        value = newValue;
     }
 
     if (colons == 1)
@@ -606,6 +604,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
         }
+        // FIXME-NEWPARSER: Support :host-context
         case CSSSelector::PseudoClassAny:
         case CSSSelector::PseudoClassHost: {
             DisallowPseudoElementsScope scope(this);
@@ -700,7 +699,17 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
         return CSSSelector::Child;
     }
 
-    return fallbackResult;
+    // Match /deep/
+    if (delimiter != '/')
+        return fallbackResult;
+    range.consume();
+    const CSSParserToken& ident = range.consume();
+    if (ident.type() != IdentToken || !equalIgnoringASCIICase(ident.value(), "deep"))
+        m_failedParsing = true;
+    const CSSParserToken& slash = range.consumeIncludingWhitespace();
+    if (slash.type() != DelimiterToken || slash.delimiter() != '/')
+        m_failedParsing = true;
+    return CSSSelector::ShadowDeep;
 }
 
 CSSSelector::Match CSSSelectorParser::consumeAttributeMatch(CSSParserTokenRange& range)
@@ -838,9 +847,7 @@ const AtomicString& CSSSelectorParser::determineNamespace(const AtomicString& pr
 
 void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector* compoundSelector)
 {
-    bool isShadowDOM = compoundSelector->needsImplicitShadowCombinatorForMatching();
-    
-    if (elementName.isNull() && defaultNamespace() == starAtom && !isShadowDOM)
+    if (elementName.isNull() && defaultNamespace() == starAtom && !compoundSelector->needsImplicitShadowCombinatorForMatching())
         return;
 
     AtomicString determinedElementName = elementName.isNull() ? starAtom : elementName;
@@ -854,16 +861,16 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomicString& namespac
         determinedPrefix = nullAtom;
     QualifiedName tag = QualifiedName(determinedPrefix, determinedElementName, namespaceURI);
 
-    // *:host never matches, so we can't discard the *,
+    // *:host/*:host-context never matches, so we can't discard the *,
     // otherwise we can't tell the difference between *:host and just :host.
     //
     // Also, selectors where we use a ShadowPseudo combinator between the
     // element and the pseudo element for matching (custom pseudo elements,
-    // ::cue), we need a universal selector to set the combinator
+    // ::cue, ::shadow), we need a universal selector to set the combinator
     // (relation) on in the cases where there are no simple selectors preceding
     // the pseudo element.
     bool explicitForHost = compoundSelector->isHostPseudoSelector() && !elementName.isNull();
-    if (tag != anyQName() || explicitForHost || isShadowDOM)
+    if (tag != anyQName() || explicitForHost || compoundSelector->needsImplicitShadowCombinatorForMatching())
         compoundSelector->prependTagSelector(tag, determinedPrefix == nullAtom && determinedElementName == starAtom && !explicitForHost);
 }
 
@@ -901,7 +908,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
         return compoundSelector;
 
     std::unique_ptr<CSSParserSelector> secondCompound = splitAfter->releaseTagHistory();
-    secondCompound->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
+    secondCompound->appendTagHistory(secondCompound->pseudoElementType() == CSSSelector::PseudoElementSlotted ? CSSSelector::ShadowSlot : CSSSelector::ShadowPseudo, WTFMove(compoundSelector));
     return secondCompound;
 }
 

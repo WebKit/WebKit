@@ -194,7 +194,10 @@ enum class CSSParserSelectorCombinator {
     DescendantDoubleChild,
 #endif
     DirectAdjacent,
-    IndirectAdjacent
+    IndirectAdjacent,
+    ShadowPseudo, // Special case of shadow DOM pseudo elements / shadow pseudo element
+    ShadowDeep, // /deep/ combinator
+    ShadowSlot // slotted to <slot> e
 };
 
 class CSSParserSelector {
@@ -259,11 +262,8 @@ public:
 
     bool isHostPseudoSelector() const;
 
-    // FIXME-NEWPARSER: "slotted" was removed here for now, since it leads to a combinator
-    // connection of ShadowDescendant, and the current shadow DOM code doesn't expect this. When
-    // we do fix this issue, make sure to patch the namespace prependTag code to remove the slotted
-    // special case, since it will be covered by this function once again.
-    bool needsImplicitShadowCombinatorForMatching() const { return match() == CSSSelector::PseudoElement && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed || pseudoElementType() == CSSSelector::PseudoElementCue); }
+    // FIXME-NEWPARSER: Missing "shadow"
+    bool needsImplicitShadowCombinatorForMatching() const { return match() == CSSSelector::PseudoElement && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed || pseudoElementType() == CSSSelector::PseudoElementCue || pseudoElementType() == CSSSelector::PseudoElementSlotted); }
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }

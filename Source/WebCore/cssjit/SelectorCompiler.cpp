@@ -414,6 +414,9 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
         return FragmentRelation::IndirectAdjacent;
     case CSSSelector::Subselector:
     case CSSSelector::ShadowDescendant:
+    case CSSSelector::ShadowPseudo:
+    case CSSSelector::ShadowDeep:
+    case CSSSelector::ShadowSlot:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
