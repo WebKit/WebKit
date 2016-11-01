@@ -36,6 +36,7 @@
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
 #include "InlineTextBox.h"
+#include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "RenderBlockFlow.h"
@@ -883,7 +884,9 @@ static String externalRepresentation(RenderBox* renderer, RenderAsTextBehavior b
     TextStream ts;
     if (!renderer->hasLayer())
         return ts.release();
-        
+
+    LOG(Layout, "externalRepresentation: dumping layer tree");
+
     RenderLayer* layer = renderer->layer();
     writeLayers(ts, layer, layer, layer->rect(), 0, behavior);
     writeSelection(ts, renderer);

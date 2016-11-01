@@ -1,0 +1,14 @@
+layer at (0,0) size 2008x2016
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2016
+  RenderBlock {HTML} at (0,0) size 800x2016
+    RenderBody {BODY} at (8,8) size 2000x2000
+layer at (200,10) size 400x100
+  RenderBlock (positioned) {DIV} at (200,0) size 400x100 [bgcolor=#808080]
+layer at (200,510) size 400x100
+  RenderBlock (positioned) {DIV} at (200,500) size 400x100 [bgcolor=#808080]
+layer at (0,160) size 100x300
+  RenderBlock (positioned) {DIV} at (0,150) size 100x300 [bgcolor=#808080]
+layer at (700,160) size 100x300
+  RenderBlock (positioned) {DIV} at (700,150) size 100x300 [bgcolor=#808080]
+scrolled to 275,10

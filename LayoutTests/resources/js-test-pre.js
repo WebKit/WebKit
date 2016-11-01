@@ -193,7 +193,7 @@ function stringify(v)
 function evalAndLog(_a, _quiet)
 {
   if (typeof _a != "string")
-    debug("WARN: tryAndLog() expects a string argument");
+    debug("WARN: evalAndLog() expects a string argument");
 
   // Log first in case things go horribly wrong or this causes a sync event.
   if (!_quiet)
@@ -206,6 +206,21 @@ function evalAndLog(_a, _quiet)
     testFailed(_a + " threw exception " + e);
   }
   return _av;
+}
+
+function evalAndLogResult(_a)
+{
+  if (typeof _a != "string")
+    debug("WARN: evalAndLogResult() expects a string argument");
+
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+    testFailed(_a + " threw exception " + e);
+  }
+
+  debug('<span>' + _a + " is " + escapeHTML(_av) + '</span>');
 }
 
 function shouldBe(_a, _b, quiet)
@@ -445,7 +460,8 @@ function shouldNotBeEqualToString(a, b)
 }
 function shouldBeEmptyString(_a) { shouldBeEqualToString(_a, ""); }
 
-function shouldEvaluateTo(actual, expected) {
+function shouldEvaluateTo(actual, expected)
+{
   // A general-purpose comparator.  'actual' should be a string to be
   // evaluated, as for shouldBe(). 'expected' may be any type and will be
   // used without being eval'ed.

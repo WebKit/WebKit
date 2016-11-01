@@ -2775,7 +2775,8 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (m_renderView.frameView().useFixedLayout())
         viewBounds = m_renderView.unscaledDocumentRect();
     else
-        viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
+        viewBounds = m_renderView.frameView().rectForFixedPositionLayout();
+
     LayoutRect layerBounds = layer.calculateLayerBounds(&layer, LayoutSize(), RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.
@@ -3718,7 +3719,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     ASSERT(layer.isComposited());
 
     GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
-    LayoutRect viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
+    LayoutRect viewportRect = m_renderView.frameView().rectForFixedPositionLayout();
 
     FixedPositionViewportConstraints constraints;
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());

@@ -358,7 +358,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
                 if (footerLayer)
                     footerLayer->syncPosition(positionForFooterLayer);
 
-                LayoutRect viewportRect = frameView.viewportConstrainedVisibleContentRect();
+                LayoutRect viewportRect = frameView.rectForFixedPositionLayout();
                 syncChildPositions(viewportRect);
             }
         }

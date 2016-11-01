@@ -71,7 +71,8 @@ private:
     Timer m_updateTimer;
 
     Ref<PlatformCALayer> m_layer;
-    Ref<PlatformCALayer> m_visibleRectIndicatorLayer;
+    Ref<PlatformCALayer> m_visibleViewportIndicatorLayer;
+    Ref<PlatformCALayer> m_layoutViewportIndicatorLayer;
     Ref<PlatformCALayer> m_coverageRectIndicatorLayer;
 
     FloatPoint m_position;

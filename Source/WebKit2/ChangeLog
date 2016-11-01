@@ -1,3 +1,15 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Add basic visual/layout viewport support for fixed position layout
+        https://bugs.webkit.org/show_bug.cgi?id=164261
+
+        Reviewed by Dean Jackson.
+
+        Don't make visualViewportEnabled an experimental feature, because I don't want it enabled
+        by default in WebKitTestRunner (and therefore mismatching DumpRenderTree).
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should support SharedArrayBuffer

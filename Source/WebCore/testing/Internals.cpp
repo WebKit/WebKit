@@ -1081,6 +1081,30 @@ ExceptionOr<void> Internals::setScrollViewPosition(int x, int y)
     return { };
 }
 
+ExceptionOr<Ref<ClientRect>> Internals::layoutViewportRect()
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { INVALID_ACCESS_ERR };
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    auto& frameView = *document->view();
+    return ClientRect::create(frameView.layoutViewportRect());
+}
+
+ExceptionOr<Ref<ClientRect>> Internals::visualViewportRect()
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { INVALID_ACCESS_ERR };
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    auto& frameView = *document->view();
+    return ClientRect::create(frameView.visualViewportRect());
+}
+
 ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue)
 {
     Document* document = contextDocument();

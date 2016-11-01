@@ -460,7 +460,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
         return constrainingRect;
     }
     
-    return view().frameView().viewportConstrainedVisibleContentRect();
+    return view().frameView().rectForFixedPositionLayout();
 }
 
 LayoutSize RenderBoxModelObject::stickyPositionOffset() const

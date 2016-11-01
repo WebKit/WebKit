@@ -1,3 +1,26 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Add basic visual/layout viewport support for fixed position layout
+        https://bugs.webkit.org/show_bug.cgi?id=164261
+
+        Reviewed by Dean Jackson.
+
+        * fast/visual-viewport/nonzoomed-rects-expected.txt: Added.
+        * fast/visual-viewport/nonzoomed-rects.html: Added.
+        * fast/visual-viewport/zoomed-fixed-expected.txt: Added.
+        * fast/visual-viewport/zoomed-fixed-scroll-down-then-up-expected.txt: Added.
+        * fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html: Added.
+        * fast/visual-viewport/zoomed-fixed.html: Added.
+        * fast/visual-viewport/zoomed-rects-expected.txt: Added.
+        * fast/visual-viewport/zoomed-rects.html: Added.
+        * platform/ios-simulator/fast/visual-viewport/nonzoomed-rects-expected.txt: Added.
+        * platform/ios-simulator/fast/visual-viewport/zoomed-fixed-scroll-down-then-up-expected.txt: Added.
+        * platform/ios-simulator/fast/visual-viewport/zoomed-rects-expected.txt: Added.
+        * resources/js-test-pre.js:
+        (evalAndLog):
+        (evalAndLogResult):
+        (shouldEvaluateTo):
+
 2016-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should support SharedArrayBuffer

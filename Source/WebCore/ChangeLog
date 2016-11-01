@@ -1,5 +1,86 @@
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Add basic visual/layout viewport support for fixed position layout
+        https://bugs.webkit.org/show_bug.cgi?id=164261
+
+        Reviewed by Dean Jackson.
+
+        This patch adds a new behavior for position:fixed objects on zooming. Instead of
+        interpolating between two implicit viewports as we do now, have explicit and distinct
+        layout and visual viewports.
+
+        The layout viewport is always the size of the initial containing block (i.e. the RenderView).
+        Position:fixed and sticky elements are laid out relative to the layout viewport.
+
+        The visual viewport is the visible part of the view, in content coordinates.
+
+        When the user pans and zooms, the visual viewport changes. If it hits the edge of the
+        layout viepwort, it pushes the layout viewport in that direction; it's as if the user
+        is dragging the layout viewport around.
+
+        The layout viewport is maintained on FrameView, and has to be recomputed when the
+        scroll position changes, when the view size changes, and when the content size (which
+        affets min/max scroll position) changes. Layout viewport size and position are computed
+        in unzoomed coordinates, requiring some new functions on FrameView to return these.
+
+        Updated the TileCoverageMap to show the layout viewport visually.
+
+        Subsequent patches will plumb the layout and visual viewports through the scrolling tree.
+
+        Tests: fast/visual-viewport/nonzoomed-rects.html
+               fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html
+               fast/visual-viewport/zoomed-fixed.html
+               fast/visual-viewport/zoomed-rects.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::fixedScrollableAreaBoundsInflatedForScrolling):
+        (WebCore::FrameView::scrollPositionRespectingCustomFixedPosition):
+        (WebCore::FrameView::computeLayoutViewportOrigin):
+        (WebCore::FrameView::setLayoutViewportOrigin):
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::minStableLayoutViewportOrigin):
+        (WebCore::FrameView::maxStableLayoutViewportOrigin):
+        (WebCore::FrameView::layoutViewportRect):
+        (WebCore::FrameView::visualViewportRect):
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect):
+        (WebCore::FrameView::rectForFixedPositionLayout):
+        (WebCore::FrameView::scrollPositionForFixedPosition):
+        (WebCore::FrameView::unscaledMinimumScrollPosition):
+        (WebCore::FrameView::unscaledMaximumScrollPosition):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::availableContentSizeChanged):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::useCustomFixedPositionLayoutRect):
+        * page/FrameView.h:
+        * page/Settings.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setLayoutViewportRect):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::update):
+        * platform/graphics/ca/TileCoverageMap.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation): Logging here is useful when debugging tests.
+        * testing/Internals.cpp:
+        (WebCore::Internals::layoutViewportRect): Expose these rects so tests can dump them.
+        (WebCore::Internals::visualViewportRect):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
         Fix bindings tests after r208209.
 
         * bindings/scripts/test/JS/JSTestObj.cpp:

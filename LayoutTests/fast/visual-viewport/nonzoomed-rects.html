@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+    </style>
+    <script>
+        description("This test scrolls the page and checks that the layout and visual viewports respond as expected.");
+
+        if (window.internals)
+            internals.settings.setVisualViewportEnabled(true);
+
+        window.jsTestIsAsync = true;
+
+        function doTest()
+        {
+            // Zooming may scroll the view away from the origin.
+            window.scrollTo(0, 0);
+
+            // Don't use shouldBeEqualToString() to avoid showing failures when correct output differs between platforms. 
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(475, 525);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(100, 776);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(50, 300);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            window.scrollTo(0, 0);
+
+            finishJSTest();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

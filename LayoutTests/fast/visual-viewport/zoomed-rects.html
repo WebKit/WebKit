@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("This test zooms and scrolls the page and checks that the layout and visual viewports respond as expected.");
+
+        if (window.internals)
+            internals.settings.setVisualViewportEnabled(true);
+
+        window.jsTestIsAsync = true;
+
+        function doAfterZooming()
+        {
+            window.scrollTo(0, 0);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(475, 525);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(100, 776);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            debug('');
+            window.scrollTo(50, 300);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            window.scrollTo(0, 0);
+
+            finishJSTest();
+        }
+        
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                doAfterZooming();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

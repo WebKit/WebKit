@@ -190,6 +190,15 @@ void TileController::setVisibleRect(const FloatRect& rect)
     updateTileCoverageMap();
 }
 
+void TileController::setLayoutViewportRect(Optional<FloatRect> rect)
+{
+    if (rect == m_layoutViewportRect)
+        return;
+
+    m_layoutViewportRect = rect;
+    updateTileCoverageMap();
+}
+
 void TileController::setCoverageRect(const FloatRect& rect)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());

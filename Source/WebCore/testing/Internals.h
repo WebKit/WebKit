@@ -160,6 +160,10 @@ public:
     void invalidateFontCache();
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
+    
+    ExceptionOr<Ref<ClientRect>> layoutViewportRect();
+    ExceptionOr<Ref<ClientRect>> visualViewportRect();
+    
     ExceptionOr<void> setViewBaseBackgroundColor(const String& colorValue);
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);

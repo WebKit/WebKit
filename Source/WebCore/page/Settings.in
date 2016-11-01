@@ -277,7 +277,7 @@ treatIPAddressAsDomain initial=false
 variationFontsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1, conditional=VARIATION_FONTS
 
 # Runtime-enabled features
-visualViewportEnabled initial=false
+visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 intersectionObserverEnabled initial=false
 
 inputEventsEnabled initial=false

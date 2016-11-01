@@ -147,6 +147,9 @@ enum UserInterfaceLayoutDirection {
 
     [MayThrowException] void setScrollViewPosition(long x, long y);
 
+    [MayThrowException] ClientRect layoutViewportRect();
+    [MayThrowException] ClientRect visualViewportRect();
+
     [MayThrowException] void setViewBaseBackgroundColor(DOMString colorValue);
 
     [MayThrowException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);

@@ -1811,7 +1811,7 @@ static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 #if PLATFORM(IOS)
 static bool shouldMakeViewportFlexible(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "viewport/");
+    return strstr(pathOrURL, "viewport/") && !strstr(pathOrURL, "visual-viewport/");
 }
 #endif
 

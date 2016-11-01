@@ -39,7 +39,7 @@ static bool pathContains(const std::string& pathOrURL, const char* substring)
 
 static bool shouldMakeViewportFlexible(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "viewport/");
+    return pathContains(pathOrURL, "viewport/") && !pathContains(pathOrURL, "visual-viewport/");
 }
 
 static bool shouldUseFixedLayout(const std::string& pathOrURL)

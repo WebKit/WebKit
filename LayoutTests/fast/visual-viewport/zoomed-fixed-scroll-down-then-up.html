@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            background-color: gray;
+        }
+        
+        .top, .bottom {
+            width: 50%;
+            left: 25%;
+            height: 100px;
+        }
+
+        .left, .right {
+            width: 100px;
+            top: 25%;
+            height: 50%;
+        }
+
+        .top { top: 0; }
+        .bottom { bottom: 0; }
+
+        .left { left: 0; }
+        .right { right: 0; }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals)
+            internals.settings.setVisualViewportEnabled(true);
+        
+        function doAfterZooming()
+        {
+            window.scrollTo(275, 525);
+            window.scrollTo(275, 10);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                doAfterZooming();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="fixed top"></div>
+<div class="fixed bottom"></div>
+<div class="fixed left"></div>
+<div class="fixed right"></div>
+
+</body>
+</html>

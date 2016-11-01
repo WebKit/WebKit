@@ -231,6 +231,7 @@
     macro(SelectionPaintingWithoutSelectionGapsEnabled, selectionPaintingWithoutSelectionGapsEnabled, Bool, bool, DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED, "", "") \
     macro(ApplePayEnabled, applePayEnabled, Bool, bool, false, "", "") \
     macro(ApplePayCapabilityDisclosureAllowed, applePayCapabilityDisclosureAllowed, Bool, bool, true, "", "") \
+    macro(VisualViewportEnabled, visualViewportEnabled, Bool, bool, false, "", "") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
@@ -294,7 +295,6 @@
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, false, "Modern Media Controls", "Use modern media controls look") \
     macro(VariationFontsEnabled, variationFontsEnabled, Bool, bool, true, "Variation Fonts", "Enable variation fonts") \
     macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, false, "Input Events", "Enable InputEvents support") \
-    macro(VisualViewportEnabled, visualViewportEnabled, Bool, bool, false, "Visual Viewport", "Use Visual Viewport for fixed elements when zooming") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, true, "WebGL 2.0", "WebGL 2 prototype") \
     \
 

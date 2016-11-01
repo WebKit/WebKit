@@ -26,6 +26,8 @@
 #ifndef TiledBacking_h
 #define TiledBacking_h
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 enum TileSizeMode {
@@ -71,6 +73,9 @@ public:
 
     virtual void setVisibleRect(const FloatRect&) = 0;
     virtual FloatRect visibleRect() const = 0;
+
+    // Only used to update the tile coverage map. 
+    virtual void setLayoutViewportRect(Optional<FloatRect>) = 0;
 
     virtual void setCoverageRect(const FloatRect&) = 0;
     virtual FloatRect coverageRect() const = 0;
