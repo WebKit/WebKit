@@ -37,18 +37,16 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         try:
             import psutil
             for attempt in xrange(max_attempt):
-                try:
-                    self._server_port = psutil.Process(self._server_process.pid).connections()[0][3][1]
-                    if self._server_port:
-                        _log.info('HTTP Server is serving at port: %d', self._server_port)
-                        break
-                except IndexError:
-                    pass
+                connections = psutil.Process(self._server_process.pid).connections()
+                if connections and connections[0].laddr and connections[0].laddr[1] and connections[0].status == 'LISTEN':
+                    self._server_port = connections[0].laddr[1]
+                    _log.info('HTTP Server is serving at port: %d', self._server_port)
+                    break
                 _log.info('Server port is not found this time, retry after %f seconds' % interval)
                 time.sleep(interval)
                 interval *= 2
             else:
-                raise Exception("Cannot listen to server, max tries exceeded")
+                raise Exception("Server is not listening on port, max tries exceeded. HTTP server may be installing dependent modules.")
         except ImportError:
             for attempt in xrange(max_attempt):
                 try:
