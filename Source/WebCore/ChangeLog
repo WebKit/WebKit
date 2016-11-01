@@ -1,3 +1,15 @@
+2016-11-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208100.
+
+        This change caused LayoutTest crashes under GuardMalloc.
+
+        Reverted changeset:
+
+        "MediaEndpoint::generateDtlsInfo is not needed"
+        https://bugs.webkit.org/show_bug.cgi?id=164130
+        http://trac.webkit.org/changeset/208100
+
 2016-11-01  Claudio Saavedra  <csaavedra@igalia.com>
 
         Add missing inline include to JSDeviceMotionEventCustom
