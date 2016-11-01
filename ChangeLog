@@ -1,3 +1,14 @@
+2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom elements by default everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=164242
+
+        Reviewed by Michael Catanzaro.
+
+        Enable the Custom Elements API in CMake builds.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-10-30  Frederic Wang  <fwang@igalia.com>
 
         Use HarfBuzz ot-math API to parse the OpenType MATH table
