@@ -82,12 +82,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 NS_ASSUME_NONNULL_END
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 @interface AVPlayer (AVPlayerVideoSleepPrevention)
 @property (nonatomic, getter=_preventsSleepDuringVideoPlayback, setter=_setPreventsSleepDuringVideoPlayback:) BOOL preventsSleepDuringVideoPlayback;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 
 #if !PLATFORM(IOS)
 

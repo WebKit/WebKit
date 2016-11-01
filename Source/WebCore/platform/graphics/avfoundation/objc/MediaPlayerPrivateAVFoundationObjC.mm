@@ -1050,7 +1050,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     setShouldDisableSleep(player()->shouldDisableSleep());
 #endif
 
@@ -3268,7 +3268,7 @@ URL MediaPlayerPrivateAVFoundationObjC::resolvedURL() const
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(_setPreventsSleepDuringVideoPlayback:)])
         [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
 #else
