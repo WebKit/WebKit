@@ -1,3 +1,16 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove test workaround now that original issue is fixed
+        https://bugs.webkit.org/show_bug.cgi?id=164255
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.logResolvedBreakpointLinesWithContext):
+        (TestPage.registerInitializer.window.logLinesWithContext):
+        (TestPage.registerInitializer.String.prototype.myPadStart): Deleted.
+        Use the real String.prototype.padStart now that it is fixed.
+
 2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable custom elements by default everywhere
