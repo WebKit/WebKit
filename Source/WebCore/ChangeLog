@@ -1,3 +1,12 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Warning: Multiple build commands for output file RenderThemeCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=164265
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should support SharedArrayBuffer

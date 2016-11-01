@@ -26918,7 +26918,6 @@
 				E4C91A16180999F100A17F6D /* RenderTextLineBoxes.h in Headers */,
 				BCEA488A097D93020094C9E4 /* RenderTheme.h in Headers */,
 				1A299FE81D7F5FA600A60093 /* RenderThemeCocoa.h in Headers */,
-				1A299FE81D7F5FA600A60093 /* RenderThemeCocoa.h in Headers */,
 				FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */,
 				BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
