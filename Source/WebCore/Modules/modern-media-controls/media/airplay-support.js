@@ -23,27 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class AirplayButton extends IconButton
+class AirplaySupport extends MediaControllerSupport
 {
 
-    constructor(layoutDelegate)
+    // Protected
+
+    get control()
     {
-        super({
-            cssClassName: "airplay",
-            iconName: Icons.Airplay,
-            layoutDelegate
-        });
+        return this.mediaController.controls.airplayButton;
     }
 
-    // Public
-
-    get on()
+    get mediaEvents()
     {
-        return this.element.classList.contains("on");
+        return ["webkitplaybacktargetavailabilitychanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
-    set on(flag) {
-        this.element.classList.toggle("on", flag);
+    buttonWasClicked(control)
+    {
+        this.mediaController.media.webkitShowPlaybackTargetPicker();
+    }
+
+    handleEvent(event)
+    {
+        if (event.type === "webkitplaybacktargetavailabilitychanged")
+            this._routesAvailable = event.availability === "available";
+
+        super.handleEvent(event);
+    }
+
+    syncControl()
+    {
+        this.control.enabled = !!this._routesAvailable;
+        this.control.on = this.mediaController.media.webkitCurrentPlaybackTargetIsWireless;
     }
 
 }

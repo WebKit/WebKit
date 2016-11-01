@@ -38,6 +38,7 @@ class MediaController
         this.controls = new MacOSInlineMediaControls
         shadowRoot.appendChild(this.controls.element);        
 
+        new AirplaySupport(this);
         new ElapsedTimeSupport(this);
         new MuteSupport(this);
         new PlacardSupport(this);
