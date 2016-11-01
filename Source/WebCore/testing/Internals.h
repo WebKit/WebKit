@@ -284,6 +284,8 @@ public:
     ExceptionOr<String> pageProperty(const String& propertyName, int pageNumber) const;
     ExceptionOr<String> pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const;
 
+    ExceptionOr<float> pageScaleFactor() const;
+
     ExceptionOr<void> setPageScaleFactor(float scaleFactor, int x, int y);
     ExceptionOr<void> setPageZoomFactor(float);
     ExceptionOr<void> setTextZoomFactor(float);

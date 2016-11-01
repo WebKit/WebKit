@@ -1,3 +1,18 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make UIScriptController::zoomToScale() work on Mac WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=164238
+
+        Reviewed by Dean Jackson.
+
+        Implement UIScriptController::zoomToScale() for WTR and DRT on Mac.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::zoomToScale):
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::zoomToScale):
+
 2016-10-31  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update twisted version in webkitpy.thirdparty.autoinstalled module.

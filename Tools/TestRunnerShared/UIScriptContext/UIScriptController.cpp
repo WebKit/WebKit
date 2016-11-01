@@ -157,11 +157,13 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
     return m_context->callbackWithID(CallbackTypeDidHideKeyboard);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(COCOA)
 void UIScriptController::zoomToScale(double, JSValueRef)
 {
 }
+#endif
 
+#if !PLATFORM(IOS)
 void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef)
 {
 }

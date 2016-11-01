@@ -66,4 +66,23 @@ void UIScriptController::insertText(JSStringRef text, int location, int length)
 #endif
 }
 
+void UIScriptController::zoomToScale(double scale, JSValueRef callback)
+{
+#if WK_API_ENABLED
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+    [webView _setPageScale:scale withOrigin:CGPointZero];
+
+    [webView _doAfterNextPresentationUpdate: ^ {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+#else
+    UNUSED_PARAM(scale);
+    UNUSED_PARAM(callback);
+#endif
 }
+
+} // namespace WTR

@@ -278,6 +278,8 @@ enum UserInterfaceLayoutDirection {
     [MayThrowException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
     [MayThrowException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
+    [MayThrowException] float pageScaleFactor();
+
     [MayThrowException] void setPageZoomFactor(unrestricted float zoomFactor);
     [MayThrowException] void setTextZoomFactor(unrestricted float zoomFactor);
 

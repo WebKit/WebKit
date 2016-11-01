@@ -2017,6 +2017,15 @@ ExceptionOr<String> Internals::pageSizeAndMarginsInPixels(int pageNumber, int wi
     return PrintContext::pageSizeAndMarginsInPixels(frame(), pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
 
+ExceptionOr<float> Internals::pageScaleFactor() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { INVALID_ACCESS_ERR };
+
+    return document->page()->pageScaleFactor();
+}
+
 ExceptionOr<void> Internals::setPageScaleFactor(float scaleFactor, int x, int y)
 {
     Document* document = contextDocument();

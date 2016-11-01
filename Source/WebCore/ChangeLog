@@ -1,3 +1,19 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make UIScriptController::zoomToScale() work on Mac WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=164238
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/zooming/uiscript-zooming.html
+        
+        Expose pageScaleFactor() for tests.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageScaleFactor):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate CanvasRenderingContext's internal canvas pointer to a reference
