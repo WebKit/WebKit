@@ -1,3 +1,21 @@
+2016-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes
+        https://bugs.webkit.org/show_bug.cgi?id=164290
+
+        Reviewed by Tim Horton.
+
+        NSURL fails to parse these URLs, WebKit used to punycode encode them, but now we match Chrome and Firefox,
+        as well as what will likely become the standard once https://github.com/whatwg/url/issues/148 is resolved.
+        We continue to parse IPv6 address hosts because otherwise we wouldn't be able to tell where a port
+        starts in a URL with colons in the IPv6 address and before the port like "a://[b::c]:4"
+
+        Covered by new API tests and updated LayoutTests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::domainToASCII):
+        (WebCore::URLParser::parseHostAndPort):
+
 2016-11-01  Gavin Barraclough  <barraclough@apple.com>
 
         Add IsAudible, IsLoading to ActivityState

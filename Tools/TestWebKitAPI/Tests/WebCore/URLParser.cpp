@@ -129,6 +129,202 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     }
 }
 
+static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+{
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(wasEnabled);
+    
+    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
+    
+    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol().toString()));
+    EXPECT_TRUE(eq(parts.user, oldURL.user()));
+    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
+    EXPECT_TRUE(eq(parts.host, oldURL.host()));
+    EXPECT_EQ(parts.port, oldURL.port().valueOr(0));
+    EXPECT_TRUE(eq(parts.path, oldURL.path()));
+    EXPECT_TRUE(eq(parts.query, oldURL.query()));
+    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, oldURL.string()));
+    
+    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
+    
+    if (testTabs == TestTabs::No)
+        return;
+    
+    for (size_t i = 0; i < urlString.length(); ++i) {
+        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        checkRelativeURL(urlStringWithTab,
+            baseURLString,
+            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+            TestTabs::No);
+    }
+}
+
+static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+{
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(), urlString);
+    URLParser::setEnabled(wasEnabled);
+    
+    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(partsNew.user, url.user()));
+    EXPECT_TRUE(eq(partsNew.password, url.pass()));
+    EXPECT_TRUE(eq(partsNew.host, url.host()));
+    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
+    EXPECT_TRUE(eq(partsNew.path, url.path()));
+    EXPECT_TRUE(eq(partsNew.query, url.query()));
+    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsNew.string, url.string()));
+    
+    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
+    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
+    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
+    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
+    EXPECT_EQ(partsOld.port, oldURL.port().valueOr(0));
+    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
+    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
+    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
+    
+    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
+    
+    if (testTabs == TestTabs::No)
+        return;
+    
+    for (size_t i = 0; i < urlString.length(); ++i) {
+        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        checkURLDifferences(urlStringWithTab,
+            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
+            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+            TestTabs::No);
+    }
+}
+
+static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+{
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(wasEnabled);
+    
+    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(partsNew.user, url.user()));
+    EXPECT_TRUE(eq(partsNew.password, url.pass()));
+    EXPECT_TRUE(eq(partsNew.host, url.host()));
+    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
+    EXPECT_TRUE(eq(partsNew.path, url.path()));
+    EXPECT_TRUE(eq(partsNew.query, url.query()));
+    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsNew.string, url.string()));
+    
+    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
+    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
+    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
+    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
+    EXPECT_EQ(partsOld.port, oldURL.port().valueOr(0));
+    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
+    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
+    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
+    
+    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
+    
+    if (testTabs == TestTabs::No)
+        return;
+    
+    for (size_t i = 0; i < urlString.length(); ++i) {
+        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        checkRelativeURLDifferences(urlStringWithTab, baseURLString,
+            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
+            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+            TestTabs::No);
+    }
+}
+
+static void shouldFail(const String& urlString)
+{
+    checkURL(urlString, {"", "", "", "", 0, "", "", "", urlString});
+}
+
+static void shouldFail(const String& urlString, const String& baseString)
+{
+    checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
+}
+
+static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+{
+    URLParser parser(urlString, { }, encoding);
+    auto url = parser.result();
+    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
+    
+    if (testTabs == TestTabs::No)
+        return;
+    
+    for (size_t i = 0; i < urlString.length(); ++i) {
+        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        checkURL(urlStringWithTab, encoding,
+            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+            TestTabs::No);
+    }
+}
+
+static void checkURL(const String& urlString, const String& baseURLString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+{
+    URLParser baseParser(baseURLString, { }, encoding);
+    URLParser parser(urlString, baseParser.result(), encoding);
+    auto url = parser.result();
+    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
+    
+    if (testTabs == TestTabs::No)
+        return;
+    
+    for (size_t i = 0; i < urlString.length(); ++i) {
+        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        checkURL(urlStringWithTab, baseURLString, encoding,
+            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+            TestTabs::No);
+    }
+}
+
 template<size_t length>
 static String utf16String(const char16_t (&url)[length])
 {
@@ -341,51 +537,6 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
-static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
-{
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
-    auto url = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(wasEnabled);
-
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
-    EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().valueOr(0));
-    EXPECT_TRUE(eq(parts.path, url.path()));
-    EXPECT_TRUE(eq(parts.query, url.query()));
-    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url.string()));
-
-    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, oldURL.user()));
-    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
-    EXPECT_TRUE(eq(parts.host, oldURL.host()));
-    EXPECT_EQ(parts.port, oldURL.port().valueOr(0));
-    EXPECT_TRUE(eq(parts.path, oldURL.path()));
-    EXPECT_TRUE(eq(parts.query, oldURL.query()));
-    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, oldURL.string()));
-
-    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
-    
-    if (testTabs == TestTabs::No)
-        return;
-
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkRelativeURL(urlStringWithTab,
-            baseURLString,
-            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
-            TestTabs::No);
-    }
-}
-
 TEST_F(URLParserTest, ParseRelative)
 {
     checkRelativeURL("/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "webkit.org", 0, "/index.html", "", "", "http://webkit.org/index.html"});
@@ -395,7 +546,9 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http://example\t.\norg", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/", "", "", "http://example.org/"});
     checkRelativeURL("test", "file:///path1/path2", {"file", "", "", "", 0, "/path1/test", "", "", "file:///path1/test"});
     checkRelativeURL(utf16String(u"http://www.foo。bar.com"), "http://other.com/", {"http", "", "", "www.foo.bar.com", 0, "/", "", "", "http://www.foo.bar.com/"});
-    checkRelativeURL(utf16String(u"sc://ñ.test/"), "about:blank", {"sc", "", "", "xn--ida.test", 0, "/", "", "", "sc://xn--ida.test/"});
+    checkRelativeURLDifferences(utf16String(u"sc://ñ.test/"), "about:blank",
+        {"sc", "", "", "%C3%B1.test", 0, "/", "", "", "sc://%C3%B1.test/"},
+        {"sc", "", "", "xn--ida.test", 0, "/", "", "", "sc://xn--ida.test/"});
     checkRelativeURL("#fragment", "http://host/path", {"http", "", "", "host", 0, "/path", "", "fragment", "http://host/path#fragment"});
     checkRelativeURL("#fragment", "file:///path", {"file", "", "", "", 0, "/path", "", "fragment", "file:///path#fragment"});
     checkRelativeURL("#fragment", "file:///path#old", {"file", "", "", "", 0, "/path", "", "fragment", "file:///path#fragment"});
@@ -465,96 +618,6 @@ TEST_F(URLParserTest, ParseRelative)
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
     checkRelativeURL("http:\\\\host\\foo", "about:blank", {"http", "", "", "host", 0, "/foo", "", "", "http://host/foo"});
-}
-
-static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
-{
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
-    auto url = URL(URL(), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(), urlString);
-    URLParser::setEnabled(wasEnabled);
-
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
-    EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.pass()));
-    EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
-    EXPECT_TRUE(eq(partsNew.path, url.path()));
-    EXPECT_TRUE(eq(partsNew.query, url.query()));
-    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsNew.string, url.string()));
-    
-    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
-    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
-    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
-    EXPECT_EQ(partsOld.port, oldURL.port().valueOr(0));
-    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
-    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
-    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
-    
-    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
-    
-    if (testTabs == TestTabs::No)
-        return;
-
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkURLDifferences(urlStringWithTab,
-            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
-            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
-            TestTabs::No);
-    }
-}
-
-static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
-{
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
-    auto url = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(wasEnabled);
-
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
-    EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.pass()));
-    EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
-    EXPECT_TRUE(eq(partsNew.path, url.path()));
-    EXPECT_TRUE(eq(partsNew.query, url.query()));
-    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsNew.string, url.string()));
-    
-    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
-    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
-    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
-    EXPECT_EQ(partsOld.port, oldURL.port().valueOr(0));
-    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
-    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
-    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
-    
-    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
-
-    if (testTabs == TestTabs::No)
-        return;
-
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkRelativeURLDifferences(urlStringWithTab, baseURLString,
-            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
-            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
-            TestTabs::No);
-    }
 }
 
 // These are differences between the new URLParser and the old URL::parse which make URLParser more standards compliant.
@@ -892,13 +955,11 @@ TEST_F(URLParserTest, ParserDifferences)
         {"http", "", "", "f", 10, "/c", "", "", "http://f:10/c"},
         {"http", "", "", "f", 10, "/c", "", "", "http://f:010/c"});
     checkURL("notspecial://HoSt", {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"});
-    checkURLDifferences("notspecial://H%6FSt",
-        {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"},
-        {"notspecial", "", "", "H%6FSt", 0, "", "", "", "notspecial://H%6FSt"});
-    checkURLDifferences("notspecial://H%4fSt",
-        {"notspecial", "", "", "HOSt", 0, "", "", "", "notspecial://HOSt"},
-        {"notspecial", "", "", "H%4fSt", 0, "", "", "", "notspecial://H%4fSt"});
-    checkURL(utf16String(u"notspecial://H😍ßt"), {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
+    checkURL("notspecial://H%6FSt", {"notspecial", "", "", "H%6FSt", 0, "", "", "", "notspecial://H%6FSt"});
+    checkURL("notspecial://H%4fSt", {"notspecial", "", "", "H%4fSt", 0, "", "", "", "notspecial://H%4fSt"});
+    checkURLDifferences(utf16String(u"notspecial://H😍ßt"),
+        {"notspecial", "", "", "H%F0%9F%98%8D%C3%9Ft", 0, "", "", "", "notspecial://H%F0%9F%98%8D%C3%9Ft"},
+        {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
     checkURLDifferences("http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/",
         {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]/"},
         {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/"}, TestTabs::No);
@@ -981,7 +1042,37 @@ TEST_F(URLParserTest, ParserDifferences)
         {"http", "", "", "[0:0:0:0:a:b:c:d]", 0, "/", "", "", "http://[0:0:0:0:a:b:c:d]/"});
     checkURLDifferences("asdf://[0:0:0:0:a:b:c:d]",
         {"asdf", "", "", "[::a:b:c:d]", 0, "", "", "", "asdf://[::a:b:c:d]"},
-        {"asdf", "", "", "[0:0:0:0:a:b:c:d]", 0, "", "", "", "asdf://[0:0:0:0:a:b:c:d]"});
+        {"asdf", "", "", "[0:0:0:0:a:b:c:d]", 0, "", "", "", "asdf://[0:0:0:0:a:b:c:d]"}, TestTabs::No);
+    shouldFail("a://%:a");
+    checkURL("a://%:/", {"a", "", "", "%", 0, "/", "", "", "a://%/"});
+    checkURL("a://%:", {"a", "", "", "%", 0, "", "", "", "a://%"});
+    checkURL("a://%:1/", {"a", "", "", "%", 1, "/", "", "", "a://%:1/"});
+    checkURLDifferences("http://%:",
+        {"", "", "", "", 0, "", "", "", "http://%:"},
+        {"http", "", "", "%", 0, "/", "", "", "http://%/"});
+    checkURL("a://123456", {"a", "", "", "123456", 0, "", "", "", "a://123456"});
+    checkURL("a://123456:7", {"a", "", "", "123456", 7, "", "", "", "a://123456:7"});
+    checkURL("a://123456:7/", {"a", "", "", "123456", 7, "/", "", "", "a://123456:7/"});
+    checkURL("a://A", {"a", "", "", "A", 0, "", "", "", "a://A"});
+    checkURL("a://A:2", {"a", "", "", "A", 2, "", "", "", "a://A:2"});
+    checkURL("a://A:2/", {"a", "", "", "A", 2, "/", "", "", "a://A:2/"});
+    checkURLDifferences("asd://ß",
+        {"asd", "", "", "%C3%83%C2%9F", 0, "", "", "", "asd://%C3%83%C2%9F"},
+        {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
+    checkURLDifferences("asd://ß:4",
+        {"asd", "", "", "%C3%83%C2%9F", 4, "", "", "", "asd://%C3%83%C2%9F:4"},
+        {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
+    checkURLDifferences("asd://ß:4/",
+        {"asd", "", "", "%C3%83%C2%9F", 4, "/", "", "", "asd://%C3%83%C2%9F:4/"},
+        {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
+    checkURLDifferences("a://[A::b]:4",
+        {"a", "", "", "[a::b]", 4, "", "", "", "a://[a::b]:4"},
+        {"a", "", "", "[A::b]", 4, "", "", "", "a://[A::b]:4"});
+    shouldFail("http://[~]");
+    shouldFail("a://[~]");
+    checkRelativeURLDifferences("a://b", "//[aBc]",
+        {"a", "", "", "b", 0, "", "", "", "a://b"},
+        {"", "", "", "", 0, "", "", "", "a://b"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
@@ -1073,16 +1164,6 @@ TEST_F(URLParserTest, DefaultPort)
         {"", "", "", "", 0, "", "", "", "file://:0/path"},
         {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
 }
-    
-static void shouldFail(const String& urlString)
-{
-    checkURL(urlString, {"", "", "", "", 0, "", "", "", urlString});
-}
-
-static void shouldFail(const String& urlString, const String& baseString)
-{
-    checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
-}
 
 TEST_F(URLParserTest, ParserFailures)
 {
@@ -1137,7 +1218,9 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[a:b:c:d:e:f:g:h:127.0.0.1]");
     shouldFail("http://[a:b:c:d:e:f:127.0.0.0x11]"); // Chrome treats this as hex, Firefox and the spec fail
     shouldFail("http://[a:b:c:d:e:f:127.0.-0.1]");
-    shouldFail("asdf://space InHost");
+    checkURLDifferences("asdf://space In\aHost",
+        {"asdf", "", "", "space In%07Host", 0, "", "", "", "asdf://space In%07Host"},
+        {"", "", "", "", 0, "", "", "", "asdf://space In\aHost"});
     shouldFail("asdf://[0:0:0:0:a:b:c:d");
 }
 
@@ -1177,57 +1260,6 @@ TEST_F(URLParserTest, AdditionalTests)
         {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
     
     // FIXME: Write more invalid surrogate pair tests based on feedback from https://bugs.webkit.org/show_bug.cgi?id=162105
-}
-
-static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
-{
-    URLParser parser(urlString, { }, encoding);
-    auto url = parser.result();
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
-    EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().valueOr(0));
-    EXPECT_TRUE(eq(parts.path, url.path()));
-    EXPECT_TRUE(eq(parts.query, url.query()));
-    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url.string()));
-
-    if (testTabs == TestTabs::No)
-        return;
-
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkURL(urlStringWithTab, encoding,
-            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
-            TestTabs::No);
-    }
-}
-
-static void checkURL(const String& urlString, const String& baseURLString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
-{
-    URLParser baseParser(baseURLString, { }, encoding);
-    URLParser parser(urlString, baseParser.result(), encoding);
-    auto url = parser.result();
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
-    EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().valueOr(0));
-    EXPECT_TRUE(eq(parts.path, url.path()));
-    EXPECT_TRUE(eq(parts.query, url.query()));
-    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url.string()));
-    
-    if (testTabs == TestTabs::No)
-        return;
-
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkURL(urlStringWithTab, baseURLString, encoding,
-            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
-            TestTabs::No);
-    }
 }
 
 TEST_F(URLParserTest, QueryEncoding)

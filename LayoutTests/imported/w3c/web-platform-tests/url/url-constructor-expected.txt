@@ -318,7 +318,7 @@ PASS Parsing: <about:/../> against <about:blank>
 PASS Parsing: <data:/../> against <about:blank> 
 PASS Parsing: <javascript:/../> against <about:blank> 
 FAIL Parsing: <mailto:/../> against <about:blank> assert_equals: origin expected "null" but got "mailto://"
-FAIL Parsing: <sc://ñ.test/> against <about:blank> assert_equals: origin expected "null" but got "sc://xn--ida.test"
+FAIL Parsing: <sc://ñ.test/> against <about:blank> assert_equals: href expected "sc://xn--ida.test/" but got "sc://%C3%B1.test/"
 FAIL Parsing: <sc:\../> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Parsing: <sc::a@example.net> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 PASS Parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank> 

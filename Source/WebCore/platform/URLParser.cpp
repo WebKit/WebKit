@@ -2469,28 +2469,18 @@ Optional<Vector<LChar, URLParser::defaultInlineBufferSize>> URLParser::domainToA
         if (domain.is8Bit()) {
             const LChar* characters = domain.characters8();
             ascii.reserveInitialCapacity(length);
-            if (m_urlIsSpecial) {
-                for (size_t i = 0; i < length; ++i) {
-                    if (UNLIKELY(isASCIIUpper(characters[i])))
-                        syntaxViolation(iteratorForSyntaxViolationPosition);
-                    ascii.uncheckedAppend(toASCIILower(characters[i]));
-                }
-            } else {
-                for (size_t i = 0; i < length; ++i)
-                    ascii.uncheckedAppend(characters[i]);
+            for (size_t i = 0; i < length; ++i) {
+                if (UNLIKELY(isASCIIUpper(characters[i])))
+                    syntaxViolation(iteratorForSyntaxViolationPosition);
+                ascii.uncheckedAppend(toASCIILower(characters[i]));
             }
         } else {
             const UChar* characters = domain.characters16();
             ascii.reserveInitialCapacity(length);
-            if (m_urlIsSpecial) {
-                for (size_t i = 0; i < length; ++i) {
-                    if (UNLIKELY(isASCIIUpper(characters[i])))
-                        syntaxViolation(iteratorForSyntaxViolationPosition);
-                    ascii.uncheckedAppend(toASCIILower(characters[i]));
-                }
-            } else {
-                for (size_t i = 0; i < length; ++i)
-                    ascii.uncheckedAppend(characters[i]);
+            for (size_t i = 0; i < length; ++i) {
+                if (UNLIKELY(isASCIIUpper(characters[i])))
+                    syntaxViolation(iteratorForSyntaxViolationPosition);
+                ascii.uncheckedAppend(toASCIILower(characters[i]));
             }
         }
         return ascii;
@@ -2610,8 +2600,27 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             m_url.m_hostEnd = currentPosition(ipv6End);
             return true;
         }
+        return false;
     }
 
+    if (!m_urlIsSpecial) {
+        for (; !iterator.atEnd(); ++iterator) {
+            if (UNLIKELY(isTabOrNewline(*iterator))) {
+                syntaxViolation(iterator);
+                continue;
+            }
+            if (*iterator == ':')
+                break;
+            utf8PercentEncode<isInSimpleEncodeSet>(iterator);
+        }
+        m_url.m_hostEnd = currentPosition(iterator);
+        if (iterator.atEnd()) {
+            m_url.m_portEnd = currentPosition(iterator);
+            return true;
+        }
+        return parsePort(iterator);
+    }
+    
     if (LIKELY(!m_hostHasPercentOrNonASCII)) {
         auto hostIterator = iterator;
         for (; !iterator.atEnd(); ++iterator) {
@@ -2622,28 +2631,23 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (isInvalidDomainCharacter(*iterator))
                 return false;
         }
-        if (m_urlIsSpecial) {
-            if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
-                serializeIPv4(address.value());
-                m_url.m_hostEnd = currentPosition(iterator);
-                if (iterator.atEnd()) {
-                    m_url.m_portEnd = currentPosition(iterator);
-                    return true;
-                }
-                return parsePort(iterator);
+        if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
+            serializeIPv4(address.value());
+            m_url.m_hostEnd = currentPosition(iterator);
+            if (iterator.atEnd()) {
+                m_url.m_portEnd = currentPosition(iterator);
+                return true;
             }
+            return parsePort(iterator);
         }
         for (; hostIterator != iterator; ++hostIterator) {
             if (UNLIKELY(isTabOrNewline(*hostIterator))) {
                 syntaxViolation(hostIterator);
                 continue;
             }
-            if (m_urlIsSpecial) {
-                if (UNLIKELY(isASCIIUpper(*hostIterator)))
-                    syntaxViolation(hostIterator);
-                appendToASCIIBuffer(toASCIILower(*hostIterator));
-            } else
-                appendToASCIIBuffer(*hostIterator);
+            if (UNLIKELY(isASCIIUpper(*hostIterator)))
+                syntaxViolation(hostIterator);
+            appendToASCIIBuffer(toASCIILower(*hostIterator));
         }
         m_url.m_hostEnd = currentPosition(iterator);
         if (!hostIterator.atEnd())

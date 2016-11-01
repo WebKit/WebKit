@@ -309,7 +309,7 @@ PASS Testing Request url 'about:/../' with base 'about:blank'
 PASS Testing Request url 'data:/../' with base 'about:blank' 
 PASS Testing Request url 'javascript:/../' with base 'about:blank' 
 PASS Testing Request url 'mailto:/../' with base 'about:blank' 
-PASS Testing Request url 'sc://ñ.test/' with base 'about:blank' 
+FAIL Testing Request url 'sc://ñ.test/' with base 'about:blank' assert_equals: expected "sc://xn--ida.test/" but got "sc://%C3%B1.test/"
 PASS Testing Request url 'sc:\../' with base 'about:blank' 
 PASS Testing Request url 'sc::a@example.net' with base 'about:blank' 
 PASS Testing Request url 'http://127.0.0.1:10100/relative_import.html' with base 'about:blank' 

@@ -1,3 +1,19 @@
+2016-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes
+        https://bugs.webkit.org/show_bug.cgi?id=164290
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        Move helper functions to the top so I can use them from any tests.
+        (TestWebKitAPI::shouldFail):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+
 2016-11-01  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [GTK] Failed to generate GeoClue2Interface files.

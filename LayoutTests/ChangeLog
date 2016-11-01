@@ -1,3 +1,14 @@
+2016-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes
+        https://bugs.webkit.org/show_bug.cgi?id=164290
+
+        Reviewed by Tim Horton.
+
+        * fast/url/host-lowercase-per-scheme-expected.txt:
+        * fast/url/safari-extension-expected.txt:
+        * fetch/fetch-url-serialization-expected.txt:
+
 2016-11-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/css/pseudo-element-matches.html as flaky on mac-wk2.
