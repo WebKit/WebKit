@@ -555,7 +555,7 @@
     {
         "name": "Custom Elements",
         "status": {
-            "status": "In Development"
+            "status": "Done"
         },
         "url": "http://w3c.github.io/webcomponents/spec/custom/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150225",

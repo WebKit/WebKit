@@ -3292,10 +3292,6 @@ webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-heade
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Failure ]
 
-webkit.org/b/150225 fast/custom-elements [ Pass ]
-
-webkit.org/b/148695 fast/shadow-dom [ Pass ]
-
 # Touch events is not enabled on Windows
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 

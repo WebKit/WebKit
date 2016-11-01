@@ -230,7 +230,7 @@ my @features = (
       define => "ENABLE_CSS3_TEXT", default => (isEfl() || isGtk()), value => \$css3TextSupport },
 
     { option => "custom-elements", desc => "Toggle custom elements support",
-      define => "ENABLE_CUSTOM_ELEMENTS", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$customElementsSupport },
+      define => "ENABLE_CUSTOM_ELEMENTS", default => 1, value => \$customElementsSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => isEfl(), value => \$customSchemeHandlerSupport },

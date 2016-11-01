@@ -1215,12 +1215,8 @@ webkit.org/b/162305 inspector/css/manager-preferredInspectorStyleSheetForFrame.h
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
-webkit.org/b/148695 fast/shadow-dom [ Pass ]
-
 # Touch events is not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
-
-webkit.org/b/150225 fast/custom-elements [ Pass ]
 
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
