@@ -1464,6 +1464,17 @@ bool MediaPlayer::getRawCookies(const URL& url, Vector<Cookie>& cookies) const
 }
 #endif
 
+void MediaPlayer::setShouldDisableSleep(bool flag)
+{
+    if (m_private)
+        m_private->setShouldDisableSleep(flag);
+}
+
+bool MediaPlayer::shouldDisableSleep() const
+{
+    return m_client.mediaPlayerShouldDisableSleep();
+}
+
 }
 
 #endif

@@ -6327,10 +6327,14 @@ void HTMLMediaElement::applyMediaFragmentURI()
 
 void HTMLMediaElement::updateSleepDisabling()
 {
-    if (!shouldDisableSleep() && m_sleepDisabler)
+    bool shouldDisableSleep = this->shouldDisableSleep();
+    if (!shouldDisableSleep && m_sleepDisabler)
         m_sleepDisabler = nullptr;
-    else if (shouldDisableSleep() && !m_sleepDisabler)
+    else if (shouldDisableSleep && !m_sleepDisabler)
         m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+
+    if (m_player)
+        m_player->setShouldDisableSleep(shouldDisableSleep);
 }
 
 bool HTMLMediaElement::shouldDisableSleep() const

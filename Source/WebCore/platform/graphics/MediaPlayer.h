@@ -275,6 +275,8 @@ public:
 #if USE(GSTREAMER)
     virtual void requestInstallMissingPlugins(const String&, const String&, MediaPlayerRequestInstallMissingPluginsCallback&) { };
 #endif
+
+    virtual bool mediaPlayerShouldDisableSleep() const { return false; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -596,6 +598,9 @@ public:
     Vector<String> preferredAudioCharacteristics() const;
 
     bool ended() const;
+
+    void setShouldDisableSleep(bool);
+    bool shouldDisableSleep() const;
 
 private:
     const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
