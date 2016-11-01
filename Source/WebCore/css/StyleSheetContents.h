@@ -138,7 +138,7 @@ public:
     bool isMutable() const { return m_isMutable; }
     void setMutable() { m_isMutable = true; }
 
-    bool isInMemoryCache() const { return m_inMemoryCacheCount; }
+    bool isInMemoryCache() const { return m_isInMemoryCache; }
     void addedToMemoryCache();
     void removedFromMemoryCache();
 
@@ -162,14 +162,14 @@ private:
     PrefixNamespaceURIMap m_namespaces;
     AtomicString m_defaultNamespace;
 
-    bool m_isUserStyleSheet;
-    bool m_loadCompleted { false };
-    bool m_hasSyntacticallyValidCSSHeader { true };
-    bool m_didLoadErrorOccur { false };
-    bool m_usesStyleBasedEditability { false };
-    bool m_isMutable { false };
-    unsigned m_inMemoryCacheCount { 0 };
-
+    bool m_loadCompleted : 1;
+    bool m_isUserStyleSheet : 1;
+    bool m_hasSyntacticallyValidCSSHeader : 1;
+    bool m_didLoadErrorOccur : 1;
+    bool m_usesStyleBasedEditability : 1;
+    bool m_isMutable : 1;
+    bool m_isInMemoryCache : 1;
+    
     CSSParserContext m_parserContext;
 
     Vector<CSSStyleSheet*> m_clients;

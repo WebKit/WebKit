@@ -1,3 +1,17 @@
+2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207967.
+
+        This change seems to be the cause of at least one LayoutTest
+        becoming flaky.
+
+        Reverted changeset:
+
+        "REGRESSION(r207753-207755): ASSERTION FAILED:
+        m_parsedStyleSheetCache->isInMemoryCache()"
+        https://bugs.webkit.org/show_bug.cgi?id=163905
+        http://trac.webkit.org/changeset/207967
+
 2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Shadow DOM scoped styles are missing
