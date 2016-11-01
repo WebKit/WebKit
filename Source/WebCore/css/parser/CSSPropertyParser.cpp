@@ -1375,7 +1375,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
     if (filterType < CSSValueInvert || filterType > CSSValueDropShadow)
         return nullptr;
     CSSParserTokenRange args = consumeFunction(range);
-    RefPtr<CSSFunctionValue>filterValue = CSSFunctionValue::create(filterType);
+    RefPtr<CSSFunctionValue> filterValue = CSSFunctionValue::create(filterType);
     RefPtr<CSSValue> parsedValue;
 
     if (filterType == CSSValueDropShadow)

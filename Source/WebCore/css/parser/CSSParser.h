@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CSSCalculationValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSParserMode.h"
 #include "CSSParserValues.h"
@@ -34,7 +35,6 @@
 #include "ColorSpace.h"
 #include "MediaQuery.h"
 #include "StyleRuleImport.h"
-#include "WebKitCSSFilterValue.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -334,7 +334,7 @@ public:
     bool parseFilterImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
     bool parseFilter(CSSParserValueList&, RefPtr<CSSValueList>&);
-    RefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList&, WebKitCSSFilterValue::FilterOperationType);
+    RefPtr<CSSFunctionValue> parseBuiltinFilterArguments(CSSValueID, CSSParserValueList&);
 
     RefPtr<CSSValue> parseClipPath();
 

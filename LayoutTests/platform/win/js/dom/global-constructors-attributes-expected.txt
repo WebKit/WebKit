@@ -1768,11 +1768,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnPrope
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSFilterValue').value is WebKitCSSFilterValue
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSFilterValue').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSFilterValue').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSFilterValue').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSFilterValue').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').value is WebKitCSSMatrix
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').hasOwnProperty('set') is false

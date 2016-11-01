@@ -12,7 +12,16 @@
       </filter>
     </defs>
   </svg>
-  <script src="script-tests/effect-reference-delete-crash.js"></script>
+  <script>
+  description("Test that no crash occurs when a SVG filter is deleted that was referenced by a deleted HTML element.");
+
+  html = document.getElementById('html');
+  html.parentNode.removeChild(html);
+  svg = document.getElementById('svg');
+  svg.parentNode.removeChild(svg);
+
+  successfullyParsed = true;
+  </script>
   <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

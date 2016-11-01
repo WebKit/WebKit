@@ -65,7 +65,6 @@
 #include "CSSVariableValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
-#include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -231,8 +230,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCalcValue>(*this, other);
         case ImageSetClass:
             return compareCSSValues<CSSImageSetValue>(*this, other);
-        case WebKitCSSFilterClass:
-            return compareCSSValues<WebKitCSSFilterValue>(*this, other);
         case SVGColorClass:
             return compareCSSValues<SVGColor>(*this, other);
         case SVGPaintClass:
@@ -345,8 +342,6 @@ String CSSValue::cssText() const
         return downcast<CSSCalcValue>(*this).customCSSText();
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).customCSSText();
-    case WebKitCSSFilterClass:
-        return downcast<WebKitCSSFilterValue>(*this).customCSSText();
     case SVGColorClass:
         return downcast<SVGColor>(*this).customCSSText();
     case SVGPaintClass:
@@ -491,9 +486,6 @@ void CSSValue::destroy()
     case FilterImageClass:
         delete downcast<CSSFilterImageValue>(this);
         return;
-    case WebKitCSSFilterClass:
-        delete downcast<WebKitCSSFilterValue>(this);
-        return;
     case SVGColorClass:
         delete downcast<SVGColor>(this);
         return;
@@ -540,8 +532,6 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
     case ImageClass:
     case CursorImageClass:
         return downcast<CSSImageValue>(*this).cloneForCSSOM();
-    case WebKitCSSFilterClass:
-        return downcast<WebKitCSSFilterValue>(*this).cloneForCSSOM();
     case WebKitCSSTransformClass:
         return downcast<WebKitCSSTransformValue>(*this).cloneForCSSOM();
     case ImageSetClass:

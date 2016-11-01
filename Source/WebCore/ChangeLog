@@ -1,3 +1,58 @@
+2016-11-01  Dean Jackson  <dino@apple.com>
+
+        Remove WebKitCSSFilterValue to make Hyatt happy
+        https://bugs.webkit.org/show_bug.cgi?id=164289
+        <rdar://problems/29050973>
+
+        Reviewed by Simon Fraser.
+
+        The new CSS parser should not use WebKitCSSFilterValue. It's non-standard,
+        very likely only used in our tests, doesn't provide much benefit, and will be
+        covered by the new CSSOM function interface.
+
+        Covered by modifying existing tests.
+
+        * DerivedSources.make: Remove WebKitCSSFilterValue.idl.
+
+        * WebCore.xcodeproj/project.pbxproj: Make CSSFunctionValue.h private so API testing
+        can see it.
+
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJSNewlyCreated): No WebKitCSSFilterValue.
+
+        * css/CSSComputedStyleDeclaration.cpp: Use CSSFunctionValue or CSSPrimitiveValue to
+        build up the computed style.
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+
+        * css/CSSValue.cpp: No WebKitCSSFilterValue.
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFilterImageValue):
+        (WebCore::CSSValue::isWebKitCSSFilterValue): Deleted.
+
+        * css/StyleResolver.cpp: Resolve against CSSFunctionValues with
+        CSSValueIDs as name, rather than WebKitCSSFilterValue.
+        (WebCore::filterOperationForType):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+
+        * css/WebKitCSSFilterValue.cpp: Removed.
+        * css/WebKitCSSFilterValue.h: Removed.
+        * css/WebKitCSSFilterValue.idl: Removed.
+
+        * css/parser/CSSParser.cpp: Parse into CSSPrimitiveValue and CSSFunctionValue.
+        (WebCore::isValidPrimitiveFilterFunction):
+        (WebCore::CSSParser::parseBuiltinFilterArguments):
+        (WebCore::cssValueKeywordIDForFunctionName):
+        (WebCore::CSSParser::parseFilter):
+        (WebCore::filterInfoForName): Deleted.
+        * css/parser/CSSParser.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFilterFunction):
+
 2016-11-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add ViewportAPI to features.json

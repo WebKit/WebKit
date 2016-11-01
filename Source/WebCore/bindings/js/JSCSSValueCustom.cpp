@@ -33,11 +33,9 @@
 #include "JSNode.h"
 #include "JSSVGColor.h"
 #include "JSSVGPaint.h"
-#include "JSWebKitCSSFilterValue.h"
 #include "JSWebKitCSSTransformValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
-#include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
 
 using namespace JSC;
@@ -68,8 +66,6 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSVal
 {
     if (value->isWebKitCSSTransformValue())
         return createWrapper<WebKitCSSTransformValue>(globalObject, WTFMove(value));
-    if (value->isWebKitCSSFilterValue())
-        return createWrapper<WebKitCSSFilterValue>(globalObject, WTFMove(value));
     if (value->isValueList())
         return createWrapper<CSSValueList>(globalObject, WTFMove(value));
     if (value->isSVGPaint())
