@@ -70,7 +70,7 @@ public:
     RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
 
     // Called from InspectorInstrumentation
-    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
+    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
 private:
     RefPtr<StorageArea> findStorageArea(ErrorString&, const Inspector::InspectorObject&, Frame*&);

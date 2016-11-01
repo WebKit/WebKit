@@ -2099,15 +2099,13 @@ void InspectorDOMAgent::didChangeCustomElementState(Element& element)
     m_frontendDispatcher->customElementStateChanged(elementId, customElementState(element));
 }
 
-void InspectorDOMAgent::frameDocumentUpdated(Frame* frame)
+void InspectorDOMAgent::frameDocumentUpdated(Frame& frame)
 {
-    Document* document = frame->document();
+    Document* document = frame.document();
     if (!document)
         return;
 
-    Page* page = frame->page();
-    ASSERT(page);
-    if (frame != &page->mainFrame())
+    if (!frame.isMainFrame())
         return;
 
     // Only update the main frame document, nested frame document updates are not required

@@ -76,7 +76,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
 
 void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
 {
-    InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, &page);
+    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, SessionStorage, securityOrigin);
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->sessionStorage();
@@ -88,7 +88,7 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
 void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
 {
     for (auto& page : pageGroup.pages())
-        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, page);
+        InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, LocalStorage, securityOrigin);
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->localStorage();

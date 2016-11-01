@@ -124,11 +124,11 @@ public:
     void didEvaluateScript(Frame&);
     void didInvalidateLayout(Frame&);
     void willLayout(Frame&);
-    void didLayout(RenderObject*);
+    void didLayout(RenderObject&);
     void willComposite(Frame&);
     void didComposite();
     void willPaint(Frame&);
-    void didPaint(RenderObject*, const LayoutRect&);
+    void didPaint(RenderObject&, const LayoutRect&);
     void willRecalculateStyle(Frame*);
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(Frame*);

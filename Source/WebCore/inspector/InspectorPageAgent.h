@@ -120,7 +120,7 @@ public:
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     void domContentEventFired();
     void loadEventFired();
-    void frameNavigated(DocumentLoader*);
+    void frameNavigated(Frame&);
     void frameDetached(Frame&);
     void loaderDetachedFromFrame(DocumentLoader&);
     void frameStartedLoading(Frame&);
@@ -130,7 +130,7 @@ public:
     void willRunJavaScriptDialog(const String& message);
     void didRunJavaScriptDialog();
     void applyEmulatedMedia(String&);
-    void didPaint(RenderObject*, const LayoutRect&);
+    void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
     void didScroll();
     void didRecalculateStyle();

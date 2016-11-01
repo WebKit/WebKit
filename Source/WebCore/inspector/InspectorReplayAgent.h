@@ -67,7 +67,7 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // InspectorInstrumentation callbacks.
-    void frameNavigated(DocumentLoader*);
+    void frameNavigated(Frame&);
     void frameDetached(Frame&);
     void willDispatchEvent(const Event&, Frame*);
 

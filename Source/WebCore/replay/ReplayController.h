@@ -131,7 +131,7 @@ public:
     void switchSession(RefPtr<ReplaySession>&&);
 
     // InspectorReplayAgent notifications.
-    void frameNavigated(DocumentLoader*);
+    void frameNavigated(Frame&);
     void frameDetached(Frame&);
     void willDispatchEvent(const Event&, Frame*);
 

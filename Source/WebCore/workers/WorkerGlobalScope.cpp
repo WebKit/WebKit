@@ -228,7 +228,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         if (scriptLoader->failed())
             return Exception { NETWORK_ERR };
 
-        InspectorInstrumentation::scriptImported(this, scriptLoader->identifier(), scriptLoader->script());
+        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
 
         NakedPtr<JSC::Exception> exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader->script(), scriptLoader->responseURL()), exception);
@@ -258,7 +258,7 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
         return;
     }
 
-    InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
+    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
@@ -278,7 +278,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTFMove(callStack), requestIdentifier);
     else
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
-    InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
+    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
 
 bool WorkerGlobalScope::isContextThread() const

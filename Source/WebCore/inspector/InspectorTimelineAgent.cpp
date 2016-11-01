@@ -325,14 +325,14 @@ void InspectorTimelineAgent::willLayout(Frame& frame)
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, &frame);
 }
 
-void InspectorTimelineAgent::didLayout(RenderObject* root)
+void InspectorTimelineAgent::didLayout(RenderObject& root)
 {
     if (m_recordStack.isEmpty())
         return;
     TimelineRecordEntry& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Layout);
     Vector<FloatQuad> quads;
-    root->absoluteQuads(quads);
+    root.absoluteQuads(quads);
     if (quads.size() >= 1)
         TimelineRecordFactory::appendLayoutRoot(entry.data.get(), quads[0]);
     else
@@ -374,12 +374,12 @@ void InspectorTimelineAgent::willPaint(Frame& frame)
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, &frame);
 }
 
-void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& clipRect)
+void InspectorTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
 {
     TimelineRecordEntry& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Paint);
     FloatQuad quad;
-    localToPageQuad(*renderer, clipRect, &quad);
+    localToPageQuad(renderer, clipRect, &quad);
     entry.data = TimelineRecordFactory::createPaintData(quad);
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }

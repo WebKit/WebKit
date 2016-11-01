@@ -79,7 +79,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     // FIXME: This need to be revisited when we support nested worker one day
     ASSERT(m_scriptExecutionContext);
     Document& document = downcast<Document>(*m_scriptExecutionContext);
-    WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(m_scriptExecutionContext.get());
+    WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*m_scriptExecutionContext.get());
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* proxy = document.idbConnectionProxy();

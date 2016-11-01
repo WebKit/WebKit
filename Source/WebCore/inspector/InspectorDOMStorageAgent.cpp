@@ -159,7 +159,7 @@ RefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::sto
         .release();
 }
 
-void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
+void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)
 {
     if (!m_enabled)
         return;

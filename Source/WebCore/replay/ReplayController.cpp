@@ -403,10 +403,9 @@ void ReplayController::replayToPosition(const ReplayPosition& position, Dispatch
     startPlayback();
 }
 
-void ReplayController::frameNavigated(DocumentLoader* loader)
+void ReplayController::frameNavigated(Frame& frame)
 {
     ASSERT(m_sessionState != SessionState::Inactive);
-    ASSERT_ARG(loader, loader);
     
     // The initial capturing segment is created prior to main frame navigation.
     // Otherwise, the prior capturing segment was completed when the frame detached,
@@ -421,8 +420,8 @@ void ReplayController::frameNavigated(DocumentLoader* loader)
 
     // We store the input cursor in both Document and JSDOMWindow, so that
     // replay state is accessible from JavaScriptCore and script-free layout code.
-    loader->frame()->document()->setInputCursor(*m_activeCursor);
-    loader->frame()->script().globalObject(mainThreadNormalWorld())->setInputCursor(m_activeCursor.get());
+    frame.document()->setInputCursor(*m_activeCursor);
+    frame.script().globalObject(mainThreadNormalWorld())->setInputCursor(m_activeCursor.get());
 }
 
 void ReplayController::frameDetached(Frame& frame)

@@ -1,3 +1,120 @@
+2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use more references in inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=164283
+
+        Reviewed by Timothy Hatcher.
+
+        (WebCore::frameForScriptExecutionContext):
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didLayoutImpl):
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        (WebCore::InspectorInstrumentation::didPaintImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEventImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForRenderer):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage): Deleted.
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameWindowDiscarded):
+        (WebCore::InspectorInstrumentation::didInstallTimer):
+        (WebCore::InspectorInstrumentation::didRemoveTimer):
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        (WebCore::InspectorInstrumentation::didLayout):
+        (WebCore::InspectorInstrumentation::willComposite):
+        (WebCore::InspectorInstrumentation::didComposite):
+        (WebCore::InspectorInstrumentation::willPaint):
+        (WebCore::InspectorInstrumentation::didPaint):
+        (WebCore::InspectorInstrumentation::continueAfterPingLoader):
+        (WebCore::InspectorInstrumentation::scriptImported):
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdated):
+        (WebCore::InspectorInstrumentation::frameStartedLoading):
+        (WebCore::InspectorInstrumentation::frameStoppedLoading):
+        (WebCore::InspectorInstrumentation::frameScheduledNavigation):
+        (WebCore::InspectorInstrumentation::frameClearedScheduledNavigation):
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEvent):
+        (WebCore::InspectorInstrumentation::shouldWaitForDebuggerOnStart):
+        (WebCore::InspectorInstrumentation::workerStarted):
+        (WebCore::InspectorInstrumentation::workerTerminated):
+        (WebCore::InspectorInstrumentation::didHandleMemoryPressure):
+        (WebCore::InspectorInstrumentation::networkStateChanged):
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForContext):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        Convert to references where possible.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::frameDocumentUpdated):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::didDispatchDOMStorageEvent):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameNavigated):
+        (WebCore::InspectorPageAgent::didPaint):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::frameNavigated):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        * inspector/InspectorTimelineAgent.h:
+        Pass references through InspectorInstrumentation to the Agents.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::removeById):
+        (WebCore::DOMTimer::fired):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDetachPage):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::frameNavigated):
+        * replay/ReplayController.h:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::workerStartMode):
+        (WebCore::WorkerInspectorProxy::workerStarted):
+        (WebCore::WorkerInspectorProxy::workerTerminated):
+        * workers/WorkerInspectorProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        Pass references to InspectorInstrumentation.
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes

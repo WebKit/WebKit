@@ -145,7 +145,7 @@ static void networkStateChanged(bool isOnLine)
     for (auto& page : *allPages) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(*frame);
-        InspectorInstrumentation::networkStateChanged(page);
+        InspectorInstrumentation::networkStateChanged(*page);
     }
 
     AtomicString eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;

@@ -56,7 +56,7 @@ WorkerInspectorProxy::~WorkerInspectorProxy()
     ASSERT(!m_pageChannel);
 }
 
-WorkerThreadStartMode WorkerInspectorProxy::workerStartMode(ScriptExecutionContext* scriptExecutionContext)
+WorkerThreadStartMode WorkerInspectorProxy::workerStartMode(ScriptExecutionContext& scriptExecutionContext)
 {
     bool pauseOnStart = InspectorInstrumentation::shouldWaitForDebuggerOnStart(scriptExecutionContext);
     return pauseOnStart ? WorkerThreadStartMode::WaitForInspector : WorkerThreadStartMode::Normal;
@@ -72,7 +72,7 @@ void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecution
 
     allWorkerInspectorProxies().add(this);
 
-    InspectorInstrumentation::workerStarted(m_scriptExecutionContext.get(), this, m_url);
+    InspectorInstrumentation::workerStarted(*m_scriptExecutionContext.get(), this, m_url);
 }
 
 void WorkerInspectorProxy::workerTerminated()
@@ -80,7 +80,7 @@ void WorkerInspectorProxy::workerTerminated()
     if (!m_workerThread)
         return;
 
-    InspectorInstrumentation::workerTerminated(m_scriptExecutionContext.get(), this);
+    InspectorInstrumentation::workerTerminated(*m_scriptExecutionContext.get(), this);
 
     allWorkerInspectorProxies().remove(this);
 

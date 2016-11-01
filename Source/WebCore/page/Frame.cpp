@@ -280,7 +280,7 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     if (newDocument)
         newDocument->didBecomeCurrentDocumentInFrame();
 
-    InspectorInstrumentation::frameDocumentUpdated(this);
+    InspectorInstrumentation::frameDocumentUpdated(*this);
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

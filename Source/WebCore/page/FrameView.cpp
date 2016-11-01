@@ -1565,7 +1565,7 @@ void FrameView::layout(bool allowSubtree)
         }
     }
 
-    InspectorInstrumentation::didLayout(cookie, root);
+    InspectorInstrumentation::didLayout(cookie, *root);
     DebugPageOverlays::didLayout(frame());
 
     --m_nestedLayoutCount;
@@ -4215,7 +4215,7 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
     Document* document = frame().document();
 
     if (!context.paintingDisabled())
-        InspectorInstrumentation::willPaint(renderView());
+        InspectorInstrumentation::willPaint(*renderView());
 
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
@@ -4273,7 +4273,7 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
         sCurrentPaintTimeStamp = 0;
 
     if (!context.paintingDisabled()) {
-        InspectorInstrumentation::didPaint(renderView(), dirtyRect);
+        InspectorInstrumentation::didPaint(*renderView(), dirtyRect);
         // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
         firePaintRelatedMilestonesIfNeeded();
     }

@@ -491,7 +491,8 @@ void DOMWindow::frameDestroyed()
 
 void DOMWindow::willDetachPage()
 {
-    InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
+    if (m_frame)
+        InspectorInstrumentation::frameWindowDiscarded(*m_frame, this);
 }
 
 void DOMWindow::willDestroyCachedFrame()
