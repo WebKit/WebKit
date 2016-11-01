@@ -224,6 +224,7 @@
     macro(NewCSSParserEnabled, newCSSParserEnabled, Bool, bool, false, "", "") \
     macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true, "", "") \
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false, "", "") \
+    macro(MediaCaptureRequiresSecureConnection, mediaCaptureRequiresSecureConnection, Bool, bool, true, "", "") \
     macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, true, "Shadow DOM", "HTML Shadow DOM prototype") \
     macro(DOMIteratorEnabled, domIteratorEnabled, Bool, bool, true, "", "") \
     macro(FetchAPIEnabled, fetchAPIEnabled, Bool, bool, true, "", "") \

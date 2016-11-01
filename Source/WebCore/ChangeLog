@@ -1,3 +1,36 @@
+2016-11-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] restrict media capture secure connections
+        https://bugs.webkit.org/show_bug.cgi?id=164234
+        <rdar://problem/28944906>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/ssl/media-stream/get-user-media-different-host.html
+               http/tests/ssl/media-stream/get-user-media-nested.html
+               http/tests/ssl/media-stream/get-user-media-secure-connection.html
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::isSecure): New.
+        (WebCore::canCallGetUserMedia): New.
+        (WebCore::UserMediaRequest::start): When the setting says the require secure a secure connection, 
+          fail immediately if the page or one of its ancestors is not secure.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::mediaCaptureRequiresSecureConnection): New.
+        (WebCore::Settings::setMediaCaptureRequiresSecureConnection): New.
+        * page/Settings.h:
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings): Do not require a secure connection for media 
+          capture during tests.
+        (WebCore::InternalSettings::resetToConsistentState):
+        (WebCore::InternalSettings::setMediaCaptureRequiresSecureConnection):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+
 2016-11-01  Gavin Barraclough  <barraclough@apple.com>
 
         Port Page timer throttling to use ActivityState instead of PageThrottler

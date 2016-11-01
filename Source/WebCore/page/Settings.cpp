@@ -90,6 +90,7 @@ bool Settings::gMockScrollAnimatorEnabled = false;
 
 #if ENABLE(MEDIA_STREAM)
 bool Settings::gMockCaptureDevicesEnabled = false;
+bool Settings::gMediaCaptureRequiresSecureConnection = true;
 #endif
 
 #if PLATFORM(WIN)
@@ -593,6 +594,16 @@ void Settings::setMockCaptureDevicesEnabled(bool enabled)
 {
     gMockCaptureDevicesEnabled = enabled;
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
+}
+
+bool Settings::mediaCaptureRequiresSecureConnection() const
+{
+    return gMediaCaptureRequiresSecureConnection;
+}
+
+void Settings::setMediaCaptureRequiresSecureConnection(bool mediaCaptureRequiresSecureConnection)
+{
+    gMediaCaptureRequiresSecureConnection = mediaCaptureRequiresSecureConnection;
 }
 #endif
 

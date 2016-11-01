@@ -1,3 +1,25 @@
+2016-11-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] restrict media capture secure connections
+        https://bugs.webkit.org/show_bug.cgi?id=164234
+        <rdar://problem/28944906>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebPreferencesDefinitions.h:
+   
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMediaCaptureRequiresSecureConnection):
+        (WKPreferencesGetMediaCaptureRequiresSecureConnection):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+   
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Drive by
+         fix: remove some unused parameters in a lambda call.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-11-01  Gavin Barraclough  <barraclough@apple.com>
 
         Add IsAudible, IsLoading to ActivityState

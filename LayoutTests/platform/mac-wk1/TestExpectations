@@ -91,6 +91,7 @@ fast/events/input-event-insert-replacement.html [ Skip ]
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
 http/tests/media/media-stream
+http/tests/ssl/media-stream
 
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting

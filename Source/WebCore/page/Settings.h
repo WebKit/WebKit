@@ -293,6 +293,9 @@ public:
 
     static bool mockCaptureDevicesEnabled();
     WEBCORE_EXPORT static void setMockCaptureDevicesEnabled(bool);
+
+    bool mediaCaptureRequiresSecureConnection() const;
+    WEBCORE_EXPORT static void setMediaCaptureRequiresSecureConnection(bool);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -393,6 +396,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     String m_mediaDeviceIdentifierStorageDirectory;
     static bool gMockCaptureDevicesEnabled;
+    static bool gMediaCaptureRequiresSecureConnection;
 #endif
 
 #if ENABLE(APPLE_PAY)

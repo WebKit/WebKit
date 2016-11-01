@@ -65,6 +65,8 @@ public:
     ExceptionOr<void> setMediaTypeOverride(const String&);
     ExceptionOr<void> setCanStartMedia(bool);
     ExceptionOr<void> setAllowsAirPlayForMediaPlayback(bool);
+    ExceptionOr<void> setMediaCaptureRequiresSecureConnection(bool);
+
     ExceptionOr<void> setEditingBehavior(const String&);
     ExceptionOr<void> setPreferMIMETypeForImages(bool);
     ExceptionOr<void> setPDFImageCachingPolicy(const String&);

@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: line 52: Trying to call getUserMedia from a document with a different security origin than its top-level frame.
+Tests that getUserMedia fails when the top level document and iframe do not have the same domain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+URL: https://127.0.0.1:8443/ssl/media-stream/get-user-media-nested.html
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;3
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;2
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame0-->-->'
+--------
+URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;1
+
+PASS getUserMedia failed with error: "NotAllowedError (DOM Exception 35): The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
+
+TEST COMPLETE
+

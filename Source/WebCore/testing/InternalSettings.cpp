@@ -220,6 +220,9 @@ InternalSettings::InternalSettings(Page* page)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     setAllowsAirPlayForMediaPlayback(false);
 #endif
+#if ENABLE(MEDIA_STREAM)
+    setMediaCaptureRequiresSecureConnection(false);
+#endif
 }
 
 Ref<InternalSettings> InternalSettings::create(Page* page)
@@ -236,6 +239,9 @@ void InternalSettings::resetToConsistentState()
     settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     settings().setAllowsAirPlayForMediaPlayback(false);
+#endif
+#if ENABLE(MEDIA_STREAM)
+    setMediaCaptureRequiresSecureConnection(false);
 #endif
 
     m_backup.restoreTo(settings());
@@ -395,6 +401,18 @@ ExceptionOr<void> InternalSettings::setAllowsAirPlayForMediaPlayback(bool allows
     settings().setAllowsAirPlayForMediaPlayback(allows);
 #else
     UNUSED_PARAM(allows);
+#endif
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setMediaCaptureRequiresSecureConnection(bool requires)
+{
+    if (!m_page)
+        return Exception { INVALID_ACCESS_ERR };
+#if ENABLE(MEDIA_STREAM)
+    settings().setMediaCaptureRequiresSecureConnection(requires);
+#else
+    UNUSED_PARAM(requires);
 #endif
     return { };
 }

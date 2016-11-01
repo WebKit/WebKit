@@ -55,6 +55,7 @@ enum ForcedPrefersReducedMotionValue { "system", "on", "off" };
     [MayThrowException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
     [MayThrowException] void setMediaTypeOverride(DOMString mediaTypeOverride);
     void setAllowsAirPlayForMediaPlayback(boolean available);
+    [Conditional=MEDIA_STREAM, MayThrowException] void setMediaCaptureRequiresSecureConnection(boolean enable);
 
     [MayThrowException] void setForcePendingWebGLPolicy(boolean forced);
 

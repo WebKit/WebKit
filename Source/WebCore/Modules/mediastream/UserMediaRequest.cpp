@@ -38,6 +38,7 @@
 #include "UserMediaRequest.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSMediaStream.h"
@@ -48,6 +49,7 @@
 #include "OverconstrainedError.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "UserMediaController.h"
 #include <wtf/MainThread.h>
 
@@ -99,12 +101,70 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
     return m_scriptExecutionContext->topOrigin();
 }
 
+static bool isSecure(DocumentLoader& documentLoader)
+{
+    if (!documentLoader.response().url().protocolIs("https"))
+        return false;
+
+    if (!documentLoader.response().certificateInfo() || documentLoader.response().certificateInfo()->containsNonRootSHA1SignedCertificate())
+        return false;
+
+    return true;
+}
+
+static bool canCallGetUserMedia(Document& document, String& errorMessage)
+{
+    bool requiresSecureConnection = document.frame()->settings().mediaCaptureRequiresSecureConnection();
+    if (requiresSecureConnection && !isSecure(*document.loader())) {
+        errorMessage = "Trying to call getUserMedia from an insecure document.";
+        return false;
+    }
+
+    auto& topDocument = document.topDocument();
+    if (&document != &topDocument) {
+        auto& topOrigin = *topDocument.topOrigin();
+
+        if (!document.securityOrigin()->isSameSchemeHostPort(&topOrigin)) {
+            errorMessage = "Trying to call getUserMedia from a document with a different security origin than its top-level frame.";
+            return false;
+        }
+
+        for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
+            if (requiresSecureConnection && !isSecure(*ancestorDocument->loader())) {
+                errorMessage = "Trying to call getUserMedia from a document with an insecure parent frame.";
+                return false;
+            }
+
+            if (!ancestorDocument->securityOrigin()->isSameSchemeHostPort(&topOrigin)) {
+                errorMessage = "Trying to call getUserMedia from a document with a different security origin than its top-level frame.";
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
 void UserMediaRequest::start()
 {
-    if (m_controller)
-        m_controller->requestUserMediaAccess(*this);
-    else
+    if (!m_scriptExecutionContext || !m_controller) {
         deny(MediaAccessDenialReason::OtherFailure, emptyString());
+        return;
+    }
+
+    Document& document = downcast<Document>(*m_scriptExecutionContext);
+    DOMWindow& window = *document.domWindow();
+
+    // 10.2 - 6.3 Optionally, e.g., based on a previously-established user preference, for security reasons,
+    // or due to platform limitations, jump to the step labeled Permission Failure below.
+    String errorMessage;
+    if (!canCallGetUserMedia(document, errorMessage)) {
+        deny(MediaAccessDenialReason::PermissionDenied, emptyString());
+        window.printErrorMessage(errorMessage);
+        return;
+    }
+
+    m_controller->requestUserMediaAccess(*this);
 }
 
 void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDeviceUID)
