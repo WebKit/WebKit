@@ -1,6 +1,7 @@
 Tests for the DOM.highlightSelector command.
 
 
+PASS: Page should have a subframe.
 
 == Running test suite: DOM.highlightSelector
 -- Running test case: MainFrameTagSelector

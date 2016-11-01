@@ -5,10 +5,11 @@
 <script>
 function test()
 {
-    InspectorTest.assert(WebInspector.frameResourceManager.mainFrame.childFrames.length === 2, "Page should have subframes.");
-    const mainFrame = WebInspector.frameResourceManager.mainFrame;
-    const childFrame1 = WebInspector.frameResourceManager.mainFrame.childFrames[0];
-    const childFrame2 = WebInspector.frameResourceManager.mainFrame.childFrames[1];
+    let suite = InspectorTest.createAsyncSuite("DOM.highlightFrame");
+
+    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let childFrames = mainFrame.childFrameCollection.toArray();
+    InspectorTest.expectEqual(childFrames.length, 2, "Page should have subframes.");
 
     function getHighlight(callback) {
         InspectorTest.evaluateInPage("window.internals.inspectorHighlightObject()", (error, payload, wasThrown) => {
@@ -25,12 +26,10 @@ function test()
         });
     }
 
-    let suite = InspectorTest.createAsyncSuite("DOM.highlightFrame");
-
     suite.addTestCase({
         name: "CheckEmptyHighlight",
         description: "Should not be a highlight yet.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             getHighlight((highlightObjectPayload) => {
                 InspectorTest.expectThat(highlightObjectPayload.length === 0, "Should not be a highlight yet.");
                 resolve();
@@ -41,7 +40,7 @@ function test()
     suite.addTestCase({
         name: "HighlightMainFrame",
         description: "Main frame does not have an owner element, so there will be no highlight.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             DOMAgent.highlightFrame(mainFrame.id, undefined, undefined, (error) => {
                 getHighlight((highlightObjectPayload) => {
                     InspectorTest.expectThat(highlightObjectPayload.length === 0, "Should not be a highlight for the main frame.");
@@ -54,8 +53,8 @@ function test()
     suite.addTestCase({
         name: "HighlightChildFrame1",
         description: "Should highlight child frame 1.",
-        test: (resolve, reject) => {
-            DOMAgent.highlightFrame(childFrame1.id, undefined, undefined, (error) => {
+        test(resolve, reject) {
+            DOMAgent.highlightFrame(childFrames[0].id, undefined, undefined, (error) => {
                 InspectorTest.assert(!error, "Should not have an error.");
                 dumpHighlight(resolve);
             });
@@ -65,8 +64,8 @@ function test()
     suite.addTestCase({
         name: "HighlightChildFrame2",
         description: "Should highlight child frame 2.",
-        test: (resolve, reject) => {
-            DOMAgent.highlightFrame(childFrame2.id, undefined, undefined, (error) => {
+        test(resolve, reject) {
+            DOMAgent.highlightFrame(childFrames[1].id, undefined, undefined, (error) => {
                 InspectorTest.assert(!error, "Should not have an error.");
                 dumpHighlight(resolve);
             });
@@ -78,7 +77,7 @@ function test()
     suite.addTestCase({
         name: "BadFrameId",
         description: "Bad frame id should cause an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             DOMAgent.highlightFrame("bad-frame-id", undefined, undefined, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);

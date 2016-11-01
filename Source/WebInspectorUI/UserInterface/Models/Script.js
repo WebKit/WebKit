@@ -52,7 +52,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
             this._resource = null;
             this._dynamicallyAddedScriptElement = true;
             documentResource.parentFrame.addExtraScript(this);
-            this._dynamicallyAddedScriptElementNumber = documentResource.parentFrame.extraScripts.length;
+            this._dynamicallyAddedScriptElementNumber = documentResource.parentFrame.extraScriptCollection.items.size;
         } else if (this._resource)
             this._resource.associateWithScript(this);
 

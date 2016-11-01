@@ -3,6 +3,7 @@ CONSOLE MESSAGE: line 42: Blocked a frame with origin "http://localhost:8000" fr
 Test that code evaluated in the main frame cannot access $0 that resolves to a node in a frame from a different domain. Bug 105423.
 
 
+PASS: Page should have a subframe.
 
 == Running test suite: CommandLineAPI.$0.cross-frame
 -- Running test case: AttemptCrossFrame$0AccessFromMainFrame

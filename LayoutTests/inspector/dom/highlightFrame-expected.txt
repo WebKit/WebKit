@@ -1,6 +1,7 @@
 Tests for the DOM.highlightFrame command.
 
   
+PASS: Page should have subframes.
 
 == Running test suite: DOM.highlightFrame
 -- Running test case: CheckEmptyHighlight

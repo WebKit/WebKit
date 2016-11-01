@@ -1,5 +1,27 @@
 2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Replace sublists inside DOM-related model objects with WI.Collection
+        https://bugs.webkit.org/show_bug.cgi?id=164098
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMTree.js:
+        * UserInterface/Models/Frame.js:
+        Add support for WebInspector.Collection.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addResourcesRecursivelyForFrame):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog.prototype._addResourcesForFrame):
+        Use new functions defined by changing to WebInspector.Collection.
+
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Fix double remove of ResourceCollection if type changes
         https://bugs.webkit.org/show_bug.cgi?id=164268
 

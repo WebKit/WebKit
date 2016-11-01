@@ -30,9 +30,14 @@ function test()
             InspectorTest.log("DOMTree instance count: " + instances.size);
 
             // Force creation of child DOM trees.
-            mainFrame.childFrames[0].domTree;
-            mainFrame.childFrames[0].childFrames[0].domTree;
-            mainFrame.childFrames[0].childFrames[0].childFrames[0].domTree;
+            let childrenLevel1 = mainFrame.childFrameCollection.toArray();
+            childrenLevel1[0].domTree;
+
+            let childrenLevel2 = childrenLevel1[0].childFrameCollection.toArray();
+            childrenLevel2[0].domTree;
+
+            let childrenLevel3 = childrenLevel2[0].childFrameCollection.toArray();
+            childrenLevel3[0].domTree;
 
             instances = WebInspector.domTreeManager.retainedObjectsWithPrototype(WebInspector.DOMTree);
             InspectorTest.expectThat(instances.size === 4, "There should be four DOMTrees listening to DOMTreeManager events after touching each Frame.");

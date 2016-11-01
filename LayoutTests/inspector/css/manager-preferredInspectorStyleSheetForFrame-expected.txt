@@ -1,6 +1,7 @@
 Test CSSManager.preferredInspectorStyleSheetForFrame.
 
 
+PASS: Page should have a subframe.
 
 == Running test suite: CSSManager.preferredInspectorStyleSheetForFrame
 -- Running test case: CheckNoStyleSheets

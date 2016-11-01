@@ -51,19 +51,19 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
 
         this.registerFolderizeSettings("frames", WebInspector.UIString("Frames"),
             (representedObject) => representedObject instanceof WebInspector.Frame,
-            () => this.frame.childFrames.length,
+            () => this.frame.childFrameCollection.items.size,
             WebInspector.FrameTreeElement
         );
 
         this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"),
             (representedObject) => representedObject instanceof WebInspector.ContentFlow,
-            () => this.frame.domTree.flowsCount,
+            () => this.frame.domTree.contentFlowCollection.items.size,
             WebInspector.ContentFlowTreeElement
         );
 
         this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"),
             (representedObject) => representedObject instanceof WebInspector.Script && representedObject.dynamicallyAddedScriptElement,
-            () => this.frame.extraScripts.length,
+            () => this.frame.extraScriptCollection.items.size,
             WebInspector.ScriptTreeElement
         );
 
@@ -178,8 +178,8 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         this.updateParentStatus();
         this.prepareToPopulate();
 
-        for (var i = 0; i < this._frame.childFrames.length; ++i)
-            this.addChildForRepresentedObject(this._frame.childFrames[i]);
+        for (let frame of this._frame.childFrameCollection.items)
+            this.addChildForRepresentedObject(frame);
 
         for (let resource of this._frame.resourceCollection.items)
             this.addChildForRepresentedObject(resource);
@@ -191,11 +191,10 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
                 this.addChildForRepresentedObject(sourceMap.resources[j]);
         }
 
-        var flowMap = this._frame.domTree.flowMap;
-        for (var flowKey in flowMap)
-            this.addChildForRepresentedObject(flowMap[flowKey]);
+        for (let contentFlow of this._frame.domTree.contentFlowCollection.items)
+            this.addChildForRepresentedObject(contentFlow);
 
-        for (let extraScript of this._frame.extraScripts) {
+        for (let extraScript of this._frame.extraScriptCollection.items) {
             if (extraScript.sourceURL || extraScript.sourceMappingURL)
                 this.addChildForRepresentedObject(extraScript);
         }

@@ -112,6 +112,7 @@ WebInspector.Collection = class Collection extends WebInspector.Object
 
  WebInspector.Collection.TypeVerifier = {
     Any: (object) => true,
+    ContentFlow: (object) => object instanceof WebInspector.ContentFlow,
     Frame: (object) => object instanceof WebInspector.Frame,
     Resource: (object) => object instanceof WebInspector.Resource,
     Script: (object) => object instanceof WebInspector.Script,

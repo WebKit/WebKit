@@ -272,7 +272,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
             for (let resource of resources)
                 this._addResource(resource, suppressFilterUpdate);
 
-            frames = frames.concat(currentFrame.childFrames);
+            frames = frames.concat(currentFrame.childFrameCollection.toArray());
         }
 
         this._updateFilter();

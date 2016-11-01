@@ -1,3 +1,26 @@
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Replace sublists inside DOM-related model objects with WI.Collection
+        https://bugs.webkit.org/show_bug.cgi?id=164098
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector/console/cross-domain-inspected-node-access-expected.txt:
+        * http/tests/inspector/console/cross-domain-inspected-node-access.html:
+        * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame-expected.txt:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html:
+        * inspector/dom/content-flow-list.html:
+        * inspector/dom/highlightFrame-expected.txt:
+        * inspector/dom/highlightFrame.html:
+        * inspector/dom/highlightNode-expected.txt:
+        * inspector/dom/highlightNode.html:
+        * inspector/dom/highlightSelector-expected.txt:
+        * inspector/dom/highlightSelector.html:
+        * inspector/model/frame-extra-scripts-expected.txt:
+        * inspector/model/frame-extra-scripts.html:
+        Change functionality to support WebInspector.Collection methods.
+
 2016-11-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Placard support

@@ -5,9 +5,12 @@
 <script>
 function test()
 {
-    InspectorTest.assert(WebInspector.frameResourceManager.mainFrame.childFrames.length === 1, "Page should have a subframe.");
-    const mainFrame = WebInspector.frameResourceManager.mainFrame;
-    const childFrame = WebInspector.frameResourceManager.mainFrame.childFrames[0];
+    let suite = InspectorTest.createAsyncSuite("DOM.highlightNode");
+
+    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let childFrames = mainFrame.childFrameCollection.toArray();
+    InspectorTest.expectEqual(childFrames.length, 1, "Page should have a subframe.");
+
     const highlightConfig = {
         showInfo: true,
         contentColor: {r: 255, g: 255, b: 255},
@@ -26,7 +29,7 @@ function test()
 
     function dumpHighlight(callback) {
         getHighlight((highlightObjectPayload) => {
-            InspectorTest.expectThat(highlightObjectPayload.length === 1, "Should be one highlighted node.");
+            InspectorTest.expectEqual(highlightObjectPayload.length, 1, "Should be one highlighted node.");
             InspectorTest.log("Highlighted Element Data: " + JSON.stringify(highlightObjectPayload[0].elementData));
             callback();
         });
@@ -36,14 +39,12 @@ function test()
     let mainFrameDocumentNodeId, mainFrameTargetNode;
     let childFrameDocumentNodeId, childFrameTargetNode;
 
-    let suite = InspectorTest.createAsyncSuite("DOM.highlightNode");
-
     suite.addTestCase({
         name: "CheckEmptyHighlight",
         description: "Should not be a highlight yet.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             getHighlight((highlightObjectPayload) => {
-                InspectorTest.expectThat(highlightObjectPayload.length === 0, "Should not be a highlight yet.");
+                InspectorTest.expectEqual(highlightObjectPayload.length, 0, "Should not be a highlight yet.");
                 resolve();
             });
         }
@@ -52,7 +53,7 @@ function test()
     suite.addTestCase({
         name: "MainFrameNodeViaNodeId",
         description: "Should highlight a node in the main frame using node id.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(mainFrameDocumentNodeId, "#id-one", function(nodeId) {
                 mainFrameTargetNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 DOMAgent.highlightNode(highlightConfig, mainFrameTargetNode.id, undefined, (error) => {
@@ -66,7 +67,7 @@ function test()
     suite.addTestCase({
         name: "ChildFrameNodeViaNodeId",
         description: "Should highlight a node in the child frame using node id.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(childFrameDocumentNodeId, "#id-one", function(nodeId) {
                 childFrameTargetNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 DOMAgent.highlightNode(highlightConfig, childFrameTargetNode.id, undefined, (error) => {
@@ -80,7 +81,7 @@ function test()
     suite.addTestCase({
         name: "MainFrameNodeViaObjectId",
         description: "Should highlight a node in the main frame using object id.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.RemoteObject.resolveNode(mainFrameTargetNode, "test", (remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
@@ -93,7 +94,7 @@ function test()
     suite.addTestCase({
         name: "ChildFrameNodeViaObjectId",
         description: "Should highlight a node in the child frame using object id.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.RemoteObject.resolveNode(childFrameTargetNode, "test", (remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
@@ -108,7 +109,7 @@ function test()
     suite.addTestCase({
         name: "MissingNodeAndObjectIdShouldError",
         description: "Missing identifiers should cause an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             DOMAgent.highlightNode(highlightConfig, undefined, undefined, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
@@ -120,7 +121,7 @@ function test()
     suite.addTestCase({
         name: "BadNodeId",
         description: "Bad node id should cause an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             DOMAgent.highlightNode(highlightConfig, 9999999, undefined, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
@@ -132,7 +133,7 @@ function test()
     suite.addTestCase({
         name: "BadObjectId",
         description: "Bad object id should cause an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             DOMAgent.highlightNode(highlightConfig, undefined, "bad-object-id", (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
@@ -143,7 +144,7 @@ function test()
 
     WebInspector.domTreeManager.requestDocument((documentNode) => {
         mainFrameDocumentNodeId = documentNode.id;
-        RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "test", contextId: childFrame.pageExecutionContext.id}, (error, remoteObjectPayload) => {
+        RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "test", contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload) => {
             let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload)
             remoteObject.pushNodeToFrontend((documentNodeId) => {
                 childFrameDocumentNodeId = documentNodeId

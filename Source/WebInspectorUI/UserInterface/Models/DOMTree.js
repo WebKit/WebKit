@@ -33,7 +33,7 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
 
         this._rootDOMNode = null;
         this._requestIdentifier = 0;
-        this._flowMap = {};
+        this._contentFlowCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.ContentFlow);
 
         this._frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
 
@@ -52,20 +52,8 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
 
     // Public
 
-    get frame()
-    {
-        return this._frame;
-    }
-
-    get flowMap()
-    {
-        return this._flowMap;
-    }
-
-    get flowsCount()
-    {
-        return Object.keys(this._flowMap).length;
-    }
+    get frame() { return this._frame; }
+    get contentFlowCollection() { return this._contentFlowCollection; }
 
     disconnect()
     {
@@ -263,64 +251,52 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
             return;
 
         // Assume that all the flows have been removed.
-        var deletedFlows = {};
-        for (var flowId in this._flowMap)
-            deletedFlows[flowId] = this._flowMap[flowId];
-
-        var newFlows = [];
-
-        var flows = event.data.flows;
-        for (var i = 0; i < flows.length; ++i) {
-            var flow = flows[i];
+        let deletedFlows = new Set(this._contentFlowCollection.items);
+        let newFlows = new Set;
+        for (let flow of event.data.flows) {
             // All the flows received from WebKit are part of the same document.
             console.assert(this._isContentFlowInCurrentDocument(flow));
 
-            var flowId = flow.id;
-            if (this._flowMap.hasOwnProperty(flowId)) {
+            if (this._contentFlowCollection.items.has(flow)) {
                 // Remove the flow name from the deleted list.
-                console.assert(deletedFlows.hasOwnProperty(flowId));
-                delete deletedFlows[flowId];
+                console.assert(deletedFlows.has(flow));
+                deletedFlows.delete(flow);
             } else {
-                this._flowMap[flowId] = flow;
-                newFlows.push(flow);
+                this._contentFlowCollection.add(flow);
+                newFlows.add(flow);
             }
         }
 
-        for (var flowId in deletedFlows) {
-            delete this._flowMap[flowId];
-        }
+        for (let flow of deletedFlows)
+            this._contentFlowCollection.remove(flow);
 
         // Send update events to listeners.
 
-        for (var flowId in deletedFlows)
-            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow: deletedFlows[flowId]});
+        for (let flow of deletedFlows)
+            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow});
 
-        for (var i = 0; i < newFlows.length; ++i)
-            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow: newFlows[i]});
+        for (let flow of newFlows)
+            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow});
     }
 
     _contentFlowWasAdded(event)
     {
-        var flow = event.data.flow;
+        let flow = event.data.flow;
         if (!this._isContentFlowInCurrentDocument(flow))
             return;
 
-        var flowId = flow.id;
-        console.assert(!this._flowMap.hasOwnProperty(flowId));
-        this._flowMap[flowId] = flow;
+        this._contentFlowCollection.add(flow);
 
         this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow});
     }
 
     _contentFlowWasRemoved(event)
     {
-        var flow = event.data.flow;
+        let flow = event.data.flow;
         if (!this._isContentFlowInCurrentDocument(flow))
             return;
 
-        var flowId = flow.id;
-        console.assert(this._flowMap.hasOwnProperty(flowId));
-        delete this._flowMap[flowId];
+        this._contentFlowCollection.remove(flow);
 
         this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow});
     }
