@@ -98,7 +98,7 @@ void IDBResultData::isolatedCopy(const IDBResultData& source, IDBResultData& des
 
 IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
 {
-    IDBResultData result(requestIdentifier);
+    IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::Error;
     result.m_error = error;
     return result;
@@ -106,7 +106,7 @@ IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifie
 
 IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseConnection& connection)
 {
-    IDBResultData result(requestIdentifier);
+    IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::OpenDatabaseSuccess;
     result.m_databaseConnectionIdentifier = connection.identifier();
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(connection.database().info());
@@ -116,7 +116,7 @@ IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& re
 
 IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseTransaction& transaction)
 {
-    IDBResultData result(requestIdentifier);
+    IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::OpenDatabaseUpgradeNeeded;
     result.m_databaseConnectionIdentifier = transaction.databaseConnection().identifier();
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(transaction.databaseConnection().database().info());
@@ -126,7 +126,7 @@ IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifi
 
 IDBResultData IDBResultData::deleteDatabaseSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBDatabaseInfo& info)
 {
-    IDBResultData result(IDBResultType::DeleteDatabaseSuccess, requestIdentifier);
+    IDBResultData result {IDBResultType::DeleteDatabaseSuccess, requestIdentifier };
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(info);
     return result;
 }
@@ -168,28 +168,28 @@ IDBResultData IDBResultData::renameIndexSuccess(const IDBResourceIdentifier& req
 
 IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBKeyData& resultKey)
 {
-    IDBResultData result(IDBResultType::PutOrAddSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::PutOrAddSuccess, requestIdentifier };
     result.m_resultKey = std::make_unique<IDBKeyData>(resultKey);
     return result;
 }
 
 IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
 {
-    IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::GetRecordSuccess, requestIdentifier };
     result.m_getResult = std::make_unique<IDBGetResult>(getResult);
     return result;
 }
 
 IDBResultData IDBResultData::getAllRecordsSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetAllResult& getAllResult)
 {
-    IDBResultData result(IDBResultType::GetAllRecordsSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::GetAllRecordsSuccess, requestIdentifier };
     result.m_getAllResult = std::make_unique<IDBGetAllResult>(getAllResult);
     return result;
 }
 
 IDBResultData IDBResultData::getCountSuccess(const IDBResourceIdentifier& requestIdentifier, uint64_t count)
 {
-    IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::GetRecordSuccess, requestIdentifier };
     result.m_resultInteger = count;
     return result;
 }
@@ -201,14 +201,14 @@ IDBResultData IDBResultData::deleteRecordSuccess(const IDBResourceIdentifier& re
 
 IDBResultData IDBResultData::openCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
 {
-    IDBResultData result(IDBResultType::OpenCursorSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::OpenCursorSuccess, requestIdentifier };
     result.m_getResult = std::make_unique<IDBGetResult>(getResult);
     return result;
 }
 
 IDBResultData IDBResultData::iterateCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
 {
-    IDBResultData result(IDBResultType::IterateCursorSuccess, requestIdentifier);
+    IDBResultData result { IDBResultType::IterateCursorSuccess, requestIdentifier };
     result.m_getResult = std::make_unique<IDBGetResult>(getResult);
     return result;
 }

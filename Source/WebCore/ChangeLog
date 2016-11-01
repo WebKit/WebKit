@@ -1,3 +1,83 @@
+2016-10-31  Brady Eidson  <beidson@apple.com>
+
+        Address style feedback in https://bugs.webkit.org/show_bug.cgi?id=164097
+        https://bugs.webkit.org/show_bug.cgi?id=164248
+
+        Unreviewed. Addressing review feedback (and then some) from Darin Adler on earlier patch.
+
+        No new tests (No behavior change).
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::commit):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::renameObjectStore):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::requestOpenCursor):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestGetValue):
+        (WebCore::IDBTransaction::requestGetKey):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteIndex):
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::createObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::renameObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::renameIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::clearObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::createIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::putOrAdd):
+        (WebCore::IDBClient::IDBConnectionProxy::getRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::getAllRecords):
+        (WebCore::IDBClient::IDBConnectionProxy::getCount):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::openCursor):
+        (WebCore::IDBClient::IDBConnectionProxy::iterateCursor):
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getAllRecords):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getCount):
+        (WebCore::IDBServer::MemoryIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::MemoryIDBBackingStore::openCursor):
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::error):
+        (WebCore::IDBResultData::openDatabaseSuccess):
+        (WebCore::IDBResultData::openDatabaseUpgradeNeeded):
+        (WebCore::IDBResultData::deleteDatabaseSuccess):
+        (WebCore::IDBResultData::putOrAddSuccess):
+        (WebCore::IDBResultData::getRecordSuccess):
+        (WebCore::IDBResultData::getAllRecordsSuccess):
+        (WebCore::IDBResultData::getCountSuccess):
+        (WebCore::IDBResultData::openCursorSuccess):
+        (WebCore::IDBResultData::iterateCursorSuccess):
+
 2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable custom elements by default everywhere
