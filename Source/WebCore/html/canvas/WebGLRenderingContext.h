@@ -31,8 +31,8 @@ namespace WebCore {
 
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
 public:
-    WebGLRenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
-    WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
+    WebGLRenderingContext(HTMLCanvasElement&, GraphicsContext3D::Attributes);
+    WebGLRenderingContext(HTMLCanvasElement&, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
 
 private:
     bool isWebGL1() const final { return true; }

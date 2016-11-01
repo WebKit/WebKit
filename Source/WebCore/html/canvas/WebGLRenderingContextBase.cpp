@@ -348,7 +348,7 @@ private:
     WebGLRenderingContextBase* m_context;
 };
 
-std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs, const String& type)
+std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement& canvas, WebGLContextAttributes* attrs, const String& type)
 {
 #if ENABLE(WEBGL2)
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
@@ -357,7 +357,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     UNUSED_PARAM(type);
 #endif
 
-    Document& document = canvas->document();
+    Document& document = canvas.document();
     Frame* frame = document.frame();
     if (!frame)
         return nullptr;
@@ -365,7 +365,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     // The FrameLoaderClient might block creation of a new WebGL context despite the page settings; in
     // particular, if WebGL contexts were lost one or more times via the GL_ARB_robustness extension.
     if (!frame->loader().client().allowWebGL(frame->settings().webGLEnabled())) {
-        canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Web page was not allowed to create a WebGL context."));
+        canvas.dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Web page was not allowed to create a WebGL context."));
         return nullptr;
     }
 
@@ -426,7 +426,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context || !context->makeContextCurrent()) {
-        canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
+        canvas.dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
         return nullptr;
     }
 
@@ -446,9 +446,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCanvas, GraphicsContext3D::Attributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, GraphicsContext3D::Attributes attributes)
     : CanvasRenderingContext(passedCanvas)
-    , ActiveDOMObject(&passedCanvas->document())
+    , ActiveDOMObject(&passedCanvas.document())
     , m_context(nullptr)
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreAllowed(false)
@@ -464,9 +464,9 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCa
 {
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
     : CanvasRenderingContext(passedCanvas)
-    , ActiveDOMObject(&passedCanvas->document())
+    , ActiveDOMObject(&passedCanvas.document())
     , m_context(WTFMove(context))
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreAllowed(false)
@@ -571,7 +571,7 @@ void WebGLRenderingContextBase::setupFlags()
 {
     ASSERT(m_context);
 
-    if (Page* page = canvas()->document().page())
+    if (Page* page = canvas().document().page())
         m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
@@ -640,15 +640,15 @@ void WebGLRenderingContextBase::markContextChanged()
     m_context->markContextChanged();
 
     m_layerCleared = false;
-    RenderBox* renderBox = canvas()->renderBox();
+    RenderBox* renderBox = canvas().renderBox();
     if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
         m_markedCanvasDirty = true;
-        canvas()->clearCopiedImage();
+        canvas().clearCopiedImage();
         renderBox->contentChanged(CanvasChanged);
     } else {
         if (!m_markedCanvasDirty) {
             m_markedCanvasDirty = true;
-            canvas()->didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+            canvas().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
         }
     }
 }
@@ -730,26 +730,26 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     if (isContextLostOrPending())
         return;
 
-    if (canvas()->document().printing())
-        canvas()->clearPresentationCopy();
+    if (canvas().document().printing())
+        canvas().clearPresentationCopy();
 
     // Until the canvas is written to by the application, the clear that
     // happened after it was composited should be ignored by the compositor.
     if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-        m_context->paintCompositedResultsToCanvas(canvas()->buffer());
+        m_context->paintCompositedResultsToCanvas(canvas().buffer());
 
-        canvas()->makePresentationCopy();
+        canvas().makePresentationCopy();
     } else
-        canvas()->clearPresentationCopy();
+        canvas().clearPresentationCopy();
     clearIfComposited();
 
     if (!m_markedCanvasDirty && !m_layerCleared)
         return;
 
-    canvas()->clearCopiedImage();
+    canvas().clearCopiedImage();
     m_markedCanvasDirty = false;
 
-    m_context->paintRenderingResultsToCanvas(canvas()->buffer());
+    m_context->paintRenderingResultsToCanvas(canvas().buffer());
 }
 
 RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
@@ -782,7 +782,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     height = clamp(height, 1, maxHeight);
 
     if (m_needsUpdate) {
-        RenderBox* renderBox = canvas()->renderBox();
+        RenderBox* renderBox = canvas().renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing())
             renderBox->contentChanged(CanvasChanged);
         m_needsUpdate = false;
@@ -2680,7 +2680,7 @@ bool WebGLRenderingContextBase::isContextLostOrPending()
 {
     if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution) {
         LOG(WebGL, "Context is being used. Attempt to resolve the policy.");
-        Document& document = canvas()->document().topDocument();
+        Document& document = canvas().document().topDocument();
         Page* page = document.page();
         if (page && !document.url().isLocalFile())
             page->mainFrame().loader().client().resolveWebGLPolicyForURL(document.url());
@@ -2825,7 +2825,7 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
         return;
     // Due to WebGL's same-origin restrictions, it is not possible to
     // taint the origin using the WebGL API.
-    ASSERT(canvas()->originClean());
+    ASSERT(canvas().originClean());
     // Validate input parameters.
     switch (format) {
     case GraphicsContext3D::ALPHA:
@@ -3810,7 +3810,7 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
     if (mode == RealLostContext) {
         // Inform the embedder that a lost context was received. In response, the embedder might
         // decide to take action such as asking the user for permission to use WebGL again.
-        if (Frame* frame = canvas()->document().frame())
+        if (Frame* frame = canvas().document().frame())
             frame->loader().client().didLoseWebGLContext(m_context->getExtensions()->getGraphicsResetStatusARB());
     }
 
@@ -4434,9 +4434,7 @@ void WebGLRenderingContextBase::printGLErrorToConsole(const String& message)
 
 void WebGLRenderingContextBase::printWarningToConsole(const String& message)
 {
-    if (!canvas())
-        return;
-    canvas()->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
+    canvas().document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
 }
 
 bool WebGLRenderingContextBase::validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst)
@@ -4780,7 +4778,7 @@ void WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation()
 void WebGLRenderingContextBase::dispatchContextLostEvent()
 {
     Ref<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, emptyString());
-    canvas()->dispatchEvent(event);
+    canvas().dispatchEvent(event);
     m_restoreAllowed = event->defaultPrevented();
     if (m_contextLostMode == RealLostContext && m_restoreAllowed)
         m_restoreTimer.startOneShot(0);
@@ -4828,7 +4826,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         break;
     }
 
-    Frame* frame = canvas()->document().frame();
+    Frame* frame = canvas().document().frame();
     if (!frame)
         return;
 
@@ -4860,7 +4858,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setupFlags();
     initializeNewContext();
     initializeVertexArrayObjects();
-    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
+    canvas().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
 }
 
 String WebGLRenderingContextBase::ensureNotNull(const String& text) const
@@ -4973,8 +4971,8 @@ void WebGLRenderingContextBase::enableOrDisable(GC3Denum capability, bool enable
 
 IntSize WebGLRenderingContextBase::clampedCanvasSize()
 {
-    return IntSize(clamp(canvas()->width(), 1, m_maxViewportDims[0]),
-                   clamp(canvas()->height(), 1, m_maxViewportDims[1]));
+    return IntSize(clamp(canvas().width(), 1, m_maxViewportDims[0]),
+        clamp(canvas().height(), 1, m_maxViewportDims[1]));
 }
 
 GC3Dint WebGLRenderingContextBase::getMaxDrawBuffers()

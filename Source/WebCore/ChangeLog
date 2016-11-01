@@ -1,3 +1,76 @@
+2016-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate CanvasRenderingContext's internal canvas pointer to a reference
+        https://bugs.webkit.org/show_bug.cgi?id=164259
+
+        Reviewed by Dean Jackson.
+
+        It is never nullptr.
+
+        No new tests because there is no behavior change.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::CanvasRenderingContext):
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::ref):
+        (WebCore::CanvasRenderingContext::deref):
+        (WebCore::CanvasRenderingContext::canvas):
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::unwindStateStack):
+        (WebCore::CanvasRenderingContext2D::isAccelerated):
+        (WebCore::CanvasRenderingContext2D::realizeSaves):
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::setShadowColor):
+        (WebCore::CanvasRenderingContext2D::resetTransform):
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::clearCanvas):
+        (WebCore::CanvasRenderingContext2D::transformAreaToDevice):
+        (WebCore::CanvasRenderingContext2D::rectContainsCanvas):
+        (WebCore::CanvasRenderingContext2D::calculateCompositingBufferRect):
+        (WebCore::CanvasRenderingContext2D::compositeBuffer):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::didDrawEntireCanvas):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        (WebCore::CanvasRenderingContext2D::paintRenderingResultsToCanvas):
+        (WebCore::CanvasRenderingContext2D::drawingContext):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        (WebCore::CanvasRenderingContext2D::toTextDirection):
+        (WebCore::CanvasRenderingContext2D::direction):
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::WebGL2RenderingContext):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::setupFlags):
+        (WebCore::WebGLRenderingContextBase::markContextChanged):
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToCanvas):
+        (WebCore::WebGLRenderingContextBase::reshape):
+        (WebCore::WebGLRenderingContextBase::isContextLostOrPending):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::printWarningToConsole):
+        (WebCore::WebGLRenderingContextBase::dispatchContextLostEvent):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::clampedCanvasSize):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2016-10-31  Brady Eidson  <beidson@apple.com>
 
         Address style feedback in https://bugs.webkit.org/show_bug.cgi?id=164097

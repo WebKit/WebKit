@@ -247,7 +247,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return nullptr;
             if (!m_context) {
-                m_context = WebGLRenderingContextBase::create(this, static_cast<WebGLContextAttributes*>(attrs), type);
+                m_context = WebGLRenderingContextBase::create(*this, static_cast<WebGLContextAttributes*>(attrs), type);
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
                     invalidateStyleAndLayerComposition();

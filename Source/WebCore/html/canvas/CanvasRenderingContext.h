@@ -46,9 +46,9 @@ class CanvasRenderingContext : public ScriptWrappable {
 public:
     virtual ~CanvasRenderingContext() { }
 
-    void ref() { m_canvas->ref(); }
-    void deref() { m_canvas->deref(); }
-    HTMLCanvasElement* canvas() const { return m_canvas; }
+    void ref() { m_canvas.ref(); }
+    void deref() { m_canvas.deref(); }
+    HTMLCanvasElement& canvas() const { return m_canvas; }
 
     virtual bool is2d() const { return false; }
     virtual bool isWebGL1() const { return false; }
@@ -60,7 +60,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return 0; }
 
 protected:
-    CanvasRenderingContext(HTMLCanvasElement*);
+    CanvasRenderingContext(HTMLCanvasElement&);
     bool wouldTaintOrigin(const CanvasPattern*);
     bool wouldTaintOrigin(const HTMLCanvasElement*);
     bool wouldTaintOrigin(const HTMLImageElement*);
@@ -70,12 +70,12 @@ protected:
     template<class T> void checkOrigin(const T* arg)
     {
         if (wouldTaintOrigin(arg))
-            canvas()->setOriginTainted();
+            canvas().setOriginTainted();
     }
     void checkOrigin(const URL&);
 
 private:
-    HTMLCanvasElement* m_canvas;
+    HTMLCanvasElement& m_canvas;
 };
 
 } // namespace WebCore

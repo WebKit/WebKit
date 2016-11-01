@@ -59,12 +59,12 @@
 
 namespace WebCore {
 
-WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, GraphicsContext3D::Attributes attributes)
+WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement& passedCanvas, GraphicsContext3D::Attributes attributes)
     : WebGLRenderingContextBase(passedCanvas, attributes)
 {
 }
 
-WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
+WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement& passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
     : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
 {
     initializeShaderExtensions();

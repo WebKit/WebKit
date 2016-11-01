@@ -108,7 +108,7 @@ inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
 
 class WebGLRenderingContextBase : public CanvasRenderingContext, public ActiveDOMObject {
 public:
-    static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement*, WebGLContextAttributes*, const String&);
+    static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement&, WebGLContextAttributes*, const String&);
     virtual ~WebGLRenderingContextBase();
 
 #if PLATFORM(WIN)
@@ -334,8 +334,8 @@ public:
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-    WebGLRenderingContextBase(HTMLCanvasElement*, GraphicsContext3D::Attributes);
-    WebGLRenderingContextBase(HTMLCanvasElement*, RefPtr<GraphicsContext3D>&&, GraphicsContext3D::Attributes);
+    WebGLRenderingContextBase(HTMLCanvasElement&, GraphicsContext3D::Attributes);
+    WebGLRenderingContextBase(HTMLCanvasElement&, RefPtr<GraphicsContext3D>&&, GraphicsContext3D::Attributes);
 
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
