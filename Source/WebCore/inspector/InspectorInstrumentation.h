@@ -257,7 +257,7 @@ public:
     static bool timelineAgentEnabled(ScriptExecutionContext*);
     static bool replayAgentEnabled(ScriptExecutionContext*);
 
-    WEBCORE_EXPORT static InstrumentingAgents* instrumentingAgentsForPage(Page*);
+    static InstrumentingAgents* instrumentingAgentsForPage(Page*);
 
     static void registerInstrumentingAgents(InstrumentingAgents&);
     static void unregisterInstrumentingAgents(InstrumentingAgents&);

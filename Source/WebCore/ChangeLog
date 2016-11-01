@@ -1,3 +1,10 @@
+2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix for r208240.
+
+        * inspector/InspectorInstrumentation.h:
+        Don't export an inlined function.
+
 2016-11-01  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] restrict media capture secure connections
