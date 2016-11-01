@@ -83,6 +83,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     case PhantomNewGeneratorFunction:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
+    case PhantomCreateRest:
         // Those are completely handled by operationMaterializeObjectInOSR
         break;
 
@@ -234,6 +235,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         return result;
     }
 
+    case PhantomCreateRest:
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
         if (!materialization->origin().inlineCallFrame) {
@@ -242,6 +244,17 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 return DirectArguments::createByCopying(exec);
             case PhantomClonedArguments:
                 return ClonedArguments::createWithMachineFrame(exec, exec, ArgumentsMode::Cloned);
+            case PhantomCreateRest: {
+                CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
+                    materialization->origin(), exec->codeBlock());
+
+                unsigned numberOfArgumentsToSkip = codeBlock->numParameters() - 1;
+                JSGlobalObject* globalObject = codeBlock->globalObject();
+                Structure* structure = globalObject->restParameterStructure();
+                JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numberOfArgumentsToSkip;
+                unsigned arraySize = exec->argumentCount() > numberOfArgumentsToSkip ? exec->argumentCount() - numberOfArgumentsToSkip : 0;
+                return constructArray(exec, structure, argumentsToCopyRegion, arraySize);
+            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 return nullptr;
@@ -255,14 +268,12 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location() != PromotedLocationDescriptor(ArgumentCountPLoc))
                     continue;
-                
                 argumentCount = JSValue::decode(values[i]).asUInt32();
-                RELEASE_ASSERT(argumentCount);
                 break;
             }
-            RELEASE_ASSERT(argumentCount);
         } else
             argumentCount = materialization->origin().inlineCallFrame->arguments.size();
+        RELEASE_ASSERT(argumentCount);
         
         JSFunction* callee = nullptr;
         if (materialization->origin().inlineCallFrame->isClosureCall) {
@@ -329,6 +340,56 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
             
             return result;
+        }
+        case PhantomCreateRest: {
+            unsigned numberOfArgumentsToSkip = codeBlock->numParameters() - 1;
+            JSGlobalObject* globalObject = codeBlock->globalObject();
+            Structure* structure = globalObject->restParameterStructure();
+            ASSERT(argumentCount > 0);
+            unsigned arraySize = (argumentCount - 1) > numberOfArgumentsToSkip ? argumentCount - 1 - numberOfArgumentsToSkip : 0;
+            JSArray* array = JSArray::tryCreateUninitialized(vm, structure, arraySize);
+            RELEASE_ASSERT(array);
+
+            for (unsigned i = materialization->properties().size(); i--;) {
+                const ExitPropertyValue& property = materialization->properties()[i];
+                if (property.location().kind() != ArgumentPLoc)
+                    continue;
+
+                unsigned argIndex = property.location().info();
+                if (numberOfArgumentsToSkip > argIndex)
+                    continue;
+                unsigned arrayIndex = argIndex - numberOfArgumentsToSkip;
+                if (arrayIndex >= arraySize)
+                    continue;
+                array->initializeIndex(vm, arrayIndex, JSValue::decode(values[i]));
+            }
+
+#if !ASSERT_DISABLED
+            // We avoid this O(n^2) loop when asserts are disabled, but the condition checked here
+            // must hold to ensure the correctness of the above loop because of how we allocate the array.
+            for (unsigned targetIndex = 0; targetIndex < arraySize; ++targetIndex) {
+                bool found = false;
+                for (unsigned i = materialization->properties().size(); i--;) {
+                    const ExitPropertyValue& property = materialization->properties()[i];
+                    if (property.location().kind() != ArgumentPLoc)
+                        continue;
+
+                    unsigned argIndex = property.location().info();
+                    if (numberOfArgumentsToSkip > argIndex)
+                        continue;
+                    unsigned arrayIndex = argIndex - numberOfArgumentsToSkip;
+                    if (arrayIndex >= arraySize)
+                        continue;
+                    if (arrayIndex == targetIndex) {
+                        found = true;
+                        break;
+                    }
+                }
+                ASSERT(found);
+            }
+#endif
+
+            return array;
         }
         default:
             RELEASE_ASSERT_NOT_REACHED();

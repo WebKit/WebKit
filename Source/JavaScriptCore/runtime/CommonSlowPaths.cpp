@@ -851,7 +851,7 @@ SLOW_PATH_DECL(slow_path_create_rest)
     BEGIN();
     unsigned arraySize = OP_C(2).jsValue().asUInt32();
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    Structure* structure = globalObject->restParameterStructure();
     unsigned numParamsToSkip = pc[3].u.unsignedValue;
     JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numParamsToSkip;
     RETURN(constructArray(exec, structure, argumentsToCopyRegion, arraySize));
