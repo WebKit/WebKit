@@ -1,5 +1,13 @@
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase test after r208239
+        https://bugs.webkit.org/show_bug.cgi?id=164290
+
+        * web-platform-tests/url/url-setters-expected.txt:
+        This was an expected change.  Non-special hosts are parsed differently than special hosts.
+
+2016-11-01  Alex Christensen  <achristensen@webkit.org>
+
         Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes
         https://bugs.webkit.org/show_bug.cgi?id=164290
 
