@@ -847,6 +847,15 @@
         "description": "Allows selection of variation values along fonts' exposed axes."
     },
     {
+        "name": "ViewportAPI",
+        "status": {
+        	"status": "Under Consideration"
+        },
+        "url": "https://github.com/WICG/ViewportAPI",
+        "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
+        "keywords": ["visual viewport", "viewport", "viewportapi"]
+    },
+    {
         "name": "requestIdleCallback",
         "status": {
             "status": "Under Consideration"

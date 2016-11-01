@@ -1,3 +1,9 @@
+2016-11-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ViewportAPI to features.json
+
+        * features.json:
+
 2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix for r208240.
