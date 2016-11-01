@@ -52,6 +52,11 @@ void WebCoreTypedArrayController::registerWrapper(JSC::JSGlobalObject* globalObj
     cacheWrapper(JSC::jsCast<JSDOMGlobalObject*>(globalObject)->world(), native, wrapper);
 }
 
+bool WebCoreTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
+{
+    return !isMainThread();
+}
+
 bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
 {
     auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.slot()->asCell());

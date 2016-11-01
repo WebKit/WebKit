@@ -41,13 +41,13 @@ EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(ExecState* execState)
     ASSERT(execState->argumentCount());
     ASSERT(execState->lexicalGlobalObject());
 
-    ArrayBuffer* buffer = toArrayBuffer(execState->uncheckedArgument(0));
+    ArrayBuffer* buffer = toUnsharedArrayBuffer(execState->uncheckedArgument(0));
     if (!buffer) {
         setDOMException(execState, DATA_CLONE_ERR);
         return JSValue::encode(jsUndefined());
     }
 
-    return JSValue::encode(JSArrayBuffer::create(execState->vm(), execState->lexicalGlobalObject()->arrayBufferStructure(), ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength())));
+    return JSValue::encode(JSArrayBuffer::create(execState->vm(), execState->lexicalGlobalObject()->arrayBufferStructure(ArrayBufferSharingMode::Default), ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength())));
 }
 
 EncodedJSValue JSC_HOST_CALL structuredCloneArrayBufferView(ExecState* execState)
@@ -59,7 +59,7 @@ EncodedJSValue JSC_HOST_CALL structuredCloneArrayBufferView(ExecState* execState
     auto* bufferView = jsDynamicDowncast<JSArrayBufferView*>(value);
     ASSERT(bufferView);
 
-    auto* buffer = bufferView->buffer();
+    auto* buffer = bufferView->unsharedBuffer();
     if (!buffer) {
         setDOMException(execState, DATA_CLONE_ERR);
         return JSValue::encode(jsUndefined());

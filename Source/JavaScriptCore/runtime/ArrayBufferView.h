@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,25 @@ public:
         return !m_buffer || m_buffer->isNeutered();
     }
     
-    PassRefPtr<ArrayBuffer> buffer() const
+    PassRefPtr<ArrayBuffer> possiblySharedBuffer() const
     {
         if (isNeutered())
             return 0;
         return m_buffer;
+    }
+    
+    PassRefPtr<ArrayBuffer> unsharedBuffer() const
+    {
+        PassRefPtr<ArrayBuffer> result = possiblySharedBuffer();
+        RELEASE_ASSERT(!result->isShared());
+        return result;
+    }
+    
+    bool isShared() const
+    {
+        if (isNeutered())
+            return false;
+        return m_buffer->isShared();
     }
 
     void* baseAddress() const

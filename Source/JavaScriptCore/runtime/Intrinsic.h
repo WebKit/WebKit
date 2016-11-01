@@ -65,6 +65,18 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     JSMapHasIntrinsic,
     JSSetHasIntrinsic,
     HasOwnPropertyIntrinsic,
+    AtomicsAddIntrinsic,
+    AtomicsAndIntrinsic,
+    AtomicsCompareExchangeIntrinsic,
+    AtomicsExchangeIntrinsic,
+    AtomicsIsLockFreeIntrinsic,
+    AtomicsLoadIntrinsic,
+    AtomicsOrIntrinsic,
+    AtomicsStoreIntrinsic,
+    AtomicsSubIntrinsic,
+    AtomicsWaitIntrinsic,
+    AtomicsWakeIntrinsic,
+    AtomicsXorIntrinsic,
     ToLowerCaseIntrinsic,
 
     // Getter intrinsics.

@@ -92,9 +92,14 @@ bool JSDataView::setIndex(ExecState*, unsigned, JSValue)
     return false;
 }
 
-PassRefPtr<DataView> JSDataView::typedImpl()
+PassRefPtr<DataView> JSDataView::possiblySharedTypedImpl()
 {
-    return DataView::create(buffer(), byteOffset(), length());
+    return DataView::create(possiblySharedBuffer(), byteOffset(), length());
+}
+
+PassRefPtr<DataView> JSDataView::unsharedTypedImpl()
+{
+    return DataView::create(unsharedBuffer(), byteOffset(), length());
 }
 
 bool JSDataView::getOwnPropertySlot(
@@ -178,7 +183,7 @@ ArrayBuffer* JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
 PassRefPtr<ArrayBufferView> JSDataView::getTypedArrayImpl(JSArrayBufferView* object)
 {
     JSDataView* thisObject = jsCast<JSDataView*>(object);
-    return thisObject->typedImpl();
+    return thisObject->possiblySharedTypedImpl();
 }
 
 Structure* JSDataView::createStructure(

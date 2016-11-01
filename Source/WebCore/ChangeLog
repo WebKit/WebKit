@@ -1,3 +1,102 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+
+        New tests added in the LayoutTests/workers/sab directory.
+        
+        This teaches WebCore that a typed array could be shared or not. By default, WebCore will
+        reject shared typed arrays as if they were not typed arrays. This ensures that we don't get
+        race conditions in code that can't handle it.
+        
+        If you postMessage a SharedArrayBuffer or something that wraps it, you will send the shared
+        memory to the other worker.
+
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::cachedKeyForKeyID):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::send):
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::getChannelData):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createRsaKeyGenParams):
+        * bindings/js/JSCryptoCustom.cpp:
+        (WebCore::JSCrypto::getRandomValues):
+        * bindings/js/JSCryptoOperationData.cpp:
+        (WebCore::cryptoOperationDataFromJSValue):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        (WebCore::toPossiblySharedArrayBufferView):
+        (WebCore::toUnsharedArrayBufferView):
+        (WebCore::toPossiblySharedInt8Array):
+        (WebCore::toPossiblySharedInt16Array):
+        (WebCore::toPossiblySharedInt32Array):
+        (WebCore::toPossiblySharedUint8Array):
+        (WebCore::toPossiblySharedUint8ClampedArray):
+        (WebCore::toPossiblySharedUint16Array):
+        (WebCore::toPossiblySharedUint32Array):
+        (WebCore::toPossiblySharedFloat32Array):
+        (WebCore::toPossiblySharedFloat64Array):
+        (WebCore::toUnsharedInt8Array):
+        (WebCore::toUnsharedInt16Array):
+        (WebCore::toUnsharedInt32Array):
+        (WebCore::toUnsharedUint8Array):
+        (WebCore::toUnsharedUint8ClampedArray):
+        (WebCore::toUnsharedUint16Array):
+        (WebCore::toUnsharedUint32Array):
+        (WebCore::toUnsharedFloat32Array):
+        (WebCore::toUnsharedFloat64Array):
+        (WebCore::toArrayBufferView): Deleted.
+        (WebCore::toInt8Array): Deleted.
+        (WebCore::toInt16Array): Deleted.
+        (WebCore::toInt32Array): Deleted.
+        (WebCore::toUint8Array): Deleted.
+        (WebCore::toUint8ClampedArray): Deleted.
+        (WebCore::toUint16Array): Deleted.
+        (WebCore::toUint32Array): Deleted.
+        (WebCore::toFloat32Array): Deleted.
+        (WebCore::toFloat64Array): Deleted.
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::constructJSDataCue):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSFileCustom.cpp:
+        (WebCore::constructJSFile):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::extractTransferables):
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBuffer):
+        (WebCore::structuredCloneArrayBufferView):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::bufferData):
+        (WebCore::WebGL2RenderingContext::bufferSubData):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData):
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Make UIScriptController::zoomToScale() work on Mac WK1 and WK2

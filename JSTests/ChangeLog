@@ -1,3 +1,19 @@
+2016-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        This adds our own test for the various corner cases of SharedArrayBuffer. This test is meant to
+        check all of the things that don't require concurrency.
+
+        * stress/SharedArrayBuffer.js: Added.
+        (checkAtomics):
+        (shouldFail):
+        (Symbol):
+        (runAtomic):
+
 2016-10-31  Saam Barati  <sbarati@apple.com>
 
         We should be able to eliminate rest parameter allocations

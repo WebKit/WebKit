@@ -1,3 +1,14 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        Support the RuntimeFlag.
+
+        * WebView/WebPreferencesPrivate.h:
+
 2016-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK1] Candidate visibility should not update as a result of selection during a dictionary lookup

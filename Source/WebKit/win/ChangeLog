@@ -1,3 +1,14 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+
+        Support the RuntimeFlag.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+
 2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use #pragma once in WebCore

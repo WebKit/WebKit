@@ -5314,7 +5314,7 @@ sub JSValueToNative
 
     AddToImplIncludesForIDLType($type, $conditional);
 
-    return ("to@{[$type->name]}($value)", 1) if $codeGenerator->IsTypedArrayType($type);
+    return ("toUnshared@{[$type->name]}($value)", 1) if $codeGenerator->IsTypedArrayType($type);
     return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1) if $codeGenerator->IsEnumType($type);
 
     # FIXME: EventListener should be a callback interface.

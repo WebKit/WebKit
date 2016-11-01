@@ -358,7 +358,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         return { };
     }
     ASSERT(m_channel);
-    m_channel->send(*arrayBufferView.buffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
+    m_channel->send(*arrayBufferView.unsharedBuffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
     return { };
 }
 

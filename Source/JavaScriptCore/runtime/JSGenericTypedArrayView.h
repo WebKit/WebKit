@@ -225,13 +225,9 @@ public:
     // then it will have thrown an exception.
     bool set(ExecState*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
-    RefPtr<typename Adaptor::ViewType> typedImpl()
-    {
-        return Adaptor::ViewType::create(buffer(), byteOffset(), length());
-    }
+    PassRefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
+    PassRefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
 
-    static RefPtr<typename Adaptor::ViewType> toWrapped(JSValue);
-    
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(typeForTypedArrayType(Adaptor::typeValue), StructureFlags), info(), NonArray);
@@ -270,6 +266,9 @@ public:
 
     static const TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
 
+    // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
+    static RefPtr<typename Adaptor::ViewType> toWrapped(JSValue);
+    
 protected:
     friend struct TypedArrayClassInfos;
 
@@ -361,18 +360,27 @@ private:
 };
 
 template<typename Adaptor>
-inline RefPtr<typename Adaptor::ViewType> toNativeTypedView(JSValue value)
+inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(JSValue value)
 {
     typename Adaptor::JSViewType* wrapper = jsDynamicCast<typename Adaptor::JSViewType*>(value);
     if (!wrapper)
         return nullptr;
-    return wrapper->typedImpl();
+    return wrapper->possiblySharedTypedImpl();
+}
+
+template<typename Adaptor>
+inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(JSValue value)
+{
+    RefPtr<typename Adaptor::ViewType> result = toPossiblySharedNativeTypedView<Adaptor>(value);
+    if (!result || result->isShared())
+        return nullptr;
+    return result;
 }
 
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(JSValue value)
 {
-    return JSC::toNativeTypedView<Adaptor>(value);
+    return JSC::toUnsharedNativeTypedView<Adaptor>(value);
 }
 
 } // namespace JSC

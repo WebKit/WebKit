@@ -63,7 +63,7 @@ inline bool Bitmap::concurrentTestAndSet(size_t n)
         oldValue = *wordPtr;
         if (oldValue & mask)
             return true;
-    } while (!WTF::weakCompareAndSwap(wordPtr, oldValue, static_cast<uint8_t>(oldValue | mask)));
+    } while (!WTF::atomicCompareExchangeWeakRelaxed(wordPtr, oldValue, static_cast<uint8_t>(oldValue | mask)));
     return false;
 }
 

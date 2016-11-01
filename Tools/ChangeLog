@@ -1,3 +1,15 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        Use the right kind of typed array API.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setAudioResultCallback):
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Make UIScriptController::zoomToScale() work on Mac WK1 and WK2

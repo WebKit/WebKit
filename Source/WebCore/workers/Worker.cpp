@@ -51,9 +51,10 @@ void networkStateChanged(bool isOnLine)
         worker->notifyNetworkStateChange(isOnLine);
 }
 
-inline Worker::Worker(ScriptExecutionContext& context)
+inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags)
     : ActiveDOMObject(&context)
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
+    , m_runtimeFlags(runtimeFlags)
 {
     if (!allWorkers) {
         allWorkers = new HashSet<Worker*>;
@@ -64,14 +65,14 @@ inline Worker::Worker(ScriptExecutionContext& context)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, const String& url)
+ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, const String& url, JSC::RuntimeFlags runtimeFlags)
 {
     ASSERT(isMainThread());
 
     // We don't currently support nested workers, so workers can only be created from documents.
     ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
 
-    auto worker = adoptRef(*new Worker(context));
+    auto worker = adoptRef(*new Worker(context, runtimeFlags));
 
     worker->suspendIfNeeded();
 
@@ -154,7 +155,7 @@ void Worker::notifyFinished()
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
         const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();
-        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy);
+        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_runtimeFlags);
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
     m_scriptLoader = nullptr;

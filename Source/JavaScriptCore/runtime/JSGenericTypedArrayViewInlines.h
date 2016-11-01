@@ -125,7 +125,7 @@ template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     VM& vm, Structure* structure, PassRefPtr<typename Adaptor::ViewType> impl)
 {
-    RefPtr<ArrayBuffer> buffer = impl->buffer();
+    RefPtr<ArrayBuffer> buffer = impl->possiblySharedBuffer();
     ConstructionContext context(vm, structure, buffer, impl->byteOffset(), impl->length());
     ASSERT(context);
     JSGenericTypedArrayView* result =
@@ -310,6 +310,18 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     
     RELEASE_ASSERT_NOT_REACHED();
     return false;
+}
+
+template<typename Adaptor>
+PassRefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl()
+{
+    return Adaptor::ViewType::create(possiblySharedBuffer(), byteOffset(), length());
+}
+
+template<typename Adaptor>
+PassRefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl()
+{
+    return Adaptor::ViewType::create(unsharedBuffer(), byteOffset(), length());
 }
 
 template<typename Adaptor>
@@ -532,7 +544,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     DeferGCForAWhile deferGC(*heap);
     
     ASSERT(!thisObject->hasIndexingHeader());
-
+    
     RELEASE_ASSERT(!thisObject->hasIndexingHeader());
     thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
         thisObject->butterfly(), vm, thisObject, thisObject->structure(),
@@ -570,7 +582,7 @@ PassRefPtr<ArrayBufferView>
 JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    return thisObject->typedImpl();
+    return thisObject->possiblySharedTypedImpl();
 }
 
 } // namespace JSC

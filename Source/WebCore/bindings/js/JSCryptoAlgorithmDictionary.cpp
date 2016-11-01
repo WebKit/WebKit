@@ -242,7 +242,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecSta
     JSValue publicExponentValue = getProperty(&state, value.getObject(), "publicExponent");
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    RefPtr<Uint8Array> publicExponentArray = toUint8Array(publicExponentValue);
+    RefPtr<Uint8Array> publicExponentArray = toUnsharedUint8Array(publicExponentValue);
     if (!publicExponentArray) {
         throwTypeError(&state, scope, ASCIILiteral("Expected a Uint8Array in publicExponent"));
         return nullptr;

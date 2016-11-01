@@ -89,6 +89,7 @@
     macro(Set)\
     macro(SetIterator)\
     macro(ShadowRoot) \
+    macro(SharedArrayBuffer) \
     macro(StaticRange) \
     macro(String) \
     macro(Symbol) \

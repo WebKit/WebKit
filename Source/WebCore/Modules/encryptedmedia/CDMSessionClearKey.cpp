@@ -183,7 +183,7 @@ RefPtr<ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& keyId) c
 
     auto keyData = m_cachedKeys.get(keyId);
     RefPtr<Uint8Array> keyDataArray = Uint8Array::create(keyData.data(), keyData.size());
-    return keyDataArray->buffer();
+    return keyDataArray->unsharedBuffer();
 }
 
 }

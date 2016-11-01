@@ -50,7 +50,7 @@ namespace WebCore {
 
         // Implementations of WorkerGlobalScopeProxy.
         // (Only use these methods in the worker object thread.)
-        void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy) override;
+        void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, JSC::RuntimeFlags) override;
         void terminateWorkerGlobalScope() override;
         void postMessageToWorkerGlobalScope(RefPtr<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>) override;
         bool hasPendingActivity() const override;

@@ -49,7 +49,6 @@
 #include "SourceCode.h"
 #include "Strong.h"
 #include "ThunkGenerators.h"
-#include "TypedArrayController.h"
 #include "VMEntryRecord.h"
 #include "Watchpoint.h"
 #include <wtf/Bag.h>
@@ -114,6 +113,7 @@ class Structure;
 class RegExp;
 #endif
 class Symbol;
+class TypedArrayController;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
 class UnlinkedFunctionExecutable;

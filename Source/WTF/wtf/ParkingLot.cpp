@@ -416,7 +416,7 @@ void ensureHashtableSize(unsigned numThreads)
     // OK, right now the old hashtable is locked up and the new hashtable is ready to rock and
     // roll. After we install the new hashtable, we can release all bucket locks.
     
-    bool result = hashtable.compareExchangeStrong(oldHashtable, newHashtable);
+    bool result = hashtable.compareExchangeStrong(oldHashtable, newHashtable) == oldHashtable;
     RELEASE_ASSERT(result);
 
     unlockHashtable(bucketsToUnlock);
@@ -671,6 +671,11 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     RefPtr<ThreadData> threadData;
     result.mayHaveMoreThreads = dequeue(
         address,
+        // Why is this here?
+        // FIXME: It seems like this could be IgnoreEmpty, but I switched this to EnsureNonEmpty
+        // without explanation in r199760. We need it to use EnsureNonEmpty if we need to perform
+        // some operation while holding the bucket lock, which usually goes into the finish func.
+        // But if that operation is a no-op, then it's not clear why we need this.
         BucketMode::EnsureNonEmpty,
         [&] (ThreadData* element, bool) {
             if (element->address != address)
@@ -743,14 +748,19 @@ NEVER_INLINE void ParkingLot::unparkOneImpl(
     threadData->parkingCondition.notify_one();
 }
 
-NEVER_INLINE void ParkingLot::unparkAll(const void* address)
+NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned count)
 {
+    if (!count)
+        return 0;
+    
     if (verbose)
-        dataLog(toString(currentThread(), ": unparking all from ", RawPointer(address), ".\n"));
+        dataLog(toString(currentThread(), ": unparking count = ", count, " from ", RawPointer(address), ".\n"));
     
     Vector<RefPtr<ThreadData>, 8> threadDatas;
     dequeue(
         address,
+        // FIXME: It seems like this ought to be EnsureNonEmpty if we follow what unparkOne() does,
+        // but that seems wrong.
         BucketMode::IgnoreEmpty,
         [&] (ThreadData* element, bool) {
             if (verbose)
@@ -758,6 +768,8 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadDatas.append(element);
+            if (threadDatas.size() == count)
+                return DequeueResult::RemoveAndStop;
             return DequeueResult::RemoveAndContinue;
         },
         [] (bool) { });
@@ -775,6 +787,13 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
 
     if (verbose)
         dataLog(toString(currentThread(), ": done unparking.\n"));
+    
+    return threadDatas.size();
+}
+
+NEVER_INLINE void ParkingLot::unparkAll(const void* address)
+{
+    unparkCount(address, UINT_MAX);
 }
 
 NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>& callback)

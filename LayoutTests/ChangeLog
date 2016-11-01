@@ -1,3 +1,19 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        Adding tests. This is a work in progress.
+
+        * workers/sab: Added.
+        * workers/sab/simple-worker-1.js: Added.
+        (onmessage):
+        * workers/sab/simple-worker-2.js: Added.
+        (onmessage):
+        * workers/sab/simple.html: Added.
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Make UIScriptController::zoomToScale() work on Mac WK1 and WK2

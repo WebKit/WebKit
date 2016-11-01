@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "EventTarget.h"
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
+#include <runtime/RuntimeFlags.h>
 #include <wtf/Optional.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -42,7 +43,7 @@ class WorkerScriptLoader;
 
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
 public:
-    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, const String& url);
+    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, const String& url, JSC::RuntimeFlags);
     virtual ~Worker();
 
     ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&);
@@ -54,7 +55,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
-    explicit Worker(ScriptExecutionContext&);
+    explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags);
 
     EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
 
@@ -73,6 +74,7 @@ private:
     WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     Optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
     bool m_shouldBypassMainWorldContentSecurityPolicy { false };
+    JSC::RuntimeFlags m_runtimeFlags;
 };
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "TypeError.h"
+#include "TypedArrayController.h"
 
 namespace JSC {
 
@@ -147,7 +148,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
         return;
     case DataViewMode:
         ASSERT(!butterfly());
-        vm.heap.addReference(this, jsCast<JSDataView*>(this)->buffer());
+        vm.heap.addReference(this, jsCast<JSDataView*>(this)->possiblySharedBuffer());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -158,7 +159,7 @@ void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
 
     if (thisObject->hasArrayBuffer()) {
-        ArrayBuffer* buffer = thisObject->buffer();
+        ArrayBuffer* buffer = thisObject->possiblySharedBuffer();
         RELEASE_ASSERT(buffer);
         visitor.addOpaqueRoot(buffer);
     }
@@ -177,6 +178,13 @@ bool JSArrayBufferView::put(
     
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
+
+ArrayBuffer* JSArrayBufferView::unsharedBuffer()
+{
+    ArrayBuffer* result = possiblySharedBuffer();
+    RELEASE_ASSERT(!result->isShared());
+    return result;
+}
     
 void JSArrayBufferView::finalize(JSCell* cell)
 {
@@ -186,12 +194,22 @@ void JSArrayBufferView::finalize(JSCell* cell)
         fastFree(thisObject->m_vector.get());
 }
 
-RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(JSValue value)
+JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)
 {
-    auto* wrapper = jsDynamicCast<JSArrayBufferView*>(value);
-    if (!wrapper)
-        return nullptr;
-    return wrapper->impl();
+    return exec->vm().m_typedArrayController->toJS(exec, globalObject(), unsharedBuffer());
+}
+
+JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(ExecState* exec)
+{
+    return exec->vm().m_typedArrayController->toJS(exec, globalObject(), possiblySharedBuffer());
+}
+
+void JSArrayBufferView::neuter()
+{
+    RELEASE_ASSERT(hasArrayBuffer());
+    RELEASE_ASSERT(!isShared());
+    m_length = 0;
+    m_vector.clear();
 }
 
 } // namespace JSC

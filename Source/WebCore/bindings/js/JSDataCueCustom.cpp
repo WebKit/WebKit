@@ -84,7 +84,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
 
     if (valueArgument.isCell() && valueArgument.asCell()->inherits(std::remove_pointer<JSArrayBuffer*>::type::info())) {
 
-        ArrayBuffer* data = toArrayBuffer(valueArgument);
+        ArrayBuffer* data = toUnsharedArrayBuffer(valueArgument);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (UNLIKELY(!data)) {

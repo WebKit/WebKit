@@ -53,7 +53,8 @@ typedef enum {
 } WebStorageBlockingPolicy;
 
 typedef enum {
-    WebKitJavaScriptRuntimeFlagsAllEnabled = 0
+    WebKitJavaScriptRuntimeFlagsSharedArrayBufferEnabled = 1u << 0,
+    WebKitJavaScriptRuntimeFlagsAllEnabled = WebKitJavaScriptRuntimeFlagsSharedArrayBufferEnabled
 } WebKitJavaScriptRuntimeFlags;
 
 extern NSString *WebPreferencesChangedNotification;

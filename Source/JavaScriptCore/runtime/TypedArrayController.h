@@ -41,6 +41,7 @@ public:
     
     virtual JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) = 0;
     virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;
+    virtual bool isAtomicsWaitAllowedOnCurrentThread() = 0;
 };
 
 } // namespace JSC

@@ -39,9 +39,9 @@ bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperat
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (ArrayBuffer* buffer = toArrayBuffer(value))
+    if (ArrayBuffer* buffer = toUnsharedArrayBuffer(value))
         result = std::make_pair(static_cast<uint8_t*>(buffer->data()), buffer->byteLength());
-    else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(value))
+    else if (RefPtr<ArrayBufferView> bufferView = toUnsharedArrayBufferView(value))
         result = std::make_pair(static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength());
     else {
         throwTypeError(exec, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));

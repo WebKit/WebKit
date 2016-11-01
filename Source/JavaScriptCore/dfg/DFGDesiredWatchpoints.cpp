@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,9 @@ void ArrayBufferViewWatchpointAdaptor::add(
         ArrayBufferNeuteringWatchpoint::create(*codeBlock->vm());
     neuteringWatchpoint->set()->add(watchpoint);
     codeBlock->addConstant(neuteringWatchpoint);
-    codeBlock->vm()->heap.addReference(neuteringWatchpoint, view->buffer());
+    // FIXME: We don't need to set this watchpoint at all for shared buffers.
+    // https://bugs.webkit.org/show_bug.cgi?id=164108
+    codeBlock->vm()->heap.addReference(neuteringWatchpoint, view->possiblySharedBuffer());
 }
 
 void InferredValueAdaptor::add(

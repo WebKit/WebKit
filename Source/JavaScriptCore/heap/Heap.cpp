@@ -1574,7 +1574,7 @@ void Heap::reportExtraMemoryVisited(CellState oldState, size_t size)
     
     for (;;) {
         size_t oldSize = *counter;
-        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
+        if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, oldSize + size))
             return;
     }
 }
@@ -1590,7 +1590,7 @@ void Heap::reportExternalMemoryVisited(CellState oldState, size_t size)
 
     for (;;) {
         size_t oldSize = *counter;
-        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
+        if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, oldSize + size))
             return;
     }
 }

@@ -21,10 +21,9 @@
 #include "config.h"
 #include "MathObject.h"
 
-#include "Lookup.h"
+#include "JSCInlines.h"
 #include "MathCommon.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

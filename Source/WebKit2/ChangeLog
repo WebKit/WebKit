@@ -1,3 +1,17 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        Adds some small things we need for SharedArrayBuffer.
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::createWebDataFromUint8Array):
+
 2016-10-31  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBObjectStore getAll/getAllKeys.

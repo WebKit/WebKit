@@ -1,3 +1,236 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        This implements https://tc39.github.io/ecmascript_sharedmem/shmem.html.
+        
+        There is now a new SharedArrayBuffer type. In the JS runtime, which includes typed array
+        types, the SharedArrayBuffer is a drop-in replacement for ArrayBuffer, even though they are
+        distinct types (new SharedArrayBuffer() instanceof ArrayBuffer == false and vice versa). The
+        DOM will not recognize SharedArrayBuffer, or any typed array that wraps it, to ensure safety.
+        This matches what other browsers intend to do, see
+        https://github.com/tc39/ecmascript_sharedmem/issues/38. API is provided for the DOM to opt
+        into SharedArrayBuffer. One notable place is postMessage, which will share the
+        SharedArrayBuffer's underlying data storage with other workers. This creates a pool of shared
+        memory that the workers can use to talk to each other.
+        
+        There is also an Atomics object in global scope, which exposes sequentially consistent atomic
+        operations: add, and, compareExchange, exchange, load, or, store, sub, and xor. Additionally
+        it exposes a Atomics.isLockFree utility, which takes a byte amount and returns true or false.
+        Also there is Atomics.wake/wait, which neatly map to ParkingLot.
+        
+        Accesses to typed arrays that wrap SharedArrayBuffer are optimized by JSC the same way as
+        always. I believe that DFG and B3 already obey the following memory model, which I believe is
+        a bit weaker than Cambridge and a bit stronger than what is being proposed for
+        SharedArrayBuffer. To predict a program's behavior under the B3 memory model, imagine the
+        space of all possible programs that would result from running an optimizer that adversarially
+        follows B3's transformation rules. B3 transformations are correct if the newly created
+        program is equivalent to the old one, assuming that any opaque effect in IR (like the reads
+        and writes of a patchpoint/call/fence) could perform any load/store that satisfies the
+        B3::Effects summary. Opaque effects are a way of describing an infinite set of programs: any
+        program that only does the effects summarized in B3::Effects belongs to the set. For example,
+        this prevents motion of operations across fences since fences are summarized as opaque
+        effects that could read or write memory. This rule alone is not enough, because it leaves the
+        door open for turning an atomic operation (like a load) into a non-atomic one (like a load
+        followed by a store of the same value back to the same location or multiple loads). This is
+        not an optimization that either our compiler or the CPU would want to do. One way to think of
+        what exactly is forbidden is that B3 transformations that mess with memory accesses can only
+        reorder them or remove them. This means that for any execution of the untransformed program,
+        the corresponding execution of the transformed program (i.e. with the same input arguments
+        and the same programs filled in for the opaque effects) must have the same loads and stores,
+        with some removed and some reordered. This is a fairly simple mental model that B3 and DFG
+        already follow and it's based on existing abstractions for the infinite set of programs
+        inside an opaque effect (DFG's AbstractHeaps and B3's Effects).
+        
+        This patch makes all atomics operations intrinsic, but the DFG doesn't know about any of them
+        yet. That's covered by bug 164108.
+        
+        This ought to be perf-neutral, but I am still running tests to confirm this. I'm also still
+        writing new tests to cover all of the Atomics functionality and the behavior of SAB objects.
+
+        * API/JSTypedArray.cpp:
+        (JSObjectGetTypedArrayBytesPtr):
+        (JSObjectGetTypedArrayBuffer):
+        (JSObjectMakeArrayBufferWithBytesNoCopy):
+        * API/tests/CompareAndSwapTest.cpp:
+        (Bitmap::concurrentTestAndSet):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        * jsc.cpp:
+        (functionTransferArrayBuffer):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::SharedArrayBufferContents::SharedArrayBufferContents):
+        (JSC::SharedArrayBufferContents::~SharedArrayBufferContents):
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::operator=):
+        (JSC::ArrayBufferContents::~ArrayBufferContents):
+        (JSC::ArrayBufferContents::clear):
+        (JSC::ArrayBufferContents::destroy):
+        (JSC::ArrayBufferContents::reset):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::makeShared):
+        (JSC::ArrayBufferContents::transferTo):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBufferContents::shareWith):
+        (JSC::ArrayBuffer::create):
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::createFromBytes):
+        (JSC::ArrayBuffer::tryCreate):
+        (JSC::ArrayBuffer::createUninitialized):
+        (JSC::ArrayBuffer::tryCreateUninitialized):
+        (JSC::ArrayBuffer::createInternal):
+        (JSC::ArrayBuffer::ArrayBuffer):
+        (JSC::ArrayBuffer::slice):
+        (JSC::ArrayBuffer::sliceImpl):
+        (JSC::ArrayBuffer::makeShared):
+        (JSC::ArrayBuffer::setSharingMode):
+        (JSC::ArrayBuffer::transferTo):
+        (JSC::ArrayBuffer::transfer): Deleted.
+        * runtime/ArrayBuffer.h:
+        (JSC::arrayBufferSharingModeName):
+        (JSC::SharedArrayBufferContents::data):
+        (JSC::ArrayBufferContents::data):
+        (JSC::ArrayBufferContents::sizeInBytes):
+        (JSC::ArrayBufferContents::isShared):
+        (JSC::ArrayBuffer::sharingMode):
+        (JSC::ArrayBuffer::isShared):
+        (JSC::ArrayBuffer::gcSizeEstimateInBytes):
+        (JSC::arrayBufferDestructorNull): Deleted.
+        (JSC::arrayBufferDestructorDefault): Deleted.
+        (JSC::ArrayBufferContents::ArrayBufferContents): Deleted.
+        (JSC::ArrayBufferContents::transfer): Deleted.
+        (JSC::ArrayBufferContents::copyTo): Deleted.
+        (JSC::ArrayBuffer::create): Deleted.
+        (JSC::ArrayBuffer::createAdopted): Deleted.
+        (JSC::ArrayBuffer::createFromBytes): Deleted.
+        (JSC::ArrayBuffer::tryCreate): Deleted.
+        (JSC::ArrayBuffer::createUninitialized): Deleted.
+        (JSC::ArrayBuffer::tryCreateUninitialized): Deleted.
+        (JSC::ArrayBuffer::createInternal): Deleted.
+        (JSC::ArrayBuffer::ArrayBuffer): Deleted.
+        (JSC::ArrayBuffer::slice): Deleted.
+        (JSC::ArrayBuffer::sliceImpl): Deleted.
+        (JSC::ArrayBufferContents::tryAllocate): Deleted.
+        (JSC::ArrayBufferContents::~ArrayBufferContents): Deleted.
+        * runtime/ArrayBufferSharingMode.h: Added.
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::possiblySharedBuffer):
+        (JSC::ArrayBufferView::unsharedBuffer):
+        (JSC::ArrayBufferView::isShared):
+        (JSC::ArrayBufferView::buffer): Deleted.
+        * runtime/AtomicsObject.cpp: Added.
+        (JSC::AtomicsObject::AtomicsObject):
+        (JSC::AtomicsObject::create):
+        (JSC::AtomicsObject::createStructure):
+        (JSC::AtomicsObject::finishCreation):
+        (JSC::atomicsFuncAdd):
+        (JSC::atomicsFuncAnd):
+        (JSC::atomicsFuncCompareExchange):
+        (JSC::atomicsFuncExchange):
+        (JSC::atomicsFuncIsLockFree):
+        (JSC::atomicsFuncLoad):
+        (JSC::atomicsFuncOr):
+        (JSC::atomicsFuncStore):
+        (JSC::atomicsFuncSub):
+        (JSC::atomicsFuncWait):
+        (JSC::atomicsFuncWake):
+        (JSC::atomicsFuncXor):
+        * runtime/AtomicsObject.h: Added.
+        * runtime/CommonIdentifiers.h:
+        * runtime/DataView.cpp:
+        (JSC::DataView::wrap):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::subarray):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::finishCreation):
+        (JSC::JSArrayBuffer::isShared):
+        (JSC::JSArrayBuffer::sharingMode):
+        * runtime/JSArrayBuffer.h:
+        (JSC::toPossiblySharedArrayBuffer):
+        (JSC::toUnsharedArrayBuffer):
+        (JSC::JSArrayBuffer::toWrapped):
+        (JSC::toArrayBuffer): Deleted.
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::JSArrayBufferConstructor):
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        (JSC::JSArrayBufferConstructor::create):
+        (JSC::constructArrayBuffer):
+        * runtime/JSArrayBufferConstructor.h:
+        (JSC::JSArrayBufferConstructor::sharingMode):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        (JSC::JSArrayBufferPrototype::JSArrayBufferPrototype):
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        (JSC::JSArrayBufferPrototype::create):
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::finishCreation):
+        (JSC::JSArrayBufferView::visitChildren):
+        (JSC::JSArrayBufferView::unsharedBuffer):
+        (JSC::JSArrayBufferView::unsharedJSBuffer):
+        (JSC::JSArrayBufferView::possiblySharedJSBuffer):
+        (JSC::JSArrayBufferView::neuter):
+        (JSC::JSArrayBufferView::toWrapped): Deleted.
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::jsBuffer): Deleted.
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::isShared):
+        (JSC::JSArrayBufferView::possiblySharedBuffer):
+        (JSC::JSArrayBufferView::possiblySharedImpl):
+        (JSC::JSArrayBufferView::unsharedImpl):
+        (JSC::JSArrayBufferView::byteOffset):
+        (JSC::JSArrayBufferView::toWrapped):
+        (JSC::JSArrayBufferView::buffer): Deleted.
+        (JSC::JSArrayBufferView::impl): Deleted.
+        (JSC::JSArrayBufferView::neuter): Deleted.
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::possiblySharedTypedImpl):
+        (JSC::JSDataView::unsharedTypedImpl):
+        (JSC::JSDataView::getTypedArrayImpl):
+        (JSC::JSDataView::typedImpl): Deleted.
+        * runtime/JSDataView.h:
+        (JSC::JSDataView::possiblySharedBuffer):
+        (JSC::JSDataView::unsharedBuffer):
+        (JSC::JSDataView::buffer): Deleted.
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::dataViewProtoGetterBuffer):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::toPossiblySharedNativeTypedView):
+        (JSC::toUnsharedNativeTypedView):
+        (JSC::JSGenericTypedArrayView<Adaptor>::toWrapped):
+        (JSC::JSGenericTypedArrayView::typedImpl): Deleted.
+        (JSC::toNativeTypedView): Deleted.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoGetterFuncBuffer):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::createAtomicsProperty):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayBufferPrototype):
+        (JSC::JSGlobalObject::arrayBufferStructure):
+        * runtime/MathObject.cpp:
+        * runtime/RuntimeFlags.h:
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::toJS):
+        * runtime/TypedArrayType.h:
+        (JSC::typedArrayTypeForType):
+
 2016-10-31  Saam Barati  <sbarati@apple.com>
 
         We should be able to eliminate rest parameter allocations

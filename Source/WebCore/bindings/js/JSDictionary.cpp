@@ -253,7 +253,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& resu
 
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint8Array>& result)
 {
-    result = toUint8Array(value);
+    result = toUnsharedUint8Array(value);
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

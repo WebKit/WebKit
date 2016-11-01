@@ -63,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     if (!newBuffer)
         return JSValue::encode(throwOutOfMemoryError(exec, scope));
     
-    Structure* structure = callee->globalObject()->arrayBufferStructure();
+    Structure* structure = callee->globalObject()->arrayBufferStructure(newBuffer->sharingMode());
     
     JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, newBuffer);
     
@@ -74,8 +74,9 @@ const ClassInfo JSArrayBufferPrototype::s_info = {
     "ArrayBufferPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
 };
 
-JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure)
+JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure, ArrayBufferSharingMode sharingMode)
     : Base(vm, structure)
+    , m_sharingMode(sharingMode)
 {
 }
 
@@ -84,14 +85,14 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     Base::finishCreation(vm);
     
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, DontEnum, 2);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "ArrayBuffer"), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, arrayBufferSharingModeName(m_sharingMode)), DontEnum | ReadOnly);
 }
 
-JSArrayBufferPrototype* JSArrayBufferPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+JSArrayBufferPrototype* JSArrayBufferPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ArrayBufferSharingMode sharingMode)
 {
     JSArrayBufferPrototype* prototype =
         new (NotNull, allocateCell<JSArrayBufferPrototype>(vm.heap))
-        JSArrayBufferPrototype(vm, structure);
+        JSArrayBufferPrototype(vm, structure, sharingMode);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }

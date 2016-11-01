@@ -91,7 +91,7 @@ void extractTransferables(JSC::ExecState& state, JSC::JSValue value, Vector<RefP
             }
             portArray.append(WTFMove(port));
         } else {
-            if (RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(value))
+            if (RefPtr<ArrayBuffer> arrayBuffer = toPossiblySharedArrayBuffer(value))
                 arrayBuffers.append(WTFMove(arrayBuffer));
             else {
                 throwTypeError(&state, scope);

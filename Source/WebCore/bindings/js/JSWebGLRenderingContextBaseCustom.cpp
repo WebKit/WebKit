@@ -513,7 +513,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
     
     RETURN_IF_EXCEPTION(scope, JSValue());
     
-    RefPtr<Float32Array> webGLArray = toFloat32Array(state.uncheckedArgument(1));
+    RefPtr<Float32Array> webGLArray = toUnsharedFloat32Array(state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, JSValue());
     
     ExceptionCode ec = 0;
@@ -596,7 +596,7 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState& state, W
     if (!location && !state.uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(&state, scope);
     
-    RefPtr<Int32Array> webGLArray = toInt32Array(state.uncheckedArgument(1));
+    RefPtr<Int32Array> webGLArray = toUnsharedInt32Array(state.uncheckedArgument(1));
     
     ExceptionCode ec = 0;
     if (webGLArray) {
@@ -662,7 +662,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
     bool transpose = state.uncheckedArgument(1).toBoolean(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
     
-    RefPtr<Float32Array> webGLArray = toFloat32Array(state.uncheckedArgument(2));
+    RefPtr<Float32Array> webGLArray = toUnsharedFloat32Array(state.uncheckedArgument(2));
 
     if (webGLArray) {
         switch (f) {

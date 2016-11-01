@@ -53,6 +53,7 @@ public:
     
     JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) override;
     void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) override;
+    bool isAtomicsWaitAllowedOnCurrentThread() override;
 
 private:
     class JSArrayBufferOwner : public WeakHandleOwner {

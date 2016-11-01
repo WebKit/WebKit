@@ -27,6 +27,7 @@
 
 #include "WorkerRunLoop.h"
 #include <memory>
+#include <runtime/RuntimeFlags.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -76,9 +77,11 @@ public:
 
     void startRunningDebuggerTasks();
     void stopRunningDebuggerTasks();
+    
+    JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
 
 protected:
-    WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
     // Factory method for creating a new worker context for the thread.
     virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin) = 0;
@@ -100,6 +103,7 @@ private:
     WorkerRunLoop m_runLoop;
     WorkerLoaderProxy& m_workerLoaderProxy;
     WorkerReportingProxy& m_workerReportingProxy;
+    JSC::RuntimeFlags m_runtimeFlags;
     bool m_pausedForDebugger { false };
 
     RefPtr<WorkerGlobalScope> m_workerGlobalScope;

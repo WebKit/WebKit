@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSType.h"
+#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -118,6 +119,32 @@ inline size_t elementSize(TypedArrayType type)
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType);
 JSType typeForTypedArrayType(TypedArrayType);
+
+inline TypedArrayType typedArrayTypeForType(JSType type)
+{
+    switch (type) {
+    case Int8ArrayType:
+        return TypeInt8;
+    case Int16ArrayType:
+        return TypeInt16;
+    case Int32ArrayType:
+        return TypeInt32;
+    case Uint8ArrayType:
+        return TypeUint8;
+    case Uint8ClampedArrayType:
+        return TypeUint8Clamped;
+    case Uint16ArrayType:
+        return TypeUint16;
+    case Uint32ArrayType:
+        return TypeUint32;
+    case Float32ArrayType:
+        return TypeFloat32;
+    case Float64ArrayType:
+        return TypeFloat64;
+    default:
+        return NotTypedArray;
+    }
+}
 
 inline bool isInt(TypedArrayType type)
 {

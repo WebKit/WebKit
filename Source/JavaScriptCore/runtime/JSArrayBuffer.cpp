@@ -28,6 +28,7 @@
 
 #include "JSCInlines.h"
 #include "TypeError.h"
+#include "TypedArrayController.h"
 
 namespace JSC {
 
@@ -43,6 +44,7 @@ JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, PassRefPtr<ArrayBuffe
 void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
+    // This probably causes GCs in the various VMs to overcount the impact of the array buffer.
     vm.heap.addReference(this, m_impl);
     vm.m_typedArrayController->registerWrapper(globalObject, m_impl, this);
 }
@@ -64,6 +66,16 @@ Structure* JSArrayBuffer::createStructure(
     return Structure::create(
         vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(),
         NonArray);
+}
+
+bool JSArrayBuffer::isShared() const
+{
+    return m_impl->isShared();
+}
+
+ArrayBufferSharingMode JSArrayBuffer::sharingMode() const
+{
+    return m_impl->sharingMode();
 }
 
 size_t JSArrayBuffer::estimatedSize(JSCell* cell)

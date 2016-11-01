@@ -157,9 +157,13 @@ public:
     TypedArrayMode mode() const { return m_mode; }
     bool hasArrayBuffer() const { return JSC::hasArrayBuffer(mode()); }
     
-    ArrayBuffer* buffer();
-    JSArrayBuffer* jsBuffer(ExecState* exec) { return exec->vm().m_typedArrayController->toJS(exec, globalObject(), buffer()); }
-    PassRefPtr<ArrayBufferView> impl();
+    bool isShared();
+    JS_EXPORT_PRIVATE ArrayBuffer* unsharedBuffer();
+    ArrayBuffer* possiblySharedBuffer();
+    JSArrayBuffer* unsharedJSBuffer(ExecState* exec);
+    JSArrayBuffer* possiblySharedJSBuffer(ExecState* exec);
+    PassRefPtr<ArrayBufferView> unsharedImpl();
+    PassRefPtr<ArrayBufferView> possiblySharedImpl();
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
@@ -173,8 +177,8 @@ public:
     static ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
-
-    JS_EXPORT_PRIVATE static RefPtr<ArrayBufferView> toWrapped(JSValue);
+    
+    static RefPtr<ArrayBufferView> toWrapped(JSValue);
 
 private:
     static void finalize(JSCell*);
@@ -195,6 +199,6 @@ protected:
 
 namespace WTF {
 
-void printInternal(PrintStream&, JSC::TypedArrayMode);
+JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::TypedArrayMode);
 
 } // namespace WTF

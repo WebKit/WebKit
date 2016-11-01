@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2008, 2010, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2010, 2012-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,39 +62,115 @@ struct Atomic {
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
+    ALWAYS_INLINE bool compareExchangeWeakRelaxed(T expected, T desired)
+    {
+        return compareExchangeWeak(expected, desired, std::memory_order_relaxed);
+    }
+
     ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
     {
         T expectedOrActual = expected;
         return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
     }
 
-    ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
         T expectedOrActual = expected;
-        return value.compare_exchange_strong(expectedOrActual, desired, order);
+        value.compare_exchange_strong(expectedOrActual, desired, order);
+        return expectedOrActual;
     }
 
-    ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
+    ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
     {
         T expectedOrActual = expected;
-        return value.compare_exchange_strong(expectedOrActual, desired, order_success, order_failure);
+        value.compare_exchange_strong(expectedOrActual, desired, order_success, order_failure);
+        return expectedOrActual;
     }
 
     template<typename U>
-    ALWAYS_INLINE T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_add(addend, order); }
+    ALWAYS_INLINE T exchangeAdd(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_add(operand, order); }
+    
+    template<typename U>
+    ALWAYS_INLINE T exchangeAnd(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_and(operand, order); }
+    
+    template<typename U>
+    ALWAYS_INLINE T exchangeOr(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_or(operand, order); }
+    
+    template<typename U>
+    ALWAYS_INLINE T exchangeSub(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_sub(operand, order); }
+    
+    template<typename U>
+    ALWAYS_INLINE T exchangeXor(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_xor(operand, order); }
     
     ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst) { return value.exchange(newValue, order); }
 
     std::atomic<T> value;
 };
 
-// This is a weak CAS function that takes a direct pointer and has no portable fencing guarantees.
 template<typename T>
-inline bool weakCompareAndSwap(volatile T* location, T expected, T newValue)
+inline T atomicLoad(T* location, std::memory_order order = std::memory_order_seq_cst)
 {
-    ASSERT(isPointerTypeAlignmentOkay(location) && "natural alignment required");
-    ASSERT(bitwise_cast<std::atomic<T>*>(location)->is_lock_free() && "expected lock-free type");
-    return bitwise_cast<Atomic<T>*>(location)->compareExchangeWeak(expected, newValue, std::memory_order_relaxed);
+    return bitwise_cast<Atomic<T>*>(location)->load(order);
+}
+
+template<typename T>
+inline void atomicStore(T* location, T newValue, std::memory_order order = std::memory_order_seq_cst)
+{
+    bitwise_cast<Atomic<T>*>(location)->store(newValue, order);
+}
+
+template<typename T>
+inline bool atomicCompareExchangeWeak(T* location, T expected, T newValue, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->compareExchangeWeak(expected, newValue, order);
+}
+
+template<typename T>
+inline bool atomicCompareExchangeWeakRelaxed(T* location, T expected, T newValue)
+{
+    return bitwise_cast<Atomic<T>*>(location)->compareExchangeWeakRelaxed(expected, newValue);
+}
+
+template<typename T>
+inline T atomicCompareExchangeStrong(T* location, T expected, T newValue, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->compareExchangeStrong(expected, newValue, order);
+}
+
+template<typename T, typename U>
+inline T atomicExchangeAdd(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchangeAdd(operand, order);
+}
+
+template<typename T, typename U>
+inline T atomicExchangeAnd(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchangeAnd(operand, order);
+}
+
+template<typename T, typename U>
+inline T atomicExchangeOr(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchangeOr(operand, order);
+}
+
+template<typename T, typename U>
+inline T atomicExchangeSub(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchangeSub(operand, order);
+}
+
+template<typename T, typename U>
+inline T atomicExchangeXor(T* location, U operand, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchangeXor(operand, order);
+}
+
+template<typename T>
+inline T atomicExchange(T* location, T newValue, std::memory_order order = std::memory_order_seq_cst)
+{
+    return bitwise_cast<Atomic<T>*>(location)->exchange(newValue, order);
 }
 
 // Just a compiler fence. Has no effect on the hardware, but tells the compiler

@@ -37,6 +37,7 @@
 #include "JSStringJoiner.h"
 #include "StructureInlines.h"
 #include "TypedArrayAdaptors.h"
+#include "TypedArrayController.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -346,7 +347,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoGetterFuncBuffer(VM&, Exe
     // 22.2.3.3
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
 
-    return JSValue::encode(thisObject->jsBuffer(exec));
+    return JSValue::encode(thisObject->possiblySharedJSBuffer(exec));
 }
 
 template<typename ViewClass>
@@ -525,7 +526,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     unsigned offset = begin;
     unsigned length = end - begin;
 
-    RefPtr<ArrayBuffer> arrayBuffer = thisObject->buffer();
+    RefPtr<ArrayBuffer> arrayBuffer = thisObject->possiblySharedBuffer();
     RELEASE_ASSERT(thisLength == thisObject->length());
 
     unsigned newByteOffset = thisObject->byteOffset() + offset * ViewClass::elementSize;
@@ -542,7 +543,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     }
 
     MarkedArgumentBuffer args;
-    args.append(vm.m_typedArrayController->toJS(exec, thisObject->globalObject(), thisObject->buffer()));
+    args.append(vm.m_typedArrayController->toJS(exec, thisObject->globalObject(), arrayBuffer.get()));
     args.append(jsNumber(newByteOffset));
     args.append(jsNumber(length));
 

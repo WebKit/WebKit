@@ -1,3 +1,50 @@
+2016-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should support SharedArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=163986
+
+        Reviewed by Keith Miller.
+        
+        Adds some small things we need for SharedArrayBuffer.
+        
+        * wtf/Atomics.h:
+        (WTF::Atomic::compareExchangeWeakRelaxed):
+        (WTF::Atomic::exchangeAdd):
+        (WTF::Atomic::exchangeAnd):
+        (WTF::Atomic::exchangeOr):
+        (WTF::Atomic::exchangeSub):
+        (WTF::Atomic::exchangeXor):
+        (WTF::atomicLoad):
+        (WTF::atomicStore):
+        (WTF::atomicCompareExchangeWeak):
+        (WTF::atomicCompareExchangeWeakRelaxed):
+        (WTF::atomicCompareExchangeStrong):
+        (WTF::atomicExchangeAdd):
+        (WTF::atomicExchangeAnd):
+        (WTF::atomicExchangeOr):
+        (WTF::atomicExchangeSub):
+        (WTF::atomicExchangeXor):
+        (WTF::atomicExchange):
+        (WTF::Atomic::exchangeAndAdd): Deleted.
+        (WTF::weakCompareAndSwap): Deleted.
+        We need to be able to do atomics operations on naked pointers. We also need to be able to do
+        all of the things that std::atomic does. This adds those things and renames
+        weakCompareAndSwap to atomicCompareExchangeWeakRelaxed so that we're using consistent
+        terminology.
+        
+        * wtf/Bitmap.h:
+        (WTF::WordType>::concurrentTestAndSet): Renamed weakCompareAndSwap.
+        (WTF::WordType>::concurrentTestAndClear): Renamed weakCompareAndSwap.
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::atomicSetAndCheck): Renamed weakCompareAndSwap.
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkCount):
+        * wtf/ParkingLot.h:
+        Added unparkCount(), which lets you unpark some bounded number of threads and returns the
+        number of threads unparked. This is just a modest extension of unparkAll(). unparkAll() now
+        just calls unparkCount(ptr, UINT_MAX).
+
 2016-10-30  Frederic Wang  <fwang@igalia.com>
 
         Use HarfBuzz ot-math API to parse the OpenType MATH table

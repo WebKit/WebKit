@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,26 @@
 
 #pragma once
 
-#include <runtime/JSGlobalObject.h>
-#include <runtime/TypedArrayController.h>
+#include "JSObject.h"
 
 namespace JSC {
-class WeakHandleOwner;
-}
 
-namespace WebCore {
-
-class WebCoreTypedArrayController : public JSC::TypedArrayController {
-public:
-    WebCoreTypedArrayController();
-    virtual ~WebCoreTypedArrayController();
-    
-    JSC::JSArrayBuffer* toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
-    void registerWrapper(JSC::JSGlobalObject*, ArrayBuffer*, JSC::JSArrayBuffer*) override;
-    bool isAtomicsWaitAllowedOnCurrentThread() override;
-
-    JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
-
+class AtomicsObject : public JSNonFinalObject {
 private:
-    class JSArrayBufferOwner : public JSC::WeakHandleOwner {
-    public:
-        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
-        void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
-    };
+    AtomicsObject(VM&, Structure*);
 
-    JSArrayBufferOwner m_owner;
+public:
+    typedef JSNonFinalObject Base;
+    
+    static AtomicsObject* create(VM&, JSGlobalObject*, Structure*);
+    
+    DECLARE_INFO;
+    
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+protected:
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
-} // namespace WebCore
+} // namespace JSC
+

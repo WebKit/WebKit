@@ -228,7 +228,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState* exec)
     if (!view)
         return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
-    return JSValue::encode(view->jsBuffer(exec));
+    return JSValue::encode(view->possiblySharedJSBuffer(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(ExecState* exec)

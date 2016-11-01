@@ -1025,7 +1025,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (initData->byteLength() < 4)
         return false;
 
-    RefPtr<ArrayBuffer> initDataBuffer = initData->buffer();
+    RefPtr<ArrayBuffer> initDataBuffer = initData->unsharedBuffer();
 
     // Use a DataView to read uint32 values from the buffer, as Uint32Array requires the reads be aligned on 4-byte boundaries. 
     RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());

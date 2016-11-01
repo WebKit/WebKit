@@ -727,10 +727,10 @@ private:
         else
             return false;
 
-        RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(obj);
+        RefPtr<ArrayBufferView> arrayBufferView = toPossiblySharedArrayBufferView(obj);
         write(static_cast<uint32_t>(arrayBufferView->byteOffset()));
         write(static_cast<uint32_t>(arrayBufferView->byteLength()));
-        RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->buffer();
+        RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->possiblySharedBuffer();
         if (!arrayBuffer) {
             code = ValidationError;
             return true;
@@ -845,7 +845,7 @@ private:
                 code = ValidationError;
                 return true;
             }
-            if (ArrayBuffer* arrayBuffer = toArrayBuffer(obj)) {
+            if (ArrayBuffer* arrayBuffer = toPossiblySharedArrayBuffer(obj)) {
                 if (arrayBuffer->isNeutered()) {
                     code = ValidationError;
                     return true;
@@ -1838,7 +1838,7 @@ private:
         if (length * elementSize != byteLength)
             return false;
 
-        RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(arrayBufferObj);
+        RefPtr<ArrayBuffer> arrayBuffer = toPossiblySharedArrayBuffer(arrayBufferObj);
         switch (arrayBufferViewSubtag) {
         case DataViewTag:
             arrayBufferView = getJSValue(DataView::create(arrayBuffer, byteOffset, length).get());
@@ -2359,7 +2359,14 @@ private:
                 fail();
                 return JSValue();
             }
-            JSValue result = JSArrayBuffer::create(m_exec->vm(), m_globalObject->arrayBufferStructure(), WTFMove(arrayBuffer));
+            Structure* structure = m_globalObject->arrayBufferStructure(arrayBuffer->sharingMode());
+            // A crazy RuntimeFlags mismatch could mean that we are not equipped to handle shared
+            // array buffers while the sender is. In that case, we would see a null structure here.
+            if (!structure) {
+                fail();
+                return JSValue();
+            }
+            JSValue result = JSArrayBuffer::create(m_exec->vm(), structure, WTFMove(arrayBuffer));
             m_gcBuffer.append(result);
             return result;
         }
@@ -2372,7 +2379,7 @@ private:
             }
 
             if (!m_arrayBuffers[index])
-                m_arrayBuffers[index] = ArrayBuffer::create(m_arrayBufferContents->at(index));
+                m_arrayBuffers[index] = ArrayBuffer::create(WTFMove(m_arrayBufferContents->at(index)));
 
             return getJSValue(m_arrayBuffers[index].get());
         }
@@ -2674,7 +2681,7 @@ std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScrip
             continue;
         visited.add(arrayBuffers[arrayBufferIndex].get());
 
-        bool result = arrayBuffers[arrayBufferIndex]->transfer(contents->at(arrayBufferIndex));
+        bool result = arrayBuffers[arrayBufferIndex]->transferTo(contents->at(arrayBufferIndex));
         if (!result) {
             code = ValidationError;
             return nullptr;

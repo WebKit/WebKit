@@ -73,12 +73,12 @@ Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::Exe
     if (value.inherits(JSReadableStream::info()))
         return FetchBody();
     if (value.inherits(JSC::JSArrayBuffer::info())) {
-        ArrayBuffer* data = toArrayBuffer(value);
+        ArrayBuffer* data = toUnsharedArrayBuffer(value);
         ASSERT(data);
         return FetchBody(*data);
     }
     if (value.inherits(JSC::JSArrayBufferView::info()))
-        return FetchBody(toArrayBufferView(value).releaseConstNonNull());
+        return FetchBody(toUnsharedArrayBufferView(value).releaseConstNonNull());
 
     return Nullopt;
 }

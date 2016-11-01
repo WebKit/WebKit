@@ -128,6 +128,8 @@ public:
     {
         unparkOneImpl(address, scopedLambdaRef<intptr_t(UnparkResult)>(callback));
     }
+    
+    WTF_EXPORT_PRIVATE static unsigned unparkCount(const void* address, unsigned count);
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);

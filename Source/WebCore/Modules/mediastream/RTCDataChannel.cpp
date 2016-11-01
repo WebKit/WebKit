@@ -219,7 +219,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 
 ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
 {
-    return send(*data.buffer());
+    return send(*data.unsharedBuffer());
 }
 
 ExceptionOr<void> RTCDataChannel::send(Blob&)

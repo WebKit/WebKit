@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,8 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 } WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
-    _WKJavaScriptRuntimeFlagsAllEnabled = 0
+    _WKJavaScriptRuntimeFlagsSharedArrayBufferEnabled = 1 << 0,
+    _WKJavaScriptRuntimeFlagsAllEnabled = _WKJavaScriptRuntimeFlagsSharedArrayBufferEnabled
 } WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @class _WKExperimentalFeature;

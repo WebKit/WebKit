@@ -115,10 +115,10 @@ JSValue JSXMLHttpRequest::send(ExecState& state)
         result = wrapped().send(*JSBlob::toWrapped(value));
     else if (value.inherits(JSDOMFormData::info()))
         result = wrapped().send(*JSDOMFormData::toWrapped(value));
-    else if (value.inherits(JSArrayBuffer::info()))
-        result = wrapped().send(*toArrayBuffer(value));
-    else if (value.inherits(JSArrayBufferView::info()))
-        result = wrapped().send(*toArrayBufferView(value).get());
+    else if (RefPtr<ArrayBuffer> arrayBuffer = toUnsharedArrayBuffer(value))
+        result = wrapped().send(*arrayBuffer);
+    else if (RefPtr<ArrayBufferView> arrayBufferView = toUnsharedArrayBufferView(value))
+        result = wrapped().send(*arrayBufferView);
     else {
         // FIXME: If toString raises an exception, should we exit before calling willSendXMLHttpRequest?
         // FIXME: If toString raises an exception, should we exit before calling send?

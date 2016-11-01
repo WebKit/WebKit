@@ -285,6 +285,7 @@
 		0F300B7B18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F300B7918AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp */; };
 		0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */; };
 		0F30D7C01D95D6320053089D /* CPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30D7BF1D95D62F0053089D /* CPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F30FB611DC2DE99003124F2 /* ArrayBufferSharingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30FB601DC2DE96003124F2 /* ArrayBufferSharingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F32BD101BB34F190093A57F /* HeapHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */; };
 		0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */; };
 		0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */; };
@@ -504,6 +505,8 @@
 		0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */; };
 		0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */; };
 		0F7C5FBA1D8895070044F5E2 /* MarkedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */; };
+		0F7CF9561DC1258D0098CC12 /* AtomicsObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */; };
+		0F7CF9571DC125900098CC12 /* AtomicsObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */; };
 		0F7F988B1D9596C500F4F12E /* DFGStoreBarrierClusteringPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */; };
 		0F7F988C1D9596C800F4F12E /* DFGStoreBarrierClusteringPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7F988A1D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.h */; };
 		0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8023E91613832300A0BA45 /* ByValInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2640,6 +2643,7 @@
 		0F300B7918AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGIntegerCheckCombiningPhase.cpp; path = dfg/DFGIntegerCheckCombiningPhase.cpp; sourceTree = "<group>"; };
 		0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGIntegerCheckCombiningPhase.h; path = dfg/DFGIntegerCheckCombiningPhase.h; sourceTree = "<group>"; };
 		0F30D7BF1D95D62F0053089D /* CPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPU.h; sourceTree = "<group>"; };
+		0F30FB601DC2DE96003124F2 /* ArrayBufferSharingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferSharingMode.h; sourceTree = "<group>"; };
 		0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapHelperPool.cpp; sourceTree = "<group>"; };
 		0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapHelperPool.h; sourceTree = "<group>"; };
 		0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapValue.cpp; path = b3/B3StackmapValue.cpp; sourceTree = "<group>"; };
@@ -2857,6 +2861,8 @@
 		0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOpInfo.h; path = dfg/DFGOpInfo.h; sourceTree = "<group>"; };
 		0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlockInlines.h; sourceTree = "<group>"; };
 		0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpaceInlines.h; sourceTree = "<group>"; };
+		0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicsObject.cpp; sourceTree = "<group>"; };
+		0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicsObject.h; sourceTree = "<group>"; };
 		0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierClusteringPhase.cpp; path = dfg/DFGStoreBarrierClusteringPhase.cpp; sourceTree = "<group>"; };
 		0F7F988A1D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierClusteringPhase.h; path = dfg/DFGStoreBarrierClusteringPhase.h; sourceTree = "<group>"; };
 		0F8023E91613832300A0BA45 /* ByValInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByValInfo.h; sourceTree = "<group>"; };
@@ -5954,6 +5960,7 @@
 				A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */,
 				0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */,
 				0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */,
+				0F30FB601DC2DE96003124F2 /* ArrayBufferSharingMode.h */,
 				A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */,
 				A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */,
 				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
@@ -5965,6 +5972,8 @@
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
 				F692A84E0255597D01FF60F7 /* ArrayPrototype.h */,
 				0FB7F38A15ED8E3800F167B2 /* ArrayStorage.h */,
+				0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */,
+				0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */,
 				5B70CFDD1DB69E5C00EC23F9 /* AsyncFunctionConstructor.cpp */,
 				5B70CFDC1DB69E5C00EC23F9 /* AsyncFunctionConstructor.h */,
 				5B70CFDB1DB69E5C00EC23F9 /* AsyncFunctionPrototype.cpp */,
@@ -6402,7 +6411,6 @@
 				0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
-				0FB7F39115ED8E3800F167B2 /* TypeError.h */,
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */,
 				52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */,
@@ -6483,6 +6491,7 @@
 				0F2B66DB17B6B5AB00A7AE3F /* TypedArrays.h */,
 				0F2B66DC17B6B5AB00A7AE3F /* TypedArrayType.cpp */,
 				0F2B66DD17B6B5AB00A7AE3F /* TypedArrayType.h */,
+				0FB7F39115ED8E3800F167B2 /* TypeError.h */,
 				52B310FE1975B4240080857C /* TypeLocationCache.cpp */,
 				52B311001975B4670080857C /* TypeLocationCache.h */,
 				0FFB6C361AF48DDC00DB1BF7 /* TypeofType.cpp */,
@@ -7574,6 +7583,7 @@
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */,
 				A7BDAEC917F4EA1400F6140C /* ArrayIteratorPrototype.h in Headers */,
+				0F7CF9571DC125900098CC12 /* AtomicsObject.h in Headers */,
 				996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
@@ -8630,6 +8640,7 @@
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
+				0F30FB611DC2DE99003124F2 /* ArrayBufferSharingMode.h in Headers */,
 				A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */,
 				A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */,
 				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
@@ -10115,6 +10126,7 @@
 				147341E71DC2CE9600AA29BA /* ScriptExecutable.cpp in Sources */,
 				0F2B670717B6B5AB00A7AE3F /* TypedArrayController.cpp in Sources */,
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,
+				0F7CF9561DC1258D0098CC12 /* AtomicsObject.cpp in Sources */,
 				52B310FF1975B4240080857C /* TypeLocationCache.cpp in Sources */,
 				0FFB6C381AF48DDC00DB1BF7 /* TypeofType.cpp in Sources */,
 				52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */,

@@ -2529,7 +2529,7 @@ CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 
 void CodeBlock::visitWeakly(SlotVisitor& visitor)
 {
-    bool setByMe = m_visitWeaklyHasBeenCalled.compareExchangeStrong(false, true);
+    bool setByMe = !m_visitWeaklyHasBeenCalled.compareExchangeStrong(false, true);
     if (!setByMe)
         return;
 

@@ -639,6 +639,7 @@ set(JavaScriptCore_SOURCES
     runtime/ArrayConventions.cpp
     runtime/ArrayIteratorPrototype.cpp
     runtime/ArrayPrototype.cpp
+    runtime/AtomicsObject.cpp
     runtime/AsyncFunctionConstructor.cpp
     runtime/AsyncFunctionPrototype.cpp
     runtime/BasicBlockLocation.cpp

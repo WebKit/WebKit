@@ -569,7 +569,7 @@ public:
                     return false;
                 newValue = oldValue & ~mask;
             }
-            if (weakCompareAndSwap(pointer, oldValue, newValue))
+            if (atomicCompareExchangeWeakRelaxed(pointer, oldValue, newValue))
                 return true;
         }
     }

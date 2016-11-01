@@ -239,6 +239,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').hasOwnProperty('get
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').value is SharedArrayBuffer
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').value is String
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').hasOwnProperty('set') is false

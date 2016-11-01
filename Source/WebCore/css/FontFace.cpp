@@ -60,9 +60,9 @@ ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& doc
         if (!is<CSSValueList>(value.get()))
             return Exception { SYNTAX_ERR };
         CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
-    } else if (auto arrayBufferView = toArrayBufferView(source))
+    } else if (auto arrayBufferView = toUnsharedArrayBufferView(source))
         dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
-    else if (auto arrayBuffer = toArrayBuffer(source)) {
+    else if (auto arrayBuffer = toUnsharedArrayBuffer(source)) {
         auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
         dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
     }

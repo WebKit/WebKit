@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,35 @@
 
 #pragma once
 
-#include <runtime/JSGlobalObject.h>
-#include <runtime/TypedArrayController.h>
+#include <wtf/PrintStream.h>
 
 namespace JSC {
-class WeakHandleOwner;
-}
 
-namespace WebCore {
-
-class WebCoreTypedArrayController : public JSC::TypedArrayController {
-public:
-    WebCoreTypedArrayController();
-    virtual ~WebCoreTypedArrayController();
-    
-    JSC::JSArrayBuffer* toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
-    void registerWrapper(JSC::JSGlobalObject*, ArrayBuffer*, JSC::JSArrayBuffer*) override;
-    bool isAtomicsWaitAllowedOnCurrentThread() override;
-
-    JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
-
-private:
-    class JSArrayBufferOwner : public JSC::WeakHandleOwner {
-    public:
-        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
-        void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
-    };
-
-    JSArrayBufferOwner m_owner;
+enum class ArrayBufferSharingMode {
+    Default,
+    Shared
 };
 
-} // namespace WebCore
+inline const char* arrayBufferSharingModeName(ArrayBufferSharingMode sharingMode)
+{
+    switch (sharingMode) {
+    case ArrayBufferSharingMode::Default:
+        return "ArrayBuffer";
+    case ArrayBufferSharingMode::Shared:
+        return "SharedArrayBuffer";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+} // namespace JSC
+
+namespace WTF {
+
+inline void printInternal(PrintStream& out, JSC::ArrayBufferSharingMode mode)
+{
+    out.print(JSC::arrayBufferSharingModeName(mode));
+}
+
+} // namespace WTF
+
