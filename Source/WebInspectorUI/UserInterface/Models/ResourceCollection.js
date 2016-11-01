@@ -173,16 +173,14 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
             return;
         }
 
-        let oldType = event.data.oldType;
-        console.assert(oldType);
-        if (!oldType)
-            return;
+        console.assert(event.data.oldType);
 
         let resourcesWithNewType = this.resourceCollectionForType(resource.type);
         resourcesWithNewType.add(resource);
 
-        let resourcesWithOldType = this.resourceCollectionForType(oldType);
-        resourcesWithOldType.remove(resource);
+        // It is not necessary to remove the resource from the sub-collection for the old type since
+        // this is handled by that sub-collection's own _resourceTypeDidChange handler (via the
+        // above if statement).
     }
 };
 

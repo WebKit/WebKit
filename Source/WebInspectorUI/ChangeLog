@@ -1,3 +1,16 @@
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Fix double remove of ResourceCollection if type changes
+        https://bugs.webkit.org/show_bug.cgi?id=164268
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/ResourceCollection.js:
+        (WebInspector.ResourceCollection.prototype._resourceTypeDidChange):
+        Change logic so that a non-typed collection will not try to remove a resource that has
+        changed types from the sub-collection of its old type, since the sub-collection itself will
+        handle the removal inside its own event listener for the type change.
+
 2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Web Inspector: Add the support for custom elements

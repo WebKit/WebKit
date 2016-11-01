@@ -1,3 +1,13 @@
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Fix double remove of ResourceCollection if type changes
+        https://bugs.webkit.org/show_bug.cgi?id=164268
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/resource-collection-expected.txt:
+        Fixed test to not expect a double remove.
+
 2016-11-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/storage/domStorage-events.html as flaky.

@@ -15,6 +15,6 @@ PASS: resourceCollectionForType will return `this` if a type is specified.
 []
 ["one"]
 ["one"]
-[]
+["one"]
 []
 
