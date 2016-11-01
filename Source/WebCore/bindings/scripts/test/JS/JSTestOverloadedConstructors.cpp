@@ -75,7 +75,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayBuffer = toArrayBuffer(state->uncheckedArgument(0));
+    auto arrayBuffer = toUnsharedArrayBuffer(state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(!arrayBuffer))
         return throwArgumentTypeError(*state, throwScope, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer");
@@ -92,7 +92,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayBufferView = toArrayBufferView(state->uncheckedArgument(0));
+    auto arrayBufferView = toUnsharedArrayBufferView(state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(!arrayBufferView))
         return throwArgumentTypeError(*state, throwScope, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView");

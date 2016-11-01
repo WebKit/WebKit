@@ -1,3 +1,13 @@
+2016-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix bindings tests after r208209.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTypedArrayAttrFunction):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+
 2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Warning: Multiple build commands for output file RenderThemeCocoa.h

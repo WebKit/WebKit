@@ -3990,7 +3990,7 @@ static inline bool setJSTestObjTypedArrayAttrFunction(ExecState& state, JSTestOb
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = toFloat32Array(value);
+    auto nativeValue = toUnsharedFloat32Array(value);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!nativeValue)) {
         throwAttributeTypeError(state, throwScope, "TestObject", "typedArrayAttr", "Float32Array");
