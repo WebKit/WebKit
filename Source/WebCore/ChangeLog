@@ -1,3 +1,9 @@
+2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add StaticPasteboard.cpp to the cmake after r207841.
+
+        * CMakeLists.txt:
+
 2016-10-31  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Clear needs layout flag even when only overflow is getting recomputed.
