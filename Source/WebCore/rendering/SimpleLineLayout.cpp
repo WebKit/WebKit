@@ -858,10 +858,6 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     Layout::RunVector runs;
 
     createTextRuns(runs, flow, lineCount);
-    for (auto& renderer : childrenOfType<RenderObject>(flow)) {
-        ASSERT(is<RenderText>(renderer) || is<RenderLineBreak>(renderer));
-        renderer.clearNeedsLayout();
-    }
     return Layout::create(runs, lineCount);
 }
 

@@ -1,3 +1,22 @@
+2016-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Clear needs layout flag even when only overflow is getting recomputed.
+        https://bugs.webkit.org/show_bug.cgi?id=164253
+
+        Reviewed by Antti Koivisto.
+
+        When a style change triggers visual overflow re-computation, we set StyleDifferenceLayout style diff
+        but in practice we don't actually make changes to the simple line structure. We just re-compute the visual overflow later.
+        This patch moves the 'clean the renderes' logic back to RenderBlockFlow::layoutSimpleLines so that
+        we set the needs layout bit to false regardless of whether we preformed layout.
+
+        Covered by fast/events/tabindex-focus-blur-all.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::create):
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Add basic visual/layout viewport support for fixed position layout
