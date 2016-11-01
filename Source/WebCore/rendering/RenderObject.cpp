@@ -1129,6 +1129,19 @@ void RenderObject::showRenderObject(bool mark, int depth) const
             fprintf(stderr, " continuation->(%p)", renderer.continuation());
     }
     showRegionsInformation();
+    if (needsLayout()) {
+        fprintf(stderr, " layout->");
+        if (selfNeedsLayout())
+            fprintf(stderr, "[self]");
+        if (normalChildNeedsLayout())
+            fprintf(stderr, "[normal child]");
+        if (posChildNeedsLayout())
+            fprintf(stderr, "[positioned child]");
+        if (needsSimplifiedNormalFlowLayout())
+            fprintf(stderr, "[simplified]");
+        if (needsPositionedMovementLayout())
+            fprintf(stderr, "[positioned movement]");
+    }
     fprintf(stderr, "\n");
 }
 

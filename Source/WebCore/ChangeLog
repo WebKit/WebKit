@@ -1,3 +1,22 @@
+2016-11-01  Zalan Bujtas  <zalan@apple.com>
+
+        ShowRenderTree: Add information about the type of the needsLayout bit.
+        https://bugs.webkit.org/show_bug.cgi?id=164287
+
+        Reviewed by Simon Fraser.
+
+        Currently showRenderTree only tells you whether a renderer's "needs layout bit" is set or not.
+        With certain type of layout bugs, it's essential to know the kind of layout a particular
+        renderer needs.
+        This patch extends the renderer output by listing all the layout bits set.
+
+        B------- -+ BODY RenderBody  (0.00, 0.00) (0.00, 0.00) renderer->(0x) node->(0x) layout->[self][normal child]
+
+        Not testable.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject):
+
 2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use more references in inspector code
