@@ -50,10 +50,11 @@ list(APPEND WebKit2_SOURCES
 
     Platform/foundation/LoggingFoundation.mm
 
+    Platform/cocoa/SharedMemoryCocoa.cpp
+
     Platform/mac/LayerHostingContext.mm
     Platform/mac/MachUtilities.cpp
     Platform/mac/MenuUtilities.mm
-    Platform/mac/SharedMemoryMac.cpp
     Platform/mac/StringUtilities.mm
 
     Platform/unix/EnvironmentUtilities.cpp
@@ -228,6 +229,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/DiagnosticLoggingClient.mm
     UIProcess/Cocoa/DownloadClient.mm
     UIProcess/Cocoa/FindClient.mm
+    UIProcess/Cocoa/FullscreenClient.mm
     UIProcess/Cocoa/NavigationState.mm
     UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm
     UIProcess/Cocoa/SessionStateCoding.mm

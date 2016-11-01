@@ -1,3 +1,9 @@
+2016-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove CUSTOM_ELEMENTS build flag
