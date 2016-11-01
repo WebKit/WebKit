@@ -1358,7 +1358,7 @@ JSCell* JIT_OPERATION operationCreateRest(ExecState* exec, Register* argumentSta
     NativeCallFrameTracer tracer(vm, exec);
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    Structure* structure = globalObject->restParameterStructure();
     static_assert(sizeof(Register) == sizeof(JSValue), "This is a strong assumption here.");
     JSValue* argumentsToCopyRegion = bitwise_cast<JSValue*>(argumentStart) + numberOfParamsToSkip;
     return constructArray(exec, structure, argumentsToCopyRegion, arraySize);

@@ -1074,6 +1074,7 @@ private:
         case PhantomNewGeneratorFunction:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
+        case PhantomCreateRest:
         case PhantomClonedArguments:
         case PutHint:
         case BottomValue:
@@ -3434,6 +3435,8 @@ private:
         InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
         
         LValue index = lowInt32(m_node->child2());
+        if (m_node->numberOfArgumentsToSkip())
+            index = m_out.add(index, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
         
         LValue limit;
         if (inlineCallFrame && !inlineCallFrame->isVarargs())
@@ -4157,7 +4160,7 @@ private:
             LValue arrayLength = lowInt32(m_node->child1());
             LBasicBlock loopStart = m_out.newBlock();
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+            Structure* structure = globalObject->restParameterStructure();
             ArrayValues arrayValues = allocateUninitializedContiguousJSArray(arrayLength, structure);
             LValue array = arrayValues.array;
             LValue butterfly = arrayValues.butterfly;
@@ -6285,17 +6288,47 @@ private:
             inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
         else
             inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
-        
-        LValue length = getArgumentsLength(inlineCallFrame).value;
-        LValue lengthIncludingThis = m_out.add(length, m_out.constInt32(1 - data->offset));
-        
+
+        LValue length = nullptr; 
+        LValue lengthIncludingThis = nullptr;
+        ArgumentsLength argumentsLength = getArgumentsLength(inlineCallFrame);
+        if (argumentsLength.isKnown) {
+            unsigned knownLength = argumentsLength.known;
+            if (knownLength >= data->offset)
+                knownLength = knownLength - data->offset;
+            else
+                knownLength = 0;
+            length = m_out.constInt32(knownLength);
+            lengthIncludingThis = m_out.constInt32(knownLength + 1);
+        } else {
+            // We need to perform the same logical operation as the code above, but through dynamic operations.
+            if (!data->offset)
+                length = argumentsLength.value;
+            else {
+                LBasicBlock isLarger = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                ValueFromBlock smallerOrEqualLengthResult = m_out.anchor(m_out.constInt32(0));
+                m_out.branch(
+                    m_out.above(argumentsLength.value, m_out.constInt32(data->offset)), unsure(isLarger), unsure(continuation));
+                LBasicBlock lastNext = m_out.appendTo(isLarger, continuation);
+                ValueFromBlock largerLengthResult = m_out.anchor(m_out.sub(argumentsLength.value, m_out.constInt32(data->offset)));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                length = m_out.phi(Int32, smallerOrEqualLengthResult, largerLengthResult);
+            }
+            lengthIncludingThis = m_out.add(length, m_out.constInt32(1));
+        }
+
         speculate(
             VarargsOverflow, noValue(), nullptr,
             m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
         
         m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
         
-        LValue sourceStart = getArgumentsStart(inlineCallFrame);
+        unsigned numberOfArgumentsToSkip = data->offset;
+        LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
         LValue targetStart = addressFor(data->machineStart).value();
 
         LBasicBlock undefinedLoop = m_out.newBlock();
@@ -6328,9 +6361,7 @@ private:
         previousIndex = m_out.phi(pointerType(), loopBound);
         currentIndex = m_out.sub(previousIndex, m_out.intPtrOne);
         LValue value = m_out.load64(
-            m_out.baseIndex(
-                m_heaps.variables, sourceStart,
-                m_out.add(currentIndex, m_out.constIntPtr(data->offset))));
+            m_out.baseIndex(m_heaps.variables, sourceStart, currentIndex));
         m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, currentIndex));
         nextIndex = m_out.anchor(currentIndex);
         m_out.addIncomingToPhi(previousIndex, nextIndex);
@@ -8376,9 +8407,9 @@ private:
         return m_out.loadPtr(addressFor(CallFrameSlot::callee));
     }
     
-    LValue getArgumentsStart(InlineCallFrame* inlineCallFrame)
+    LValue getArgumentsStart(InlineCallFrame* inlineCallFrame, unsigned offset = 0)
     {
-        VirtualRegister start = AssemblyHelpers::argumentsStart(inlineCallFrame);
+        VirtualRegister start = AssemblyHelpers::argumentsStart(inlineCallFrame) + offset;
         return addressFor(start).value();
     }
     

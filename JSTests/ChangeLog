@@ -1,5 +1,76 @@
 2016-10-31  Saam Barati  <sbarati@apple.com>
 
+        We should be able to eliminate rest parameter allocations
+        https://bugs.webkit.org/show_bug.cgi?id=163925
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/rest-parameter-allocation-elimination.js: Added.
+        (assert):
+        (test1.bar):
+        (test1):
+        (test2.jaz):
+        (test2.jaz2.kaz):
+        (test2.jaz2):
+        (test2):
+        (test3.foo):
+        (test3.baz):
+        (test3.jaz):
+        (test3):
+        (test4.baz):
+        (test4.jaz):
+        (test4):
+        (test5.baz):
+        (test5.jaz):
+        (test5):
+        (test6.baz):
+        (test6.jaz):
+        (test6):
+        (test7.baz):
+        (test7.jaz):
+        (test7.check):
+        (test7):
+        (test8.baz):
+        (test8.jaz):
+        (test8.check):
+        (test8):
+        (test9.baz):
+        (test9.jaz):
+        (test9.check):
+        (test9):
+        (test10.baz):
+        (test10.jaz):
+        (test10):
+        (test11.bar):
+        (test11.foo):
+        (test11.makeArguments):
+        (test11.):
+        (test12):
+        (test12.bar):
+        (test12.foo):
+        (test12.makeArguments):
+        (test12.):
+        (test13.bar):
+        (test13.top):
+        (test13.foo):
+        (test13.makeArguments):
+        (test13.):
+        (test13):
+        (test14.bar):
+        (test14.top):
+        (test14.foo):
+        (test14.makeArguments):
+        (test14.):
+        (test14):
+        (test15.bar):
+        (test15.top):
+        (test15.foo):
+        (test15.makeArguments):
+        (test15.):
+        (test15):
+
+2016-10-31  Saam Barati  <sbarati@apple.com>
+
         Debug JSC test microbenchmarks/pure-get-by-id-cse-2.js timing out
         https://bugs.webkit.org/show_bug.cgi?id=164227
 

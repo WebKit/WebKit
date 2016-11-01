@@ -458,6 +458,7 @@ public:
             
         case PhantomDirectArguments:
         case PhantomClonedArguments:
+        case PhantomCreateRest:
             // These pretend to be the empty value constant for the benefit of the DFG backend, which
             // otherwise wouldn't take kindly to a node that doesn't compute a value.
             return true;
@@ -471,7 +472,7 @@ public:
     {
         ASSERT(hasConstant());
         
-        if (op() == PhantomDirectArguments || op() == PhantomClonedArguments) {
+        if (op() == PhantomDirectArguments || op() == PhantomClonedArguments || op() == PhantomCreateRest) {
             // These pretend to be the empty value constant for the benefit of the DFG backend, which
             // otherwise wouldn't take kindly to a node that doesn't compute a value.
             return FrozenValue::emptySingleton();
@@ -1745,6 +1746,7 @@ public:
         switch (op()) {
         case PhantomNewObject:
         case PhantomDirectArguments:
+        case PhantomCreateRest:
         case PhantomClonedArguments:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
@@ -2388,7 +2390,7 @@ public:
 
     unsigned numberOfArgumentsToSkip()
     {
-        ASSERT(op() == CreateRest || op() == GetRestLength);
+        ASSERT(op() == CreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds);
         return m_opInfo.as<unsigned>();
     }
 

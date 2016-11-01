@@ -1,3 +1,127 @@
+2016-10-31  Saam Barati  <sbarati@apple.com>
+
+        We should be able to eliminate rest parameter allocations
+        https://bugs.webkit.org/show_bug.cgi?id=163925
+
+        Reviewed by Filip Pizlo.
+
+        This is the first step towards eliminating rest parameter
+        allocations when they're spread to other function calls:
+        `function foo(...args) { bar(...args); }`
+        
+        This patch simply removes the allocation for rest parameter
+        allocations using the same escape analysis that is performed
+        in the argument elimination phase. I've added a new rule to
+        the phase to make sure that CheckStructure doesn't count as
+        an escape for an allocation since this often shows up in code
+        like this:
+        
+        ```
+        function foo(...args) {
+            let r = [];
+            for (let i = 0; i < args.length; i++)
+                r.push(args[i]);
+            return r;
+        }
+        ```
+        
+        The above program now entirely eliminates the allocation for args
+        compiled in the FTL. Programs like this also eliminate the allocation
+        for args:
+        
+        ```
+        function foo(...args) { return [args.length, args[0]]; }
+        
+        function bar(...args) { return someOtherFunction.apply(null, args); }
+        ```
+        
+        This patch extends the arguments elimination phase to understand
+        the concept that we may want to forward arguments, or get from
+        the arguments region, starting at some offset. The offset is the
+        number of names parameter before the rest parameter. For example:
+        
+        ```
+        function foo(a, b, ...args) { return bar.apply(null, args); }
+        ```
+        
+        Will forward arguments starting at the *third* argument.
+        Our arguments forwarding code already had the notion of starting
+        from some offset, however, I found bugs in that code. I extended
+        it to work properly for rest parameters with arbitrary skip offsets.
+        
+        And this program:
+        ```
+        function foo(...args) {
+            let r = [];
+            for (let i = 0; i < args.length; i++)
+                r.push(args[i]);
+            return r;
+        }
+        ```
+        
+        Knows to perform the GetMyArgumentByVal* with an offset of 3
+        inside the loop. To make this work, I taught GetMyArgumentByVal 
+        and GetMyArgumentByValOutOfBounds to take an offset representing
+        the number of arguments to skip.
+        
+        This patch is a ~20% speedup on microbenchmarks.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::constant):
+        (JSC::DFG::Node::isPhantomAllocation):
+        (JSC::DFG::Node::numberOfArgumentsToSkip):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsStart):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetVarargsFrame):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::restParameterStructure):
+
 2016-10-31  Mark Lam  <mark.lam@apple.com>
 
         Add $vm.codeBlockFor() debugging utility.
