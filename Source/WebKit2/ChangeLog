@@ -1,3 +1,11 @@
+2016-10-31  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, CMake build fix
+
+        Adds #include <WebCore/IDBGetAllRecordsData.h>
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Add basic visual/layout viewport support for fixed position layout
