@@ -4582,8 +4582,6 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    Ref<Frame> protector(frame);
-
     if (replacementEditingRange.location != notFound) {
         RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo));
         if (replacementRange) {
@@ -4747,8 +4745,6 @@ void WebPage::setComposition(const String& text, const Vector<CompositionUnderli
         send(Messages::WebPageProxy::EditorStateChanged(editorState()));
         return;
     }
-
-    Ref<Frame> protector(*targetFrame);
 
     if (replacementLength > 0) {
         // The layout needs to be uptodate before setting a selection
