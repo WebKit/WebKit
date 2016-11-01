@@ -121,13 +121,18 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserStreamDataFlags) {
 - (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
 @end
 
-@interface AVStreamDataParser (AVStreamDataParserPrivate)
-+ (NSString *)outputMIMECodecParameterForInputMIMECodecParameter:(NSString *)inputMIMECodecParameter;
-@end
 NS_ASSUME_NONNULL_END
 
 #endif // !PLATFORM(IOS)
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
+NS_ASSUME_NONNULL_BEGIN
+@interface AVStreamDataParser (AVStreamDataParserPrivate)
++ (NSString *)outputMIMECodecParameterForInputMIMECodecParameter:(NSString *)inputMIMECodecParameter;
+@end
+NS_ASSUME_NONNULL_END
+#endif
 
 #if PLATFORM(IOS) && (!HAVE(AVKIT) || !USE(APPLE_INTERNAL_SDK))
 #import <AVFoundation/AVPlayerLayer.h>
