@@ -1,3 +1,15 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Shadow DOM scoped styles are missing
+        https://bugs.webkit.org/show_bug.cgi?id=164247
+        <rdar://problem/29035061>
+
+        Reviewed by Antti Koivisto.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedInlineStyles):
+        Fix incorrect WrapperPromise usage.
+
 2016-10-31  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Arrows for Styles scope bar item are misaligned

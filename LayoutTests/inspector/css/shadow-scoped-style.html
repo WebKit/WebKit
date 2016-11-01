@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function isEmptyObject(object) {
+        for (let property in object)
+            return false;
+        return true;
+    }
+
+    function dumpStyleDeclarations(styles) {
+        InspectorTest.log("STYLES:");
+        for (let style of styles)
+            InspectorTest.log(style.generateCSSRuleString());
+    }
+
+    let documentNode;
+    let hostNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.ShadowScopedStyle");
+
+    suite.addTestCase({
+        name: "CSS.ShadowScopedStyle.HostStyles",
+        description: "Ensure shadow root host element gets :host styles.",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#shadow-host", (nodeId) => {
+                if (!nodeId) {
+                    InspectorTest.fail("DOM node #shadow-host not found in document.");
+                    reject();
+                    return;
+                }
+
+                hostNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                let nodeStyles = WebInspector.cssStyleManager.stylesForNode(hostNode);
+                nodeStyles.refresh().then(() => {
+                    InspectorTest.expectThat(hostNode.hasShadowRoots(), "Node should have shadow roots.");
+                    InspectorTest.expectFalse(hostNode.isInShadowTree(), "Node should not be in a shadow tree.");
+                    InspectorTest.expectThat(hostNode.shadowRoots()[0].shadowRootType() === WebInspector.DOMNode.ShadowRootType.Open, "Node should have an open shadow root.");
+                    InspectorTest.expectThat(isEmptyObject(nodeStyles.pseudoElements), "Node should have no pseudo element styles.");
+                    dumpStyleDeclarations(nodeStyles.orderedStyles);
+                    resolve();
+                }).catch(reject);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.ShadowScopedStyle.ElementInShadowTree",
+        description: "Ensure element in shadow tree gets shadow dom scoped styles.",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(hostNode.shadowRoots()[0].id, "#shadow-node", (nodeId) => {
+                if (!nodeId) {
+                    InspectorTest.fail("DOM node #shadow-node not found in #shadow-host's shadowRoot.");
+                    reject();
+                    return;
+                }
+
+                let node = WebInspector.domTreeManager.nodeForId(nodeId);
+                let nodeStyles = WebInspector.cssStyleManager.stylesForNode(node);
+                nodeStyles.refresh().then(() => {
+                    InspectorTest.expectFalse(node.hasShadowRoots(), "Node should not have shadow roots.");
+                    InspectorTest.expectThat(node.isInShadowTree(), "Node should be in a shadow tree.");
+                    dumpStyleDeclarations(nodeStyles.orderedStyles);
+                    resolve();
+                }).catch(reject);
+            });
+        }
+    });
+
+    // Add Test: CSS.ShadowScopedStyle.SlottedElement
+    // FIXME: <https://webkit.org/b/164249> Web Inspector: Ensure inspector shows :slotted() styles in sidebar
+
+    WebInspector.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test matched styles for nodes include shadow dom scoped styles.</p>
+<div>
+    Before
+    <div id="shadow-host" style="padding: 5px"></div>
+    After
+</div>
+<style>#shadow-host { padding: 10px; }</style>
+<script>
+(function() {
+    let shadowRoot = document.getElementById("shadow-host").attachShadow({mode: "open"});
+    shadowRoot.innerHTML = `
+        <style>
+        :host { padding: 20px; }
+        div { color: blue; }
+        </style>
+        <div id="shadow-node" style="color: green">Shadow Content</div>
+    `;
+})();
+</script>
+</body>
+</html>

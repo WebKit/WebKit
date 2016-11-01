@@ -1,3 +1,38 @@
+2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Shadow DOM scoped styles are missing
+        https://bugs.webkit.org/show_bug.cgi?id=164247
+        <rdar://problem/29035061>
+
+        Reviewed by Antti Koivisto.
+
+        Test: inspector/css/shadow-scoped-style.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        Only match :host pseudo class for NOPSEUDO. It doesn't make sense
+        with a pseudo element request (:host::before does not make sense).
+
+        * css/InspectorCSSOMWrappers.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collectFromStyleSheetContents):
+        (WebCore::InspectorCSSOMWrappers::collectDocumentWrappers):
+        (WebCore::InspectorCSSOMWrappers::getWrapperForRuleInSheets):
+        Simplify existing "once per document" wrapper collection.
+
+        (WebCore::InspectorCSSOMWrappers::maybeCollectFromStyleSheets):
+        (WebCore::InspectorCSSOMWrappers::collectScopeWrappers):
+        Include a path to add style sheets that weren't already collected.
+        This will be useful when trying the StyleScope stylesheets which
+        are different for different nodes.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::containingStyleScopeForElement):        
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        Collect rules for document and StyleScope sheets separately.
+        For elements with a shadow root, add the root's sheets as
+        well in case there are :host rules that affect the element.
+
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208180.

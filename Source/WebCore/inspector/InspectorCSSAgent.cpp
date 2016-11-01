@@ -51,6 +51,7 @@
 #include "RenderNamedFlowFragment.h"
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
+#include "ShadowRoot.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -59,7 +60,6 @@
 #include "StyleSheetList.h"
 #include "WebKitNamedFlow.h"
 #include <inspector/InspectorProtocolObjects.h>
-#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -1016,9 +1016,17 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     // StyleRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().styleScope(), styleResolver.document().extensionStyleSheets());
+    styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(styleResolver.document().extensionStyleSheets());
+    styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*element));
+
+    // Possiblity of :host styles if this element has a shadow root.
+    if (ShadowRoot* shadowRoot = element->shadowRoot())
+        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(shadowRoot->styleScope());
+
+    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule);
     if (!cssomWrapper)
         return nullptr;
+
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());
     return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(cssomWrapper, element) : nullptr;
 }

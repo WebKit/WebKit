@@ -145,7 +145,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             this._updateStyleCascade();
 
-            fetchedComputedStylesPromise.resolve();
+            fetchedInlineStylesPromise.resolve();
         }
 
         function fetchedComputedStyle(error, computedPropertiesPayload)
@@ -243,7 +243,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, fetchedInlineStyles.bind(this));
         CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
 
-        this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise, fetchedInlineStylesPromise, fetchedComputedStylesPromise])
+        this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedComputedStylesPromise.promise])
         .then(() => {
             this._pendingRefreshTask = null;
         });

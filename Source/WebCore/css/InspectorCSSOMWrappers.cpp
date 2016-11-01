@@ -81,38 +81,56 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
     }
 }
 
-void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet>>& sheetWrapperSet, StyleSheetContents* styleSheet)
+void InspectorCSSOMWrappers::collectFromStyleSheetContents(StyleSheetContents* styleSheet)
 {
     if (!styleSheet)
         return;
     RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(*styleSheet);
-    sheetWrapperSet.add(styleSheetWrapper);
+    m_styleSheetCSSOMWrapperSet.add(styleSheetWrapper);
     collect(styleSheetWrapper.get());
 }
 
 void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& sheets)
 {
-    for (unsigned i = 0; i < sheets.size(); ++i)
-        collect(sheets[i].get());
+    for (auto& sheet : sheets)
+        collect(sheet.get());
 }
 
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, Style::Scope& styleScope, ExtensionStyleSheets& extensionStyleSheets)
+void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& sheets)
+{
+    for (auto& sheet : sheets) {
+        if (!m_styleSheetCSSOMWrapperSet.contains(sheet.get())) {
+            m_styleSheetCSSOMWrapperSet.add(sheet);
+            collect(sheet.get());
+        }
+    }
+}
+
+void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::simpleDefaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::defaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::quirksStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::svgStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mathMLStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mediaControlsStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::fullscreenStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::plugInsStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::simpleDefaultStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::defaultStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::quirksStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::svgStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::mathMLStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaControlsStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::fullscreenStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::plugInsStyleSheet);
 
-        collectFromStyleSheets(styleScope.activeStyleSheets());
         collect(extensionStyleSheets.pageUserSheet());
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
         collectFromStyleSheets(extensionStyleSheets.documentUserStyleSheets());
     }
+}
+
+void InspectorCSSOMWrappers::collectScopeWrappers(Style::Scope& styleScope)
+{
+    maybeCollectFromStyleSheets(styleScope.activeStyleSheets());
+}
+
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule)
+{
     return m_styleRuleToCSSOMWrapperMap.get(rule);
 }
 

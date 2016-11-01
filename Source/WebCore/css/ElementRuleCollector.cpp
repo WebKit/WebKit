@@ -213,7 +213,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     if (parent && parent->shadowRoot())
         matchSlottedPseudoElementRules(matchRequest, ruleRange);
 
-    if (m_element.shadowRoot())
+    if (m_element.shadowRoot() && m_pseudoStyleRequest.pseudoId == NOPSEUDO)
         matchHostPseudoClassRules(matchRequest, ruleRange);
 
     if (m_element.isInShadowTree())

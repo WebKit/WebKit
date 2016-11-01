@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef InspectorCSSOMWrappers_h
-#define InspectorCSSOMWrappers_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -45,20 +44,21 @@ class InspectorCSSOMWrappers {
 public:
     // WARNING. This will construct CSSOM wrappers for all style rules and cache them in a map for significant memory cost.
     // It is here to support inspector. Don't use for any regular engine functions.
-    CSSStyleRule* getWrapperForRuleInSheets(StyleRule*, Style::Scope&, ExtensionStyleSheets&);
+    CSSStyleRule* getWrapperForRuleInSheets(StyleRule*);
     void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
+    void collectDocumentWrappers(ExtensionStyleSheets&);
+    void collectScopeWrappers(Style::Scope&);
 
 private:
     template <class ListType>
     void collect(ListType*);
 
-    void collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet>>& sheetWrapperSet, StyleSheetContents*);
+    void collectFromStyleSheetContents(StyleSheetContents*);
     void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
+    void maybeCollectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
     HashMap<StyleRule*, RefPtr<CSSStyleRule>> m_styleRuleToCSSOMWrapperMap;
     HashSet<RefPtr<CSSStyleSheet>> m_styleSheetCSSOMWrapperSet;
 };
 
 } // namespace WebCore
-
-#endif // InspectorCSSOMWrappers_h
