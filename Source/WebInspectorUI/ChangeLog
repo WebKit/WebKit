@@ -1,5 +1,16 @@
 2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve debugger highlight in some exception cases
+        https://bugs.webkit.org/show_bug.cgi?id=164300
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        When walking up AST nodes and reach a throw statement, use that.
+
+2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Cleanup stale code in NetworkSidebarPanel
         https://bugs.webkit.org/show_bug.cgi?id=164295
 

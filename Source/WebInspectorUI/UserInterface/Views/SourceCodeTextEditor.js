@@ -1291,7 +1291,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
                 // In a function call.
                 if (node.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression
-                    || node.type === WebInspector.ScriptSyntaxTree.NodeType.NewExpression) {
+                    || node.type === WebInspector.ScriptSyntaxTree.NodeType.NewExpression
+                    || node.type === WebInspector.ScriptSyntaxTree.NodeType.ThrowStatement) {
                     callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
                     return;
                 }
