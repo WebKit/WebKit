@@ -1,3 +1,20 @@
+2016-11-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r208208 and r208210.
+        https://bugs.webkit.org/show_bug.cgi?id=164276
+
+        This change caused 28 JSC test failures. (Requested by
+        ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "We should be able to eliminate rest parameter allocations"
+        https://bugs.webkit.org/show_bug.cgi?id=163925
+        http://trac.webkit.org/changeset/208208
+
+        "Fix the EFL build."
+        http://trac.webkit.org/changeset/208210
+
 2016-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should support SharedArrayBuffer

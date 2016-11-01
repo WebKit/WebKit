@@ -5601,7 +5601,6 @@ void SpeculativeJIT::compile(Node* node)
     case GetStack:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
-    case PhantomCreateRest:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

@@ -354,7 +354,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MaterializeNewObject:
     case MaterializeCreateActivation:
     case PhantomDirectArguments:
-    case PhantomCreateRest:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:

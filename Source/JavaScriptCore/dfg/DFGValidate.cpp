@@ -670,7 +670,6 @@ private:
                 case PhantomNewGeneratorFunction:
                 case PhantomCreateActivation:
                 case PhantomDirectArguments:
-                case PhantomCreateRest:
                 case PhantomClonedArguments:
                 case MovHint:
                 case Upsilon:

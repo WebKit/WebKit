@@ -64,23 +64,14 @@ Node* emitCodeToGetArgumentsArrayLength(
     DFG_ASSERT(
         graph, arguments,
         arguments->op() == CreateDirectArguments || arguments->op() == CreateScopedArguments
-        || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest
-        || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments || arguments->op() == PhantomCreateRest);
+        || arguments->op() == CreateClonedArguments || arguments->op() == PhantomDirectArguments
+        || arguments->op() == PhantomClonedArguments);
     
     InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
-
-    unsigned numberOfArgumentsToSkip = 0;
-    if (arguments->op() == CreateRest || arguments->op() == PhantomCreateRest)
-        numberOfArgumentsToSkip = arguments->numberOfArgumentsToSkip();
     
     if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-        unsigned argumentsSize = inlineCallFrame->arguments.size() - 1;
-        if (argumentsSize >= numberOfArgumentsToSkip)
-            argumentsSize -= numberOfArgumentsToSkip;
-        else
-            argumentsSize = 0;
         return insertionSet.insertConstant(
-            nodeIndex, origin, jsNumber(argumentsSize));
+            nodeIndex, origin, jsNumber(inlineCallFrame->arguments.size() - 1));
     }
     
     Node* argumentCount;
@@ -93,23 +84,12 @@ Node* emitCodeToGetArgumentsArrayLength(
             nodeIndex, SpecInt32Only, GetStack, origin,
             OpInfo(graph.m_stackAccessData.add(argumentCountRegister, FlushedInt32)));
     }
-
-    Node* result = insertionSet.insertNode(
+    
+    return insertionSet.insertNode(
         nodeIndex, SpecInt32Only, ArithSub, origin, OpInfo(Arith::Unchecked),
         Edge(argumentCount, Int32Use),
         insertionSet.insertConstantForUse(
-            nodeIndex, origin, jsNumber(1 + numberOfArgumentsToSkip), Int32Use));
-
-    if (numberOfArgumentsToSkip) {
-        // The above subtraction may produce a negative number if this number is non-zero. We correct that here.
-        result = insertionSet.insertNode(
-            nodeIndex, SpecInt32Only, ArithMax, origin, 
-            Edge(result, Int32Use), 
-            insertionSet.insertConstantForUse(nodeIndex, origin, jsNumber(0), Int32Use));
-        result->setResult(NodeResultInt32);
-    }
-
-    return result;
+            nodeIndex, origin, jsNumber(1), Int32Use));
 }
 
 } } // namespace JSC::DFG

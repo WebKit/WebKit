@@ -165,7 +165,6 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
         
-    case PhantomCreateRest:
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
         InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
@@ -174,10 +173,6 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
             // given that we can read them from the stack.
             break;
         }
-
-        unsigned numberOfArgumentsToSkip = 0;
-        if (node->op() == PhantomCreateRest)
-            numberOfArgumentsToSkip = node->numberOfArgumentsToSkip();
         
         if (inlineCallFrame->isVarargs()) {
             // Record how to read each argument and the argument count.
@@ -193,7 +188,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
             m_availability.m_heap.set(PromotedHeapLocation(ArgumentsCalleePLoc, node), callee);
         }
         
-        for (unsigned i = numberOfArgumentsToSkip; i < inlineCallFrame->arguments.size() - 1; ++i) {
+        for (unsigned i = 0; i < inlineCallFrame->arguments.size() - 1; ++i) {
             Availability argument = m_availability.m_locals.operand(
                 inlineCallFrame->stackOffset + CallFrame::argumentOffset(i));
             

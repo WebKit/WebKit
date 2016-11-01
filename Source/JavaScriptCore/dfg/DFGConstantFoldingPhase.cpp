@@ -314,11 +314,9 @@ private:
                 
             case GetMyArgumentByVal:
             case GetMyArgumentByValOutOfBounds: {
-                JSValue indexValue = m_state.forNode(node->child2()).value();
-                if (!indexValue || !indexValue.isInt32())
+                JSValue index = m_state.forNode(node->child2()).value();
+                if (!index || !index.isInt32())
                     break;
-
-                unsigned index = indexValue.asUInt32() + node->numberOfArgumentsToSkip();
                 
                 Node* arguments = node->child1().node();
                 InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
@@ -337,10 +335,10 @@ private:
                 // GetMyArgumentByVal in such statically-out-of-bounds accesses; we just lose CFA unless
                 // GCSE removes the access entirely.
                 if (inlineCallFrame) {
-                    if (index >= inlineCallFrame->arguments.size() - 1)
+                    if (index.asUInt32() >= inlineCallFrame->arguments.size() - 1)
                         break;
                 } else {
-                    if (index >= m_state.variables().numberOfArguments() - 1)
+                    if (index.asUInt32() >= m_state.variables().numberOfArguments() - 1)
                         break;
                 }
                 
@@ -351,14 +349,15 @@ private:
                     data = m_graph.m_stackAccessData.add(
                         VirtualRegister(
                             inlineCallFrame->stackOffset +
-                            CallFrame::argumentOffset(index)),
+                            CallFrame::argumentOffset(index.asInt32())),
                         FlushedJSValue);
                 } else {
                     data = m_graph.m_stackAccessData.add(
-                        virtualRegisterForArgument(index + 1), FlushedJSValue);
+                        virtualRegisterForArgument(index.asInt32() + 1), FlushedJSValue);
                 }
                 
-                if (inlineCallFrame && !inlineCallFrame->isVarargs() && index < inlineCallFrame->arguments.size() - 1) {
+                if (inlineCallFrame && !inlineCallFrame->isVarargs()
+                    && index.asUInt32() < inlineCallFrame->arguments.size() - 1) {
                     node->convertToGetStack(data);
                     eliminated = true;
                     break;

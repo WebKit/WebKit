@@ -477,12 +477,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
-    case PhantomCreateRest:
-        // Even though it's phantom, it still has the property that one can't be replaced with another.
-        read(HeapObjectCount);
-        write(HeapObjectCount);
-        return;
-
     case CallObjectConstructor:
     case ToThis:
     case CreateThis:

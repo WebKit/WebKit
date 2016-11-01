@@ -1665,17 +1665,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // that's the conservative thing to do. Otherwise we'd need to write more code to mark such
             // paths as unreachable, or to return undefined. We could implement that eventually.
             
-            unsigned argumentIndex = index.asUInt32() + node->numberOfArgumentsToSkip();
             if (inlineCallFrame) {
-                if (argumentIndex < inlineCallFrame->arguments.size() - 1) {
+                if (index.asUInt32() < inlineCallFrame->arguments.size() - 1) {
                     forNode(node) = m_state.variables().operand(
-                        virtualRegisterForArgument(argumentIndex + 1) + inlineCallFrame->stackOffset);
+                        virtualRegisterForArgument(index.asInt32() + 1) + inlineCallFrame->stackOffset);
                     m_state.setFoundConstants(true);
                     break;
                 }
             } else {
-                if (argumentIndex < m_state.variables().numberOfArguments() - 1) {
-                    forNode(node) = m_state.variables().argument(argumentIndex + 1);
+                if (index.asUInt32() < m_state.variables().numberOfArguments() - 1) {
+                    forNode(node) = m_state.variables().argument(index.asInt32() + 1);
                     m_state.setFoundConstants(true);
                     break;
                 }
@@ -1686,7 +1685,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // We have a bound on the types even though it's random access. Take advantage of this.
             
             AbstractValue result;
-            for (unsigned i = 1 + node->numberOfArgumentsToSkip(); i < inlineCallFrame->arguments.size(); ++i) {
+            for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;) {
                 result.merge(
                     m_state.variables().operand(
                         virtualRegisterForArgument(i) + inlineCallFrame->stackOffset));
@@ -1951,7 +1950,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PhantomCreateActivation:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
-    case PhantomCreateRest:
     case BottomValue:
         m_state.setDidClobber(true); // Prevent constant folding.
         // This claims to return bottom.
@@ -2867,15 +2865,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case CreateRest:
-        if (!m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-            // This means we're already having a bad time.
+        if (!m_graph.isWatchingHavingABadTimeWatchpoint(node)) // This means we're already having a bad time.
             clobberWorld(node->origin.semantic, clobberLimit);
-            forNode(node).setType(m_graph, SpecArray);
-            break;
-        }
-        forNode(node).set(
-            m_graph,
-            m_graph.globalObjectFor(node->origin.semantic)->restParameterStructure());
+        forNode(node).setType(m_graph, SpecArray);
         break;
             
     case Check: {

@@ -118,14 +118,6 @@ public:
                     registerStructure(globalObject->originalArrayStructureForIndexingType(ArrayWithSlowPutArrayStorage));
                     break;
                 }
-
-                case CreateRest: {
-                    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                        registerStructure(globalObject->restParameterStructure());
-                    }
-                    break;
-                }
                     
                 case NewTypedArray:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType()));
