@@ -97,6 +97,7 @@ inline bool isValueType(Type type)
     return false;
 }
 
+const char* toString(Type);
 
 struct Signature {
     Type returnType;

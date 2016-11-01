@@ -1230,6 +1230,7 @@
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
 		531374BD1D5CE67600AF7A0B /* WasmPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WasmPlan.h */; };
 		531374BF1D5CE95000AF7A0B /* WasmPlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */; };
+		533B15DF1DC7F463004D500A /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; };
 		5341FC701DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */; };
 		5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */; };
 		53486BB71C1795C300F6F3AF /* JSTypedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 53486BB61C1795C300F6F3AF /* JSTypedArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1253,7 +1254,6 @@
 		53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
 		53F40E8F1D5902820099A1B6 /* WasmB3IRGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */; };
-		53F40E911D5903020099A1B6 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E901D5903020099A1B6 /* WasmOps.h */; };
 		53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */; };
 		53F40E951D5A7AEF0099A1B6 /* WasmModuleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */; };
 		53F40E971D5A7BEC0099A1B6 /* WasmModuleParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */; };
@@ -1262,13 +1262,16 @@
 		53FA2AE31CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */; };
 		53FD04D31D7AB277003287D3 /* WasmCallingConvention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */; };
 		53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */; };
-		5C4E8E961DBEBE620036F1FC /* JSONParseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */; };
+		53FF7F991DBFCD9000A26CCC /* WasmValidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FF7F981DBFCD9000A26CCC /* WasmValidate.h */; };
+		53FF7F9B1DBFD2B900A26CCC /* WasmValidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F9A1DBFD2B900A26CCC /* WasmValidate.cpp */; };
+		53FF7F9D1DC00DB100A26CCC /* WasmFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F9C1DC00DB100A26CCC /* WasmFormat.cpp */; };
 		5B70CFDE1DB69E6600EC23F9 /* JSAsyncFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFD81DB69E5C00EC23F9 /* JSAsyncFunction.h */; };
 		5B70CFDF1DB69E6600EC23F9 /* JSAsyncFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B70CFD91DB69E5C00EC23F9 /* JSAsyncFunction.cpp */; };
 		5B70CFE01DB69E6600EC23F9 /* AsyncFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFDA1DB69E5C00EC23F9 /* AsyncFunctionPrototype.h */; };
 		5B70CFE11DB69E6600EC23F9 /* AsyncFunctionPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B70CFDB1DB69E5C00EC23F9 /* AsyncFunctionPrototype.cpp */; };
 		5B70CFE21DB69E6600EC23F9 /* AsyncFunctionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFDC1DB69E5C00EC23F9 /* AsyncFunctionConstructor.h */; };
 		5B70CFE31DB69E6600EC23F9 /* AsyncFunctionConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B70CFDD1DB69E5C00EC23F9 /* AsyncFunctionConstructor.cpp */; };
+		5C4E8E961DBEBE620036F1FC /* JSONParseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 14D857740A4696C80032146C /* testapi.js */; };
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
@@ -3558,6 +3561,7 @@
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
 		531374BC1D5CE67600AF7A0B /* WasmPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmPlan.h; sourceTree = "<group>"; };
 		531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmPlan.cpp; sourceTree = "<group>"; };
+		533B15DE1DC7F463004D500A /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
 		5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmBoundsCheckValue.cpp; path = b3/B3WasmBoundsCheckValue.cpp; sourceTree = "<group>"; };
 		5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmBoundsCheckValue.h; path = b3/B3WasmBoundsCheckValue.h; sourceTree = "<group>"; };
 		53486BB61C1795C300F6F3AF /* JSTypedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArray.h; sourceTree = "<group>"; };
@@ -3585,7 +3589,6 @@
 		53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFunctionParser.h; sourceTree = "<group>"; };
 		53F40E8C1D5901F20099A1B6 /* WasmParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmParser.h; sourceTree = "<group>"; };
 		53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmB3IRGenerator.cpp; sourceTree = "<group>"; };
-		53F40E901D5903020099A1B6 /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
 		53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmB3IRGenerator.h; sourceTree = "<group>"; };
 		53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModuleParser.h; sourceTree = "<group>"; };
 		53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModuleParser.cpp; sourceTree = "<group>"; };
@@ -3594,8 +3597,9 @@
 		53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallingConvention.cpp; sourceTree = "<group>"; };
 		53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCallingConvention.h; sourceTree = "<group>"; };
-		5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSONParseTest.cpp; path = API/tests/JSONParseTest.cpp; sourceTree = "<group>"; };
-		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
+		53FF7F981DBFCD9000A26CCC /* WasmValidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmValidate.h; sourceTree = "<group>"; };
+		53FF7F9A1DBFD2B900A26CCC /* WasmValidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmValidate.cpp; sourceTree = "<group>"; };
+		53FF7F9C1DC00DB100A26CCC /* WasmFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFormat.cpp; sourceTree = "<group>"; };
 		5B70CFD81DB69E5C00EC23F9 /* JSAsyncFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAsyncFunction.h; sourceTree = "<group>"; };
 		5B70CFD91DB69E5C00EC23F9 /* JSAsyncFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAsyncFunction.cpp; sourceTree = "<group>"; };
 		5B70CFDA1DB69E5C00EC23F9 /* AsyncFunctionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFunctionPrototype.h; sourceTree = "<group>"; };
@@ -3603,6 +3607,8 @@
 		5B70CFDC1DB69E5C00EC23F9 /* AsyncFunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFunctionConstructor.h; sourceTree = "<group>"; };
 		5B70CFDD1DB69E5C00EC23F9 /* AsyncFunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFunctionConstructor.cpp; sourceTree = "<group>"; };
 		5B8243041DB7AA4900EA6384 /* AsyncFunctionPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncFunctionPrototype.js; sourceTree = "<group>"; };
+		5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSONParseTest.cpp; path = API/tests/JSONParseTest.cpp; sourceTree = "<group>"; };
+		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
 		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5845,6 +5851,7 @@
 				996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */,
 				996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */,
 				65A946141C8E9F6F00A7209A /* YarrCanonicalizeUnicode.cpp */,
+				533B15DE1DC7F463004D500A /* WasmOps.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/JavaScriptCore;
@@ -5881,7 +5888,7 @@
 				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
-				53F40E901D5903020099A1B6 /* WasmOps.h */,
+				53FF7F9C1DC00DB100A26CCC /* WasmFormat.cpp */,
 				7BC547D21B69599B00959B58 /* WasmFormat.h */,
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
 				535557151D9DFA32006D583B /* WasmMemory.cpp */,
@@ -5892,6 +5899,8 @@
 				531374BC1D5CE67600AF7A0B /* WasmPlan.h */,
 				53F40E8C1D5901F20099A1B6 /* WasmParser.h */,
 				53F40E841D58F9770099A1B6 /* WasmSections.h */,
+				53FF7F9A1DBFD2B900A26CCC /* WasmValidate.cpp */,
+				53FF7F981DBFCD9000A26CCC /* WasmValidate.h */,
 			);
 			path = wasm;
 			sourceTree = "<group>";
@@ -7996,6 +8005,7 @@
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
 				0F2BDC4B1522809D00CD8910 /* DFGVariableEventStream.h in Headers */,
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
+				53FF7F991DBFCD9000A26CCC /* WasmValidate.h in Headers */,
 				0FC97F4218202119002C9B26 /* DFGWatchpointCollectionPhase.h in Headers */,
 				0FDB2CE8174830A2007B3C1B /* DFGWorklist.h in Headers */,
 				147341DA1DC0300100AA29BA /* WebAssemblyExecutable.h in Headers */,
@@ -8399,7 +8409,6 @@
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
-				53F40E911D5903020099A1B6 /* WasmOps.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* CLoopStack.h in Headers */,
@@ -8780,6 +8789,7 @@
 				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */,
+				533B15DF1DC7F463004D500A /* WasmOps.h in Headers */,
 				A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */,
 				A7CA3AEC17DA5168006538AF /* WeakMapData.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
@@ -9941,6 +9951,7 @@
 				0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
 				A5A1A0951D8CB341004C2EB8 /* DebuggerParseData.cpp in Sources */,
+				53FF7F9D1DC00DB100A26CCC /* WasmFormat.cpp in Sources */,
 				FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */,
 				FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */,
 				0F4680D214BBD16500BFE272 /* LLIntData.cpp in Sources */,
@@ -10099,6 +10110,7 @@
 				14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */,
 				70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */,
 				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,
+				53FF7F9B1DBFD2B900A26CCC /* WasmValidate.cpp in Sources */,
 				14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */,
 				9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,

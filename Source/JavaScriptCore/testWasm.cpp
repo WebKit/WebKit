@@ -269,6 +269,27 @@ inline JSValue boxd(double value)
     return box(bitwise_cast<uint64_t>(value));
 }
 
+static void checkPlan(Plan& plan, unsigned expectedNumberOfFunctions)
+{
+    if (plan.failed()) {
+        dataLogLn("Module failed to compile with error: ", plan.errorMessage());
+        CRASH();
+    }
+
+    if (plan.resultSize() != expectedNumberOfFunctions) {
+        dataLogLn("Incorrect number of functions");
+        CRASH();
+    }
+
+    for (unsigned i = 0; i < expectedNumberOfFunctions; ++i) {
+        if (!plan.result(i)) {
+            dataLogLn("Function at index, " , i, " failed to compile correctly");
+            CRASH();
+        }
+    }
+
+}
+
 // For now we inline the test files.
 static void runWasmTests()
 {
@@ -290,10 +311,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 2 || !plan.result(0) || !plan.result(1)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 2);
 
         // Test this doesn't crash.
         CHECK(isIdentical(invoke<float>(*plan.result(1)->jsEntryPoint, { boxf(0.0), boxf(1.5) }), -1.5f));
@@ -319,10 +337,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 2 || !plan.result(0) || !plan.result(1)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 2);
 
         // Test this doesn't crash.
         CHECK(isIdentical(invoke<float>(*plan.result(1)->jsEntryPoint, { boxf(0.0), boxf(1.5) }), 1.5f));
@@ -353,10 +368,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 2 || !plan.result(0) || !plan.result(1)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 2);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(1)->jsEntryPoint, { box(0) }), 0);
@@ -387,10 +399,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0) }), 1);
@@ -447,10 +456,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 2 || !plan.result(0) || !plan.result(1)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 2);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(1)->jsEntryPoint, { box(0) }), 0);
@@ -463,27 +469,23 @@ static void runWasmTests()
 
     {
         // Generated from:
-        // (module
-        //  (memory 1)
-        //  (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
-        //   (i64.store (get_local $ptr) (get_local $i))
-        //   (return (i64.load (get_local $ptr)))
-        //   )
-        //  )
+        //    (module
+        //     (memory 1)
+        //     (func (export "i64") (param $i i64) (param $ptr i32) (result i64)
+        //      (i64.store (get_local $ptr) (get_local $i))
+        //      (return (i64.load (get_local $ptr)))
+        //      )
+        //     )
         Vector<uint8_t> vector = {
             0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
             0x02, 0x02, 0x01, 0x01, 0x02, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
-            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
-            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
-            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x34, 0x03, 0x00, 0x14,
-            0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x03, 0x69, 0x36,
+            0x34, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80, 0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00,
+            0x14, 0x01, 0x14, 0x00, 0x34, 0x03, 0x00, 0x14, 0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(10) }), 0);
@@ -510,10 +512,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(10) }), 0);
@@ -550,10 +549,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -605,10 +601,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -649,10 +642,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -680,10 +670,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0) }), 0);
@@ -710,10 +697,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(10) }), 0);
@@ -741,10 +725,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(10) }), 0);
@@ -781,10 +762,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -836,10 +814,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -880,10 +855,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
         // Test this doesn't crash.
@@ -911,10 +883,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0) }), 0);
@@ -941,10 +910,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(1) }), 1);
@@ -982,10 +948,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(1) }), 1);
@@ -1009,10 +972,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { }), 5);
@@ -1030,10 +990,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { }), 11);
@@ -1050,10 +1007,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { }), 11);
@@ -1070,10 +1024,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { }), 11);
@@ -1089,10 +1040,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(1) }), 1);
@@ -1118,10 +1066,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0) }), 0);
@@ -1154,10 +1099,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0) }), 0);
@@ -1198,10 +1140,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(1) }), 0);
@@ -1251,10 +1190,7 @@ static void runWasmTests()
         };
 
         Plan plan(*vm, vector);
-        if (plan.failed() || plan.resultSize() != 1 || !plan.result(0)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        checkPlan(plan, 1);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.result(0)->jsEntryPoint, { box(0), box(1) }), 1);

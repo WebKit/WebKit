@@ -87,6 +87,10 @@ private:
         {
         }
 
+        LazyBlock()
+        {
+        }
+
         explicit operator bool() const { return !!m_block; }
 
         BasicBlock* get(Procedure& proc)
@@ -116,6 +120,10 @@ public:
         {
             if (signature != Void)
                 result.append(proc.addVariable(toB3Type(signature)));
+        }
+
+        ControlData()
+        {
         }
 
         void dump(PrintStream& out) const
@@ -172,8 +180,8 @@ public:
 
     B3IRGenerator(Memory*, Procedure&, Vector<UnlinkedCall>& unlinkedCalls);
 
-    void addArguments(const Vector<Type>&);
-    void addLocal(Type, uint32_t);
+    bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
+    bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
     // Locals
@@ -191,8 +199,8 @@ public:
     // Control flow
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
     ControlData WARN_UNUSED_RETURN addLoop(Type signature);
-    ControlData WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature);
-    bool WARN_UNUSED_RETURN addElse(ControlData&);
+    bool WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
+    bool WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
 
     bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
     bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
@@ -245,16 +253,22 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
     }
 }
 
-void B3IRGenerator::addLocal(Type type, uint32_t count)
+bool B3IRGenerator::addLocal(Type type, uint32_t count)
 {
-    m_locals.reserveCapacity(m_locals.size() + count);
+    if (!m_locals.tryReserveCapacity(m_locals.size() + count))
+        return false;
+
     for (uint32_t i = 0; i < count; ++i)
-        m_locals.append(m_proc.addVariable(toB3Type(type)));
+        m_locals.uncheckedAppend(m_proc.addVariable(toB3Type(type)));
+    return true;
 }
 
-void B3IRGenerator::addArguments(const Vector<Type>& types)
+bool B3IRGenerator::addArguments(const Vector<Type>& types)
 {
     ASSERT(!m_locals.size());
+    if (!m_locals.tryReserveCapacity(types.size()))
+        return false;
+
     m_locals.grow(types.size());
     wasmCallingConvention().loadArguments(types, m_proc, m_currentBlock, Origin(),
         [&] (ExpressionType argument, unsigned i) {
@@ -262,6 +276,7 @@ void B3IRGenerator::addArguments(const Vector<Type>& types)
             m_locals[i] = argumentVariable;
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, argument);
         });
+    return true;
 }
 
 bool B3IRGenerator::getLocal(uint32_t index, ExpressionType& result)
@@ -493,7 +508,7 @@ B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
     return ControlData(m_proc, signature, body);
 }
 
-B3IRGenerator::ControlData B3IRGenerator::addIf(ExpressionType condition, Type signature)
+bool B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType& result)
 {
     // FIXME: This needs to do some kind of stack passing.
 
@@ -507,10 +522,11 @@ B3IRGenerator::ControlData B3IRGenerator::addIf(ExpressionType condition, Type s
     notTaken->addPredecessor(m_currentBlock);
 
     m_currentBlock = taken;
-    return ControlData(m_proc, signature, notTaken, continuation);
+    result = ControlData(m_proc, signature, notTaken, continuation);
+    return true;
 }
 
-bool B3IRGenerator::addElse(ControlData& data)
+bool B3IRGenerator::addElse(ControlData& data, const ExpressionList&)
 {
     ASSERT(data.continuation);
     m_currentBlock = data.special;

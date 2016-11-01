@@ -73,12 +73,14 @@ FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functio
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
-    m_context.addArguments(m_signature->arguments);
 }
 
 template<typename Context>
 bool FunctionParser<Context>::parse()
 {
+    if (!m_context.addArguments(m_signature->arguments))
+        return false;
+
     uint32_t localCount;
     if (!parseVarUInt32(localCount))
         return false;
@@ -92,7 +94,8 @@ bool FunctionParser<Context>::parse()
         if (!parseValueType(typeOfLocal))
             return false;
 
-        m_context.addLocal(typeOfLocal, numberOfLocals);
+        if (!m_context.addLocal(typeOfLocal, numberOfLocals))
+            return false;
     }
 
     return parseBlock();
@@ -282,12 +285,16 @@ bool FunctionParser<Context>::parseExpression(OpType op)
             return false;
 
         ExpressionType condition = m_expressionStack.takeLast();
-        m_controlStack.append(m_context.addIf(condition, inlineSignature));
+        ControlType control;
+        if (!m_context.addIf(condition, inlineSignature, control))
+            return false;
+
+        m_controlStack.append(control);
         return true;
     }
 
     case OpType::Else: {
-        return m_context.addElse(m_controlStack.last());
+        return m_context.addElse(m_controlStack.last(), m_expressionStack);
     }
 
     case OpType::Br:
@@ -349,7 +356,7 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
         ControlType& data = m_controlStack.last();
         ASSERT(data.type() == BlockType::If);
         m_unreachableBlocks = 0;
-        return m_context.addElse(data);
+        return m_context.addElse(data, m_expressionStack);
     }
 
     case OpType::End: {

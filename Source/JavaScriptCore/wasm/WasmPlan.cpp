@@ -32,6 +32,7 @@
 #include "WasmB3IRGenerator.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleParser.h"
+#include "WasmValidate.h"
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace Wasm {
@@ -63,6 +64,13 @@ Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
         const uint8_t* functionStart = source + info.start;
         size_t functionLength = info.end - info.start;
         ASSERT(functionLength <= sourceLength);
+
+        String error = validateFunction(functionStart, functionLength, info.signature, moduleParser.functionInformation());
+        if (!error.isNull()) {
+            m_errorMessage = error;
+            return;
+        }
+
         m_result.append(parseAndCompile(vm, functionStart, functionLength, moduleParser.memory().get(), info.signature, moduleParser.functionInformation()));
     }
 
