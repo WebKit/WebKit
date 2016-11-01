@@ -82,6 +82,11 @@ WebInspector.DOMObserver = class DOMObserver
         WebInspector.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
+    customElementStateChanged(nodeId, customElementState)
+    {
+        WebInspector.domTreeManager._customElementStateChanged(nodeId, customElementState);
+    }
+
     pseudoElementAdded(parentNodeId, pseudoElement)
     {
         WebInspector.domTreeManager._pseudoElementAdded(parentNodeId, pseudoElement);

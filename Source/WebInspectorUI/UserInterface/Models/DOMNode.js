@@ -83,6 +83,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             }
         }
 
+        if (this._nodeType === Node.ELEMENT_NODE)
+            this._customElementState = payload.customElementState || WebInspector.DOMNode.CustomElementState.Builtin;
+        else
+            this._customElementState = null;
+
         if (payload.templateContent) {
             this._templateContent = new WebInspector.DOMNode(this._domTreeManager, this.ownerDocument, false, payload.templateContent);
             this._templateContent.parentNode = this;
@@ -261,6 +266,16 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     isInUserAgentShadowTree()
     {
         return this._isInShadowTree && this.ancestorShadowRoot().isUserAgentShadowRoot();
+    }
+
+    isCustomElement()
+    {
+        return this._customElementState === WebInspector.DOMNode.CustomElementState.Custom;
+    }
+
+    customElementState()
+    {
+        return this._customElementState;
     }
 
     isShadowRoot()
@@ -807,4 +822,11 @@ WebInspector.DOMNode.ShadowRootType = {
     UserAgent: "user-agent",
     Closed: "closed",
     Open: "open",
+};
+                     
+WebInspector.DOMNode.CustomElementState = {
+    Builtin: "builtin",
+    Custom: "custom",
+    Waiting: "waiting",
+    Failed: "failed",
 };

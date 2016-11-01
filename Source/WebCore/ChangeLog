@@ -1,3 +1,31 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Add the support for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=164266
+        <rdar://problem/29038883>
+
+        Reviewed by Joseph Pecoraro.
+
+        Set "customElementState" property on each DOMNode object when building a protocol object for the node.
+        Also added InspectorInstrumentation::didChangeCustomElementState to track the changes to custom element states.
+
+        Tests: inspector/dom/customElementState.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setIsDefinedCustomElement): Invoke didChangeCustomElementState to update the state.
+        (WebCore::Element::setIsFailedCustomElement): Ditto.
+        (WebCore::Element::setIsCustomElementUpgradeCandidate): Ditto.
+        (WebCore::Element::enqueueToUpgrade): Ditto.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::customElementState): Added.
+        (WebCore::InspectorDOMAgent::buildObjectForNode): Set the custom element state.
+        (WebCore::InspectorDOMAgent::didChangeCustomElementState): Invoke customElementStateChanged.
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didChangeCustomElementStateImpl): Added.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didChangeCustomElementState): Added.
+
 2016-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add StaticPasteboard.cpp to the cmake after r207841.

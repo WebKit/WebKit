@@ -1,3 +1,15 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Add the support for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=164266
+
+        Reviewed by Joseph Pecoraro.
+
+        Added a Inspector protocol test for CustomElementState.
+
+        * inspector/dom/customElementState-expected.txt: Added.
+        * inspector/dom/customElementState.html: Added.
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Add basic visual/layout viewport support for fixed position layout

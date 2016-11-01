@@ -740,6 +740,11 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 InspectorFrontendHost.copyText(xpath);
             });
         }
+
+        if (node.isCustomElement()) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), this._showCustomElementDefinition.bind(this));
+        }
     }
 
     _startEditing()
@@ -1486,6 +1491,35 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         let node = this.representedObject;
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode);
+    }
+
+    _showCustomElementDefinition()
+    {
+        const node = this.representedObject;
+        WebInspector.RemoteObject.resolveNode(node, "", (remoteObject) => {
+            if (!remoteObject)
+                return;
+
+            remoteObject.getProperty("constructor", (error, result, wasThrown) => {
+                if (error || result.type !== "function")
+                    return;
+
+                DebuggerAgent.getFunctionDetails(result.objectId, (error, response) => {
+                    if (error)
+                        return;
+
+                    let location = response.location;
+                    let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                    if (!sourceCode)
+                        return;
+
+                    let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+                    WebInspector.showSourceCodeLocation(sourceCodeLocation);
+                });
+                result.release();
+            });
+            remoteObject.release();
+        });
     }
 
     _editAsHTML()

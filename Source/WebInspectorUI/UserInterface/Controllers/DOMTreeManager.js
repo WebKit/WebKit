@@ -248,6 +248,13 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
         this._unbind(node);
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeRemoved, {node, parent});
     }
+    
+    _customElementStateChanged(elementId, newState)
+    {
+        const node = this._idToDOMNode[elementId];
+        node._customElementState = newState;
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.CustomElementStateChanged, {node});
+    }
 
     _pseudoElementAdded(parentId, pseudoElement)
     {
@@ -779,6 +786,7 @@ WebInspector.DOMTreeManager.Event = {
     CharacterDataModified: "dom-tree-manager-character-data-modified",
     NodeInserted: "dom-tree-manager-node-inserted",
     NodeRemoved: "dom-tree-manager-node-removed",
+    CustomElementStateChanged: "dom-tree-manager-custom-element-state-changed",
     DocumentUpdated: "dom-tree-manager-document-updated",
     ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
     DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",

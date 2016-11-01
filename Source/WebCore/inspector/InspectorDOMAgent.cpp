@@ -1303,6 +1303,17 @@ static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRootMode mo
     return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
 }
 
+static Inspector::Protocol::DOM::CustomElementState customElementState(const Element& element)
+{
+    if (element.isDefinedCustomElement())
+        return Inspector::Protocol::DOM::CustomElementState::Custom;
+    if (element.isFailedCustomElement())
+        return Inspector::Protocol::DOM::CustomElementState::Failed;
+    if (element.isUndefinedCustomElement() || element.isCustomElementUpgradeCandidate())
+        return Inspector::Protocol::DOM::CustomElementState::Waiting;
+    return Inspector::Protocol::DOM::CustomElementState::Builtin;
+}
+
 static String computeContentSecurityPolicySHA256Hash(const Element& element)
 {
     // FIXME: Compute the digest with respect to the raw bytes received from the page.
@@ -1389,6 +1400,10 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
 
         if (is<HTMLStyleElement>(element) || (is<HTMLScriptElement>(element) && !element.hasAttributeWithoutSynchronization(HTMLNames::srcAttr)))
             value->setContentSecurityPolicyHash(computeContentSecurityPolicySHA256Hash(element));
+
+        auto state = customElementState(element);
+        if (state != Inspector::Protocol::DOM::CustomElementState::Builtin)
+            value->setCustomElementState(state);
 
         if (element.pseudoId()) {
             Inspector::Protocol::DOM::PseudoType pseudoType;
@@ -2073,6 +2088,15 @@ void InspectorDOMAgent::willPopShadowRoot(Element& host, ShadowRoot& root)
     int rootId = m_documentNodeToIdMap.get(&root);
     if (hostId && rootId)
         m_frontendDispatcher->shadowRootPopped(hostId, rootId);
+}
+
+void InspectorDOMAgent::didChangeCustomElementState(Element& element)
+{
+    int elementId = m_documentNodeToIdMap.get(&element);
+    if (!elementId)
+        return;
+
+    m_frontendDispatcher->customElementStateChanged(elementId, customElementState(element));
 }
 
 void InspectorDOMAgent::frameDocumentUpdated(Frame* frame)

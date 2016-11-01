@@ -219,6 +219,12 @@ void InspectorInstrumentation::willPopShadowRootImpl(InstrumentingAgents& instru
         domAgent->willPopShadowRoot(host, root);
 }
 
+void InspectorInstrumentation::didChangeCustomElementStateImpl(InstrumentingAgents& instrumentingAgents, Element& element)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
+        domAgent->didChangeCustomElementState(element);
+}
+
 void InspectorInstrumentation::pseudoElementCreatedImpl(InstrumentingAgents& instrumentingAgents, PseudoElement& pseudoElement)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())

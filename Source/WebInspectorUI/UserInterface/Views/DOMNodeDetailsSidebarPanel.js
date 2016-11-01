@@ -32,6 +32,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeModified, this._attributesChanged, this);
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeRemoved, this._attributesChanged, this);
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
+        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
 
         this.element.classList.add("dom-node");
 
@@ -100,15 +101,10 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
 
     layout()
     {
-        var domNode = this.domNode;
-        if (!domNode)
+        if (!this.domNode)
             return;
 
-        this._identityNodeTypeRow.value = this._nodeTypeDisplayName();
-        this._identityNodeNameRow.value = domNode.nodeNameInCorrectCase();
-        this._identityNodeValueRow.value = domNode.nodeValue();
-        this._identityNodeContentSecurityPolicyHashRow.value = domNode.contentSecurityPolicyHash();
-
+        this._refreshIdentity();
         this._refreshAttributes();
         this._refreshProperties();
         this._refreshEventListeners();
@@ -120,6 +116,15 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
     _accessibilitySupported()
     {
         return window.DOMAgent && DOMAgent.getAccessibilityPropertiesForNode;
+    }
+
+    _refreshIdentity()
+    {
+        const domNode = this.domNode;
+        this._identityNodeTypeRow.value = this._nodeTypeDisplayName();
+        this._identityNodeNameRow.value = domNode.nodeNameInCorrectCase();
+        this._identityNodeValueRow.value = domNode.nodeValue();
+        this._identityNodeContentSecurityPolicyHashRow.value = domNode.contentSecurityPolicyHash();
     }
 
     _refreshAttributes()
@@ -600,11 +605,21 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         this._identityNodeValueRow.value = this.domNode.nodeValue();
     }
 
+    _customElementStateChanged(event)
+    {
+        if (event.data.node !== this.domNode)
+            return;
+        this._refreshIdentity();
+    }
+
     _nodeTypeDisplayName()
     {
         switch (this.domNode.nodeType()) {
-        case Node.ELEMENT_NODE:
-            return WebInspector.UIString("Element");
+        case Node.ELEMENT_NODE: {
+            const nodeName = WebInspector.UIString("Element");
+            const state = this._customElementState();
+            return state === null ? nodeName : `${nodeName} (${state})`;
+        }
         case Node.TEXT_NODE:
             return WebInspector.UIString("Text Node");
         case Node.COMMENT_NODE:
@@ -623,6 +638,23 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             console.error("Unknown DOM node type: ", this.domNode.nodeType());
             return this.domNode.nodeType();
         }
+    }
+
+    _customElementState()
+    {
+        const state = this.domNode.customElementState();
+        switch (state) {
+        case WebInspector.DOMNode.CustomElementState.Builtin:
+            return null;
+        case WebInspector.DOMNode.CustomElementState.Custom:
+            return WebInspector.UIString("Custom");
+        case WebInspector.DOMNode.CustomElementState.Waiting:
+            return WebInspector.UIString("Waiting to be upgraded");
+        case WebInspector.DOMNode.CustomElementState.Failed:
+            return WebInspector.UIString("Failed to upgrade");
+        }
+        console.error("Unknown DOM custom element state: ", state);
+        return null;
     }
 
     _createAttributesDataGrid()

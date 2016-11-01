@@ -122,6 +122,7 @@ public:
     static void activeStyleSheetsUpdated(Document&);
     static void didPushShadowRoot(Element& host, ShadowRoot&);
     static void willPopShadowRoot(Element& host, ShadowRoot&);
+    static void didChangeCustomElementState(Element&);
     static void pseudoElementCreated(Page*, PseudoElement&);
     static void pseudoElementDestroyed(Page*, PseudoElement&);
     static void didCreateNamedFlow(Document*, WebKitNamedFlow&);
@@ -295,6 +296,7 @@ private:
     static void activeStyleSheetsUpdatedImpl(InstrumentingAgents&, Document&);
     static void didPushShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
     static void willPopShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
+    static void didChangeCustomElementStateImpl(InstrumentingAgents&, Element&);
     static void pseudoElementCreatedImpl(InstrumentingAgents&, PseudoElement&);
     static void pseudoElementDestroyedImpl(InstrumentingAgents&, PseudoElement&);
     static void didCreateNamedFlowImpl(InstrumentingAgents&, Document*, WebKitNamedFlow&);
@@ -565,6 +567,13 @@ inline void InspectorInstrumentation::willPopShadowRoot(Element& host, ShadowRoo
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(host.document()))
         willPopShadowRootImpl(*instrumentingAgents, host, root);
+}
+
+inline void InspectorInstrumentation::didChangeCustomElementState(Element& element)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(element.document()))
+        didChangeCustomElementStateImpl(*instrumentingAgents, element);
 }
 
 inline void InspectorInstrumentation::pseudoElementCreated(Page* page, PseudoElement& pseudoElement)

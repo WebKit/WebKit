@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMNode.customElementState");
+    let documentNode;
+
+    suite.addTestCase({
+        name: "CustomElementState.Builtin",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#builtin", (nodeId) => {
+                const node = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.expectEqual(node.customElementState(), "builtin", "#builtin should be CustomElementState.Builtin.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CustomElementState.Custom.Constructed",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "constructed-element", (nodeId) => {
+                const node = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.expectEqual(node.customElementState(), "custom", "constructed-element should be CustomElementState.Custom.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CustomElementState.Custom.Upgraded",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "upgraded-element", (nodeId) => {
+                const node = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.expectEqual(node.customElementState(), "custom", "upgraded-element should be CustomElementState.Custom.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CustomElementState.Waiting",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "undefined-element", (nodeId) => {
+                const node = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.expectEqual(node.customElementState(), "waiting", "undefined-element should be CustomElementState.Waiting.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CustomElementState.Failed",
+        test(resolve, reject) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "failed-element", (nodeId) => {
+                const node = WebInspector.domTreeManager.nodeForId(nodeId);
+                InspectorTest.expectEqual(node.customElementState(), "failed", "failed-element should be CustomElementState.Failed.");
+                resolve();
+            });
+        }
+    });
+
+    WebInspector.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+
+customElements.define("constructed-element", class extends HTMLElement { });
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for DOMNode.customElementState.</p>
+<div style="display: none">
+    <input id="builtin">
+    <constructed-element></constructed-element>
+    <upgraded-element></upgraded-element>
+    <undefined-element></undefined-element>
+    <failed-element></failed-element>
+</div>
+<script>
+
+customElements.define("upgraded-element", class extends HTMLElement { });
+customElements.define("failed-element", class extends HTMLElement { constructor() { super(); throw "failedElementError"; } });
+
+</script>
+</body>
+</html>

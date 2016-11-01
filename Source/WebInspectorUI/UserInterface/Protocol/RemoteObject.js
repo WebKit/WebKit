@@ -418,6 +418,15 @@ WebInspector.RemoteObject = class RemoteObject
             callback(0);
     }
 
+    getProperty(propertyName, callback)
+    {
+        function inspectedPage_object_getProperty(property) {
+            return this[property];
+        }
+
+        this.callFunction(inspectedPage_object_getProperty, [propertyName], true, callback);
+    }
+
     callFunction(functionDeclaration, args, generatePreview, callback)
     {
         function mycallback(error, result, wasThrown)

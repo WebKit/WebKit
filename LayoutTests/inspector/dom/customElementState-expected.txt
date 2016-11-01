@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 91: failedElementError
+Test for DOMNode.customElementState.
+
+Uncaught exception in test page: failedElementError [customElementState.html:91]
+
+== Running test suite: DOMNode.customElementState
+-- Running test case: CustomElementState.Builtin
+PASS: #builtin should be CustomElementState.Builtin.
+
+-- Running test case: CustomElementState.Custom.Constructed
+PASS: constructed-element should be CustomElementState.Custom.
+
+-- Running test case: CustomElementState.Custom.Upgraded
+PASS: upgraded-element should be CustomElementState.Custom.
+
+-- Running test case: CustomElementState.Waiting
+PASS: undefined-element should be CustomElementState.Waiting.
+
+-- Running test case: CustomElementState.Failed
+PASS: failed-element should be CustomElementState.Failed.
+

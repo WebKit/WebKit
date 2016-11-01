@@ -1883,6 +1883,7 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
         data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+    InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
 void Element::setIsFailedCustomElement(JSCustomElementInterface&)
@@ -1896,6 +1897,7 @@ void Element::setIsFailedCustomElement(JSCustomElementInterface&)
         if (auto* queue = elementRareData()->customElementReactionQueue())
             queue->clear();
     }
+    InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
 void Element::setIsCustomElementUpgradeCandidate()
@@ -1903,6 +1905,7 @@ void Element::setIsCustomElementUpgradeCandidate()
     ASSERT(!getFlag(IsCustomElement));
     setFlag(IsCustomElement);
     setFlag(IsEditingTextOrUndefinedCustomElementFlag);
+    InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
 void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
@@ -1910,6 +1913,7 @@ void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
     ASSERT(!isDefinedCustomElement() && !isFailedCustomElement());
     setFlag(IsCustomElement);
     setFlag(IsEditingTextOrUndefinedCustomElementFlag);
+    InspectorInstrumentation::didChangeCustomElementState(*this);
 
     auto& data = ensureElementRareData();
     ASSERT(!data.customElementReactionQueue());

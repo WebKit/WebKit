@@ -26,6 +26,12 @@
             "description": "Shadow root type."
         },
         {
+            "id": "CustomElementState",
+            "type": "string",
+            "enum": ["builtin", "custom", "waiting", "failed"],
+            "description": "Custom element state."
+        },
+        {
             "id": "LiveRegionRelevant",
             "type": "string",
             "enum": ["additions", "removals", "text"],
@@ -52,6 +58,7 @@
                 { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
                 { "name": "pseudoType", "$ref": "PseudoType", "optional": true, "description": "Pseudo element type for this node." },
                 { "name": "shadowRootType", "$ref": "ShadowRootType", "optional": true, "description": "Shadow root type." },
+                { "name": "customElementState", "$ref": "CustomElementState", "optional": true, "description": "Custom element state." },
                 { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
                 { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },
                 { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." },
@@ -544,6 +551,14 @@
                 { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }
             ],
             "description": "Called when shadow root is popped from the element."
+        },
+        {
+            "name": "customElementStateChanged",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Element id." },
+                { "name": "customElementState", "$ref": "CustomElementState", "description": "Custom element state." }
+            ],
+            "description": "Called when the custom element state is changed."
         },
         {
             "name": "pseudoElementAdded",

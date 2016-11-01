@@ -1,3 +1,49 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Add the support for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=164266
+        <rdar://problem/29038883>
+
+        Reviewed by Joseph Pecoraro.
+
+        Show the custom element state in DOM node's details pane:
+         - "Element" for all builtin elements.
+         - "Element (Custom)" for any upgraded custom elements.
+         - "Element (Waiting to be upgraded)" for any element waiting to be upgraded.
+         - "Element (Failed to upgrade)" for any custom element that failed during construction or an upgrade.
+
+        And add "Jump to Definition" to the context menu of an node to find the custom element's definition.
+
+        * Localizations/en.lproj/localizedStrings.js: Added localized strings.
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._customElementStateChanged): Added. Update the state and fire
+        WebInspector.DOMTreeManager.Event.CustomElementStateChanged to update the node's details pane.
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode): Set the custom element state or default to "builtin". Use null when the node
+        is not an element.
+        (WebInspector.DOMNode.prototype.isCustomElement): Added. Returns true if this is a successfully
+        constructed or upgraded custom element.
+        (WebInspector.DOMNode.prototype.customElementState): Added.
+        (WebInspector.DOMNode.CustomElementState): Added.
+        * UserInterface/Protocol/DOMObserver.js:
+        (WebInspector.DOMObserver.prototype.customElementStateChanged): Added.
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getProperty): Added. Retrieves the property of a given name from
+        the remote backend.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel): Call _customElementStateChanged when the custom element
+        state changes by listening to WebInspector.DOMTreeManager.Event.CustomElementStateChanged.
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype.layout):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshIdentity): Extracted from layout.
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._customElementStateChanged): Added. 
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._nodeTypeDisplayName): Include the custom element
+        state when it's not a builtin element (_customElementState returns null in that case).
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._customElementState): Get the localized string for
+        each custom element state.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu): Add "Jump to Definition" item in the
+        context menu of an element when it's a successfully constructed or upgraded custom element.
+
 2016-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Shadow DOM scoped styles are missing

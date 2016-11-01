@@ -1,3 +1,16 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Add the support for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=164266
+        <rdar://problem/29038883>
+
+        Reviewed by Joseph Pecoraro.
+
+        Added customElementState of type CustomElementState to reflect the custom element state on each DOM node
+        along with customElementStateChanged which fires when the custom element state changes.
+
+        * inspector/protocol/DOM.json:
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the EFL build.
