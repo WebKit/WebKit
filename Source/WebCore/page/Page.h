@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "ActivityState.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -34,7 +35,6 @@
 #include "SessionID.h"
 #include "Supplementable.h"
 #include "UserInterfaceLayoutDirection.h"
-#include "ViewState.h"
 #include "ViewportArguments.h"
 #include "WheelEventTestTrigger.h"
 #include <memory>
@@ -126,7 +126,7 @@ class StorageNamespace;
 class StorageNamespaceProvider;
 class UserContentProvider;
 class ValidationMessageClient;
-class ViewStateChangeObserver;
+class ActivityStateChangeObserver;
 class VisitedLinkStore;
 
 typedef uint64_t LinkHash;
@@ -334,22 +334,22 @@ public:
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
-    WEBCORE_EXPORT void setViewState(ViewState::Flags);
+    WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
     bool isVisibleAndActive() const;
     void pageActivityStateChanged() { updateTimerThrottlingState(); }
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
-    bool isVisible() const { return m_viewState & ViewState::IsVisible; }
+    bool isVisible() const { return m_activityState & ActivityState::IsVisible; }
 
     // Notification that this Page was moved into or out of a native window.
     WEBCORE_EXPORT void setIsInWindow(bool);
-    bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
+    bool isInWindow() const { return m_activityState & ActivityState::IsInWindow; }
 
     void setIsClosing() { m_isClosing = true; }
     bool isClosing() const { return m_isClosing; }
 
-    void addViewStateChangeObserver(ViewStateChangeObserver&);
-    void removeViewStateChangeObserver(ViewStateChangeObserver&);
+    void addActivityStateChangeObserver(ActivityStateChangeObserver&);
+    void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
@@ -666,7 +666,7 @@ private:
 
     bool m_isEditable;
     bool m_isPrerender;
-    ViewState::Flags m_viewState;
+    ActivityState::Flags m_activityState;
     PageActivityState::Flags m_pageActivityState;
 
     LayoutMilestones m_requestedLayoutMilestones;
@@ -711,7 +711,7 @@ private:
     Ref<VisitedLinkStore> m_visitedLinkStore;
     RefPtr<WheelEventTestTrigger> m_testTrigger;
 
-    HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
+    HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;

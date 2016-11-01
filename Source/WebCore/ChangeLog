@@ -1,3 +1,55 @@
+2016-10-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Rename ViewState to ActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=164254
+
+        Reviewed by Andreas Kling.
+
+        We plan to add a couple more flags to ViewState that aren't directly related to the view
+        itself - whether there is an ongoing page load, and whether whether there is audio playback.
+        This will allow viewState (now activityState) to fully drive throttling decisions.
+
+        Renaming this bitfield accordingly.
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::~GeolocationController):
+        (WebCore::GeolocationController::activityStateDidChange):
+        (WebCore::GeolocationController::viewStateDidChange): Deleted.
+        * Modules/geolocation/GeolocationController.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ActivityState.h: Copied from Source/WebCore/page/ViewState.h.
+        * page/ActivityStateChangeObserver.h: Copied from Source/WebCore/page/ViewStateChangeObserver.h.
+        (WebCore::ActivityStateChangeObserver::~ActivityStateChangeObserver):
+        (WebCore::ViewStateChangeObserver::~ViewStateChangeObserver): Deleted.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController):
+        (WebCore::FocusController::setFocused):
+        (WebCore::FocusController::setActivityState):
+        (WebCore::FocusController::setActive):
+        (WebCore::FocusController::setViewState): Deleted.
+        * page/FocusController.h:
+        (WebCore::FocusController::isActive):
+        (WebCore::FocusController::isFocused):
+        (WebCore::FocusController::contentIsVisible):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setIsInWindow):
+        (WebCore::Page::addActivityStateChangeObserver):
+        (WebCore::Page::removeActivityStateChangeObserver):
+        (WebCore::Page::updateTimerThrottlingState):
+        (WebCore::Page::setActivityState):
+        (WebCore::Page::isVisibleAndActive):
+        (WebCore::Page::setIsVisible):
+        (WebCore::Page::addViewStateChangeObserver): Deleted.
+        (WebCore::Page::removeViewStateChangeObserver): Deleted.
+        (WebCore::Page::setViewState): Deleted.
+        * page/Page.h:
+        (WebCore::Page::isVisible):
+        (WebCore::Page::isInWindow):
+        * page/PageThrottler.h:
+        * page/ViewState.h: Removed.
+        * page/ViewStateChangeObserver.h: Removed.
+
 2016-11-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208100.

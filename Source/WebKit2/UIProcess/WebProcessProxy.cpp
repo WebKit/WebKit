@@ -715,7 +715,7 @@ void WebProcessProxy::releasePageCache()
 void WebProcessProxy::windowServerConnectionStateChanged()
 {
     for (const auto& page : m_pageMap.values())
-        page->viewStateDidChange(ViewState::IsVisuallyIdle);
+        page->activityStateDidChange(ActivityState::IsVisuallyIdle);
 }
 
 void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, Function<void (WebsiteData)> completionHandler)

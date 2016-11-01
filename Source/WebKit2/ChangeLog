@@ -1,3 +1,134 @@
+2016-10-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Rename ViewState to ActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=164254
+
+        Reviewed by Andreas Kling.
+
+        We plan to add a couple more flags to ViewState that aren't directly related to the view
+        itself - whether there is an ongoing page load, and whether whether there is audio playback.
+        This will allow viewState (now activityState) to fully drive throttling decisions.
+
+        Renaming this bitfield accordingly.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate):
+        (_WebKitWebViewBasePrivate::updateActivityStateTimerFired):
+        (webkitWebViewBaseScheduleUpdateActivityState):
+        (toplevelWindowFocusInEvent):
+        (toplevelWindowFocusOutEvent):
+        (toplevelWindowStateEvent):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseMap):
+        (webkitWebViewBaseUnmap):
+        (webkitWebViewBaseSetFocus):
+        (webkitWebViewBaseIsInWindowActive):
+        (webkitWebViewBaseIsFocused):
+        (webkitWebViewBaseIsVisible):
+        (webkitWebViewBaseIsInWindow):
+        (_WebKitWebViewBasePrivate::updateViewStateTimerFired): Deleted.
+        (webkitWebViewBaseScheduleUpdateViewState): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::resignFirstResponder):
+        (WebKit::WebViewImpl::windowDidOrderOffScreen):
+        (WebKit::WebViewImpl::windowDidOrderOnScreen):
+        (WebKit::WebViewImpl::windowDidBecomeKey):
+        (WebKit::WebViewImpl::windowDidResignKey):
+        (WebKit::WebViewImpl::windowDidMiniaturize):
+        (WebKit::WebViewImpl::windowDidDeminiaturize):
+        (WebKit::WebViewImpl::windowDidChangeOcclusionState):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::viewDidHide):
+        (WebKit::WebViewImpl::viewDidUnhide):
+        (WebKit::WebViewImpl::activeSpaceDidChange):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChanges):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChangesSync):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::waitForDidUpdateActivityState):
+        (WebKit::DrawingAreaProxy::waitForDidUpdateViewState): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::setSuppressVisibilityUpdates):
+        (WebKit::WebPageProxy::updateActivityState):
+        (WebKit::WebPageProxy::activityStateDidChange):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::waitForDidUpdateActivityState):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::installActivityStateChangeCompletionHandler):
+        (WebKit::WebPageProxy::updateViewState): Deleted.
+        (WebKit::WebPageProxy::viewStateDidChange): Deleted.
+        (WebKit::WebPageProxy::dispatchViewStateChange): Deleted.
+        (WebKit::WebPageProxy::waitForDidUpdateViewState): Deleted.
+        (WebKit::WebPageProxy::installViewStateChangeCompletionHandler): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow):
+        (WebKit::WebPageProxy::didUpdateActivityState):
+        (WebKit::WebPageProxy::isViewVisible):
+        (WebKit::WebPageProxy::didUpdateViewState): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::windowServerConnectionStateChanged):
+        * UIProcess/efl/WebView.cpp:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _applicationDidEnterBackground]):
+        (-[WKContentView _applicationWillEnterForeground]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _applicationDidEnterBackground]):
+        (-[WKPDFView _applicationWillEnterForeground]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::synchronizeDynamicViewportUpdate):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState): Deleted.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateViewState): Deleted.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::activityStateDidChange):
+        (WebKit::PluginView::viewStateDidChange): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::activityStateDidChange):
+        (WebKit::AcceleratedDrawingArea::viewStateDidChange): Deleted.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::activityStateDidChange):
+        (WebKit::DrawingArea::viewStateDidChange): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::updateIsInWindow):
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::setViewState): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isVisible):
+        (WebKit::WebPage::isVisibleOrOccluded):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        (WebKit::RemoteLayerTreeDrawingArea::viewStateDidChange): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired):
+        (WebKit::TiledCoreAnimationDrawingArea::viewStateDidChange): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired): Deleted.
+
 2016-10-31  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, CMake build fix

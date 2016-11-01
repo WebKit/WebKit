@@ -418,18 +418,18 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(double)
 
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
 
-    m_webPageProxy.didUpdateViewState();
+    m_webPageProxy.didUpdateActivityState();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState()
+void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState()
 {
     // We must send the didUpdate message before blocking on the next commit, otherwise
     // we can be guaranteed that the next commit won't come until after the waitForAndDispatchImmediately times out.
     if (m_didUpdateMessageState != DoesNotNeedDidUpdate)
         didRefreshDisplay(monotonicallyIncreasingTime());
 
-    static std::chrono::milliseconds viewStateUpdateTimeout = [] {
-        if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideViewStateUpdateTimeout"])
+    static std::chrono::milliseconds activityStateUpdateTimeout = [] {
+        if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
             return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>([value doubleValue]));
 
 #if PLATFORM(IOS)
@@ -438,7 +438,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState()
         return std::chrono::milliseconds(250);
 #endif
     }();
-    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_webPageProxy.pageID(), viewStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_webPageProxy.pageID(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)> callbackFunction)

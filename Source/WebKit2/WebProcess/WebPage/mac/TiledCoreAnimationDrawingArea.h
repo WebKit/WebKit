@@ -81,8 +81,8 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
 
-    void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState, const Vector<uint64_t>&) override;
-    void didUpdateViewStateTimerFired();
+    void activityStateDidChange(WebCore::ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<uint64_t>&) override;
+    void didUpdateActivityStateTimerFired();
 
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
@@ -146,9 +146,9 @@ private:
 
     WebCore::TransformationMatrix m_transform;
 
-    RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateViewStateTimer;
-    Vector<uint64_t> m_nextViewStateChangeCallbackIDs;
-    bool m_wantsDidUpdateViewState;
+    RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
+    Vector<uint64_t> m_nextActivityStateChangeCallbackIDs;
+    bool m_wantsDidUpdateActivityState;
 
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 

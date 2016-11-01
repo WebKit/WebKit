@@ -535,14 +535,14 @@ void PluginView::webPageDestroyed()
     m_webPage = 0;
 }
 
-void PluginView::viewStateDidChange(ViewState::Flags changed)
+void PluginView::activityStateDidChange(ActivityState::Flags changed)
 {
     if (!m_plugin || !m_isInitialized)
         return;
 
-    if (changed & ViewState::IsVisibleOrOccluded)
+    if (changed & ActivityState::IsVisibleOrOccluded)
         m_plugin->windowVisibilityChanged(m_webPage->isVisibleOrOccluded());
-    if (changed & ViewState::WindowIsActive)
+    if (changed & ActivityState::WindowIsActive)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 }
 

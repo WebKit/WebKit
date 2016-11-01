@@ -303,7 +303,7 @@ void WebPageProxy::synchronizeDynamicViewportUpdate()
     // If m_dynamicViewportSizeUpdateWaitingForTarget is false, we are waiting for the next valid frame with the hope it is the one for the new target.
     // If m_dynamicViewportSizeUpdateWaitingForTarget is still true, this is a desperate attempt to get the valid frame before finishing the animation.
     if (m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit)
-        m_drawingArea->waitForDidUpdateViewState();
+        m_drawingArea->waitForDidUpdateActivityState();
 
     m_dynamicViewportSizeUpdateWaitingForTarget = false;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;

@@ -48,6 +48,7 @@
 #include "ShareableBitmap.h"
 #include "UserData.h"
 #include "UserMediaPermissionRequestManager.h"
+#include <WebCore/ActivityState.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DragData.h>
@@ -68,7 +69,6 @@
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/UserScriptTypes.h>
-#include <WebCore/ViewState.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <memory>
@@ -436,8 +436,8 @@ public:
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
 
-    bool isVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
-    bool isVisibleOrOccluded() const { return m_viewState & WebCore::ViewState::IsVisibleOrOccluded; }
+    bool isVisible() const { return m_activityState & WebCore::ActivityState::IsVisible; }
+    bool isVisibleOrOccluded() const { return m_activityState & WebCore::ActivityState::IsVisibleOrOccluded; }
 
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(LayerHostingMode);
@@ -1041,7 +1041,7 @@ private:
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, uint64_t callbackID);
     void updateIsInWindow(bool isInitialState = false);
-    void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState, const Vector<uint64_t>& callbackIDs);
+    void setActivityState(WebCore::ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<uint64_t>& callbackIDs);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
@@ -1485,7 +1485,7 @@ private:
 
     bool m_useAsyncScrolling;
 
-    WebCore::ViewState::Flags m_viewState;
+    WebCore::ActivityState::Flags m_activityState;
 
     UserActivity m_userActivity;
     WebCore::HysteresisActivity m_userActivityHysteresis;

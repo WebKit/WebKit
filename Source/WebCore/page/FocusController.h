@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "ActivityState.h"
 #include "FocusDirection.h"
 #include "LayoutRect.h"
 #include "Timer.h"
-#include "ViewState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -51,7 +51,7 @@ class TreeScope;
 class FocusController {
     WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FocusController(Page&, ViewState::Flags);
+    explicit FocusController(Page&, ActivityState::Flags);
 
     WEBCORE_EXPORT void setFocusedFrame(PassRefPtr<Frame>);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
@@ -62,15 +62,15 @@ public:
 
     WEBCORE_EXPORT bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
 
-    void setViewState(ViewState::Flags);
+    void setActivityState(ActivityState::Flags);
 
     WEBCORE_EXPORT void setActive(bool);
-    bool isActive() const { return m_viewState & ViewState::WindowIsActive; }
+    bool isActive() const { return m_activityState & ActivityState::WindowIsActive; }
 
     WEBCORE_EXPORT void setFocused(bool);
-    bool isFocused() const { return m_viewState & ViewState::IsFocused; }
+    bool isFocused() const { return m_activityState & ActivityState::IsFocused; }
 
-    bool contentIsVisible() const { return m_viewState & ViewState::IsVisible; }
+    bool contentIsVisible() const { return m_activityState & ActivityState::IsVisible; }
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
     WEBCORE_EXPORT Element* nextFocusableElement(Node&);
@@ -119,7 +119,7 @@ private:
     Page& m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
-    ViewState::Flags m_viewState;
+    ActivityState::Flags m_activityState;
 
     Timer m_focusRepaintTimer;
     double m_focusSetTime;

@@ -313,10 +313,10 @@ static inline int shadowAdjustedTabIndex(Element& element, KeyboardEvent& event)
     return element.tabIndex();
 }
 
-FocusController::FocusController(Page& page, ViewState::Flags viewState)
+FocusController::FocusController(Page& page, ActivityState::Flags activityState)
     : m_page(page)
     , m_isChangingFocusedFrame(false)
-    , m_viewState(viewState)
+    , m_activityState(activityState)
     , m_focusRepaintTimer(*this, &FocusController::focusRepaintTimerFired)
 {
 }
@@ -359,7 +359,7 @@ Frame& FocusController::focusedOrMainFrame() const
 
 void FocusController::setFocused(bool focused)
 {
-    m_page.setViewState(focused ? m_viewState | ViewState::IsFocused : m_viewState & ~ViewState::IsFocused);
+    m_page.setActivityState(focused ? m_activityState | ActivityState::IsFocused : m_activityState & ~ActivityState::IsFocused);
 }
 
 void FocusController::setFocusedInternal(bool focused)
@@ -825,23 +825,23 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
     return true;
 }
 
-void FocusController::setViewState(ViewState::Flags viewState)
+void FocusController::setActivityState(ActivityState::Flags activityState)
 {
-    ViewState::Flags changed = m_viewState ^ viewState;
-    m_viewState = viewState;
+    ActivityState::Flags changed = m_activityState ^ activityState;
+    m_activityState = activityState;
 
-    if (changed & ViewState::IsFocused)
-        setFocusedInternal(viewState & ViewState::IsFocused);
-    if (changed & ViewState::WindowIsActive) {
-        setActiveInternal(viewState & ViewState::WindowIsActive);
-        if (changed & ViewState::IsVisible)
-            setIsVisibleAndActiveInternal(viewState & ViewState::WindowIsActive);
+    if (changed & ActivityState::IsFocused)
+        setFocusedInternal(activityState & ActivityState::IsFocused);
+    if (changed & ActivityState::WindowIsActive) {
+        setActiveInternal(activityState & ActivityState::WindowIsActive);
+        if (changed & ActivityState::IsVisible)
+            setIsVisibleAndActiveInternal(activityState & ActivityState::WindowIsActive);
     }
 }
 
 void FocusController::setActive(bool active)
 {
-    m_page.setViewState(active ? m_viewState | ViewState::WindowIsActive : m_viewState & ~ViewState::WindowIsActive);
+    m_page.setActivityState(active ? m_activityState | ActivityState::WindowIsActive : m_activityState & ~ActivityState::WindowIsActive);
 }
 
 void FocusController::setActiveInternal(bool active)

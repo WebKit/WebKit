@@ -30,6 +30,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "APIPageConfiguration.h"
 #include "AcceleratedDrawingAreaProxy.h"
+#include "ActivityState.h"
 #include "CoordinatedGraphicsScene.h"
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "DownloadManagerEfl.h"
@@ -38,7 +39,6 @@
 #include "InputMethodContextEfl.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
-#include "ViewState.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebContextMenuProxyEfl.h"

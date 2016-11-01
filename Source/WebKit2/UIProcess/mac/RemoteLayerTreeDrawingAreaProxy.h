@@ -73,7 +73,7 @@ private:
     void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 
-    void waitForDidUpdateViewState() override;
+    void waitForDidUpdateActivityState() override;
     void hideContentUntilPendingUpdate() override;
     void hideContentUntilAnyUpdate() override;
     bool hasVisibleContent() const override;

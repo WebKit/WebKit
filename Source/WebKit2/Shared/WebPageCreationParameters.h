@@ -32,6 +32,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
@@ -40,7 +41,6 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
-#include <WebCore/ViewState.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -60,7 +60,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
 
-    WebCore::ViewState::Flags viewState;
+    WebCore::ActivityState::Flags activityState;
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;

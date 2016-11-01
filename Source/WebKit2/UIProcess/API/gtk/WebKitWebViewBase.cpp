@@ -31,6 +31,7 @@
 
 #include "APIPageConfiguration.h"
 #include "AcceleratedBackingStore.h"
+#include "ActivityState.h"
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
 #include "KeyBindingTranslator.h"
@@ -38,7 +39,6 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
-#include "ViewState.h"
 #include "WebEventFactory.h"
 #include "WebFullScreenClientGtk.h"
 #include "WebInspectorProxy.h"
@@ -146,16 +146,16 @@ typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
 struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
-        : updateViewStateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::updateViewStateTimerFired)
+        : updateActivityStateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::updateActivityStateTimerFired)
     {
     }
 
-    void updateViewStateTimerFired()
+    void updateActivityStateTimerFired()
     {
         if (!pageProxy)
             return;
-        pageProxy->viewStateDidChange(viewStateFlagsToUpdate);
-        viewStateFlagsToUpdate = ViewState::NoFlags;
+        pageProxy->activityStateDidChange(activityStateFlagsToUpdate);
+        activityStateFlagsToUpdate = ActivityState::NoFlags;
     }
 
     WebKitWebViewChildrenMap children;
@@ -185,9 +185,9 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelWindowRealizedID;
 
     // View State.
-    ViewState::Flags viewState;
-    ViewState::Flags viewStateFlagsToUpdate;
-    RunLoop::Timer<WebKitWebViewBasePrivate> updateViewStateTimer;
+    ActivityState::Flags activityState;
+    ActivityState::Flags activityStateFlagsToUpdate;
+    RunLoop::Timer<WebKitWebViewBasePrivate> updateActivityStateTimer;
 
     WebKitWebViewBaseDownloadRequestHandler downloadHandler;
 
@@ -212,14 +212,14 @@ struct _WebKitWebViewBasePrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 
-static void webkitWebViewBaseScheduleUpdateViewState(WebKitWebViewBase* webViewBase, ViewState::Flags flagsToUpdate)
+static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, ActivityState::Flags flagsToUpdate)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    priv->viewStateFlagsToUpdate |= flagsToUpdate;
-    if (priv->updateViewStateTimer.isActive())
+    priv->activityStateFlagsToUpdate |= flagsToUpdate;
+    if (priv->updateActivityStateTimer.isActive())
         return;
 
-    priv->updateViewStateTimer.startOneShot(0);
+    priv->updateActivityStateTimer.startOneShot(0);
 }
 
 static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, WebKitWebViewBase* webViewBase)
@@ -229,11 +229,11 @@ static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, We
         return FALSE;
 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->viewState & ViewState::WindowIsActive)
+    if (priv->activityState & ActivityState::WindowIsActive)
         return FALSE;
 
-    priv->viewState |= ViewState::WindowIsActive;
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, ViewState::WindowIsActive);
+    priv->activityState |= ActivityState::WindowIsActive;
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::WindowIsActive);
 
     return FALSE;
 }
@@ -241,11 +241,11 @@ static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, We
 static gboolean toplevelWindowFocusOutEvent(GtkWidget*, GdkEventFocus*, WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!(priv->viewState & ViewState::WindowIsActive))
+    if (!(priv->activityState & ActivityState::WindowIsActive))
         return FALSE;
 
-    priv->viewState &= ~ViewState::WindowIsActive;
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, ViewState::WindowIsActive);
+    priv->activityState &= ~ActivityState::WindowIsActive;
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::WindowIsActive);
 
     return FALSE;
 }
@@ -257,14 +257,14 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
         return FALSE;
 
     bool visible = !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
-    if ((visible && priv->viewState & ViewState::IsVisible) || (!visible && !(priv->viewState & ViewState::IsVisible)))
+    if ((visible && priv->activityState & ActivityState::IsVisible) || (!visible && !(priv->activityState & ActivityState::IsVisible)))
         return FALSE;
 
     if (visible)
-        priv->viewState |= ViewState::IsVisible;
+        priv->activityState |= ActivityState::IsVisible;
     else
-        priv->viewState &= ~ViewState::IsVisible;
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, ViewState::IsVisible);
+        priv->activityState &= ~ActivityState::IsVisible;
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 
     return FALSE;
 }
@@ -306,17 +306,17 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     priv->toplevelOnScreenWindow = window;
 
     if (!priv->toplevelOnScreenWindow) {
-        ViewState::Flags flagsToUpdate = 0;
-        if (priv->viewState & ViewState::IsInWindow) {
-            priv->viewState &= ~ViewState::IsInWindow;
-            flagsToUpdate |= ViewState::IsInWindow;
+        ActivityState::Flags flagsToUpdate = 0;
+        if (priv->activityState & ActivityState::IsInWindow) {
+            priv->activityState &= ~ActivityState::IsInWindow;
+            flagsToUpdate |= ActivityState::IsInWindow;
         }
-        if (priv->viewState & ViewState::WindowIsActive) {
-            priv->viewState &= ~ViewState::WindowIsActive;
-            flagsToUpdate |= ViewState::IsInWindow;
+        if (priv->activityState & ActivityState::WindowIsActive) {
+            priv->activityState &= ~ActivityState::WindowIsActive;
+            flagsToUpdate |= ActivityState::IsInWindow;
         }
         if (flagsToUpdate)
-            webkitWebViewBaseScheduleUpdateViewState(webViewBase, flagsToUpdate);
+            webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
 
         return;
     }
@@ -631,20 +631,20 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    ViewState::Flags flagsToUpdate = 0;
-    if (!(priv->viewState & ViewState::IsVisible))
-        flagsToUpdate |= ViewState::IsVisible;
+    ActivityState::Flags flagsToUpdate = 0;
+    if (!(priv->activityState & ActivityState::IsVisible))
+        flagsToUpdate |= ActivityState::IsVisible;
     if (priv->toplevelOnScreenWindow) {
-        if (!(priv->viewState & ViewState::IsInWindow))
-            flagsToUpdate |= ViewState::IsInWindow;
-        if (gtk_window_is_active(GTK_WINDOW(priv->toplevelOnScreenWindow)) && !(priv->viewState & ViewState::WindowIsActive))
-            flagsToUpdate |= ViewState::WindowIsActive;
+        if (!(priv->activityState & ActivityState::IsInWindow))
+            flagsToUpdate |= ActivityState::IsInWindow;
+        if (gtk_window_is_active(GTK_WINDOW(priv->toplevelOnScreenWindow)) && !(priv->activityState & ActivityState::WindowIsActive))
+            flagsToUpdate |= ActivityState::WindowIsActive;
     }
     if (!flagsToUpdate)
         return;
 
-    priv->viewState |= flagsToUpdate;
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, flagsToUpdate);
+    priv->activityState |= flagsToUpdate;
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
 }
 
 static void webkitWebViewBaseUnmap(GtkWidget* widget)
@@ -653,11 +653,11 @@ static void webkitWebViewBaseUnmap(GtkWidget* widget)
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!(priv->viewState & ViewState::IsVisible))
+    if (!(priv->activityState & ActivityState::IsVisible))
         return;
 
-    priv->viewState &= ~ViewState::IsVisible;
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, ViewState::IsVisible);
+    priv->activityState &= ~ActivityState::IsVisible;
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 }
 
 static gboolean webkitWebViewBaseFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
@@ -1379,46 +1379,46 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
 void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if ((focused && priv->viewState & ViewState::IsFocused) || (!focused && !(priv->viewState & ViewState::IsFocused)))
+    if ((focused && priv->activityState & ActivityState::IsFocused) || (!focused && !(priv->activityState & ActivityState::IsFocused)))
         return;
 
-    ViewState::Flags flagsToUpdate = ViewState::IsFocused;
+    ActivityState::Flags flagsToUpdate = ActivityState::IsFocused;
     if (focused) {
-        priv->viewState |= ViewState::IsFocused;
+        priv->activityState |= ActivityState::IsFocused;
 
         // If the view has received the focus and the window is not active
         // mark the current window as active now. This can happen if the
         // toplevel window is a GTK_WINDOW_POPUP and the focus has been
         // set programatically like WebKitTestRunner does, because POPUP
         // can't be focused.
-        if (!(priv->viewState & ViewState::WindowIsActive)) {
-            priv->viewState |= ViewState::WindowIsActive;
-            flagsToUpdate |= ViewState::WindowIsActive;
+        if (!(priv->activityState & ActivityState::WindowIsActive)) {
+            priv->activityState |= ActivityState::WindowIsActive;
+            flagsToUpdate |= ActivityState::WindowIsActive;
         }
     } else
-        priv->viewState &= ~ViewState::IsFocused;
+        priv->activityState &= ~ActivityState::IsFocused;
 
-    webkitWebViewBaseScheduleUpdateViewState(webViewBase, flagsToUpdate);
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
 }
 
 bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase* webViewBase)
 {
-    return webViewBase->priv->viewState & ViewState::WindowIsActive;
+    return webViewBase->priv->activityState & ActivityState::WindowIsActive;
 }
 
 bool webkitWebViewBaseIsFocused(WebKitWebViewBase* webViewBase)
 {
-    return webViewBase->priv->viewState & ViewState::IsFocused;
+    return webViewBase->priv->activityState & ActivityState::IsFocused;
 }
 
 bool webkitWebViewBaseIsVisible(WebKitWebViewBase* webViewBase)
 {
-    return webViewBase->priv->viewState & ViewState::IsVisible;
+    return webViewBase->priv->activityState & ActivityState::IsVisible;
 }
 
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
 {
-    return webViewBase->priv->viewState & ViewState::IsInWindow;
+    return webViewBase->priv->activityState & ActivityState::IsInWindow;
 }
 
 void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase* webViewBase, WebKitWebViewBaseDownloadRequestHandler downloadHandler)

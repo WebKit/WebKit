@@ -369,9 +369,9 @@ void AcceleratedDrawingArea::destroyNativeSurfaceHandleForCompositing(bool& hand
 }
 #endif
 
-void AcceleratedDrawingArea::viewStateDidChange(ViewState::Flags changed, bool, const Vector<uint64_t>&)
+void AcceleratedDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool, const Vector<uint64_t>&)
 {
-    if (changed & ViewState::IsVisible) {
+    if (changed & ActivityState::IsVisible) {
         if (m_webPage.isVisible())
             resumePainting();
         else

@@ -38,14 +38,14 @@ GeolocationController::GeolocationController(Page& page, GeolocationClient& clie
     : m_page(page)
     , m_client(client)
 {
-    m_page.addViewStateChangeObserver(*this);
+    m_page.addActivityStateChangeObserver(*this);
 }
 
 GeolocationController::~GeolocationController()
 {
     ASSERT(m_observers.isEmpty());
 
-    // NOTE: We don't have to remove ourselves from page's ViewStateChangeObserver set, since
+    // NOTE: We don't have to remove ourselves from page's ActivityStateChangeObserver set, since
     // we are supplement of the Page, and our destructor getting called means the page is being
     // torn down.
 
@@ -124,12 +124,12 @@ GeolocationPosition* GeolocationController::lastPosition()
     return m_client.lastPosition();
 }
 
-void GeolocationController::viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState)
+void GeolocationController::activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState)
 {
     // Toggle GPS based on page visibility to save battery.
-    ViewState::Flags changed = oldViewState ^ newViewState;
-    if (changed & ViewState::IsVisible && !m_observers.isEmpty()) {
-        if (newViewState & ViewState::IsVisible)
+    ActivityState::Flags changed = oldActivityState ^ newActivityState;
+    if (changed & ActivityState::IsVisible && !m_observers.isEmpty()) {
+        if (newActivityState & ActivityState::IsVisible)
             m_client.startUpdating();
         else
             m_client.stopUpdating();

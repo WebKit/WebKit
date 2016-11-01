@@ -31,6 +31,7 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
+#include <WebCore/ActivityState.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/Image.h>
 #include <WebCore/MediaCanStartListener.h>
@@ -39,7 +40,6 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
-#include <WebCore/ViewState.h>
 #include <memory>
 #include <wtf/Deque.h>
 #include <wtf/RunLoop.h>
@@ -77,7 +77,7 @@ public:
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 
-    void viewStateDidChange(WebCore::ViewState::Flags changed);
+    void activityStateDidChange(WebCore::ActivityState::Flags changed);
     void setLayerHostingMode(LayerHostingMode);
 
 #if PLATFORM(COCOA)

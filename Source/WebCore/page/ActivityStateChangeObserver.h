@@ -25,17 +25,17 @@
 
 #pragma once
 
-#include "ViewState.h"
+#include "ActivityState.h"
 
 namespace WebCore {
 
-class ViewStateChangeObserver {
+class ActivityStateChangeObserver {
 public:
-    virtual ~ViewStateChangeObserver()
+    virtual ~ActivityStateChangeObserver()
     {
     }
     
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) = 0;
+    virtual void activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState) = 0;
 };
 
 } // namespace WebCore

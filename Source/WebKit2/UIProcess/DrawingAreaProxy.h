@@ -89,7 +89,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateViewState() { }
+    virtual void waitForDidUpdateActivityState() { }
     
     virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) { ASSERT_NOT_REACHED(); }
 

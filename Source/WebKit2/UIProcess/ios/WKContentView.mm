@@ -602,7 +602,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_applicationDidEnterBackground
 {
     _page->applicationDidEnterBackground();
-    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+    _page->activityStateDidChange(ActivityState::AllFlags & ~ActivityState::IsInWindow);
 }
 
 - (void)_applicationDidCreateWindowContext
@@ -619,7 +619,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_applicationWillEnterForeground
 {
     _page->applicationWillEnterForeground();
-    _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
+    _page->activityStateDidChange(ActivityState::AllFlags & ~ActivityState::IsInWindow, true, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-struct ViewState {
+struct ActivityState {
     enum {
         WindowIsActive = 1 << 0,
         IsFocused = 1 << 1,
