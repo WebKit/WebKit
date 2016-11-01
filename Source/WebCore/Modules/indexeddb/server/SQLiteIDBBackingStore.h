@@ -114,6 +114,9 @@ private:
 
     IDBError deleteUnusedBlobFileRecords(SQLiteIDBTransaction&);
 
+    IDBError getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
+    IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
+
     JSC::VM& vm();
     JSC::JSGlobalObject& globalObject();
     void initializeVM();

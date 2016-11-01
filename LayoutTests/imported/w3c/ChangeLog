@@ -1,3 +1,13 @@
+2016-11-01  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBIndex getAll/getAllKeys.
+        <rdar://problem/28806933> and https://bugs.webkit.org/show_bug.cgi?id=164294
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/IndexedDB/idbindex_getAll-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_getAllKeys-expected.txt:
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Rebase test after r208239

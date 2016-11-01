@@ -1878,7 +1878,12 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     return { };
 }
 
-static const ASCIILiteral& queryForGetAllRecords(const IDBGetAllRecordsData& getAllRecordsData)
+IDBError SQLiteIDBBackingStore::getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
+{
+    return getAllRecordsData.indexIdentifier ? getAllIndexRecords(transactionIdentifier, getAllRecordsData, result) : getAllObjectStoreRecords(transactionIdentifier, getAllRecordsData, result);
+}
+
+static const ASCIILiteral& queryForGetAllObjectStoreRecords(const IDBGetAllRecordsData& getAllRecordsData)
 {
     static NeverDestroyed<const ASCIILiteral> lowerOpenUpperOpenKey("SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
     static NeverDestroyed<const ASCIILiteral> lowerOpenUpperClosedKey("SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
@@ -1912,9 +1917,9 @@ static const ASCIILiteral& queryForGetAllRecords(const IDBGetAllRecordsData& get
     return lowerClosedUpperClosedValue.get();
 }
 
-IDBError SQLiteIDBBackingStore::getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
+IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
 {
-    LOG(IndexedDB, "SQLiteIDBBackingStore::getAllRecords");
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getAllObjectStoreRecords");
 
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
@@ -1943,7 +1948,7 @@ IDBError SQLiteIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize upper IDBKey in lookup range") };
     }
 
-    SQLiteStatement sql(*m_sqliteDB, queryForGetAllRecords(getAllRecordsData));
+    SQLiteStatement sql(*m_sqliteDB, queryForGetAllObjectStoreRecords(getAllRecordsData));
     if (sql.prepare() != SQLITE_OK
         || sql.bindInt64(1, getAllRecordsData.objectStoreIdentifier) != SQLITE_OK
         || sql.bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
@@ -1954,11 +1959,14 @@ IDBError SQLiteIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
 
     result = { getAllRecordsData.getAllType };
 
+    uint32_t targetResults;
+    if (getAllRecordsData.count && getAllRecordsData.count.value())
+        targetResults = getAllRecordsData.count.value();
+    else
+        targetResults = std::numeric_limits<uint32_t>::max();
+
     int sqlResult = sql.step();
     uint32_t returnedResults = 0;
-    uint32_t targetResults = getAllRecordsData.count ? getAllRecordsData.count.value() : 0;
-    if (!targetResults)
-        targetResults = std::numeric_limits<uint32_t>::max();
 
     while (sqlResult == SQLITE_ROW && returnedResults < targetResults) {
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values) {
@@ -2002,6 +2010,54 @@ IDBError SQLiteIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
     // There was an error fetching records from the database.
     LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", getAllRecordsData.objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
     return { IDBDatabaseException::UnknownError, ASCIILiteral("Error looking up record in object store by key range") };
+}
+
+IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getAllIndexRecords - %s", getAllRecordsData.keyRangeData.loggingString().utf8().data());
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get all index records from database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to get all index records from database without an in-progress transaction") };
+    }
+
+    auto cursor = transaction->maybeOpenBackingStoreCursor(getAllRecordsData.objectStoreIdentifier, getAllRecordsData.indexIdentifier, getAllRecordsData.keyRangeData);
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to perform index gets in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cannot open cursor to perform index gets in database") };
+    }
+
+    if (cursor->didError()) {
+        LOG_ERROR("Cursor failed while looking up index records in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cursor failed while looking up index records in database") };
+    }
+
+    result = { getAllRecordsData.getAllType };
+    uint32_t currentCount = 0;
+    uint32_t targetCount = getAllRecordsData.count ? getAllRecordsData.count.value() : 0;
+    if (!targetCount)
+        targetCount = std::numeric_limits<uint32_t>::max();
+    while (!cursor->didComplete() && !cursor->didError() && currentCount < targetCount) {
+        if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Keys) {
+            IDBKeyData keyCopy = cursor->currentPrimaryKey();
+            result.addKey(WTFMove(keyCopy));
+        } else
+            result.addValue(cursor->currentValue() ? *cursor->currentValue() : IDBValue());
+
+        ++currentCount;
+        cursor->advance(1);
+    }
+
+    if (cursor->didError()) {
+        LOG_ERROR("Cursor failed while looking up index records in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cursor failed while looking up index records in database") };
+    }
+
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t indexID, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range, IDBGetResult& getResult)

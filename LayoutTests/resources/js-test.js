@@ -711,6 +711,34 @@ function finishJSTest()
         testRunner.notifyDone();
 }
 
+function areObjectsEqual(a, b) {
+	for (var property in a) {
+		if (!b.hasOwnProperty(property))
+			return false;
+
+		switch (typeof (a[property])) {
+		case 'function':
+			if (typeof b[property] == 'undefined' || a[property].toString() != b[property].toString())
+				return false;
+			break;
+		case 'object':
+			if (!areObjectsEqual(a, b))
+				return false;
+			break;
+		default:
+			if (a[property] != b[property])
+				return false;
+		}
+	}
+ 
+	for (var property in b) {
+		if (!a.hasOwnProperty(property))
+			return false;
+	}
+	
+	return true;
+};
+
 function startWorker(testScriptURL)
 {
     self.jsTestIsAsync = true;

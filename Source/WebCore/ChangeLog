@@ -1,3 +1,54 @@
+2016-11-01  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBIndex getAll/getAllKeys.
+        <rdar://problem/28806933> and https://bugs.webkit.org/show_bug.cgi?id=164294
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/idbindex-getall-1-private.html
+               storage/indexeddb/modern/idbindex-getall-1.html
+               storage/indexeddb/modern/idbindex-getallkeys-1-private.html
+               storage/indexeddb/modern/idbindex-getallkeys-1.html
+               Existing imported W3C tests.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::getAll):
+        (WebCore::IDBIndex::getAllKeys):
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::createIndexGet):
+        (WebCore::IDBRequest::createCount): Deleted.
+        (WebCore::IDBRequest::createGet): Deleted.
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::allValuesForKey):
+        * Modules/indexeddb/server/IndexValueStore.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::getAllRecords):
+
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::getAllRecords):
+        * Modules/indexeddb/server/MemoryIndex.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllRecords):
+        (WebCore::IDBServer::queryForGetAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllIndexRecords):
+        (WebCore::IDBServer::queryForGetAllRecords): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove CUSTOM_ELEMENTS build flag

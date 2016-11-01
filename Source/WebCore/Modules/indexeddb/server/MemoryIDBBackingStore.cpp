@@ -375,11 +375,19 @@ IDBError MemoryIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
     if (!m_transactions.contains(transactionIdentifier))
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store transaction found to get all records") };
 
-    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(getAllRecordsData.objectStoreIdentifier);
+    auto* objectStore = m_objectStoresByIdentifier.get(getAllRecordsData.objectStoreIdentifier);
     if (!objectStore)
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store object store found") };
 
-    objectStore->getAllRecords(getAllRecordsData.keyRangeData, getAllRecordsData.count, getAllRecordsData.getAllType, result);
+    if (getAllRecordsData.indexIdentifier) {
+        auto* index = objectStore->indexForIdentifier(getAllRecordsData.indexIdentifier);
+        if (!index)
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store index found") };
+
+        index->getAllRecords(getAllRecordsData.keyRangeData, getAllRecordsData.count, getAllRecordsData.getAllType, result);
+    } else
+        objectStore->getAllRecords(getAllRecordsData.keyRangeData, getAllRecordsData.count, getAllRecordsData.getAllType, result);
+
     return { };
 }
 

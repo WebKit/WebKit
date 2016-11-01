@@ -1,15 +1,15 @@
 
-FAIL Single item get index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Empty object store index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get all keys index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL maxCount=10 index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get bound range index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get bound range with maxCount index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get upper excluded index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get lower excluded index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Get bound range (generated) with maxCount index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Non existent key index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL maxCount=0 index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Retrieve multiEntry key index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
-FAIL Retrieve one key multiple values index.getAll is not a function. (In 'index.getAll(range, maxCount)', 'index.getAll' is undefined)
+PASS Single item get 
+PASS Empty object store 
+PASS Get all keys 
+PASS maxCount=10 
+PASS Get bound range 
+PASS Get bound range with maxCount 
+PASS Get upper excluded 
+PASS Get lower excluded 
+PASS Get bound range (generated) with maxCount 
+PASS Non existent key 
+PASS maxCount=0 
+PASS Retrieve multiEntry key 
+PASS Retrieve one key multiple values 
 

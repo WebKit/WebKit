@@ -51,6 +51,7 @@ public:
     IndexValueStore(bool unique);
 
     const IDBKeyData* lowestValueForKey(const IDBKeyData&) const;
+    Vector<IDBKeyData> allValuesForKey(const IDBKeyData&, uint32_t limit) const;
     uint64_t countForKey(const IDBKeyData&) const;
     IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
     bool contains(const IDBKeyData&) const;

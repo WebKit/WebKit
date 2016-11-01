@@ -747,6 +747,24 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::ExecState& 
     return request;
 }
 
+Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(JSC::ExecState& state, IDBIndex& index, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
+{
+    LOG(IndexedDB, "IDBTransaction::requestGetAllIndexRecords");
+    ASSERT(isActive());
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
+
+    auto request = IDBRequest::create(*scriptExecutionContext(), index, *this);
+    addRequest(request.get());
+
+    IDBGetAllRecordsData getAllRecordsData { keyRangeData, getAllType, count, index.objectStore().info().identifier(), index.info().identifier() };
+
+    scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetAllRecordsOnServer, &IDBTransaction::getAllRecordsOnServer, getAllRecordsData));
+
+    return request;
+}
+
 void IDBTransaction::getAllRecordsOnServer(IDBClient::TransactionOperation& operation, const IDBGetAllRecordsData& getAllRecordsData)
 {
     LOG(IndexedDB, "IDBTransaction::getAllRecordsOnServer");
@@ -822,7 +840,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& state, IDBIndex& i
 
     ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
-    auto request = IDBRequest::createGet(*scriptExecutionContext(), index, type, *this);
+    auto request = IDBRequest::createIndexGet(*scriptExecutionContext(), index, type, *this);
     addRequest(request.get());
 
     IDBGetRecordData getRecordData = { range };
@@ -894,7 +912,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(ExecState& state, IDBIndex& index, 
 
     ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
-    auto request = IDBRequest::createCount(*scriptExecutionContext(), index, *this);
+    auto request = IDBRequest::create(*scriptExecutionContext(), index, *this);
     addRequest(request.get());
 
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetCountOnServer, &IDBTransaction::getCountOnServer, range));

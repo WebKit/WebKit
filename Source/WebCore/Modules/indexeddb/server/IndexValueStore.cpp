@@ -51,6 +51,19 @@ const IDBKeyData* IndexValueStore::lowestValueForKey(const IDBKeyData& key) cons
     return entry->getLowest();
 }
 
+Vector<IDBKeyData> IndexValueStore::allValuesForKey(const IDBKeyData& key, uint32_t limit) const
+{
+    const auto& entry = m_records.get(key);
+    if (!entry)
+        return { };
+
+    Vector<IDBKeyData> results;
+    for (auto iterator = entry->begin(); results.size() < limit && iterator.isValid(); ++iterator)
+        results.append(iterator.key());
+
+    return results;
+}
+
 uint64_t IndexValueStore::countForKey(const IDBKeyData& key) const
 {
     const auto& entry = m_records.get(key);

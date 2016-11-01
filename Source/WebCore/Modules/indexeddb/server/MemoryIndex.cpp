@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBError.h"
+#include "IDBGetAllResult.h"
 #include "IDBGetResult.h"
 #include "IDBKeyRangeData.h"
 #include "IndexKey.h"
@@ -156,6 +157,45 @@ uint64_t MemoryIndex::countForKeyRange(const IDBKeyRangeData& inRange)
 
     return count;
 }
+
+void MemoryIndex::getAllRecords(const IDBKeyRangeData& keyRangeData, Optional<uint32_t> count, IndexedDB::GetAllType type, IDBGetAllResult& result) const
+{
+    LOG(IndexedDB, "MemoryIndex::getAllRecords");
+
+    result = { type };
+
+    if (!m_records)
+        return;
+
+    uint32_t targetCount;
+    if (count && count.value())
+        targetCount = count.value();
+    else
+        targetCount = std::numeric_limits<uint32_t>::max();
+
+    IDBKeyRangeData range = keyRangeData;
+    uint32_t currentCount = 0;
+    while (currentCount < targetCount) {
+        auto key = m_records->lowestKeyWithRecordInRange(range);
+        if (key.isNull())
+            return;
+
+        range.lowerKey = key;
+        range.lowerOpen = true;
+
+        auto allValues = m_records->allValuesForKey(key, targetCount - currentCount);
+        for (auto& keyValue : allValues) {
+            if (type == IndexedDB::GetAllType::Keys) {
+                IDBKeyData keyCopy { keyValue };
+                result.addKey(WTFMove(keyCopy));
+            } else
+                result.addValue(m_objectStore.valueForKeyRange(keyValue));
+        }
+
+        currentCount += allValues.size();
+    }
+}
+
 
 IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& indexKey)
 {

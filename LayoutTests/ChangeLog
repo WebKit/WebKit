@@ -1,3 +1,23 @@
+2016-11-01  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBIndex getAll/getAllKeys.
+        <rdar://problem/28806933> and https://bugs.webkit.org/show_bug.cgi?id=164294
+
+        Reviewed by Alex Christensen.
+
+        * resources/js-test.js:
+        (areObjectsEqual):
+
+        * storage/indexeddb/modern/idbindex-getall-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbindex-getall-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbindex-getall-1-private.html: Added.
+        * storage/indexeddb/modern/idbindex-getall-1.html: Added.
+        * storage/indexeddb/modern/idbindex-getallkeys-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbindex-getallkeys-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbindex-getallkeys-1-private.html: Added.
+        * storage/indexeddb/modern/idbindex-getallkeys-1.html: Added.
+        * storage/indexeddb/modern/resources/idbindex-getall-1.js: Added.
+
 2016-11-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Airplay support
