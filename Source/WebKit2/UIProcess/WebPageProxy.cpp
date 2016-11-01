@@ -1464,6 +1464,10 @@ void WebPageProxy::updateActivityState(ActivityState::Flags flagsToUpdate)
         m_activityState |= ActivityState::IsInWindow;
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
         m_activityState |= ActivityState::IsVisuallyIdle;
+    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted))
+        m_activityState |= ActivityState::IsAudible;
+    if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
+        m_activityState |= ActivityState::IsLoading;
 }
 
 void WebPageProxy::activityStateDidChange(ActivityState::Flags mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
@@ -1590,8 +1594,8 @@ void WebPageProxy::updateThrottleState()
         m_preventProcessSuppressionCount = nullptr;
 
     // We should suppress if the page is not active, is visually idle, and supression is enabled.
-    bool isLoading = m_pageLoadState.isLoading();
-    bool isPlayingAudio = m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted);
+    bool isLoading = m_activityState & ActivityState::IsLoading;
+    bool isPlayingAudio = m_activityState & ActivityState::IsAudible;
     bool pageShouldBeSuppressed = !isLoading && !isPlayingAudio && processSuppressionEnabled && (m_activityState & ActivityState::IsVisuallyIdle);
     if (m_pageSuppressed != pageShouldBeSuppressed) {
         m_pageSuppressed = pageShouldBeSuppressed;
@@ -4167,7 +4171,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 
     m_process->send(Messages::WebPage::SetMuted(state), m_pageID);
 
-    updateThrottleState();
+    activityStateDidChange(ActivityState::IsAudible);
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -6359,7 +6363,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
 
-    updateThrottleState();
+    activityStateDidChange(ActivityState::IsAudible);
 
     playingMediaMask |= MediaProducer::HasActiveMediaCaptureDevice;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))

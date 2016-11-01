@@ -1,3 +1,16 @@
+2016-11-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Add IsAudible, IsLoading to ActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=164286
+
+        Reviewed by Geoff Garen.
+
+        By computing these values in the UIProcess and passing them to WebContent we can
+        more closely unify iOS & macOS throttling, and remove the PageThrottler class.
+
+        * page/ActivityState.h:
+            - added IsAudible, IsLoading
+
 2016-10-31  Gavin Barraclough  <barraclough@apple.com>
 
         Rename ViewState to ActivityState

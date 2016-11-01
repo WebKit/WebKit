@@ -1,3 +1,26 @@
+2016-11-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Add IsAudible, IsLoading to ActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=164286
+
+        Reviewed by Geoff Garen.
+
+        By computing these values in the UIProcess and passing them to WebContent we can
+        more closely unify iOS & macOS throttling, and remove the PageThrottler class.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+            - Added update for IsAudible, IsLoading flags.
+        (WebKit::WebPageProxy::updateThrottleState):
+            - Read IsAudible, IsLoading flags from ActivityState.
+        (WebKit::WebPageProxy::setMuted):
+            - call activityStateDidChange to trigger update.
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+            - call activityStateDidChange to trigger update.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isLoadingChanged):
+            - call activityStateDidChange to trigger update.
+
 2016-10-31  Gavin Barraclough  <barraclough@apple.com>
 
         Rename ViewState to ActivityState

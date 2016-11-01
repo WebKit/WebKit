@@ -1142,7 +1142,7 @@ public:
         
     WeakPtr<WebPageProxy> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
 
-    void isLoadingChanged() { updateThrottleState(); }
+    void isLoadingChanged() { activityStateDidChange(WebCore::ActivityState::IsLoading); }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);

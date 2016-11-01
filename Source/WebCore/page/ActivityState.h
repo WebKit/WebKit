@@ -35,12 +35,14 @@ struct ActivityState {
         IsVisibleOrOccluded = 1 << 3,
         IsInWindow = 1 << 4,
         IsVisuallyIdle = 1 << 5,
+        IsAudible = 1 << 6,
+        IsLoading = 1 << 7,
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle | IsAudible | IsLoading;
 };
 
 } // namespace WebCore
