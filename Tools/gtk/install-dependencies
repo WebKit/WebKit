@@ -96,6 +96,7 @@ function installDependenciesWithApt {
         cmake \
         flex \
         gawk \
+        geoclue-2.0 \
         gnome-common \
         gperf \
         gtk-doc-tools \
