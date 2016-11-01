@@ -1964,6 +1964,8 @@ sub generateBuildSystemFromCMakeProject
     } elsif (isAnyWindows() && isWin64()) {
         push @args, '-G "Visual Studio 14 2015 Win64"';
     }
+    # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
+    push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
 
     # Some ports have production mode, but build-webkit should always use developer mode.
     push @args, "-DDEVELOPER_MODE=ON" if isEfl() || isGtk() || isJSCOnly();

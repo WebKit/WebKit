@@ -50,6 +50,7 @@ my @ppExtraOutput;
 my @ppExtraArgs;
 my $numOfJobs = 1;
 my $idlAttributesFile;
+my $showProgress;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
@@ -62,7 +63,8 @@ GetOptions('include=s@' => \@idlDirectories,
            'ppExtraOutput=s@' => \@ppExtraOutput,
            'ppExtraArgs=s@' => \@ppExtraArgs,
            'idlAttributesFile=s' => \$idlAttributesFile,
-           'numOfJobs=i' => \$numOfJobs);
+           'numOfJobs=i' => \$numOfJobs,
+           'showProgress' => \$showProgress);
 
 $| = 1;
 my @idlFiles;
@@ -82,7 +84,7 @@ if ($supplementalDependencyFile) {
                     '--idlFilesList', $idlFilesList,
                     '--supplementalDependencyFile', $supplementalDependencyFile,
                     @ppExtraArgs);
-        print("Preprocess IDL\n");
+        printProgress("Preprocess IDL");
         executeCommand($perl, @args) == 0 or die;
     }
     readSupplementalDependencyFile($supplementalDependencyFile, \%newSupplements);
@@ -121,7 +123,6 @@ my @idlFilesToUpdate = grep &{sub {
 }}, @idlFiles;
 my $queue = Thread::Queue->new(@idlFilesToUpdate);
 my $abort :shared = 0;
-my $terminalWidth = getTerminalWidth();
 my $totalCount = @idlFilesToUpdate;
 my $currentCount :shared = 0;
 
@@ -162,12 +163,7 @@ sub worker {
         eval {
             $currentCount++;
             my $basename = basename($file);
-            if ($terminalWidth) {
-                my $w = $terminalWidth - 1;
-                print sprintf("%-*.*s\r", $w, $w, "[$currentCount/$totalCount] $basename");
-            } else {
-                print "[$currentCount/$totalCount] $basename\n";
-            }
+            printProgress("[$currentCount/$totalCount] $basename");
             executeCommand($perl, @args, $file) == 0 or die;
         };
         if ($@) {
@@ -230,13 +226,6 @@ sub CygwinPathIfNeeded
     return $path;
 }
 
-sub getTerminalWidth
-{
-    return 0 unless -t STDOUT;
-    return 80 if $^O eq 'MSWin32';
-    return `stty size` =~ /\d+\s+(\d+)/ ? $1 : 80;
-}
-
 sub readSupplementalDependencyFile
 {
     my $filename = shift;
@@ -247,4 +236,11 @@ sub readSupplementalDependencyFile
         $supplements->{$idlFile} = [sort @followingIdlFiles];
     }
     close($fh) or die;
+}
+
+sub printProgress
+{
+    return unless $showProgress;
+    my $msg = shift;
+    print "$msg\n";
 }
