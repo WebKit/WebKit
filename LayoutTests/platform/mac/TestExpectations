@@ -1453,3 +1453,5 @@ webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/sc
 
 # Internal APIs to test PiP and AirPlay are not available on Yosemite.
 [ Yosemite ] media/modern-media-controls/placard-support [ Skip ]
+
+webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
