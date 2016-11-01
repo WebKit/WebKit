@@ -1,3 +1,30 @@
+2016-11-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: Placard support
+        https://bugs.webkit.org/show_bug.cgi?id=163731
+        <rdar://problem/28869598>
+
+        Reviewed by Dean Jackson.
+
+        Adding two new tests to check that the picture-in-picture and AirPlay placards are shown
+        based on the media presentation mode.
+
+        * media/modern-media-controls/placard-support/placard-support-airplay-expected.txt: Added.
+        * media/modern-media-controls/placard-support/placard-support-airplay.html: Added.
+        * media/modern-media-controls/placard-support/placard-support-pip-expected.txt: Added.
+        * media/modern-media-controls/placard-support/placard-support-pip.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-11-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/storage/domStorage-events.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164278
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes
