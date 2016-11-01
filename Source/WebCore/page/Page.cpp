@@ -1227,7 +1227,8 @@ void Page::updateTimerThrottlingState()
 
     // If the page is visible (but idle), there is any activity (loading, media playing, etc), or per setting,
     // we allow timer throttling, but not increasing timer throttling.
-    if (!m_settings->hiddenPageDOMTimerThrottlingAutoIncreases() || m_activityState & ActivityState::IsVisible || m_pageThrottler.activityState()) {
+    if (!m_settings->hiddenPageDOMTimerThrottlingAutoIncreases()
+        || m_activityState & (ActivityState::IsVisible | ActivityState::IsAudible | ActivityState::IsLoading)) {
         setTimerThrottlingState(TimerThrottlingState::Enabled);
         return;
     }
@@ -1458,7 +1459,7 @@ void Page::setActivityState(ActivityState::Flags activityState)
     if (changed & ActivityState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(activityState & ActivityState::IsVisuallyIdle);
 
-    if (changed & (ActivityState::IsVisible | ActivityState::IsVisuallyIdle))
+    if (changed & (ActivityState::IsVisible | ActivityState::IsVisuallyIdle | ActivityState::IsAudible | ActivityState::IsLoading))
         updateTimerThrottlingState();
 
     for (auto* observer : m_activityStateChangeObservers)

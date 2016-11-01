@@ -336,7 +336,7 @@ public:
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
     bool isVisibleAndActive() const;
-    void pageActivityStateChanged() { updateTimerThrottlingState(); }
+    void pageActivityStateChanged() { }
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
     bool isVisible() const { return m_activityState & ActivityState::IsVisible; }

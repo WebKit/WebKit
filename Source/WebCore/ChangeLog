@@ -1,3 +1,21 @@
+2016-11-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Port Page timer throttling to use ActivityState instead of PageThrottler
+        https://bugs.webkit.org/show_bug.cgi?id=164291
+
+        Reviewed by Geoff Garen & Antti Koivisto.
+
+        ActivityState now conveys this information; after this change PageThrottler is redundant and can be removed.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateTimerThrottlingState):
+            - determine page throttling mode based on IsAudible/IsLoading in ActivityState.
+        (WebCore::Page::setActivityState):
+            - call updateTimerThrottlingState if IsAudible/IsLoading change.
+        * page/Page.h:
+        (WebCore::Page::pageActivityStateChanged):
+            - no need to listen for PageActivityState changes from the PageThrottler.
+
 2016-11-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Placard support
