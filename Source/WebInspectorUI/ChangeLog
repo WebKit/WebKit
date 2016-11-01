@@ -1,5 +1,43 @@
 2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        REGRESSION (r191419): Web Inspector: Autocomplete is broken
+        https://bugs.webkit.org/show_bug.cgi?id=150493
+
+        Reviewed by Timothy Hatcher.
+
+        Fixed CodeMirror.undo() logic rolled out by r191539 <https://webkit.org/b/150537>
+
+        Added calls to CodeMirror.changeGeneration(true) which tells the history stack to "close"
+        the current event, preventing it from being consolidated with new changes.  If the user
+        typed fast enough, non-completion changes (like adding ":" in CSS) would get merged with
+        completion changes, causing calls to CodeMirror.undo() to undo those changes as well.  To
+        prevent this, a boolean variable is set to true whenever a completion "activity" is in
+        progress, defined by a sequence of completion related events.  When this "activity" first
+        starts, call CodeMirror.changeGeneration(true) to freeze the current history.
+
+        See original bug for more information <https://webkit.org/b/147720>.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.updateCompletions):
+        (WebInspector.CodeMirrorCompletionController.prototype.isCompletionChange):
+        (WebInspector.CodeMirrorCompletionController.prototype.hideCompletions):
+        (WebInspector.CodeMirrorCompletionController.prototype.close):
+        (WebInspector.CodeMirrorCompletionController.prototype.completionSuggestionsSelectedCompletion):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._commitCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._commitCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._completeAtCurrentPosition):
+        (WebInspector.CodeMirrorCompletionController.prototype._handleBeforeChange):
+        (WebInspector.CodeMirrorCompletionController.prototype._createCompletionHintMarker): Deleted.
+        (WebInspector.CodeMirrorCompletionController.prototype._removeLastChangeFromHistory): Deleted.
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.clearMarker): Deleted.
+
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Replace sublists inside DOM-related model objects with WI.Collection
         https://bugs.webkit.org/show_bug.cgi?id=164098
 
