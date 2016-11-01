@@ -1,3 +1,15 @@
+2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup stale code in NetworkSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=164295
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.closed): Deleted.
+        This doesn't appear to be needed since NetworkSidebarPanel never
+        registered any event listeners.
+
 2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         REGRESSION (r191419): Web Inspector: Autocomplete is broken
