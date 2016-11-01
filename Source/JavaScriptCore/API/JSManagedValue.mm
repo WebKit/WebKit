@@ -213,7 +213,6 @@ private:
     m_owners = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1];
 
     JSC::JSValue jsValue = toJS(exec, [value JSValueRef]);
-    dataLog("Creating managed value with value ", jsValue, "\n");
     if (jsValue.isObject())
         m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), self);
     else if (jsValue.isString())
