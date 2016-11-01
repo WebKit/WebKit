@@ -1,3 +1,15 @@
+2016-10-31  Nan Wang  <n_wang@apple.com>
+
+        AX: aria-sort is not exposed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=164245
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::stringAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+
 2016-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Implement IntersectionObserver

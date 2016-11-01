@@ -2758,6 +2758,24 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     }
 }
 
+- (NSString *)accessibilitySortDirection
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    switch (m_object->sortDirection()) {
+    case SortDirectionAscending:
+        return @"ascending";
+    case SortDirectionDescending:
+        return @"descending";
+    case SortDirectionOther:
+        return @"other";
+    default:
+    case SortDirectionNone:
+        return nil;
+    }
+}
+
 - (WebAccessibilityObjectWrapper *)accessibilityMathRootIndexObject
 {
     if (![self _prepareAccessibilityCall])

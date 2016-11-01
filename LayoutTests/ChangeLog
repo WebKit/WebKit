@@ -1,3 +1,13 @@
+2016-10-31  Nan Wang  <n_wang@apple.com>
+
+        AX: aria-sort is not exposed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=164245
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/aria-sort-ios-expected.txt: Added.
+        * accessibility/ios-simulator/aria-sort-ios.html: Added.
+
 2016-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208178.
