@@ -204,10 +204,8 @@ public:
     void setInteractiveFormValidationEnabled(bool isEnabled) { m_isInteractiveFormValidationEnabled = isEnabled; }
     bool interactiveFormValidationEnabled() const { return m_isInteractiveFormValidationEnabled; }
 
-#if ENABLE(CUSTOM_ELEMENTS)
     void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
     bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
-#endif
 
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
@@ -328,9 +326,7 @@ private:
 
     bool m_isInteractiveFormValidationEnabled { false };
 
-#if ENABLE(CUSTOM_ELEMENTS)
-    bool m_areCustomElementsEnabled;
-#endif
+    bool m_areCustomElementsEnabled { true };
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled;

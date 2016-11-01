@@ -176,9 +176,7 @@ public:
 
 private:
     JSC::ExecState* m_previousState;
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack m_customElementReactionStack;
-#endif
 };
 
 JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);

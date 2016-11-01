@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CustomElementReactionQueue.h"
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -283,5 +281,3 @@ CustomElementReactionStack::ElementQueue& CustomElementReactionStack::backupElem
 }
 
 }
-
-#endif

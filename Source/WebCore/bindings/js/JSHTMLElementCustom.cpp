@@ -40,7 +40,6 @@ namespace WebCore {
 
 using namespace JSC;
 
-#if ENABLE(CUSTOM_ELEMENTS)
 EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 {
     VM& vm = exec.vm();
@@ -107,7 +106,6 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 
     return JSValue::encode(elementWrapperValue);
 }
-#endif
 
 JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) const
 {

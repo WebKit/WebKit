@@ -28,8 +28,6 @@
 #include "config.h"
 #include "JSCustomElementInterface.h"
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include "DOMWrapperWorld.h"
 #include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
@@ -302,5 +300,3 @@ void JSCustomElementInterface::didUpgradeLastElementInConstructionStack()
 }
 
 } // namespace WebCore
-
-#endif

@@ -136,9 +136,7 @@
 #include "JSCSSValue.cpp"
 #include "JSCSSValueList.cpp"
 #include "JSClipboardEvent.cpp"
-#if ENABLE(CUSTOM_ELEMENTS)
 #include "JSCustomElementRegistry.cpp"
-#endif
 #include "JSCustomEvent.cpp"
 #include "JSDatabase.cpp"
 #include "JSDatabaseCallback.cpp"

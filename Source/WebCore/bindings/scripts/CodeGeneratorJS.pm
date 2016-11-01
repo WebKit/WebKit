@@ -3460,9 +3460,7 @@ sub GenerateImplementation
             }
 
             if ($attribute->extendedAttributes->{CEReactions}) {
-                push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
                 push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
-                push(@implContent, "#endif\n");
                 $implIncludes{"CustomElementReactionQueue.h"} = 1;
             }
 
@@ -3519,9 +3517,7 @@ sub GenerateImplementation
                         my $forwardedAttribute = $codeGenerator->GetAttributeFromInterface($interface, $type->name, $putForwards);
 
                         if ($forwardedAttribute->extendedAttributes->{CEReactions}) {
-                            push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
                             push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
-                            push(@implContent, "#endif\n");
                             $implIncludes{"CustomElementReactionQueue.h"} = 1;
                         }
 
@@ -3748,9 +3744,7 @@ END
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             if ($function->extendedAttributes->{CEReactions}) {
-                push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
                 push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
-                push(@implContent, "#endif\n");
                 $implIncludes{"CustomElementReactionQueue.h"} = 1;
             }
 

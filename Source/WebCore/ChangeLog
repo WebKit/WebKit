@@ -1,3 +1,90 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove CUSTOM_ELEMENTS build flag
+        https://bugs.webkit.org/show_bug.cgi?id=164267
+
+        Reviewed by Antti Koivisto.
+
+        Removed the build flag. Also rebaselined the bindings tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::customElementsEnabled):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * bindings/js/JSCustomElementInterface.cpp:
+        * bindings/js/JSCustomElementInterface.h:
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::deleteProperty):
+        (WebCore::JSDOMStringMap::putDelegate):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength):
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::indexSetter):
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::setJSTestCEReactionsAttributeWithCEReactionsFunction):
+        (WebCore::setJSTestCEReactionsReflectAttributeWithCEReactionsFunction):
+        (WebCore::setJSTestCEReactionsStringifierAttributeFunction):
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactions):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::setJSTestCEReactionsStringifierValueFunction):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isDefinedElement):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        * dom/CustomElementReactionQueue.cpp:
+        * dom/CustomElementReactionQueue.h:
+        * dom/CustomElementRegistry.cpp:
+        * dom/CustomElementRegistry.h:
+        * dom/CustomElementRegistry.idl:
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation):
+        (WebCore::createFallbackHTMLElement):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::didMoveToNewDocument):
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setCustomElementReactionQueue):
+        * dom/Node.h:
+        (WebCore::Node::isFailedCustomElement):
+        * dom/make_names.pl:
+        (printWrapperFactoryCppFile):
+        * html/HTMLElement.idl:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertGenericHTMLElement):
+        (WebCore::HTMLTreeBuilder::didCreateCustomOrCallbackElement):
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::hasParserBlockingScriptWork):
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2016-11-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: Airplay support

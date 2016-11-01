@@ -1,3 +1,14 @@
+2016-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove CUSTOM_ELEMENTS build flag
+        https://bugs.webkit.org/show_bug.cgi?id=164267
+
+        Reviewed by Antti Koivisto.
+
+        Removed the build flag.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Percent-encode non-ASCII code points in hosts of URLs with unrecognized schemes

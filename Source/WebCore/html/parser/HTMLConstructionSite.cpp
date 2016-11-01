@@ -479,8 +479,6 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
     m_openElements.push(HTMLStackItem::create(WTFMove(element), token));
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 JSCustomElementInterface* HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken& token)
 {
     JSCustomElementInterface* elementInterface = nullptr;
@@ -498,8 +496,6 @@ void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const Ato
     attachLater(currentNode(), element.copyRef());
     m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, attributes));
 }
-
-#endif
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
@@ -658,7 +654,6 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     bool insideTemplateElement = !ownerDocument.frame();
     RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-#if ENABLE(CUSTOM_ELEMENTS)
         auto* window = ownerDocument.domWindow();
         if (customElementInterface && window) {
             auto* registry = window->customElementRegistry();
@@ -669,17 +664,12 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
                 }
             }
         }
-#else
-        UNUSED_PARAM(customElementInterface);
-#endif
 
         QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
-#if ENABLE(CUSTOM_ELEMENTS)
         if (window && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsCustomElementUpgradeCandidate();
         } else
-#endif
             element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
     }
     ASSERT(element);

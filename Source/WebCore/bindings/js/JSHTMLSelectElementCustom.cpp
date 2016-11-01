@@ -55,10 +55,7 @@ void selectElementIndexSetter(JSC::ExecState& state, HTMLSelectElement& element,
 
 void JSHTMLSelectElement::indexSetter(JSC::ExecState* state, unsigned index, JSC::JSValue value)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
-
     selectElementIndexSetter(*state, wrapped(), index, value);
 }
 

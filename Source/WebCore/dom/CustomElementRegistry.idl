@@ -24,7 +24,6 @@
 */
 
 [
-    Conditional=CUSTOM_ELEMENTS,
     EnabledAtRuntime=CustomElements,
     ImplementationLacksVTable,
     JSGenerateToNativeObject,

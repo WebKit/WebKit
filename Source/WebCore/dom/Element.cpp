@@ -1333,10 +1333,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
 
     document().incDOMTreeVersion();
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
-#endif
 
     if (valueIsSameAsBefore)
         return;
@@ -1553,10 +1551,8 @@ void Element::didMoveToNewDocument(Document* oldDocument)
             attributeChanged(classAttr, nullAtom, getAttribute(classAttr));
     }
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, *oldDocument, document());
-#endif
 }
 
 bool Element::hasAttributes() const
@@ -1664,15 +1660,12 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
             updateLabel(*newScope, nullAtom, attributeWithoutSynchronization(forAttr));
     }
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (becomeConnected) {
         if (UNLIKELY(isCustomElementUpgradeCandidate()))
             CustomElementReactionQueue::enqueueElementUpgradeIfDefined(*this);
         if (UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
-
-#endif
 
     return InsertionDone;
 }
@@ -1721,10 +1714,8 @@ void Element::removedFrom(ContainerNode& insertionPoint)
                 updateLabel(*oldScope, attributeWithoutSynchronization(forAttr), nullAtom);
         }
 
-#if ENABLE(CUSTOM_ELEMENTS)
         if (becomeDisconnected && UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
-#endif
     }
 
     if (!parentNode()) {
@@ -1874,8 +1865,6 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
     return shadow;
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterface)
 {
     clearFlag(IsEditingTextOrUndefinedCustomElementFlag);
@@ -1929,8 +1918,6 @@ CustomElementReactionQueue* Element::reactionQueue() const
         return nullptr;
     return elementRareData()->customElementReactionQueue();
 }
-
-#endif
 
 const AtomicString& Element::shadowPseudoId() const
 {

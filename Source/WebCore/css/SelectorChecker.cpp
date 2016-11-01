@@ -1054,10 +1054,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             specificity = CSSSelector::addSpecificities(specificity, hostSpecificity);
             return true;
         }
-#if ENABLE(CUSTOM_ELEMENTS)
         case CSSSelector::PseudoClassDefined:
             return isDefinedElement(element);
-#endif
         case CSSSelector::PseudoClassWindowInactive:
             return isWindowInactive(element);
 

@@ -625,16 +625,12 @@ bool DOMWindow::isCurrentlyDisplayedInFrame() const
     return m_frame && m_frame->document()->domWindow() == this;
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry)
         m_customElementRegistry = CustomElementRegistry::create(*this);
     return *m_customElementRegistry;
 }
-
-#endif
 
 #if ENABLE(ORIENTATION_EVENTS)
 

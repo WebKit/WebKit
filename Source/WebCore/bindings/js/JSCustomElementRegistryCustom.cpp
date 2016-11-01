@@ -38,8 +38,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype, const Identifier& id)
 {
     VM& vm = state.vm();
@@ -201,7 +199,5 @@ JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
 
     return promise;
 }
-
-#endif
 
 }

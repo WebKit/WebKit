@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CustomElementRegistry.h"
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include "CustomElementReactionQueue.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -119,5 +117,3 @@ JSC::JSValue CustomElementRegistry::get(const AtomicString& name)
 }
 
 }
-
-#endif

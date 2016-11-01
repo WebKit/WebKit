@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include "ActiveDOMCallback.h"
 #include "QualifiedName.h"
 #include <heap/Weak.h>
@@ -110,5 +108,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CUSTOM_ELEMENTS)

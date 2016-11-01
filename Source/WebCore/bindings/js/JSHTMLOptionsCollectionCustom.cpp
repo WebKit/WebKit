@@ -50,10 +50,7 @@ bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyN
 
 void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
-
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     double number = value.toNumber(&state);
@@ -70,10 +67,7 @@ void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 
 void JSHTMLOptionsCollection::indexSetter(ExecState* state, unsigned index, JSValue value)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
-
     selectElementIndexSetter(*state, wrapped().selectElement(), index, value);
 }
 

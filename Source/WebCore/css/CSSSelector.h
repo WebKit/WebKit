@@ -167,9 +167,7 @@ namespace WebCore {
             PseudoClassRole,
 #endif
             PseudoClassHost,
-#if ENABLE(CUSTOM_ELEMENTS)
             PseudoClassDefined,
-#endif
         };
 
         enum PseudoElementType {

@@ -191,7 +191,6 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
     ASSERT(scriptingContentIsAllowed(parserContentPolicy()));
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (std::unique_ptr<CustomElementConstructionData> constructionData = m_treeBuilder->takeCustomElementConstructionData()) {
         ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
 
@@ -201,7 +200,6 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
         m_treeBuilder->didCreateCustomOrCallbackElement(WTFMove(newElement), *constructionData);
         return;
     }
-#endif
 
     TextPosition scriptStartPosition = TextPosition::belowRangePosition();
     if (auto scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartPosition)) {

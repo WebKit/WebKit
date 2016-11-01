@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -105,5 +103,3 @@ private:
 };
 
 }
-
-#endif

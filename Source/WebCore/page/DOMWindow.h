@@ -291,10 +291,8 @@ public:
     DOMApplicationCache* applicationCache() const;
     DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
     CustomElementRegistry& ensureCustomElementRegistry();
-#endif
 
 #if ENABLE(ORIENTATION_EVENTS)
     // This is the interface orientation in degrees. Some examples are:
@@ -410,9 +408,7 @@ private:
     mutable RefPtr<Storage> m_localStorage;
     mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
-#if ENABLE(CUSTOM_ELEMENTS)
     RefPtr<CustomElementRegistry> m_customElementRegistry;
-#endif
 
 #if ENABLE(WEB_TIMING)
     mutable RefPtr<Performance> m_performance;

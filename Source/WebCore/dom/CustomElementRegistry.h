@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 #include "JSDOMPromise.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
@@ -82,5 +80,3 @@ private:
 };
 
 }
-
-#endif

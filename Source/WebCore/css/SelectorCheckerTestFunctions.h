@@ -63,12 +63,10 @@ ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
     return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !element.isDisabledFormControl();
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
 ALWAYS_INLINE bool isDefinedElement(const Element& element)
 {
     return !element.isUndefinedCustomElement();
 }
-#endif
 
 ALWAYS_INLINE bool isMediaDocument(const Element& element)
 {

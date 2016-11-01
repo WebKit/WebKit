@@ -188,9 +188,7 @@ static inline bool setJSTestCEReactionsStringifierValueFunction(ExecState& state
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, false);

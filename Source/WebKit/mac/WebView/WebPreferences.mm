@@ -609,9 +609,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitMediaCaptureRequiresSecureConnectionPreferenceKey,
 #endif
         [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
-#if ENABLE(CUSTOM_ELEMENTS)
-        [NSNumber numberWithBool:NO], WebKitCustomElementsEnabledPreferenceKey,
-#endif
+        [NSNumber numberWithBool:YES], WebKitCustomElementsEnabledPreferenceKey,
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
 #endif

@@ -19,9 +19,7 @@
  */
 
 [
-#if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     CustomConstructor(),
-#endif
     ExportMacro=WEBCORE_EXPORT,
     JSCustomPushEventHandlerScope,
     JSGenerateToNativeObject,

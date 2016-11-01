@@ -59,10 +59,7 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* state, Pro
 
 bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
-
     if (propertyName.isSymbol())
         return Base::deleteProperty(cell, state, propertyName);
     return jsCast<JSDOMStringMap*>(cell)->wrapped().deleteItem(propertyNameToString(propertyName));
@@ -81,9 +78,7 @@ bool JSDOMStringMap::putDelegate(ExecState* state, PropertyName propertyName, JS
     if (propertyName.isSymbol())
         return false;
 
-#if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
-#endif
 
     String stringValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(scope, true);

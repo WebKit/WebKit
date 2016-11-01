@@ -53,8 +53,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, const AtomicString& name, const Vector<Attribute>& attributes)
     : elementInterface(WTFMove(customElementInterface))
     , name(name)
@@ -63,8 +61,6 @@ CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElement
 
 CustomElementConstructionData::~CustomElementConstructionData()
 { }
-
-#endif
 
 namespace {
 
@@ -869,21 +865,15 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
 
 inline void HTMLTreeBuilder::insertGenericHTMLElement(AtomicHTMLToken& token)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     auto* elementInterface = m_tree.insertHTMLElementOrFindCustomElementInterface(token);
     if (UNLIKELY(elementInterface))
         m_customElementToConstruct = std::make_unique<CustomElementConstructionData>(*elementInterface, token.name(), token.attributes());
-#else
-    m_tree.insertHTMLElement(token);
-#endif
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
 void HTMLTreeBuilder::didCreateCustomOrCallbackElement(Ref<Element>&& element, CustomElementConstructionData& data)
 {
     m_tree.insertCustomElement(WTFMove(element), data.name, data.attributes);
 }
-#endif
 
 void HTMLTreeBuilder::processTemplateStartTag(AtomicHTMLToken& token)
 {

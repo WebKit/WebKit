@@ -860,8 +860,6 @@ void Document::childrenChanged(const ChildChange& change)
     styleScope().clearResolver();
 }
 
-#if ENABLE(CUSTOM_ELEMENTS)
-
 static ALWAYS_INLINE RefPtr<HTMLElement> createUpgradeCandidateElement(Document& document, const QualifiedName& name)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().customElementsEnabled())
@@ -875,15 +873,12 @@ static ALWAYS_INLINE RefPtr<HTMLElement> createUpgradeCandidateElement(Document&
     return WTFMove(element);
 }
 
-#endif
-
 static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& document, const AtomicString& localName)
 {
     auto element = HTMLElementFactory::createKnownElement(localName, document);
     if (LIKELY(element))
         return Ref<Element> { element.releaseNonNull() };
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (auto* window = document.domWindow()) {
         auto* registry = window->customElementRegistry();
         if (UNLIKELY(registry)) {
@@ -891,17 +886,14 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& d
                 return elementInterface->constructElementWithFallback(document, localName);
         }
     }
-#endif
 
     if (UNLIKELY(!Document::isValidName(localName)))
         return Exception { INVALID_CHARACTER_ERR };
 
     QualifiedName qualifiedName { nullAtom, localName, xhtmlNamespaceURI };
 
-#if ENABLE(CUSTOM_ELEMENTS)
     if (auto element = createUpgradeCandidateElement(document, qualifiedName))
         return Ref<Element> { element.releaseNonNull() };
-#endif
 
     return Ref<Element> { HTMLUnknownElement::create(qualifiedName, document) };
 }
@@ -1051,7 +1043,6 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
 
 static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const QualifiedName& name)
 {
-#if ENABLE(CUSTOM_ELEMENTS)
     if (auto* window = document.domWindow()) {
         auto* registry = window->customElementRegistry();
         if (UNLIKELY(registry)) {
@@ -1065,7 +1056,6 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
     // FIXME: Should we also check the equality of prefix between the custom element and name?
     if (auto element = createUpgradeCandidateElement(document, name))
         return element.releaseNonNull();
-#endif
     return HTMLUnknownElement::create(name, document);
 }
 
