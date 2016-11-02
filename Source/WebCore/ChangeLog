@@ -1,3 +1,30 @@
+2016-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r203289):Assertion in MathOperator::stretchTo() on Wikipedia Page
+        https://bugs.webkit.org/show_bug.cgi?id=162933
+        <rdar://problem/28570590>
+
+        Reviewed by Dean Jackson.
+
+        A debug assertion is triggered when an empty <mo> tag is used with a "stretchy" flag.
+
+        We shouldn't be trying to apply stretch operations on an empty MathML element. Create a
+        helper function (isStretchy) to encapsulate the fact that only non-empty elements with
+        the 'MathMLOperatorDictionary::Stretchy' operator flag should have stretching applied.
+
+        Test: mathml/empty-mo.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::stretchTo): Revise assertion to use new 'isStretchy' predicate.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::isStretchy): Added.
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::computeLineVerticalStretch): Use new 'isStretchy' predicate.
+        (WebCore::RenderMathMLRow::layoutRowItems): Ditto.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::computeOperatorsHorizontalStretch): Ditto.
+        (WebCore::RenderMathMLUnderOver::verticalParameters): Ditto.
+
 2016-11-01  Dean Jackson  <dino@apple.com>
 
         Filter functions grayscale/invert/opacity/sepia should clamp values over 100%, not fail

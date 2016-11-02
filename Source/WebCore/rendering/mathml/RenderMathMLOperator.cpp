@@ -117,7 +117,7 @@ bool RenderMathMLOperator::isVertical() const
 
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
-    ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
+    ASSERT(isStretchy());
     ASSERT(isVertical());
 
     if (!isVertical() || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
@@ -157,7 +157,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
 
 void RenderMathMLOperator::stretchTo(LayoutUnit width)
 {
-    ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
+    ASSERT(isStretchy());
     ASSERT(!isVertical());
 
     if (isVertical() || m_stretchWidth == width)

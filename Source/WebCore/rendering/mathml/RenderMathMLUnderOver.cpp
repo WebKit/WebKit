@@ -56,7 +56,7 @@ void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
         if (child->needsLayout()) {
             if (is<RenderMathMLBlock>(child)) {
                 if (auto renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator()) {
-                    if (renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && !renderOperator->isVertical()) {
+                    if (renderOperator->isStretchy() && !renderOperator->isVertical()) {
                         renderOperator->resetStretchSize();
                         renderOperators.append(renderOperator);
                     }
@@ -217,7 +217,7 @@ RenderMathMLUnderOver::VerticalParameters RenderMathMLUnderOver::verticalParamet
                 parameters.useUnderOverBarFallBack = false;
                 return parameters;
             }
-            if (baseOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && !baseOperator->isVertical()) {
+            if (baseOperator->isStretchy() && !baseOperator->isVertical()) {
                 // The base is a horizontal stretchy operator, so we read StretchStack constants from the MATH table.
                 parameters.underGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackGapBelowMin);
                 parameters.overGapMin = mathData->getMathConstant(primaryFont, OpenTypeMathData::StretchStackGapAboveMin);

@@ -56,6 +56,7 @@ public:
     void updateTokenContent() final;
     void updateFromElement() final;
     virtual UChar32 textContent() const;
+    bool isStretchy() const { return textContent() && hasOperatorFlag(MathMLOperatorDictionary::Stretchy); }
 
 protected:
     virtual void updateMathOperator();

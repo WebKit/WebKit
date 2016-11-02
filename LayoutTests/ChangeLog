@@ -1,3 +1,14 @@
+2016-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r203289):Assertion in MathOperator::stretchTo() on Wikipedia Page
+        https://bugs.webkit.org/show_bug.cgi?id=162933
+        <rdar://problem/28570590>
+
+        Reviewed by Dean Jackson.
+
+        * mathml/empty-mo-expected.txt: Added.
+        * mathml/empty-mo.html: Added.
+
 2016-11-01  Dean Jackson  <dino@apple.com>
 
         Filter functions grayscale/invert/opacity/sepia should clamp values over 100%, not fail
