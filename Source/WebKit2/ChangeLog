@@ -1,3 +1,33 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: Network process crash when converting main resource to download
+        https://bugs.webkit.org/show_bug.cgi?id=164220
+
+        Reviewed by Alex Christensen.
+
+        Right after the main resource load is converted to a download, the web process deletes the ResourceLoader which
+        sends the RemoveLoadIdentifier to the network process and the load is aborted. Sometimes it happens that
+        NetworkResourceLoader::abort() is called while the NetworkLoad is still deciding the destination of the
+        download. In such case, NetworkResourceLoader::didConvertToDownload() has already been called, but not
+        NetworkResourceLoader::didBecomeDownload(). In NetworkResourceLoader::abort() we already handle the case of
+        having a NetworkLoad after NetworkResourceLoader::didConvertToDownload() has been called, to avoid canceling the
+        load in such case, however cleanup() is always called unconditionally and the NetworkLoad is deleted before
+        NetworkResourceLoader::didBecomeDownload() is called. When the NetworkLoad is destroyed the NetworkDataTask
+        client becomes nullptr, leaving it in a state where both the client is nullptr and the download hasn't been
+        created yet. That's not expected to happen and when the response completion handler is called in the
+        NetworkDataTask it tries to use either the client or the download and it crashes.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier): Update ASSERT, because abort doesn't cleanup the
+        resource loader in case it's becoming a download.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didBecomeDownload): Call cleanup() instead of just deleting the network load.
+        (WebKit::NetworkResourceLoader::isBecomingDownload): Helper method to check if the resource load was converted to a
+        download, but didBecomeDownload() hasn't been called yet.
+        (WebKit::NetworkResourceLoader::abort): If the resource load is becoming a download do not call cleanup()
+        because it will be called by didBecomeDownload() later.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2016-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Add logging for "WebKit encountered an internal error" messages

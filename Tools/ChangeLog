@@ -1,3 +1,20 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: Network process crash when converting main resource to download
+        https://bugs.webkit.org/show_bug.cgi?id=164220
+
+        Reviewed by Alex Christensen.
+
+        Split /webkit2/Downloads/policy-decision-download in two, one to test the full load when main resource is
+        converted to a download and another one to test the cancellation as the test was doing before. When doing the
+        full load, delay a bit the decide destination to ensure the load is aborted before the data task has became a
+        download.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (testPolicyResponseDownload):
+        (testPolicyResponseDownloadCancel):
+        (beforeAll):
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Remove PassRefPtr from DumpRenderTree

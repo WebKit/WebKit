@@ -81,6 +81,7 @@ public:
     ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
     uint64_t frameID() const { return m_parameters.webFrameID; }
     uint64_t pageID() const { return m_parameters.webPageID; }
+    bool isBecomingDownload() const;
 
     struct SynchronousLoadData;
 
