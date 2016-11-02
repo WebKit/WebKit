@@ -1,3 +1,19 @@
+2016-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Add logging for "WebKit encountered an internal error" messages
+        <https://webkit.org/b/164272>
+        <rdar://problem/28546064>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource):
+        - Add logging for various internalError() events.
+
 2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] BadDamage X Window System error in WebKit::AcceleratedBackingStoreX11::update when called from WebPageProxy::exitAcceleratedCompositingMode

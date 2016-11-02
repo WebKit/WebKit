@@ -35,7 +35,11 @@
 #include "WebProcess.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
+#include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
@@ -200,6 +204,10 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
         RELEASE_LOG_IF_ALLOWED("didReceiveResource: Unable to create SharedBuffer (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
+        if (auto* frame = m_coreLoader->frame()) {
+            if (auto* page = frame->page())
+                page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::createSharedBufferFailedKey(), WebCore::ShouldSample::No);
+        }
         m_coreLoader->didFail(internalError(m_coreLoader->request().url()));
         return;
     }

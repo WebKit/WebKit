@@ -1,3 +1,25 @@
+2016-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Add logging for "WebKit encountered an internal error" messages
+        <https://webkit.org/b/164272>
+        <rdar://problem/28546064>
+
+        Reviewed by Alex Christensen.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::internalErrorKey):
+        (WebCore::DiagnosticLoggingKeys::invalidSessionIDKey):
+        (WebCore::DiagnosticLoggingKeys::createSharedBufferFailedKey):
+        (WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey):
+        - Add implementations for new key methods.
+
+        * page/DiagnosticLoggingKeys.h:
+        (WebCore::DiagnosticLoggingKeys::internalErrorKey):
+        (WebCore::DiagnosticLoggingKeys::invalidSessionIDKey):
+        (WebCore::DiagnosticLoggingKeys::createSharedBufferFailedKey):
+        (WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey):
+        - Add declarations for new key methods.
+
 2016-11-02  Zalan Bujtas  <zalan@apple.com>
 
         [Tables] Simplified layout skips captions.
