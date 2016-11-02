@@ -1,3 +1,13 @@
+2016-11-02  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r207753-207755): ASSERTION FAILED: m_parsedStyleSheetCache->isInMemoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=163905
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/security/cached-cross-origin-shared-css-stylesheet-expected.txt: Added.
+        * http/tests/security/cached-cross-origin-shared-css-stylesheet.html: Added.
+
 2016-11-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] mimax(auto, <flex>) should be serialized as <flex>

@@ -63,13 +63,7 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
     : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
     , m_defaultNamespace(starAtom)
-    , m_loadCompleted(false)
     , m_isUserStyleSheet(ownerRule && ownerRule->parentStyleSheet() && ownerRule->parentStyleSheet()->isUserStyleSheet())
-    , m_hasSyntacticallyValidCSSHeader(true)
-    , m_didLoadErrorOccur(false)
-    , m_usesStyleBasedEditability(false)
-    , m_isMutable(false)
-    , m_isInMemoryCache(false)
     , m_parserContext(context)
 {
 }
@@ -84,13 +78,10 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_childRules(o.m_childRules.size())
     , m_namespaces(o.m_namespaces)
     , m_defaultNamespace(o.m_defaultNamespace)
-    , m_loadCompleted(true)
     , m_isUserStyleSheet(o.m_isUserStyleSheet)
+    , m_loadCompleted(true)
     , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
-    , m_didLoadErrorOccur(false)
     , m_usesStyleBasedEditability(o.m_usesStyleBasedEditability)
-    , m_isMutable(false)
-    , m_isInMemoryCache(false)
     , m_parserContext(o.m_parserContext)
 {
     ASSERT(o.isCacheable());
@@ -532,16 +523,15 @@ void StyleSheetContents::unregisterClient(CSSStyleSheet* sheet)
 
 void StyleSheetContents::addedToMemoryCache()
 {
-    ASSERT(!m_isInMemoryCache);
     ASSERT(isCacheable());
-    m_isInMemoryCache = true;
+    ++m_inMemoryCacheCount;
 }
 
 void StyleSheetContents::removedFromMemoryCache()
 {
-    ASSERT(m_isInMemoryCache);
+    ASSERT(m_inMemoryCacheCount);
     ASSERT(isCacheable());
-    m_isInMemoryCache = false;
+    --m_inMemoryCacheCount;
 }
 
 void StyleSheetContents::shrinkToFit()
