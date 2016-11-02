@@ -180,7 +180,7 @@ void WebView::setActive(bool active)
         return;
 
     scene->setActive(active);
-    m_page->viewStateDidChange(ViewState::WindowIsActive);
+    m_page->activityStateDidChange(ActivityState::WindowIsActive);
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -199,7 +199,7 @@ void WebView::setFocused(bool focused)
         return;
 
     m_focused = focused;
-    m_page->viewStateDidChange(ViewState::IsFocused | ViewState::WindowIsActive);
+    m_page->activityStateDidChange(ActivityState::IsFocused | ActivityState::WindowIsActive);
 }
 
 void WebView::setVisible(bool visible)
@@ -208,7 +208,7 @@ void WebView::setVisible(bool visible)
         return;
 
     m_visible = visible;
-    m_page->viewStateDidChange(ViewState::IsVisible);
+    m_page->activityStateDidChange(ActivityState::IsVisible);
 
     if (auto* drawingArea = static_cast<AcceleratedDrawingAreaProxy*>(page()->drawingArea()))
         drawingArea->visibilityDidChange();

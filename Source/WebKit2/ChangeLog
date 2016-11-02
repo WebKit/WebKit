@@ -1,3 +1,14 @@
+2016-11-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, EFL build fix after r208225
+
+        Rename ViewState to ActivityState
+
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setActive):
+        (WebKit::WebView::setFocused):
+        (WebKit::WebView::setVisible):
+
 2016-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.
