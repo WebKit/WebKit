@@ -32,6 +32,7 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "UnlinkedModuleProgramCodeBlock.h"
 
 namespace JSC {
 

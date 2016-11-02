@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CodeBlock.h"
+#include "UnlinkedFunctionCodeBlock.h"
 
 namespace JSC {
 

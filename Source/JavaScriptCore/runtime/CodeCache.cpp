@@ -31,6 +31,9 @@
 #include "Parser.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include "UnlinkedEvalCodeBlock.h"
+#include "UnlinkedModuleProgramCodeBlock.h"
+#include "UnlinkedProgramCodeBlock.h"
 
 namespace JSC {
 
