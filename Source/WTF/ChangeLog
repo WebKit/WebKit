@@ -1,3 +1,15 @@
+2016-11-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Clean wrong comment about compositing on the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=164339
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h: The comment about compositing on the UI process
+        was added on r109302 but was not removed properly when the Qt port
+        was removed from trunk.
+        USE_PROTECTION_SPACE_AUTH_CALLBACK has nothing to do with it.
+
 2016-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove Battery Status API from the tree

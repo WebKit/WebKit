@@ -949,7 +949,6 @@
 #define USE_TEXTURE_MAPPER_GL 1
 #endif
 
-/* Compositing on the UI-process in WebKit2 */
 #if PLATFORM(COCOA)
 #define USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
