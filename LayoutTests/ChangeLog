@@ -1,3 +1,17 @@
+2016-11-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] mimax(auto, <flex>) should be serialized as <flex>
+        https://bugs.webkit.org/show_bug.cgi?id=164316
+
+        Reviewed by Sergio Villar Senin.
+
+        Add new test case to verify it. We can only check it
+        using grid-auto-columns|rows, because grid-template-columns|rows
+        is serialized to the used breadth.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+
 2016-11-02  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Enable creation of ReadableByteStreamController

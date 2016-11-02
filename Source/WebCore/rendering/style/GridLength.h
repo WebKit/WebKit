@@ -72,6 +72,7 @@ public:
     }
 
     bool isContentSized() const { return m_type == LengthType && (m_length.isAuto() || m_length.isMinContent() || m_length.isMaxContent()); }
+    bool isAuto() const { return m_type == LengthType && m_length.isAuto(); }
 
 private:
     // Ideally we would put the 2 following fields in a union, but Length has a constructor,

@@ -52,6 +52,8 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "min
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto 30px minmax(10%, 60%)"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "fit-content(10px) fit-content(30%)"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "fit-content(5%) fit-content(40px)"
+PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "2fr"
+PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "1fr"
 
 Test setting grid-auto-columns and grid-auto-rows to bad minmax value through JS
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "auto"

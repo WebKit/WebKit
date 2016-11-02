@@ -1012,6 +1012,9 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
     }
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
+        if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex())
+            return CSSValuePool::singleton().createValue(trackSize.maxTrackBreadth().flex(), CSSPrimitiveValue::CSS_FR);
+
         auto minMaxTrackBreadths = CSSValueList::createCommaSeparated();
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style));
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.maxTrackBreadth(), style));
