@@ -1,3 +1,9 @@
+2016-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Add Battery Status to features.json, marked as "Removed".
+
+        * features.json:
+
 2016-11-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Load stylesheets in link elements inside a connected shadow tree

@@ -1,6 +1,17 @@
 {
     "specification": [
     {
+        "name": "Battery Status API",
+        "status": {
+        	"status": "Removed"
+        },
+        "url": "https://w3c.github.io/battery/",
+        "webkit-url": "https://webkit.org/b/62698",
+        "keywords": ["battery"],
+        "category": "webapps",
+        "description": "An API that provides information about the battery status of the hosting device."
+    },
+    {
         "name": "Beacon API",
         "status": {
             "status": "Under Consideration",
