@@ -1,3 +1,19 @@
+2016-11-02  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r199558): File paths selected for upload are stored using the wrong string encoding
+        https://bugs.webkit.org/show_bug.cgi?id=164311
+        <rdar://problem/26995374>
+
+        Reviewed by Tim Horton.
+
+        -[NSURL fileSystemRepresentation] returns a char* in file system representation, which on
+        iOS is UTF-8, but we were implicitly converting it to a String, which assumes a char* is
+        Latin-1 encoded.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _chooseFiles:displayString:iconImage:]): Changed to use fromUTF8() to
+        convert fileURL.fileSystemRepresentation to a String.
+
 2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: Network process crash when converting main resource to download

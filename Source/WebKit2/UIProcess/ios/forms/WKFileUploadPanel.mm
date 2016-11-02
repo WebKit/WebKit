@@ -342,7 +342,7 @@ static UIImage* iconForFile(NSURL *file)
     Vector<String> filenames;
     filenames.reserveInitialCapacity(count);
     for (NSURL *fileURL in fileURLs)
-        filenames.uncheckedAppend(fileURL.fileSystemRepresentation);
+        filenames.uncheckedAppend(String::fromUTF8(fileURL.fileSystemRepresentation));
 
     NSData *jpeg = UIImageJPEGRepresentation(iconImage, 1.0);
     RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([jpeg bytes]), [jpeg length])));
