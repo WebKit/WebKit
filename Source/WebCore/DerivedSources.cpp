@@ -389,11 +389,10 @@
 #include "JSProgressEvent.cpp"
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
-#if ENABLE(READABLE_STREAM_API)
+#include "JSReadableByteStreamController.cpp"
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamDefaultController.cpp"
 #include "JSReadableStreamDefaultReader.cpp"
-#endif
 #include "JSRect.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"
 #include "JSRGBColor.cpp"

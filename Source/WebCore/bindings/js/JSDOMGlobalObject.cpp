@@ -105,12 +105,21 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 
 #if ENABLE(READABLE_STREAM_API)
     JSObject* privateReadableStreamDefaultControllerConstructor = createReadableStreamDefaultControllerPrivateConstructor(vm, *this);
+#if ENABLE(READABLE_BYTE_STREAM_API)
+    JSObject* privateReadableByteStreamControllerConstructor = createReadableByteStreamControllerPrivateConstructor(vm, *this);
+#endif
     JSObject* privateReadableStreamDefaultReaderConstructor = createReadableStreamDefaultReaderPrivateConstructor(vm, *this);
 
     ASSERT(!constructors().get(privateReadableStreamDefaultControllerConstructor->info()).get());
+#if ENABLE(READABLE_BYTE_STREAM_API)
+    ASSERT(!constructors().get(privateReadableByteStreamControllerConstructor->info()).get());
+#endif
     ASSERT(!constructors().get(privateReadableStreamDefaultReaderConstructor->info()).get());
     JSC::WriteBarrier<JSC::JSObject> temp;
     constructors().add(privateReadableStreamDefaultControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultControllerConstructor);
+#if ENABLE(READABLE_BYTE_STREAM_API)
+    constructors().add(privateReadableByteStreamControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableByteStreamControllerConstructor);
+#endif
     constructors().add(privateReadableStreamDefaultReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultReaderConstructor);
 #endif
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
@@ -134,6 +143,9 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 #endif
 #if ENABLE(READABLE_STREAM_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultControllerPrivateName(), privateReadableStreamDefaultControllerConstructor, DontDelete | ReadOnly),
+#if ENABLE(READABLE_BYTE_STREAM_API)
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableByteStreamControllerPrivateName(), privateReadableByteStreamControllerConstructor, DontDelete | ReadOnly),
+#endif
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), privateReadableStreamDefaultReaderConstructor, DontDelete | ReadOnly),
 #endif
     };

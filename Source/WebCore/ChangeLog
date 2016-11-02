@@ -1,3 +1,43 @@
+2016-11-02  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Enable creation of ReadableByteStreamController
+        https://bugs.webkit.org/show_bug.cgi?id=164014
+
+        Reviewed by Youenn Fablet.
+
+        Added support for creating ReadableByteStreamController. IDL is mostly
+        implemented but methods return TypeError. Tests have been added to ensure
+        behaviour. This part of Readable Streams API is associated to
+        a flag (READABLE_BYTE_STREAM_API).
+
+        Test: streams/readable-byte-stream-controller.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/streams/ReadableByteStreamController.idl: Added.
+        * Modules/streams/ReadableByteStreamController.js: Added.
+        (enqueue): Empty method for the moment, throws TypeError.
+        (error): Empty method for the moment, throws TypeError.
+        (close): Empty method for the moment, throws TypeError.
+        (byobRequest): Empty method for the moment, throws TypeError.
+        (desiredSize): Empty method for the moment, throws TypeError.
+        * Modules/streams/ReadableByteStreamInternals.js: Added.
+        (privateInitializeReadableByteStreamController):
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        (WebCore::constructJSReadableByteStreamController):
+        (WebCore::constructJSReadableStreamDefaultReader):
+        (WebCore::JSBuiltinReadableByteStreamControllerPrivateConstructor::initializeExecutable):
+        (WebCore::createReadableByteStreamControllerPrivateConstructor):
+        * bindings/js/JSReadableStreamPrivateConstructors.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2016-11-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: fullscreen toggle support

@@ -52,8 +52,16 @@ function initializeReadableStream(underlyingSource, strategy)
     const typeString = @String(type);
 
     if (typeString === "bytes") {
-         // FIXME: Implement support of ReadableByteStreamController.
-        @throwTypeError("ReadableByteStreamController is not implemented");
+        if (strategy.highWaterMark === @undefined)
+            strategy.highWaterMark = 0;
+        // FIXME: When ReadableByteStreamController is no more dependent on a compile flag, specific error handling can be removed.
+        // Constructor is not necessarily available if the byteStream part of Readeable Stream API is not activated. Therefore, a
+        // specific handling of error is done.
+        try {
+            this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);
+        } catch (e) {
+            @throwTypeError("ReadableByteStreamController could not be created");
+        }
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 1;

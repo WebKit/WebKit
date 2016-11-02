@@ -129,6 +129,7 @@ my (
     $proximityEventsSupport,
     $quotaSupport,
     $readableStreamAPISupport,
+    $readableByteStreamAPISupport,
     $registerProtocolHandlerSupport,
     $requestAnimationFrameSupport,
     $resolutionMediaQuerySupport,
@@ -398,6 +399,9 @@ my @features = (
 
     { option => "readableStreamAPI", desc => "Toggle ReadableStream API support",
       define => "ENABLE_READABLE_STREAM_API", default => 1, value => \$readableStreamAPISupport },
+
+    { option => "readableByteStreamAPI", desc => "Toggle support of ByteStream part of ReadableStream API",
+      define => "ENABLE_READABLE_BYTE_STREAM_API", default => 1, value => \$readableByteStreamAPISupport },
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
       define => "ENABLE_RESOLUTION_MEDIA_QUERY", default => isEfl(), value => \$resolutionMediaQuerySupport },
