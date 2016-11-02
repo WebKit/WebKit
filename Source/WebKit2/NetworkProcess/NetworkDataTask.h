@@ -80,6 +80,7 @@ public:
     virtual void suspend() = 0;
     virtual void cancel() = 0;
     virtual void resume() = 0;
+    virtual void invalidateAndCancel() = 0;
 
     enum class State {
         Running,

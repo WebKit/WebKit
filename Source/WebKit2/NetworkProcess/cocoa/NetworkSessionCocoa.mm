@@ -466,6 +466,8 @@ NetworkSessionCocoa::~NetworkSessionCocoa()
 
 void NetworkSessionCocoa::invalidateAndCancel()
 {
+    NetworkSession::invalidateAndCancel();
+
     [m_sessionWithCredentialStorage invalidateAndCancel];
     [m_sessionWithoutCredentialStorage invalidateAndCancel];
 }

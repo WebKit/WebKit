@@ -59,7 +59,7 @@ public:
     BlobDataFileReference* file() const { return m_file.get(); }
 
     long long offset() const { return m_offset; }
-    long long length() const; // Computes file length if it's not known yet.
+    WEBCORE_EXPORT long long length() const; // Computes file length if it's not known yet.
 
 private:
     friend class BlobData;

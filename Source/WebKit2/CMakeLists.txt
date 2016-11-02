@@ -183,6 +183,7 @@ endif ()
 set(NetworkProcess_COMMON_SOURCES
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkDataTask.cpp
+    NetworkProcess/NetworkDataTaskBlob.cpp
     NetworkProcess/NetworkLoad.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp

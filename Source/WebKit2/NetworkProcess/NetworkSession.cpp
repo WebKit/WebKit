@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#include "NetworkDataTask.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <wtf/MainThread.h>
 
@@ -79,6 +80,12 @@ NetworkSession::NetworkSession(SessionID sessionID)
 
 NetworkSession::~NetworkSession()
 {
+}
+
+void NetworkSession::invalidateAndCancel()
+{
+    for (auto* task : m_dataTaskSet)
+        task->invalidateAndCancel();
 }
 
 } // namespace WebKit

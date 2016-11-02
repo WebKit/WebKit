@@ -1,3 +1,104 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: Add NetworkDataTask implementation for blobs
+        https://bugs.webkit.org/show_bug.cgi?id=163939
+
+        Reviewed by Alex Christensen.
+
+        Add NetworkDataTaskBlob to handle blobs when using NetworkSession instead of using ResourceHandle. This patch
+        adds more USE(NETWORK_SESSION) ifdefs to not use ResourceHandle in Downloads and NetworkLoad when NetworkSession
+        is enabled.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download): Split the constructor again and remove the PlatformDownloadTaskRef
+        definitions. Now Cocoa specific constructor receives a NSURLSessionDownloadTask and the general constructor
+        reveices a NetworkDataTask and is used by Soup backend and blobs.
+        (WebKit::Download::~Download):
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didFinish):
+        (WebKit::Download::platformCancelNetworkLoad): Rename cancelNetworkLoad() as platformCancelNetworkLoad() since
+        this is now used only by Cocoa platform to cancel the NSURLSessionDownloadTask.
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::Download):
+        (WebKit::Download::suggestedName):
+        (WebKit::Download::request):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload): Remove blobs specific code when using NetworkSession.
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::platformCancelNetworkLoad):
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp: Removed.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload): Remove blobs specific code when
+        using NetworkSession.
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create): If request is a blob, create a NetworkDataTaskBlob.
+        * NetworkProcess/NetworkDataTask.h: Add invalidateAndCancel pure virtual method.
+        * NetworkProcess/NetworkDataTaskBlob.cpp: Added.
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::~NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::clearStream):
+        (WebKit::NetworkDataTaskBlob::resume):
+        (WebKit::NetworkDataTaskBlob::suspend):
+        (WebKit::NetworkDataTaskBlob::cancel):
+        (WebKit::NetworkDataTaskBlob::invalidateAndCancel):
+        (WebKit::NetworkDataTaskBlob::getSizeForNext):
+        (WebKit::NetworkDataTaskBlob::didGetSize):
+        (WebKit::NetworkDataTaskBlob::seek):
+        (WebKit::NetworkDataTaskBlob::didReceiveResponse):
+        (WebKit::NetworkDataTaskBlob::read):
+        (WebKit::NetworkDataTaskBlob::readData):
+        (WebKit::NetworkDataTaskBlob::readFile):
+        (WebKit::NetworkDataTaskBlob::didOpen):
+        (WebKit::NetworkDataTaskBlob::didRead):
+        (WebKit::NetworkDataTaskBlob::consumeData):
+        (WebKit::NetworkDataTaskBlob::setPendingDownloadLocation):
+        (WebKit::NetworkDataTaskBlob::suggestedFilename):
+        (WebKit::NetworkDataTaskBlob::download):
+        (WebKit::NetworkDataTaskBlob::writeDownload):
+        (WebKit::NetworkDataTaskBlob::cleanDownloadFiles):
+        (WebKit::NetworkDataTaskBlob::didFailDownload):
+        (WebKit::NetworkDataTaskBlob::didFinishDownload):
+        (WebKit::NetworkDataTaskBlob::didFail):
+        (WebKit::NetworkDataTaskBlob::didFinish):
+        * NetworkProcess/NetworkDataTaskBlob.h: Added.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad): Remove blobs specific code when using NetworkSession.
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::setDefersLoading):
+        (WebKit::NetworkLoad::cancel):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel): Moved from NetworkSessionSoup, since this is now used also by blobs.
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::registerNetworkDataTask): Ditto.
+        (WebKit::NetworkSession::unregisterNetworkDataTask): Ditto.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h: Add invalidateAndCancel() implementation that does nothing
+        because in Cocoa all tasks are invalidated and canceled by the network session.
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::~NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::download):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * PlatformEfl.cmake: Remove DownloadSoup.cpp from compilation.
+        * PlatformGTK.cmake: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Add new files to compilation.
+
 2016-11-02  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r199558): File paths selected for upload are stored using the wrong string encoding

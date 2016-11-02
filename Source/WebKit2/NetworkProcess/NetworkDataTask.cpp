@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#include "NetworkDataTaskBlob.h"
 #include "NetworkSession.h"
 #include <wtf/MainThread.h>
 
@@ -44,6 +45,9 @@ namespace WebKit {
 
 Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, StoredCredentials storedCredentials, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
+    if (request.url().protocolIsBlob())
+        return NetworkDataTaskBlob::create(session, client, request, shouldContentSniff);
+
 #if PLATFORM(COCOA)
     return NetworkDataTaskCocoa::create(session, client, request, storedCredentials, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect);
 #endif

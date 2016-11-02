@@ -26,13 +26,10 @@
 #pragma once
 
 #include "NetworkSession.h"
-#include <wtf/HashSet.h>
 
 typedef struct _SoupSession SoupSession;
 
 namespace WebKit {
-
-class NetworkDataTaskSoup;
 
 class NetworkSessionSoup final : public NetworkSession {
 public:
@@ -44,15 +41,8 @@ public:
 
     SoupSession* soupSession() const;
 
-    void registerNetworkDataTask(NetworkDataTaskSoup& task) { m_dataTaskSet.add(&task); }
-    void unregisterNetworkDataTask(NetworkDataTaskSoup& task) { m_dataTaskSet.remove(&task); }
-
 private:
     NetworkSessionSoup(WebCore::SessionID);
-
-    void invalidateAndCancel() override;
-
-    HashSet<NetworkDataTaskSoup*> m_dataTaskSet;
 };
 
 } // namespace WebKit

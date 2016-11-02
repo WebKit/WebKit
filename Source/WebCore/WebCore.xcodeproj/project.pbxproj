@@ -2060,7 +2060,7 @@
 		514C76700CE923A1007EF3CD /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765B0CE923A1007EF3CD /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76710CE923A1007EF3CD /* HTTPHeaderMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765D0CE923A1007EF3CD /* HTTPParsers.cpp */; };
-		514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765E0CE923A1007EF3CD /* HTTPParsers.h */; };
+		514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765E0CE923A1007EF3CD /* HTTPParsers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76740CE923A1007EF3CD /* ProtectionSpaceBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */; };
 		514C76750CE923A1007EF3CD /* ProtectionSpaceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76630CE923A1007EF3CD /* ResourceHandle.cpp */; };
@@ -6181,7 +6181,7 @@
 		E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */; };
 		E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CAA5C50E8BD23600A73ECA /* JSWorker.h */; };
 		E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */; };
-		E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CDE9211501916900862CC5 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (); }; };
+		E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CDE9211501916900862CC5 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1D31CDC19196020001005A3 /* BlobDataFileReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1D31CDA19196020001005A3 /* BlobDataFileReference.cpp */; };
 		E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = E1D31CDB19196020001005A3 /* BlobDataFileReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
