@@ -2698,6 +2698,7 @@ static RefPtr<CSSValue> consumeCommaSeparatedBackgroundComponent(CSSPropertyID p
     return result;
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 static RefPtr<CSSPrimitiveValue> consumeSelfPositionKeyword(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -3023,7 +3024,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
             return false;
         if (allTracksAreFixedSized)
             allTracksAreFixedSized = isGridTrackFixedSized(*trackSize);
-        repeatedValues->append(*trackSize);
+        repeatedValues->append(trackSize.releaseNonNull());
         ++numberOfTracks;
         lineNames = consumeGridLineNames(args);
         if (lineNames)
@@ -3040,7 +3041,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
         repetitions = std::min(repetitions, kGridMaxTracks / numberOfTracks);
         for (size_t i = 0; i < repetitions; ++i) {
             for (size_t j = 0; j < repeatedValues->length(); ++j)
-                list.append(adoptRef(*repeatedValues->item(j)));
+                list.append(adoptRef(*repeatedValues->itemWithoutBoundsCheck(j)));
         }
     }
     return true;
@@ -3085,7 +3086,7 @@ static RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSSPars
         if (lineNames) {
             if (!allowGridLineNames)
                 return nullptr;
-            values->append(*lineNames);
+            values->append(lineNames.releaseNonNull());
         }
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
     return values;
@@ -3118,6 +3119,7 @@ static RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     ASSERT(columnCount);
     return CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
 }
+#endif
 
 #if ENABLE(CSS_REGIONS)
 static RefPtr<CSSValue> consumeFlowProperty(CSSParserTokenRange& range)
@@ -3702,28 +3704,46 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
         return nullptr;
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignItems:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeAlignItems(m_range);
     case CSSPropertyJustifySelf:
     case CSSPropertyAlignSelf:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeSelfPositionOverflowPosition(m_range);
     case CSSPropertyJustifyItems:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeJustifyItems(m_range);
     case CSSPropertyGridColumnEnd:
     case CSSPropertyGridColumnStart:
     case CSSPropertyGridRowEnd:
     case CSSPropertyGridRowStart:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeGridLine(m_range);
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeGridTrackList(m_range, m_context.mode, GridAuto);
     case CSSPropertyGridTemplateColumns:
     case CSSPropertyGridTemplateRows:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeGridTemplatesRowsOrColumns(m_range, m_context.mode);
     case CSSPropertyGridTemplateAreas:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeGridTemplateAreas(m_range);
     case CSSPropertyGridAutoFlow:
+        if (!m_context.cssGridLayoutEnabled)
+            return nullptr;
         return consumeGridAutoFlow(m_range);
+#endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowInto:
     case CSSPropertyWebkitFlowFrom:

@@ -1,3 +1,15 @@
+2016-11-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Clean up new parser's grid layout ifdefs/runtime checking
+        https://bugs.webkit.org/show_bug.cgi?id=164341
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeGridTrackRepeatFunction):
+        (WebCore::consumeGridTrackList):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove Battery Status API from the tree
