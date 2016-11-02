@@ -1,3 +1,60 @@
+2016-11-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Load stylesheets in link elements inside a connected shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=160683
+        <rdar://problem/29040652>
+
+        Reviewed by Antti Koivisto.
+
+        Allow external stylesheets within a shadow tree by storing the appropriate style scope in HTMLLinkElement
+        when it's connected to a document instead of always talking to document's style scope.
+
+        Also improve ShadowRoot's insertedInto and removedFrom so that they only try to add and remove itself from
+        m_inDocumentShadowRoots when the connected-ness changes.
+
+        This patch also removes the superfluous call to notifyChildNodeRemoved in Element::removeShadowRoot to
+        avoid invoking notifyChildNodeRemoved during a document teardown, which is incorrect. It's sufficient that
+        ~ShadowRoot calls ContainerNode::removeDetachedChildren(), and in turn removeDetachedChildrenInContainer()
+        since the latter function tears down nodes via the deletion queue during a document destruction and use
+        notifyChildNodeRemoved() on nodes that outlive the shadow root.
+
+        Tests: fast/shadow-dom/link-element-in-shadow-tree.html
+               fast/shadow-dom/selected-stylesheet-in-shadow-tree.html
+
+       * dom/Document.cpp:
+       (WebCore::Document::didInsertInDocumentShadowRoot): Assert that the shadow root is not in the set.
+       (WebCore::Document::didRemoveInDocumentShadowRoot): Assert that the shadow root is not in the document as
+       this function is now called after Node::removedFrom in ShadowRoot::removedFrom.
+       * dom/Element.cpp:
+       (WebCore::Element::removeShadowRoot): See the description above.
+       * dom/ShadowRoot.cpp:
+       (WebCore::ShadowRoot::insertedInto): Only call didInsertInDocumentShadowRoot when the this shadow root is
+       newly connected to a document so we can add assertions in didInsertInDocumentShadowRoot.
+       (WebCore::ShadowRoot::removedFrom): Ditto for the removal.
+       * html/HTMLLinkElement.cpp:
+       (WebCore::HTMLLinkElement::HTMLLinkElement):
+       (WebCore::HTMLLinkElement::~HTMLLinkElement):
+       (WebCore::HTMLLinkElement::setDisabledState): Exit early when the element is not in a document as invoking
+       didChangeActiveStyleSheetCandidates would require having a valid m_styleScope and process() already exits
+       early when inDocument() is false.
+       (WebCore::HTMLLinkElement::parseAttribute):
+       (WebCore::HTMLLinkElement::process): Removed the early exit for when the element is in a shadow tree.
+       (WebCore::HTMLLinkElement::insertedInto): Exit early unless this element has just become connected to
+       a document instead of whenever its self-inclusive ancestor is inserted into a container.
+       (WebCore::HTMLLinkElement::removedFrom): Ditto for removal. Also call removeStyleSheetCandidateNode after
+       calling removePendingSheet since the latter depends on m_styleScope being not null.
+       (WebCore::HTMLLinkElement::addPendingSheet):
+       (WebCore::HTMLLinkElement::removePendingSheet):
+       * html/HTMLLinkElement.h:
+       * html/HTMLStyleElement.cpp:
+       (WebCore::HTMLStyleElement::insertedInto): Only call inline style owner's insertedIntoDocument if this
+       element has just become connected to a document.
+       (WebCore::HTMLStyleElement::removedFrom): Ditto for the removal.
+       * style/StyleScope.h:
+       * svg/SVGStyleElement.cpp:
+       (WebCore::SVGStyleElement::insertedInto): Ditto.
+       (WebCore::SVGStyleElement::removedFrom): Ditto for the removal.
+
 2016-11-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Clean up new parser's grid layout ifdefs/runtime checking

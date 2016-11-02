@@ -84,17 +84,18 @@ ShadowRoot::~ShadowRoot()
 
 Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode& insertionPoint)
 {
-    auto result = DocumentFragment::insertedInto(insertionPoint);
-    if (inDocument())
+    bool wasInDocument = inDocument();
+    DocumentFragment::insertedInto(insertionPoint);
+    if (insertionPoint.inDocument() && !wasInDocument)
         document().didInsertInDocumentShadowRoot(*this);
-    return result;
+    return InsertionDone;
 }
 
 void ShadowRoot::removedFrom(ContainerNode& insertionPoint)
 {
-    if (inDocument())
-        document().didRemoveInDocumentShadowRoot(*this);
     DocumentFragment::removedFrom(insertionPoint);
+    if (insertionPoint.inDocument() && !inDocument())
+        document().didRemoveInDocumentShadowRoot(*this);
 }
 
 Style::Scope& ShadowRoot::styleScope()
