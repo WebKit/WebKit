@@ -319,7 +319,9 @@ private:
 
     void recalcCollapsedBorders();
     void recalcSections() const;
-    void layoutCaption(RenderTableCaption*);
+    enum class BottomCaptionLayoutPhase { Yes, No };
+    void layoutCaptions(BottomCaptionLayoutPhase = BottomCaptionLayoutPhase::No);
+    void layoutCaption(RenderTableCaption&);
 
     void distributeExtraLogicalHeight(LayoutUnit extraLogicalHeight);
 
