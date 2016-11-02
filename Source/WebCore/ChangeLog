@@ -1,3 +1,22 @@
+2016-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit nullptr dereference Archive Subframe
+        https://bugs.webkit.org/show_bug.cgi?id=164281
+        <rdar://problem/28943006>
+
+        Reviewed by Andy Estes.
+
+        If the page is torn down during a load, we can attempt to use a deallocated
+        (and nulled) document loader. Most places that use the "active document loader"
+        null-check it before using, but there was one place that did not. This patch
+        fixes that oversight.
+
+        Test: fast/dom/crash-with-bad-url.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Check that the active document
+        loader is non-null before using.
+
 2016-11-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support scroll-snap-* properties

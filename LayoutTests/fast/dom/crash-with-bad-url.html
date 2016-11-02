@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    description('This tests that WebKit properly handles sub-frames with invalid URLs. It passes if it does not crash.');
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var lscript = 'script>'
+
+    function runTest() {
+        var doc = document.getElementById('target').contentWindow.document;
+        doc.open();
+        doc.write("<body onload='test()'><p>Test Content</p><script>function test() { var doc=document.getElementById('target').contentWindow.document; doc.open(); doc.write('<img src=x onerror=alert(0)>'); doc.close(); if (window.testRunner) { testRunner.notifyDone(); } }</" + lscript + "<iframe id='target' src='http://255.255.255.255'></body>");
+        doc.close();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <iframe id='target' src="http://255.255.255.255/" width="500" height="500"></iframe>
+</body>
+</html>

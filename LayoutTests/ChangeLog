@@ -1,3 +1,14 @@
+2016-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit nullptr dereference Archive Subframe
+        https://bugs.webkit.org/show_bug.cgi?id=164281
+        <rdar://problem/28943006>
+
+        Reviewed by Andy Estes.
+
+        * fast/dom/crash-with-bad-url-expected.txt: Added.
+        * fast/dom/crash-with-bad-url.html: Added.
+
 2016-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/scrubber-support/scrubber-support-drag.html as flaky.
