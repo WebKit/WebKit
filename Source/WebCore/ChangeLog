@@ -1,3 +1,14 @@
+2016-11-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn the Input Events runtime flag on by default
+        https://bugs.webkit.org/show_bug.cgi?id=164297
+
+        Reviewed by Ryosuke Niwa.
+
+        Set the initial value of inputEventsEnabled in Settings to true.
+
+        * page/Settings.in:
+
 2016-11-01  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBIndex getAll/getAllKeys.

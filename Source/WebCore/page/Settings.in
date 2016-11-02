@@ -280,7 +280,7 @@ variationFontsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1, conditiona
 visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 intersectionObserverEnabled initial=false
 
-inputEventsEnabled initial=false
+inputEventsEnabled initial=true
 
 quickTimePluginReplacementEnabled initial=defaultQuickTimePluginReplacementEnabled
 youTubeFlashPluginReplacementEnabled initial=defaultYouTubeFlashPluginReplacementEnabled
