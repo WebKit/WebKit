@@ -2709,6 +2709,7 @@ webkit.org/b/164088 media/modern-media-controls/scrubber-support/scrubber-suppor
 webkit.org/b/164160 media/modern-media-controls/volume-support/volume-support-click.html [ Skip ]
 webkit.org/b/164160 media/modern-media-controls/volume-support/volume-support-drag.html [ Skip ]
 webkit.org/b/164250 media/modern-media-controls/volume-support/volume-support-media-api.html [ Skip ]
+webkit.org/b/164314 media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Skip ]
 
 # This variation font test requires Skia which isn't available on iOS.
 webkit.org/b/163093 fast/text/variations/advances.html [ Failure ]

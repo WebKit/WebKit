@@ -1,5 +1,22 @@
 2016-11-02  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Media Controller: fullscreen toggle support
+        https://bugs.webkit.org/show_bug.cgi?id=163728
+        <rdar://problem/27989486>
+
+        Reviewed by Darin Adler.
+
+        Adding new tests to check that clicking on the fullscreen button enters fullscreen and
+        that the fullscreen button is enabled when fullscreen is supported.
+
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-click-expected.txt: Added.
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-click.html: Added.
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-enabled-expected.txt: Added.
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
+2016-11-02  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Media Controller: PiP support
         https://bugs.webkit.org/show_bug.cgi?id=163730
         <rdar://problem/27989485>

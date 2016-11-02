@@ -30,6 +30,7 @@ controls/pip-placard.js
 media/media-controller-support.js
 media/airplay-support.js
 media/elapsed-time-support.js
+media/fullscreen-support.js
 media/mute-support.js
 media/pip-support.js
 media/placard-support.js

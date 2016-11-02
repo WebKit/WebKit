@@ -1,5 +1,32 @@
 2016-11-02  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Media Controller: fullscreen toggle support
+        https://bugs.webkit.org/show_bug.cgi?id=163728
+        <rdar://problem/27989486>
+
+        Reviewed by Darin Adler.
+
+        We introduce the FullscreenSupport class which brings support for entering and
+        exiting fullscreen by clicking on the fullscreen button in the media controls
+        and correctly reflecting the media's fullscreen state should it be changed
+        via the media API.
+
+        Tests: media/modern-media-controls/fullscreen-support/fullscreen-support-click.html
+               media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/fullscreen-support.js: Added.
+        (FullscreenSupport):
+        (FullscreenSupport.prototype.get control):
+        (FullscreenSupport.prototype.get mediaEvents):
+        (FullscreenSupport.prototype.buttonWasClicked):
+        (FullscreenSupport.prototype.syncControl):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * WebCore.xcodeproj/project.pbxproj:
+
+2016-11-02  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Media Controller: PiP support
         https://bugs.webkit.org/show_bug.cgi?id=163730
         <rdar://problem/27989485>
