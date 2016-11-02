@@ -190,9 +190,9 @@ set(JavaScriptCore_SOURCES
     bytecode/ArrayProfile.cpp
     bytecode/BytecodeBasicBlock.cpp
     bytecode/BytecodeGeneratorification.cpp
-    bytecode/BytecodeRewriter.cpp
     bytecode/BytecodeIntrinsicRegistry.cpp
     bytecode/BytecodeLivenessAnalysis.cpp
+    bytecode/BytecodeRewriter.cpp
     bytecode/CallEdge.cpp
     bytecode/CallLinkInfo.cpp
     bytecode/CallLinkStatus.cpp
@@ -204,14 +204,16 @@ set(JavaScriptCore_SOURCES
     bytecode/CodeOrigin.cpp
     bytecode/CodeType.cpp
     bytecode/ComplexGetStatus.cpp
-    bytecode/DataFormat.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DOMJITAccessCasePatchpointParams.cpp
+    bytecode/DataFormat.cpp
     bytecode/DeferredCompilationCallback.cpp
     bytecode/DeferredSourceDump.cpp
+    bytecode/EvalCodeBlock.cpp
     bytecode/ExecutionCounter.cpp
     bytecode/ExitKind.cpp
     bytecode/ExitingJITType.cpp
+    bytecode/FunctionCodeBlock.cpp
     bytecode/GetByIdStatus.cpp
     bytecode/GetByIdVariant.cpp
     bytecode/InlineAccess.cpp
@@ -221,11 +223,13 @@ set(JavaScriptCore_SOURCES
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp
     bytecode/LazyOperandValueProfile.cpp
     bytecode/MethodOfGettingAValueProfile.cpp
+    bytecode/ModuleProgramCodeBlock.cpp
     bytecode/ObjectPropertyCondition.cpp
     bytecode/ObjectPropertyConditionSet.cpp
     bytecode/Opcode.cpp
     bytecode/PolymorphicAccess.cpp
     bytecode/PreciseJumpTargets.cpp
+    bytecode/ProgramCodeBlock.cpp
     bytecode/PropertyCondition.cpp
     bytecode/PutByIdFlags.cpp
     bytecode/PutByIdStatus.cpp
@@ -246,6 +250,7 @@ set(JavaScriptCore_SOURCES
     bytecode/VariableWriteFireDetail.cpp
     bytecode/VirtualRegister.cpp
     bytecode/Watchpoint.cpp
+    bytecode/WebAssemblyCodeBlock.cpp
 
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp

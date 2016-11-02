@@ -27,6 +27,7 @@
 #include "TestRunnerUtils.h"
 
 #include "CodeBlock.h"
+#include "FunctionCodeBlock.h"
 #include "HeapStatistics.h"
 #include "JSCInlines.h"
 #include "LLIntData.h"

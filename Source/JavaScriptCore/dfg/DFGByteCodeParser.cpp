@@ -41,6 +41,7 @@
 #include "DFGClobbersExitState.h"
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
+#include "FunctionCodeBlock.h"
 #include "GetByIdStatus.h"
 #include "Heap.h"
 #include "JSCInlines.h"

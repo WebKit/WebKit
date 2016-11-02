@@ -40,7 +40,9 @@
 #include "DirectArguments.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
+#include "EvalCodeBlock.h"
 #include "ExceptionFuzz.h"
+#include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "ICStats.h"
@@ -54,8 +56,10 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
+#include "ModuleProgramCodeBlock.h"
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
+#include "ProgramCodeBlock.h"
 #include "PropertyName.h"
 #include "RegExpObject.h"
 #include "Repatch.h"
@@ -66,6 +70,7 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
+#include "WebAssemblyCodeBlock.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {

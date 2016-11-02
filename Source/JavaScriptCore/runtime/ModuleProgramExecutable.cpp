@@ -31,6 +31,7 @@
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LLIntEntrypoint.h"
+#include "ModuleProgramCodeBlock.h"
 #include "Parser.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"

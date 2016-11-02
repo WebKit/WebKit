@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
+#include "FunctionCodeBlock.h"
 #include "SlowPathReturnType.h"
 #include "StackAlignment.h"
 #include "Symbol.h"

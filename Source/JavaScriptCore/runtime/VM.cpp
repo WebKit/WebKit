@@ -42,8 +42,10 @@
 #include "DFGWorklist.h"
 #include "Disassembler.h"
 #include "ErrorInstance.h"
+#include "EvalCodeBlock.h"
 #include "Exception.h"
 #include "FTLThunks.h"
+#include "FunctionCodeBlock.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
@@ -73,10 +75,12 @@
 #include "LLIntData.h"
 #include "Lexer.h"
 #include "Lookup.h"
+#include "ModuleProgramCodeBlock.h"
 #include "NativeStdFunctionCell.h"
 #include "Nodes.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
+#include "ProgramCodeBlock.h"
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
@@ -97,6 +101,7 @@
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
+#include "WebAssemblyCodeBlock.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SimpleStats.h>

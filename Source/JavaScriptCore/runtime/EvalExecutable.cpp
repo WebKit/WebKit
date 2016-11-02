@@ -28,6 +28,8 @@
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
 #include "Debugger.h"
+#include "EvalCodeBlock.h"
+#include "FunctionCodeBlock.h"
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LLIntEntrypoint.h"

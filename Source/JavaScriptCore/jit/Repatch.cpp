@@ -36,14 +36,15 @@
 #include "DOMJITGetterSetter.h"
 #include "DirectArguments.h"
 #include "FTLThunks.h"
+#include "FunctionCodeBlock.h"
 #include "GCAwareJITStubRoutine.h"
 #include "GetterSetter.h"
 #include "ICStats.h"
 #include "InlineAccess.h"
 #include "JIT.h"
 #include "JITInlines.h"
-#include "LinkBuffer.h"
 #include "JSCInlines.h"
+#include "LinkBuffer.h"
 #include "PolymorphicAccess.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
@@ -52,6 +53,7 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
+#include "WebAssemblyCodeBlock.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>

@@ -25,9 +25,10 @@
 
 #include "config.h"
 #include "FunctionExecutableDump.h"
-#include "JSCellInlines.h"
 
 #include "CodeBlock.h"
+#include "FunctionCodeBlock.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

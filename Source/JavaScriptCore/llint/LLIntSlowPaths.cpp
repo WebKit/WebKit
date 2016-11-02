@@ -32,8 +32,10 @@
 #include "CommonSlowPathsExceptions.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
+#include "EvalCodeBlock.h"
 #include "Exception.h"
 #include "ExceptionFuzz.h"
+#include "FunctionCodeBlock.h"
 #include "FunctionWhitelist.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
@@ -53,13 +55,16 @@
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
+#include "ModuleProgramCodeBlock.h"
 #include "ObjectConstructor.h"
 #include "ObjectPropertyConditionSet.h"
+#include "ProgramCodeBlock.h"
 #include "ProtoCallFrame.h"
 #include "RegExpObject.h"
 #include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"
 #include "VMInlines.h"
+#include "WebAssemblyCodeBlock.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 

@@ -43,12 +43,15 @@
 #include "DFGJITCode.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
+#include "EvalCodeBlock.h"
+#include "FunctionCodeBlock.h"
 #include "FunctionExecutableDump.h"
 #include "GetPutInfo.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITMathIC.h"
+#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
@@ -57,10 +60,11 @@
 #include "LLIntEntrypoint.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LowLevelInterpreter.h"
-#include "JSCInlines.h"
+#include "ModuleProgramCodeBlock.h"
 #include "PCToCodeOriginMap.h"
 #include "PolymorphicAccess.h"
 #include "ProfilerDatabase.h"
+#include "ProgramCodeBlock.h"
 #include "ReduceWhitespace.h"
 #include "Repatch.h"
 #include "SlotVisitorInlines.h"
@@ -70,6 +74,7 @@
 #include "TypeProfiler.h"
 #include "UnlinkedInstructionStream.h"
 #include "VMInlines.h"
+#include "WebAssemblyCodeBlock.h"
 #include "WebAssemblyExecutable.h"
 #include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
@@ -96,65 +101,6 @@ const ClassInfo CodeBlock::s_info = {
     "CodeBlock", 0, 0,
     CREATE_METHOD_TABLE(CodeBlock)
 };
-
-const ClassInfo FunctionCodeBlock::s_info = {
-    "FunctionCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(FunctionCodeBlock)
-};
-
-#if ENABLE(WEBASSEMBLY)
-const ClassInfo WebAssemblyCodeBlock::s_info = {
-    "WebAssemblyCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(WebAssemblyCodeBlock)
-};
-#endif
-
-const ClassInfo GlobalCodeBlock::s_info = {
-    "GlobalCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(GlobalCodeBlock)
-};
-
-const ClassInfo ProgramCodeBlock::s_info = {
-    "ProgramCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(ProgramCodeBlock)
-};
-
-const ClassInfo ModuleProgramCodeBlock::s_info = {
-    "ModuleProgramCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(ModuleProgramCodeBlock)
-};
-
-const ClassInfo EvalCodeBlock::s_info = {
-    "EvalCodeBlock", &Base::s_info, 0,
-    CREATE_METHOD_TABLE(EvalCodeBlock)
-};
-
-void FunctionCodeBlock::destroy(JSCell* cell)
-{
-    jsCast<FunctionCodeBlock*>(cell)->~FunctionCodeBlock();
-}
-
-#if ENABLE(WEBASSEMBLY)
-void WebAssemblyCodeBlock::destroy(JSCell* cell)
-{
-    jsCast<WebAssemblyCodeBlock*>(cell)->~WebAssemblyCodeBlock();
-}
-#endif
-
-void ProgramCodeBlock::destroy(JSCell* cell)
-{
-    jsCast<ProgramCodeBlock*>(cell)->~ProgramCodeBlock();
-}
-
-void ModuleProgramCodeBlock::destroy(JSCell* cell)
-{
-    jsCast<ModuleProgramCodeBlock*>(cell)->~ModuleProgramCodeBlock();
-}
-
-void EvalCodeBlock::destroy(JSCell* cell)
-{
-    jsCast<EvalCodeBlock*>(cell)->~EvalCodeBlock();
-}
 
 CString CodeBlock::inferredName() const
 {

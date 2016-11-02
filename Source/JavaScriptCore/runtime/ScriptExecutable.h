@@ -105,8 +105,6 @@ public:
     template <typename ExecutableType>
     JSObject* prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
 
-    template <typename Functor> void forEachCodeBlock(Functor&&);
-
 private:
     friend class ExecutableBase;
     JSObject* prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);

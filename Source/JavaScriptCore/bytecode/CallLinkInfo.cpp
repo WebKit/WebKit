@@ -29,6 +29,7 @@
 #include "CallFrameShuffleData.h"
 #include "DFGOperations.h"
 #include "DFGThunks.h"
+#include "FunctionCodeBlock.h"
 #include "JSCInlines.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"

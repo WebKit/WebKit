@@ -35,6 +35,7 @@
 #include "Parser.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
+#include "WebAssemblyCodeBlock.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

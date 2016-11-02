@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "LLIntEntrypoint.h"
 #include "Parser.h"
+#include "ProgramCodeBlock.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>

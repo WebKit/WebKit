@@ -27,6 +27,7 @@
 #include "JSDollarVMPrototype.h"
 
 #include "CodeBlock.h"
+#include "FunctionCodeBlock.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
