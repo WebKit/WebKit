@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ewk_context.h"
 
-#include "BatteryProvider.h"
 #include "ContextHistoryClientEfl.h"
 #include "DownloadManagerEfl.h"
 #include "RequestManagerClientEfl.h"
@@ -68,9 +67,6 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     : m_context(context)
     , m_databaseManager(std::make_unique<EwkDatabaseManager>())
     , m_storageManager(std::make_unique<EwkStorageManager>(WKContextGetKeyValueStorageManager(context)))
-#if ENABLE(BATTERY_STATUS)
-    , m_batteryProvider(BatteryProvider::create(context))
-#endif
     , m_downloadManager(std::make_unique<DownloadManagerEfl>(context))
     , m_requestManagerClient(std::make_unique<RequestManagerClientEfl>(context))
     , m_historyClient(std::make_unique<ContextHistoryClientEfl>(context))

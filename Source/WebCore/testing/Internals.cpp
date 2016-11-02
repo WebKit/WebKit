@@ -143,10 +143,6 @@
 #include "ColorChooser.h"
 #endif
 
-#if ENABLE(BATTERY_STATUS)
-#include "BatteryController.h"
-#endif
-
 #if ENABLE(PROXIMITY_EVENTS)
 #include "DeviceProximityController.h"
 #endif
@@ -1506,24 +1502,6 @@ String Internals::parserMetaData(JSC::JSValue code)
     result.appendLiteral(" }");
 
     return result.toString();
-}
-
-ExceptionOr<void> Internals::setBatteryStatus(const String& eventType, bool charging, double chargingTime, double dischargingTime, double level)
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Exception { INVALID_ACCESS_ERR };
-
-#if ENABLE(BATTERY_STATUS)
-    BatteryController::from(document->page())->didChangeBatteryStatus(eventType, BatteryStatus::create(charging, chargingTime, dischargingTime, level));
-#else
-    UNUSED_PARAM(eventType);
-    UNUSED_PARAM(charging);
-    UNUSED_PARAM(chargingTime);
-    UNUSED_PARAM(dischargingTime);
-    UNUSED_PARAM(level);
-#endif
-    return { };
 }
 
 ExceptionOr<void> Internals::setDeviceProximity(const String&, double value, double min, double max)

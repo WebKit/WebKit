@@ -38,9 +38,6 @@ namespace WebKit {
 class ContextHistoryClientEfl;
 class DownloadManagerEfl;
 class RequestManagerClientEfl;
-#if ENABLE(BATTERY_STATUS)
-class BatteryProvider;
-#endif
 }
 
 class EwkContext : public EwkObject {
@@ -115,9 +112,6 @@ private:
     std::unique_ptr<EwkDatabaseManager> m_databaseManager;
     std::unique_ptr<EwkFaviconDatabase> m_faviconDatabase;
     std::unique_ptr<EwkStorageManager> m_storageManager;
-#if ENABLE(BATTERY_STATUS)
-    RefPtr<WebKit::BatteryProvider> m_batteryProvider;
-#endif
     std::unique_ptr<WebKit::DownloadManagerEfl> m_downloadManager;
     std::unique_ptr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
 

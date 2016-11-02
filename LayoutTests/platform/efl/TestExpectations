@@ -1551,9 +1551,6 @@ webkit.org/b/66873 http/tests/loading/redirect-methods.html [ Failure ]
 # Issue related to hit testing
 webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 
-# Issue related to battery status and vibration API
-webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
-
 # Interferes with the rAF tests that are enabled
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
@@ -1969,7 +1966,6 @@ webkit.org/b/128663 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
 
 # Failing after r163562
-webkit.org/b/128670 batterystatus/window-property.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 # HIDPI-related tests do not work

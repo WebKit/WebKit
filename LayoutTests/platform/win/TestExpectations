@@ -529,9 +529,6 @@ http/tests/pointer-lock/ [ Skip ]
 # TODO Vibration API is not implemented.
 vibration/ [ Skip ]
 
-# Needs BatteryClient implementation.
-webkit.org/b/62698 batterystatus/ [ Skip ]
-
 # Proximity Events is not supported.
 proximity/ [ Skip ]
 fast/events/constructors/device-proximity-event-constructor.html

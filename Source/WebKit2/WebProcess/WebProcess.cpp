@@ -129,10 +129,6 @@
 #include "WebNotificationManager.h"
 #endif
 
-#if ENABLE(BATTERY_STATUS)
-#include "WebBatteryManager.h"
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -194,9 +190,6 @@ WebProcess::WebProcess()
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
-#endif
-#if ENABLE(BATTERY_STATUS)
-    addSupplement<WebBatteryManager>();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     addSupplement<WebMediaKeyStorageManager>();

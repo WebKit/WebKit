@@ -101,8 +101,6 @@ public:
         AutomationSession,
         BackForwardList,
         BackForwardListItem,
-        BatteryManager,
-        BatteryStatus,
         CacheManager,
         ColorPickerResultListener,
         ContextMenuListener,

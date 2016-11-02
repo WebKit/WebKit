@@ -196,10 +196,6 @@
 #include <WebCore/MHTMLArchive.h>
 #endif
 
-#if ENABLE(BATTERY_STATUS)
-#include "WebBatteryClient.h"
-#endif
-
 #if ENABLE(VIBRATION)
 #include "WebVibrationClient.h"
 #endif
@@ -442,9 +438,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
     m_drawingArea->updatePreferences(parameters.store);
 
-#if ENABLE(BATTERY_STATUS)
-    WebCore::provideBatteryTo(*m_page, *new WebBatteryClient(this));
-#endif
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
 #endif

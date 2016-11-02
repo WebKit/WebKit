@@ -236,7 +236,6 @@ public:
     InternalSettings* settings() const;
     unsigned workerThreadCount() const;
 
-    ExceptionOr<void> setBatteryStatus(const String& eventType, bool charging, double chargingTime, double dischargingTime, double level);
     ExceptionOr<void> setDeviceProximity(const String& eventType, double value, double min, double max);
 
     enum {

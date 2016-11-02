@@ -1,3 +1,55 @@
+2016-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Battery Status API from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=164213
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/WebBatteryStatus.cpp: Removed.
+        * Shared/WebBatteryStatus.h: Removed.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBatteryManager.cpp: Removed.
+        * UIProcess/API/C/WKBatteryManager.h: Removed.
+        * UIProcess/API/C/WKBatteryStatus.cpp: Removed.
+        * UIProcess/API/C/WKBatteryStatus.h: Removed.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetBatteryManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_main.cpp:
+        (WebKit::EwkMain::initialize):
+        (WebKit::EwkMain::finalize):
+        (WebKit::EwkMain::shutdownInitializedEFLModules):
+        * UIProcess/API/gtk/WebKitBatteryProvider.cpp: Removed.
+        * UIProcess/API/gtk/WebKitBatteryProvider.h: Removed.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        * UIProcess/WebBatteryManagerProxy.cpp: Removed.
+        * UIProcess/WebBatteryManagerProxy.h: Removed.
+        * UIProcess/WebBatteryManagerProxy.messages.in: Removed.
+        * UIProcess/WebBatteryProvider.cpp: Removed.
+        * UIProcess/WebBatteryProvider.h: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        * UIProcess/efl/BatteryProvider.cpp: Removed.
+        * UIProcess/efl/BatteryProvider.h: Removed.
+        * WebProcess/Battery: Removed.
+        * WebProcess/Battery/WebBatteryManager.cpp: Removed.
+        * WebProcess/Battery/WebBatteryManager.h: Removed.
+        * WebProcess/Battery/WebBatteryManager.messages.in: Removed.
+        * WebProcess/WebCoreSupport/WebBatteryClient.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebBatteryClient.h: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_resourceLoadStatisticsStorage):
+
 2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: Add NetworkDataTask implementation for blobs

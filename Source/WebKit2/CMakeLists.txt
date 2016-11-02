@@ -49,7 +49,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/ApplePay"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Automation"
-    "${WEBKIT2_DIR}/WebProcess/Battery"
     "${WEBKIT2_DIR}/WebProcess/Cookies"
     "${WEBKIT2_DIR}/WebProcess/Databases"
     "${WEBKIT2_DIR}/WebProcess/Databases/IndexedDB"
@@ -76,7 +75,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
     "${WEBCORE_DIR}"
-    "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
@@ -263,7 +261,6 @@ set(WebKit2_SOURCES
     Shared/UserData.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
-    Shared/WebBatteryStatus.cpp
     Shared/WebCompiledContentExtension.cpp
     Shared/WebCompiledContentExtensionData.cpp
     Shared/WebConnection.cpp
@@ -370,8 +367,6 @@ set(WebKit2_SOURCES
     UIProcess/UserMediaPermissionRequestProxy.cpp
     UIProcess/VisitedLinkStore.cpp
     UIProcess/WebBackForwardList.cpp
-    UIProcess/WebBatteryManagerProxy.cpp
-    UIProcess/WebBatteryProvider.cpp
     UIProcess/WebColorPicker.cpp
     UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContextClient.cpp
@@ -432,8 +427,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp
     UIProcess/API/C/WKBackForwardListItemRef.cpp
     UIProcess/API/C/WKBackForwardListRef.cpp
-    UIProcess/API/C/WKBatteryManager.cpp
-    UIProcess/API/C/WKBatteryStatus.cpp
     UIProcess/API/C/WKContext.cpp
     UIProcess/API/C/WKContextConfigurationRef.cpp
     UIProcess/API/C/WKCookieManager.cpp
@@ -527,8 +520,6 @@ set(WebKit2_SOURCES
 
     WebProcess/Automation/WebAutomationSessionProxy.cpp
 
-    WebProcess/Battery/WebBatteryManager.cpp
-
     WebProcess/Cookies/WebCookieManager.cpp
 
     WebProcess/Databases/WebDatabaseProvider.cpp
@@ -621,7 +612,6 @@ set(WebKit2_SOURCES
     WebProcess/UserContent/WebUserContentController.cpp
 
     WebProcess/WebCoreSupport/SessionStateConversion.cpp
-    WebProcess/WebCoreSupport/WebBatteryClient.cpp
     WebProcess/WebCoreSupport/WebChromeClient.cpp
     WebProcess/WebCoreSupport/WebColorChooser.cpp
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp
@@ -692,7 +682,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/RemoteWebInspectorProxy.messages.in
     UIProcess/VisitedLinkStore.messages.in
-    UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
     UIProcess/WebFullScreenManagerProxy.messages.in
     UIProcess/WebGeolocationManagerProxy.messages.in
@@ -724,8 +713,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebProcess.messages.in
 
     WebProcess/Automation/WebAutomationSessionProxy.messages.in
-
-    WebProcess/Battery/WebBatteryManager.messages.in
 
     WebProcess/Cookies/WebCookieManager.messages.in
 

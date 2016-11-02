@@ -1,3 +1,37 @@
+2016-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Battery Status API from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=164213
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * Modules/battery: Removed.
+        * Modules/battery/BatteryClient.h: Removed.
+        * Modules/battery/BatteryController.cpp: Removed.
+        * Modules/battery/BatteryController.h: Removed.
+        * Modules/battery/BatteryManager.cpp: Removed.
+        * Modules/battery/BatteryManager.h: Removed.
+        * Modules/battery/BatteryManager.idl: Removed.
+        * Modules/battery/BatteryStatus.cpp: Removed.
+        * Modules/battery/BatteryStatus.h: Removed.
+        * Modules/battery/NavigatorBattery.cpp: Removed.
+        * Modules/battery/NavigatorBattery.h: Removed.
+        * Modules/battery/NavigatorBattery.idl: Removed.
+        * PlatformEfl.cmake:
+        * dom/EventTargetFactory.in:
+        * platform/efl/BatteryProviderEfl.cpp: Removed.
+        * platform/efl/BatteryProviderEfl.h: Removed.
+        * platform/efl/BatteryProviderEflClient.h: Removed.
+        * platform/glib/BatteryProviderUPower.cpp: Removed.
+        * platform/glib/BatteryProviderUPower.h: Removed.
+        * platform/glib/BatteryProviderUPowerClient.h: Removed.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setBatteryStatus): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-11-02  Keith Rollin  <krollin@apple.com>
 
         NetworkSession: Add NetworkDataTask implementation for blobs

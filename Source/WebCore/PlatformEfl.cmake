@@ -93,7 +93,6 @@ list(APPEND WebCore_SOURCES
 
     platform/crypto/gnutls/CryptoDigestGnuTLS.cpp
 
-    platform/efl/BatteryProviderEfl.cpp
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp
     platform/efl/DragImageEfl.cpp

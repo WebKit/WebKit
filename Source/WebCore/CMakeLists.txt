@@ -6,7 +6,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
-    "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/fetch"
@@ -139,7 +138,6 @@ set(WebCore_IDL_INCLUDES
     xml
 
     Modules/airplay
-    Modules/battery
     Modules/encryptedmedia/legacy
     Modules/fetch
     Modules/geolocation
@@ -169,9 +167,6 @@ set(WebCore_IDL_INCLUDES
 
 set(WebCore_NON_SVG_IDL_FILES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
-
-    Modules/battery/BatteryManager.idl
-    Modules/battery/NavigatorBattery.idl
 
     Modules/fetch/DOMWindowFetch.idl
     Modules/fetch/FetchBody.idl
@@ -793,11 +788,6 @@ endif ()
 
 set(WebCore_SOURCES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
-
-    Modules/battery/BatteryController.cpp
-    Modules/battery/BatteryManager.cpp
-    Modules/battery/BatteryStatus.cpp
-    Modules/battery/NavigatorBattery.cpp
 
     Modules/fetch/DOMWindowFetch.cpp
     Modules/fetch/FetchBody.cpp

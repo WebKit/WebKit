@@ -84,7 +84,6 @@ fast/events/wheelevent-in-text-node.html [ Skip ]
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
 
 # Not supported on iOS
-batterystatus
 fast/mediastream
 fast/speechsynthesis
 gamepad

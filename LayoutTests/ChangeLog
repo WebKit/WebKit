@@ -1,3 +1,42 @@
+2016-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Battery Status API from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=164213
+
+        Reviewed by Sam Weinig.
+
+        * batterystatus: Removed.
+        * batterystatus/add-listener-from-callback-expected.txt: Removed.
+        * batterystatus/add-listener-from-callback.html: Removed.
+        * batterystatus/basic-all-types-of-events-expected.txt: Removed.
+        * batterystatus/basic-all-types-of-events.html: Removed.
+        * batterystatus/basic-operation-expected.txt: Removed.
+        * batterystatus/basic-operation.html: Removed.
+        * batterystatus/event-after-navigation-expected.txt: Removed.
+        * batterystatus/event-after-navigation.html: Removed.
+        * batterystatus/multiple-frames-expected.txt: Removed.
+        * batterystatus/multiple-frames.html: Removed.
+        * batterystatus/resources: Removed.
+        * batterystatus/resources/event-after-navigation-new.html: Removed.
+        * batterystatus/script-tests: Removed.
+        * batterystatus/script-tests/add-listener-from-callback.js: Removed.
+        * batterystatus/script-tests/basic-all-types-of-events.js: Removed.
+        * batterystatus/script-tests/basic-operation.js: Removed.
+        * batterystatus/script-tests/event-after-navigation.js: Removed.
+        * batterystatus/script-tests/multiple-frames.js: Removed.
+        * batterystatus/script-tests/updates.js: Removed.
+        * batterystatus/script-tests/window-property.js: Removed.
+        * batterystatus/updates-expected.txt: Removed.
+        * batterystatus/updates.html: Removed.
+        * batterystatus/window-property-expected.txt: Removed.
+        * batterystatus/window-property.html: Removed.
+        * fast/dom/event-handler-attributes.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-11-02  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r203289):Assertion in MathOperator::stretchTo() on Wikipedia Page
