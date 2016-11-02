@@ -31,6 +31,7 @@
 #include "IndexedDB.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -103,25 +104,25 @@ public:
     const Vector<RefPtr<IDBKey>>& array() const
     {
         ASSERT(m_type == KeyType::Array);
-        return m_array;
+        return WTF::get<Vector<RefPtr<IDBKey>>>(m_value);
     }
 
     const String& string() const
     {
         ASSERT(m_type == KeyType::String);
-        return m_string;
+        return WTF::get<String>(m_value);
     }
 
     double date() const
     {
         ASSERT(m_type == KeyType::Date);
-        return m_number;
+        return WTF::get<double>(m_value);
     }
 
     double number() const
     {
         ASSERT(m_type == KeyType::Number);
-        return m_number;
+        return WTF::get<double>(m_value);
     }
 
     int compare(const IDBKey& other) const;
@@ -143,15 +144,18 @@ public:
 #endif
 
 private:
-    IDBKey() : m_type(KeyType::Invalid), m_number(0), m_sizeEstimate(OverheadSize) { }
-    IDBKey(KeyType type, double number) : m_type(type), m_number(number), m_sizeEstimate(OverheadSize + sizeof(double)) { }
-    explicit IDBKey(const String& value) : m_type(KeyType::String), m_string(value), m_number(0), m_sizeEstimate(OverheadSize + value.length() * sizeof(UChar)) { }
-    IDBKey(const Vector<RefPtr<IDBKey>>& keyArray, size_t arraySize) : m_type(KeyType::Array), m_array(keyArray), m_number(0), m_sizeEstimate(OverheadSize + arraySize) { }
+    IDBKey()
+        : m_type(KeyType::Invalid)
+        , m_sizeEstimate(OverheadSize)
+    {
+    }
+
+    IDBKey(KeyType, double number);
+    explicit IDBKey(const String& value);
+    IDBKey(const Vector<RefPtr<IDBKey>>& keyArray, size_t arraySize);
 
     const KeyType m_type;
-    const Vector<RefPtr<IDBKey>> m_array;
-    const String m_string;
-    const double m_number;
+    Variant<Vector<RefPtr<IDBKey>>, String, double> m_value;
 
     const size_t m_sizeEstimate;
 

@@ -1,3 +1,45 @@
+2016-11-02  Brady Eidson  <beidson@apple.com>
+
+        Give IDBKey(Data) a WTF::Variant overhaul.
+        https://bugs.webkit.org/show_bug.cgi?id=164332
+
+        Reviewed by Alex Christensen and Andy Estes.
+
+        No new tests (Refactor, no behavior change).
+
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::isValid):
+        (WebCore::IDBKey::compare):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::array):
+        (WebCore::IDBKey::string):
+        (WebCore::IDBKey::date):
+        (WebCore::IDBKey::number):
+        (WebCore::IDBKey::IDBKey): Deleted.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::maybeCreateIDBKey):
+        (WebCore::IDBKeyData::isolatedCopy):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+        (WebCore::IDBKeyData::compare):
+        (WebCore::IDBKeyData::loggingString):
+        (WebCore::IDBKeyData::setArrayValue):
+        (WebCore::IDBKeyData::setStringValue):
+        (WebCore::IDBKeyData::setDateValue):
+        (WebCore::IDBKeyData::setNumberValue):
+        (WebCore::IDBKeyData::operator==):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::hash):
+        (WebCore::IDBKeyData::string):
+        (WebCore::IDBKeyData::date):
+        (WebCore::IDBKeyData::number):
+        (WebCore::IDBKeyData::array):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+
 2016-11-01  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move interfaces and typed arrays over to JSDOMConvert
