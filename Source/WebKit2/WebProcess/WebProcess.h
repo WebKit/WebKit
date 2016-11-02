@@ -307,6 +307,8 @@ private:
     void ensureAutomationSessionProxy(const String& sessionIdentifier);
     void destroyAutomationSessionProxy();
 
+    void logDiagnosticMessageForNetworkProcessCrash();
+
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;
     void initializeProcessName(const ChildProcessInitializationParameters&) override;

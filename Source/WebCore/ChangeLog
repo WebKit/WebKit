@@ -1,3 +1,18 @@
+2016-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 164333: Add logging for "WebKit encountered an internal error" messages due to Network process crashes
+        <https://webkit.org/b/164333>
+        <rdar://problem/29072727>
+
+        Reviewed by Alex Christensen.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::networkProcessCrashedKey):
+        - Add implementation for new key method.
+        * page/DiagnosticLoggingKeys.h:
+        (WebCore::DiagnosticLoggingKeys::networkProcessCrashedKey):
+        - Add declaration for new key method.
+
 2016-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         The GC should be in a thread
