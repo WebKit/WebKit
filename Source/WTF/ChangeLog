@@ -1,3 +1,14 @@
+2016-11-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Copy build results to AAS 'Program Files' folder.
+        https://bugs.webkit.org/show_bug.cgi?id=164273
+
+        Reviewed by Brent Fulgham.
+
+        The preferred location for the binaries is the AAS 'Program Files' folder.
+
+        * WTF.vcxproj/WTF.proj:
+
 2016-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should support SharedArrayBuffer
