@@ -27,7 +27,7 @@
 class WebKitTestBus {
 public:
     WebKitTestBus();
-    virtual ~WebKitTestBus();
+    ~WebKitTestBus();
 
     bool run();
     GDBusProxy* createProxy(const char* serviceName, const char* objectPath, const char* interfaceName, GMainLoop*);
@@ -36,7 +36,7 @@ public:
 private:
     GDBusConnection* getOrCreateConnection();
 
-    pid_t m_pid;
+    GRefPtr<GTestDBus> m_bus;
     CString m_address;
     GRefPtr<GDBusConnection> m_connection;
 };

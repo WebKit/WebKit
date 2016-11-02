@@ -20,53 +20,23 @@
 #include "config.h"
 #include "WebKitTestBus.h"
 
-#include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/WTFString.h>
-
 WebKitTestBus::WebKitTestBus()
-    : m_pid(-1)
+    : m_bus(adoptGRef(g_test_dbus_new(G_TEST_DBUS_NONE)))
 {
-}
-
-bool WebKitTestBus::run()
-{
-    // FIXME: Use GTestDBus when we bump glib to 2.34.
-    GUniquePtr<char> dbusLaunch(g_find_program_in_path("dbus-launch"));
-    if (!dbusLaunch) {
-        g_warning("Error starting DBUS daemon: dbus-launch not found in path");
-        return false;
-    }
-
-    GUniqueOutPtr<char> output;
-    GUniqueOutPtr<GError> error;
-    if (!g_spawn_command_line_sync(dbusLaunch.get(), &output.outPtr(), 0, 0, &error.outPtr())) {
-        g_warning("Error starting DBUS daemon: %s", error->message);
-        return false;
-    }
-
-    String outputString = String::fromUTF8(output.get());
-    Vector<String> lines;
-    outputString.split(UChar('\n'), /* allowEmptyEntries */ false, lines);
-    for (size_t i = 0; i < lines.size(); ++i) {
-        char** keyValue = g_strsplit(lines[i].utf8().data(), "=", 2);
-        g_assert_cmpuint(g_strv_length(keyValue), ==, 2);
-        if (!g_strcmp0(keyValue[0], "DBUS_SESSION_BUS_ADDRESS")) {
-            m_address = keyValue[1];
-            g_setenv("DBUS_SESSION_BUS_ADDRESS", keyValue[1], TRUE);
-        } else if (!g_strcmp0(keyValue[0], "DBUS_SESSION_BUS_PID"))
-            m_pid = g_ascii_strtoll(keyValue[1], 0, 10);
-        g_strfreev(keyValue);
-    }
-
-    return m_pid > 0;
 }
 
 WebKitTestBus::~WebKitTestBus()
 {
-    g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
+    g_test_dbus_down(m_bus.get());
+}
 
-    if (m_pid != -1)
-        kill(m_pid, SIGTERM);
+bool WebKitTestBus::run()
+{
+    CString display = g_getenv("DISPLAY");
+    g_test_dbus_up(m_bus.get());
+    m_address = g_test_dbus_get_bus_address(m_bus.get());
+    g_setenv("DISPLAY", display.data(), FALSE);
+    return !m_address.isNull();
 }
 
 GDBusConnection* WebKitTestBus::getOrCreateConnection()
@@ -77,7 +47,8 @@ GDBusConnection* WebKitTestBus::getOrCreateConnection()
     g_assert(!m_address.isNull());
     m_connection = adoptGRef(g_dbus_connection_new_for_address_sync(m_address.data(),
         static_cast<GDBusConnectionFlags>(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT | G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),
-        0, 0, 0));
+        nullptr, nullptr, nullptr));
+    g_assert(m_connection.get());
     return m_connection.get();
 }
 
@@ -88,19 +59,19 @@ static void onNameAppeared(GDBusConnection*, const char*, const char*, gpointer 
 
 GDBusProxy* WebKitTestBus::createProxy(const char* serviceName, const char* objectPath, const char* interfaceName, GMainLoop* mainLoop)
 {
-    unsigned watcherID = g_bus_watch_name_on_connection(getOrCreateConnection(), serviceName, G_BUS_NAME_WATCHER_FLAGS_NONE, onNameAppeared, 0, mainLoop, 0);
+    unsigned watcherID = g_bus_watch_name_on_connection(getOrCreateConnection(), serviceName, G_BUS_NAME_WATCHER_FLAGS_NONE, onNameAppeared, nullptr, mainLoop, nullptr);
     g_main_loop_run(mainLoop);
     g_bus_unwatch_name(watcherID);
 
     GDBusProxy* proxy = g_dbus_proxy_new_sync(
         connection(),
         G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
-        0, // GDBusInterfaceInfo
+        nullptr, // GDBusInterfaceInfo
         serviceName,
         objectPath,
         interfaceName,
-        0, // GCancellable
-        0);
+        nullptr, // GCancellable
+        nullptr);
     g_assert(proxy);
     return proxy;
 }
