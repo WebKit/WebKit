@@ -36,6 +36,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._style = style || null;
         this._selectorElements = [];
         this._ruleDisabled = false;
+        this._hasInvalidSelector = false;
 
         this._element = document.createElement("div");
         this._element.classList.add("style-declaration-section");
@@ -53,6 +54,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             this._selectorInput.spellcheck = false;
             this._selectorInput.tabIndex = -1;
             this._selectorInput.addEventListener("mouseover", this._handleMouseOver.bind(this));
+            this._selectorInput.addEventListener("mousemove", this._handleMouseMove.bind(this));
             this._selectorInput.addEventListener("mouseout", this._handleMouseOut.bind(this));
             this._selectorInput.addEventListener("keydown", this._handleKeyDown.bind(this));
             this._selectorInput.addEventListener("keypress", this._handleKeyPress.bind(this));
@@ -119,7 +121,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         if (!style.editable)
             this._element.classList.add(WebInspector.CSSStyleDeclarationSection.LockedStyleClassName);
         else if (style.ownerRule)
-            this._style.ownerRule.addEventListener(WebInspector.CSSRule.Event.SelectorChanged, this.refresh.bind(this));
+            this._style.ownerRule.addEventListener(WebInspector.CSSRule.Event.SelectorChanged, this._updateSelectorIcon.bind(this));
         else
             this._element.classList.add(WebInspector.CSSStyleDeclarationSection.SelectorLockedStyleClassName);
 
@@ -273,6 +275,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             break;
         }
 
+        this._updateSelectorIcon();
         if (this._selectorInput)
             this._selectorInput.value = this._selectorElement.textContent;
     }
@@ -532,6 +535,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
     _handleIconElementClicked()
     {
+        if (this._hasInvalidSelector) {
+            // This will revert the selector text to the original valid value.
+            this.refresh();
+            return;
+        }
+
         this._ruleDisabled = this._ruleDisabled ? !this._propertiesTextEditor.uncommentAllProperties() : this._propertiesTextEditor.commentAllProperties();
         this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
         this._element.classList.toggle("rule-disabled", this._ruleDisabled);
@@ -555,6 +564,25 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
     _handleMouseOver(event)
     {
         this._highlightNodesWithSelector();
+    }
+
+    _handleMouseMove(event)
+    {
+        if (this._hasInvalidSelector)
+            return;
+
+        // Attempts to find a selector element under the mouse so that the title (which contains the
+        // specificity information) can be applied to _selectorInput, which will then display the
+        // title if the user hovers long enough.
+        for (let element of this._selectorElements) {
+            let {top, right, bottom, left} = element.getBoundingClientRect();
+            if (event.clientX >= left && event.clientX <= right && event.clientY >= top && event.clientY <= bottom) {
+                this._selectorInput.title = element.title;
+                return;
+            }
+        }
+
+        this._selectorInput.title = "";
     }
 
     _handleMouseOut(event)
@@ -651,6 +679,23 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         }
 
         this._style.ownerRule.selectorText = newSelectorText;
+    }
+
+    _updateSelectorIcon(event)
+    {
+        if (!this._style.ownerRule || !this._style.editable)
+            return;
+
+        this._hasInvalidSelector = event && event.data && !event.data.valid;
+        this._element.classList.toggle("invalid-selector", !!this._hasInvalidSelector);
+        if (this._hasInvalidSelector) {
+            this._iconElement.title = WebInspector.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this._selectorElement.textContent.trim());
+            this._selectorInput.title = WebInspector.UIString("Using the previous selector “%s”.").format(this._style.ownerRule.selectorText);
+            return;
+        }
+
+        this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
+        this._selectorInput.title = "";
     }
 
     _editorContentChanged(event)

@@ -90,7 +90,7 @@
     filter: brightness(0.8);
 }
 
-.style-declaration-section.rule-disabled > .header > .icon {
+.style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon {
     opacity: 0.5;
 }
 
@@ -149,6 +149,19 @@
 
 .style-declaration-section > .header > .origin > .go-to-link {
     color: inherit !important;
+}
+
+.style-declaration-section.invalid-selector > .header > .icon {
+    top: 4px;
+    left: 6px;
+    width: 12px;
+    height: 12px;
+    content: url(../Images/Error.svg);
+}
+
+.style-declaration-section.invalid-selector > .header > .selector,
+.style-declaration-section.invalid-selector > .header > .selector > * {
+    color: red;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {

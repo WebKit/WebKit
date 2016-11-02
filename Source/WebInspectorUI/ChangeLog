@@ -1,3 +1,31 @@
+2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Creating a new pseudo-selector in the Styles sidebar doesn't work on first attempt
+        https://bugs.webkit.org/show_bug.cgi?id=164092
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon):
+        (.style-declaration-section.invalid-selector > .header > .icon):
+        (.style-declaration-section.invalid-selector > .header > .selector,):
+        (.style-declaration-section.rule-disabled > .header > .icon): Deleted.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleIconElementClicked):
+        (WebInspector.CSSStyleDeclarationSection.prototype._updateSelectorIcon): Added.
+        Re-add logic removed by https://webkit.org/b/159734 for handling invalid selectors.  Instead
+        of just refreshing the section whenever the represented CSSRule changes selectors, we only
+        need to refresh if the selector no longer applies to the current element.
+
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleMouseMove): Added.
+        Fix another issue discovered while adding the invalid selector warnings, where the title
+        attribute of each individual selector was no longer visible.  To fix this, whenever the user
+        moves their mouse over the selector input, the position is compared to each selector to find
+        the first one that matches, whose title is then applied to the input element.
+
 2016-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve debugger highlight in some exception cases
