@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-scripts.js");
+
+function test()
+{
+    function sanitizeURL(url) {
+        return url.replace(/^.*?LayoutTests\//, "");
+    }
+
+    let mainTarget = WebInspector.mainTarget;
+    let workerTarget = Array.from(WebInspector.targets).find((target) => target.type === WebInspector.Target.Type.Worker);
+    let mainDebuggerData = WebInspector.debuggerManager.dataForTarget(mainTarget);
+    let workerDebuggerData = WebInspector.debuggerManager.dataForTarget(workerTarget);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Debugger.Script");
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Script.MainResource",
+        description: "Worker main resource should be a script tied to the Worker.",
+        test(resolve, reject) {
+            let script = workerTarget.mainResource;
+            InspectorTest.expectThat(script instanceof WebInspector.Script, "Worker target's main resource should be a Script.");
+            InspectorTest.expectEqual(script.target, workerTarget, "Worker target's main resource should be owned by a Worker target.");
+            InspectorTest.expectThat(workerDebuggerData.scripts.includes(script), "Worker DebuggerData should include script.");
+            InspectorTest.expectThat(workerDebuggerData.scriptForIdentifier(script.id), "Worker DebuggerData should include script by identifier.");
+            InspectorTest.expectEqual(workerDebuggerData.scriptsForURL(script.url).length, 1, "Worker DebuggerData should include script by URL.");
+            InspectorTest.expectThat(!mainDebuggerData.scripts.includes(script), "Main DebuggerData should not include the script.");
+            script.requestContent()
+                .then(({content}) => {
+                    InspectorTest.expectGreaterThan(content.length, 100, "Worker target's main resource should have content.");
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Script.ImportedScript",
+        description: "Worker should be told of all scripts, like imported scripts.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`worker.postMessage("triggerImportScripts")`);
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                let script = event.data.script;
+                if (!/worker-import-1\.js$/.test(script.url))
+                    return;
+
+                InspectorTest.pass(`ScriptAdded - ${sanitizeURL(script.url)}`);
+                InspectorTest.expectEqual(script.target, workerTarget, "Script should be owned by a Worker target.");
+                InspectorTest.expectThat(workerDebuggerData.scripts.includes(script), "Worker DebuggerData should include script.");
+                InspectorTest.expectThat(workerDebuggerData.scriptForIdentifier(script.id), "Worker DebuggerData should include script by identifier.");
+                InspectorTest.expectEqual(workerDebuggerData.scriptsForURL(script.url).length, 1, "Worker DebuggerData should include script by URL.");
+                InspectorTest.expectThat(!mainDebuggerData.scripts.includes(script), "Main DebuggerData should not include the script.");
+                script.requestContent()
+                    .then(({content}) => {
+                        InspectorTest.expectThat(content.includes("workerImport1"), "Imported script content should have 'workerImport1'.");
+                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                        resolve();
+                    }).catch(reject);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Script.NamedEval",
+        description: "Worker should be told of all scripts, like named evaluations.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`worker.postMessage("triggerEvalScript")`);
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                let script = event.data.script;
+                if (!/worker-eval\.js$/.test(script.sourceURL))
+                    return;
+
+                InspectorTest.pass(`ScriptAdded - ${script.sourceURL}`);
+                InspectorTest.expectEqual(script.target, workerTarget, "Script should be owned by a Worker target.");
+                InspectorTest.expectThat(workerDebuggerData.scripts.includes(script), "Worker DebuggerData should include script.");
+                InspectorTest.expectThat(workerDebuggerData.scriptForIdentifier(script.id), "Worker DebuggerData should include script by identifier.");
+                InspectorTest.expectThat(!mainDebuggerData.scripts.includes(script), "Main DebuggerData should not include the script.");
+                script.requestContent()
+                    .then(({content}) => {
+                        InspectorTest.expectThat(content.includes("workerEval"), "Eval script content should have 'workerEval'.");
+                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                        resolve();
+                    }).catch(reject);
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure we can associate scripts with Workers and get their contents.</p>
+</body>
+</html>

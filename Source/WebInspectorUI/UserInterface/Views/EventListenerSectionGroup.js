@@ -79,7 +79,7 @@ WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends
         if (!this._eventListener.location)
             return functionName;
 
-        var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(this._eventListener.location.scriptId);
+        var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(this._eventListener.location.scriptId, WebInspector.mainTarget);
         if (!sourceCode)
             return functionName;
 

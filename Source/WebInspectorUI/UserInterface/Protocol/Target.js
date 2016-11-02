@@ -33,6 +33,7 @@ WebInspector.Target = class Target extends WebInspector.Object
         this._type = type;
         this._connection = connection;
         this._executionContext = null;
+        this._mainResource = null;
 
         this._connection.target = this;
 
@@ -43,6 +44,7 @@ WebInspector.Target = class Target extends WebInspector.Object
 
     get RuntimeAgent() { return this._connection._agents.Runtime; }
     get ConsoleAgent() { return this._connection._agents.Console; }
+    get DebuggerAgent() { return this._connection._agents.Debugger; }
 
     // Public
 
@@ -50,6 +52,9 @@ WebInspector.Target = class Target extends WebInspector.Object
     get type() { return this._type; }
     get connection() { return this._connection; }
     get executionContext() { return this._executionContext; }
+
+    get mainResource() { return this._mainResource; }
+    set mainResource(resource) { this._mainResource = resource; }
 };
 
 WebInspector.Target.Type = {
@@ -98,7 +103,12 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
         if (this.RuntimeAgent) {
             this.RuntimeAgent.enable();
             this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
+            // FIXME: Enable Type Profiler
+            // FIXME: Enable Code Coverage Profiler
         }
+
+        if (this.DebuggerAgent)
+            WebInspector.debuggerManager.initializeTarget(this);
 
         if (this.ConsoleAgent)
             this.ConsoleAgent.enable();

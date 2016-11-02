@@ -113,7 +113,7 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             if (nodePayload.url) {
                 var sourceCode = WebInspector.frameResourceManager.resourceForURL(nodePayload.url);
                 if (!sourceCode)
-                    sourceCode = WebInspector.debuggerManager.scriptsForURL(nodePayload.url)[0];
+                    sourceCode = WebInspector.debuggerManager.scriptsForURL(nodePayload.url, WebInspector.assumingMainTarget())[0];
 
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = nodePayload.lineNumber - 1;

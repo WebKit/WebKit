@@ -101,6 +101,19 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         return this._sourceCode;
     }
 
+    get target()
+    {
+        if (this._sourceCode instanceof WebInspector.SourceMapResource) {
+            if (this._sourceCode.sourceMap.originalSourceCode instanceof WebInspector.Script)
+                return this._sourceCode.sourceMap.originalSourceCode.target;
+        }
+
+        if (this._sourceCode instanceof WebInspector.Script)
+            return this._sourceCode.target;
+
+        return WebInspector.mainTarget;
+    }
+
     shown()
     {
         super.shown();
@@ -236,7 +249,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (this._sourceCode instanceof WebInspector.Resource)
             PageAgent.searchInResource(this._sourceCode.parentFrame.id, this._sourceCode.url, query, false, false, searchResultCallback.bind(this));
         else if (this._sourceCode instanceof WebInspector.Script)
-            DebuggerAgent.searchInContent(this._sourceCode.id, query, false, false, searchResultCallback.bind(this));
+            this._sourceCode.target.DebuggerAgent.searchInContent(this._sourceCode.id, query, false, false, searchResultCallback.bind(this));
         return true;
     }
 
@@ -1037,7 +1050,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
             if (script) {
                 contextMenu.appendItem(WebInspector.UIString("Continue to Here"), () => {
-                    WebInspector.debuggerManager.continueToLocation(script.id, sourceCodeLocation.lineNumber, sourceCodeLocation.columnNumber);
+                    WebInspector.debuggerManager.continueToLocation(script, sourceCodeLocation.lineNumber, sourceCodeLocation.columnNumber);
                 });
                 contextMenu.appendSeparator();
             }
@@ -1510,7 +1523,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (candidate !== this.tokenTrackingController.candidate)
                 return;
 
-            var data = WebInspector.RemoteObject.fromPayload(result);
+            let data = WebInspector.RemoteObject.fromPayload(result, this.target);
             switch (data.type) {
             case "function":
                 this._showPopoverForFunction(data);
@@ -1531,15 +1544,16 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             }
         }
 
-        var expression = appendWebInspectorSourceURL(candidate.expression);
+        let target = WebInspector.debuggerManager.activeCallFrame ? WebInspector.debuggerManager.activeCallFrame.target : this.target;
+        let expression = appendWebInspectorSourceURL(candidate.expression);
 
         if (WebInspector.debuggerManager.activeCallFrame) {
-            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this));
+            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this), target.DebuggerAgent);
             return;
         }
 
-        // No call frame available. Use the main page's context.
-        RuntimeAgent.evaluate.invoke({expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this));
+        // No call frame available. Use the SourceCode's page's context.
+        target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this), target.RuntimeAgent);
     }
 
     _tokenTrackingControllerHighlightedJavaScriptTypeInformation(candidate)
@@ -1632,7 +1646,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             content.appendChild(title);
 
             let location = response.location;
-            let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+            let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, this.target);
             let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
             let functionSourceCodeLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation);
             title.appendChild(functionSourceCodeLink);
@@ -1659,7 +1673,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
             this._showPopover(content);
         }
-        DebuggerAgent.getFunctionDetails(data.objectId, didGetDetails.bind(this));
+
+        data.target.DebuggerAgent.getFunctionDetails(data.objectId, didGetDetails.bind(this));
     }
 
     _showPopoverForObject(data)

@@ -195,8 +195,8 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
                 updateEmptyContentPlaceholder.call(this);
             }
 
-            for (var script of scriptsToSearch)
-                DebuggerAgent.searchInContent(script.id, searchQuery, isCaseSensitive, isRegex, scriptCallback.bind(this, script));
+            for (let script of scriptsToSearch)
+                script.target.DebuggerAgent.searchInContent(script.id, searchQuery, isCaseSensitive, isRegex, scriptCallback.bind(this, script));
         }
 
         function domCallback(error, searchId, resultsCount)

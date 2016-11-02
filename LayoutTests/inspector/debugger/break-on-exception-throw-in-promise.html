@@ -18,7 +18,8 @@ function test()
             test: (resolve, reject) => {
                 InspectorTest.evaluateInPage(expression);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.expectThat(WebInspector.debuggerManager.pauseReason === "exception", "Should pause for exception.");
+                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                    InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     let callFrame = WebInspector.debuggerManager.activeCallFrame;
                     let name = callFrame.functionName || "<anonymous>";
                     let location = callFrame.sourceCodeLocation;
@@ -77,9 +78,11 @@ function test()
 
                 phase++;
 
+                let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+
                 // Pause at throw inside then.
                 if (phase === 1) {
-                    InspectorTest.expectThat(WebInspector.debuggerManager.pauseReason === "exception", "Should pause for exception.");
+                    InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     logPauseLocation();
                     WebInspector.debuggerManager.resume();
                     return;
@@ -87,7 +90,7 @@ function test()
 
                 // Pause at re-throw inside catch.
                 if (phase === 2) {
-                    InspectorTest.expectThat(WebInspector.debuggerManager.pauseReason === "exception", "Should pause for exception.");
+                    InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     logPauseLocation();
                     WebInspector.debuggerManager.resume().then(() => {
                         WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);

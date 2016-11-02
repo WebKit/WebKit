@@ -620,7 +620,14 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._callStackContentTreeOutline.removeChildren();
         this._activeCallFrameTreeElement = null;
 
-        var callFrames = WebInspector.debuggerManager.callFrames;
+        if (!WebInspector.debuggerManager.activeCallFrame) {
+            this._callStackRow.showEmptyMessage();
+            return;
+        }
+
+        let target = WebInspector.debuggerManager.activeCallFrame.target;
+        let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        let callFrames = targetData.callFrames;
         if (!callFrames || !callFrames.length) {
             this._callStackRow.showEmptyMessage();
             return;
@@ -629,10 +636,10 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._callStackRow.hideEmptyMessage();
         this._callStackRow.element.appendChild(this._callStackContentTreeOutline.element);
 
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
-        for (var i = 0; i < callFrames.length; ++i) {
-            var callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrames[i]);
-            if (callFrames[i] === activeCallFrame)
+        let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        for (let callFrame of callFrames) {
+            let callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrame);
+            if (callFrame === activeCallFrame)
                 this._activeCallFrameTreeElement = callFrameTreeElement;
             this._callStackContentTreeOutline.appendChild(callFrameTreeElement);
         }
@@ -645,7 +652,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _debuggerActiveCallFrameDidChange()
     {
-        var callFrames = WebInspector.debuggerManager.callFrames;
+        if (!WebInspector.debuggerManager.activeCallFrame)
+            return;
+
+        let target = WebInspector.debuggerManager.activeCallFrame.target;
+        let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        let callFrames = targetData.callFrames;
         if (!callFrames)
             return;
 
@@ -653,13 +665,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             this._activeCallFrameTreeElement.isActiveCallFrame = false;
 
         this._activeCallFrameTreeElement = this._callStackContentTreeOutline.findTreeElement(WebInspector.debuggerManager.activeCallFrame);
+
         if (this._activeCallFrameTreeElement)
             this._activeCallFrameTreeElement.isActiveCallFrame = true;
 
-        var indexOfActiveCallFrame = callFrames.indexOf(WebInspector.debuggerManager.activeCallFrame);
+        // FIXME: What is this, and is it still relevant?
         // It is useful to turn off the step out button when there is no call frame to go through
         // since there might be call frames in the backend that were removed when processing the call
         // frame payload.
+        let indexOfActiveCallFrame = callFrames.indexOf(WebInspector.debuggerManager.activeCallFrame);
         this._debuggerStepOutButtonItem.enabled = indexOfActiveCallFrame < callFrames.length - 1;
     }
 
@@ -825,9 +839,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _updatePauseReasonSection()
     {
-        var pauseData = WebInspector.debuggerManager.pauseData;
+        let target = WebInspector.debuggerManager.activeCallFrame.target;
+        let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        let {pauseReason, pauseData} = targetData;
 
-        switch (WebInspector.debuggerManager.pauseReason) {
+        switch (pauseReason) {
         case WebInspector.DebuggerManager.PauseReason.Assertion:
             // FIXME: We should include the assertion condition string.
             console.assert(pauseData, "Expected data with an assertion, but found none.");
@@ -876,7 +892,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             console.assert(pauseData, "Expected data with an exception, but found none.");
             if (pauseData) {
                 // FIXME: We should improve the appearance of thrown objects. This works well for exception strings.
-                var data = WebInspector.RemoteObject.fromPayload(pauseData);
+                var data = WebInspector.RemoteObject.fromPayload(pauseData, target);
                 this._pauseReasonTextRow.text = WebInspector.UIString("Exception with thrown value: %s").format(data.description);
                 this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
                 return true;

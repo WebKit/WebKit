@@ -49,7 +49,7 @@ WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
         this._repeatCount = repeatCount || 0;
         this._parameters = parameters;
 
-        this._stackTrace = WebInspector.StackTrace.fromPayload(stackTrace || []);
+        this._stackTrace = WebInspector.StackTrace.fromPayload(this._target, stackTrace || []);
 
         this._request = request;
     }

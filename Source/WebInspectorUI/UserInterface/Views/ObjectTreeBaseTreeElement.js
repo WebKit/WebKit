@@ -223,12 +223,12 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
             // FIXME: We should better handle bound functions.
             if (!isFunctionStringNativeCode(resolvedValue.description)) {
                 contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), function() {
-                    DebuggerAgent.getFunctionDetails(resolvedValue.objectId, function(error, response) {
+                    resolvedValue.target.DebuggerAgent.getFunctionDetails(resolvedValue.objectId, function(error, response) {
                         if (error)
                             return;
 
                         let location = response.location;
-                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, resolvedValue.target);
                         if (!sourceCode)
                             return;
 

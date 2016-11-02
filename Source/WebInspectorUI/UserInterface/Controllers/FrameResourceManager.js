@@ -485,7 +485,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
         var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
         if (!sourceCode)
-            sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
+            sourceCode = WebInspector.debuggerManager.scriptsForURL(url, WebInspector.mainTarget)[0];
 
         if (!sourceCode)
             return null;

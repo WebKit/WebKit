@@ -59,8 +59,8 @@ function test()
                 InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
                 remoteObject.getCollectionEntries(0, 100, function(entries) {
                     InspectorTest.log("ENTRIES:");
-                    entries.sort(function(a, b) { return a.value.value - b.value.value; });
-                    for (var entry of entries)
+                    entries.sort((a, b) => a.value.value - b.value.value);
+                    for (let entry of entries)
                         InspectorTest.assert(entry instanceof WebInspector.CollectionEntry);
                     InspectorTest.log(JSON.stringify(entries, remoteObjectJSONFilter, "  "));
                     remoteObject.releaseWeakCollectionEntries();

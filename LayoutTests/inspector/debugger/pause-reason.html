@@ -62,10 +62,11 @@ function test()
     });
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, function(event) {
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
         InspectorTest.log("PAUSE #" + (++pauses));
-        InspectorTest.log("  REASON: " + WebInspector.debuggerManager.pauseReason);
-        if (WebInspector.debuggerManager.pauseData)
-            InspectorTest.log("  DATA: " + JSON.stringify(sanitizePauseData(WebInspector.debuggerManager.pauseData)));
+        InspectorTest.log("  REASON: " + targetData.pauseReason);
+        if (targetData.pauseData)
+            InspectorTest.log("  DATA: " + JSON.stringify(sanitizePauseData(targetData.pauseData)));
         else
             InspectorTest.log("  NO DATA");
 

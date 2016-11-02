@@ -12,6 +12,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 4,
   "_column": 20,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_parameters": [
     {
@@ -71,7 +72,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 7,
   "_column": 21,
-  "_sourceCodeLocation": null,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_parameters": [
     {
@@ -93,7 +94,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 10,
   "_column": 22,
-  "_sourceCodeLocation": null,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_parameters": [
     {
@@ -115,7 +116,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 14,
   "_column": 23,
-  "_sourceCodeLocation": null,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_parameters": [
     {
@@ -137,6 +138,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 18,
   "_column": 24,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null
@@ -151,6 +153,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_url": "inspector/worker/resources/worker-console.js",
   "_line": 21,
   "_column": 22,
+  "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null

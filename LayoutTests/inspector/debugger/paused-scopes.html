@@ -72,7 +72,8 @@ function test()
     }
 
     function dumpCallFrames() {
-        let callFrames = WebInspector.debuggerManager.callFrames;
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let callFrames = targetData.callFrames;
         let chain = Promise.resolve();
         for (let callFrame of callFrames)
             chain = chain.then(() => dumpCallFrame(callFrame));

@@ -63,6 +63,11 @@
     content: image-set(url(../Images/ClippingJS.png) 1x, url(../Images/ClippingJS@2x.png) 2x);
 }
 
+/* FIXME: <https://webkit.org/b/164138> [GTK] Web Inspector: Add new GTK+ icons for Worker Scripts */
+body:matches(.mac-platform, .windows-platform) .script.worker-icon .icon {
+    content: image-set(url(../Images/WorkerScript.png) 1x, url(../Images/WorkerScript@2x.png) 2x);
+}
+
 .large .resource-icon .icon {
     content: image-set(url(../Images/DocumentGenericLarge.png) 1x, url(../Images/DocumentGenericLarge@2x.png) 2x);
 }
@@ -101,4 +106,9 @@
 
 .large .source-map-resource.resource-icon.resource-type-script .icon {
     content: image-set(url(../Images/ClippingJSLarge.png) 1x, url(../Images/ClippingJSLarge@2x.png) 2x);
+}
+
+/* FIXME: <https://webkit.org/b/164138> [GTK] Web Inspector: Add new GTK+ icons for Worker Scripts */
+body:matches(.mac-platform, .windows-platform) .large .script.worker-icon .icon {
+    content: image-set(url(../Images/WorkerScriptLarge.png) 1x, url(../Images/WorkerScriptLarge@2x.png) 2x);
 }

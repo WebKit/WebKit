@@ -24,27 +24,10 @@
  */
 
 #include "config.h"
-
 #include "JSWorkerGlobalScope.h"
 
-#include "ExceptionCode.h"
-#include "JSDOMBinding.h"
-#include "JSDOMGlobalObject.h"
-#include "JSEventListener.h"
-#include "JSEventSource.h"
-#include "JSMessageChannel.h"
-#include "JSMessagePort.h"
-#include "JSWorkerLocation.h"
-#include "JSWorkerNavigator.h"
-#include "JSXMLHttpRequest.h"
 #include "ScheduledAction.h"
 #include "WorkerGlobalScope.h"
-#include "WorkerLocation.h"
-#include "WorkerNavigator.h"
-
-#if ENABLE(WEB_SOCKETS)
-#include "JSWebSocket.h"
-#endif
 
 using namespace JSC;
 

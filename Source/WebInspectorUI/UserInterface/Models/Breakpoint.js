@@ -33,6 +33,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
             var sourceCode = sourceCodeLocationOrInfo.sourceCode;
             var contentIdentifier = sourceCode ? sourceCode.contentIdentifier : null;
             var scriptIdentifier = sourceCode instanceof WebInspector.Script ? sourceCode.id : null;
+            var target = sourceCode instanceof WebInspector.Script ? sourceCode.target : null;
             var location = sourceCodeLocationOrInfo;
         } else if (sourceCodeLocationOrInfo && typeof sourceCodeLocationOrInfo === "object") {
             // The 'url' fallback is for transitioning from older frontends and should be removed.
@@ -53,6 +54,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         this._id = null;
         this._contentIdentifier = contentIdentifier || null;
         this._scriptIdentifier = scriptIdentifier || null;
+        this._target = target || null;
         this._disabled = disabled || false;
         this._condition = condition || "";
         this._ignoreCount = ignoreCount || 0;
@@ -85,6 +87,11 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
     get scriptIdentifier()
     {
         return this._scriptIdentifier;
+    }
+
+    get target()
+    {
+        return this._target;
     }
 
     get sourceCodeLocation()
@@ -195,7 +202,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
     get info()
     {
-        // The id, scriptIdentifier and resolved state are tied to the current session, so don't include them for serialization.
+        // The id, scriptIdentifier, target, and resolved state are tied to the current session, so don't include them for serialization.
         return {
             contentIdentifier: this._contentIdentifier,
             lineNumber: this._sourceCodeLocation.lineNumber,

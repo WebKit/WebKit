@@ -84,7 +84,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                 });
             } else {
                 HeapAgent.getRemoteObject(heapObjectIdentifier, WebInspector.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
-                    let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                    let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPayload(remoteObjectPayload, WebInspector.assumingMainTarget());
                     WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, shouldRevealConsole);
                 });
             }
@@ -259,7 +259,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                 return this.location.href;
             }
 
-            let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+            let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload, WebInspector.assumingMainTarget());
             remoteObject.callFunctionJSON(inspectedPage_window_getLocationHref, undefined, (href) => {
                 remoteObject.release();
 
@@ -292,7 +292,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                 let functionNameElement = containerElement.appendChild(document.createElement("span"));
                 functionNameElement.classList.add("function-name");
                 functionNameElement.textContent = name || displayName || WebInspector.UIString("(anonymous function)");
-                let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, WebInspector.assumingMainTarget());
                 if (sourceCode) {
                     let locationElement = containerElement.appendChild(document.createElement("span"));
                     locationElement.classList.add("location");
@@ -411,7 +411,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                 HeapAgent.getPreview(node.id, function(error, string, functionDetails, objectPreviewPayload) {
                     if (functionDetails) {
                         let location = functionDetails.location;
-                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, WebInspector.assumingMainTarget());
                         if (sourceCode) {
                             const dontFloat = true;
                             const useGoToArrowButton = true;

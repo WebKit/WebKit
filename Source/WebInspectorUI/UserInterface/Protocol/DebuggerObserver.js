@@ -46,11 +46,11 @@ WebInspector.DebuggerObserver = class DebuggerObserver
             let legacySourceMapURL = arguments[7];
             let hasSourceURL = arguments[8];
             let legacySourceURL = hasSourceURL ? url : undefined;
-            WebInspector.debuggerManager.scriptDidParse(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, legacySourceURL, legacySourceMapURL);
+            WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, legacySourceURL, legacySourceMapURL);
             return;
         }
 
-        WebInspector.debuggerManager.scriptDidParse(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL);
+        WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL);
     }
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)
@@ -60,17 +60,17 @@ WebInspector.DebuggerObserver = class DebuggerObserver
 
     breakpointResolved(breakpointId, location)
     {
-        WebInspector.debuggerManager.breakpointResolved(breakpointId, location);
+        WebInspector.debuggerManager.breakpointResolved(this.target, breakpointId, location);
     }
 
     paused(callFrames, reason, data)
     {
-        WebInspector.debuggerManager.debuggerDidPause(callFrames, reason, data);
+        WebInspector.debuggerManager.debuggerDidPause(this.target, callFrames, reason, data);
     }
 
     resumed()
     {
-        WebInspector.debuggerManager.debuggerDidResume();
+        WebInspector.debuggerManager.debuggerDidResume(this.target);
     }
 
     playBreakpointActionSound(breakpointActionIdentifier)
@@ -80,6 +80,6 @@ WebInspector.DebuggerObserver = class DebuggerObserver
 
     didSampleProbe(sample)
     {
-        WebInspector.probeManager.didSampleProbe(sample);
+        WebInspector.probeManager.didSampleProbe(this.target, sample);
     }
 };

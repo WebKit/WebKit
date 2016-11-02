@@ -1,3 +1,38 @@
+2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts
+        https://bugs.webkit.org/show_bug.cgi?id=164136
+        <rdar://problem/29028462>
+
+        Reviewed by Brian Burg.
+
+        * inspector/worker/debugger-pause-expected.txt: Added.
+        * inspector/worker/debugger-pause.html: Added.
+        * inspector/worker/debugger-scripts-expected.txt: Added.
+        * inspector/worker/debugger-scripts.html: Added.
+        * inspector/worker/resources/worker-debugger-pause.js: Added.
+        * inspector/worker/resources/worker-import-1.js: Added.
+        * inspector/worker/resources/worker-scripts.js: Added.
+        New tests for Debugger features in a Worker.
+
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-exception.html:
+        * inspector/debugger/break-on-uncaught-exception.html:
+        * inspector/debugger/evaluateOnCallFrame-CommandLineAPI.html:
+        * inspector/debugger/pause-reason.html:
+        * inspector/debugger/paused-scopes.html:
+        * inspector/debugger/resources/log-pause-location.js:
+        * inspector/debugger/stepping/stepInto.html:
+        * inspector/debugger/stepping/stepOut.html:
+        * inspector/debugger/stepping/stepOver.html:
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint.html:
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html:
+        * inspector/debugger/tail-deleted-frames-this-value.html:
+        * inspector/debugger/tail-deleted-frames.html:
+        * inspector/debugger/tail-recursion.html:
+        Most debugger data moved from DebuggerManager into DebuggerData for a target.
+        Update tests that access such data like pauseReason / pauseData / callFrames.
+
 2016-11-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Load stylesheets in link elements inside a connected shadow tree

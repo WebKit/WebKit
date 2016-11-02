@@ -2212,10 +2212,11 @@ WebInspector.linkifyElement = function(linkElement, sourceCodeLocation) {
     linkElement.addEventListener("click", showSourceCodeLocation.bind(this));
 };
 
-WebInspector.sourceCodeForURL = function(url) {
+WebInspector.sourceCodeForURL = function(url)
+{
     var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
     if (!sourceCode) {
-        sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
+        sourceCode = WebInspector.debuggerManager.scriptsForURL(url, WebInspector.assumingMainTarget())[0];
         if (sourceCode)
             sourceCode = sourceCode.resource || sourceCode;
     }
@@ -2526,6 +2527,15 @@ Object.defineProperty(WebInspector, "targets",
 {
     get() { return this.targetManager.targets; }
 });
+
+// Many places assume the main target because they cannot yet be
+// used by reached by Worker debugging. Eventually, once all
+// Worker domains have been implemented, all of these must be
+// handled properly.
+WebInspector.assumingMainTarget = function()
+{
+    return WebInspector.mainTarget;
+}
 
 // OpenResourceDialog delegate
 

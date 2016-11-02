@@ -1,3 +1,261 @@
+2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts
+        https://bugs.webkit.org/show_bug.cgi?id=164136
+        <rdar://problem/29028462>
+
+        Reviewed by Brian Burg.
+        
+        By implementing DebuggerAgent, Workers will inform the frontend about
+        Scripts that evaluate in the Worker's VM and the Worker VM can pause
+        and send the pausing CallFrames to the frontend. This means that
+        WebInspector.Script and WebInspector.CallFrame will need to be made
+        target aware. This also means that each Target will have its own
+        set of debugger data, such as the list of scripts and pause data
+        like the pause reason / call frames. Previously all this data was
+        managed by DebuggerManager.
+
+        With this change we split that data out of DebuggerManager to be
+        per-target DebuggerData. DebuggerManager keeps `activeCallFrame`
+        but the list of scripts and pause data have moved into `DebuggerData`
+        which is per-target, accessed through DebuggerManager's new
+        dataForTarget(target) method.
+
+        Finally we make a few changes to the UserInterface to make Workers
+        and their scripts, appear grouped together. The Resources sidebar
+        previously had a single top level item for the Main Frame, which
+        has all its resources as its children (potentially grouped into
+        folders). With this change, each Worker gets its own top level
+        item as well, and the Worker's subresources (imported scripts)
+        become its children.
+
+        We also now associate a single mainResource with Targets. In the
+        case of Workers, we assume and assert that this is a Script. If
+        this were to ever change we would need to adjust the assumptions.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Test/Test.js:
+        Add WebInspector.assumingMainTarget to fill in all the places where
+        we assume the main target right now, but would need to handle non-main
+        targets as other agents are implemented in workers. For example profile
+        data that assumes the main target right now could be worker targets
+        when we implement ScriptProfiler / Heap agents.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection):
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.Target):
+        (WebInspector.Target.prototype.get DebuggerAgent):
+        (WebInspector.Target.prototype.get mainResource):
+        (WebInspector.Target.prototype.set mainResource):
+        (WebInspector.WorkerTarget.prototype.initialize):
+        (WebInspector.WorkerTarget):
+        Include DebuggerAgent in Targets.
+        Include a mainResource for Worker Targets.
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver.prototype.scriptParsed):
+        (WebInspector.DebuggerObserver.prototype.breakpointResolved):
+        (WebInspector.DebuggerObserver.prototype.paused):
+        (WebInspector.DebuggerObserver.prototype.resumed):
+        Pass the target on to managers when necessary.
+
+        * UserInterface/Models/DebuggerData.js: Added.
+        (WebInspector.DebuggerData):
+        (WebInspector.DebuggerData.prototype.get target):
+        (WebInspector.DebuggerData.prototype.get callFrames):
+        (WebInspector.DebuggerData.prototype.get pauseReason):
+        (WebInspector.DebuggerData.prototype.get pauseData):
+        (WebInspector.DebuggerData.prototype.get scripts):
+        (WebInspector.DebuggerData.prototype.scriptForIdentifier):
+        (WebInspector.DebuggerData.prototype.scriptsForURL):
+        (WebInspector.DebuggerData.prototype.reset):
+        (WebInspector.DebuggerData.prototype.addScript):
+        (WebInspector.DebuggerData.prototype.pause):
+        (WebInspector.DebuggerData.prototype.unpause):
+        Extract per-target data from DebuggerManager. This includes the list
+        of scripts evaluated in a Target, and any pause data for this target
+        such as the pause reason and call frames.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.dataForTarget):
+        (WebInspector.DebuggerManager.prototype.get pauseReason): Deleted.
+        (WebInspector.DebuggerManager.prototype.get pauseData): Deleted.
+        (WebInspector.DebuggerManager.prototype.get callFrames): Deleted.
+        (WebInspector.DebuggerManager.prototype.reset):
+        New way to access per-target debugger data.
+
+        (WebInspector.DebuggerManager.prototype.initializeTarget):
+        When a new Target is created, synchronize frontend state with the target.
+        Things like the list of breakpoints and global breakpoint states.
+
+        (WebInspector.DebuggerManager.prototype.scriptForIdentifier):
+        (WebInspector.DebuggerManager.prototype.scriptsForURL):
+        Convenience accessors for scripts must now provide a Target.
+
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        This is a convenience accessors for a list of all scripts across all targets
+        so this handles getting the list across all targets.
+
+        (WebInspector.DebuggerManager.prototype.pause):
+        (WebInspector.DebuggerManager.prototype.resume):
+        (WebInspector.DebuggerManager.prototype.stepOver):
+        (WebInspector.DebuggerManager.prototype.stepInto):
+        (WebInspector.DebuggerManager.prototype.stepOut):
+        (WebInspector.DebuggerManager.prototype.continueToLocation):
+        Stepping commands affect the current target with the active call frame.
+        Eventually we will change Pause and Resume behavior to affect all targets.
+        
+        (WebInspector.DebuggerManager.prototype.addBreakpoint):
+        (WebInspector.DebuggerManager.prototype.breakpointResolved):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        (WebInspector.DebuggerManager.prototype._removeBreakpoint):
+        Breakpoints should be set on all targets, but we need a way
+        to set them on a specific target, when initializing an
+        individual target when we want to inform that single target
+        of all of the breakpoints.
+
+        (WebInspector.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+        (WebInspector.DebuggerManager.prototype._updateBreakOnExceptionsState):
+        Changing global breakpoint state should inform all targets.
+
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        Associate Scripts with a Target. Identify the main resource of a
+        Worker Target and set it as soon as we can.
+
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype.debuggerDidResume):
+        (WebInspector.DebuggerManager.prototype._sourceCodeLocationFromPayload):
+        (WebInspector.DebuggerManager.prototype._scopeChainFromPayload):
+        (WebInspector.DebuggerManager.prototype._scopeChainNodeFromPayload):
+        (WebInspector.DebuggerManager.prototype._mainResourceDidChange):
+        (WebInspector.DebuggerManager.prototype._didResumeInternal):
+        Pausing and resuming now happens per-target, so associate
+        created model objects (CallFrame, ScopeChain objects) and any
+        other necessary data with the target.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get target):
+        (WebInspector.Breakpoint.prototype.get info):
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame):
+        (WebInspector.CallFrame.prototype.get target):
+        (WebInspector.CallFrame.fromDebuggerPayload):
+        (WebInspector.CallFrame.fromPayload):
+        * UserInterface/Models/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage):
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.get target):
+        (WebInspector.Script.prototype.isMainResource):
+        (WebInspector.Script.prototype.requestContentFromBackend):
+        (WebInspector.Script.prototype._resolveResource):
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace.fromPayload):
+        (WebInspector.StackTrace.fromString):
+        * UserInterface/Models/ProbeManager.js:
+        (WebInspector.ProbeManager.prototype.didSampleProbe):
+        * UserInterface/Models/Probe.js:
+        (WebInspector.ProbeSample):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsString):
+        Associate model objects with a specific target where necessary.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        Use target specific DebuggerAgent where necessary.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._callFramesFromPayload):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup.prototype._functionTextOrLink):
+        (WebInspector.EventListenerSectionGroup):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.node.shortestGCRootPath.):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populateWindowPreview):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populatePreview):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPathRow):
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode.prototype.iconClassName):
+        (WebInspector.ProfileDataGridNode.prototype.filterableDataForColumn):
+        (WebInspector.ProfileDataGridNode.prototype._displayContent):
+        Use assumed main target and audit these when the Worker gets more Agents.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype._initiatorSourceCodeLocationFromPayload):
+        This will always be the main target because only the main target
+        has access to the DOM.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.get target):
+        (WebInspector.SourceCodeTextEditor.prototype.customPerformSearch):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression.populate):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction):
+        Update target specific actions to use the proper target's agents.
+
+        * UserInterface/Views/TargetTreeElement.js: Added.
+        (WebInspector.TargetTreeElement):
+        (WebInspector.TargetTreeElement.prototype.get target):
+        (WebInspector.TargetTreeElement.prototype.onexpand):
+        (WebInspector.TargetTreeElement.prototype.oncollapse):
+        Add a new tree element for a Target. We currently assume that the
+        main resource for a Target will be a Script right now, as is the
+        case for Web Workers. This simply remembers its expanded or
+        collapsed state and has a better icon.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (body:matches(.mac-platform, .windows-platform) .script.worker-icon .icon):
+        (body:matches(.mac-platform, .windows-platform) .large .script.worker-icon .icon):
+        * UserInterface/Images/WorkerScript.png: Renamed from Source/WebInspectorUI/UserInterface/Images/WorkerDocument.png.
+        * UserInterface/Images/WorkerScript@2x.png: Renamed from Source/WebInspectorUI/UserInterface/Images/WorkerDocument@2x.png.
+        * UserInterface/Images/WorkerScriptLarge.png: Renamed from Source/WebInspectorUI/UserInterface/Images/WorkerDocumentLarge.png.
+        * UserInterface/Images/WorkerScriptLarge@2x.png: Renamed from Source/WebInspectorUI/UserInterface/Images/WorkerDocumentLarge@2x.png.
+        Improve icon for a Worker's main resource script.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptsCleared):
+        (WebInspector.ResourceSidebarPanel.prototype._addScriptForNonMainTarget):
+        (WebInspector.ResourceSidebarPanel.prototype._addTargetWithMainResource):
+        (WebInspector.ResourceSidebarPanel.prototype._targetRemoved):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.searchScripts):
+        (WebInspector.SearchSidebarPanel.prototype._searchTreeElementForScript):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline.createTreeElement):
+        (WebInspector.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        (WebInspector.OpenResourceDialog.prototype.didDismissDialog):
+        (WebInspector.OpenResourceDialog.prototype.didPresentDialog):
+        (WebInspector.OpenResourceDialog.prototype._addResourcesForFrame):
+        (WebInspector.OpenResourceDialog.prototype._addScriptsForTarget):
+        (WebInspector.OpenResourceDialog.prototype._scriptAdded):
+        (WebInspector.OpenResourceDialog):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addTreeElementForSourceCodeToTreeOutline):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerCallFramesDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        Include scripts from non-main targets in sidebars.
+
 2016-11-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Creating a new pseudo-selector in the Styles sidebar doesn't work on first attempt

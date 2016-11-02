@@ -45,6 +45,11 @@ WebInspector.ScriptTreeElement = class ScriptTreeElement extends WebInspector.So
         } else
             this.addClassName(WebInspector.ScriptTreeElement.AnonymousScriptIconStyleClassName);
 
+        if (script.isMainResource()) {
+            console.assert(script.target.type === WebInspector.Target.Type.Worker);
+            this.addClassName("worker-icon");
+        }
+
         this._script = script;
     }
 

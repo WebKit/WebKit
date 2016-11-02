@@ -15,10 +15,10 @@ function test()
         return url.replace(/^.*?LayoutTests\//, "");
     }
 
-    function remoteObjectJSONFilter(key, value) {
+    function consoleMessageJSONFilter(key, value) {
         if (key === "_target" || key === "_hasChildren" || key === "_listeners")
             return undefined;
-        if (key === "_objectId" || key === "_stackTrace")
+        if (key === "_objectId" || key === "_stackTrace" || key === "_sourceCodeLocation")
             return "<filtered>";
         if (key === "_url")
             return sanitizeURL(value);
@@ -62,7 +62,7 @@ function test()
                             validate(message);
                         if (preprocess)
                             preprocess(message);
-                        InspectorTest.log(JSON.stringify(message, remoteObjectJSONFilter, "  "));
+                        InspectorTest.log(JSON.stringify(message, consoleMessageJSONFilter, "  "));
                         resolve();
                     }).catch(reject);
             }

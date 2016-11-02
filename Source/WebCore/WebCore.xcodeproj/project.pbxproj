@@ -3898,6 +3898,8 @@
 		A516E8B8136E04DB0076C3C0 /* LocalizedDateCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */; };
 		A52A68611DBB0F630083373F /* WorkerConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52A685F1DBB0F5B0083373F /* WorkerConsoleAgent.cpp */; };
 		A52A68621DBB0F630083373F /* WorkerConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A52A68601DBB0F5B0083373F /* WorkerConsoleAgent.h */; };
+		A52A68651DBD4B5D0083373F /* WorkerDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52A68631DBD4B580083373F /* WorkerDebuggerAgent.cpp */; };
+		A52A68661DBD4B5D0083373F /* WorkerDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A52A68641DBD4B580083373F /* WorkerDebuggerAgent.h */; };
 		A5416FE518810EF80009FC5F /* YouTubeEmbedShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */; };
 		A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */; };
 		A54A0C5D1DB6D9C00017A90B /* InspectorWorkerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54A0C5B1DB6D9B10017A90B /* InspectorWorkerAgent.cpp */; };
@@ -11420,6 +11422,8 @@
 		A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = InspectorOverlayPage.js; sourceTree = "<group>"; };
 		A52A685F1DBB0F5B0083373F /* WorkerConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerConsoleAgent.cpp; sourceTree = "<group>"; };
 		A52A68601DBB0F5B0083373F /* WorkerConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerConsoleAgent.h; sourceTree = "<group>"; };
+		A52A68631DBD4B580083373F /* WorkerDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerDebuggerAgent.cpp; sourceTree = "<group>"; };
+		A52A68641DBD4B580083373F /* WorkerDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerDebuggerAgent.h; sourceTree = "<group>"; };
 		A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubeEmbedShadowElement.cpp; sourceTree = "<group>"; };
 		A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouTubeEmbedShadowElement.h; sourceTree = "<group>"; };
 		A54A0C5B1DB6D9B10017A90B /* InspectorWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWorkerAgent.cpp; sourceTree = "<group>"; };
@@ -15937,6 +15941,8 @@
 				A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */,
 				A52A685F1DBB0F5B0083373F /* WorkerConsoleAgent.cpp */,
 				A52A68601DBB0F5B0083373F /* WorkerConsoleAgent.h */,
+				A52A68631DBD4B580083373F /* WorkerDebuggerAgent.cpp */,
+				A52A68641DBD4B580083373F /* WorkerDebuggerAgent.h */,
 				A54A0C5F1DB7F8B70017A90B /* WorkerInspectorController.cpp */,
 				A54A0C601DB7F8B70017A90B /* WorkerInspectorController.h */,
 				A57FD7191DB94236006AE24B /* WorkerRuntimeAgent.cpp */,
@@ -27914,6 +27920,7 @@
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
 				A52A68621DBB0F630083373F /* WorkerConsoleAgent.h in Headers */,
 				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,
+				A52A68661DBD4B5D0083373F /* WorkerDebuggerAgent.h in Headers */,
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerGlobalScope.h in Headers */,
 				5185FCB41BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.h in Headers */,
@@ -31373,6 +31380,7 @@
 				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
 				A52A68611DBB0F630083373F /* WorkerConsoleAgent.cpp in Sources */,
 				A55639D21C6F09E700806D8E /* WorkerConsoleClient.cpp in Sources */,
+				A52A68651DBD4B5D0083373F /* WorkerDebuggerAgent.cpp in Sources */,
 				A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */,
 				2E4346480F546A8200B0F1BA /* WorkerGlobalScope.cpp in Sources */,
 				418C395A1C8DD6990051C8A3 /* WorkerGlobalScopeFetch.cpp in Sources */,

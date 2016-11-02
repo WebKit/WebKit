@@ -122,6 +122,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     {
         WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
         this._queryController.reset();
     }
@@ -130,9 +131,17 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     {
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
         if (WebInspector.frameResourceManager.mainFrame)
             this._addResourcesForFrame(WebInspector.frameResourceManager.mainFrame);
+
+        for (let target of WebInspector.targets) {
+            if (target !== WebInspector.mainTarget)
+                this._addScriptsForTarget(target);
+        }
+
+        this._updateFilter();
 
         this._inputElement.focus();
         this._clear();
@@ -274,8 +283,18 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
             frames = frames.concat(currentFrame.childFrameCollection.toArray());
         }
+    }
 
-        this._updateFilter();
+    _addScriptsForTarget(target)
+    {
+        const suppressFilterUpdate = true;
+
+        let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        for (let script of targetData.scripts) {
+            if (isWebKitInternalScript(script.sourceURL) || isWebInspectorConsoleEvaluationScript(script.sourceURL))
+                continue;
+            this._addResource(script, suppressFilterUpdate);
+        }
     }
 
     _mainResourceDidChange(event)
@@ -289,6 +308,15 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     _resourceWasAdded(event)
     {
         this._addResource(event.data.resource);
+    }
+
+    _scriptAdded(event)
+    {
+        let script = event.data.script;
+        if (script.target === WebInspector.mainTarget)
+            return;
+
+        this._addResource(script);
     }
 };
 

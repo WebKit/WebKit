@@ -25,14 +25,16 @@
 
 WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 {
-    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted)
+    constructor(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted)
     {
         super();
 
+        console.assert(target instanceof WebInspector.Target);
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
         console.assert(!thisObject || thisObject instanceof WebInspector.RemoteObject);
         console.assert(!scopeChain || scopeChain instanceof Array);
 
+        this._target = target;
         this._id = id || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
         this._functionName = functionName || "";
@@ -45,6 +47,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
     // Public
 
+    get target() { return this._target; }
     get id() { return this._id; }
     get sourceCodeLocation() { return this._sourceCodeLocation; }
     get functionName() { return this._functionName; }
@@ -193,10 +196,10 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         return payload.functionName.endsWith(" code");
     }
 
-    static fromDebuggerPayload(payload, scopeChain, sourceCodeLocation)
+    static fromDebuggerPayload(target, payload, scopeChain, sourceCodeLocation)
     {
         let id = payload.callFrameId;
-        let thisObject = WebInspector.RemoteObject.fromPayload(payload.this);
+        let thisObject = WebInspector.RemoteObject.fromPayload(payload.this, target);
         let functionName = WebInspector.CallFrame.functionNameFromPayload(payload);
         let nativeCode = false;
         let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
@@ -207,10 +210,10 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             programCode = true;
         }
 
-        return new WebInspector.CallFrame(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
+        return new WebInspector.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
     }
 
-    static fromPayload(payload)
+    static fromPayload(target, payload)
     {
         console.assert(payload);
 
@@ -226,14 +229,14 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         } else if (url || scriptId) {
             let sourceCode = null;
             if (scriptId) {
-                sourceCode = WebInspector.debuggerManager.scriptForIdentifier(scriptId);
+                sourceCode = WebInspector.debuggerManager.scriptForIdentifier(scriptId, target);
                 if (sourceCode && sourceCode.resource)
                     sourceCode = sourceCode.resource;
             }
             if (!sourceCode)
                 sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
             if (!sourceCode)
-                sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
+                sourceCode = WebInspector.debuggerManager.scriptsForURL(url, target)[0];
 
             if (sourceCode) {
                 // The lineNumber is 1-based, but we expect 0-based.
@@ -252,6 +255,6 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             programCode = true;
         }
 
-        return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);
+        return new WebInspector.CallFrame(target, null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);
     }
 };

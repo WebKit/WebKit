@@ -46,10 +46,13 @@ function test()
             expectedFrames.push({functionName: 'bar', scope: ['i', i], isTailDeleted: i > 0 ? true : false});
         expectedFrames.push({functionName: 'timeout', scope: ['foo', 25], isTailDeleted: true});
 
-        InspectorTest.assert(WebInspector.debuggerManager.callFrames.length >= expectedFrames.length);
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let callFrames = targetData.callFrames;
+
+        InspectorTest.assert(callFrames.length >= expectedFrames.length);
 
         for (let i = 0; i < expectedFrames.length; i++) {
-            let callFrame = WebInspector.debuggerManager.callFrames[i];
+            let callFrame = callFrames[i];
             let expectedFrame = expectedFrames[i];
             InspectorTest.log("Expected frame: " + JSON.stringify(expectedFrame));
             InspectorTest.expectThat(callFrame.functionName === expectedFrame.functionName, `Function name: ${callFrame.functionName} is correct.`);

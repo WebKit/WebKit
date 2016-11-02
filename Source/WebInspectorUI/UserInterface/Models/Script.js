@@ -25,13 +25,15 @@
 
 WebInspector.Script = class Script extends WebInspector.SourceCode
 {
-    constructor(id, range, url, injected, sourceURL, sourceMapURL)
+    constructor(target, id, range, url, injected, sourceURL, sourceMapURL)
     {
         super();
 
         console.assert(id);
+        console.assert(target instanceof WebInspector.Target);
         console.assert(range instanceof WebInspector.TextRange);
 
+        this._target = target;
         this._id = id || null;
         this._range = range || null;
         this._url = url || null;
@@ -74,6 +76,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     }
 
     // Public
+
+    get target()
+    {
+        return this._target;
+    }
 
     get id()
     {
@@ -197,6 +204,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         return this._scriptSyntaxTree;
     }
 
+    isMainResource()
+    {
+        return this._target.mainResource === this;
+    }
+
     requestContentFromBackend()
     {
         if (!this._id) {
@@ -205,7 +217,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        return DebuggerAgent.getScriptSource(this._id);
+        return this._target.DebuggerAgent.getScriptSource(this._id);
     }
 
     saveIdentityToCookie(cookie)
@@ -252,6 +264,10 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
 
         // No URL, no resource.
         if (!this._url)
+            return null;
+
+        // Only associate Scripts on the Page with Resources on the Page.
+        if (this._target !== WebInspector.mainTarget)
             return null;
 
         try {

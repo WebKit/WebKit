@@ -684,7 +684,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!payload)
             return null;
 
-        return payload.map(WebInspector.CallFrame.fromPayload);
+        return payload.map((x) => WebInspector.CallFrame.fromPayload(WebInspector.assumingMainTarget(), x));
     }
 
     _addRecord(record)

@@ -60,12 +60,13 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
 
     // Protected (called by WebInspector.DebuggerObserver)
 
-    didSampleProbe(sample)
+    didSampleProbe(target, sample)
     {
         console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);
-        var probe = this._probesByIdentifier.get(sample.probeId);
-        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(sample.timestamp);
-        probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, sample.payload));
+        let probe = this._probesByIdentifier.get(sample.probeId);
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(sample.timestamp);
+        let object = WebInspector.RemoteObject.fromPayload(sample.payload, target);
+        probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, object));
     }
 
     // Private

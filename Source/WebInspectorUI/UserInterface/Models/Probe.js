@@ -26,14 +26,16 @@
 
 WebInspector.ProbeSample = class ProbeSample extends WebInspector.Object
 {
-    constructor(sampleId, batchId, elapsedTime, payload)
+    constructor(sampleId, batchId, elapsedTime, object)
     {
         super();
+
+        console.assert(object instanceof WebInspector.RemoteObject);
 
         this.sampleId = sampleId;
         this.batchId = batchId;
         this.timestamp = elapsedTime;
-        this.object = WebInspector.RemoteObject.fromPayload(payload);
+        this.object = object;
     }
 };
 

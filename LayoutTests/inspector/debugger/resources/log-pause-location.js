@@ -178,7 +178,7 @@ TestPage.registerInitializer(() => {
                 InspectorTest.log(`EXPRESSION: ${expression}`);
                 InspectorTest.log(`STEPS: ${steps.join(", ")}`);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.pauseReason})`);
+                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target).pauseReason})`);
                 });
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
                     InspectorTest.log("RESUMED");

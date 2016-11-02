@@ -47,9 +47,12 @@ function test()
         InspectorTest.log("Going to look at the top " + numFramesToInspect + " frames.");
         InspectorTest.log("------------------------------------");
 
-        InspectorTest.assert(WebInspector.debuggerManager.callFrames.length > numFramesToInspect); // We just look at top 50. This isn't a precise number. But it gets at the gist of the debugging experience.
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let callFrames = targetData.callFrames;
+
+        InspectorTest.assert(callFrames.length > numFramesToInspect); // We just look at top 50. This isn't a precise number. But it gets at the gist of the debugging experience.
         for (let i = 0; i < numFramesToInspect; i++) {
-            let callFrame = WebInspector.debuggerManager.callFrames[i];
+            let callFrame = callFrames[i];
             InspectorTest.assert(callFrame.functionName === "recurse");
             let topScope = callFrame.scopeChain[0];
 

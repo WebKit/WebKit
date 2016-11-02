@@ -81,6 +81,11 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         let target = this._activeExecutionContext.target;
         let executionContextId = this._activeExecutionContext.id;
 
+        if (WebInspector.debuggerManager.activeCallFrame) {
+            target = WebInspector.debuggerManager.activeCallFrame.target;
+            executionContextId = target.executionContext.id;
+        }
+
         function evalCallback(error, result, wasThrown, savedResultIndex)
         {
             this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.DidEvaluate, {objectGroup});
@@ -99,7 +104,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 
         if (WebInspector.debuggerManager.activeCallFrame) {
             // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
+            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this), target.DebuggerAgent);
             return;
         }
 

@@ -72,7 +72,10 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
 {
     TimerBase::fireTimersInNestedEventLoop();
 
-    // FIXME: Implement Worker Debugger Run Loop.
+    MessageQueueWaitResult result;
+    do {
+        result = m_workerGlobalScope.thread().runLoop().runInMode(&m_workerGlobalScope, WorkerRunLoop::debuggerMode());
+    } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
 
 void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::Exception* exception) const

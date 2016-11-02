@@ -97,6 +97,8 @@ Object.defineProperty(WebInspector, "targets",
     get() { return this.targetManager.targets; }
 });
 
+WebInspector.assumingMainTarget = () => WebInspector.mainTarget;
+
 WebInspector.isDebugUIEnabled = () => false;
 
 WebInspector.UIString = (string) => string;

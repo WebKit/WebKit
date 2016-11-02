@@ -36,16 +36,16 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
     // Static
 
-    static fromPayload(payload)
+    static fromPayload(target, payload)
     {
-        var callFrames = payload.map(WebInspector.CallFrame.fromPayload);
+        let callFrames = payload.map((x) => WebInspector.CallFrame.fromPayload(target, x));
         return new WebInspector.StackTrace(callFrames);
     }
 
-    static fromString(stack)
+    static fromString(target, stack)
     {
-        var payload = WebInspector.StackTrace._parseStackTrace(stack);
-        return WebInspector.StackTrace.fromPayload(payload);
+        let payload = WebInspector.StackTrace._parseStackTrace(stack);
+        return WebInspector.StackTrace.fromPayload(target, payload);
     }
 
     // May produce false negatives; must not produce any false positives.

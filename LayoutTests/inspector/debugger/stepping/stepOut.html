@@ -54,7 +54,7 @@ function test()
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.pauseReason})`);
+                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target).pauseReason})`);
                 });
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
                     InspectorTest.log("RESUMED");

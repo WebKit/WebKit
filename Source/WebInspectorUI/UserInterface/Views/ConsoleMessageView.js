@@ -335,7 +335,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             callFrame = firstNonNativeNonAnonymousCallFrame;
         } else if (this._message.url && !this._shouldHideURL(this._message.url)) {
             // CSS warnings have no stack traces.
-            callFrame = WebInspector.CallFrame.fromPayload({
+            callFrame = WebInspector.CallFrame.fromPayload(this._message.target, {
                 functionName: "",
                 url: this._message.url,
                 lineNumber: this._message.line,
@@ -557,7 +557,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
     _formatParameterAsString(object, fragment)
     {
         if (this._isStackTrace(object)) {
-            let stackTrace = WebInspector.StackTrace.fromString(object.description);
+            let stackTrace = WebInspector.StackTrace.fromString(this._message.target, object.description);
             if (stackTrace.callFrames.length) {
                 let stackView = new WebInspector.StackTraceView(stackTrace);
                 fragment.appendChild(stackView.element);

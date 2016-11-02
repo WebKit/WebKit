@@ -18,7 +18,8 @@ function test()
             test: (resolve, reject) => {
                 InspectorTest.evaluateInPage(expression);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.expectThat(WebInspector.debuggerManager.pauseReason === "exception", "Should pause for exception.");
+                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                    InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     let callFrame = WebInspector.debuggerManager.activeCallFrame;
                     let name = callFrame.functionName || "<anonymous>";
                     let location = callFrame.sourceCodeLocation;

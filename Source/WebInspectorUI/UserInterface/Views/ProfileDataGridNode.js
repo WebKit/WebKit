@@ -60,7 +60,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
     iconClassName()
     {
-        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
+        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
         if (!script || !script.url)
             return "native-icon";
         if (this._node.name === "(program)")
@@ -130,7 +130,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
     {
         if (columnIdentifier === "function") {
             let filterableData = [this.displayName()];
-            let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
+            let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
             if (script && script.url && this._node.line >= 0 && this._node.column >= 0)
                 filterableData.push(script.url);
             return filterableData;
@@ -232,7 +232,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         let titleElement = fragment.appendChild(document.createElement("span"));
         titleElement.textContent = title;
 
-        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID);
+        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
         if (script && script.url && this._node.line >= 0 && this._node.column >= 0) {
             // Convert from 1-based line and column to 0-based.
             let sourceCodeLocation = script.createSourceCodeLocation(this._node.line - 1, this._node.column - 1);

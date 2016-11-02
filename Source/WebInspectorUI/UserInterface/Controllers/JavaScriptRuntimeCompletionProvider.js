@@ -223,8 +223,11 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
 
             if (!base) {
                 var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$_"];
-                if (WebInspector.debuggerManager.paused && WebInspector.debuggerManager.pauseReason === WebInspector.DebuggerManager.PauseReason.Exception)
-                    commandLineAPI.push("$exception");
+                if (WebInspector.debuggerManager.paused) {
+                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.runtimeManager.activeExecutionContext.target);
+                    if (targetData.pauseReason === WebInspector.DebuggerManager.PauseReason.Exception)
+                        commandLineAPI.push("$exception");
+                }
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
 

@@ -36,6 +36,9 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         this._navigationBar = new WebInspector.NavigationBar;
         this.addSubview(this._navigationBar);
 
+        this._targetTreeElementMap = new Map;
+        this._deferredTargetScripts = [];
+
         var scopeItemPrefix = "resource-sidebar-";
         var scopeBarItems = [];
 
@@ -60,6 +63,8 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptWasAdded, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptRemoved, this._scriptWasRemoved, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptsCleared, this._scriptsCleared, this);
+
+        WebInspector.targetManager.addEventListener(WebInspector.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
         WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
 
@@ -282,6 +287,12 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         if (script.resource || script.dynamicallyAddedScriptElement)
             return;
 
+        // Worker script.
+        if (script.target !== WebInspector.mainTarget) {
+            this._addScriptForNonMainTarget(script);
+            return;
+        }
+
         var insertIntoTopLevel = false;
 
         if (script.injected) {
@@ -349,6 +360,62 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
                 this._anonymousScriptsFolderTreeElement.parent.removeChild(this._anonymousScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
             this._anonymousScriptsFolderTreeElement = null;
         }
+
+        this._deferredTargetScripts = [];
+        if (this._targetTreeElementMap.size) {
+            for (let treeElement of this._targetTreeElementMap)
+                treeElement.parent.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
+            this._targetTreeElementMap.clear();
+        }
+    }
+
+    _addScriptForNonMainTarget(script)
+    {
+        let targetTreeElement = this._targetTreeElementMap.get(script.target);
+        if (!targetTreeElement) {
+            // Defer adding this script until we have the main resource for the Target.
+            // This can happen when opening the inspector after a page has already loaded,
+            // in those cases the scriptDidParse events are in random order.
+            if (script.isMainResource())
+                this._addTargetWithMainResource(script.target);
+            else
+                this._deferredTargetScripts.push(script);
+            return;
+        }
+
+        let scriptTreeElement = new WebInspector.ScriptTreeElement(script);
+        let index = insertionIndexForObjectInListSortedByFunction(scriptTreeElement, targetTreeElement.children, this._compareTreeElements);
+        targetTreeElement.insertChild(scriptTreeElement, index);
+    }
+
+    _addTargetWithMainResource(target)
+    {
+        console.assert(target.type === WebInspector.Target.Type.Worker);
+
+        let targetTreeElement = new WebInspector.TargetTreeElement(target);
+        this._targetTreeElementMap.set(target, targetTreeElement);
+
+        let index = insertionIndexForObjectInListSortedByFunction(targetTreeElement, this.contentTreeOutline.children, this._compareTreeElements);
+        this.contentTreeOutline.insertChild(targetTreeElement, index);
+
+        let [deferredScriptsForThisTarget, deferredScriptsForAnotherTarget] = this._deferredTargetScripts.partition((script) => script.target === target);
+        this._deferredTargetScripts = deferredScriptsForAnotherTarget;
+        for (let script of deferredScriptsForThisTarget) {
+            let scriptTreeElement = new WebInspector.ScriptTreeElement(script);
+            let index = insertionIndexForObjectInListSortedByFunction(scriptTreeElement, targetTreeElement.children, this._compareTreeElements);
+            targetTreeElement.insertChild(scriptTreeElement, index);
+        }
+    }
+
+    _targetRemoved(event)
+    {
+        let removedTarget = event.data.target;
+
+        let targetTreeElement = this._targetTreeElementMap.take(removedTarget);
+        if (targetTreeElement)
+            targetTreeElement.parent.removeChild(targetTreeElement);
+
+        this._deferredTargetScripts = this._deferredTargetScripts.filter((script) => script.target !== removedTarget);
     }
 
     _treeSelectionDidChange(event)

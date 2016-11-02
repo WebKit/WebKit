@@ -520,14 +520,14 @@ WebInspector.RemoteObject = class RemoteObject
             return result.promise;
         }
 
-        DebuggerAgent.getFunctionDetails(this._objectId, function(error, response) {
+        this._target.DebuggerAgent.getFunctionDetails(this._objectId, (error, response) => {
             if (error) {
                 result.reject(error);
                 return;
             }
 
             var location = response.location;
-            var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+            var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, this._target);
 
             if (!sourceCode || (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceCode.sourceURL))) {
                 result.resolve(WebInspector.RemoteObject.SourceCodeLocationPromise.NoSourceFound);

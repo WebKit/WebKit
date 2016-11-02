@@ -1,3 +1,36 @@
+2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts
+        https://bugs.webkit.org/show_bug.cgi?id=164136
+        <rdar://problem/29028462>
+
+        Reviewed by Brian Burg.
+
+        Tests: inspector/worker/debugger-pause.html
+               inspector/worker/debugger-scripts.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        New file.
+
+        * inspector/PageDebuggerAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp: Added.
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::breakpointActionLog):
+        (WebCore::WorkerDebuggerAgent::injectedScriptForEval):
+        * inspector/WorkerDebuggerAgent.h: Added.
+        DebuggerAgent customizations for Workers.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Add the new agent.
+
+        * inspector/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        Implement the nested run loop for Workers.
+
 2016-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Add Battery Status to features.json, marked as "Removed".

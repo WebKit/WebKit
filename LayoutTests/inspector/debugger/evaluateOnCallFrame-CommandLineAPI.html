@@ -61,12 +61,14 @@ function test()
     }
 
     function testEvaluateOnNonStrictCallFrame(expression, callback) {
-        let callFrame = WebInspector.debuggerManager.callFrames[1]; // foo
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let callFrame = targetData.callFrames[1]; // foo
         testEvaluateOnCallFrame(callFrame, expression, callback);
     }
 
     function testEvaluateOnNonStrictCallFrameThrows(expression, callback) {
-        let callFrame = WebInspector.debuggerManager.callFrames[1]; // foo
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let callFrame = targetData.callFrames[1]; // foo
         testEvaluateOnCallFrameThrows(callFrame, expression, callback);
     }
 
@@ -76,8 +78,9 @@ function test()
         name: "ValidateCallFrames",
         description: "Test6 evaluate can access CommandLineAPI methods.",
         test: (resolve, reject) => {
+            let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
             InspectorTest.expectThat(WebInspector.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");
-            InspectorTest.expectThat(WebInspector.debuggerManager.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
+            InspectorTest.expectThat(targetData.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
 
             testEvaluateOnStrictCallFrame("a", (x) => { InspectorTest.expectThat(x === 6, "`a` should be 5 in `bar`."); });
             testEvaluateOnStrictCallFrame("b", (x) => { InspectorTest.expectThat(x === 123, "`b` should be 123 in `bar`."); });
