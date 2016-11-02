@@ -67,7 +67,7 @@ static void parseUserData(WKTypeRef userData, String& webExtensionsDirectory, GR
     GVariant* data = nullptr;
     g_variant_get(variant.get(), "(m&smv)", &directory, &data);
 
-    webExtensionsDirectory = WebCore::filenameToString(directory);
+    webExtensionsDirectory = WebCore::stringFromFileSystemRepresentation(directory);
     initializationUserData = adoptGRef(data);
 }
 

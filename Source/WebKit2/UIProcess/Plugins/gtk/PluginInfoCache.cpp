@@ -69,7 +69,7 @@ PluginInfoCache::PluginInfoCache()
     if (WebCore::makeAllDirectories(cacheDirectory.get())) {
         // Delete old cache file.
         GUniquePtr<char> oldCachePath(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
-        WebCore::deleteFile(WebCore::filenameToString(oldCachePath.get()));
+        WebCore::deleteFile(WebCore::stringFromFileSystemRepresentation(oldCachePath.get()));
 
         m_cachePath.reset(g_build_filename(cacheDirectory.get(), cacheFilenameForCurrentDisplay(), nullptr));
         g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);

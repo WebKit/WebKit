@@ -1,3 +1,31 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove FileSystem::filenameToString() and use FileSystem::stringFromFileSystemRepresentation() everywhere instead
+        https://bugs.webkit.org/show_bug.cgi?id=164315
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::getExecutablePath):
+        (WebKit::findWebKitProcess):
+        * UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp:
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_favicon_database_directory):
+        (webkit_web_context_set_additional_plugins_directory):
+        (webkit_web_context_set_disk_cache_directory):
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetDataStore):
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::PluginInfoCache):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath):
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::parseUserData):
+
 2016-11-02  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Enable creation of ReadableByteStreamController

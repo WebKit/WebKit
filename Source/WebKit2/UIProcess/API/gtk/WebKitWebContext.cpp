@@ -260,20 +260,20 @@ static void webkitWebContextConstructed(GObject* object)
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
 
     API::ProcessPoolConfiguration configuration;
-    configuration.setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
+    configuration.setInjectedBundlePath(WebCore::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setMaximumProcessCount(1);
     configuration.setDiskCacheSpeculativeValidationEnabled(true);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
     if (priv->websiteDataManager) {
-        configuration.setLocalStorageDirectory(WebCore::filenameToString(webkit_website_data_manager_get_local_storage_directory(priv->websiteDataManager.get())));
-        configuration.setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::filenameToString(webkit_website_data_manager_get_disk_cache_directory(priv->websiteDataManager.get())), networkCacheSubdirectory));
-        configuration.setApplicationCacheDirectory(WebCore::filenameToString(webkit_website_data_manager_get_offline_application_cache_directory(priv->websiteDataManager.get())));
-        configuration.setIndexedDBDatabaseDirectory(WebCore::filenameToString(webkit_website_data_manager_get_indexeddb_directory(priv->websiteDataManager.get())));
-        configuration.setWebSQLDatabaseDirectory(WebCore::filenameToString(webkit_website_data_manager_get_websql_directory(priv->websiteDataManager.get())));
+        configuration.setLocalStorageDirectory(WebCore::stringFromFileSystemRepresentation(webkit_website_data_manager_get_local_storage_directory(priv->websiteDataManager.get())));
+        configuration.setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(webkit_website_data_manager_get_disk_cache_directory(priv->websiteDataManager.get())), networkCacheSubdirectory));
+        configuration.setApplicationCacheDirectory(WebCore::stringFromFileSystemRepresentation(webkit_website_data_manager_get_offline_application_cache_directory(priv->websiteDataManager.get())));
+        configuration.setIndexedDBDatabaseDirectory(WebCore::stringFromFileSystemRepresentation(webkit_website_data_manager_get_indexeddb_directory(priv->websiteDataManager.get())));
+        configuration.setWebSQLDatabaseDirectory(WebCore::stringFromFileSystemRepresentation(webkit_website_data_manager_get_websql_directory(priv->websiteDataManager.get())));
     } else if (!priv->localStorageDirectory.isNull())
-        configuration.setLocalStorageDirectory(WebCore::filenameToString(priv->localStorageDirectory.data()));
+        configuration.setLocalStorageDirectory(WebCore::stringFromFileSystemRepresentation(priv->localStorageDirectory.data()));
 
     priv->processPool = WebProcessPool::create(configuration);
 
@@ -643,7 +643,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     ensureFaviconDatabase(context);
 
     // Use default if 0 is passed as parameter.
-    String directoryPath = WebCore::filenameToString(path);
+    String directoryPath = WebCore::stringFromFileSystemRepresentation(path);
     priv->faviconDatabaseDirectory = directoryPath.isEmpty()
         ? priv->processPool->iconDatabasePath().utf8()
         : directoryPath.utf8();
@@ -653,7 +653,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         WebCore::IconDatabase::defaultDatabaseFilename().utf8().data(), nullptr));
 
     // Setting the path will cause the icon database to be opened.
-    priv->processPool->setIconDatabasePath(WebCore::filenameToString(faviconDatabasePath.get()));
+    priv->processPool->setIconDatabasePath(WebCore::stringFromFileSystemRepresentation(faviconDatabasePath.get()));
 }
 
 /**
@@ -734,7 +734,7 @@ void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* conte
     g_return_if_fail(directory);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    context->priv->processPool->setAdditionalPluginsDirectory(WebCore::filenameToString(directory));
+    context->priv->processPool->setAdditionalPluginsDirectory(WebCore::stringFromFileSystemRepresentation(directory));
 #endif
 }
 
@@ -1079,7 +1079,7 @@ void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, cons
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-    context->priv->processPool->configuration().setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::filenameToString(directory), networkCacheSubdirectory));
+    context->priv->processPool->configuration().setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(directory), networkCacheSubdirectory));
 }
 
 /**

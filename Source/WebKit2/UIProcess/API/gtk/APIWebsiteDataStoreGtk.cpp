@@ -39,7 +39,7 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
 // Why is only this directory namespaced to a particular application?
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation(WebCore::pathByAppendingComponent(WebCore::filenameToString(g_get_prgname()), "WebKitCache"));
+    return cacheDirectoryFileSystemRepresentation(WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"));
 }
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
@@ -69,12 +69,12 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
 {
-    return WebCore::pathByAppendingComponent(WebCore::filenameToString(g_get_user_cache_dir()), directoryName);
+    return WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(g_get_user_cache_dir()), directoryName);
 }
 
 String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
 {
-    return WebCore::pathByAppendingComponent(WebCore::filenameToString(g_get_user_data_dir()), directoryName);
+    return WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(g_get_user_data_dir()), directoryName);
 }
 
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()

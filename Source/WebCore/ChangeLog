@@ -1,3 +1,17 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove FileSystem::filenameToString() and use FileSystem::stringFromFileSystemRepresentation() everywhere instead
+        https://bugs.webkit.org/show_bug.cgi?id=164315
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::stringFromFileSystemRepresentation):
+        (WebCore::homeDirectoryPath):
+        (WebCore::listDirectory):
+        (WebCore::filenameToString): Deleted.
+
 2016-11-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] mimax(auto, <flex>) should be serialized as <flex>

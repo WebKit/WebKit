@@ -310,13 +310,13 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
     if (!priv->websiteDataStore) {
         WebsiteDataStore::Configuration configuration;
         configuration.localStorageDirectory = !priv->localStorageDirectory ?
-            API::WebsiteDataStore::defaultLocalStorageDirectory() : WebCore::filenameToString(priv->localStorageDirectory.get());
+            API::WebsiteDataStore::defaultLocalStorageDirectory() : WebCore::stringFromFileSystemRepresentation(priv->localStorageDirectory.get());
         configuration.networkCacheDirectory = !priv->diskCacheDirectory ?
-            API::WebsiteDataStore::defaultNetworkCacheDirectory() : WebCore::pathByAppendingComponent(WebCore::filenameToString(priv->diskCacheDirectory.get()), networkCacheSubdirectory);
+            API::WebsiteDataStore::defaultNetworkCacheDirectory() : WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory);
         configuration.applicationCacheDirectory = !priv->applicationCacheDirectory ?
-            API::WebsiteDataStore::defaultApplicationCacheDirectory() : WebCore::filenameToString(priv->applicationCacheDirectory.get());
+            API::WebsiteDataStore::defaultApplicationCacheDirectory() : WebCore::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get());
         configuration.webSQLDatabaseDirectory = !priv->webSQLDirectory ?
-            API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::filenameToString(priv->webSQLDirectory.get());
+            API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::stringFromFileSystemRepresentation(priv->webSQLDirectory.get());
         configuration.mediaKeysStorageDirectory = API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
         priv->websiteDataStore = API::WebsiteDataStore::create(WTFMove(configuration));
     }
