@@ -90,10 +90,7 @@ namespace WebCore {
 #if ENABLE(CSS_SELECTORS_LEVEL4)
             DescendantDoubleChild,
 #endif
-            ShadowDescendant, // FIXME-NEWPARSER: Remove this in favor of the new shadow values below.
-            ShadowPseudo, // Special case of shadow DOM pseudo elements / shadow pseudo element
-            ShadowDeep, // /deep/ combinator
-            ShadowSlot // slotted to <slot> e
+            ShadowDescendant
         };
 
         enum PseudoClassType {

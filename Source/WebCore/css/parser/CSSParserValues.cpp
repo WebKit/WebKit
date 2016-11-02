@@ -242,9 +242,16 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(S
     AtomicString name = pseudoTypeString.toAtomicString();
     
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);
-    if (pseudoType == CSSSelector::PseudoElementUnknown)
-        return nullptr;
-    
+    if (pseudoType == CSSSelector::PseudoElementUnknown) {
+        // FIXME-NEWPARSER: We can't add "slotted" to the map without breaking the old
+        // parser, so this hack ensures the new parser still recognizes it. When the new
+        // parser turns on, we can add "slotted" to the map and remove this code.
+        if (pseudoTypeString.startsWithIgnoringASCIICase("slotted"))
+            pseudoType = CSSSelector::PseudoElementSlotted;
+        else
+            return nullptr;
+    }
+
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(pseudoType);
@@ -493,15 +500,6 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
         break;
     case CSSParserSelectorCombinator::IndirectAdjacent:
         selectorRelation = CSSSelector::IndirectAdjacent;
-        break;
-    case CSSParserSelectorCombinator::ShadowDeep:
-        selectorRelation = CSSSelector::ShadowDeep;
-        break;
-    case CSSParserSelectorCombinator::ShadowPseudo:
-        selectorRelation = CSSSelector::ShadowPseudo;
-        break;
-    case CSSParserSelectorCombinator::ShadowSlot:
-        selectorRelation = CSSSelector::ShadowSlot;
         break;
     }
     end->setRelation(selectorRelation);
