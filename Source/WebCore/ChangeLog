@@ -1,3 +1,24 @@
+2016-11-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support scroll-snap-* properties
+        https://bugs.webkit.org/show_bug.cgi?id=164321
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSPrimitiveValue.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertScrollSnapPoints):
+        (WebCore::StyleBuilderConverter::convertSnapCoordinatePair):
+        (WebCore::StyleBuilderConverter::convertScrollSnapCoordinates):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumePositionLonghand):
+        (WebCore::consumePositionX):
+        (WebCore::consumePositionY):
+        (WebCore::consumePositionList):
+        (WebCore::consumeScrollSnapDestination):
+        (WebCore::consumeScrollSnapPoints):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Add logging for "WebKit encountered an internal error" messages

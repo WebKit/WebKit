@@ -1719,7 +1719,7 @@ static RefPtr<CSSValue> consumeTransform(CSSParserTokenRange& range, CSSParserMo
 }
 
 template <CSSValueID start, CSSValueID end>
-static RefPtr<CSSValue> consumePositionLonghand(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSPrimitiveValue> consumePositionLonghand(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().type() == IdentToken) {
         CSSValueID id = range.peek().id();
@@ -1738,12 +1738,12 @@ static RefPtr<CSSValue> consumePositionLonghand(CSSParserTokenRange& range, CSSP
     return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
 }
 
-static RefPtr<CSSValue> consumePositionX(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSPrimitiveValue> consumePositionX(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     return consumePositionLonghand<CSSValueLeft, CSSValueRight>(range, cssParserMode);
 }
 
-static RefPtr<CSSValue> consumePositionY(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSPrimitiveValue> consumePositionY(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     return consumePositionLonghand<CSSValueTop, CSSValueBottom>(range, cssParserMode);
 }
@@ -2006,15 +2006,20 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-static RefPtr<CSSValueList> consumePositionList(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValueList> consumeSnapPointCoordinateList(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    RefPtr<CSSValueList> positions = CSSValueList::createCommaSeparated();
+    RefPtr<CSSValueList> positions = CSSValueList::createSpaceSeparated();
     do {
-        RefPtr<CSSValue> position = consumePosition(range, cssParserMode, UnitlessQuirk::Forbid);
-        if (!position)
+        
+        RefPtr<CSSPrimitiveValue> first = consumePositionX(range, cssParserMode);
+        if (!first || range.atEnd())
             return nullptr;
+        RefPtr<CSSPrimitiveValue> second = consumePositionY(range, cssParserMode);
+        if (!second)
+            return nullptr;
+        RefPtr<CSSValue> position = createPrimitiveValuePair(first.releaseNonNull(), second.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
         positions->append(position.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
+    } while (!range.atEnd());
     return positions;
 }
 
@@ -2022,23 +2027,45 @@ static RefPtr<CSSValue> consumeScrollSnapCoordinate(CSSParserTokenRange& range, 
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    return consumePositionList(range, cssParserMode);
+    return consumeSnapPointCoordinateList(range, cssParserMode);
+}
+
+static RefPtr<CSSValue> consumeScrollSnapDestination(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    RefPtr<CSSPrimitiveValue> first = consumePositionX(range, cssParserMode);
+    if (!first || range.atEnd())
+        return nullptr;
+    RefPtr<CSSPrimitiveValue> second = consumePositionY(range, cssParserMode);
+    if (!second)
+        return nullptr;
+    return createPrimitiveValuePair(first.releaseNonNull(), second.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
 }
 
 static RefPtr<CSSValue> consumeScrollSnapPoints(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueElements)
         return consumeIdent(range);
-    if (range.peek().functionId() == CSSValueRepeat) {
-        CSSParserTokenRange args = consumeFunction(range);
-        RefPtr<CSSPrimitiveValue> parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
-        if (args.atEnd() && parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0)) {
-            RefPtr<CSSFunctionValue> result = CSSFunctionValue::create(CSSValueRepeat);
-            result->append(parsedValue.releaseNonNull());
-            return result;
+    
+    RefPtr<CSSValueList> points = CSSValueList::createSpaceSeparated();
+    do {
+        if (range.peek().functionId() == CSSValueRepeat) {
+            CSSParserTokenRange args = consumeFunction(range);
+            RefPtr<CSSPrimitiveValue> parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
+            if (args.atEnd() && parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0)) {
+                Ref<CSSFunctionValue> result = CSSFunctionValue::create(CSSValueRepeat);
+                result->append(parsedValue.releaseNonNull());
+                points->append(WTFMove(result));
+            }
+        } else {
+            RefPtr<CSSValue> length = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+            if (!length)
+                return nullptr;
+            points->append(length.releaseNonNull());
         }
-    }
-    return nullptr;
+    } while (!range.atEnd());
+    
+    
+    return points;
 }
 
 #endif
@@ -3602,6 +3629,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapCoordinate:
         return consumeScrollSnapCoordinate(m_range, m_context.mode);
+    case CSSPropertyWebkitScrollSnapDestination:
+        return consumeScrollSnapDestination(m_range, m_context.mode);
     case CSSPropertyWebkitScrollSnapPointsX:
     case CSSPropertyWebkitScrollSnapPointsY:
         return consumeScrollSnapPoints(m_range, m_context.mode);

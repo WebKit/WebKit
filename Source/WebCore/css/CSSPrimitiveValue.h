@@ -113,6 +113,7 @@ public:
         CSS_DPCM = 32,
         CSS_FR = 33,
 #if ENABLE(CSS_SCROLL_SNAP)
+        // FIXME-NEWPARSER: Remove once new parser lands.
         CSS_LENGTH_REPEAT = 34,
 #endif
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
