@@ -56,6 +56,8 @@ private:
     bool WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
     bool WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
+    bool WARN_UNUSED_RETURN popExpressionStack(ExpressionType& result);
+
     Context& m_context;
     Vector<ExpressionType, 1> m_expressionStack;
     Vector<ControlType> m_controlStack;
@@ -144,8 +146,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 {
     switch (op) {
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
-        ExpressionType right = m_expressionStack.takeLast();
-        ExpressionType left = m_expressionStack.takeLast();
+        ExpressionType right;
+        if (!popExpressionStack(right))
+            return false;
+
+        ExpressionType left;
+        if (!popExpressionStack(left))
+            return false;
+
         ExpressionType result;
         if (!m_context.binaryOp(static_cast<BinaryOpType>(op), left, right, result))
             return false;
@@ -154,9 +162,12 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE) {
-        ExpressionType arg = m_expressionStack.takeLast();
+        ExpressionType value;
+        if (!popExpressionStack(value))
+            return false;
+
         ExpressionType result;
-        if (!m_context.unaryOp(static_cast<UnaryOpType>(op), arg, result))
+        if (!m_context.unaryOp(static_cast<UnaryOpType>(op), value, result))
             return false;
         m_expressionStack.append(result);
         return true;
@@ -171,7 +182,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseVarUInt32(offset))
             return false;
 
-        ExpressionType pointer = m_expressionStack.takeLast();
+        ExpressionType pointer;
+        if (!popExpressionStack(pointer))
+            return false;
+
         ExpressionType result;
         if (!m_context.load(static_cast<LoadOpType>(op), pointer, result, offset))
             return false;
@@ -188,8 +202,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseVarUInt32(offset))
             return false;
 
-        ExpressionType value = m_expressionStack.takeLast();
-        ExpressionType pointer = m_expressionStack.takeLast();
+        ExpressionType value;
+        if (!popExpressionStack(value))
+            return false;
+
+        ExpressionType pointer;
+        if (!popExpressionStack(pointer))
+            return false;
+
         return m_context.store(static_cast<StoreOpType>(op), pointer, value, offset);
     }
 
@@ -227,7 +247,9 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         uint32_t index;
         if (!parseVarUInt32(index))
             return false;
-        ExpressionType value = m_expressionStack.takeLast();
+        ExpressionType value;
+        if (!popExpressionStack(value))
+            return false;
         return m_context.setLocal(index, value);
     }
 
@@ -284,7 +306,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseValueType(inlineSignature))
             return false;
 
-        ExpressionType condition = m_expressionStack.takeLast();
+        ExpressionType condition;
+        if (!popExpressionStack(condition))
+            return false;
+
         ControlType control;
         if (!m_context.addIf(condition, inlineSignature, control))
             return false;
@@ -294,6 +319,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::Else: {
+        if (!m_controlStack.size()) {
+            m_context.setErrorMessage("Attempted to use else block at the top-level of a function");
+            return false;
+        }
         return m_context.addElse(m_controlStack.last(), m_expressionStack);
     }
 
@@ -304,9 +333,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
             return false;
 
         ExpressionType condition = Context::emptyExpression;
-        if (op == OpType::BrIf)
-            condition = m_expressionStack.takeLast();
-        else
+        if (op == OpType::BrIf) {
+            if (!popExpressionStack(condition))
+                return false;
+        } else
             m_unreachableBlocks = 1;
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target];
@@ -316,8 +346,11 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Return: {
         Vector<ExpressionType, 1> returnValues;
-        if (m_signature->returnType != Void)
-            returnValues.append(m_expressionStack.takeLast());
+        if (m_signature->returnType != Void) {
+            ExpressionType returnValue;
+            if (!popExpressionStack(returnValue))
+            returnValues.append(returnValue);
+        }
 
         m_unreachableBlocks = 1;
         return m_context.addReturn(returnValues);
@@ -401,6 +434,18 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
         break;
     }
     return true;
+}
+
+template<typename Context>
+bool FunctionParser<Context>::popExpressionStack(ExpressionType& result)
+{
+    if (!m_expressionStack.size()) {
+        result = m_expressionStack.takeLast();
+        return true;
+    }
+
+    m_context.setErrorMessage("Attempted to use an stack value when none existed");
+    return false;
 }
 
 #undef CREATE_CASE

@@ -212,6 +212,8 @@ public:
 
     void dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack);
 
+    void setErrorMessage(String&&) { UNREACHABLE_FOR_PLATFORM(); }
+
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, Origin, ExpressionType pointer, uint32_t offset);

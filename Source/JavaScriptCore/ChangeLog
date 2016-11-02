@@ -1,3 +1,23 @@
+2016-11-02  Keith Miller  <keith_miller@apple.com>
+
+        We should not pop from an empty stack in the Wasm function parser.
+        https://bugs.webkit.org/show_bug.cgi?id=164275
+
+        Reviewed by Filip Pizlo.
+
+        This patch prevents an issue in the wasm parser where we might
+        accidentially pop from the expression stack without if there
+        are no entries. It also fixes a similar issue with else
+        blocks where a user might try to put an else on the top level
+        of a function.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::popExpressionStack):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::setErrorMessage):
+
 2016-11-02  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Enable creation of ReadableByteStreamController

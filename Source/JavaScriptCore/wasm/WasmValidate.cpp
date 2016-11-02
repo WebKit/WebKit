@@ -104,6 +104,7 @@ public:
 
     void dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack);
 
+    void setErrorMessage(String&& message) { ASSERT(m_errorMessage.isNull()); m_errorMessage = WTFMove(message); }
     String errorMessage() const { return m_errorMessage; }
     Validate(ExpressionType returnType)
         : m_returnType(returnType)
