@@ -1,3 +1,22 @@
+2016-11-02  Saam Barati  <sbarati@apple.com>
+
+        Allocation elimination of rest parameter doesn't take into account indexed properties on Array.prototype/Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=164301
+
+        Reviewed by Geoffrey Garen.
+
+        We weren't taking into account indexed properties on the __proto__
+        of the rest parameter. This made the code for doing out of bound
+        accesses incorrect since it just assumed it's safe for the result of
+        an out of bound access to be undefined. This broke the semantics
+        of JS code when there was an indexed property on the Array.prototype
+        or Object.prototype.
+
+        This patch makes sure we set up the proper watchpoints for making
+        sure out of bound accesses are safe to return undefined.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2016-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         One file per class for CodeBlock.h/.cpp

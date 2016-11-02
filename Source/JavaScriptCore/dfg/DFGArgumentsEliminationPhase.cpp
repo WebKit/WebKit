@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayPrototype.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "ClonedArguments.h"
 #include "DFGArgumentsUtilities.h"
@@ -154,13 +155,25 @@ private:
                 if (mode.isInBounds())
                     break;
                 
-                // If we're out-of-bounds then we proceed only if the object prototype is
-                // sane (i.e. doesn't have indexed properties).
+                // If we're out-of-bounds then we proceed only if the prototype chain
+                // for the allocation is sane (i.e. doesn't have indexed properties).
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                if (globalObject->objectPrototypeIsSane()) {
-                    m_graph.watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
-                    if (globalObject->objectPrototypeIsSane())
+                InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
+                if (edge->op() == CreateRest) {
+                    InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
+                    if (arrayPrototypeTransition.isStillValid() 
+                        && objectPrototypeTransition.isStillValid() 
+                        && globalObject->arrayPrototypeChainIsSane()) {
+                        m_graph.watchpoints().addLazily(arrayPrototypeTransition);
+                        m_graph.watchpoints().addLazily(objectPrototypeTransition);
                         break;
+                    }
+                } else {
+                    if (objectPrototypeTransition.isStillValid() 
+                        && globalObject->objectPrototypeIsSane()) {
+                        m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                        break;
+                    }
                 }
                 escape(edge, source);
                 break;
