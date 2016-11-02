@@ -1,3 +1,16 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Plugin process crash in WebKit::NetscapePluginX11::visibilityDidChange with evince browser plugin
+        https://bugs.webkit.org/show_bug.cgi?id=164204
+
+        Reviewed by Michael Catanzaro.
+
+        Check the platform plugin widget is embedded before trying to get its socket window.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePluginX11::geometryDidChange):
+        (WebKit::NetscapePluginX11::visibilityDidChange):
+
 2016-11-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn the Input Events runtime flag on by default
