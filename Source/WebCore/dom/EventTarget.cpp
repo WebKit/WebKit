@@ -131,7 +131,8 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
         eventTargetData()->eventListenerMap.replace(eventType, *existingListener, listener.releaseNonNull(), { });
         return true;
     }
-    return addEventListener(eventType, listener.releaseNonNull());}
+    return addEventListener(eventType, listener.releaseNonNull());
+}
 
 EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
 {

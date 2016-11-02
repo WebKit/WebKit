@@ -52,6 +52,7 @@
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
 #include "SuperSampler.h"
+#include "StopIfNecessaryTimer.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "VM.h"
@@ -189,6 +190,41 @@ private:
 
 } // anonymous namespace
 
+class Heap::Thread : public AutomaticThread {
+public:
+    Thread(const LockHolder& locker, Heap& heap)
+        : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition)
+        , m_heap(heap)
+    {
+    }
+    
+protected:
+    PollResult poll(const LockHolder& locker) override
+    {
+        if (m_heap.m_threadShouldStop) {
+            m_heap.notifyThreadStopping(locker);
+            return PollResult::Stop;
+        }
+        if (m_heap.shouldCollectInThread(locker))
+            return PollResult::Work;
+        return PollResult::Wait;
+    }
+    
+    WorkResult work() override
+    {
+        m_heap.collectInThread();
+        return WorkResult::Continue;
+    }
+    
+    void threadDidStart() override
+    {
+        WTF::registerGCThread(GCThreadType::Main);
+    }
+
+private:
+    Heap& m_heap;
+};
+
 Heap::Heap(VM* vm, HeapType heapType)
     : m_heapType(heapType)
     , m_ramSize(Options::forceRAMSize() ? Options::forceRAMSize() : ramSize())
@@ -224,15 +260,23 @@ Heap::Heap(VM* vm, HeapType heapType)
 #endif // USE(CF)
     , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::createEdenTimer(this))
-    , m_sweeper(std::make_unique<IncrementalSweeper>(this))
+    , m_sweeper(adoptRef(new IncrementalSweeper(this)))
+    , m_stopIfNecessaryTimer(adoptRef(new StopIfNecessaryTimer(vm)))
     , m_deferralDepth(0)
 #if USE(FOUNDATION)
     , m_delayedReleaseRecursionCount(0)
 #endif
     , m_helperClient(&heapHelperPool())
+    , m_threadLock(Box<Lock>::create())
+    , m_threadCondition(AutomaticThreadCondition::create())
 {
+    m_worldState.store(0);
+    
     if (Options::verifyHeap())
         m_verifier = std::make_unique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
+    
+    LockHolder locker(*m_threadLock);
+    m_thread = adoptRef(new Thread(locker, *this));
 }
 
 Heap::~Heap()
@@ -251,9 +295,28 @@ bool Heap::isPagedOut(double deadline)
 void Heap::lastChanceToFinalize()
 {
     RELEASE_ASSERT(!m_vm->entryScope);
-    RELEASE_ASSERT(!m_collectionScope);
     RELEASE_ASSERT(m_mutatorState == MutatorState::Running);
-
+    
+    // Carefully bring the thread down. We need to use waitForCollector() until we know that there
+    // won't be any other collections.
+    bool stopped = false;
+    {
+        LockHolder locker(*m_threadLock);
+        stopped = m_thread->tryStop(locker);
+        if (!stopped) {
+            m_threadShouldStop = true;
+            m_threadCondition->notifyOne(locker);
+        }
+    }
+    if (!stopped) {
+        waitForCollector(
+            [&] (const LockHolder&) -> bool {
+                return m_threadIsStopping;
+            });
+        // It's now safe to join the thread, since we know that there will not be any more collections.
+        m_thread->join();
+    }
+    
     m_arrayBuffers.lastChanceToFinalize();
     m_codeBlocks->lastChanceToFinalize();
     m_objectSpace.lastChanceToFinalize();
@@ -381,12 +444,10 @@ void Heap::completeAllJITPlans()
 #endif
 }
 
-void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
+void Heap::markRoots(double gcStartTime)
 {
     TimingScope markRootsTimingScope(*this, "Heap::markRoots");
     
-    ASSERT(isValidThreadState(m_vm));
-
     HeapRootVisitor heapRootVisitor(m_slotVisitor);
     
     {
@@ -459,7 +520,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
             TimingScope preConvergenceTimingScope(*this, "Heap::markRoots conservative scan");
             ConservativeRoots conservativeRoots(*this);
             SuperSamplerScope superSamplerScope(false);
-            gatherStackRoots(conservativeRoots, stackOrigin, stackTop, calleeSavedRegisters);
+            gatherStackRoots(conservativeRoots);
             gatherJSStackRoots(conservativeRoots);
             gatherScratchBufferRoots(conservativeRoots);
             visitConservativeRoots(conservativeRoots);
@@ -499,10 +560,10 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     endMarking();
 }
 
-void Heap::gatherStackRoots(ConservativeRoots& roots, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
+void Heap::gatherStackRoots(ConservativeRoots& roots)
 {
     m_jitStubRoutines->clearMarks();
-    m_machineThreads.gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks, stackOrigin, stackTop, calleeSavedRegisters);
+    m_machineThreads.gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks);
 }
 
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)
@@ -566,8 +627,8 @@ void Heap::visitConservativeRoots(ConservativeRoots& roots)
 void Heap::visitCompilerWorklistWeakReferences()
 {
 #if ENABLE(DFG_JIT)
-    for (auto worklist : m_suspendedCompilerWorklists)
-        worklist->visitWeakReferences(m_slotVisitor);
+    for (unsigned i = DFG::numberOfWorklists(); i--;)
+        DFG::existingWorklistForIndex(i).visitWeakReferences(m_slotVisitor);
 
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("DFG Worklists:\n", m_slotVisitor);
@@ -577,8 +638,8 @@ void Heap::visitCompilerWorklistWeakReferences()
 void Heap::removeDeadCompilerWorklistEntries()
 {
 #if ENABLE(DFG_JIT)
-    for (auto worklist : m_suspendedCompilerWorklists)
-        worklist->removeDeadPlans(*m_vm);
+    for (unsigned i = DFG::numberOfWorklists(); i--;)
+        DFG::existingWorklistForIndex(i).removeDeadPlans(*m_vm);
 #endif
 }
 
@@ -908,7 +969,7 @@ void Heap::clearUnmarkedExecutables()
 void Heap::deleteUnmarkedCompiledCode()
 {
     clearUnmarkedExecutables();
-    m_codeBlocks->deleteUnmarkedAndUnreferenced(*m_collectionScope);
+    m_codeBlocks->deleteUnmarkedAndUnreferenced(*m_lastCollectionScope);
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 
@@ -928,11 +989,10 @@ void Heap::addToRememberedSet(const JSCell* cell)
 
 void Heap::collectAllGarbage()
 {
-    SuperSamplerScope superSamplerScope(false);
     if (!m_isSafeToCollect)
         return;
-
-    collectWithoutAnySweep(CollectionScope::Full);
+    
+    collectSync(CollectionScope::Full);
 
     DeferGCForAWhile deferGC(*this);
     if (UNLIKELY(Options::useImmortalObjects()))
@@ -955,34 +1015,74 @@ void Heap::collectAllGarbage()
     sweepAllLogicallyEmptyWeakBlocks();
 }
 
-void Heap::collect(Optional<CollectionScope> scope)
+void Heap::collectAsync(Optional<CollectionScope> scope)
 {
-    SuperSamplerScope superSamplerScope(false);
+    if (!m_isSafeToCollect)
+        return;
+
+    bool alreadyRequested = false;
+    {
+        LockHolder locker(*m_threadLock);
+        for (Optional<CollectionScope> request : m_requests) {
+            if (scope) {
+                if (scope == CollectionScope::Eden) {
+                    alreadyRequested = true;
+                    break;
+                } else {
+                    RELEASE_ASSERT(scope == CollectionScope::Full);
+                    if (request == CollectionScope::Full) {
+                        alreadyRequested = true;
+                        break;
+                    }
+                }
+            } else {
+                if (!request || request == CollectionScope::Full) {
+                    alreadyRequested = true;
+                    break;
+                }
+            }
+        }
+    }
+    if (alreadyRequested)
+        return;
+
+    requestCollection(scope);
+}
+
+void Heap::collectSync(Optional<CollectionScope> scope)
+{
     if (!m_isSafeToCollect)
         return;
     
-    collectWithoutAnySweep(scope);
+    waitForCollection(requestCollection(scope));
 }
 
-NEVER_INLINE void Heap::collectWithoutAnySweep(Optional<CollectionScope> scope)
+bool Heap::shouldCollectInThread(const LockHolder&)
 {
-    void* stackTop;
-    ALLOCATE_AND_GET_REGISTER_STATE(registers);
-
-    collectImpl(scope, wtfThreadData().stack().origin(), &stackTop, registers);
-
-    sanitizeStackForVM(m_vm);
+    RELEASE_ASSERT(m_requests.isEmpty() == (m_lastServedTicket == m_lastGrantedTicket));
+    RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
+    
+    return !m_requests.isEmpty();
 }
 
-NEVER_INLINE void Heap::collectImpl(Optional<CollectionScope> scope, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
+void Heap::collectInThread()
 {
+    Optional<CollectionScope> scope;
+    {
+        LockHolder locker(*m_threadLock);
+        RELEASE_ASSERT(!m_requests.isEmpty());
+        scope = m_requests.first();
+    }
+    
     SuperSamplerScope superSamplerScope(false);
-    TimingScope collectImplTimingScope(scope, "Heap::collectImpl");
+    TimingScope collectImplTimingScope(scope, "Heap::collectInThread");
     
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
 #endif
     
+    stopTheWorld();
+
     double before = 0;
     if (Options::logGC()) {
         dataLog("[GC: ", capacity() / 1024, " kb ");
@@ -999,87 +1099,401 @@ NEVER_INLINE void Heap::collectImpl(Optional<CollectionScope> scope, void* stack
 #if ENABLE(JIT)
     {
         DeferGCForAWhile awhile(*this);
-        JITWorklist::instance()->completeAllForVM(*m_vm);
+        if (JITWorklist::instance()->completeAllForVM(*m_vm))
+            setGCDidJIT();
     }
 #endif // ENABLE(JIT)
     
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
     
-    RELEASE_ASSERT(!m_deferralDepth);
-    ASSERT(vm()->currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());
     ASSERT(m_isSafeToCollect);
-    RELEASE_ASSERT(!m_collectionScope);
-    
-    suspendCompilerThreads();
-    willStartCollection(scope);
-    {
-        HelpingGCScope helpingHeapScope(*this);
-        
-        collectImplTimingScope.setScope(*this);
-        
-        gcStartTime = WTF::monotonicallyIncreasingTime();
-        if (m_verifier) {
-            // Verify that live objects from the last GC cycle haven't been corrupted by
-            // mutators before we begin this new GC cycle.
-            m_verifier->verify(HeapVerifier::Phase::BeforeGC);
-            
-            m_verifier->initializeGCCycle();
-            m_verifier->gatherLiveObjects(HeapVerifier::Phase::BeforeMarking);
-        }
-        
-        flushOldStructureIDTables();
-        stopAllocation();
-        prepareForMarking();
-        flushWriteBarrierBuffer();
-        
-        if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
-            cache->clear();
-        
-        markRoots(gcStartTime, stackOrigin, stackTop, calleeSavedRegisters);
-        
-        if (m_verifier) {
-            m_verifier->gatherLiveObjects(HeapVerifier::Phase::AfterMarking);
-            m_verifier->verify(HeapVerifier::Phase::AfterMarking);
-        }
-        
-        if (vm()->typeProfiler())
-            vm()->typeProfiler()->invalidateTypeSetCache();
-        
-        reapWeakHandles();
-        pruneStaleEntriesFromWeakGCMaps();
-        sweepArrayBuffers();
-        snapshotUnswept();
-        finalizeUnconditionalFinalizers();
-        removeDeadCompilerWorklistEntries();
-        deleteUnmarkedCompiledCode();
-        deleteSourceProviderCaches();
-        
-        notifyIncrementalSweeper();
-        m_codeBlocks->writeBarrierCurrentlyExecuting(this);
-        m_codeBlocks->clearCurrentlyExecuting();
-        
-        prepareForAllocation();
-        updateAllocationLimits();
+    if (m_collectionScope) {
+        dataLog("Collection scope already set during GC: ", m_collectionScope, "\n");
+        RELEASE_ASSERT_NOT_REACHED();
     }
+    
+    willStartCollection(scope);
+    collectImplTimingScope.setScope(*this);
+        
+    gcStartTime = WTF::monotonicallyIncreasingTime();
+    if (m_verifier) {
+        // Verify that live objects from the last GC cycle haven't been corrupted by
+        // mutators before we begin this new GC cycle.
+        m_verifier->verify(HeapVerifier::Phase::BeforeGC);
+            
+        m_verifier->initializeGCCycle();
+        m_verifier->gatherLiveObjects(HeapVerifier::Phase::BeforeMarking);
+    }
+        
+    flushOldStructureIDTables();
+    stopAllocation();
+    prepareForMarking();
+    flushWriteBarrierBuffer();
+        
+    if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
+        cache->clear();
+        
+    markRoots(gcStartTime);
+        
+    if (m_verifier) {
+        m_verifier->gatherLiveObjects(HeapVerifier::Phase::AfterMarking);
+        m_verifier->verify(HeapVerifier::Phase::AfterMarking);
+    }
+        
+    if (vm()->typeProfiler())
+        vm()->typeProfiler()->invalidateTypeSetCache();
+        
+    reapWeakHandles();
+    pruneStaleEntriesFromWeakGCMaps();
+    sweepArrayBuffers();
+    snapshotUnswept();
+    finalizeUnconditionalFinalizers();
+    removeDeadCompilerWorklistEntries();
+    notifyIncrementalSweeper();
+        
+    m_codeBlocks->writeBarrierCurrentlyExecuting(this);
+    m_codeBlocks->clearCurrentlyExecuting();
+        
+    prepareForAllocation();
+    updateAllocationLimits();
+
     didFinishCollection(gcStartTime);
-    resumeCompilerThreads();
-    sweepLargeAllocations();
     
     if (m_verifier) {
         m_verifier->trimDeadObjects();
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
 
+    if (false) {
+        dataLog("Heap state after GC:\n");
+        m_objectSpace.dumpBits();
+    }
+    
     if (Options::logGC()) {
         double after = currentTimeMS();
         dataLog(after - before, " ms]\n");
     }
     
-    if (false) {
-        dataLog("Heap state after GC:\n");
-        m_objectSpace.dumpBits();
+    {
+        LockHolder locker(*m_threadLock);
+        m_requests.removeFirst();
+        m_lastServedTicket++;
+        clearMutatorWaiting();
     }
+    ParkingLot::unparkAll(&m_worldState);
+
+    setNeedFinalize();
+    resumeTheWorld();
+}
+
+void Heap::stopTheWorld()
+{
+    RELEASE_ASSERT(!m_collectorBelievesThatTheWorldIsStopped);
+    waitWhileNeedFinalize();
+    stopTheMutator();
+    suspendCompilerThreads();
+    m_collectorBelievesThatTheWorldIsStopped = true;
+}
+
+void Heap::resumeTheWorld()
+{
+    RELEASE_ASSERT(m_collectorBelievesThatTheWorldIsStopped);
+    m_collectorBelievesThatTheWorldIsStopped = false;
+    resumeCompilerThreads();
+    resumeTheMutator();
+}
+
+void Heap::stopTheMutator()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        if ((oldState & stoppedBit)
+            && (oldState & shouldStopBit))
+            return;
+        
+        // Note: We could just have the mutator stop in-place like we do when !hasAccessBit. We could
+        // switch to that if it turned out to be less confusing, but then it would not give the
+        // mutator the opportunity to react to the world being stopped.
+        if (oldState & mutatorWaitingBit) {
+            if (m_worldState.compareExchangeWeak(oldState, oldState & ~mutatorWaitingBit))
+                ParkingLot::unparkAll(&m_worldState);
+            continue;
+        }
+        
+        if (!(oldState & hasAccessBit)
+            || (oldState & stoppedBit)) {
+            // We can stop the world instantly.
+            if (m_worldState.compareExchangeWeak(oldState, oldState | stoppedBit | shouldStopBit))
+                return;
+            continue;
+        }
+        
+        RELEASE_ASSERT(oldState & hasAccessBit);
+        RELEASE_ASSERT(!(oldState & stoppedBit));
+        m_worldState.compareExchangeStrong(oldState, oldState | shouldStopBit);
+        m_stopIfNecessaryTimer->scheduleSoon();
+        ParkingLot::compareAndPark(&m_worldState, oldState | shouldStopBit);
+    }
+}
+
+void Heap::resumeTheMutator()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        RELEASE_ASSERT(oldState & shouldStopBit);
+        
+        if (!(oldState & hasAccessBit)) {
+            // We can resume the world instantly.
+            if (m_worldState.compareExchangeWeak(oldState, oldState & ~(stoppedBit | shouldStopBit))) {
+                ParkingLot::unparkAll(&m_worldState);
+                return;
+            }
+            continue;
+        }
+        
+        // We can tell the world to resume.
+        if (m_worldState.compareExchangeWeak(oldState, oldState & ~shouldStopBit)) {
+            ParkingLot::unparkAll(&m_worldState);
+            return;
+        }
+    }
+}
+
+void Heap::stopIfNecessarySlow()
+{
+    while (stopIfNecessarySlow(m_worldState.load())) { }
+    handleGCDidJIT();
+}
+
+bool Heap::stopIfNecessarySlow(unsigned oldState)
+{
+    RELEASE_ASSERT(oldState & hasAccessBit);
+    
+    if (handleNeedFinalize(oldState))
+        return true;
+    
+    if (!(oldState & shouldStopBit)) {
+        if (!(oldState & stoppedBit))
+            return false;
+        m_worldState.compareExchangeStrong(oldState, oldState & ~stoppedBit);
+        return true;
+    }
+    
+    m_worldState.compareExchangeStrong(oldState, oldState | stoppedBit);
+    ParkingLot::unparkAll(&m_worldState);
+    ParkingLot::compareAndPark(&m_worldState, oldState | stoppedBit);
+    return true;
+}
+
+template<typename Func>
+void Heap::waitForCollector(const Func& func)
+{
+    for (;;) {
+        bool done;
+        {
+            LockHolder locker(*m_threadLock);
+            done = func(locker);
+            if (!done) {
+                setMutatorWaiting();
+                // At this point, the collector knows that we intend to wait, and he will clear the
+                // waiting bit and then unparkAll when the GC cycle finishes. Clearing the bit
+                // prevents us from parking except if there is also stop-the-world. Unparking after
+                // clearing means that if the clearing happens after we park, then we will unpark.
+            }
+        }
+
+        // If we're in a stop-the-world scenario, we need to wait for that even if done is true.
+        unsigned oldState = m_worldState.load();
+        if (stopIfNecessarySlow(oldState))
+            continue;
+        
+        if (done) {
+            clearMutatorWaiting(); // Clean up just in case.
+            return;
+        }
+        
+        // If mutatorWaitingBit is still set then we want to wait.
+        ParkingLot::compareAndPark(&m_worldState, oldState | mutatorWaitingBit);
+    }
+}
+
+void Heap::acquireAccessSlow()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        RELEASE_ASSERT(!(oldState & hasAccessBit));
+        
+        if (oldState & shouldStopBit) {
+            RELEASE_ASSERT(oldState & stoppedBit);
+            // Wait until we're not stopped anymore.
+            ParkingLot::compareAndPark(&m_worldState, oldState);
+            continue;
+        }
+        
+        RELEASE_ASSERT(!(oldState & stoppedBit));
+        unsigned newState = oldState | hasAccessBit;
+        if (m_worldState.compareExchangeWeak(oldState, newState)) {
+            handleGCDidJIT();
+            handleNeedFinalize();
+            return;
+        }
+    }
+}
+
+void Heap::releaseAccessSlow()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        RELEASE_ASSERT(oldState & hasAccessBit);
+        RELEASE_ASSERT(!(oldState & stoppedBit));
+        
+        if (handleNeedFinalize(oldState))
+            continue;
+        
+        if (oldState & shouldStopBit) {
+            unsigned newState = (oldState & ~hasAccessBit) | stoppedBit;
+            if (m_worldState.compareExchangeWeak(oldState, newState)) {
+                ParkingLot::unparkAll(&m_worldState);
+                return;
+            }
+            continue;
+        }
+        
+        RELEASE_ASSERT(!(oldState & shouldStopBit));
+        
+        if (m_worldState.compareExchangeWeak(oldState, oldState & ~hasAccessBit))
+            return;
+    }
+}
+
+bool Heap::handleGCDidJIT(unsigned oldState)
+{
+    RELEASE_ASSERT(oldState & hasAccessBit);
+    if (!(oldState & gcDidJITBit))
+        return false;
+    if (m_worldState.compareExchangeWeak(oldState, oldState & ~gcDidJITBit)) {
+        WTF::crossModifyingCodeFence();
+        return true;
+    }
+    return true;
+}
+
+bool Heap::handleNeedFinalize(unsigned oldState)
+{
+    RELEASE_ASSERT(oldState & hasAccessBit);
+    if (!(oldState & needFinalizeBit))
+        return false;
+    if (m_worldState.compareExchangeWeak(oldState, oldState & ~needFinalizeBit)) {
+        finalize();
+        // Wake up anyone waiting for us to finalize. Note that they may have woken up already, in
+        // which case they would be waiting for us to release heap access.
+        ParkingLot::unparkAll(&m_worldState);
+        return true;
+    }
+    return true;
+}
+
+void Heap::handleGCDidJIT()
+{
+    while (handleGCDidJIT(m_worldState.load())) { }
+}
+
+void Heap::handleNeedFinalize()
+{
+    while (handleNeedFinalize(m_worldState.load())) { }
+}
+
+void Heap::setGCDidJIT()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        RELEASE_ASSERT(oldState & stoppedBit);
+        if (m_worldState.compareExchangeWeak(oldState, oldState | gcDidJITBit))
+            return;
+    }
+}
+
+void Heap::setNeedFinalize()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        if (m_worldState.compareExchangeWeak(oldState, oldState | needFinalizeBit)) {
+            m_stopIfNecessaryTimer->scheduleSoon();
+            return;
+        }
+    }
+}
+
+void Heap::waitWhileNeedFinalize()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        if (!(oldState & needFinalizeBit)) {
+            // This means that either there was no finalize request or the main thread will finalize
+            // with heap access, so a subsequent call to stopTheWorld() will return only when
+            // finalize finishes.
+            return;
+        }
+        ParkingLot::compareAndPark(&m_worldState, oldState);
+    }
+}
+
+unsigned Heap::setMutatorWaiting()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        unsigned newState = oldState | mutatorWaitingBit;
+        if (m_worldState.compareExchangeWeak(oldState, newState))
+            return newState;
+    }
+}
+
+void Heap::clearMutatorWaiting()
+{
+    for (;;) {
+        unsigned oldState = m_worldState.load();
+        if (m_worldState.compareExchangeWeak(oldState, oldState & ~mutatorWaitingBit))
+            return;
+    }
+}
+
+void Heap::notifyThreadStopping(const LockHolder&)
+{
+    m_threadIsStopping = true;
+    clearMutatorWaiting();
+    ParkingLot::unparkAll(&m_worldState);
+}
+
+void Heap::finalize()
+{
+    HelpingGCScope helpingGCScope(*this);
+    deleteUnmarkedCompiledCode();
+    deleteSourceProviderCaches();
+    sweepLargeAllocations();
+}
+
+Heap::Ticket Heap::requestCollection(Optional<CollectionScope> scope)
+{
+    stopIfNecessary();
+    
+    ASSERT(vm()->currentThreadIsHoldingAPILock());
+    RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());
+    
+    sanitizeStackForVM(m_vm);
+
+    LockHolder locker(*m_threadLock);
+    m_requests.append(scope);
+    m_lastGrantedTicket++;
+    m_threadCondition->notifyOne(locker);
+    return m_lastGrantedTicket;
+}
+
+void Heap::waitForCollection(Ticket ticket)
+{
+    waitForCollector(
+        [&] (const LockHolder&) -> bool {
+            return m_lastServedTicket >= ticket;
+        });
 }
 
 void Heap::sweepLargeAllocations()
@@ -1090,13 +1504,11 @@ void Heap::sweepLargeAllocations()
 void Heap::suspendCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
-    ASSERT(m_suspendedCompilerWorklists.isEmpty());
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
-            m_suspendedCompilerWorklists.append(worklist);
-            worklist->suspendAllThreads();
-        }
-    }
+    // We ensure the worklists so that it's not possible for the mutator to start a new worklist
+    // after we have suspended the ones that he had started before. That's not very expensive since
+    // the worklists use AutomaticThreads anyway.
+    for (unsigned i = DFG::numberOfWorklists(); i--;)
+        DFG::ensureWorklistForIndex(i).suspendAllThreads();
 #endif
 }
 
@@ -1320,6 +1732,7 @@ void Heap::didFinishCollection(double gcStartTime)
     }
 
     RELEASE_ASSERT(m_collectionScope);
+    m_lastCollectionScope = m_collectionScope;
     m_collectionScope = Nullopt;
 
     for (auto* observer : m_observers)
@@ -1329,20 +1742,9 @@ void Heap::didFinishCollection(double gcStartTime)
 void Heap::resumeCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
-    for (auto worklist : m_suspendedCompilerWorklists)
-        worklist->resumeAllThreads();
-    m_suspendedCompilerWorklists.clear();
+    for (unsigned i = DFG::numberOfWorklists(); i--;)
+        DFG::existingWorklistForIndex(i).resumeAllThreads();
 #endif
-}
-
-void Heap::setFullActivityCallback(PassRefPtr<FullGCActivityCallback> activityCallback)
-{
-    m_fullActivityCallback = activityCallback;
-}
-
-void Heap::setEdenActivityCallback(PassRefPtr<EdenGCActivityCallback> activityCallback)
-{
-    m_edenActivityCallback = activityCallback;
 }
 
 GCActivityCallback* Heap::fullActivityCallback()
@@ -1353,11 +1755,6 @@ GCActivityCallback* Heap::fullActivityCallback()
 GCActivityCallback* Heap::edenActivityCallback()
 {
     return m_edenActivityCallback.get();
-}
-
-void Heap::setIncrementalSweeper(std::unique_ptr<IncrementalSweeper> sweeper)
-{
-    m_sweeper = WTFMove(sweeper);
 }
 
 IncrementalSweeper* Heap::sweeper()
@@ -1546,7 +1943,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
     addToRememberedSet(from);
 }
 
-bool Heap::shouldCollect()
+bool Heap::canCollect()
 {
     if (isDeferred())
         return false;
@@ -1554,9 +1951,19 @@ bool Heap::shouldCollect()
         return false;
     if (collectionScope() || mutatorState() == MutatorState::HelpingGC)
         return false;
+    return true;
+}
+
+bool Heap::shouldCollectHeuristic()
+{
     if (Options::gcMaxHeapSize())
         return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize();
     return m_bytesAllocatedThisCycle > m_maxEdenSize;
+}
+
+bool Heap::shouldCollect()
+{
+    return canCollect() && shouldCollectHeuristic();
 }
 
 bool Heap::isCurrentThreadBusy()
@@ -1598,13 +2005,22 @@ void Heap::reportExternalMemoryVisited(CellState oldState, size_t size)
 
 bool Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 {
-    if (!shouldCollect())
+    if (!canCollect())
+        return false;
+    
+    if (deferralContext) {
+        deferralContext->m_shouldGC |=
+            !!(m_worldState.load() & (shouldStopBit | needFinalizeBit | gcDidJITBit));
+    } else
+        stopIfNecessary();
+    
+    if (!shouldCollectHeuristic())
         return false;
 
     if (deferralContext)
         deferralContext->m_shouldGC = true;
     else
-        collect();
+        collectAsync();
     return true;
 }
 
@@ -1614,7 +2030,7 @@ void Heap::collectAccordingToDeferGCProbability()
         return;
 
     if (randomNumber() < Options::deferGCProbability()) {
-        collect();
+        collectAsync();
         return;
     }
 
@@ -1659,5 +2075,15 @@ void Heap::didFreeBlock(size_t capacity)
     UNUSED_PARAM(capacity);
 #endif
 }
+
+#if USE(CF)
+void Heap::setRunLoop(CFRunLoopRef runLoop)
+{
+    m_runLoop = runLoop;
+    m_fullActivityCallback->setRunLoop(runLoop);
+    m_edenActivityCallback->setRunLoop(runLoop);
+    m_sweeper->setRunLoop(runLoop);
+}
+#endif // USE(CF)
 
 } // namespace JSC

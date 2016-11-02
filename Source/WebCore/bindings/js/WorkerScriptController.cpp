@@ -51,6 +51,7 @@ WorkerScriptController::WorkerScriptController(WorkerGlobalScope* workerGlobalSc
     , m_workerGlobalScope(workerGlobalScope)
     , m_workerGlobalScopeWrapper(*m_vm)
 {
+    m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
     m_vm->ensureWatchdog();
     initNormalWorldClientData(m_vm.get());
 }
@@ -186,6 +187,16 @@ void WorkerScriptController::disableEval(const String& errorMessage)
     JSLockHolder lock(vm());
 
     m_workerGlobalScopeWrapper->setEvalEnabled(false, errorMessage);
+}
+
+void WorkerScriptController::releaseHeapAccess()
+{
+    m_vm->heap.releaseAccess();
+}
+
+void WorkerScriptController::acquireHeapAccess()
+{
+    m_vm->heap.acquireAccess();
 }
 
 void WorkerScriptController::attachDebugger(JSC::Debugger* debugger)

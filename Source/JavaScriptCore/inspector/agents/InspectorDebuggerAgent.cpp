@@ -455,6 +455,7 @@ void InspectorDebuggerAgent::resolveBreakpoint(const Script& script, JSC::Breakp
 
 void InspectorDebuggerAgent::setBreakpoint(JSC::Breakpoint& breakpoint, bool& existing)
 {
+    JSC::JSLockHolder locker(m_scriptDebugServer.vm());
     m_scriptDebugServer.setBreakpoint(breakpoint, existing);
 }
 
@@ -469,6 +470,7 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString&, const String& breakp
         for (auto& action : breakpointActions)
             m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action));
 
+        JSC::JSLockHolder locker(m_scriptDebugServer.vm());
         m_scriptDebugServer.removeBreakpointActions(breakpointID);
         m_scriptDebugServer.removeBreakpoint(breakpointID);
     }
@@ -560,6 +562,7 @@ void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispat
 
     m_breakReason = breakReason;
     m_breakAuxData = WTFMove(data);
+    JSC::JSLockHolder locker(m_scriptDebugServer.vm());
     m_scriptDebugServer.setPauseOnNextStatement(true);
 }
 
@@ -881,9 +884,12 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
 
 void InspectorDebuggerAgent::clearDebuggerBreakpointState()
 {
-    m_scriptDebugServer.clearBreakpointActions();
-    m_scriptDebugServer.clearBreakpoints();
-    m_scriptDebugServer.clearBlacklist();
+    {
+        JSC::JSLockHolder holder(m_scriptDebugServer.vm());
+        m_scriptDebugServer.clearBreakpointActions();
+        m_scriptDebugServer.clearBreakpoints();
+        m_scriptDebugServer.clearBlacklist();
+    }
 
     m_pausedScriptState = nullptr;
     m_currentCallStack = { };

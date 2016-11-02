@@ -165,7 +165,7 @@ void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
 
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
-    exec->vm().heap.collect(CollectionScope::Eden);
+    exec->vm().heap.collectSync(CollectionScope::Eden);
 }
 
 void JSDisableGCTimer(void)

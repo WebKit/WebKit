@@ -34,7 +34,6 @@ class Heap;
 class MarkedAllocator;
 
 class IncrementalSweeper : public HeapTimer {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
 

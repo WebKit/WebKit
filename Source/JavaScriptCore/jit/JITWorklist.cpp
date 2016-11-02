@@ -158,8 +158,9 @@ JITWorklist::~JITWorklist()
     UNREACHABLE_FOR_PLATFORM();
 }
 
-void JITWorklist::completeAllForVM(VM& vm)
+bool JITWorklist::completeAllForVM(VM& vm)
 {
+    bool result = false;
     DeferGC deferGC(vm.heap);
     for (;;) {
         Vector<RefPtr<Plan>, 32> myPlans;
@@ -186,12 +187,14 @@ void JITWorklist::completeAllForVM(VM& vm)
                 // If we don't find plans, then we're either done or we need to wait, depending on
                 // whether we found some unfinished plans.
                 if (!didFindUnfinishedPlan)
-                    return;
+                    return result;
                 
                 m_condition->wait(*m_lock);
             }
         }
         
+        RELEASE_ASSERT(!myPlans.isEmpty());
+        result = true;
         finalizePlans(myPlans);
     }
 }

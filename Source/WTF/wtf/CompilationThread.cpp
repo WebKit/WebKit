@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,13 +33,13 @@
 
 namespace WTF {
 
-static ThreadSpecific<bool>* s_isCompilationThread;
+static ThreadSpecific<bool, CanBeGCThread::True>* s_isCompilationThread;
 
 static void initializeCompilationThreads()
 {
     static std::once_flag initializeCompilationThreadsOnceFlag;
     std::call_once(initializeCompilationThreadsOnceFlag, []{
-        s_isCompilationThread = new ThreadSpecific<bool>();
+        s_isCompilationThread = new ThreadSpecific<bool, CanBeGCThread::True>();
     });
 }
 

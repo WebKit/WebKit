@@ -35,6 +35,7 @@ extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
 #include <windows.h>
+#include <intrin.h>
 #endif
 
 namespace WTF {
@@ -53,6 +54,8 @@ struct Atomic {
     // is usually not high enough to justify the risk.
 
     ALWAYS_INLINE T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
+    
+    ALWAYS_INLINE T loadRelaxed() const { return load(std::memory_order_relaxed); }
 
     ALWAYS_INLINE void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
 
@@ -200,22 +203,24 @@ inline void arm_dmb_st()
     asm volatile("dmb ishst" ::: "memory");
 }
 
+inline void arm_isb()
+{
+    asm volatile("isb" ::: "memory");
+}
+
 inline void loadLoadFence() { arm_dmb(); }
 inline void loadStoreFence() { arm_dmb(); }
 inline void storeLoadFence() { arm_dmb(); }
 inline void storeStoreFence() { arm_dmb_st(); }
 inline void memoryBarrierAfterLock() { arm_dmb(); }
 inline void memoryBarrierBeforeUnlock() { arm_dmb(); }
+inline void crossModifyingCodeFence() { arm_isb(); }
 
 #elif CPU(X86) || CPU(X86_64)
 
 inline void x86_ortop()
 {
 #if OS(WINDOWS)
-    // I think that this does the equivalent of a dummy interlocked instruction,
-    // instead of using the 'mfence' instruction, at least according to MSDN. I
-    // know that it is equivalent for our purposes, but it would be good to
-    // investigate if that is actually better.
     MemoryBarrier();
 #elif CPU(X86_64)
     // This has acqrel semantics and is much cheaper than mfence. For exampe, in the JSC GC, using
@@ -226,12 +231,28 @@ inline void x86_ortop()
 #endif
 }
 
+inline void x86_cpuid()
+{
+#if OS(WINDOWS)
+    int info[4];
+    __cpuid(info, 0);
+#else
+    intptr_t a = 0, b, c, d;
+    asm volatile(
+        "cpuid"
+        : "+a"(a), "=b"(b), "=c"(c), "=d"(d)
+        :
+        : "memory");
+#endif
+}
+
 inline void loadLoadFence() { compilerFence(); }
 inline void loadStoreFence() { compilerFence(); }
 inline void storeLoadFence() { x86_ortop(); }
 inline void storeStoreFence() { compilerFence(); }
 inline void memoryBarrierAfterLock() { compilerFence(); }
 inline void memoryBarrierBeforeUnlock() { compilerFence(); }
+inline void crossModifyingCodeFence() { x86_cpuid(); }
 
 #else
 
@@ -241,6 +262,7 @@ inline void storeLoadFence() { std::atomic_thread_fence(std::memory_order_seq_cs
 inline void storeStoreFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 inline void memoryBarrierAfterLock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 inline void memoryBarrierBeforeUnlock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void crossModifyingCodeFence() { std::atomic_thread_fence(std::memory_order_seq_cst); } // Probably not strong enough.
 
 #endif
 

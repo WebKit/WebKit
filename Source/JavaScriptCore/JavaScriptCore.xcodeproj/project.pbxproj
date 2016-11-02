@@ -505,6 +505,9 @@
 		0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */; };
 		0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */; };
 		0F7C5FBA1D8895070044F5E2 /* MarkedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */; };
+		0F7CF94F1DBEEE880098CC12 /* ReleaseHeapAccessScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */; };
+		0F7CF9521DC027D90098CC12 /* StopIfNecessaryTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */; };
+		0F7CF9531DC027DB0098CC12 /* StopIfNecessaryTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */; };
 		0F7CF9561DC1258D0098CC12 /* AtomicsObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */; };
 		0F7CF9571DC125900098CC12 /* AtomicsObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */; };
 		0F7F988B1D9596C500F4F12E /* DFGStoreBarrierClusteringPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */; };
@@ -2864,6 +2867,9 @@
 		0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOpInfo.h; path = dfg/DFGOpInfo.h; sourceTree = "<group>"; };
 		0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlockInlines.h; sourceTree = "<group>"; };
 		0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpaceInlines.h; sourceTree = "<group>"; };
+		0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReleaseHeapAccessScope.h; sourceTree = "<group>"; };
+		0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StopIfNecessaryTimer.cpp; sourceTree = "<group>"; };
+		0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StopIfNecessaryTimer.h; sourceTree = "<group>"; };
 		0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicsObject.cpp; sourceTree = "<group>"; };
 		0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicsObject.h; sourceTree = "<group>"; };
 		0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierClusteringPhase.cpp; path = dfg/DFGStoreBarrierClusteringPhase.cpp; sourceTree = "<group>"; };
@@ -5619,9 +5625,12 @@
 				0FA762021DB9242300B7A2FD /* MutatorState.cpp */,
 				0FA762031DB9242300B7A2FD /* MutatorState.h */,
 				ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */,
+				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */,
+				0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */,
+				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -7832,6 +7841,7 @@
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
 				E3FFC8531DAD7D1500DEA53E /* DOMJITValue.h in Headers */,
 				0F9D36951AE9CC33000D4DFB /* DFGCleanUpPhase.h in Headers */,
+				0F7CF94F1DBEEE880098CC12 /* ReleaseHeapAccessScope.h in Headers */,
 				A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */,
 				0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */,
 				A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */,
@@ -8671,6 +8681,7 @@
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				BC18C4640E16F5CD00B34460 /* SourceCode.h in Headers */,
 				0F7C39FD1C8F659500480151 /* RegExpObjectInlines.h in Headers */,
+				0F7CF9521DC027D90098CC12 /* StopIfNecessaryTimer.h in Headers */,
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
@@ -9906,6 +9917,7 @@
 				7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */,
 				7C184E2217BEE240007CB63A /* JSPromiseConstructor.cpp in Sources */,
 				7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */,
+				0F7CF9531DC027DB0098CC12 /* StopIfNecessaryTimer.cpp in Sources */,
 				7C184E1E17BEE22E007CB63A /* JSPromisePrototype.cpp in Sources */,
 				2A05ABD51961DF2400341750 /* JSPropertyNameEnumerator.cpp in Sources */,
 				E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */,

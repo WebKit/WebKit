@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,9 @@ namespace WebCore {
         void disableEval(const String& errorMessage);
 
         JSC::VM& vm() { return *m_vm; }
+        
+        void releaseHeapAccess();
+        void acquireHeapAccess();
 
         void attachDebugger(JSC::Debugger*);
         void detachDebugger(JSC::Debugger*);

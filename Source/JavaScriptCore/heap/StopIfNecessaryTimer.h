@@ -25,59 +25,20 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
-#include <wtf/AutomaticThread.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include "HeapTimer.h"
 
 namespace JSC {
 
-class CodeBlock;
-class VM;
+class Heap;
 
-class JITWorklist {
-    WTF_MAKE_NONCOPYABLE(JITWorklist);
-    WTF_MAKE_FAST_ALLOCATED;
-
-    class Plan;
-    typedef Vector<RefPtr<Plan>, 32> Plans;
-    
+class StopIfNecessaryTimer : public HeapTimer {
 public:
-    ~JITWorklist();
+    explicit StopIfNecessaryTimer(VM*);
     
-    bool completeAllForVM(VM&); // Return true if any JIT work happened.
-    void poll(VM&);
+    void doWork() override;
     
-    void compileLater(CodeBlock*);
-    
-    void compileNow(CodeBlock*);
-    
-    static JITWorklist* instance();
-    
-private:
-    JITWorklist();
-    
-    class Thread;
-    friend class Thread;
-    
-    void finalizePlans(Plans&);
-    
-    Plans m_queue;
-    Plans m_plans;
-    HashSet<CodeBlock*> m_planned;
-    
-    Box<Lock> m_lock;
-    RefPtr<AutomaticThreadCondition> m_condition; // We use One True Condition for everything because that's easier.
-    RefPtr<AutomaticThread> m_thread;
-    
-    unsigned m_numAvailableThreads { 0 };
+    void scheduleSoon();
 };
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)

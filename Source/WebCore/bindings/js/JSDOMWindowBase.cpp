@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003-2009, 2014 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2009, 2014, 2016 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *  Copyright (c) 2015 Canon Inc. All rights reserved.
  *
@@ -49,8 +49,6 @@
 
 #if PLATFORM(IOS)
 #include "ChromeClient.h"
-#include "WebSafeGCActivityCallbackIOS.h"
-#include "WebSafeIncrementalSweeperIOS.h"
 #endif
 
 using namespace JSC;
@@ -244,13 +242,11 @@ VM& JSDOMWindowBase::commonVM()
     if (!vm) {
         ScriptController::initializeThreading();
         vm = &VM::createLeaked(LargeHeap).leakRef();
+        vm->heap.acquireAccess(); // At any time, we may do things that affect the GC.
 #if !PLATFORM(IOS)
         vm->setExclusiveThread(std::this_thread::get_id());
 #else
-        vm->heap.setFullActivityCallback(WebSafeFullGCActivityCallback::create(&vm->heap));
-        vm->heap.setEdenActivityCallback(WebSafeEdenGCActivityCallback::create(&vm->heap));
-
-        vm->heap.setIncrementalSweeper(std::make_unique<WebSafeIncrementalSweeper>(&vm->heap));
+        vm->heap.setRunLoop(WebThreadRunLoop());
         vm->heap.machineThreads().addCurrentThread();
 #endif
 

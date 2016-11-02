@@ -1,3 +1,25 @@
+2016-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be in a thread
+        https://bugs.webkit.org/show_bug.cgi?id=163562
+
+        Reviewed by Geoffrey Garen and Andreas Kling.
+        
+        This fixes some bugs and adds a few features.
+
+        * wtf/Atomics.h: The GC may do work on behalf of the JIT. If it does, the main thread needs to execute a cross-modifying code fence. This is cpuid on x86 and I believe it's isb on ARM. It would have been an isync on PPC and I think that isb is the ARM equivalent.
+        (WTF::arm_isb):
+        (WTF::crossModifyingCodeFence):
+        (WTF::x86_ortop):
+        (WTF::x86_cpuid):
+        * wtf/AutomaticThread.cpp: I accidentally had AutomaticThreadCondition inherit from ThreadSafeRefCounted<AutomaticThread> [sic]. This never crashed before because all of our prior AutomaticThreadConditions were immortal.
+        (WTF::AutomaticThread::AutomaticThread):
+        (WTF::AutomaticThread::~AutomaticThread):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/MainThread.cpp: Need to allow initializeGCThreads() to be called separately because it's now more than just a debugging thing.
+        (WTF::initializeGCThreads):
+
 2016-11-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Clean wrong comment about compositing on the UI process.

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2009, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2015-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2009 Acision BV. All rights reserved.
  *
@@ -299,16 +299,6 @@ void MachineThreads::removeThreadIfFound(PlatformThread platformThread)
         }
         delete t;
     }
-}
-
-SUPPRESS_ASAN
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters)
-{
-    void* registersBegin = &calleeSavedRegisters;
-    void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&calleeSavedRegisters + 1)));
-    conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
-
-    conservativeRoots.add(stackTop, stackOrigin, jitStubRoutines, codeBlocks);
 }
 
 MachineThreads::Thread::Thread(const PlatformThread& platThread, void* base, void* end)
@@ -1018,10 +1008,8 @@ static void growBuffer(size_t size, void** buffer, size_t* capacity)
     *buffer = fastMalloc(*capacity);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
-    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackOrigin, stackTop, calleeSavedRegisters);
-
     size_t size;
     size_t capacity = 0;
     void* buffer = nullptr;

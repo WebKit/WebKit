@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Jian Li <jianli@chromium.org>
  * Copyright (C) 2012 Patrick Gansterer <paroga@paroga.com>
  *
@@ -42,6 +42,7 @@
 #ifndef WTF_ThreadSpecific_h
 #define WTF_ThreadSpecific_h
 
+#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 
@@ -59,7 +60,12 @@ namespace WTF {
 #define THREAD_SPECIFIC_CALL
 #endif
 
-template<typename T> class ThreadSpecific {
+enum class CanBeGCThread {
+    False,
+    True
+};
+
+template<typename T, CanBeGCThread canBeGCThread = CanBeGCThread::False> class ThreadSpecific {
     WTF_MAKE_NONCOPYABLE(ThreadSpecific);
 public:
     ThreadSpecific();
@@ -86,10 +92,10 @@ private:
     struct Data {
         WTF_MAKE_NONCOPYABLE(Data);
     public:
-        Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
+        Data(T* value, ThreadSpecific<T, canBeGCThread>* owner) : value(value), owner(owner) {}
 
         T* value;
-        ThreadSpecific<T>* owner;
+        ThreadSpecific<T, canBeGCThread>* owner;
     };
 
 #if USE(PTHREADS)
@@ -127,24 +133,28 @@ inline void* threadSpecificGet(ThreadSpecificKey key)
     return pthread_getspecific(key);
 }
 
-template<typename T>
-inline ThreadSpecific<T>::ThreadSpecific()
+template<typename T, CanBeGCThread canBeGCThread>
+inline ThreadSpecific<T, canBeGCThread>::ThreadSpecific()
 {
     int error = pthread_key_create(&m_key, destroy);
     if (error)
         CRASH();
 }
 
-template<typename T>
-inline T* ThreadSpecific<T>::get()
+template<typename T, CanBeGCThread canBeGCThread>
+inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
     Data* data = static_cast<Data*>(pthread_getspecific(m_key));
-    return data ? data->value : 0;
+    if (data)
+        return data->value;
+    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
+    return nullptr;
 }
 
-template<typename T>
-inline void ThreadSpecific<T>::set(T* ptr)
+template<typename T, CanBeGCThread canBeGCThread>
+inline void ThreadSpecific<T, canBeGCThread>::set(T* ptr)
 {
+    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
     ASSERT(!get());
     pthread_setspecific(m_key, new Data(ptr, this));
 }
@@ -185,8 +195,8 @@ inline void* threadSpecificGet(ThreadSpecificKey key)
     return FlsGetValue(key);
 }
 
-template<typename T>
-inline ThreadSpecific<T>::ThreadSpecific()
+template<typename T, CanBeGCThread canBeGCThread>
+inline ThreadSpecific<T, canBeGCThread>::ThreadSpecific()
     : m_index(-1)
 {
     DWORD flsKey = FlsAlloc(destroy);
@@ -199,22 +209,26 @@ inline ThreadSpecific<T>::ThreadSpecific()
     flsKeys()[m_index] = flsKey;
 }
 
-template<typename T>
-inline ThreadSpecific<T>::~ThreadSpecific()
+template<typename T, CanBeGCThread canBeGCThread>
+inline ThreadSpecific<T, canBeGCThread>::~ThreadSpecific()
 {
     FlsFree(flsKeys()[m_index]);
 }
 
-template<typename T>
-inline T* ThreadSpecific<T>::get()
+template<typename T, CanBeGCThread canBeGCThread>
+inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
     Data* data = static_cast<Data*>(FlsGetValue(flsKeys()[m_index]));
-    return data ? data->value : 0;
+    if (data)
+        return data->value;
+    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
+    return nullptr;
 }
 
-template<typename T>
-inline void ThreadSpecific<T>::set(T* ptr)
+template<typename T, CanBeGCThread canBeGCThread>
+inline void ThreadSpecific<T, canBeGCThread>::set(T* ptr)
 {
+    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
     ASSERT(!get());
     Data* data = new Data(ptr, this);
     FlsSetValue(flsKeys()[m_index], data);
@@ -224,8 +238,8 @@ inline void ThreadSpecific<T>::set(T* ptr)
 #error ThreadSpecific is not implemented for this platform.
 #endif
 
-template<typename T>
-inline void THREAD_SPECIFIC_CALL ThreadSpecific<T>::destroy(void* ptr)
+template<typename T, CanBeGCThread canBeGCThread>
+inline void THREAD_SPECIFIC_CALL ThreadSpecific<T, canBeGCThread>::destroy(void* ptr)
 {
     Data* data = static_cast<Data*>(ptr);
 
@@ -249,14 +263,14 @@ inline void THREAD_SPECIFIC_CALL ThreadSpecific<T>::destroy(void* ptr)
     delete data;
 }
 
-template<typename T>
-inline bool ThreadSpecific<T>::isSet()
+template<typename T, CanBeGCThread canBeGCThread>
+inline bool ThreadSpecific<T, canBeGCThread>::isSet()
 {
     return !!get();
 }
 
-template<typename T>
-inline ThreadSpecific<T>::operator T*()
+template<typename T, CanBeGCThread canBeGCThread>
+inline ThreadSpecific<T, canBeGCThread>::operator T*()
 {
     T* ptr = static_cast<T*>(get());
     if (!ptr) {
@@ -269,21 +283,21 @@ inline ThreadSpecific<T>::operator T*()
     return ptr;
 }
 
-template<typename T>
-inline T* ThreadSpecific<T>::operator->()
+template<typename T, CanBeGCThread canBeGCThread>
+inline T* ThreadSpecific<T, canBeGCThread>::operator->()
 {
     return operator T*();
 }
 
-template<typename T>
-inline T& ThreadSpecific<T>::operator*()
+template<typename T, CanBeGCThread canBeGCThread>
+inline T& ThreadSpecific<T, canBeGCThread>::operator*()
 {
     return *operator T*();
 }
 
 #if USE(WEB_THREAD)
-template<typename T>
-inline void ThreadSpecific<T>::replace(T* newPtr)
+template<typename T, CanBeGCThread canBeGCThread>
+inline void ThreadSpecific<T, canBeGCThread>::replace(T* newPtr)
 {
     ASSERT(newPtr);
     Data* data = static_cast<Data*>(pthread_getspecific(m_key));

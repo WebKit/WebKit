@@ -68,7 +68,7 @@ inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
 #endif // USE(WEB_THREAD)
 
-void initializeGCThreads();
+WTF_EXPORT_PRIVATE void initializeGCThreads();
 
 enum class GCThreadType {
     Main,

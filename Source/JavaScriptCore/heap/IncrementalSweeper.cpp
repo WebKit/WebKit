@@ -71,6 +71,8 @@ void IncrementalSweeper::doSweep(double sweepBeginTime)
 
 bool IncrementalSweeper::sweepNextBlock()
 {
+    m_vm->heap.stopIfNecessary();
+
     MarkedBlock::Handle* block = nullptr;
     
     for (; m_currentAllocator; m_currentAllocator = m_currentAllocator->nextAllocator()) {

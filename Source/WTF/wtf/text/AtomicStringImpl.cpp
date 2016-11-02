@@ -25,9 +25,12 @@
 #include "AtomicStringImpl.h"
 
 #include "AtomicStringTable.h"
+#include "CommaPrinter.h"
+#include "DataLog.h"
 #include "HashSet.h"
 #include "IntegerToStringConversion.h"
 #include "StringHash.h"
+#include "StringPrintStream.h"
 #include "Threading.h"
 #include "WTFThreadData.h"
 #include <wtf/unicode/UTF8.h>
@@ -75,7 +78,8 @@ static inline Ref<AtomicStringImpl> addToStringTable(const T& value)
 {
     AtomicStringTableLocker locker;
 
-    HashSet<StringImpl*>::AddResult addResult = stringTable().add<HashTranslator>(value);
+    HashSet<StringImpl*>& atomicStringTable = stringTable();
+    HashSet<StringImpl*>::AddResult addResult = atomicStringTable.add<HashTranslator>(value);
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
@@ -451,6 +455,7 @@ void AtomicStringImpl::remove(AtomicStringImpl* string)
     HashSet<StringImpl*>& atomicStringTable = stringTable();
     HashSet<StringImpl*>::iterator iterator = atomicStringTable.find(string);
     ASSERT_WITH_MESSAGE(iterator != atomicStringTable.end(), "The string being removed is atomic in the string table of an other thread!");
+    ASSERT(string == *iterator);
     atomicStringTable.remove(iterator);
 }
 

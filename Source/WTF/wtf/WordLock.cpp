@@ -61,7 +61,7 @@ struct ThreadData {
     ThreadData* queueTail { nullptr };
 };
 
-ThreadSpecific<ThreadData>* threadData;
+ThreadSpecific<ThreadData, CanBeGCThread::True>* threadData;
 
 ThreadData* myThreadData()
 {
@@ -69,7 +69,7 @@ ThreadData* myThreadData()
     std::call_once(
         initializeOnce,
         [] {
-            threadData = new ThreadSpecific<ThreadData>();
+            threadData = new ThreadSpecific<ThreadData, CanBeGCThread::True>();
         });
 
     return *threadData;

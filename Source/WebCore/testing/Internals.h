@@ -496,6 +496,8 @@ public:
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
     bool userPrefersReducedMotion() const;
+    
+    void reportBacktrace();
 
 private:
     explicit Internals(Document&);

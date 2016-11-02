@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,10 +101,10 @@ static CompilationResult compileImpl(
     
     plan->callback = callback;
     if (Options::useConcurrentJIT()) {
-        Worklist* worklist = ensureGlobalWorklistFor(mode);
+        Worklist& worklist = ensureGlobalWorklistFor(mode);
         if (logCompilationChanges(mode))
-            dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", worklist->queueLength(), ".\n");
-        worklist->enqueue(plan);
+            dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", worklist.queueLength(), ".\n");
+        worklist.enqueue(plan);
         return CompilationDeferred;
     }
     

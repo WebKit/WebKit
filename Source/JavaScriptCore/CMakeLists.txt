@@ -486,6 +486,7 @@ set(JavaScriptCore_SOURCES
     heap/MarkedSpace.cpp
     heap/MutatorState.cpp
     heap/SlotVisitor.cpp
+    heap/StopIfNecessaryTimer.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp

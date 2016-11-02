@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2008, 2012, 2014, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -128,17 +128,24 @@ void JSLock::didAcquireLock()
     // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
+    
+    WTFThreadData& threadData = wtfThreadData();
+    ASSERT(!m_entryAtomicStringTable);
+    m_entryAtomicStringTable = threadData.setCurrentAtomicStringTable(m_vm->atomicStringTable());
+    ASSERT(m_entryAtomicStringTable);
+
+    if (m_vm->heap.hasAccess())
+        m_shouldReleaseHeapAccess = false;
+    else {
+        m_vm->heap.acquireAccess();
+        m_shouldReleaseHeapAccess = true;
+    }
 
     RELEASE_ASSERT(!m_vm->stackPointerAtVMEntry());
     void* p = &p; // A proxy for the current stack pointer.
     m_vm->setStackPointerAtVMEntry(p);
 
-    WTFThreadData& threadData = wtfThreadData();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
-
-    ASSERT(!m_entryAtomicStringTable);
-    m_entryAtomicStringTable = threadData.setCurrentAtomicStringTable(m_vm->atomicStringTable());
-    ASSERT(m_entryAtomicStringTable);
 
     m_vm->heap.machineThreads().addCurrentThread();
 
@@ -167,7 +174,7 @@ void JSLock::unlock(intptr_t unlockCount)
     m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
-
+        
         if (!m_hasExclusiveThread) {
             m_ownerThreadID = std::thread::id();
             m_lock.unlock();
@@ -183,6 +190,9 @@ void JSLock::willReleaseLock()
 
         vm->heap.releaseDelayedReleasedObjects();
         vm->setStackPointerAtVMEntry(nullptr);
+        
+        if (m_shouldReleaseHeapAccess)
+            vm->heap.releaseAccess();
     }
 
     if (m_entryAtomicStringTable) {

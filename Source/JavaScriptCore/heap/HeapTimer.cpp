@@ -99,11 +99,13 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* contextPtr)
 void HeapTimer::scheduleTimer(double intervalInSeconds)
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + intervalInSeconds);
+    m_isScheduled = true;
 }
 
 void HeapTimer::cancelTimer()
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
+    m_isScheduled = false;
 }
 
 #elif PLATFORM(EFL)
@@ -152,11 +154,13 @@ void HeapTimer::scheduleTimer(double intervalInSeconds)
 
     double targetTime = currentTime() + intervalInSeconds;
     ecore_timer_interval_set(m_timer, targetTime);
+    m_isScheduled = true;
 }
 
 void HeapTimer::cancelTimer()
 {
     ecore_timer_freeze(m_timer);
+    m_isScheduled = false;
 }
 #elif USE(GLIB)
 
@@ -219,11 +223,13 @@ void HeapTimer::scheduleTimer(double intervalInSeconds)
     gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, delayDuration.count());
     ASSERT(targetTime >= currentTime);
     g_source_set_ready_time(m_timer.get(), targetTime);
+    m_isScheduled = true;
 }
 
 void HeapTimer::cancelTimer()
 {
     g_source_set_ready_time(m_timer.get(), -1);
+    m_isScheduled = false;
 }
 #else
 HeapTimer::HeapTimer(VM* vm)

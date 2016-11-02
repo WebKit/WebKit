@@ -39,7 +39,7 @@ EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
 
 void EdenGCActivityCallback::doCollection()
 {
-    m_vm->heap.collect(CollectionScope::Eden);
+    m_vm->heap.collectAsync(CollectionScope::Eden);
 }
 
 double EdenGCActivityCallback::lastGCLength()

@@ -1,3 +1,148 @@
+2016-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be in a thread
+        https://bugs.webkit.org/show_bug.cgi?id=163562
+
+        Reviewed by Geoffrey Garen and Andreas Kling.
+        
+        In a concurrent GC, the work of collecting happens on a separate thread. This patch
+        implements this, and schedules the thread the way that a concurrent GC thread would be
+        scheduled. But, the GC isn't actually concurrent yet because it calls stopTheWorld() before
+        doing anything and calls resumeTheWorld() after it's done with everything. The next step will
+        be to make it really concurrent by basically calling stopTheWorld()/resumeTheWorld() around
+        bounded snippets of work while making most of the work happen with the world running. Our GC
+        will probably always have stop-the-world phases because the semantics of JSC weak references
+        call for it.
+        
+        This implements concurrent GC scheduling. This means that there is no longer a
+        Heap::collect() API. Instead, you can call collectAsync() which makes sure that a GC is
+        scheduled (it will do nothing if one is scheduled or ongoing) or you can call collectSync()
+        to schedule a GC and wait for it to happen. I made our debugging stuff call collectSync().
+        It should be a goal to never call collectSync() except for debugging or benchmark harness
+        hacks.
+        
+        The collector thread is an AutomaticThread, so it won't linger when not in use. It works on
+        a ticket-based system, like you would see at the DMV. A ticket is a 64-bit integer. There are
+        two ticket counters: last granted and last served. When you request a collection, last
+        granted is incremented and its new value given to you. When a collection completes, last
+        served is incremented. collectSync() waits until last served catches up to what last granted
+        had been at the time you requested a GC. This means that if you request a sync GC in the
+        middle of an async GC, you will wait for that async GC to finish and then you will request
+        and wait for your sync GC.
+        
+        The synchronization between the collector thread and the main threads is complex. The
+        collector thread needs to be able to ask the main thread to stop. It needs to be able to do
+        some post-GC clean-up, like the synchronous CodeBlock and LargeAllocation sweeps, on the main
+        thread. The collector needs to be able to ask the main thread to execute a cross-modifying
+        code fence before running any JIT code, since the GC might aid the JIT worklist and run JIT
+        finalization. It's possible for the GC to want the main thread to run something at the same
+        time that the main thread wants to wait for the GC. The main thread needs to be able to run
+        non-JSC stuff without causing the GC to completely stall. The main thread needs to be able
+        to query its own state (is there a request to stop?) and change it (running JSC versus not)
+        quickly, since this may happen on hot paths. This kind of intertwined system of requests,
+        notifications, and state changes requires a combination of lock-free algorithms and waiting.
+        So, this is all implemented using a Atomic<unsigned> Heap::m_worldState, which has bits to
+        represent things being requested by the collector and the heap access state of the mutator. I
+        am borrowing a lot of terms that I've seen in other VMs that I've worked on. Here's what they
+        mean:
+        
+        - Stop the world: make sure that either the mutator is not running, or that it's not running
+          code that could mess with the heap.
+        
+        - Heap access: the mutator is said to have heap access if it could mess with the heap.
+        
+        If you stop the world and the mutator doesn't have heap access, all you're doing is making
+        sure that it will block when it tries to acquire heap access. This means that our GC is
+        already fully concurrent in cases where the GC is requested while the mutator has no heap
+        access. This probably won't happen, but if it did then it should just work. Usually, stopping
+        the world means that we state our shouldStop request with m_worldState, and a future call
+        to Heap::stopIfNecessary() will go to slow path and stop. The act of stopping or waiting to
+        acquire heap access is managed by using ParkingLot API directly on m_worldState. This works
+        out great because it would be very awkward to get the same functionality using locks and
+        condition variables, since we want stopIfNecessary/acquireAccess/requestAccess fast paths
+        that are single atomic instructions (load/CAS/CAS, respectively). The mutator will call these
+        things frequently. Currently we have Heap::stopIfNecessary() polling on every allocator slow
+        path, but we may want to make it even more frequent than that.
+        
+        Currently only JSC API clients benefit from the heap access optimization. The DOM forces us
+        to assume that heap access is permanently on, since DOM manipulation doesn't always hold the
+        JSLock. We could still allow the GC to proceed when the runloop is idle by having the GC put
+        a task on the runloop that just calls stopIfNecessary().
+        
+        This is perf neutral. The only behavior change that clients ought to observe is that marking
+        and the weak fixpoint happen on a separate thread. Marking was already parallel so it already
+        handled multiple threads, but now it _never_ runs on the main thread. The weak fixpoint
+        needed some help to be able to run on another thread - mostly because there was some code in
+        IndexedDB that was using thread specifics in the weak fixpoint.
+
+        * API/JSBase.cpp:
+        (JSSynchronousEdenCollectForDebugging):
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue initWithValue:]):
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::doCollection):
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/Heap.cpp:
+        (JSC::Heap::Thread::Thread):
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::shouldCollectInThread):
+        (JSC::Heap::collectInThread):
+        (JSC::Heap::stopTheWorld):
+        (JSC::Heap::resumeTheWorld):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::acquireAccessSlow):
+        (JSC::Heap::releaseAccessSlow):
+        (JSC::Heap::handleDidJIT):
+        (JSC::Heap::handleNeedFinalize):
+        (JSC::Heap::setDidJIT):
+        (JSC::Heap::setNeedFinalize):
+        (JSC::Heap::waitWhileNeedFinalize):
+        (JSC::Heap::finalize):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::waitForCollection):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::canCollect):
+        (JSC::Heap::shouldCollectHeuristic):
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::collectAccordingToDeferGCProbability):
+        (JSC::Heap::collect): Deleted.
+        (JSC::Heap::collectWithoutAnySweep): Deleted.
+        (JSC::Heap::collectImpl): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::ReleaseAccessScope::ReleaseAccessScope):
+        (JSC::Heap::ReleaseAccessScope::~ReleaseAccessScope):
+        * heap/HeapInlines.h:
+        (JSC::Heap::acquireAccess):
+        (JSC::Heap::releaseAccess):
+        (JSC::Heap::stopIfNecessary):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherConservativeRoots):
+        (JSC::MachineThreads::gatherFromCurrentThread): Deleted.
+        * heap/MachineStackMarker.h:
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::completeAllForVM):
+        * jit/JITWorklist.h:
+        * jsc.cpp:
+        (functionFullGC):
+        (functionEdenGC):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::willReleaseLock):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::edenGC):
+
 2016-11-02  Michael Saboff  <msaboff@apple.com>
 
         Crash beneath SlotVisitor::drain @ cooksillustrated.com

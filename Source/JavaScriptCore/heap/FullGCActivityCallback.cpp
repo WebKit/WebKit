@@ -55,7 +55,7 @@ void FullGCActivityCallback::doCollection()
     }
 #endif
 
-    heap.collect(CollectionScope::Full);
+    heap.collectAsync(CollectionScope::Full);
 }
 
 double FullGCActivityCallback::lastGCLength()

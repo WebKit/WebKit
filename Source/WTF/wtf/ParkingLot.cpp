@@ -447,12 +447,12 @@ ThreadData::~ThreadData()
 
 ThreadData* myThreadData()
 {
-    static ThreadSpecific<RefPtr<ThreadData>>* threadData;
+    static ThreadSpecific<RefPtr<ThreadData>, CanBeGCThread::True>* threadData;
     static std::once_flag initializeOnce;
     std::call_once(
         initializeOnce,
         [] {
-            threadData = new ThreadSpecific<RefPtr<ThreadData>>();
+            threadData = new ThreadSpecific<RefPtr<ThreadData>, CanBeGCThread::True>();
         });
     
     RefPtr<ThreadData>& result = **threadData;

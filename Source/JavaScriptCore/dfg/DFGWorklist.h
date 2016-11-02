@@ -121,18 +121,30 @@ private:
 };
 
 // For DFGMode compilations.
-Worklist* ensureGlobalDFGWorklist();
+Worklist& ensureGlobalDFGWorklist();
 Worklist* existingGlobalDFGWorklistOrNull();
 
 // For FTLMode and FTLForOSREntryMode compilations.
-Worklist* ensureGlobalFTLWorklist();
+Worklist& ensureGlobalFTLWorklist();
 Worklist* existingGlobalFTLWorklistOrNull();
 
-Worklist* ensureGlobalWorklistFor(CompilationMode);
+Worklist& ensureGlobalWorklistFor(CompilationMode);
 
 // Simplify doing things for all worklists.
 inline unsigned numberOfWorklists() { return 2; }
-inline Worklist* worklistForIndexOrNull(unsigned index)
+inline Worklist& ensureWorklistForIndex(unsigned index)
+{
+    switch (index) {
+    case 0:
+        return ensureGlobalDFGWorklist();
+    case 1:
+        return ensureGlobalFTLWorklist();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return ensureGlobalDFGWorklist();
+    }
+}
+inline Worklist* existingWorklistForIndexOrNull(unsigned index)
 {
     switch (index) {
     case 0:
@@ -143,6 +155,12 @@ inline Worklist* worklistForIndexOrNull(unsigned index)
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
+}
+inline Worklist& existingWorklistForIndex(unsigned index)
+{
+    Worklist* result = existingWorklistForIndexOrNull(index);
+    RELEASE_ASSERT(result);
+    return *result;
 }
 
 void completeAllPlansForVM(VM&);

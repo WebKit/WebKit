@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
     , m_connectionProxy(connectionProxy)
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
+    , m_eventNames(eventNames())
 {
     LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64 " (%p)", m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier, this);
     suspendIfNeeded();
@@ -73,7 +74,7 @@ IDBDatabase::~IDBDatabase()
 
 bool IDBDatabase::hasPendingActivity() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(currentThread() == originThreadID() || mayBeGCThread());
 
     if (m_closedInServer)
         return false;
@@ -81,7 +82,7 @@ bool IDBDatabase::hasPendingActivity() const
     if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty() || !m_abortingTransactions.isEmpty())
         return true;
 
-    return hasEventListeners(eventNames().abortEvent) || hasEventListeners(eventNames().errorEvent) || hasEventListeners(eventNames().versionchangeEvent);
+    return hasEventListeners(m_eventNames.abortEvent) || hasEventListeners(m_eventNames.errorEvent) || hasEventListeners(m_eventNames.versionchangeEvent);
 }
 
 const String IDBDatabase::name() const
@@ -252,7 +253,7 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
     for (auto& transaction : m_activeTransactions.values())
         transaction->connectionClosedFromServer(error);
 
-    Ref<Event> event = Event::create(eventNames().errorEvent, true, false);
+    Ref<Event> event = Event::create(m_eventNames.errorEvent, true, false);
     event->setTarget(this);
 
     if (auto* context = scriptExecutionContext())
@@ -446,8 +447,8 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
         connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
         return;
     }
-
-    Ref<Event> event = IDBVersionChangeEvent::create(requestIdentifier, currentVersion, requestedVersion, eventNames().versionchangeEvent);
+    
+    Ref<Event> event = IDBVersionChangeEvent::create(requestIdentifier, currentVersion, requestedVersion, m_eventNames.versionchangeEvent);
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
@@ -459,7 +460,7 @@ bool IDBDatabase::dispatchEvent(Event& event)
 
     bool result = EventTargetWithInlineData::dispatchEvent(event);
 
-    if (event.isVersionChangeEvent() && event.type() == eventNames().versionchangeEvent)
+    if (event.isVersionChangeEvent() && event.type() == m_eventNames.versionchangeEvent)
         connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
 
     return result;

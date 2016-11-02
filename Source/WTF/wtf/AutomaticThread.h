@@ -69,7 +69,7 @@ namespace WTF {
 
 class AutomaticThread;
 
-class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThread> {
+class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThreadCondition> {
 public:
     static WTF_EXPORT_PRIVATE RefPtr<AutomaticThreadCondition> create();
     
@@ -112,6 +112,15 @@ public:
     // AutomaticThread).
     virtual ~AutomaticThread();
     
+    // Sometimes it's possible to optimize for the case that there is no underlying thread.
+    bool hasUnderlyingThread(const LockHolder&) const { return m_hasUnderlyingThread; }
+    
+    // This attempts to quickly stop the thread. This will succeed if the thread happens to not be
+    // running. Returns true if the thread has been stopped. A good idiom for stopping your automatic
+    // thread is to first try this, and if that doesn't work, to tell the thread using your own
+    // mechanism (set some flag and then notify the condition).
+    bool tryStop(const LockHolder&);
+    
     void join();
     
 protected:
@@ -151,9 +160,6 @@ protected:
     enum class WorkResult { Continue, Stop };
     virtual WorkResult work() = 0;
     
-    class ThreadScope;
-    friend class ThreadScope;
-    
     // It's sometimes useful to allocate resources while the thread is running, and to destroy them
     // when the thread dies. These methods let you do this. You can override these methods, and you
     // can be sure that the default ones don't do anything (so you don't need a super call).
@@ -163,11 +169,15 @@ protected:
 private:
     friend class AutomaticThreadCondition;
     
+    class ThreadScope;
+    friend class ThreadScope;
+    
     void start(const LockHolder&);
     
     Box<Lock> m_lock;
     RefPtr<AutomaticThreadCondition> m_condition;
     bool m_isRunning { true };
+    bool m_hasUnderlyingThread { false };
     Condition m_isRunningCondition;
 };
 

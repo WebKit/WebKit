@@ -78,7 +78,6 @@ void AutomaticThreadCondition::add(const LockHolder&, AutomaticThread* thread)
 
 void AutomaticThreadCondition::remove(const LockHolder&, AutomaticThread* thread)
 {
-    ASSERT(m_threads.contains(thread));
     m_threads.removeFirst(thread);
     ASSERT(!m_threads.contains(thread));
 }
@@ -92,16 +91,30 @@ AutomaticThread::AutomaticThread(const LockHolder& locker, Box<Lock> lock, RefPt
     : m_lock(lock)
     , m_condition(condition)
 {
+    if (verbose)
+        dataLog(RawPointer(this), ": Allocated AutomaticThread.\n");
     m_condition->add(locker, this);
 }
 
 AutomaticThread::~AutomaticThread()
 {
+    if (verbose)
+        dataLog(RawPointer(this), ": Deleting AutomaticThread.\n");
     LockHolder locker(*m_lock);
     
     // It's possible that we're in a waiting state with the thread shut down. This is a goofy way to
     // die, but it could happen.
     m_condition->remove(locker, this);
+}
+
+bool AutomaticThread::tryStop(const LockHolder&)
+{
+    if (!m_isRunning)
+        return true;
+    if (m_hasUnderlyingThread)
+        return false;
+    m_isRunning = false;
+    return true;
 }
 
 void AutomaticThread::join()
@@ -113,38 +126,43 @@ void AutomaticThread::join()
 
 class AutomaticThread::ThreadScope {
 public:
-    ThreadScope(AutomaticThread& thread)
+    ThreadScope(RefPtr<AutomaticThread> thread)
         : m_thread(thread)
     {
-        m_thread.threadDidStart();
+        m_thread->threadDidStart();
     }
     
     ~ThreadScope()
     {
-        m_thread.threadWillStop();
+        m_thread->threadWillStop();
+        
+        LockHolder locker(*m_thread->m_lock);
+        m_thread->m_hasUnderlyingThread = false;
     }
 
 private:
-    AutomaticThread& m_thread;
+    RefPtr<AutomaticThread> m_thread;
 };
 
 void AutomaticThread::start(const LockHolder&)
 {
+    RELEASE_ASSERT(m_isRunning);
+    
     RefPtr<AutomaticThread> preserveThisForThread = this;
+    
+    m_hasUnderlyingThread = true;
     
     ThreadIdentifier thread = createThread(
         "WTF::AutomaticThread",
         [=] () {
             if (verbose)
-                dataLog("Running automatic thread!\n");
-            RefPtr<AutomaticThread> preserveThisInThread = preserveThisForThread;
+                dataLog(RawPointer(this), ": Running automatic thread!\n");
+            ThreadScope threadScope(preserveThisForThread);
             
-            {
+            if (!ASSERT_DISABLED) {
                 LockHolder locker(*m_lock);
                 ASSERT(!m_condition->contains(locker, this));
             }
-            
-            ThreadScope threadScope(*this);
             
             auto stop = [&] (const LockHolder&) {
                 m_isRunning = false;
@@ -167,7 +185,7 @@ void AutomaticThread::start(const LockHolder&)
                             m_condition->m_condition.waitUntilMonotonicClockSeconds(*m_lock, timeout);
                         if (!awokenByNotify) {
                             if (verbose)
-                                dataLog("Going to sleep!\n");
+                                dataLog(RawPointer(this), ": Going to sleep!\n");
                             m_condition->add(locker, this);
                             return;
                         }

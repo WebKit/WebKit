@@ -1,3 +1,18 @@
+2016-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be in a thread
+        https://bugs.webkit.org/show_bug.cgi?id=163562
+
+        Reviewed by Geoffrey Garen and Andreas Kling.
+
+        No new tests because existing tests cover this.
+        
+        We now need to be more careful about using JSLock. This fixes some places that were not
+        holding it. New assertions in the GC are more likely to catch this than before.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+
 2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts

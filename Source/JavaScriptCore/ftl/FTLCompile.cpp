@@ -65,7 +65,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     if (safepointResult.didGetCancelled())
         return;
-    RELEASE_ASSERT(state.graph.m_vm.heap.mutatorState() != MutatorState::HelpingGC);
+    RELEASE_ASSERT(!state.graph.m_vm.heap.collectorBelievesThatTheWorldIsStopped());
     
     if (state.allocationFailed)
         return;

@@ -29,6 +29,7 @@
 #include "JSCInlines.h"
 #include "JSTypedArrays.h"
 #include "ObjectPrototype.h"
+#include "ReleaseHeapAccessScope.h"
 #include "TypedArrayController.h"
 
 namespace JSC {
@@ -340,14 +341,18 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     }
     
     bool didPassValidation = false;
-    ParkingLot::ParkResult result = ParkingLot::parkConditionally(
-        ptr,
-        [&] () -> bool {
-            didPassValidation = WTF::atomicLoad(ptr) == expectedValue;
-            return didPassValidation;
-        },
-        [] () { },
-        timeout);
+    ParkingLot::ParkResult result;
+    {
+        ReleaseHeapAccessScope releaseHeapAccessScope(vm.heap);
+        result = ParkingLot::parkConditionally(
+            ptr,
+            [&] () -> bool {
+                didPassValidation = WTF::atomicLoad(ptr) == expectedValue;
+                return didPassValidation;
+            },
+            [] () { },
+            timeout);
+    }
     const char* resultString;
     if (!didPassValidation)
         resultString = "not-equal";

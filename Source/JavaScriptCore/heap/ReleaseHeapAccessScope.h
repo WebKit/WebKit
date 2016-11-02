@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSafeIncrementalSweeperIOS_h
-#define WebSafeIncrementalSweeperIOS_h
+#pragma once
 
-#include "WebCoreThread.h"
-#include <JavaScriptCore/IncrementalSweeper.h>
+#include "Heap.h"
 
-namespace WebCore {
+namespace JSC {
 
-class WebSafeIncrementalSweeper final : public JSC::IncrementalSweeper {
+// Almost all of the VM's code runs with "heap access". This means that the GC thread believes that
+// the VM is messing with the heap in a way that would be unsafe for certain phases of the collector,
+// like the weak reference fixpoint, stack scanning, and changing barrier modes. However, many long
+// running operations inside the VM don't require heap access. For example, memcpying a typed array
+// if a reference to it is on the stack is totally fine without heap access. Blocking on a futex is
+// also fine without heap access. Releasing heap access for long-running code (in the case of futex
+// wait, possibly infinitely long-running) ensures that the GC can finish a collection cycle while
+// you are waiting.
+class ReleaseHeapAccessScope {
 public:
-    explicit WebSafeIncrementalSweeper(JSC::Heap* heap)
-        : JSC::IncrementalSweeper(heap)
+    ReleaseHeapAccessScope(Heap& heap)
+        : m_heap(heap)
     {
-        setRunLoop(WebThreadRunLoop());
+        m_heap.releaseAccess();
+    }
+    
+    ~ReleaseHeapAccessScope()
+    {
+        m_heap.acquireAccess();
     }
 
-    ~WebSafeIncrementalSweeper() override { }
-
+private:
+    Heap& m_heap;
 };
 
-} // namespace WebCore
+} // namespace JSC
 
-#endif // WebSafeIncrementalSweeperIOS_h
