@@ -71,7 +71,7 @@ GeolocationPosition* core(WebGeolocationPosition *position)
     return self;
 }
 
-- (id)initWithGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition
+- (id)initWithGeolocationPosition:(RefPtr<GeolocationPosition>)coreGeolocationPosition
 {
     self = [super init];
     if (!self)

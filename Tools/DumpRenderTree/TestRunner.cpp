@@ -123,9 +123,9 @@ TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPi
 {
 }
 
-PassRefPtr<TestRunner> TestRunner::create(const std::string& testURL, const std::string& expectedPixelHash)
+Ref<TestRunner> TestRunner::create(const std::string& testURL, const std::string& expectedPixelHash)
 {
-    return adoptRef(new TestRunner(testURL, expectedPixelHash));
+    return adoptRef(*new TestRunner(testURL, expectedPixelHash));
 }
 
 // Static Functions

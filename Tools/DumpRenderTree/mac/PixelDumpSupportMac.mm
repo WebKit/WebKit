@@ -78,7 +78,7 @@ static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
     CGContextRestoreGState(context);
 }
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     WebView* view = [mainFrame webView];
 
@@ -174,7 +174,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     return bitmapContext;
 }
 
-PassRefPtr<BitmapContext> createPagedBitmapContext()
+RefPtr<BitmapContext> createPagedBitmapContext()
 {
     int pageWidthInPixels = TestRunner::viewWidth;
     int pageHeightInPixels = TestRunner::viewHeight;

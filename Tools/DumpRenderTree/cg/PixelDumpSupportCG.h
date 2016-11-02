@@ -28,10 +28,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PixelDumpSupportCG_h
-#define PixelDumpSupportCG_h
+#pragma once
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
@@ -49,9 +47,9 @@ typedef HBITMAP PlatformBitmapBuffer;
 
 class BitmapContext : public RefCounted<BitmapContext> {
 public:
-    static PassRefPtr<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, CGContextRef context)
+    static Ref<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, CGContextRef context)
     {
-        return adoptRef(new BitmapContext(buffer, context));
+        return adoptRef(*new BitmapContext(buffer, context));
     }
 
     ~BitmapContext()
@@ -80,8 +78,6 @@ private:
 };
 
 #if PLATFORM(COCOA)
-PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer);
+RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer);
 #endif
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);
-
-#endif // PixelDumpSupportCG_h
+RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);

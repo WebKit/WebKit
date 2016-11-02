@@ -34,7 +34,6 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <vector>
-#include <wtf/PassRefPtr.h>
 
 using namespace std;
 

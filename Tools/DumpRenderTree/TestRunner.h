@@ -25,9 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef TestRunner_h
-#define TestRunner_h
+
+#pragma once
 
 #include "UIScriptContext.h"
 #include <JavaScriptCore/JSObjectRef.h>
@@ -35,13 +34,12 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 class TestRunner : public WTR::UIScriptContextDelegate, public RefCounted<TestRunner> {
     WTF_MAKE_NONCOPYABLE(TestRunner);
 public:
-    static PassRefPtr<TestRunner> create(const std::string& testURL, const std::string& expectedPixelHash);
+    static Ref<TestRunner> create(const std::string& testURL, const std::string& expectedPixelHash);
 
     static const unsigned viewWidth;
     static const unsigned viewHeight;
@@ -466,5 +464,3 @@ private:
 
     int m_timeout;
 };
-
-#endif // TestRunner_h

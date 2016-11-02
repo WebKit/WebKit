@@ -44,7 +44,7 @@
 using namespace WebCore;
 
 @interface WebGeolocationPosition (Internal)
-- (id)initWithGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition;
+- (id)initWithGeolocationPosition:(RefPtr<GeolocationPosition>)coreGeolocationPosition;
 @end
 
 // CoreLocation runs in the main thread. WebGeolocationProviderIOS lives on the WebThread.

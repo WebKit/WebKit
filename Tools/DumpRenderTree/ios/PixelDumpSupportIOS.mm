@@ -48,7 +48,7 @@
 extern DumpRenderTreeWindow *gDrtWindow;
 extern DumpRenderTreeBrowserView *gWebBrowserView;
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

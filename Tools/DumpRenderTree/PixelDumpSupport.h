@@ -26,20 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PixelDumpSupport_h
-#define PixelDumpSupport_h
+#pragma once
 
 #include <string>
-
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 class BitmapContext;
 
 void computeMD5HashStringForBitmapContext(BitmapContext*, char hashString[33]);
-PassRefPtr<BitmapContext> createPagedBitmapContext();
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);
+RefPtr<BitmapContext> createPagedBitmapContext();
+RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);
 void dumpBitmap(BitmapContext*, const char* checksum);
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash);
 void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum);
-
-#endif // PixelDumpSupport_h

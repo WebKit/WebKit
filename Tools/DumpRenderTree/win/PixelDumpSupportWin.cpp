@@ -54,7 +54,7 @@ static void makeAlphaChannelOpaque(void* argbBits, LONG width, LONG height)
     }
 }
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     RECT frame;
     if (!GetWindowRect(webViewWindow, &frame))
