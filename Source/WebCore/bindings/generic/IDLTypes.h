@@ -83,7 +83,7 @@ struct IDLString : IDLType<String> {
     using NullableType = String;
     static String nullValue() { return String(); }
     static bool isNullValue(const String& value) { return value.isNull(); }
-    static const String& extractValueFromNullable(const String& value) { return value; }
+    template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 struct IDLDOMString : IDLString { };
 struct IDLByteString : IDLUnsupportedType { };
@@ -95,9 +95,9 @@ template<typename T> struct IDLInterface : IDLType<RefPtr<T>> {
     using RawType = T;
 
     using NullableType = RefPtr<T>;
-    static RefPtr<T> nullValue() { return nullptr; }
+    static std::nullptr_t nullValue() { return nullptr; }
     static bool isNullValue(const RefPtr<T>& value) { return !value; }
-    static const RefPtr<T>& extractValueFromNullable(const RefPtr<T>& value) { return value; }
+    template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
 template<typename T> struct IDLDictionary : IDLType<T> { };

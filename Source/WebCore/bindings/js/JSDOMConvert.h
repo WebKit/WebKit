@@ -37,9 +37,17 @@ template<typename T> struct Converter;
 enum class IntegerConversionConfiguration { Normal, EnforceRange, Clamp };
 enum class StringConversionConfiguration { Normal, TreatNullAsEmptyString };
 
+struct DefaultExceptionThrower {
+    void operator()(JSC::ExecState& state, JSC::ThrowScope& scope)
+    {
+        throwTypeError(&state, scope);
+    }
+};
+
 template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue);
 template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
 template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, StringConversionConfiguration);
+template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, ExceptionThrower&&);
 
 // Specialized by generated code for IDL dictionary conversion.
 template<typename T> T convertDictionary(JSC::ExecState&, JSC::JSValue);
@@ -64,6 +72,11 @@ template<typename T> inline typename Converter<T>::ReturnType convert(JSC::ExecS
     return Converter<T>::convert(state, value, configuration);
 }
 
+template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
+{
+    return Converter<T>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+}
+
 // Conversion from Implementation -> JSValue
 template<typename T> struct JSConverter;
 
@@ -72,6 +85,8 @@ template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, U&&);
 template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, U&&);
 template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<U>&&);
 template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<U>&&);
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, U&&);
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<U>&&);
 
 // Specialized by generated code for IDL enumeration conversion.
 template<typename T> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, T);
@@ -149,6 +164,21 @@ template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state,
     return toJS<T>(state, globalObject, value.releaseReturnValue());
 }
 
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+{
+    return JSConverter<T>::convertNewlyCreated(state, globalObject, std::forward<U>(value));
+}
+
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<U>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+
+    return toJSNewlyCreated<T>(state, globalObject, value.releaseReturnValue());
+}
+
 
 template<typename T> struct DefaultConverter {
     using ReturnType = typename T::ImplementationType;
@@ -157,8 +187,23 @@ template<typename T> struct DefaultConverter {
 // MARK: -
 // MARK: Nullable type
 
+namespace Detail {
+    template<typename IDLType>
+    struct NullableConversionType;
+
+    template<typename IDLType> 
+    struct NullableConversionType {
+        using Type = typename IDLNullable<IDLType>::ImplementationType;
+    };
+
+    template<typename T>
+    struct NullableConversionType<IDLInterface<T>> {
+        using Type = typename Converter<IDLInterface<T>>::ReturnType;
+    };
+}
+
 template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNullable<T>> {
-    using ReturnType = typename IDLNullable<T>::ImplementationType;
+    using ReturnType = typename Detail::NullableConversionType<T>::Type;
     
     // 1. If Type(V) is not Object, and the conversion to an IDL value is being performed
     // due to V being assigned to an attribute whose type is a nullable callback function
@@ -188,6 +233,14 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
             return T::nullValue();
         return Converter<T>::convert(state, value, configuration);
     }
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
+    {
+        if (value.isUndefinedOrNull())
+            return T::nullValue();
+        return Converter<T>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
 };
 
 template<typename T> struct JSConverter<IDLNullable<T>> {
@@ -196,19 +249,30 @@ template<typename T> struct JSConverter<IDLNullable<T>> {
     static constexpr bool needsState = JSConverter<T>::needsState;
     static constexpr bool needsGlobalObject = JSConverter<T>::needsGlobalObject;
 
-    static JSC::JSValue convert(const ImplementationType& value)
+    template<typename U>
+    static JSC::JSValue convert(U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
         return JSConverter<T>::convert(T::extractValueFromNullable(value));
     }
-    static JSC::JSValue convert(JSC::ExecState& state, const ImplementationType& value)
+    template<typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
         return JSConverter<T>::convert(state, T::extractValueFromNullable(value));
     }
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ImplementationType& value)
+    template<typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        if (T::isNullValue(value))
+            return JSC::jsNull();
+        return JSConverter<T>::convert(state, globalObject, T::extractValueFromNullable(value));
+    }
+
+    template<typename U>
+    static JSC::JSValue convertNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
@@ -261,25 +325,41 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
     using ReturnType = typename JSDOMWrapperConverterTraits<T>::ToWrappedReturnType;
     using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
         ReturnType object = WrapperType::toWrapped(value);
-        if (!object)
-            throwTypeError(&state, scope);
+        if (UNLIKELY(!object))
+            exceptionThrower(state, scope);
         return object;
     }
 };
+
+namespace Detail {
+
+template <typename T> inline T* getPtrOrRef(const T* p) { return const_cast<T*>(p); }
+template <typename T> inline T& getPtrOrRef(const T& p) { return const_cast<T&>(p); }
+template <typename T> inline T* getPtrOrRef(const RefPtr<T>& p) { return const_cast<T*>(p.get()); }
+template <typename T> inline T& getPtrOrRef(const Ref<T>& p) { return const_cast<T&>(p.get()); }
+
+}
 
 template<typename T> struct JSConverter<IDLInterface<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    template<typename U>
-    static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const U& value)
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
     {
-        return toJS(&exec, &globalObject, WTF::getPtr(value));
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+
+    template<typename U>
+    static JSC::JSValue convertNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return toJSNewlyCreated(&state, &globalObject, std::forward<U>(value));
     }
 };
 

@@ -1,3 +1,14 @@
+2016-11-01  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move interfaces and typed arrays over to JSDOMConvert
+        https://bugs.webkit.org/show_bug.cgi?id=164256
+
+        Reviewed by Alex Christensen.
+
+        * runtime/JSArrayBuffer.h:
+        (JSC::JSArrayBuffer::toWrapped):
+        Change return type to ArrayBuffer* to match WebCore's expectation.
+
 2016-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         The GC should be in a thread

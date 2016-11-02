@@ -214,9 +214,8 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto nextChild = JSNode::toWrapped(state->uncheckedArgument(0));
-    if (UNLIKELY(!nextChild))
-        return throwArgumentTypeError(*state, throwScope, 0, "nextChild", "TestActiveDOMObject", "excitingFunction", "Node");
+    auto nextChild = convert<IDLInterface<Node>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 0, "nextChild", "TestActiveDOMObject", "excitingFunction", "Node"); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.excitingFunction(*nextChild);
     return JSValue::encode(jsUndefined());
 }

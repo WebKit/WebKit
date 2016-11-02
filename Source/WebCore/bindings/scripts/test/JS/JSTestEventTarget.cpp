@@ -220,7 +220,7 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemCaller(J
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto index = convert<IDLUnsignedLong>(*state, state->uncheckedArgument(0), IntegerConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = toJS(state, castedThis->globalObject(), impl.item(WTFMove(index)));
+    JSValue result = toJS<IDLInterface<Node>>(*state, *castedThis->globalObject(), impl.item(WTFMove(index)));
     return JSValue::encode(result);
 }
 

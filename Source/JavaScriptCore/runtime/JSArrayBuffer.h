@@ -53,7 +53,7 @@ public:
     DECLARE_EXPORT_INFO;
     
     // This is the default DOM unwrapping. It calls toUnsharedArrayBuffer().
-    static RefPtr<ArrayBuffer> toWrapped(JSValue);
+    static ArrayBuffer* toWrapped(JSValue);
     
 protected:
 
@@ -85,7 +85,7 @@ inline ArrayBuffer* toUnsharedArrayBuffer(JSValue value)
     return result;
 }
 
-inline RefPtr<ArrayBuffer> JSArrayBuffer::toWrapped(JSValue value)
+inline ArrayBuffer* JSArrayBuffer::toWrapped(JSValue value)
 {
     return toUnsharedArrayBuffer(value);
 }

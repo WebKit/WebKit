@@ -1,2 +1,2 @@
-Caught exception: SVG_WRONG_TYPE_ERR (DOM SVG Exception): An object of the wrong type was passed to an operation.
+Caught exception: TypeError: Argument 1 ('item') to SVGPointList.appendItem must be an instance of SVGPoint
 PASSED -- WebKit did not crash!

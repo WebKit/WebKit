@@ -1,3 +1,18 @@
+2016-11-01  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move interfaces and typed arrays over to JSDOMConvert
+        https://bugs.webkit.org/show_bug.cgi?id=164256
+
+        Reviewed by Alex Christensen.
+
+        * svg/custom/polyline-points-crash-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/SVGTransformList-expected.txt:
+        Update test results for improved error messages.
+
 2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts

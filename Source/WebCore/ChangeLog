@@ -1,3 +1,115 @@
+2016-11-01  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move interfaces and typed arrays over to JSDOMConvert
+        https://bugs.webkit.org/show_bug.cgi?id=164256
+
+        Reviewed by Alex Christensen.
+
+        - Add the ability to pass an "exception thrower" functor to the convert functions.
+          This is only implemented for convert<IDLInterface<T>> and convert<IDLNullable<IDLInterface<T>>>
+          for now, but can be extended for more types as necessary to improve exception messages.
+        - Add support for using toJSNewlyCreated in JSDOMConvert.
+
+        * bindings/generic/IDLTypes.h:
+        (WebCore::IDLString::extractValueFromNullable):
+        Use forwarding to simplify extraction function.
+
+        (WebCore::IDLInterface::nullValue):
+        Update nullValue to work for both RefPtr<T> and T*.
+
+        (WebCore::IDLInterface::extractValueFromNullable):
+        Use forwarding to simplify extraction function.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::DefaultExceptionThrower::operator()):
+        Add a default "exception thrower" which throws a normal type error.
+
+        (WebCore::convert):
+        Add an overload of convert which takes an "exception thrower".
+
+        (WebCore::toJSNewlyCreated):
+        Add new overloaded function toJSNewlyCreated, matching the toJS overload set,
+        which will return "newly created" values. This only works for types that implement
+        a toJSNewlyCreated function for themselves.
+
+        (WebCore::Converter<IDLNullable<T>>::convert):
+        Fix the return type of Converter<IDLNullable<T>> to be specialized when
+        T is an IDLInterface. In that case, we want to match the return type of
+        inner converter.
+        
+        Also add implementation of convert overload that takes an "exception thrower".
+
+        (WebCore::JSConverter<IDLNullable<T>>::convert):
+        (WebCore::JSConverter<IDLNullable<T>>::convertNewlyCreated):
+        Reimplement conversion to use forwarding of the value.
+
+        (WebCore::Converter<IDLInterface<T>>::convert):
+        Add support for an "exception thrower".
+
+        (WebCore::Detail::getPtrOrRef):
+        Add helper functions that extract either a pointer or reference, depending on the type,
+        and const_casts it allowing the value to be used with toJS functions.
+
+        (WebCore::JSConverter<IDLInterface<T>>::convert):
+        Re-implement to support more varied input values.
+
+        (WebCore::JSConverter<IDLInterface<T>>::convertNewlyCreated):
+        Added. Forwards to overloaded toJSNewlyCreated functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToImplIncludesForIDLType):
+        Add support for adding the right includes for SerializedScriptValue and Dictionary.
+
+        (GetArgumentExceptionThrower):
+        (GetAttributeExceptionThrower):
+        Add helpers to generate "exception thrower" lambdas for wrappers and typed arrays
+        being passed to setters and functions.
+
+        (GenerateParametersCheck):
+        Move around special cases so it is clear that it's not wrappers and typed arrays that
+        need specialization here, it is now just EventListener and XPathNSResolver.
+
+        (GetIDLInterfaceName):
+        Add helper to get the InterfaceName for use in IDLInterface template.
+
+        (GetBaseIDLType):
+        Use new GetIDLInterfaceName helper.
+
+        (IsValidContextForJSValueToNative):
+        Remove IDLOperation as a valid context. It is not.
+
+        (JSValueToNative):
+        Move JSDOMConvert based conversion to the bottom, to show that everything above it
+        is a special case that should be fixed. I have used explicit c-style if-statements
+        to make it clear what the types of the exceptional cases are.
+
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Add wrapper types and typed arrays to the list needing state and globalObject.
+
+        (NativeToJSValue):
+        Move JSDOMConvert based conversion to the bottom, to show that everything above it
+        is a special case that should be fixed. I have used explicit c-style if-statements
+        to make it clear what the types of the exceptional cases are.
+
+        (JSValueToNativeIsHandledByDOMConvert): Deleted.
+        (NativeToJSValueIsHandledByDOMConvert): Deleted.
+        Remove predicates protecting use of JSDOMConvert now that it is the default.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
 2016-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Bug 164333: Add logging for "WebKit encountered an internal error" messages due to Network process crashes
