@@ -1,5 +1,19 @@
 2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        PluginInfoStore::loadPluginsIfNecessary can still load plugins multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=164103
+
+        Reviewed by Michael Catanzaro.
+
+        Follow symlinks when scanning plugins to avoid duplicates.
+
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp: Bump the cache version to ensure duplicated plugins are removed
+        from the cache.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::pluginPathsInDirectory): Use realpath() to always return the actual file path.
+
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Plugin process crash in WebKit::NetscapePluginX11::visibilityDidChange with evince browser plugin
         https://bugs.webkit.org/show_bug.cgi?id=164204
 

@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-static const unsigned gSchemaVersion = 2;
+static const unsigned gSchemaVersion = 3;
 
 PluginInfoCache& PluginInfoCache::singleton()
 {
