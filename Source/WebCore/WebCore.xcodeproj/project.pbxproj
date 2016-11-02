@@ -7446,8 +7446,8 @@
 		0F87166E1C869D83004FF0DE /* LengthPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthPoint.h; sourceTree = "<group>"; };
 		0F8B456F1DC3FB1000443C3F /* IntersectionObserverCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IntersectionObserverCallback.idl; sourceTree = "<group>"; };
 		0F8B45711DC3FBA300443C3F /* IntersectionObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntersectionObserverCallback.h; sourceTree = "<group>"; };
-		0F8B45731DC41DBA00443C3F /* JSIntersectionObserverCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSIntersectionObserverCallback.cpp; path = JSIntersectionObserverCallback.cpp; sourceTree = "<group>"; };
-		0F8B45741DC41DBA00443C3F /* JSIntersectionObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSIntersectionObserverCallback.h; path = JSIntersectionObserverCallback.h; sourceTree = "<group>"; };
+		0F8B45731DC41DBA00443C3F /* JSIntersectionObserverCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIntersectionObserverCallback.cpp; sourceTree = "<group>"; };
+		0F8B45741DC41DBA00443C3F /* JSIntersectionObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIntersectionObserverCallback.h; sourceTree = "<group>"; };
 		0F97A657155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayRefreshMonitorIOS.mm; sourceTree = "<group>"; };
 		0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerUpdater.cpp; sourceTree = "<group>"; };
 		0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerUpdater.h; sourceTree = "<group>"; };
@@ -9863,6 +9863,7 @@
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
 		7118FED315685CC60030B79A /* JSSVGViewSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGViewSpec.h; sourceTree = "<group>"; };
 		711FB0751DC7688F00C4C708 /* placard-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "placard-support.js"; sourceTree = "<group>"; };
+		7130141D1DC9C08600CA3A88 /* pip-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "pip-support.js"; sourceTree = "<group>"; };
 		7134496B146941B300720312 /* SVGLengthContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLengthContext.cpp; sourceTree = "<group>"; };
 		7134496C146941B300720312 /* SVGLengthContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGLengthContext.h; sourceTree = "<group>"; };
 		713E70AF1733E8B300A22D00 /* plugIns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = plugIns.js; sourceTree = "<group>"; };
@@ -17875,6 +17876,7 @@
 				7177E2461DB80D2F00919A0B /* media-controller-support.js */,
 				71D02D921DB55C4E00DD5CF5 /* media-controller.js */,
 				7177E2471DB80D2F00919A0B /* mute-support.js */,
+				7130141D1DC9C08600CA3A88 /* pip-support.js */,
 				711FB0751DC7688F00C4C708 /* placard-support.js */,
 				71004B9D1DC1398800A52A38 /* playback-support.js */,
 				71004B9B1DC1109300A52A38 /* remaining-time-support.js */,
