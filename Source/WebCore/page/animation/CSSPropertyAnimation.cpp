@@ -599,7 +599,10 @@ public:
 
     void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        dst->setOpacity(blendFunc(anim, a->opacity(), b->opacity(), progress));
+        float fromOpacity = a->opacity();
+
+        // This makes sure we put the object being animated into a RenderLayer during the animation
+        dst->setOpacity(blendFunc(anim, (fromOpacity == 1) ? 0.999999f : fromOpacity, b->opacity(), progress));
     }
 };
 

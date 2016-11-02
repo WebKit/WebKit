@@ -995,7 +995,6 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     
     RenderBox* box = renderBox();
     ASSERT(box);
-    // FIXME: replace with call to AnimationController::isRunningAcceleratedAnimationOnRenderer() and remove RenderStyle::isRunningAcceleratedAnimation().
     if (renderer().style().isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());

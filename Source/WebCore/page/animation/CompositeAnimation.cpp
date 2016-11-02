@@ -292,33 +292,13 @@ bool CompositeAnimation::animate(RenderElement& renderer, const RenderStyle* cur
     m_keyframeAnimations.checkConsistency();
 
     bool animationStateChanged = false;
-    bool forceStackingContext = false;
 
     if (currentStyle) {
         // Now that we have transition objects ready, let them know about the new goal state.  We want them
         // to fill in a RenderStyle*& only if needed.
-        bool checkForStackingContext = false;
         for (auto& transition : m_transitions.values()) {
             if (transition->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle))
                 animationStateChanged = true;
-
-            checkForStackingContext |= WillChangeData::propertyCreatesStackingContext(transition->animatingProperty());
-        }
-
-        if (blendedStyle && checkForStackingContext) {
-            // Note that this is similar to code in StyleResolver::adjustRenderStyle() but only needs to consult
-            // animatable properties that can trigger stacking context.
-            if (blendedStyle->opacity() < 1.0f
-                || blendedStyle->hasTransformRelatedProperty()
-                || blendedStyle->hasMask()
-                || blendedStyle->clipPath()
-                || blendedStyle->boxReflect()
-                || blendedStyle->hasFilter()
-#if ENABLE(FILTERS_LEVEL_2)
-                || blendedStyle->hasBackdropFilter()
-#endif
-                )
-            forceStackingContext = true;
         }
     }
 
@@ -326,22 +306,8 @@ bool CompositeAnimation::animate(RenderElement& renderer, const RenderStyle* cur
     // to fill in a RenderStyle*& only if needed.
     for (auto& name : m_keyframeAnimationOrderMap) {
         RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name);
-        if (keyframeAnim) {
-            if (keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle))
-                animationStateChanged = true;
-
-            bool runningOrFillingForwards = !keyframeAnim->waitingToStart() && !keyframeAnim->postActive();
-            forceStackingContext |= runningOrFillingForwards && keyframeAnim->triggersStackingContext();
-        }
-    }
-
-    // https://drafts.csswg.org/css-animations-1/
-    // While an animation is applied but has not finished, or has finished but has an animation-fill-mode of forwards or both,
-    // the user agent must act as if the will-change property ([css-will-change-1]) on the element additionally
-    // includes all the properties animated by the animation.
-    if (forceStackingContext && blendedStyle) {
-        if (blendedStyle->hasAutoZIndex())
-            blendedStyle->setZIndex(0);
+        if (keyframeAnim && keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle))
+            animationStateChanged = true;
     }
 
     return animationStateChanged;
