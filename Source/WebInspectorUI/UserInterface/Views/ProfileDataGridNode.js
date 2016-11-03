@@ -255,6 +255,8 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         if (!this.shouldRefreshChildren)
             return;
 
+        this.removeEventListener("populate", this._populate, this);
+
         this._node.forEachChild((child) => {
             if (!this._childrenToChargeToSelf.has(child)) {
                 if (child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime))
@@ -263,7 +265,5 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         });
 
         this.sort();
-
-        this.removeEventListener("populate", this._populate, this);
     }
 };

@@ -182,11 +182,10 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         if (!this.shouldRefreshChildren)
             return;
 
+        this.removeEventListener("populate", this._populate, this);
         this.removeChildren();
 
         for (let node of this._profileNode.childNodes)
             this.appendChild(new WebInspector.ProfileNodeDataGridNode(node, this.baseStartTime, this.rangeStartTime, this.rangeEndTime));
-
-        this.removeEventListener("populate", this._populate, this);
     }
 };
