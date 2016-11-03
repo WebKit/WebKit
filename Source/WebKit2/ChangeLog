@@ -1,5 +1,26 @@
 2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r208307. rdar://problem/29078457
+
+    2016-11-02  David Kilzer  <ddkilzer@apple.com>
+
+            Bug 164333: Add logging for "WebKit encountered an internal error" messages due to Network process crashes
+            <https://webkit.org/b/164333>
+            <rdar://problem/29072727>
+
+            Reviewed by Alex Christensen.
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::logDiagnosticMessageForNetworkProcessCrash):
+            Add private method to log diagnostic message.
+            (WebKit::WebProcess::networkProcessConnectionClosed):
+            Call logDiagnosticMessageForNetworkProcessCrash().
+            * WebProcess/WebProcess.h:
+            (WebKit::WebProcess::logDiagnosticMessageForNetworkProcessCrash):
+            Declare new method.
+
+2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r208286. rdar://problem/28634857
 
     2016-11-02  David Kilzer  <ddkilzer@apple.com>

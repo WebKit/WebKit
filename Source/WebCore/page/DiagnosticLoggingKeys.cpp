@@ -133,6 +133,11 @@ String DiagnosticLoggingKeys::networkKey()
     return ASCIILiteral("network");
 }
 
+String DiagnosticLoggingKeys::networkProcessCrashedKey()
+{
+    return ASCIILiteral("networkProcessCrashed");
+}
+
 String DiagnosticLoggingKeys::neverSeenBeforeKey()
 {
     return ASCIILiteral("neverSeenBefore");

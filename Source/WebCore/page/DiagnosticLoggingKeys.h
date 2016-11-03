@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT static String needsRevalidationKey();
     WEBCORE_EXPORT static String networkCacheKey();
     static String networkKey();
+    WEBCORE_EXPORT static String networkProcessCrashedKey();
     WEBCORE_EXPORT static String neverSeenBeforeKey();
     static String noCacheKey();
     static String noCurrentHistoryItemKey();
