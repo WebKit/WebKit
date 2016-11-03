@@ -1,3 +1,23 @@
+2016-11-03  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r206247): Painting milestones can be delayed until the next layer flush
+        https://bugs.webkit.org/show_bug.cgi?id=164340
+        <rdar://problem/29074344>
+
+        Reviewed by Tim Horton.
+
+        To give WebKit a chance to deliver the painting milestones to its client after the commit,
+        we must tell it about them before or during the commit. To that end, we should not defer
+        the call to firePaintRelatedMilestonesIfNeeded until after the commit.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor): Removed
+          m_paintRelatedMilestonesTimer initializer.
+        (WebCore::RenderLayerCompositor::didPaintBacking): Call
+          FrameView::firePaintRelatedMilestonesIfNeeded directly from here.
+        (WebCore::RenderLayerCompositor::paintRelatedMilestonesTimerFired): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2016-11-03  Antti Koivisto  <antti@apple.com>
 
         imported/mozilla/svg/paint-order-01.svg and imported/mozilla/svg/paint-order-02.svg are flaky failures

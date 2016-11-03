@@ -1,3 +1,20 @@
+2016-11-03  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r206247): Painting milestones can be delayed until the next layer flush
+        https://bugs.webkit.org/show_bug.cgi?id=164340
+        <rdar://problem/29074344>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h: Declared new helper function.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones): Helper
+          function that sends the message to the UI process and resets
+          m_pendingNewlyReachedLayoutMilestones.
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers): Wait until after the commit to get the
+          pending milestones and send them to the UI process. This way we don’t miss milestones that
+          fire during the commit.
+
 2016-11-02  David Kilzer  <ddkilzer@apple.com>
 
         Bug 164333: Add logging for "WebKit encountered an internal error" messages due to Network process crashes

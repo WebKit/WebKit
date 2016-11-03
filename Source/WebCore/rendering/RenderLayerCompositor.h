@@ -475,8 +475,6 @@ private:
     void startLayerFlushTimerIfNeeded();
     void layerFlushTimerFired();
 
-    void paintRelatedMilestonesTimerFired();
-
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer&);
     void logLayerInfo(const RenderLayer&, int depth);
@@ -548,7 +546,6 @@ private:
 
     std::unique_ptr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
 
-    Timer m_paintRelatedMilestonesTimer;
     Timer m_layerFlushTimer;
 
     bool m_layerFlushThrottlingEnabled { false };

@@ -122,6 +122,8 @@ private:
     void updateScrolledExposedRect();
     void scaleViewToFitDocumentIfNeeded();
 
+    void sendPendingNewlyReachedLayoutMilestones();
+
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
