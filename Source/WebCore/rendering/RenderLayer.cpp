@@ -6907,6 +6907,9 @@ RenderStyle RenderLayer::createReflectionStyle()
 
     // Map in our mask.
     newStyle.setMaskBoxImage(renderer().style().boxReflect()->mask());
+    
+    // Style has transform and mask, so needs to be stacking context.
+    newStyle.setZIndex(0);
 
     return newStyle;
 }
