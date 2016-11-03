@@ -1,5 +1,17 @@
 2016-11-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Followup after r208314.
+
+        The style created for reflections contains transforms and a mask, so needs to get explicit
+        z-index on it. This doesn't change rendering, since this layer has no children.
+
+        Fixes assertions in various reflection tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
+2016-11-02  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r208025) GraphicsContext state stack assertions loading webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=164350
         rdar://problem/29053414
