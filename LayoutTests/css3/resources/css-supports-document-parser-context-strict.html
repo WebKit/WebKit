@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeFalse("CSS.supports('color', '-webkit-focus-ring-color')");
+window.parent.document.test1 = CSS.supports('color', '-webkit-focus-ring-color');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

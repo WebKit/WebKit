@@ -1,3 +1,13 @@
+2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSS.supports("font-variation-settings", "'wght' 500") erroneously returns false
+        https://bugs.webkit.org/show_bug.cgi?id=164244
+
+        Reviewed by Michael Catanzaro.
+
+        * fast/text/variations/css-supports-runtime-switch-expected.txt: Added.
+        * fast/text/variations/css-supports-runtime-switch.html: Added.
+
 2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Add DOMJIT::Signature

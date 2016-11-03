@@ -1,3 +1,22 @@
+2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSS.supports("font-variation-settings", "'wght' 500") erroneously returns false
+        https://bugs.webkit.org/show_bug.cgi?id=164244
+
+        Reviewed by Michael Catanzaro.
+
+        Because we weren't passing a Document into CSSParserContext's constructor,
+        there was no way for our parser to know whether the runtime switch was on
+        or not. Instead, we can use the CallWith attribute in the IDL file to pass
+        in a Document.
+
+        Test: fast/text/variations/css-supports-runtime-switch.html
+
+        * css/DOMCSSNamespace.cpp:
+        (WebCore::DOMCSSNamespace::supports):
+        * css/DOMCSSNamespace.h:
+        * css/DOMCSSNamespace.idl:
+
 2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Add DOMJIT::Signature
