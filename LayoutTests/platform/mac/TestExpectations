@@ -1464,3 +1464,6 @@ webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
 webkit.org/b/163915 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 webkit.org/b/163915 svg/wicd/test-rightsizing-b.xhtml [ Pass Failure ]
+
+webkit.org/b/164388 inspector/sampling-profiler/call-frame-with-dom-functions.htm [ Pass Timeout ]
+webkit.org/b/164388 inspector/sampling-profiler/expression-location-info.html [ Pass Timeout ]

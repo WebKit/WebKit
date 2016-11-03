@@ -1,5 +1,14 @@
 2016-11-03  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking two inspector/sampling-profiler tests as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164388
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-11-03  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r208302.
 
         This change causes LayoutTest crashes under GuardMalloc.
