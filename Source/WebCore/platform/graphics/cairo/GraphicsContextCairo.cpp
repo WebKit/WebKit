@@ -805,7 +805,7 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
     }
 }
 
-void GraphicsContext::setURLForRect(const URL&, const IntRect&)
+void GraphicsContext::setURLForRect(const URL&, const FloatRect&)
 {
     notImplemented();
 }

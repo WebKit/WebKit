@@ -468,7 +468,10 @@ public:
     void translate(const FloatSize& size) { translate(size.width(), size.height()); }
     WEBCORE_EXPORT void translate(float x, float y);
 
-    void setURLForRect(const URL&, const IntRect&);
+    void setURLForRect(const URL&, const FloatRect&);
+
+    void setDestinationForRect(const String& name, const FloatRect&);
+    void addDestinationAtPoint(const String& name, const FloatPoint&);
 
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
@@ -575,6 +578,8 @@ public:
 #endif
 
     static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
+
+    bool supportsInternalLinks() const;
 
 private:
     void platformInit(PlatformGraphicsContext*);

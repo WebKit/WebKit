@@ -1548,7 +1548,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
         setCGFillColor(platformContext(), fillColor());
 }
 
-void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
 {
 #if !PLATFORM(IOS)
     if (paintingDisabled())
@@ -1565,15 +1565,11 @@ void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 
     CGContextRef context = platformContext();
 
+    FloatRect rect = destRect;
     // Get the bounding box to handle clipping.
-    CGRect box = CGContextGetClipBoundingBox(context);
+    rect.intersect(CGContextGetClipBoundingBox(context));
 
-    IntRect intBox((int)box.origin.x, (int)box.origin.y, (int)box.size.width, (int)box.size.height);
-    IntRect rect = destRect;
-    rect.intersect(intBox);
-
-    CGPDFContextSetURLForRect(context, urlRef.get(),
-        CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
+    CGPDFContextSetURLForRect(context, urlRef.get(), CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
 #else
     UNUSED_PARAM(link);
     UNUSED_PARAM(destRect);
@@ -1900,6 +1896,36 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 
     CGContextRef context = platformContext();
     CGContextStrokeEllipseInRect(context, ellipse);
+}
+
+bool GraphicsContext::supportsInternalLinks() const
+{
+    return true;
+}
+
+void GraphicsContext::setDestinationForRect(const String& name, const FloatRect& destRect)
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+
+    FloatRect rect = destRect;
+    rect.intersect(CGContextGetClipBoundingBox(context));
+
+    CGRect transformedRect = CGRectApplyAffineTransform(rect, CGContextGetCTM(context));
+    CGPDFContextSetDestinationForRect(context, name.createCFString().get(), transformedRect);
+}
+
+void GraphicsContext::addDestinationAtPoint(const String& name, const FloatPoint& position)
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+
+    CGPoint transformedPoint = CGPointApplyAffineTransform(position, CGContextGetCTM(context));
+    CGPDFContextAddDestinationAtPoint(context, name.createCFString().get(), transformedPoint);
 }
 
 }

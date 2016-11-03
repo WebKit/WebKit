@@ -33,6 +33,7 @@
 #import <wtf/Vector.h>
 
 @class WKPrintingViewData;
+@class PDFDestination;
 @class PDFDocument;
 
 namespace WebKit {
@@ -52,6 +53,7 @@ class WebFrameProxy;
 
     Vector<uint8_t> _printedPagesData;
     RetainPtr<PDFDocument> _printedPagesPDFDocument;
+    Vector<Vector<RetainPtr<PDFDestination>>> _linkDestinationsPerPage;
 
     uint64_t _expectedComputedPagesCallback;
     HashMap<uint64_t, WebCore::IntRect> _expectedPreviewCallbacks;

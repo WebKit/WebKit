@@ -1,3 +1,52 @@
+2016-11-03  Tim Horton  <timothy_horton@apple.com>
+
+        Printing to PDF should produce internal links when HTML has internal links
+        https://bugs.webkit.org/show_bug.cgi?id=112081
+        <rdar://problem/5955705>
+
+        Reviewed by Simon Fraser.
+        Patch originally by David Lattimore.
+
+        No new tests, as it's unclear how to test PDF output.
+
+        * dom/Element.cpp:
+        (WebCore::Element::findAnchorElementForLink):
+        * dom/Element.h:
+        Add findAnchorElementForLink, which looks up the anchor element corresponding
+        to the current element's href, and also returns the fragment name as an out parameter.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::PrintContext):
+        (WebCore::PrintContext::spoolPage):
+        (WebCore::PrintContext::spoolRect):
+        (WebCore::PrintContext::end):
+        (WebCore::PrintContext::collectLinkedDestinations):
+        (WebCore::PrintContext::outputLinkedDestinations):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect):
+        Plumb internal links (fragment links) through to GraphicsContext, using
+        the fragment name from the page.
+
+        * page/PrintContext.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::supportsInternalLinks):
+        (WebCore::GraphicsContext::setDestinationForRect):
+        (WebCore::GraphicsContext::addDestinationAtPoint):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::supportsInternalLinks):
+        (WebCore::GraphicsContext::setDestinationForRect):
+        (WebCore::GraphicsContext::addDestinationAtPoint):
+        Plumb internal links through to the CGContext. Apply the CTM, because
+        these functions expect positions in global coordinates.
+
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+        Adjust setURLForRect to take a FloatRect, like everything else, and
+        stop rounding.
+
 2016-11-03  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r208298.

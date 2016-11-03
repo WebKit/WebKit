@@ -427,6 +427,11 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     return 0; // Invalid page number.
 }
 
+static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *destination)
+{
+    return (CFStringRef)[NSString stringWithFormat:@"%lu-%f-%f", (unsigned long)[document indexForPage:destination.page], destination.point.x, destination.point.y];
+}
+
 - (void)_drawPDFDocument:(PDFDocument *)pdfDocument page:(unsigned)page atPoint:(NSPoint)point
 {
     if (!pdfDocument) {
@@ -456,6 +461,11 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
 
     CGAffineTransform transform = CGContextGetCTM(context);
 
+    for (const auto& destination : _linkDestinationsPerPage[page]) {
+        CGPoint destinationPoint = CGPointApplyAffineTransform(NSPointToCGPoint([destination point]), transform);
+        CGPDFContextAddDestinationAtPoint(context, linkDestinationName(pdfDocument, destination.get()), destinationPoint);
+    }
+
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
         if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
             continue;
@@ -465,11 +475,17 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
         PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
 #pragma clang diagnostic pop
         NSURL *url = [linkAnnotation URL];
-        if (!url)
-            continue;
+        CGRect transformedRect = CGRectApplyAffineTransform(NSRectToCGRect([linkAnnotation bounds]), transform);
 
-        CGRect urlRect = NSRectToCGRect([linkAnnotation bounds]);
-        CGRect transformedRect = CGRectApplyAffineTransform(urlRect, transform);
+        if (!url) {
+            PDFDestination *destination = [linkAnnotation destination];
+            if (!destination)
+                continue;
+            CGPDFContextSetDestinationForRect(context, linkDestinationName(pdfDocument, destination), transformedRect);
+
+            continue;
+        }
+
         CGPDFContextSetURLForRect(context, (CFURLRef)url, transformedRect);
     }
 
@@ -549,6 +565,31 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     if (!_printedPagesPDFDocument) {
         RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
         _printedPagesPDFDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
+
+        unsigned pageCount = [_printedPagesPDFDocument pageCount];
+        _linkDestinationsPerPage.clear();
+        _linkDestinationsPerPage.resize(pageCount);
+        for (unsigned i = 0; i < pageCount; i++) {
+            PDFPage *page = [_printedPagesPDFDocument pageAtIndex:i];
+            for (PDFAnnotation *annotation in page.annotations) {
+                if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
+                    continue;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
+#pragma clang diagnostic pop
+                if (linkAnnotation.URL)
+                    continue;
+
+                PDFDestination *destination = linkAnnotation.destination;
+                if (!destination)
+                    continue;
+
+                unsigned destinationPageIndex = [_printedPagesPDFDocument indexForPage:destination.page];
+                _linkDestinationsPerPage[destinationPageIndex].append(destination);
+            }
+        }
     }
 
     unsigned printedPageNumber = [self _pageForRect:nsRect] - [self _firstPrintedPageNumber];

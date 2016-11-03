@@ -1642,7 +1642,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     notImplemented();
 }
 
-void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
 {
     if (paintingDisabled())
         return;

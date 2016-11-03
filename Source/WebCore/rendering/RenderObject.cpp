@@ -604,10 +604,22 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     Node* node = this->node();
     if (!is<Element>(node) || !node->isLink())
         return;
-    const AtomicString& href = downcast<Element>(*node).getAttribute(hrefAttr);
+    Element& element = downcast<Element>(*node);
+    const AtomicString& href = element.getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    paintInfo.context().setURLForRect(node->document().completeURL(href), snappedIntRect(urlRect));
+
+    if (paintInfo.context().supportsInternalLinks()) {
+        String outAnchorName;
+        Element* linkTarget = element.findAnchorElementForLink(outAnchorName);
+        if (linkTarget) {
+            paintInfo.context().setDestinationForRect(outAnchorName, urlRect);
+            return;
+        }
+    }
+
+    paintInfo.context().setURLForRect(node->document().completeURL(href), urlRect);
+
 }
 
 #if PLATFORM(IOS)

@@ -24,6 +24,8 @@
 #include "GraphicsContext.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -34,7 +36,6 @@ namespace WebCore {
 
 PrintContext::PrintContext(Frame* frame)
     : m_frame(frame)
-    , m_isPrinting(false)
 {
 }
 
@@ -190,6 +191,7 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
     ctx.translate(-pageRect.x(), -pageRect.y());
     ctx.clip(pageRect);
     m_frame->view()->paintContents(ctx, pageRect);
+    outputLinkedDestinations(ctx, m_frame->document(), pageRect);
     ctx.restore();
 }
 
@@ -200,6 +202,7 @@ void PrintContext::spoolRect(GraphicsContext& ctx, const IntRect& rect)
     ctx.translate(-rect.x(), -rect.y());
     ctx.clip(rect);
     m_frame->view()->paintContents(ctx, rect);
+    outputLinkedDestinations(ctx, m_frame->document(), rect);
     ctx.restore();
 }
 
@@ -208,6 +211,7 @@ void PrintContext::end()
     ASSERT(m_isPrinting);
     m_isPrinting = false;
     m_frame->setPrinting(false, FloatSize(), FloatSize(), 0, AdjustViewSize);
+    m_linkedDestinations = nullptr;
 }
 
 static inline RenderBoxModelObject* enclosingBoxModelObject(RenderElement* renderer)
@@ -244,6 +248,39 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
             return pageNumber;
     }
     return -1;
+}
+
+void PrintContext::collectLinkedDestinations(Node& node)
+{
+    for (Node* child = &node; child; child = NodeTraversal::next(*child)) {
+        if (!is<Element>(child))
+            continue;
+
+        String outAnchorName;
+        if (Element* element = downcast<Element>(child)->findAnchorElementForLink(outAnchorName))
+            m_linkedDestinations->set(outAnchorName, *element);
+    }
+}
+
+void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Node* node, const IntRect& pageRect)
+{
+    if (!graphicsContext.supportsInternalLinks())
+        return;
+
+    if (!m_linkedDestinations) {
+        m_linkedDestinations = std::make_unique<HashMap<String, Ref<Element>>>();
+        collectLinkedDestinations(*node);
+    }
+
+    for (const auto& it : *m_linkedDestinations) {
+        FloatPoint point = it.value->renderer()->anchorRect().minXMinYCorner();
+        point.expandedTo(FloatPoint());
+
+        if (!pageRect.contains(roundedIntPoint(point)))
+            continue;
+
+        graphicsContext.addDestinationAtPoint(it.key, point);
+    }
 }
 
 String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pageNumber)
