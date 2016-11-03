@@ -1,3 +1,20 @@
+2016-11-03  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake][MinGW] Don't use MS bitfield layout to reduce sizes of data structures
+        https://bugs.webkit.org/show_bug.cgi?id=164026
+
+        Reviewed by Michael Catanzaro.
+
+        With MS bitfileds RegisterAtOffset becomes wider than ptrdiff_t because of
+        different alignment requirements, invoking static_assert. Instead of
+        muting assert for MinGW like it's done for MSVC, it's a better choice to
+        use more dense layout, as bitfields are not used in public APIs.
+
+        Also, suppress MinGW warnings from "#pragma warning" which it doesn't
+        understand.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2016-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove Battery Status API from the tree
