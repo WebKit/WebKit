@@ -1,3 +1,14 @@
+2016-11-03  Saam Barati  <sbarati@apple.com>
+
+        Asking for a value profile prediction should be defensive against not finding a value profile
+        https://bugs.webkit.org/show_bug.cgi?id=164306
+
+        Reviewed by Mark Lam.
+
+        * stress/inlined-tail-call-in-inlined-setter-should-not-crash-when-getting-value-profile.js: Added.
+        (let.o.set foo):
+        (bar):
+
 2016-11-02  Saam Barati  <sbarati@apple.com>
 
         Allocation elimination of rest parameter doesn't take into account indexed properties on Array.prototype/Object.prototype

@@ -851,56 +851,56 @@ private:
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
         SpeculatedType prediction;
-        CodeBlock* profiledBlock = nullptr;
-
         {
             ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
             prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
-
-            if (prediction == SpecNone) {
-                // If we have no information about the values this
-                // node generates, we check if by any chance it is
-                // a tail call opcode. In that case, we walk up the
-                // inline frames to find a call higher in the call
-                // chain and use its prediction. If we only have
-                // inlined tail call frames, we use SpecFullTop
-                // to avoid a spurious OSR exit.
-                Instruction* instruction = m_inlineStackTop->m_profiledBlock->instructions().begin() + bytecodeIndex;
-                OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(instruction->u.opcode);
-
-                switch (opcodeID) {
-                case op_tail_call:
-                case op_tail_call_varargs:
-                case op_tail_call_forward_arguments: {
-                    if (!inlineCallFrame()) {
-                        prediction = SpecFullTop;
-                        break;
-                    }
-                    CodeOrigin* codeOrigin = inlineCallFrame()->getCallerSkippingTailCalls();
-                    if (!codeOrigin) {
-                        prediction = SpecFullTop;
-                        break;
-                    }
-                    InlineStackEntry* stack = m_inlineStackTop;
-                    while (stack->m_inlineCallFrame != codeOrigin->inlineCallFrame)
-                        stack = stack->m_caller;
-                    bytecodeIndex = codeOrigin->bytecodeIndex;
-                    profiledBlock = stack->m_profiledBlock;
-                    break;
-                }
-
-                default:
-                    break;
-                }
-            }
         }
 
-        if (profiledBlock) {
+        if (prediction != SpecNone)
+            return prediction;
+
+        // If we have no information about the values this
+        // node generates, we check if by any chance it is
+        // a tail call opcode. In that case, we walk up the
+        // inline frames to find a call higher in the call
+        // chain and use its prediction. If we only have
+        // inlined tail call frames, we use SpecFullTop
+        // to avoid a spurious OSR exit.
+        Instruction* instruction = m_inlineStackTop->m_profiledBlock->instructions().begin() + bytecodeIndex;
+        OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(instruction->u.opcode);
+
+        switch (opcodeID) {
+        case op_tail_call:
+        case op_tail_call_varargs:
+        case op_tail_call_forward_arguments: {
+            // Things should be more permissive to us returning BOTTOM instead of TOP here.
+            // Currently, this will cause us to Force OSR exit. This is bad because returning
+            // TOP will cause anything that transitively touches this speculated type to
+            // also become TOP during prediction propagation.
+            // https://bugs.webkit.org/show_bug.cgi?id=164337
+            if (!inlineCallFrame())
+                return SpecFullTop;
+
+            CodeOrigin* codeOrigin = inlineCallFrame()->getCallerSkippingTailCalls();
+            if (!codeOrigin)
+                return SpecFullTop;
+
+            InlineStackEntry* stack = m_inlineStackTop;
+            while (stack->m_inlineCallFrame != codeOrigin->inlineCallFrame)
+                stack = stack->m_caller;
+
+            bytecodeIndex = codeOrigin->bytecodeIndex;
+            CodeBlock* profiledBlock = stack->m_profiledBlock;
             ConcurrentJITLocker locker(profiledBlock->m_lock);
-            prediction = profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
+            return profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
         }
 
-        return prediction;
+        default:
+            return SpecNone;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return SpecNone;
     }
 
     SpeculatedType getPrediction(unsigned bytecodeIndex)

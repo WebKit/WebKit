@@ -414,7 +414,9 @@ public:
     ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset);
     SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJITLocker& locker, int bytecodeOffset)
     {
-        return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction(locker);
+        if (ValueProfile* valueProfile = valueProfileForBytecodeOffset(bytecodeOffset))
+            return valueProfile->computeUpdatedPrediction(locker);
+        return SpecNone;
     }
 
     unsigned totalNumberOfValueProfiles()

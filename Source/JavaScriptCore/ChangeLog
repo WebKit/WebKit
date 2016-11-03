@@ -1,3 +1,25 @@
+2016-11-03  Saam Barati  <sbarati@apple.com>
+
+        Asking for a value profile prediction should be defensive against not finding a value profile
+        https://bugs.webkit.org/show_bug.cgi?id=164306
+
+        Reviewed by Mark Lam.
+
+        Currently, the code that calls CodeBlock::valueProfilePredictionForBytecodeOffset
+        in the DFG assumes it will always be at a value producing node. However, this isn't
+        true if we tail call from an inlined setter. When we're at a tail call, we try
+        to find the first caller that isn't a tail call to see what value the
+        tail_call produces. If we inline a setter, however, we will end up finding
+        the put_by_id as our first non-tail-called "caller", and that won't have a
+        value profile associated with it since it's not a value producing node.
+        CodeBlock::valueProfilePredictionForBytecodeOffset should be defensive
+        against finding a null value profile.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+
 2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix CLoop build after r208320.
