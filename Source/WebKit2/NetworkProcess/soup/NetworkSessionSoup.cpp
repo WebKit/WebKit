@@ -26,8 +26,10 @@
 #include "config.h"
 #include "NetworkSessionSoup.h"
 
+#include "NetworkDataTaskSoup.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -45,6 +47,12 @@ NetworkSessionSoup::~NetworkSessionSoup()
 SoupSession* NetworkSessionSoup::soupSession() const
 {
     return networkStorageSession().soupNetworkSession().soupSession();
+}
+
+void NetworkSessionSoup::invalidateAndCancel()
+{
+    for (auto* task : m_dataTaskSet)
+        task->invalidateAndCancel();
 }
 
 } // namespace WebKit

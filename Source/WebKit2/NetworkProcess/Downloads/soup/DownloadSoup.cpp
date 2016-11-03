@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Brent Fulgham <bfulgham@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NetworkLoad.h"
+#include "config.h"
+#include "Download.h"
 
-#import <WebCore/CFNetworkSPI.h>
-#import <WebCore/ResourceHandle.h>
-
-namespace WebKit {
+#include "DataReference.h"
+#include "NetworkDataTask.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
-#if USE(CFURLCONNECTION)
+namespace WebKit {
 
-void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef cfResponse)
+void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
 {
-    ASSERT_UNUSED(handle, handle == m_handle);
-
-    m_handle->continueWillCacheResponse(cfResponse);
+    notImplemented();
 }
 
-#else
-
-void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
+void Download::cancelNetworkLoad()
 {
-    ASSERT_UNUSED(handle, handle == m_handle);
-
-    m_handle->continueWillCacheResponse(nsResponse);
+    m_download->cancel();
+    didCancel({ });
 }
 
-#endif // !USE(CFURLCONNECTION)
+void Download::platformInvalidate()
+{
+}
+
+void Download::platformDidFinish()
+{
+}
 
 } // namespace WebKit

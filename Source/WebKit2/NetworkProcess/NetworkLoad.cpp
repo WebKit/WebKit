@@ -67,6 +67,10 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& para
     , m_parameters(WTFMove(parameters))
     , m_currentRequest(m_parameters.request)
 {
+    if (m_parameters.request.url().protocolIsBlob()) {
+        m_handle = ResourceHandle::create(nullptr, m_parameters.request, this, m_parameters.defersLoading, m_parameters.contentSniffingPolicy == SniffContent);
+        return;
+    }
     m_task = NetworkDataTask::create(networkSession, *this, m_parameters.request, m_parameters.allowStoredCredentials, m_parameters.contentSniffingPolicy, m_parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
     if (!m_parameters.defersLoading)
         m_task->resume();
@@ -97,14 +101,12 @@ NetworkLoad::~NetworkLoad()
 #endif
     if (m_task)
         m_task->clearClient();
-#else
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+#elif USE(PROTECTION_SPACE_AUTH_CALLBACK)
     if (m_handle && m_waitingForContinueCanAuthenticateAgainstProtectionSpace)
         m_handle->continueCanAuthenticateAgainstProtectionSpace(false);
 #endif
     if (m_handle)
         m_handle->clearClient();
-#endif
 }
 
 void NetworkLoad::setDefersLoading(bool defers)
@@ -116,10 +118,9 @@ void NetworkLoad::setDefersLoading(bool defers)
         else
             m_task->resume();
     }
-#else
+#endif
     if (m_handle)
         m_handle->setDefersLoading(defers);
-#endif
 }
 
 void NetworkLoad::cancel()
@@ -127,10 +128,9 @@ void NetworkLoad::cancel()
 #if USE(NETWORK_SESSION)
     if (m_task)
         m_task->cancel();
-#else
+#endif
     if (m_handle)
         m_handle->cancel();
-#endif
 }
 
 void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
@@ -143,21 +143,27 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 #endif
 
 #if USE(NETWORK_SESSION)
-    auto redirectCompletionHandler = std::exchange(m_redirectCompletionHandler, nullptr);
-    if (m_currentRequest.isNull())
-        didCompleteWithError(cancelledError(m_currentRequest));
+    auto redirectCompletionHandler = std::exchange(m_redirectCompletionHandler, nullptr);    
     ASSERT(redirectCompletionHandler);
-    if (redirectCompletionHandler)
-        redirectCompletionHandler(m_currentRequest);
-#else
+#endif
+    
     if (m_currentRequest.isNull()) {
         if (m_handle)
             m_handle->cancel();
         didFail(m_handle.get(), cancelledError(m_currentRequest));
+#if USE(NETWORK_SESSION)
+        if (redirectCompletionHandler)
+            redirectCompletionHandler({ });
+#endif
+        return;
     } else if (m_handle) {
         auto currentRequestCopy = m_currentRequest;
         m_handle->continueWillSendRequest(WTFMove(currentRequestCopy));
     }
+
+#if USE(NETWORK_SESSION)
+    if (redirectCompletionHandler)
+        redirectCompletionHandler(m_currentRequest);
 #endif
 }
 
@@ -165,13 +171,12 @@ void NetworkLoad::continueDidReceiveResponse()
 {
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler) {
-        auto responseCompletionHandler = std::exchange(m_responseCompletionHandler, nullptr);
-        responseCompletionHandler(PolicyUse);
+        m_responseCompletionHandler(PolicyUse);
+        m_responseCompletionHandler = nullptr;
     }
-#else
+#endif
     if (m_handle)
         m_handle->continueDidReceiveResponse();
-#endif
 }
 
 NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiveResponse(ResourceResponse&& response)
@@ -280,23 +285,6 @@ void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& c
         NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, *m_challenge, WTFMove(completionHandler));
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
-{
-    ASSERT(m_challengeCompletionHandler);
-    auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
-    if (!result) {
-        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(*m_challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
-        else
-            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        return;
-    }
-
-    completeAuthenticationChallenge(WTFMove(completionHandler));
-}
-#endif
-
 void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(isMainThread());
@@ -374,8 +362,8 @@ void NetworkLoad::cannotShowURL()
 {
     m_client.didFailLoading(cannotShowURLError(m_currentRequest));
 }
-
-#else
+    
+#endif
 
 void NetworkLoad::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& receivedResponse)
 {
@@ -430,13 +418,32 @@ void NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* han
         return;
     }
 
+#if !USE(NETWORK_SESSION)
     m_waitingForContinueCanAuthenticateAgainstProtectionSpace = true;
+#endif
     m_client.canAuthenticateAgainstProtectionSpaceAsync(protectionSpace);
 }
+#endif
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
+#if USE(NETWORK_SESSION)
+    ASSERT_WITH_MESSAGE(!m_handle, "Blobs should never give authentication challenges");
+    ASSERT(m_challengeCompletionHandler);
+    auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
+    if (!result) {
+        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(*m_challenge))
+            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
+        else
+            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
+        return;
+    }
+
+    completeAuthenticationChallenge(WTFMove(completionHandler));
+#else
     m_waitingForContinueCanAuthenticateAgainstProtectionSpace = false;
+#endif
     if (m_handle)
         m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
 }
@@ -508,6 +515,5 @@ void NetworkLoad::receivedCancellation(ResourceHandle* handle, const Authenticat
     m_handle->cancel();
     didFail(m_handle.get(), cancelledError(m_currentRequest));
 }
-#endif // USE(NETWORK_SESSION)
 
 } // namespace WebKit

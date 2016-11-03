@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BlobDownloadClient.h"
 
-#if !USE(NETWORK_SESSION)
-
 #include "DataReference.h"
 #include "Download.h"
 #include "WebErrors.h"
@@ -99,5 +97,3 @@ void BlobDownloadClient::didFail(ResourceHandle*, const ResourceError& error)
 }
 
 }
-
-#endif // !USE(NETWORK_SESSION)

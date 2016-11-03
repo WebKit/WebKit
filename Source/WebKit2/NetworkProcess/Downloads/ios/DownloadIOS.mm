@@ -142,7 +142,7 @@ void Download::startNetworkLoadWithHandle(ResourceHandle* handle, const Resource
 #pragma clang diagnostic pop
 }
 
-void Download::platformCancelNetworkLoad()
+void Download::cancelNetworkLoad()
 {
     notImplemented();
 }

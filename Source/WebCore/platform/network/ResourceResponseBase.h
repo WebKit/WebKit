@@ -99,7 +99,7 @@ public:
     String httpHeaderField(const String& name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
+    void setHTTPHeaderField(HTTPHeaderName, const String& value);
 
     void addHTTPHeaderField(HTTPHeaderName, const String& value);
     void addHTTPHeaderField(const String& name, const String& value);

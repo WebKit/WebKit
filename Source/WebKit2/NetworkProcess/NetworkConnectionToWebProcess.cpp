@@ -207,16 +207,18 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID 
     }
 
 #if USE(NETWORK_SESSION)
-    loader->networkLoad()->convertTaskToDownload(downloadID, request, response);
-    loader->didConvertToDownload();
-#else
+    if (!request.url().protocolIsBlob()) {
+        loader->networkLoad()->convertTaskToDownload(downloadID, request, response);
+        loader->didConvertToDownload();
+        return;
+    }
+#endif
     networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->networkLoad()->handle(), request, response);
 
     // Unblock the URL connection operation queue.
     loader->networkLoad()->handle()->continueDidReceiveResponse();
 
     loader->didConvertToDownload();
-#endif
 }
 
 void NetworkConnectionToWebProcess::cookiesForDOM(SessionID sessionID, const URL& firstParty, const URL& url, String& result)

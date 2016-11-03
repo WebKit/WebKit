@@ -45,22 +45,10 @@ using namespace WebCore;
 namespace WebKit {
 
 #if USE(NETWORK_SESSION)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const SessionID& sessionID, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, PlatformDownloadTaskRef download, const WebCore::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
-    , m_download(&download)
-    , m_sessionID(sessionID)
-    , m_suggestedName(suggestedName)
-{
-    ASSERT(m_downloadID.downloadID());
-
-    m_downloadManager.didCreateDownload();
-}
-#if PLATFORM(COCOA)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const SessionID& sessionID, const String& suggestedName)
-    : m_downloadManager(downloadManager)
-    , m_downloadID(downloadID)
-    , m_downloadTask(download)
+    , m_download(download)
     , m_sessionID(sessionID)
     , m_suggestedName(suggestedName)
 {
@@ -69,7 +57,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
     m_downloadManager.didCreateDownload();
 }
 #endif
-#else
+
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
@@ -80,11 +68,9 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, cons
 
     m_downloadManager.didCreateDownload();
 }
-#endif // USE(NETWORK_SESSION)
 
 Download::~Download()
 {
-#if !USE(NETWORK_SESSION)
     if (m_resourceHandle) {
         m_resourceHandle->clearClient();
         m_resourceHandle->cancel();
@@ -93,12 +79,10 @@ Download::~Download()
     m_downloadClient = nullptr;
 
     platformInvalidate();
-#endif
 
     m_downloadManager.didDestroyDownload();
 }
 
-#if !USE(NETWORK_SESSION)
 void Download::start()
 {
     if (m_request.url().protocolIsBlob()) {
@@ -108,7 +92,11 @@ void Download::start()
         return;
     }
 
+#if USE(NETWORK_SESSION)
+    ASSERT_NOT_REACHED();
+#else
     startNetworkLoad();
+#endif
 }
 
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
@@ -120,45 +108,53 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
         return;
     }
 
+#if USE(NETWORK_SESSION)
+    UNUSED_PARAM(handle);
+    UNUSED_PARAM(response);
+    ASSERT_NOT_REACHED();
+#else
     startNetworkLoadWithHandle(handle, response);
-}
 #endif
+}
 
 void Download::cancel()
 {
-#if USE(NETWORK_SESSION)
-    if (m_download) {
-        m_download->cancel();
-        didCancel({ });
-        return;
-    }
-#else
     if (m_request.url().protocolIsBlob()) {
         auto resourceHandle = WTFMove(m_resourceHandle);
         resourceHandle->cancel();
         static_cast<BlobDownloadClient*>(m_downloadClient.get())->didCancel();
         return;
     }
-#endif
-    platformCancelNetworkLoad();
+    cancelNetworkLoad();
 }
 
-#if !USE(NETWORK_SESSION)
 void Download::didStart()
 {
     send(Messages::DownloadProxy::DidStart(m_request, m_suggestedName));
 }
 
+#if !USE(NETWORK_SESSION)
 void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
 {
     m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, authenticationChallenge);
 }
+#endif
 
 void Download::didReceiveResponse(const ResourceResponse& response)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Created (id = %" PRIu64 ")", downloadID().downloadID());
 
     send(Messages::DownloadProxy::DidReceiveResponse(response));
+}
+
+void Download::didReceiveData(uint64_t length)
+{
+    if (!m_hasReceivedData) {
+        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().downloadID());
+        m_hasReceivedData = true;
+    }
+
+    send(Messages::DownloadProxy::DidReceiveData(length));
 }
 
 bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
@@ -169,6 +165,8 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
 
     return result;
 }
+
+#if !USE(NETWORK_SESSION)
 
 String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
@@ -183,6 +181,8 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
 
     return destination;
 }
+
+#endif
 
 void Download::decideDestinationWithSuggestedFilenameAsync(const String& suggestedFilename)
 {
@@ -209,30 +209,17 @@ void Download::continueDidReceiveResponse()
 {
     m_resourceHandle->continueDidReceiveResponse();
 }
-#endif
 
 void Download::didCreateDestination(const String& path)
 {
     send(Messages::DownloadProxy::DidCreateDestination(path));
 }
 
-void Download::didReceiveData(uint64_t length)
-{
-    if (!m_hasReceivedData) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().downloadID());
-        m_hasReceivedData = true;
-    }
-
-    send(Messages::DownloadProxy::DidReceiveData(length));
-}
-
 void Download::didFinish()
 {
     RELEASE_LOG_IF_ALLOWED("didFinish: (id = %" PRIu64 ")", downloadID().downloadID());
 
-#if !USE(NETWORK_SESSION)
     platformDidFinish();
-#endif
 
     send(Messages::DownloadProxy::DidFinish());
 
@@ -289,11 +276,5 @@ bool Download::isAlwaysOnLoggingAllowed() const
     return false;
 #endif
 }
-
-#if !PLATFORM(COCOA)
-void Download::platformCancelNetworkLoad()
-{
-}
-#endif
 
 } // namespace WebKit

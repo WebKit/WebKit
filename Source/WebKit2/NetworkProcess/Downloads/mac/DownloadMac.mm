@@ -109,7 +109,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
-void Download::platformCancelNetworkLoad()
+void Download::cancelNetworkLoad()
 {
     [m_nsURLDownload cancel];
 

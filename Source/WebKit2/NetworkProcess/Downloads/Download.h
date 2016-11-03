@@ -40,6 +40,12 @@
 #if USE(NETWORK_SESSION)
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLSessionDownloadTask;
+typedef NSURLSessionDownloadTask* PlatformDownloadTaskRef;
+#elif USE(SOUP)
+namespace WebKit {
+class NetworkDataTask;
+}
+typedef WebKit::NetworkDataTask* PlatformDownloadTaskRef;
 #endif
 #else // USE(NETWORK_SESSION)
 #if PLATFORM(COCOA)
@@ -67,7 +73,6 @@ class ResourceResponse;
 namespace WebKit {
 
 class DownloadManager;
-class NetworkDataTask;
 class NetworkSession;
 class WebPage;
 
@@ -75,43 +80,39 @@ class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if USE(NETWORK_SESSION)
-    Download(DownloadManager&, DownloadID, NetworkDataTask&, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
-#if PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
+    Download(DownloadManager&, DownloadID, PlatformDownloadTaskRef, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
 #endif
-#else
     Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
-#endif
 
     ~Download();
 
-#if !USE(NETWORK_SESSION)
     void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
-#endif
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancel();
 
     DownloadID downloadID() const { return m_downloadID; }
     const String& suggestedName() const { return m_suggestedName; }
+    const WebCore::ResourceRequest& request() const { return m_request; }
 
 #if USE(NETWORK_SESSION)
     void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTFMove(sandboxExtension); }
 #else
-    const WebCore::ResourceRequest& request() const { return m_request; }
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+#endif
     void didStart();
     void didReceiveResponse(const WebCore::ResourceResponse&);
+    void didReceiveData(uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
+#if !USE(NETWORK_SESSION)
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
+#endif
     void decideDestinationWithSuggestedFilenameAsync(const String&);
     void didDecideDownloadDestination(const String& destinationPath, const SandboxExtension::Handle&, bool allowOverwrite);
     void continueDidReceiveResponse();
-    void platformDidFinish();
-#endif
     void didCreateDestination(const String& path);
-    void didReceiveData(uint64_t length);
     void didFinish();
+    void platformDidFinish();
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
     void didCancel(const IPC::DataReference& resumeData);
 
@@ -123,35 +124,37 @@ private:
 #if !USE(NETWORK_SESSION)
     void startNetworkLoad();
     void startNetworkLoadWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
-    void platformInvalidate();
 #endif
-    void platformCancelNetworkLoad();
+    void cancelNetworkLoad();
+
+    void platformInvalidate();
 
     bool isAlwaysOnLoggingAllowed() const;
 
     DownloadManager& m_downloadManager;
     DownloadID m_downloadID;
+    WebCore::ResourceRequest m_request;
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 
 #if USE(NETWORK_SESSION)
-    RefPtr<NetworkDataTask> m_download;
 #if PLATFORM(COCOA)
-    RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
+    RetainPtr<NSURLSessionDownloadTask> m_download;
+#elif USE(SOUP)
+    RefPtr<NetworkDataTask> m_download;
 #endif
     WebCore::SessionID m_sessionID;
 #else // USE(NETWORK_SESSION)
-    WebCore::ResourceRequest m_request;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
+#endif // USE(NETWORK_SESSION)
 #if USE(CFURLCONNECTION)
     RetainPtr<CFURLDownloadRef> m_download;
 #endif
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
-#endif // USE(NETWORK_SESSION)
     String m_suggestedName;
     bool m_hasReceivedData { false };
 };
