@@ -1,3 +1,37 @@
+2016-11-02  Andreas Kling  <akling@apple.com>
+
+        MarkedSpace should have specialized size classes for popular engine objects.
+        <https://webkit.org/b/164345>
+
+        Reviewed by Filip Pizlo.
+
+        The MarkedSpace size classes were recently reworked to minimize wasted space
+        at the end of MarkedBlocks.
+
+        However, we know that some specific objects will be allocated in very high volume.
+        Adding specialized size classes for those object sizes achieves greater utilization
+        since we're basically guaranteed to allocate them all the time.
+
+        Inject specialized size classes for these four objects:
+
+            - FunctionCodeBlock
+                560 bytes instead of 624
+                28 per block instead of 26 (+2)
+
+            - FunctionExecutable
+                176 bytes instead of 224
+                92 per block instead of 72 (+20)
+
+            - UnlinkedFunctionCodeBlock
+                256 bytes instead of 320
+                63 per block instead of 50 (+13)
+
+            - UnlinkedFunctionExecutable
+                192 bytes instead of 224
+                84 per block instead of 72 (+12)
+
+        * heap/MarkedSpace.cpp:
+
 2016-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         One file per class for UnlinkedCodeBlock.h/.cpp

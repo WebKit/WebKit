@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MarkedSpace.h"
 
+#include "FunctionCodeBlock.h"
 #include "IncrementalSweeper.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
@@ -43,14 +44,13 @@ const Vector<size_t>& sizeClasses()
             result = new Vector<size_t>();
             
             auto add = [&] (size_t sizeClass) {
+                sizeClass = WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeClass);
                 if (Options::dumpSizeClasses())
                     dataLog("Adding JSC MarkedSpace size class: ", sizeClass, "\n");
                 // Perform some validation as we go.
                 RELEASE_ASSERT(!(sizeClass % MarkedSpace::sizeStep));
                 if (result->isEmpty())
                     RELEASE_ASSERT(sizeClass == MarkedSpace::sizeStep);
-                else
-                    RELEASE_ASSERT(sizeClass > result->last());
                 result->append(sizeClass);
             };
             
@@ -129,7 +129,19 @@ const Vector<size_t>& sizeClasses()
                 
                 add(betterSizeClass);
             }
-            
+
+            add(sizeof(UnlinkedFunctionExecutable));
+            add(sizeof(UnlinkedFunctionCodeBlock));
+            add(sizeof(FunctionExecutable));
+            add(sizeof(FunctionCodeBlock));
+
+            {
+                // Sort and deduplicate.
+                std::sort(result->begin(), result->end());
+                auto it = std::unique(result->begin(), result->end());
+                result->shrinkCapacity(it - result->begin());
+            }
+
             if (Options::dumpSizeClasses())
                 dataLog("JSC Heap MarkedSpace size class dump: ", listDump(*result), "\n");
 
