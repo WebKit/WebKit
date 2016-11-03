@@ -1,5 +1,14 @@
 2016-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking fast/css/attribute-for-content-property-style-update-xhtml.xhtml as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164162
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2016-11-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking svg/wicd/test-rightsizing-a.xhtml and svg/wicd/test-rightsizing-b.xhtml as flaky on mac.
         https://bugs.webkit.org/show_bug.cgi?id=163915
 
