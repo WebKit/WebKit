@@ -367,6 +367,7 @@ void GraphicsContext::restore()
         LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
+
     m_state = m_stack.last();
     m_stack.removeLast();
 

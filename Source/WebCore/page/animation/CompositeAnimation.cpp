@@ -299,10 +299,12 @@ bool CompositeAnimation::animate(RenderElement& renderer, const RenderStyle* cur
         // to fill in a RenderStyle*& only if needed.
         bool checkForStackingContext = false;
         for (auto& transition : m_transitions.values()) {
-            if (transition->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle))
+            bool didBlendStyle = false;
+            if (transition->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle, didBlendStyle))
                 animationStateChanged = true;
 
-            checkForStackingContext |= WillChangeData::propertyCreatesStackingContext(transition->animatingProperty());
+            if (didBlendStyle)
+                checkForStackingContext |= WillChangeData::propertyCreatesStackingContext(transition->animatingProperty());
         }
 
         if (blendedStyle && checkForStackingContext) {
@@ -327,11 +329,11 @@ bool CompositeAnimation::animate(RenderElement& renderer, const RenderStyle* cur
     for (auto& name : m_keyframeAnimationOrderMap) {
         RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name);
         if (keyframeAnim) {
-            if (keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle))
+            bool didBlendStyle = false;
+            if (keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, blendedStyle, didBlendStyle))
                 animationStateChanged = true;
 
-            bool runningOrFillingForwards = !keyframeAnim->waitingToStart() && !keyframeAnim->postActive();
-            forceStackingContext |= runningOrFillingForwards && keyframeAnim->triggersStackingContext();
+            forceStackingContext |= didBlendStyle && keyframeAnim->triggersStackingContext();
         }
     }
 

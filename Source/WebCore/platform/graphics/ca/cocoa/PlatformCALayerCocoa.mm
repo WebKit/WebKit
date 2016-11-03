@@ -1067,46 +1067,48 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     [NSGraphicsContext setCurrentContext:layerContext];
 #endif
     
-    GraphicsContext graphicsContext(context);
-    graphicsContext.setIsCALayerContext(true);
-    graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
-    
-    if (!layerContents->platformCALayerContentsOpaque()) {
-        // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
-        graphicsContext.setShouldSmoothFonts(false);
-    }
-    
-#if PLATFORM(MAC)
-    // It's important to get the clip from the context, because it may be significantly
-    // smaller than the layer bounds (e.g. tiled layers)
-    ThemeMac::setFocusRingClipRect(CGContextGetClipBoundingBox(context));
-#endif
-    
-    for (const auto& rect : dirtyRects) {
-        GraphicsContextStateSaver stateSaver(graphicsContext);
-        graphicsContext.clip(rect);
+    {
+        GraphicsContext graphicsContext(context);
+        graphicsContext.setIsCALayerContext(true);
+        graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
         
-        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
-    }
-    
-#if PLATFORM(IOS)
-    fontAntialiasingState.restore();
-#else
-    ThemeMac::setFocusRingClipRect(FloatRect());
-    
-    [NSGraphicsContext restoreGraphicsState];
+        if (!layerContents->platformCALayerContentsOpaque()) {
+            // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
+            graphicsContext.setShouldSmoothFonts(false);
+        }
+        
+#if PLATFORM(MAC)
+        // It's important to get the clip from the context, because it may be significantly
+        // smaller than the layer bounds (e.g. tiled layers)
+        ThemeMac::setFocusRingClipRect(CGContextGetClipBoundingBox(context));
 #endif
-    
+        
+        for (const auto& rect : dirtyRects) {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.clip(rect);
+            
+            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
+        }
+        
+#if PLATFORM(IOS)
+        fontAntialiasingState.restore();
+#else
+        ThemeMac::setFocusRingClipRect(FloatRect());
+        
+        [NSGraphicsContext restoreGraphicsState];
+#endif
+    }
+
+    CGContextRestoreGState(context);
+
     // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
     layerContents = platformCALayer->owner();
     ASSERT(layerContents);
     
-    CGContextRestoreGState(context);
-    
     // Always update the repaint count so that it's accurate even if the count itself is not shown. This will be useful
     // for the Web Inspector feeding this information through the LayerTreeAgent.
     int repaintCount = layerContents->platformCALayerIncrementRepaintCount(platformCALayer);
-    
+
     if (!platformCALayer->usesTiledBackingLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformCALayer))
         drawRepaintIndicator(context, platformCALayer, repaintCount, nullptr);
 }
