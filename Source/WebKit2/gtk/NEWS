@@ -1,4 +1,21 @@
 ==================
+WebKitGTK+  2.14.2
+==================
+
+What's new in WebKitGTK+ 2.14.2?
+
+  - Expose WebKitDOMHTMLInputElement APIs for form autofill in unstable DOM API.
+  - Properly update WebKitWebView and WebKitWebPage URI properties when request is modified by
+    WebKitWebPage:send-request signal.
+  - Restore user agent quirk for Yahoo.
+  - Dot not leak the default WebKitWebsiteDataManager in WebKitWebContext.
+  - Use eglGetPlatformDisplay when available instead of eglGetDisplay.
+  - Avoid strstr() when checking (E)GL extensions.
+  - Fix several crashes and rendering issues.
+  - Fix the build with ENABLE_OPENGL=OFF and allow to build on Wayland without OpenGL again.
+  - Translation updates: Hungarian.
+
+==================
 WebKitGTK+  2.14.1
 ==================
 
