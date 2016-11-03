@@ -516,17 +516,17 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 
 NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction constructor, const String& name)
 {
-    return getHostFunction(function, NoIntrinsic, constructor, name);
+    return getHostFunction(function, NoIntrinsic, constructor, nullptr, name);
 }
 
-NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const String& name)
+NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, const String& name)
 {
 #if ENABLE(JIT)
     if (canUseJIT()) {
         return jitStubs->hostFunctionStub(
             this, function, constructor,
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0,
-            intrinsic, name);
+            intrinsic, signature, name);
     }
 #else // ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
@@ -534,7 +534,7 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
     return NativeExecutable::create(*this,
         adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
         adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
-        NoIntrinsic, name);
+        NoIntrinsic, signature, name);
 }
 
 VM::ClientData::~ClientData()

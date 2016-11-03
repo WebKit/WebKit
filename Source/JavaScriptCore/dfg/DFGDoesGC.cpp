@@ -301,6 +301,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreateRest:
     case ToLowerCase:
     case CallDOMGetter:
+    case CallDOM:
         return true;
         
     case MultiPutByOffset:

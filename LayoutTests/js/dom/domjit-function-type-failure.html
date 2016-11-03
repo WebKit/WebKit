@@ -12,20 +12,25 @@
 </div>
 
 <script>
-description('Test DOMJIT accessor will be LICM-ed.');
+description('Test DOMJIT function will cause BadType OSR exits.');
 
-function test() {
-    var div = document.createElement('div');
-    var ret = 0;
+var div = document.createElement('div');
+div.setAttribute("cocoa", "Cocoa");
+function test(div, name) {
+    var ret = "invalid";
     for (var i = 0; i < 1e4; ++i)
-        ret = div.nodeType;
+        ret = div.getAttribute(name);
     return ret;
 }
 var result;
 (function () {
     for (var i = 0; i < 100; ++i) {
-        result = test();
-        shouldBe(`result`, `Node.ELEMENT_NODE`, true);
+        result = test(div, 'cocoa');
+        shouldBe(`result`, `"Cocoa"`, true);
+    }
+    for (var i = 0; i < 100; ++i) {
+        result = test(div, 400);
+        shouldBe(`result`, `null`, true);
     }
 }());
 </script>

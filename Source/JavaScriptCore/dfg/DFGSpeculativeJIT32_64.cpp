@@ -5561,6 +5561,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CallDOM:
+        compileCallDOM(node);
+        break;
+
     case CallDOMGetter:
         compileCallDOMGetter(node);
         break;

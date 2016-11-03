@@ -46,6 +46,11 @@ class SpeculativeJIT;
 class JITCompiler;
 }
 
+namespace DOMJIT {
+class Signature;
+}
+
+
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
 JS_EXPORT_PRIVATE String getCalculatedDisplayName(VM&, JSObject*);
@@ -67,7 +72,7 @@ public:
         return sizeof(JSFunction);
     }
 
-    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
     
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
 

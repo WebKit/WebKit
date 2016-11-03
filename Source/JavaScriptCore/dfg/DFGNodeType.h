@@ -407,6 +407,7 @@ namespace JSC { namespace DFG {
     /* Nodes for DOM JIT */\
     macro(CheckDOM, NodeMustGenerate) \
     macro(CallDOMGetter, NodeResultJS | NodeMustGenerate) \
+    macro(CallDOM, NodeResultJS | NodeMustGenerate) \
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

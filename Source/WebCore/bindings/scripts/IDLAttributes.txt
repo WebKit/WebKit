@@ -52,7 +52,7 @@ CustomPutFunction
 CustomSetPrototype
 CustomSetter
 CustomToJSObject
-DOMJIT
+DOMJIT=|ReadDOM
 DoNotCheckConstants
 DoNotCheckSecurity
 DoNotCheckSecurityOnGetter

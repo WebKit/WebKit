@@ -151,6 +151,11 @@ inline bool isStringSpeculation(SpeculatedType value)
     return !!value && (value & SpecString) == value;
 }
 
+inline bool isNotStringSpeculation(SpeculatedType value)
+{
+    return value && !(value & SpecString);
+}
+
 inline bool isStringOrOtherSpeculation(SpeculatedType value)
 {
     return !!value && (value & (SpecString | SpecOther)) == value;
@@ -303,6 +308,11 @@ inline bool isInt32Speculation(SpeculatedType value)
     return value && !(value & ~SpecInt32Only);
 }
 
+inline bool isNotInt32Speculation(SpeculatedType value)
+{
+    return value && !(value & SpecInt32Only);
+}
+
 inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
 {
     return value && !(value & ~(SpecBoolean | SpecInt32Only));
@@ -386,6 +396,11 @@ inline bool isFullNumberOrBooleanSpeculationExpectingDefined(SpeculatedType valu
 inline bool isBooleanSpeculation(SpeculatedType value)
 {
     return value == SpecBoolean;
+}
+
+inline bool isNotBooleanSpeculation(SpeculatedType value)
+{
+    return value && !(value & SpecBoolean);
 }
 
 inline bool isOtherSpeculation(SpeculatedType value)

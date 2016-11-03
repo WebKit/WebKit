@@ -23,44 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <domjit/DOMJITHeapRange.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
-
-#if ENABLE(JIT)
-
-namespace WebCore { namespace DOMJIT {
-
-// Describe your abstract heap hierarchy here.
-// V(AbstractHeapName, Parent)
-#define DOMJIT_ABSTRACT_HEAP_LIST(V) \
-    V(Node, DOM) \
-    V(Node_firstChild, Node) \
-    V(Node_lastChild, Node) \
-    V(Node_parentNode, Node) \
-    V(Node_nextSibling, Node) \
-    V(Node_previousSibling, Node) \
-    V(Node_ownerDocument, Node) \
-    V(Document, DOM) \
-    V(Document_documentElement, Document) \
-
-
-class AbstractHeapRepository {
-    WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
-public:
-    static const AbstractHeapRepository& shared();
-
-    JSC::DOMJIT::HeapRange DOM;
-
-#define DOMJIT_DEFINE_MEMBER(name, parent) JSC::DOMJIT::HeapRange name;
-    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_MEMBER)
-#undef DOMJIT_DEFINE_MEMBER
-
-    AbstractHeapRepository();
-};
-
-} }
-
+#ifndef WebCore_FWD_SpeculatedType_h
+#define WebCore_FWD_SpeculatedType_h
+#include <JavaScriptCore/SpeculatedType.h>
 #endif

@@ -1060,6 +1060,9 @@ private:
         case CheckDOM:
             compileCheckDOM();
             break;
+        case CallDOM:
+            compileCallDOM();
+            break;
         case CallDOMGetter:
             compileCallDOMGetter();
             break;
@@ -9098,6 +9101,57 @@ private:
                 });
             });
         patchpoint->effects = Effects::forCheck();
+    }
+
+    void compileCallDOM()
+    {
+        const DOMJIT::Signature* signature = m_node->signature();
+
+        // FIXME: We should have a way to call functions with the vector of registers.
+        // https://bugs.webkit.org/show_bug.cgi?id=163099
+        Vector<LValue, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> operands;
+
+        unsigned index = 0;
+        DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, [&](Node*, Edge edge) {
+            if (!index)
+                operands.append(lowCell(edge));
+            else {
+                switch (signature->arguments[index - 1]) {
+                case SpecString:
+                    operands.append(lowString(edge));
+                    break;
+                case SpecInt32Only:
+                    operands.append(lowInt32(edge));
+                    break;
+                case SpecBoolean:
+                    operands.append(lowBoolean(edge));
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+            ++index;
+        });
+
+        unsigned argumentCountIncludingThis = signature->argumentCount + 1;
+        LValue result;
+        switch (argumentCountIncludingThis) {
+        case 1:
+            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EP>(signature->unsafeFunction)), m_callFrame, operands[0]);
+            break;
+        case 2:
+            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EPP>(signature->unsafeFunction)), m_callFrame, operands[0], operands[1]);
+            break;
+        case 3:
+            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EPPP>(signature->unsafeFunction)), m_callFrame, operands[0], operands[1], operands[2]);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        setJSValue(result);
     }
 
     void compileCallDOMGetter()

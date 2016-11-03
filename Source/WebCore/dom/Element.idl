@@ -26,20 +26,20 @@
 ] interface Element : Node {
     readonly attribute DOMString? tagName;
 
-    DOMString? getAttribute(DOMString name);
+    [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString name);
 
     [CEReactions, MayThrowException] void setAttribute(DOMString name, DOMString value);
 
     [CEReactions] void removeAttribute(DOMString name);
-    Attr? getAttributeNode(DOMString name);
+    [DOMJIT=ReadDOM] Attr? getAttributeNode(DOMString name);
 
     [CEReactions, MayThrowException] Attr? setAttributeNode(Attr newAttr);
     [CEReactions, MayThrowException] Attr removeAttributeNode(Attr oldAttr);
 
-    HTMLCollection getElementsByTagName(DOMString name);
+    [DOMJIT=ReadDOM] HTMLCollection getElementsByTagName(DOMString name);
 
     readonly attribute NamedNodeMap attributes;
-    boolean hasAttributes();
+    [DOMJIT=ReadDOM] boolean hasAttributes();
 
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 

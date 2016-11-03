@@ -1537,7 +1537,6 @@ set(WebCore_SOURCES
 
     dom/default/PlatformMessagePortChannel.cpp
 
-    domjit/DOMJITAbstractHeapRepository.cpp
     domjit/DOMJITHelpers.cpp
     domjit/JSDocumentDOMJIT.cpp
     domjit/JSNodeDOMJIT.cpp
@@ -3510,6 +3509,15 @@ list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/CommandLineAP
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/ColorData.cpp)
 
+
+# Generate DOMJITAbstractHeapRepository.h
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/DOMJITAbstractHeapRepository.h
+    MAIN_DEPENDENCY domjit/DOMJITAbstractHeapRepository.yaml
+    DEPENDS ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb
+    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${DERIVED_SOURCES_WEBCORE_DIR}/DOMJITAbstractHeapRepository.h
+    VERBATIM)
+list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/DOMJITAbstractHeapRepository.h)
 
 # Generate XMLViewerCSS.h
 add_custom_command(

@@ -30,6 +30,7 @@
 #include "ArrayConstructor.h"
 #include "DFGAbstractInterpreter.h"
 #include "DOMJITGetterSetter.h"
+#include "DOMJITSignature.h"
 #include "GetByIdStatus.h"
 #include "GetterSetter.h"
 #include "HashMapImpl.h"
@@ -2301,6 +2302,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (patchpoint->effect.writes)
             clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(m_graph, callDOMGetterData->domJIT->resultType());
+        break;
+    }
+    case CallDOM: {
+        const DOMJIT::Signature* signature = node->signature();
+        if (signature->effect.writes)
+            clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(m_graph, signature->result);
         break;
     }
     case CheckArray: {

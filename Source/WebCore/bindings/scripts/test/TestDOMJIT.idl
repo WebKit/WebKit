@@ -63,4 +63,10 @@ interface TestDOMJIT : Node {
     [DOMJIT] readonly attribute ByteString? byteStringNullableAttr;
     [DOMJIT] readonly attribute USVString? usvStringNullableAttr;
     [DOMJIT] readonly attribute Node? nodeNullableAttr;
+
+    [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString name);
+    [DOMJIT=ReadDOM] DOMString item(unsigned short x, unsigned short y);
+    [DOMJIT=ReadDOM] boolean hasAttribute();
+    [DOMJIT=ReadDOM] Element getElementById([RequiresExistingAtomicString] DOMString elementId);
+    [DOMJIT=ReadDOM] NodeList getElementsByName([AtomicString] DOMString elementName);
 };

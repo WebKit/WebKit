@@ -90,10 +90,10 @@ void JITThunks::finalize(Handle<Unknown> handle, void*)
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, const String& name)
 {
-    return hostFunctionStub(vm, function, constructor, nullptr, NoIntrinsic, name);
+    return hostFunctionStub(vm, function, constructor, nullptr, NoIntrinsic, nullptr, name);
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     ASSERT(!isCompilationThread());    
     ASSERT(vm->canUseJIT());
@@ -110,14 +110,14 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
     
     RefPtr<JITCode> forConstruct = adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk));
     
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, forCall, function, forConstruct, constructor, intrinsic, name);
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, forCall, function, forConstruct, constructor, intrinsic, signature, name);
     weakAdd(*m_hostFunctionStubMap, std::make_tuple(function, constructor, name), Weak<NativeExecutable>(nativeExecutable, this));
     return nativeExecutable;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic, const String& name)
 {
-    return hostFunctionStub(vm, function, callHostFunctionAsConstructor, generator, intrinsic, name);
+    return hostFunctionStub(vm, function, callHostFunctionAsConstructor, generator, intrinsic, nullptr, name);
 }
 
 void JITThunks::clearHostFunctionStubs()

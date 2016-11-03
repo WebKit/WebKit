@@ -56,17 +56,17 @@ template<typename T> void* allocateCell(Heap&, size_t);
 template<typename T> void* allocateCell(Heap&, GCDeferralContext*);
 template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t);
 
-#define DECLARE_EXPORT_INFO                                             \
-    protected:                                                          \
-        static JS_EXPORTDATA const ::JSC::ClassInfo s_info;             \
-    public:                                                             \
-        static const ::JSC::ClassInfo* info() { return &s_info; }
+#define DECLARE_EXPORT_INFO                                                  \
+    protected:                                                               \
+        static JS_EXPORTDATA const ::JSC::ClassInfo s_info;                  \
+    public:                                                                  \
+        static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
 
-#define DECLARE_INFO                                                    \
-    protected:                                                          \
-        static const ::JSC::ClassInfo s_info;                           \
-    public:                                                             \
-        static const ::JSC::ClassInfo* info() { return &s_info; }
+#define DECLARE_INFO                                                         \
+    protected:                                                               \
+        static const ::JSC::ClassInfo s_info;                                \
+    public:                                                                  \
+        static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
 
 class JSCell : public HeapCell {
     friend class JSValue;

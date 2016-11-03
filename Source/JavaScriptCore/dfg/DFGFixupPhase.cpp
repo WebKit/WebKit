@@ -1708,15 +1708,26 @@ private:
             break;
         }
 
-        case CheckDOM:
-            fixEdge<CellUse>(node->child1());
+        case CheckDOM: {
+            fixupCheckDOM(node);
             break;
+        }
 
         case CallDOMGetter: {
             DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
             fixEdge<CellUse>(node->child1()); // DOM.
             if (patchpoint->requireGlobalObject)
                 fixEdge<KnownCellUse>(node->child2()); // GlobalObject.
+            break;
+        }
+
+        case CallDOM: {
+            fixupCallDOM(node);
+            break;
+        }
+
+        case Call: {
+            attemptToMakeCallDOM(node);
             break;
         }
 
@@ -1736,7 +1747,6 @@ private:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case NotifyWrite:
-        case Call:
         case DirectCall:
         case CheckTypeInfoFlags:
         case TailCallInlinedCaller:
@@ -2659,6 +2669,93 @@ private:
             OpInfo(arrayMode.asWord()), Edge(child, KnownCellUse), Edge(storage));
     }
     
+    bool attemptToMakeCallDOM(Node* node)
+    {
+        if (m_graph.hasExitSite(node->origin.semantic, BadType))
+            return false;
+
+        const DOMJIT::Signature* signature = node->signature();
+        if (!signature)
+            return false;
+
+        {
+            unsigned index = 0;
+            bool shouldConvertToCallDOM = true;
+            m_graph.doToChildren(node, [&](Edge& edge) {
+                // Callee. Ignore this. DFGByteCodeParser already emit appropriate checks.
+                if (!index)
+                    return;
+
+                if (index == 1) {
+                    // DOM node case.
+                    if (edge->shouldSpeculateNotCell())
+                        shouldConvertToCallDOM = false;
+                } else {
+                    switch (signature->arguments[index - 2]) {
+                    case SpecString:
+                        if (edge->shouldSpeculateNotString())
+                            shouldConvertToCallDOM = false;
+                        break;
+                    case SpecInt32Only:
+                        if (edge->shouldSpeculateNotInt32())
+                            shouldConvertToCallDOM = false;
+                        break;
+                    case SpecBoolean:
+                        if (edge->shouldSpeculateNotBoolean())
+                            shouldConvertToCallDOM = false;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
+                }
+                ++index;
+            });
+            if (!shouldConvertToCallDOM)
+                return false;
+        }
+
+        Node* thisNode = m_graph.varArgChild(node, 1).node();
+        Ref<DOMJIT::Patchpoint> checkDOMPatchpoint = signature->checkDOM();
+        m_graph.m_domJITPatchpoints.append(checkDOMPatchpoint.ptr());
+        Node* checkDOM = m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckDOM, node->origin, OpInfo(checkDOMPatchpoint.ptr()), OpInfo(signature->classInfo), Edge(thisNode));
+        node->convertToCallDOM(m_graph);
+        fixupCheckDOM(checkDOM);
+        fixupCallDOM(node);
+        return true;
+    }
+
+    void fixupCheckDOM(Node* node)
+    {
+        fixEdge<CellUse>(node->child1());
+    }
+
+    void fixupCallDOM(Node* node)
+    {
+        const DOMJIT::Signature* signature = node->signature();
+        auto fixup = [&](Edge& edge, unsigned argumentIndex) {
+            if (!edge)
+                return;
+            switch (signature->arguments[argumentIndex]) {
+            case SpecString:
+                fixEdge<StringUse>(edge);
+                break;
+            case SpecInt32Only:
+                fixEdge<Int32Use>(edge);
+                break;
+            case SpecBoolean:
+                fixEdge<BooleanUse>(edge);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+        fixEdge<CellUse>(node->child1()); // DOM.
+        fixup(node->child2(), 0);
+        fixup(node->child3(), 1);
+    }
+
     void fixupChecksInBlock(BasicBlock* block)
     {
         if (!block)

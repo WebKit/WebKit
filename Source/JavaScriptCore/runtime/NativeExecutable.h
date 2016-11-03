@@ -28,6 +28,9 @@
 #include "ExecutableBase.h"
 
 namespace JSC {
+namespace DOMJIT {
+class Signature;
+}
 
 class NativeExecutable final : public ExecutableBase {
     friend class JIT;
@@ -36,7 +39,7 @@ public:
     typedef ExecutableBase Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const String& name);
+    static NativeExecutable* create(VM&, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*, const String& name);
 
     static void destroy(JSCell*);
 
@@ -66,6 +69,14 @@ public:
     DECLARE_INFO;
 
     const String& name() const { return m_name; }
+    const DOMJIT::Signature* signature() const { return m_signature; }
+
+    const DOMJIT::Signature* signatureFor(CodeSpecializationKind kind) const
+    {
+        if (isCall(kind))
+            return signature();
+        return nullptr;
+    }
 
 protected:
     void finishCreation(VM&, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name);
@@ -73,10 +84,11 @@ protected:
 private:
     friend class ExecutableBase;
 
-    NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic);
+    NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*);
 
     NativeFunction m_function;
     NativeFunction m_constructor;
+    const DOMJIT::Signature* m_signature;
 
     String m_name;
 };

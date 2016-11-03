@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="target"></div>
+</div>
+
+<script>
+description('Test function calls should overlap with effects of DOMJIT functions.');
+
+function test()
+{
+    var target = document.getElementById('target');
+    target.setAttribute("cocoa", "0");
+    for (var i = 0; i < 1e4; ++i) {
+        var ret = target.getAttribute("cocoa");
+        if (ret !== String(i))
+            return false;
+        target.setAttribute("cocoa", String(i + 1));
+        var ret = target.getAttribute("cocoa");
+        if (ret === String(i))
+            return false;
+    }
+    return true;
+}
+
+shouldBeTrue(`test()`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

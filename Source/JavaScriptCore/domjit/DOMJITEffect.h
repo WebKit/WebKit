@@ -28,56 +28,62 @@
 #include "DOMJITHeapRange.h"
 #include <wtf/Optional.h>
 
-#if ENABLE(JIT)
-
 namespace JSC { namespace DOMJIT {
 
-struct Effect {
+class Effect {
+public:
     HeapRange reads { HeapRange::top() };
     HeapRange writes { HeapRange::top() };
-    Optional<HeapRange> def;
+    HeapRange def { HeapRange::top() };
 
-    static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
+    constexpr Effect() = default;
+    constexpr Effect(HeapRange reads, HeapRange writes)
+        : reads(reads)
+        , writes(writes)
     {
-        Effect effect;
-        effect.reads = readRange;
-        effect.writes = writeRange;
-        return effect;
     }
 
-    static Effect forPure()
+    constexpr Effect(HeapRange reads, HeapRange writes, HeapRange def)
+        : reads(reads)
+        , writes(writes)
+        , def(def)
     {
-        Effect effect;
-        effect.reads = HeapRange::none();
-        effect.writes = HeapRange::none();
-        effect.def = HeapRange::none();
-        return effect;
     }
 
-    static Effect forDef(HeapRange def)
+    constexpr static Effect forWrite(HeapRange writeRange)
     {
-        Effect effect;
-        effect.reads = def;
-        effect.writes = HeapRange::none();
-        effect.def = def;
-        return effect;
+        return Effect(HeapRange::none(), writeRange);
     }
 
-    static Effect forDef(HeapRange def, HeapRange readRange, HeapRange writeRange)
+    constexpr static Effect forRead(HeapRange readRange)
     {
-        Effect effect;
-        effect.reads = readRange;
-        effect.writes = writeRange;
-        effect.def = def;
-        return effect;
+        return Effect(readRange, HeapRange::none());
     }
 
-    bool mustGenerate() const
+    constexpr static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
+    {
+        return Effect(readRange, writeRange);
+    }
+
+    constexpr static Effect forPure()
+    {
+        return Effect(HeapRange::none(), HeapRange::none(), HeapRange::none());
+    }
+
+    constexpr static Effect forDef(HeapRange def)
+    {
+        return Effect(def, HeapRange::none(), def);
+    }
+
+    constexpr static Effect forDef(HeapRange def, HeapRange readRange, HeapRange writeRange)
+    {
+        return Effect(readRange, writeRange, def);
+    }
+
+    constexpr bool mustGenerate() const
     {
         return !!writes;
     }
 };
 
 } }
-
-#endif

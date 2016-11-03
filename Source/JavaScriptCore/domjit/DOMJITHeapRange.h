@@ -28,8 +28,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 
-#if ENABLE(JIT)
-
 namespace JSC { namespace DOMJIT {
 
 class HeapRange {
@@ -47,7 +45,6 @@ public:
         ASSERT_WITH_MESSAGE(begin <= end, "begin <= end is the invariant of this HeapRange.");
     }
 
-private:
     enum ConstExprTag { ConstExpr };
     constexpr HeapRange(ConstExprTag, uint16_t begin, uint16_t end)
         : m_begin(begin)
@@ -55,21 +52,13 @@ private:
     {
     }
 
-    template<uint16_t begin, uint16_t end>
-    static constexpr HeapRange fromConstant()
-    {
-        static_assert(begin <= end, "begin <= end is the invariant of this HeapRange.");
-        return HeapRange(ConstExpr, begin, end);
-    }
-
-public:
     enum RawRepresentationTag { RawRepresentation };
     explicit constexpr HeapRange(RawRepresentationTag, uint32_t value)
         : m_raw(value)
     {
     }
 
-    static HeapRange fromRaw(uint32_t value)
+    constexpr static HeapRange fromRaw(uint32_t value)
     {
         return HeapRange(RawRepresentation, value);
     }
@@ -78,14 +67,26 @@ public:
     uint16_t end() const { return m_end; }
     uint32_t rawRepresentation() { return m_raw; }
 
-    explicit operator bool() const
+    constexpr explicit operator bool() const
     {
         return m_begin != m_end;
     }
 
-    bool operator==(const HeapRange& other) const
+    constexpr bool operator==(const HeapRange& other) const
     {
         return m_begin == other.m_begin && m_end == other.m_end;
+    }
+
+    constexpr bool operator!=(const HeapRange& other) const
+    {
+        return !operator==(other);
+    }
+
+    template<uint16_t begin, uint16_t end>
+    static constexpr HeapRange fromConstant()
+    {
+        static_assert(begin < end || (begin == UINT16_MAX && end == UINT16_MAX), "begin < end or the both are UINT16_MAX is the invariant of this HeapRange.");
+        return HeapRange(ConstExpr, begin, end);
     }
 
     static constexpr HeapRange top() { return fromConstant<0, UINT16_MAX>(); }
@@ -127,5 +128,3 @@ private:
 };
 
 } }
-
-#endif

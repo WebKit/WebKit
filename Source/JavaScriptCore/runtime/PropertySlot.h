@@ -51,6 +51,7 @@ enum Attribute {
     ClassStructure    = 1 << 12, // property is a lazy class structure - only used by static hashtables
     PropertyCallback  = 1 << 13, // property that is a lazy property callback - only used by static hashtables
     DOMJITAttribute   = 1 << 14, // property is a DOM JIT attribute - only used by static hashtables
+    DOMJITFunction    = 1 << 15, // property is a DOM JIT function - only used by static hashtables
     BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
     BuiltinOrFunctionOrLazyProperty = Builtin | Function | CellProperty | ClassStructure | PropertyCallback, // helper only used by static hashtables
     BuiltinOrFunctionOrAccessorOrLazyProperty = Builtin | Function | Accessor | CellProperty | ClassStructure | PropertyCallback, // helper only used by static hashtables

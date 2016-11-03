@@ -39,6 +39,9 @@
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
+namespace DOMJIT {
+class Signature;
+}
 
 class VM;
 class NativeExecutable;
@@ -57,7 +60,7 @@ public:
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
 
     NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, const String& name);
-    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, ThunkGenerator, Intrinsic, const String& name);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
     NativeExecutable* hostFunctionStub(VM*, NativeFunction, ThunkGenerator, Intrinsic, const String& name);
 
     void clearHostFunctionStubs();

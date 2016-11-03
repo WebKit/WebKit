@@ -28,6 +28,7 @@
 #include "FunctionExecutable.h"
 #include "JSCell.h"
 #include "JSFunction.h"
+#include "NativeExecutable.h"
 
 namespace JSC {
 
@@ -118,6 +119,20 @@ public:
     {
         if (ExecutableBase* executable = this->executable())
             return jsDynamicCast<FunctionExecutable*>(executable);
+        return nullptr;
+    }
+
+    NativeExecutable* nativeExecutable() const
+    {
+        if (ExecutableBase* executable = this->executable())
+            return jsDynamicCast<NativeExecutable*>(executable);
+        return nullptr;
+    }
+
+    const DOMJIT::Signature* signatureFor(CodeSpecializationKind kind) const
+    {
+        if (NativeExecutable* nativeExecutable = this->nativeExecutable())
+            return nativeExecutable->signatureFor(kind);
         return nullptr;
     }
     

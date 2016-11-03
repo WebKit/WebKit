@@ -1,3 +1,134 @@
+2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add DOMJIT::Signature
+        https://bugs.webkit.org/show_bug.cgi?id=162980
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        This patch introduces a new mechanism called DOMJIT::Signature. We can annotate the function with DOMJIT::Signature.
+        DOMJIT::Signature has type information of that function. And it also maintains the effect of the function and the
+        pointer to the unsafe function. The unsafe function means the function without type and argument count checks.
+        By using these information, we can separate type and argument count checks from the function. And we can emit
+        these things as DFG checks and convert the function call itself to CallDOM node. CallDOM node can call the unsafe
+        function directly without any checks. Furthermore, this CallDOM node can represent its own clobberizing rules based
+        on DOMJIT::Effect maintained by DOMJIT::Signature. It allows us to make opaque Call node to a CallDOM node that
+        merely reads some part of heap. These changes (1) can drop duplicate type checks in DFG, (2) offer ability to move
+        CallDOM node to somewhere, and (3) track more detailed heap reads and writes of CallDOM nodes.
+
+        We first emit Call node with DOMJIT::Signature in DFGByteCodeParser. And in the fixup phase, we attempt to lower
+        Call node to CallDOM node with checks & edge filters. This is because we do not know the type predictions in
+        DFGByteCodeParser phase. If we always emit CallDOM node in DFGByteCodeParser, if we evaluate `div.getAttribute(true)`
+        thingy, the Uncountable OSR exits repeatedly happen because AI figures out the abstract value is cleared.
+
+        Currently, DOMJIT signature only allows the types that can reside in GPR. This is because the types of the unsafe
+        function arguments are represented as the sequence of void*. In the future, we will extend to accept other types like
+        float, double etc.
+
+        We annotate several functions in Element. In particular, we annotate Element::getAttribute. This allows us to perform
+        LICM in Dromaeo dom-attr test. In the Dromaeo dom-attr getAttribute test, we can see 32x improvement. (134974.8 v.s. 4203.4)
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallVariant.h:
+        (JSC::CallVariant::functionExecutable):
+        (JSC::CallVariant::nativeExecutable):
+        (JSC::CallVariant::signatureFor):
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotStringSpeculation):
+        (JSC::isNotInt32Speculation):
+        (JSC::isNotBooleanSpeculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleDOMJITCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeCallDOM):
+        (JSC::DFG::FixupPhase::fixupCheckDOM):
+        (JSC::DFG::FixupPhase::fixupCallDOM):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToCallDOM):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::shouldSpeculateNotInt32):
+        (JSC::DFG::Node::shouldSpeculateNotBoolean):
+        (JSC::DFG::Node::shouldSpeculateNotString):
+        (JSC::DFG::Node::hasSignature):
+        (JSC::DFG::Node::signature):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * domjit/DOMJITEffect.h:
+        (JSC::DOMJIT::Effect::Effect):
+        (JSC::DOMJIT::Effect::forWrite):
+        (JSC::DOMJIT::Effect::forRead):
+        (JSC::DOMJIT::Effect::forReadWrite):
+        (JSC::DOMJIT::Effect::forPure):
+        (JSC::DOMJIT::Effect::forDef):
+        (JSC::DOMJIT::Effect::mustGenerate):
+        In clang, we cannot make this Effect constructor constexpr if we use Optional<HeapRange>.
+        So we use HeapRange::top() for Nullopt def now.
+
+        * domjit/DOMJITHeapRange.h:
+        (JSC::DOMJIT::HeapRange::fromRaw):
+        (JSC::DOMJIT::HeapRange::operator bool):
+        (JSC::DOMJIT::HeapRange::operator==):
+        (JSC::DOMJIT::HeapRange::operator!=):
+        (JSC::DOMJIT::HeapRange::fromConstant):
+        * domjit/DOMJITSignature.h: Copied from Source/JavaScriptCore/domjit/DOMJITEffect.h.
+        (JSC::DOMJIT::Signature::Signature):
+        (JSC::DOMJIT::Signature::argumentCount):
+        (JSC::DOMJIT::Signature::checkDOM):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * jit/JITOperations.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeFunction):
+        * runtime/JSObject.h:
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::functionLength):
+        (JSC::HashTableValue::signature):
+        (JSC::reifyStaticProperty):
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/NativeExecutable.h:
+        * runtime/PropertySlot.h:
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+        * runtime/VM.h:
+
 2016-11-02  Andreas Kling  <akling@apple.com>
 
         MarkedSpace should have specialized size classes for popular engine objects.

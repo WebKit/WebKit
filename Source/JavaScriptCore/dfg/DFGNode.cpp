@@ -220,6 +220,26 @@ void Node::convertToDirectCall(FrozenValue* executable)
     m_opInfo = executable;
 }
 
+void Node::convertToCallDOM(Graph& graph)
+{
+    ASSERT(op() == Call);
+    ASSERT(signature());
+
+    Edge edges[3];
+    // Skip the first one. This is callee.
+    RELEASE_ASSERT(numChildren() <= 4);
+    for (unsigned i = 1; i < numChildren(); ++i)
+        edges[i - 1] = graph.varArgChild(this, i);
+
+    setOpAndDefaultFlags(CallDOM);
+    children.setChild1(edges[0]);
+    children.setChild2(edges[1]);
+    children.setChild3(edges[2]);
+
+    if (!signature()->effect.mustGenerate())
+        clearFlags(NodeMustGenerate);
+}
+
 String Node::tryGetString(Graph& graph)
 {
     if (hasConstant())

@@ -24,6 +24,7 @@
 #include "CallFrame.h"
 #include "CustomGetterSetter.h"
 #include "DOMJITGetterSetter.h"
+#include "DOMJITSignature.h"
 #include "Identifier.h"
 #include "IdentifierInlines.h"
 #include "Intrinsic.h"
@@ -75,12 +76,19 @@ struct HashTableValue {
     Intrinsic intrinsic() const { ASSERT(m_attributes & Function); return m_intrinsic; }
     BuiltinGenerator builtinGenerator() const { ASSERT(m_attributes & Builtin); return reinterpret_cast<BuiltinGenerator>(m_values.value1); }
     NativeFunction function() const { ASSERT(m_attributes & Function); return reinterpret_cast<NativeFunction>(m_values.value1); }
-    unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_values.value2); }
+    unsigned char functionLength() const
+    {
+        ASSERT(m_attributes & Function);
+        if (m_attributes & DOMJITFunction)
+            return signature()->argumentCount;
+        return static_cast<unsigned char>(m_values.value2);
+    }
 
     GetFunction propertyGetter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<GetFunction>(m_values.value1); }
     PutFunction propertyPutter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<PutFunction>(m_values.value2); }
 
     DOMJIT::GetterSetter* domJIT() const { ASSERT(m_attributes & DOMJITAttribute); return reinterpret_cast<DOMJITGetterSetterGenerator>(m_values.value1)(); }
+    const DOMJIT::Signature* signature() const { ASSERT(m_attributes & DOMJITFunction); return reinterpret_cast<const DOMJIT::Signature*>(m_values.value2); }
 
     NativeFunction accessorGetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value1); }
     NativeFunction accessorSetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value2); }
@@ -313,6 +321,12 @@ inline void reifyStaticProperty(VM& vm, const PropertyName& propertyName, const 
     }
 
     if (value.attributes() & Function) {
+        if (value.attributes() & DOMJITFunction) {
+            thisObj.putDirectNativeFunction(
+                vm, thisObj.globalObject(), propertyName, value.functionLength(),
+                value.function(), value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
+            return;
+        }
         thisObj.putDirectNativeFunction(
             vm, thisObj.globalObject(), propertyName, value.functionLength(),
             value.function(), value.intrinsic(), attributesForStructure(value.attributes()));

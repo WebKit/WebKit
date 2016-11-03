@@ -48,7 +48,6 @@ Ref<JSC::DOMJIT::Patchpoint> DocumentDocumentElementDOMJIT::checkDOM()
 
 Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentDocumentElementDOMJIT::callDOMGetter()
 {
-    const auto& heap = DOMJIT::AbstractHeapRepository::shared();
     Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> patchpoint = JSC::DOMJIT::CallDOMGetterPatchpoint::create();
     patchpoint->numGPScratchRegisters = 1;
     patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
@@ -70,7 +69,7 @@ Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentDocumentElementDOMJIT::callDOM
 
         return CCallHelpers::JumpList();
     });
-    patchpoint->effect = JSC::DOMJIT::Effect::forDef(heap.Document_documentElement);
+    patchpoint->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_documentElement);
     return patchpoint;
 }
 

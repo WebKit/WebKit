@@ -168,7 +168,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject
     NativeExecutable* executable = vm.getHostFunction(
         slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
         slowCase ? NoIntrinsic : BoundThisNoArgsFunctionCallIntrinsic,
-        canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor,
+        canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr,
         name);
     Structure* structure = getBoundFunctionStructure(vm, exec, globalObject, targetFunction);
     RETURN_IF_EXCEPTION(scope, nullptr);

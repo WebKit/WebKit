@@ -7260,6 +7260,88 @@ static void allocateTemporaryRegistersForPatchpoint(SpeculativeJIT* jit, Vector<
     }
 }
 
+void SpeculativeJIT::compileCallDOM(Node* node)
+{
+    const DOMJIT::Signature* signature = node->signature();
+
+    // FIXME: We should have a way to call functions with the vector of registers.
+    // https://bugs.webkit.org/show_bug.cgi?id=163099
+    Vector<Variant<SpeculateCellOperand, SpeculateInt32Operand, SpeculateBooleanOperand>, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> operands;
+    Vector<GPRReg, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> regs;
+
+    auto appendCell = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        regs.append(operand.gpr());
+        operands.append(WTFMove(operand));
+    };
+
+    auto appendString = [&](Edge& edge) {
+        SpeculateCellOperand operand(this, edge);
+        GPRReg gpr = operand.gpr();
+        regs.append(gpr);
+        speculateString(edge, gpr);
+        operands.append(WTFMove(operand));
+    };
+
+    auto appendInt32 = [&](Edge& edge) {
+        SpeculateInt32Operand operand(this, edge);
+        regs.append(operand.gpr());
+        operands.append(WTFMove(operand));
+    };
+
+    auto appendBoolean = [&](Edge& edge) {
+        SpeculateBooleanOperand operand(this, edge);
+        regs.append(operand.gpr());
+        operands.append(WTFMove(operand));
+    };
+
+    unsigned index = 0;
+    m_jit.graph().doToChildren(node, [&](Edge edge) {
+        if (!index)
+            appendCell(edge);
+        else {
+            switch (signature->arguments[index - 1]) {
+            case SpecString:
+                appendString(edge);
+                break;
+            case SpecInt32Only:
+                appendInt32(edge);
+                break;
+            case SpecBoolean:
+                appendBoolean(edge);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+        ++index;
+    });
+
+    JSValueRegsTemporary result(this);
+    JSValueRegs resultRegs = result.regs();
+
+    flushRegisters();
+    unsigned argumentCountIncludingThis = signature->argumentCount + 1;
+    switch (argumentCountIncludingThis) {
+    case 1:
+        callOperation(reinterpret_cast<J_JITOperation_EP>(signature->unsafeFunction), extractResult(resultRegs), regs[0]);
+        break;
+    case 2:
+        callOperation(reinterpret_cast<J_JITOperation_EPP>(signature->unsafeFunction), extractResult(resultRegs), regs[0], regs[1]);
+        break;
+    case 3:
+        callOperation(reinterpret_cast<J_JITOperation_EPPP>(signature->unsafeFunction), extractResult(resultRegs), regs[0], regs[1], regs[2]);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    m_jit.exceptionCheck();
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
     DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;

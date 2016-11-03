@@ -81,7 +81,7 @@ namespace WebCore {
     public:
         ~JSDOMGlobalObject();
 
-        static const JSC::ClassInfo* info() { return &s_info; }
+        static constexpr const JSC::ClassInfo* info() { return &s_info; }
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
         {

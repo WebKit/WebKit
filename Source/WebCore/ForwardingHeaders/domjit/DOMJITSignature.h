@@ -23,48 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DOMJITAbstractHeapRepository.h"
-
-#include <domjit/DOMJITAbstractHeap.h>
-#include <wtf/DataLog.h>
-#include <wtf/NeverDestroyed.h>
-
-#if ENABLE(JIT)
-
-namespace WebCore { namespace DOMJIT {
-
-static const bool verbose = false;
-
-AbstractHeapRepository::AbstractHeapRepository()
-{
-    JSC::DOMJIT::AbstractHeap DOMHeap("DOM");
-#define DOMJIT_DEFINE_HEAP(name, parent) JSC::DOMJIT::AbstractHeap name##Heap(#name);
-    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_HEAP)
-#undef DOMJIT_DEFINE_HEAP
-
-#define DOMJIT_INITIALIZE_HEAP(name, parent) name##Heap.setParent(&parent##Heap);
-    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_INITIALIZE_HEAP)
-#undef DOMJIT_INITIALIZE_HEAP
-
-    DOMHeap.compute(0);
-
-#define DOMJIT_INITIALIZE_MEMBER(name, parent) name = name##Heap.range();
-    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_INITIALIZE_MEMBER)
-#undef DOMJIT_INITIALIZE_MEMBER
-
-    if (verbose) {
-        dataLog("DOMJIT Heap Repository:\n");
-        DOMHeap.deepDump(WTF::dataFile());
-    }
-}
-
-const AbstractHeapRepository& AbstractHeapRepository::shared()
-{
-    static NeverDestroyed<AbstractHeapRepository> repository;
-    return repository.get();
-}
-
-} }
-
+#ifndef WebCore_FWD_DOMJITSignature_h
+#define WebCore_FWD_DOMJITSignature_h
+#include <JavaScriptCore/DOMJITSignature.h>
 #endif

@@ -62,6 +62,7 @@ namespace DOMJIT {
 class GetterSetter;
 class Patchpoint;
 class CallDOMGetterPatchpoint;
+class Signature;
 }
 
 namespace Profiler {
@@ -652,6 +653,8 @@ public:
     }
     
     void convertToDirectCall(FrozenValue*);
+
+    void convertToCallDOM(Graph&);
     
     JSValue asJSValue()
     {
@@ -1464,6 +1467,7 @@ public:
         case ToNumber:
         case LoadFromJSMapBucket:
         case CallDOMGetter:
+        case CallDOM:
             return true;
         default:
             return false;
@@ -1981,6 +1985,11 @@ public:
     {
         return isInt32Speculation(prediction());
     }
+
+    bool shouldSpeculateNotInt32()
+    {
+        return isNotInt32Speculation(prediction());
+    }
     
     bool sawBooleans()
     {
@@ -2041,6 +2050,11 @@ public:
     {
         return isBooleanSpeculation(prediction());
     }
+
+    bool shouldSpeculateNotBoolean()
+    {
+        return isNotBooleanSpeculation(prediction());
+    }
     
     bool shouldSpeculateOther()
     {
@@ -2065,6 +2079,11 @@ public:
     bool shouldSpeculateString()
     {
         return isStringSpeculation(prediction());
+    }
+
+    bool shouldSpeculateNotString()
+    {
+        return isNotStringSpeculation(prediction());
     }
  
     bool shouldSpeculateStringOrOther()
@@ -2366,6 +2385,18 @@ public:
     const ClassInfo* classInfo()
     {
         return m_opInfo2.as<const ClassInfo*>();
+    }
+
+    bool hasSignature() const
+    {
+        // Note that this does not include TailCall node types intentionally.
+        // CallDOM node types are always converted from Call.
+        return op() == Call || op() == CallDOM;
+    }
+
+    const DOMJIT::Signature* signature()
+    {
+        return m_opInfo.as<const DOMJIT::Signature*>();
     }
 
     Node* replacement() const

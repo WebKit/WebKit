@@ -1,3 +1,22 @@
+2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add DOMJIT::Signature
+        https://bugs.webkit.org/show_bug.cgi?id=162980
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        * js/dom/domjit-accessor-licm.html:
+        * js/dom/domjit-function-effect-should-overlap-with-call-expected.txt: Added.
+        * js/dom/domjit-function-effect-should-overlap-with-call.html: Added.
+        * js/dom/domjit-function-expected.txt: Added.
+        * js/dom/domjit-function-licm-expected.txt: Added.
+        * js/dom/domjit-function-licm.html: Copied from LayoutTests/js/dom/domjit-accessor-licm.html.
+        * js/dom/domjit-function-type-contradiction-expected.txt: Added.
+        * js/dom/domjit-function-type-contradiction.html: Copied from LayoutTests/js/dom/domjit-accessor-licm.html.
+        * js/dom/domjit-function-type-failure-expected.txt: Added.
+        * js/dom/domjit-function-type-failure.html: Copied from LayoutTests/js/dom/domjit-accessor-licm.html.
+        * js/dom/domjit-function.html: Added.
+
 2016-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/mozilla/svg/paint-order-01.svg and imported/mozilla/svg/paint-order-02.svg as flaky.
