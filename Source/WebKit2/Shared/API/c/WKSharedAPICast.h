@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKSharedAPICast_h
-#define WKSharedAPICast_h
+#pragma once
 
+#include "APIArray.h"
 #include "APIError.h"
 #include "APINumber.h"
 #include "APISecurityOrigin.h"
@@ -136,8 +136,8 @@ auto toImpl(T t) -> ImplType*
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType>::APIType>
 class ProxyingRefPtr {
 public:
-    ProxyingRefPtr(PassRefPtr<ImplType> impl)
-        : m_impl(impl)
+    ProxyingRefPtr(RefPtr<ImplType>&& impl)
+        : m_impl(WTFMove(impl))
     {
     }
 
@@ -153,6 +153,11 @@ private:
 };
 
 /* Special cases. */
+
+inline ProxyingRefPtr<API::Array> toAPI(Ref<API::Array>&& array)
+{
+    return ProxyingRefPtr<API::Array>(WTFMove(array));
+}
 
 inline ProxyingRefPtr<API::String> toAPI(StringImpl* string)
 {
@@ -996,5 +1001,3 @@ inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserCont
 }
 
 } // namespace WebKit
-
-#endif // WKSharedAPICast_h

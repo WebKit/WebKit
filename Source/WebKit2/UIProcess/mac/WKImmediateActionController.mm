@@ -254,7 +254,7 @@ using namespace WebKit;
     _page->setTextIndicatorAnimationProgress(1);
 }
 
-- (PassRefPtr<API::HitTestResult>)_webHitTestResult
+- (RefPtr<API::HitTestResult>)_webHitTestResult
 {
     RefPtr<API::HitTestResult> hitTestResult;
     if (_state == ImmediateActionState::Ready)
@@ -262,7 +262,7 @@ using namespace WebKit;
     else
         hitTestResult = _page->lastMouseMoveHitTestResult();
 
-    return WTFMove(hitTestResult);
+    return hitTestResult;
 }
 
 #pragma mark Immediate actions

@@ -38,9 +38,9 @@ using namespace WebCore;
 
 namespace API {
 
-Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
+Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
 {
-    return adoptRef(*new WebArchive(mainResource, subresources, subframeArchives));
+    return adoptRef(*new WebArchive(mainResource, WTFMove(subresources), WTFMove(subframeArchives)));
 }
 
 Ref<WebArchive> WebArchive::create(API::Data* data)
@@ -48,9 +48,9 @@ Ref<WebArchive> WebArchive::create(API::Data* data)
     return adoptRef(*new WebArchive(data));
 }
 
-Ref<WebArchive> WebArchive::create(PassRefPtr<LegacyWebArchive> legacyWebArchive)
+Ref<WebArchive> WebArchive::create(RefPtr<LegacyWebArchive>&& legacyWebArchive)
 {
-    return adoptRef(*new WebArchive(legacyWebArchive));
+    return adoptRef(*new WebArchive(WTFMove(legacyWebArchive)));
 }
 
 Ref<WebArchive> WebArchive::create(Range* range)
@@ -58,10 +58,10 @@ Ref<WebArchive> WebArchive::create(Range* range)
     return adoptRef(*new WebArchive(LegacyWebArchive::create(range)));
 }
 
-WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
+WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
     : m_cachedMainResource(mainResource)
-    , m_cachedSubresources(subresources)
-    , m_cachedSubframeArchives(subframeArchives)
+    , m_cachedSubresources(WTFMove(subresources))
+    , m_cachedSubframeArchives(WTFMove(subframeArchives))
 {
     RefPtr<ArchiveResource> coreMainResource = m_cachedMainResource->coreArchiveResource();
 
@@ -90,8 +90,8 @@ WebArchive::WebArchive(API::Data* data)
     m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->bytes(), data->size()).get());
 }
 
-WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> legacyWebArchive)
-    : m_legacyWebArchive(legacyWebArchive)
+WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& legacyWebArchive)
+    : m_legacyWebArchive(WTFMove(legacyWebArchive))
 {
 }
 

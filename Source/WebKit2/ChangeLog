@@ -1,3 +1,58 @@
+2016-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce PassRefPtr use in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=164360
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::SecurityOrigin):
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::create):
+        (API::SerializedScriptValue::SerializedScriptValue):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::ProxyingRefPtr::ProxyingRefPtr):
+        (WebKit::toAPI):
+        * Shared/APIWebArchive.h:
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::create):
+        (API::WebArchive::WebArchive):
+        * UIProcess/API/APIHitTestResult.cpp:
+        (API::HitTestResult::create):
+        * UIProcess/API/APIHitTestResult.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        * UIProcess/API/C/WKPage.cpp:
+        (WebKit::RunBeforeUnloadConfirmPanelResultListener::create):
+        (WebKit::RunBeforeUnloadConfirmPanelResultListener::RunBeforeUnloadConfirmPanelResultListener):
+        (WebKit::RunJavaScriptAlertResultListener::create):
+        (WebKit::RunJavaScriptAlertResultListener::RunJavaScriptAlertResultListener):
+        (WebKit::RunJavaScriptConfirmResultListener::create):
+        (WebKit::RunJavaScriptConfirmResultListener::RunJavaScriptConfirmResultListener):
+        (WebKit::RunJavaScriptPromptResultListener::create):
+        (WebKit::RunJavaScriptPromptResultListener::RunJavaScriptPromptResultListener):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKWebAllowDenyPolicyListener initWithPermissionRequestProxy:]):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _webHitTestResult]):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (contextMenuItems):
+        (WKBundlePageCopyContextMenuItems):
+        (WKBundlePageCopyContextMenuAtPointInWindow):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserMessageHandlerDescriptorProxy::create):
+        * WebProcess/WebPage/WebUndoStep.cpp:
+        (WebKit::WebUndoStep::create):
+        * WebProcess/WebPage/WebUndoStep.h:
+        (WebKit::WebUndoStep::WebUndoStep):
+
 2016-11-01  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageThrottler & all related code
