@@ -39,6 +39,7 @@ public:
     static String cachedResourceRevalidationKey();
     static String canCacheKey();
     static String cannotSuspendActiveDOMObjectsKey();
+    WEBCORE_EXPORT static String createSharedBufferFailedKey();
     WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
     static String deviceMotionKey();
@@ -56,6 +57,8 @@ public:
     static String httpsNoStoreKey();
     static String imageKey();
     static String inMemoryCacheKey();
+    WEBCORE_EXPORT static String internalErrorKey();
+    WEBCORE_EXPORT static String invalidSessionIDKey();
     WEBCORE_EXPORT static String isAttachmentKey();
     WEBCORE_EXPORT static String isConditionalRequestKey();
     static String isDisabledKey();
@@ -120,6 +123,7 @@ public:
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithoutRevalidationKey();
     static String svgDocumentKey();
+    WEBCORE_EXPORT static String synchronousMessageFailedKey();
     WEBCORE_EXPORT static String uncacheableStatusCodeKey();
     static String underMemoryPressureKey();
     WEBCORE_EXPORT static String unknownEntryRequestKey();

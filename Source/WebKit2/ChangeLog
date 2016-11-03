@@ -1,3 +1,23 @@
+2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208286. rdar://problem/28634857
+
+    2016-11-02  David Kilzer  <ddkilzer@apple.com>
+
+            Add logging for "WebKit encountered an internal error" messages
+            <https://webkit.org/b/164272>
+            <rdar://problem/28546064>
+
+            Reviewed by Alex Christensen.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::startNetworkLoad):
+            * WebProcess/Network/WebLoaderStrategy.cpp:
+            (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::didReceiveResource):
+            - Add logging for various internalError() events.
+
 2016-11-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r208255. rdar://problem/28962886

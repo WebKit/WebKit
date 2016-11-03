@@ -40,6 +40,7 @@
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
@@ -217,6 +218,7 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", parameters.sessionID.sessionID());
         RELEASE_LOG_ERROR_IF_ALLOWED("startNetworkLoad: Attempted to create a NetworkLoad with a session that does not exist (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", sessionID=%" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, parameters.sessionID.sessionID());
+        NetworkProcess::singleton().logDiagnosticMessage(m_parameters.webPageID, WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::invalidSessionIDKey(), WebCore::ShouldSample::No);
         didFailLoading(internalError(request.url()));
         return;
     }
