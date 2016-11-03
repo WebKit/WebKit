@@ -157,38 +157,6 @@ Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> NodeNodeTypeDOMJIT::callDOMGetter()
     return patchpoint;
 }
 
-Ref<JSC::DOMJIT::Patchpoint> NodeOwnerDocumentDOMJIT::checkDOM()
-{
-    return DOMJIT::checkDOM<Node>();
-}
-
-Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> NodeOwnerDocumentDOMJIT::callDOMGetter()
-{
-    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> patchpoint = JSC::DOMJIT::CallDOMGetterPatchpoint::create();
-    patchpoint->numGPScratchRegisters = 1;
-    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
-        JSValueRegs result = params[0].jsValueRegs();
-        GPRReg node = params[1].gpr();
-        GPRReg globalObject = params[2].gpr();
-        JSValue globalObjectValue = params[2].value();
-        GPRReg scratch = params.gpScratch(0);
-
-        // If the given node is a Document, Node#ownerDocument returns null.
-        auto notDocument = DOMJIT::branchIfNotDocumentWrapper(jit, node);
-        jit.moveValue(jsNull(), result);
-        auto done = jit.jump();
-
-        notDocument.link(&jit);
-        jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
-        DOMJIT::loadDocument(jit, scratch, scratch);
-        DOMJIT::toWrapper<Document>(jit, params, scratch, globalObject, result, DOMJIT::toWrapperSlow<Document>, globalObjectValue);
-        done.link(&jit);
-        return CCallHelpers::JumpList();
-    });
-    patchpoint->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_ownerDocument);
-    return patchpoint;
-}
-
 }
 
 #endif

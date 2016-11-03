@@ -1,3 +1,12 @@
+2016-11-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, rolling out due to crash in Amazon web site
+        https://bugs.webkit.org/show_bug.cgi?id=164380
+        <rdar://problem/29094221>
+
+        * js/dom/domjit-accessor-owner-document-expected.txt: Removed.
+        * js/dom/domjit-accessor-owner-document.html: Removed.
+
 2016-11-03  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support binary keys.
