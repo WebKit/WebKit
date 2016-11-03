@@ -55,10 +55,12 @@ public:
     {
     }
 
+#if ENABLE(JIT)
     Ref<Patchpoint> checkDOM() const
     {
         return checkDOMGeneratorFunction();
     }
+#endif
 
     uintptr_t unsafeFunction;
     CheckDOMGeneratorFunction* checkDOMGeneratorFunction;

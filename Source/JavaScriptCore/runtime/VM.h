@@ -141,6 +141,9 @@ struct ArityCheckData;
 namespace Profiler {
 class Database;
 }
+namespace DOMJIT {
+class Signature;
+}
 
 struct HashTable;
 struct Instruction;

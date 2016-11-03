@@ -1,3 +1,14 @@
+2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, fix CLoop build after r208320.
+        https://bugs.webkit.org/show_bug.cgi?id=162980
+
+        Guard with ENABLE(JIT).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+
 2016-11-02  Brady Eidson  <beidson@apple.com>
 
         Expand upon IndexedDB status in features.json.

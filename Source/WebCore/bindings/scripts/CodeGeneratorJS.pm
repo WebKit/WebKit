@@ -2701,15 +2701,21 @@ sub GenerateImplementation
             my $domJITSignatureName = "DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($function->name);
             my $classInfo = "JS" . $interface->type->name . "::info()";
             my $resultType = GetResultTypeFilter($interface, $function->type);
-            my $domJITSignature = "static const JSC::DOMJIT::Signature ${domJITSignatureName}((uintptr_t)${unsafeFunctionName}, DOMJIT::checkDOM<$interfaceName>, $classInfo, JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), ${resultType}";
+            my $domJITSignatureHeader = "static const JSC::DOMJIT::Signature ${domJITSignatureName}((uintptr_t)${unsafeFunctionName},";
+            my $domJITSignatureFooter = "$classInfo, JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), ${resultType}";
             foreach my $argument (@{$function->arguments}) {
                 my $type = $argument->type;
                 my $argumentType = GetArgumentTypeFilter($interface, $type);
-                $domJITSignature .= ", ${argumentType}";
+                $domJITSignatureFooter .= ", ${argumentType}";
             }
+            $domJITSignatureFooter .= ");";
             my $conditionalString = $codeGenerator->GenerateConditionalString($function);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, $domJITSignature . ");\n");
+            push(@implContent, "#if ENABLE(JIT)\n");
+            push(@implContent, "$domJITSignatureHeader DOMJIT::checkDOM<$interfaceName>, $domJITSignatureFooter\n");
+            push(@implContent, "#else\n");
+            push(@implContent, "$domJITSignatureHeader nullptr, $domJITSignatureFooter\n");
+            push(@implContent, "#endif\n");
             push(@implContent, "#endif\n") if $conditionalString;
             push(@implContent, "\n");
         }

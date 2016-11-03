@@ -95,15 +95,35 @@ JSC::EncodedJSValue jsTestDOMJITNodeNullableAttr(JSC::ExecState*, JSC::EncodedJS
 JSC::EncodedJSValue jsTestDOMJITConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestDOMJITConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
+#if ENABLE(JIT)
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetAttribute, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#else
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetAttribute, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#endif
 
+#if ENABLE(JIT)
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionItem, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
+#else
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionItem, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
+#endif
 
+#if ENABLE(JIT)
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionHasAttribute, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
+#else
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionHasAttribute, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
+#endif
 
+#if ENABLE(JIT)
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementById, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#else
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementById, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#endif
 
+#if ENABLE(JIT)
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#else
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+#endif
 
 class JSTestDOMJITPrototype : public JSC::JSNonFinalObject {
 public:

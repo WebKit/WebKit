@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DOMJITHeapRange.h"
 
-#if ENABLE(JIT)
-
 namespace JSC { namespace DOMJIT {
 
 void HeapRange::dump(PrintStream& out) const
@@ -36,5 +34,3 @@ void HeapRange::dump(PrintStream& out) const
 }
 
 } }
-
-#endif
