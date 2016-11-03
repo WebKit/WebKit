@@ -116,17 +116,16 @@ void SVGStyleElement::finishParsingChildren()
 
 Node::InsertionNotificationRequest SVGStyleElement::insertedInto(ContainerNode& rootParent)
 {
-    bool wasInDocument = inDocument();
-    auto result = SVGElement::insertedInto(rootParent);
-    if (rootParent.inDocument() && !wasInDocument)
+    SVGElement::insertedInto(rootParent);
+    if (rootParent.inDocument())
         m_styleSheetOwner.insertedIntoDocument(*this);
-    return result;
+    return InsertionDone;
 }
 
 void SVGStyleElement::removedFrom(ContainerNode& rootParent)
 {
     SVGElement::removedFrom(rootParent);
-    if (rootParent.inDocument() && !inDocument())
+    if (rootParent.inDocument())
         m_styleSheetOwner.removedFromDocument(*this);
 }
 

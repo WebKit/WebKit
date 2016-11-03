@@ -6980,13 +6980,11 @@ DOMSelection* Document::getSelection()
 void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
     ASSERT(shadowRoot.inDocument());
-    ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.add(&shadowRoot);
 }
 
 void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
-    ASSERT(!shadowRoot.inDocument());
     ASSERT(m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.remove(&shadowRoot);
 }

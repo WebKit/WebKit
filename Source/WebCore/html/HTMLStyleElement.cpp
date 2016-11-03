@@ -94,17 +94,18 @@ void HTMLStyleElement::finishParsingChildren()
 
 Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(ContainerNode& insertionPoint)
 {
-    bool wasInDocument = inDocument();
-    auto result = HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument() && !wasInDocument)
+    HTMLElement::insertedInto(insertionPoint);
+    if (insertionPoint.inDocument())
         m_styleSheetOwner.insertedIntoDocument(*this);
-    return result;
+
+    return InsertionDone;
 }
 
 void HTMLStyleElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint.inDocument() && !inDocument())
+
+    if (insertionPoint.inDocument())
         m_styleSheetOwner.removedFromDocument(*this);
 }
 

@@ -80,6 +80,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
+    , m_isInShadowTree(false)
     , m_firedLoad(false)
     , m_loadedResource(false)
     , m_pendingSheetType(Unknown)
@@ -100,8 +101,8 @@ HTMLLinkElement::~HTMLLinkElement()
     if (m_cachedSheet)
         m_cachedSheet->removeClient(*this);
 
-    if (m_styleScope)
-        m_styleScope->removeStyleSheetCandidateNode(*this);
+    if (inDocument())
+        document().styleScope().removeStyleSheetCandidateNode(*this);
 
     linkLoadEventSender().cancelEvent(*this);
     linkErrorEventSender().cancelEvent(*this);
@@ -111,42 +112,35 @@ void HTMLLinkElement::setDisabledState(bool disabled)
 {
     DisabledState oldDisabledState = m_disabledState;
     m_disabledState = disabled ? Disabled : EnabledViaScript;
-    if (oldDisabledState == m_disabledState)
-        return;
+    if (oldDisabledState != m_disabledState) {
+        // If we change the disabled state while the sheet is still loading, then we have to
+        // perform three checks:
+        if (styleSheetIsLoading()) {
+            // Check #1: The sheet becomes disabled while loading.
+            if (m_disabledState == Disabled)
+                removePendingSheet();
 
-    ASSERT(inDocument() || !styleSheetIsLoading());
-    if (!inDocument())
-        return;
+            // Check #2: An alternate sheet becomes enabled while it is still loading.
+            if (m_relAttribute.isAlternate && m_disabledState == EnabledViaScript)
+                addPendingSheet(ActiveSheet);
 
-    // If we change the disabled state while the sheet is still loading, then we have to
-    // perform three checks:
-    if (styleSheetIsLoading()) {
-        // Check #1: The sheet becomes disabled while loading.
-        if (m_disabledState == Disabled)
-            removePendingSheet();
+            // Check #3: A main sheet becomes enabled while it was still loading and
+            // after it was disabled via script. It takes really terrible code to make this
+            // happen (a double toggle for no reason essentially). This happens on
+            // virtualplastic.net, which manages to do about 12 enable/disables on only 3
+            // sheets. :)
+            if (!m_relAttribute.isAlternate && m_disabledState == EnabledViaScript && oldDisabledState == Disabled)
+                addPendingSheet(ActiveSheet);
 
-        // Check #2: An alternate sheet becomes enabled while it is still loading.
-        if (m_relAttribute.isAlternate && m_disabledState == EnabledViaScript)
-            addPendingSheet(ActiveSheet);
+            // If the sheet is already loading just bail.
+            return;
+        }
 
-        // Check #3: A main sheet becomes enabled while it was still loading and
-        // after it was disabled via script. It takes really terrible code to make this
-        // happen (a double toggle for no reason essentially). This happens on
-        // virtualplastic.net, which manages to do about 12 enable/disables on only 3
-        // sheets. :)
-        if (!m_relAttribute.isAlternate && m_disabledState == EnabledViaScript && oldDisabledState == Disabled)
-            addPendingSheet(ActiveSheet);
-
-        // If the sheet is already loading just bail.
-        return;
-    }
-
-    // Load the sheet, since it's never been loaded before.
-    if (!m_sheet && m_disabledState == EnabledViaScript)
-        process();
-    else {
-        ASSERT(m_styleScope);
-        m_styleScope->didChangeActiveStyleSheetCandidates();
+        // Load the sheet, since it's never been loaded before.
+        if (!m_sheet && m_disabledState == EnabledViaScript)
+            process();
+        else
+            document().styleScope().didChangeActiveStyleSheetCandidates();
     }
 }
 
@@ -182,7 +176,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         m_media = value.string().convertToASCIILowercase();
         process();
         if (m_sheet && !isDisabled())
-            m_styleScope->didChangeActiveStyleSheetCandidates();
+            document().styleScope().didChangeActiveStyleSheetCandidates();
         return;
     }
     if (name == disabledAttr) {
@@ -220,7 +214,7 @@ String HTMLLinkElement::crossOrigin() const
 
 void HTMLLinkElement::process()
 {
-    if (!inDocument()) {
+    if (!inDocument() || m_isInShadowTree) {
         ASSERT(!m_sheet);
         return;
     }
@@ -289,7 +283,7 @@ void HTMLLinkElement::process()
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         clearSheet();
-        m_styleScope->didChangeActiveStyleSheetCandidates();
+        document().styleScope().didChangeActiveStyleSheetCandidates();
     }
 }
 
@@ -303,13 +297,15 @@ void HTMLLinkElement::clearSheet()
 
 Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode& insertionPoint)
 {
-    bool wasInDocument = inDocument();
     HTMLElement::insertedInto(insertionPoint);
-    if (!insertionPoint.inDocument() || wasInDocument)
+    if (!insertionPoint.inDocument())
         return InsertionDone;
 
-    m_styleScope = &Style::Scope::forNode(*this);
-    m_styleScope->addStyleSheetCandidateNode(*this, m_createdByParser);
+    m_isInShadowTree = isInShadowTree();
+    if (m_isInShadowTree)
+        return InsertionDone;
+
+    document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
 
     process();
     return InsertionDone;
@@ -318,20 +314,20 @@ Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode& 
 void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
-    if (!insertionPoint.inDocument() || inDocument())
+    if (!insertionPoint.inDocument())
         return;
+
+    if (m_isInShadowTree) {
+        ASSERT(!m_sheet);
+        return;
+    }
+    document().styleScope().removeStyleSheetCandidateNode(*this);
 
     if (m_sheet)
         clearSheet();
 
     if (styleSheetIsLoading())
         removePendingSheet(RemovePendingSheetNotifyLater);
-    
-    if (m_styleScope) {
-        m_styleScope->removeStyleSheetCandidateNode(*this);
-        m_styleScope = nullptr;
-    }
-
 }
 
 void HTMLLinkElement::finishParsingChildren()
@@ -548,8 +544,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
 
     if (m_pendingSheetType == InactiveSheet)
         return;
-    ASSERT(m_styleScope);
-    m_styleScope->addPendingSheet();
+    document().styleScope().addPendingSheet();
 }
 
 void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType notification)
@@ -560,14 +555,13 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
     if (type == Unknown)
         return;
 
-    ASSERT(m_styleScope);
     if (type == InactiveSheet) {
         // Document just needs to know about the sheet for exposure through document.styleSheets
-        m_styleScope->didChangeActiveStyleSheetCandidates();
+        document().styleScope().didChangeActiveStyleSheetCandidates();
         return;
     }
 
-    m_styleScope->removePendingSheet(
+    document().styleScope().removePendingSheet(
         notification == RemovePendingSheetNotifyImmediately
         ? Style::Scope::RemovePendingSheetNotifyImmediately
         : Style::Scope::RemovePendingSheetNotifyLater);

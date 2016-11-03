@@ -1784,6 +1784,8 @@ void Element::removeShadowRoot()
 
     oldRoot->setHost(nullptr);
     oldRoot->setParentTreeScope(&document());
+
+    notifyChildNodeRemoved(*this, *oldRoot);
 }
 
 static bool canAttachAuthorShadowRoot(const Element& element)

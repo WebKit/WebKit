@@ -1,8 +1,0 @@
-
-PASS The title attribute on the style element in a document must set the preferred stylesheet. 
-PASS The title attribute on the style element inside a closed shadow tree must not set the preferred stylesheet. 
-PASS The title attribute on the style element inside an open shadow tree must not set the preferred stylesheet. 
-PASS The title attribute on the link element in a document must set the preferred stylesheet. 
-PASS The title attribute on the link element inside a closed shadow tree must not set the preferred stylesheet. 
-PASS The title attribute on the link element inside an open shadow tree must not set the preferred stylesheet. 
-
