@@ -1385,7 +1385,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     _scaleToRestore = scale;
 }
 
-- (RefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot
+- (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot
 {
     float deviceScale = WebCore::screenScaleFactor();
     WebCore::FloatSize snapshotSize(self.bounds.size);

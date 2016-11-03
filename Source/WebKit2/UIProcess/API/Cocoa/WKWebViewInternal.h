@@ -83,7 +83,7 @@ struct PrintInfo;
 - (void)_restorePageScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatSize)topInset scale:(double)scale;
 - (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale; // FIXME: needs scroll origin?
 
-- (RefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
+- (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 
 - (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;

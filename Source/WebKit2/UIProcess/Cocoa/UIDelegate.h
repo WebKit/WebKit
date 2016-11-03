@@ -76,7 +76,7 @@ private:
 
     private:
         // API::UIClient
-        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
+        PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
         void close(WebKit::WebPageProxy*) override;
         void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
         void didEnterFullscreen(WebKit::WebPageProxy*) override;

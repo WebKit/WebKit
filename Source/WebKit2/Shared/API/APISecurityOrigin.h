@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/PassRefPtr.h>
 
 namespace API {
 
@@ -50,8 +51,8 @@ public:
     WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
 
 private:
-    SecurityOrigin(RefPtr<WebCore::SecurityOrigin>&& securityOrigin)
-        : m_securityOrigin(WTFMove(securityOrigin))
+    SecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+        : m_securityOrigin(securityOrigin)
     {
     }
 
