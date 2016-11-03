@@ -652,6 +652,7 @@
         "url": "https://html.spec.whatwg.org/#constraint-validation",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164382",
         "keywords": ["form validation", "bubble"],
+        "specification": "HTML5",
         "description": "Interactive validation of constraints on HTML forms by displaying bubbles with a validation message next to incomplete / invalid form controls.",
         "contact": {
             "name": "Chris Dumez",

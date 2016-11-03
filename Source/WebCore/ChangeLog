@@ -1,5 +1,11 @@
 2016-11-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, add HTML5 specification for HTML Interactive Form Validation feature.
+
+        * features.json:
+
+2016-11-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, add HTML Interactive Form Validation to features.json
 
         * features.json:
