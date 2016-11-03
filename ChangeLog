@@ -1,5 +1,17 @@
 2016-11-03  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Fixes to build JSCOnly on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=164379
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsJSCOnly.cmake: Define BUILDING_JSCONLY__, use
+        system ICU libraries on macOS
+        * Source/cmake/WebKitMacros.cmake: Fixed WEBKIT_FRAMEWORK macro for
+        static JSC
+
+2016-11-03  Konstantin Tokarev  <annulen@yandex.ru>
+
         [cmake][MinGW] Don't use MS bitfield layout to reduce sizes of data structures
         https://bugs.webkit.org/show_bug.cgi?id=164026
 

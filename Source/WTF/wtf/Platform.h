@@ -445,6 +445,8 @@
 #define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
+#elif defined(BUILDING_JSCONLY__)
+/* JSCOnly does not provide PLATFORM() macro */
 #elif OS(MAC_OS_X)
 #define WTF_PLATFORM_MAC 1
 #elif OS(IOS)
