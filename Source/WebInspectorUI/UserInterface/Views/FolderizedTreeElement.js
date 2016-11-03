@@ -51,20 +51,18 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
         this._folderSettingsKey = x;
     }
 
-    registerFolderizeSettings(type, folderDisplayName, validateRepresentedObjectCallback, countChildrenCallback, treeElementConstructor)
+    registerFolderizeSettings(type, displayName, representedObject, treeElementConstructor)
     {
         console.assert(type);
-        console.assert(folderDisplayName);
-        console.assert(typeof validateRepresentedObjectCallback === "function");
-        console.assert(typeof countChildrenCallback === "function");
+        console.assert(displayName);
+        console.assert(representedObject);
         console.assert(typeof treeElementConstructor === "function");
 
-        var settings = {
+        let settings = {
             type,
-            folderDisplayName,
-            validateRepresentedObjectCallback,
-            countChildrenCallback,
-            treeElementConstructor
+            displayName,
+            representedObject,
+            treeElementConstructor,
         };
 
         this._folderizeSettingsMap.set(type, settings);
@@ -147,9 +145,9 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
     updateParentStatus()
     {
-        var hasChildren = false;
-        for (var settings of this._folderizeSettingsMap.values()) {
-            if (settings.countChildrenCallback()) {
+        let hasChildren = false;
+        for (let settings of this._folderizeSettingsMap.values()) {
+            if (settings.representedObject.items.size) {
                 hasChildren = true;
                 break;
             }
@@ -272,10 +270,10 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
         console.assert(this._folderSettingsKey !== "");
 
-        function createFolderTreeElement(type, displayName)
+        function createFolderTreeElement(settings)
         {
-            let folderTreeElement = new WebInspector.FolderTreeElement(displayName);
-            let folderExpandedSetting = new WebInspector.Setting(type + "-folder-expanded-" + this._folderSettingsKey, false);
+            let folderTreeElement = new WebInspector.FolderTreeElement(settings.displayName, settings.representedObject);
+            let folderExpandedSetting = new WebInspector.Setting(settings.type + "-folder-expanded-" + this._folderSettingsKey, false);
             this._folderExpandedSettingMap.set(folderTreeElement, folderExpandedSetting);
 
             if (folderExpandedSetting.value)
@@ -296,7 +294,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
         if (folder)
             return folder;
 
-        folder = createFolderTreeElement.call(this, settings.type, settings.folderDisplayName);
+        folder = createFolderTreeElement.call(this, settings);
         this._folderTypeMap.set(settings.type, folder);
         return folder;
     }
@@ -313,8 +311,8 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
     _settingsForRepresentedObject(representedObject)
     {
-        for (var settings of this._folderizeSettingsMap.values()) {
-            if (settings.validateRepresentedObjectCallback(representedObject))
+        for (let settings of this._folderizeSettingsMap.values()) {
+            if (settings.representedObject.typeVerifier(representedObject))
                 return settings;
         }
         return null;
@@ -369,7 +367,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
         // Iterate over all the available child object types.
         for (var settings of this._folderizeSettingsMap.values()) {
-            if (pushCategory(settings.countChildrenCallback()))
+            if (pushCategory(settings.representedObject.items.size))
                 return true;
         }
         return false;

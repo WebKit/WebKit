@@ -171,13 +171,17 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         // window.eval() or browser features like Auto Fill and Reader. They are not normally added to the sidebar, but since
         // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
 
-        if (!this._anonymousScriptsFolderTreeElement)
-            this._anonymousScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Anonymous Scripts"));
+        if (!this._anonymousScriptsFolderTreeElement) {
+            let collection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
+            this._anonymousScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Anonymous Scripts"), collection);
+        }
 
         if (!this._anonymousScriptsFolderTreeElement.parent) {
             var index = insertionIndexForObjectInListSortedByFunction(this._anonymousScriptsFolderTreeElement, this.contentTreeOutline.children, this._compareTreeElements);
             this.contentTreeOutline.insertChild(this._anonymousScriptsFolderTreeElement, index);
         }
+
+        this._anonymousScriptsFolderTreeElement.representedObject.add(representedObject);
 
         var scriptTreeElement = new WebInspector.ScriptTreeElement(representedObject);
         this._anonymousScriptsFolderTreeElement.appendChild(scriptTreeElement);
@@ -293,21 +297,30 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             return;
         }
 
-        var insertIntoTopLevel = false;
+        let insertIntoTopLevel = false;
+        let parentFolderTreeElement = null;
 
         if (script.injected) {
-            if (!this._extensionScriptsFolderTreeElement)
-                this._extensionScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extension Scripts"));
-            var parentFolderTreeElement = this._extensionScriptsFolderTreeElement;
+            if (!this._extensionScriptsFolderTreeElement) {
+                let collection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
+                this._extensionScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extension Scripts"), collection);
+            }
+
+            parentFolderTreeElement = this._extensionScriptsFolderTreeElement;
         } else {
             if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript && !WebInspector.hasExtraDomains)
                 insertIntoTopLevel = true;
             else {
-                if (!this._extraScriptsFolderTreeElement)
-                    this._extraScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extra Scripts"));
-                var parentFolderTreeElement = this._extraScriptsFolderTreeElement;
+                if (!this._extraScriptsFolderTreeElement) {
+                    let collection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
+                    this._extraScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extra Scripts"), collection);
+                }
+
+                parentFolderTreeElement = this._extraScriptsFolderTreeElement;
             }
         }
+
+        parentFolderTreeElement.representedObject.add(script);
 
         var scriptTreeElement = new WebInspector.ScriptTreeElement(script);
 
@@ -346,18 +359,24 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         if (this._extensionScriptsFolderTreeElement) {
             if (this._extensionScriptsFolderTreeElement.parent)
                 this._extensionScriptsFolderTreeElement.parent.removeChild(this._extensionScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
+
+            this._extensionScriptsFolderTreeElement.representedObject.clear();
             this._extensionScriptsFolderTreeElement = null;
         }
 
         if (this._extraScriptsFolderTreeElement) {
             if (this._extraScriptsFolderTreeElement.parent)
                 this._extraScriptsFolderTreeElement.parent.removeChild(this._extraScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
+
+            this._extraScriptsFolderTreeElement.representedObject.clear();
             this._extraScriptsFolderTreeElement = null;
         }
 
         if (this._anonymousScriptsFolderTreeElement) {
             if (this._anonymousScriptsFolderTreeElement.parent)
                 this._anonymousScriptsFolderTreeElement.parent.removeChild(this._anonymousScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
+
+            this._anonymousScriptsFolderTreeElement.representedObject.clear();
             this._anonymousScriptsFolderTreeElement = null;
         }
 

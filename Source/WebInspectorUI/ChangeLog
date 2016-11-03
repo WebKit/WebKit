@@ -1,3 +1,42 @@
+2016-11-03  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Modify FolderTreeElement to have a Collection as a its represented object
+        https://bugs.webkit.org/show_bug.cgi?id=164349
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/FolderTreeElement.js:
+        (WebInspector.FolderTreeElement):
+        Now accepts a representedObject parameter, which must be a WebInspector.Collection.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype.registerFolderizeSettings):
+        (WebInspector.FolderizedTreeElement.prototype.updateParentStatus):
+        (WebInspector.FolderizedTreeElement.prototype._parentTreeElementForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype._settingsForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype._shouldGroupIntoFolders):
+        (WebInspector.FolderizedTreeElement):
+        Rework the logic for creating WebInspector.FolderTreeElement so that items for the
+        representedObject parameter may be passed in via registerFolderizeSettings.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.): Deleted.
+        (WebInspector.FrameTreeElement.makeChildCountCallback): Deleted.
+        Rework logic for calling registerFolderizeSettings to support the representedObject
+        parameter.  Also changed calls to WebInspector.Frame to support the
+        WebInspector.Collection class.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptsCleared):
+        Create WebInspector.Collection instances of Script model objects for additional folders
+        created by the Resources sidebar:
+         - Anonymous Scripts
+         - Extension Scripts
+         - Extra Scripts
+
 2016-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include DebuggerAgent in Workers - see, pause, and step through scripts

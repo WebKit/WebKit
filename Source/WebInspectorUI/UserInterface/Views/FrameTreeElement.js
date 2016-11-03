@@ -49,44 +49,13 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         this.shouldRefreshChildren = true;
         this.folderSettingsKey = this._frame.url.hash;
 
-        this.registerFolderizeSettings("frames", WebInspector.UIString("Frames"),
-            (representedObject) => representedObject instanceof WebInspector.Frame,
-            () => this.frame.childFrameCollection.items.size,
-            WebInspector.FrameTreeElement
-        );
+        this.registerFolderizeSettings("frames", WebInspector.UIString("Frames"), this._frame.childFrameCollection, WebInspector.FrameTreeElement);
+        this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"), this._frame.domTree.contentFlowCollection, WebInspector.ContentFlowTreeElement);
+        this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"), this._frame.extraScriptCollection, WebInspector.ScriptTreeElement);
 
-        this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"),
-            (representedObject) => representedObject instanceof WebInspector.ContentFlow,
-            () => this.frame.domTree.contentFlowCollection.items.size,
-            WebInspector.ContentFlowTreeElement
-        );
-
-        this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"),
-            (representedObject) => representedObject instanceof WebInspector.Script && representedObject.dynamicallyAddedScriptElement,
-            () => this.frame.extraScriptCollection.items.size,
-            WebInspector.ScriptTreeElement
-        );
-
-        function makeValidateCallback(resourceType) {
-            return function(representedObject) {
-                return representedObject instanceof WebInspector.Resource && representedObject.type === resourceType;
-            };
-        }
-
-        function makeChildCountCallback(frame, resourceType) {
-            return function() {
-                return frame.resourceCollectionForType(resourceType).items.size;
-            };
-        }
-
-        for (var key in WebInspector.Resource.Type) {
-            var value = WebInspector.Resource.Type[key];
-            var folderName = WebInspector.Resource.displayNameForType(value, true);
-            this.registerFolderizeSettings(key, folderName,
-                makeValidateCallback(value),
-                makeChildCountCallback(this.frame, value),
-                WebInspector.ResourceTreeElement
-            );
+        for (let [key, value] of Object.entries(WebInspector.Resource.Type)) {
+            let folderName = WebInspector.Resource.displayNameForType(value, true);
+            this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), WebInspector.ResourceTreeElement);
         }
 
         this.updateParentStatus();

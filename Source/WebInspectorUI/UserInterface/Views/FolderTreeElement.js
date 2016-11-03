@@ -25,22 +25,15 @@
 
 WebInspector.FolderTreeElement = class FolderTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(title, subtitle, additionalClassNames, representedObject)
+    constructor(title, representedObject)
     {
-        var classNames;
-        if (!additionalClassNames)
-            classNames = [];
-        else if (additionalClassNames.constructor === Array)
-            classNames = additionalClassNames;
-        else if (typeof additionalClassNames === "string")
-            classNames = [additionalClassNames];
+        console.assert(!representedObject || representedObject instanceof WebInspector.Collection);
 
-        classNames.unshift(WebInspector.FolderTreeElement.FolderIconStyleClassName);
-
-        super(classNames, title, subtitle, representedObject, true);
+        const classNames = [WebInspector.FolderTreeElement.FolderIconStyleClassName];
+        const subtitle = null;
+        const hasChildren = true;
+        super(classNames, title, subtitle, representedObject, hasChildren);
     }
-
-    // No Methods or Properties
 };
 
 WebInspector.FolderTreeElement.FolderIconStyleClassName = "folder-icon";
