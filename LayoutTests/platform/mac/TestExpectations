@@ -1461,3 +1461,6 @@ webkit.org/b/164322 [ ElCapitan ] media/modern-media-controls/placard-support/pl
 webkit.org/b/164328 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
 
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
+
+webkit.org/b/163915 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
+webkit.org/b/163915 svg/wicd/test-rightsizing-b.xhtml [ Pass Failure ]
