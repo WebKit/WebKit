@@ -2792,6 +2792,46 @@
 
 2016-11-02  Keith Miller  <keith_miller@apple.com>
 
+        Wasm starts a new stack whenever it adds a new block and has return types for blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=164100
+
+        Reviewed by Saam Barati.
+
+        This patch overhauls much of the Wasm function parser, validator, and B3 IR generator
+        to work with block return types. In Wasm, blocks can act as expressions and have a
+        return value. Most of the control flow operators needed to be rewritten in order to
+        support this feature. To enable return types the function parser needed to be able
+        to save and restore the expression stack from previous blocks, which is done via the
+        control stack.
+
+        This patch also removes the lazy continuation block system added previously. It's
+        not clear if there would be any performance win from such a system. There are likely
+        many other things with orders of magnitude more impact on B3 IR generation. The
+        complexity cost of such a system is not worth the effort without sufficient evidence
+        otherwise.
+
+        * testWasm.cpp:
+        (runWasmTests):
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseBlock):
+        (JSC::Wasm::FunctionParser<Context>::addReturn):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        (JSC::Wasm::FunctionParser<Context>::popExpressionStack):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::ControlData::hasNonVoidSignature):
+        (JSC::Wasm::Validate::addElse):
+        (JSC::Wasm::Validate::addElseToUnreachable):
+        (JSC::Wasm::Validate::addBranch):
+        (JSC::Wasm::Validate::endBlock):
+        (JSC::Wasm::Validate::addEndToUnreachable):
+        (JSC::Wasm::Validate::dump):
+        (JSC::Wasm::validateFunction):
+        (JSC::Wasm::Validate::isContinuationReachable): Deleted.
+
+2016-11-02  Keith Miller  <keith_miller@apple.com>
+
         We should not pop from an empty stack in the Wasm function parser.
         https://bugs.webkit.org/show_bug.cgi?id=164275
 

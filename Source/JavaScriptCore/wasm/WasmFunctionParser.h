@@ -43,10 +43,16 @@ class FunctionParser : public Parser {
 public:
     typedef typename Context::ExpressionType ExpressionType;
     typedef typename Context::ControlType ControlType;
+    typedef typename Context::ExpressionList ExpressionList;
 
     FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const Vector<FunctionInformation>& functions);
 
     bool WARN_UNUSED_RETURN parse();
+
+    struct ControlEntry {
+        ExpressionList enclosedExpressionStack;
+        ControlType controlData;
+    };
 
 private:
     static const bool verbose = false;
@@ -54,13 +60,14 @@ private:
     bool WARN_UNUSED_RETURN parseBlock();
     bool WARN_UNUSED_RETURN parseExpression(OpType);
     bool WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
+    bool WARN_UNUSED_RETURN addReturn();
     bool WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
     bool WARN_UNUSED_RETURN popExpressionStack(ExpressionType& result);
 
     Context& m_context;
-    Vector<ExpressionType, 1> m_expressionStack;
-    Vector<ControlType> m_controlStack;
+    ExpressionList m_expressionStack;
+    Vector<ControlEntry> m_controlStack;
     const Signature* m_signature;
     const Vector<FunctionInformation>& m_functions;
     unsigned m_unreachableBlocks { 0 };
@@ -120,7 +127,7 @@ bool FunctionParser<Context>::parseBlock()
         }
 
         if (op == OpType::End && !m_controlStack.size())
-            break;
+            return m_unreachableBlocks ? true : addReturn();
 
         if (m_unreachableBlocks) {
             if (!parseUnreachableExpression(static_cast<OpType>(op))) {
@@ -136,9 +143,24 @@ bool FunctionParser<Context>::parseBlock()
 
     }
 
-    // I'm not sure if we should check the expression stack here...
-    return true;
+    RELEASE_ASSERT_NOT_REACHED();
 }
+
+template<typename Context>
+bool FunctionParser<Context>::addReturn()
+{
+    ExpressionList returnValues;
+    if (m_signature->returnType != Void) {
+        ExpressionType returnValue;
+        if (!popExpressionStack(returnValue))
+            return false;
+        returnValues.append(returnValue);
+    }
+
+    m_unreachableBlocks = 1;
+    return m_context.addReturn(returnValues);
+}
+
 #define CREATE_CASE(name, id, b3op) case name:
 
 template<typename Context>
@@ -288,7 +310,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseValueType(inlineSignature))
             return false;
 
-        m_controlStack.append(m_context.addBlock(inlineSignature));
+        m_controlStack.append({ WTFMove(m_expressionStack), m_context.addBlock(inlineSignature) });
+        m_expressionStack = ExpressionList();
         return true;
     }
 
@@ -297,7 +320,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseValueType(inlineSignature))
             return false;
 
-        m_controlStack.append(m_context.addLoop(inlineSignature));
+        m_controlStack.append({ WTFMove(m_expressionStack), m_context.addLoop(inlineSignature) });
+        m_expressionStack = ExpressionList();
         return true;
     }
 
@@ -314,7 +338,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!m_context.addIf(condition, inlineSignature, control))
             return false;
 
-        m_controlStack.append(control);
+        m_controlStack.append({ WTFMove(m_expressionStack), control });
+        m_expressionStack = ExpressionList();
         return true;
     }
 
@@ -323,7 +348,11 @@ bool FunctionParser<Context>::parseExpression(OpType op)
             m_context.setErrorMessage("Attempted to use else block at the top-level of a function");
             return false;
         }
-        return m_context.addElse(m_controlStack.last(), m_expressionStack);
+
+        if (!m_context.addElse(m_controlStack.last().controlData, m_expressionStack))
+            return false;
+        m_expressionStack.shrink(0);
+        return true;
     }
 
     case OpType::Br:
@@ -339,29 +368,31 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         } else
             m_unreachableBlocks = 1;
 
-        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target];
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
 
         return m_context.addBranch(data, condition, m_expressionStack);
     }
 
     case OpType::Return: {
-        Vector<ExpressionType, 1> returnValues;
-        if (m_signature->returnType != Void) {
-            ExpressionType returnValue;
-            if (!popExpressionStack(returnValue))
-            returnValues.append(returnValue);
-        }
-
-        m_unreachableBlocks = 1;
-        return m_context.addReturn(returnValues);
+        return addReturn();
     }
 
     case OpType::End: {
-        ControlType data = m_controlStack.takeLast();
-        return m_context.endBlock(data, m_expressionStack);
+        ControlEntry data = m_controlStack.takeLast();
+        // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
+        // That's a little too effectful for me but I don't have a better API right now.
+        // see: https://bugs.webkit.org/show_bug.cgi?id=164353
+        if (!m_context.endBlock(data, m_expressionStack))
+            return false;
+        m_expressionStack.swap(data.enclosedExpressionStack);
+        return true;
     }
 
-    case OpType::Unreachable:
+    case OpType::Unreachable: {
+        m_unreachableBlocks = 1;
+        return true;
+    }
+
     case OpType::Select:
     case OpType::BrTable:
     case OpType::Nop:
@@ -386,17 +417,20 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
         if (m_unreachableBlocks > 1)
             return true;
 
-        ControlType& data = m_controlStack.last();
-        ASSERT(data.type() == BlockType::If);
+        ControlEntry& data = m_controlStack.last();
         m_unreachableBlocks = 0;
-        return m_context.addElse(data, m_expressionStack);
+        if (!m_context.addElseToUnreachable(data.controlData))
+            return false;
+        m_expressionStack.shrink(0);
+        return true;
     }
 
     case OpType::End: {
         if (m_unreachableBlocks == 1) {
-            ControlType data = m_controlStack.takeLast();
-            if (!m_context.isContinuationReachable(data))
-                return true;
+            ControlEntry data = m_controlStack.takeLast();
+            if (!m_context.addEndToUnreachable(data))
+                return false;
+            m_expressionStack.swap(data.enclosedExpressionStack);
         }
         m_unreachableBlocks--;
         return true;
@@ -439,12 +473,12 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
 template<typename Context>
 bool FunctionParser<Context>::popExpressionStack(ExpressionType& result)
 {
-    if (!m_expressionStack.size()) {
+    if (m_expressionStack.size()) {
         result = m_expressionStack.takeLast();
         return true;
     }
 
-    m_context.setErrorMessage("Attempted to use an stack value when none existed");
+    m_context.setErrorMessage("Attempted to use a stack value when none existed");
     return false;
 }
 

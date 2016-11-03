@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmFunctionParser.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
@@ -62,6 +63,8 @@ public:
             }
         }
 
+        bool hasNonVoidSignature() const { return m_signature != Void; }
+
         BlockType type() const { return m_blockType; }
         Type signature() const { return m_signature; }
     private:
@@ -71,6 +74,8 @@ public:
     typedef Type ExpressionType;
     typedef ControlData ControlType;
     typedef Vector<ExpressionType, 1> ExpressionList;
+    typedef FunctionParser<Validate>::ControlEntry ControlEntry;
+
     static const ExpressionType emptyExpression = Void;
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
@@ -94,15 +99,17 @@ public:
     ControlData WARN_UNUSED_RETURN addLoop(Type signature);
     bool WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
     bool WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
+    bool WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
     bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
-    bool WARN_UNUSED_RETURN endBlock(ControlData&, ExpressionList& expressionStack);
+    bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
+    bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
+
 
     bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const FunctionInformation&, const Vector<ExpressionType>& args, ExpressionType& result);
-    bool WARN_UNUSED_RETURN isContinuationReachable(ControlData&) { return true; }
 
-    void dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack);
+    void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
     void setErrorMessage(String&& message) { ASSERT(m_errorMessage.isNull()); m_errorMessage = WTFMove(message); }
     String errorMessage() const { return m_errorMessage; }
@@ -184,13 +191,18 @@ bool Validate::addIf(ExpressionType condition, Type signature, ControlType& resu
 
 bool Validate::addElse(ControlType& current, const ExpressionList& values)
 {
-    if (current.type() != BlockType::If) {
-        m_errorMessage = makeString("Attempting to add else block to something other than an if");
+    if (!unify(values, current)) {
+        ASSERT(errorMessage());
         return false;
     }
 
-    if (!unify(values, current)) {
-        ASSERT(errorMessage());
+    return addElseToUnreachable(current);
+}
+
+bool Validate::addElseToUnreachable(ControlType& current)
+{
+    if (current.type() != BlockType::If) {
+        m_errorMessage = makeString("Attempting to add else block to something other than an if");
         return false;
     }
 
@@ -219,7 +231,7 @@ bool Validate::addBranch(ControlType& target, ExpressionType condition, const Ex
         return false;
     }
 
-    if (target.type() == BlockType::If)
+    if (target.type() == BlockType::Loop)
         return true;
 
     if (target.signature() == Void)
@@ -233,18 +245,31 @@ bool Validate::addBranch(ControlType& target, ExpressionType condition, const Ex
     return false;
 }
 
-bool Validate::endBlock(ControlType& block, ExpressionList& stack)
+bool Validate::endBlock(ControlEntry& entry, ExpressionList& stack)
 {
+    ControlData& block = entry.controlData;
     if (block.signature() == Void)
         return true;
 
+    if (!stack.size()) {
+        m_errorMessage = makeString("Block fallthough expected type: ", toString(block.signature()), " but the stack was empty");
+        return false;
+    }
 
-    ASSERT(stack.size() == 1);
-    if (block.signature() == stack[0])
+    if (block.signature() == stack.last()) {
+        entry.enclosedExpressionStack.append(block.signature());
         return true;
+    }
 
     m_errorMessage = makeString("Block fallthrough has expected type: ", toString(block.signature()), " but produced type: ", toString(block.signature()));
     return false;
+}
+
+bool Validate::addEndToUnreachable(ControlEntry& entry)
+{
+    if (entry.controlData.signature() != Void)
+        entry.enclosedExpressionStack.append(entry.controlData.signature());
+    return true;
 }
 
 bool Validate::addCall(unsigned, const FunctionInformation& info, const Vector<ExpressionType>& args, ExpressionType& result)
@@ -288,9 +313,10 @@ bool Validate::unify(const ExpressionList& values, const ControlType& block)
     return false;
 }
 
-void Validate::dump(const Vector<ControlType>&, const ExpressionList&)
+void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
 {
-    dataLogLn("Validating");
+    // If you need this then you should fix the validator's error messages instead...
+    // Think of this as penance for the sin of bad error messages.
 }
 
 String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const Vector<FunctionInformation>& functions)
@@ -299,6 +325,10 @@ String validateFunction(const uint8_t* source, size_t length, const Signature* s
     FunctionParser<Validate> validator(context, source, length, signature, functions);
     if (!validator.parse()) {
         // FIXME: add better location information here. see: https://bugs.webkit.org/show_bug.cgi?id=164288
+        // FIXME: We should never not have an error message if we return false.
+        // see: https://bugs.webkit.org/show_bug.cgi?id=164354
+        if (context.errorMessage().isNull())
+            return "Unknown error";
         return context.errorMessage();
     }
 
