@@ -17,15 +17,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef AccessibilityNotificationHandlerAtk_h
-#define AccessibilityNotificationHandlerAtk_h
+#pragma once
 
 #if HAVE(ACCESSIBILITY)
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <atk/atk.h>
 #include <atk/atkobject.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -33,9 +31,9 @@ namespace WTR {
 
 class AccessibilityNotificationHandler : public RefCounted<AccessibilityNotificationHandler> {
 public:
-    static PassRefPtr<AccessibilityNotificationHandler> create()
+    static Ref<AccessibilityNotificationHandler> create()
     {
-        return adoptRef(new AccessibilityNotificationHandler());
+        return adoptRef(*new AccessibilityNotificationHandler());
     }
     ~AccessibilityNotificationHandler();
     void setPlatformElement(GRefPtr<AtkObject> platformElement) { m_platformElement = platformElement; }
@@ -56,5 +54,3 @@ private:
 } // namespace WTR
 
 #endif // HAVE(ACCESSIBILITY)
-
-#endif // AccessibilityNotificationHandlerAtk_h

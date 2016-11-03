@@ -38,9 +38,9 @@
 
 namespace WTR {
 
-PassRefPtr<AccessibilityController> AccessibilityController::create()
+Ref<AccessibilityController> AccessibilityController::create()
 {
-    return adoptRef(new AccessibilityController);
+    return adoptRef(*new AccessibilityController);
 }
 
 AccessibilityController::AccessibilityController()
@@ -72,7 +72,7 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL)
-PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
+Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityRootObject(page);
@@ -80,7 +80,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
     return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityFocusedObject(page);
@@ -89,26 +89,15 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 }
 #endif
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, int y)
+RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, int y)
 {
-    RefPtr<AccessibilityUIElement> uiElement = rootElement();
+    Ref<AccessibilityUIElement> uiElement = rootElement();
     return uiElement->elementAtPoint(x, y);
 }
 
-// Unsupported methods on various platforms.
-// As they're implemented on other platforms this list should be modified.
-#if (!PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
-bool AccessibilityController::addNotificationListener(JSValueRef) { return false; }
-bool AccessibilityController::removeNotificationListener() { return false; }
-PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return nullptr; }
-void AccessibilityController::logAccessibilityEvents() { }
-void AccessibilityController::resetToConsistentState() { }
-JSRetainPtr<JSStringRef> AccessibilityController::platformName() { return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("")); }
-#endif
-
 #if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
-PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement() { return nullptr; }
-PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { return nullptr; }
+RefPtr<AccessibilityUIElement> AccessibilityController::rootElement() { return nullptr; }
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { return nullptr; }
 #endif
 
 } // namespace WTR

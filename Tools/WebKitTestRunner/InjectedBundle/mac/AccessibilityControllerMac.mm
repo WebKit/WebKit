@@ -29,15 +29,12 @@
  */
 
 #import "config.h"
-#import "AccessibilityCommonMac.h"
 #import "AccessibilityController.h"
 
-#if HAVE(ACCESSIBILITY)
-
+#import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
-
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
@@ -71,10 +68,6 @@ bool AccessibilityController::removeNotificationListener()
     return true;
 }
 
-void AccessibilityController::logAccessibilityEvents()
-{
-}
-
 void AccessibilityController::resetToConsistentState()
 {
     if (m_globalNotificationHandler)
@@ -100,7 +93,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     id root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
@@ -119,5 +112,3 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 }
 
 } // namespace WTR
-
-#endif // HAVE(ACCESSIBILITY)

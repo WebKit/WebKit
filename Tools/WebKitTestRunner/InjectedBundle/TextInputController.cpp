@@ -34,9 +34,9 @@
 
 namespace WTR {
 
-PassRefPtr<TextInputController> TextInputController::create()
+Ref<TextInputController> TextInputController::create()
 {
-    return adoptRef(new TextInputController);
+    return adoptRef(*new TextInputController);
 }
 
 TextInputController::TextInputController()

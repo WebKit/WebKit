@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityUIElement_h
-#define AccessibilityUIElement_h
+#pragma once
 
 #include "AccessibilityTextMarker.h"
 #include "AccessibilityTextMarkerRange.h"
@@ -62,8 +61,8 @@ namespace WTR {
 
 class AccessibilityUIElement : public JSWrappable {
 public:
-    static PassRefPtr<AccessibilityUIElement> create(PlatformUIElement);
-    static PassRefPtr<AccessibilityUIElement> create(const AccessibilityUIElement&);
+    static Ref<AccessibilityUIElement> create(PlatformUIElement);
+    static Ref<AccessibilityUIElement> create(const AccessibilityUIElement&);
 
     ~AccessibilityUIElement();
 
@@ -74,12 +73,12 @@ public:
 
     bool isEqual(AccessibilityUIElement* otherElement);
     
-    PassRefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
-    PassRefPtr<AccessibilityUIElement> childAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
+    RefPtr<AccessibilityUIElement> childAtIndex(unsigned);
     unsigned indexOfChild(AccessibilityUIElement*);
     int childrenCount();
-    PassRefPtr<AccessibilityUIElement> titleUIElement();
-    PassRefPtr<AccessibilityUIElement> parentElement();
+    RefPtr<AccessibilityUIElement> titleUIElement();
+    RefPtr<AccessibilityUIElement> parentElement();
 
     void takeFocus();
     void takeSelection();
@@ -89,7 +88,7 @@ public:
     // Methods - platform-independent implementations
     JSRetainPtr<JSStringRef> allAttributes();
     JSRetainPtr<JSStringRef> attributesOfLinkedUIElements();
-    PassRefPtr<AccessibilityUIElement> linkedUIElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> linkedUIElementAtIndex(unsigned);
     
     JSRetainPtr<JSStringRef> attributesOfDocumentLinks();
     JSRetainPtr<JSStringRef> attributesOfChildren();
@@ -103,7 +102,7 @@ public:
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
     JSValueRef uiElementArrayAttributeValue(JSStringRef attribute) const;
-    PassRefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
+    RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
     void setBoolAttributeValue(JSStringRef attribute, bool value);
     bool isAttributeSupported(JSStringRef attribute);
@@ -145,7 +144,7 @@ public:
     void setSelectedChildAtIndex(unsigned) const;
     void removeSelectionAtIndex(unsigned) const;
     unsigned selectedChildrenCount() const;
-    PassRefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
+    RefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
     
     bool isValid() const;
     bool isExpanded() const;
@@ -183,15 +182,15 @@ public:
     JSValueRef columnHeaders() const;
 
     // Tree/Outline specific attributes
-    PassRefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);
-    PassRefPtr<AccessibilityUIElement> disclosedByRow();
-    PassRefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
-    PassRefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> disclosedByRow();
+    RefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
     // ARIA specific
-    PassRefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
-    PassRefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
-    PassRefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
 
     // ARIA Drag and Drop
     bool ariaIsGrabbed() const;
@@ -208,7 +207,7 @@ public:
     JSRetainPtr<JSStringRef> attributedStringForRange(unsigned location, unsigned length);
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
     unsigned uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
-    PassRefPtr<AccessibilityUIElement> uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
+    RefPtr<AccessibilityUIElement> uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
 
     // Text-specific
@@ -218,49 +217,49 @@ public:
     JSRetainPtr<JSStringRef> sentenceAtOffset(int offset);
     
     // Table-specific
-    PassRefPtr<AccessibilityUIElement> cellForColumnAndRow(unsigned column, unsigned row);
+    RefPtr<AccessibilityUIElement> cellForColumnAndRow(unsigned column, unsigned row);
 
     // Scrollarea-specific
-    PassRefPtr<AccessibilityUIElement> horizontalScrollbar() const;
-    PassRefPtr<AccessibilityUIElement> verticalScrollbar() const;
+    RefPtr<AccessibilityUIElement> horizontalScrollbar() const;
+    RefPtr<AccessibilityUIElement> verticalScrollbar() const;
 
     void scrollToMakeVisible();
     void scrollToGlobalPoint(int x, int y);
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
     
     // Text markers.
-    PassRefPtr<AccessibilityTextMarkerRange> lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);    
-    PassRefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
-    PassRefPtr<AccessibilityTextMarkerRange> selectedTextMarkerRange();
+    RefPtr<AccessibilityTextMarkerRange> lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
+    RefPtr<AccessibilityTextMarkerRange> selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
-    PassRefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
-    PassRefPtr<AccessibilityTextMarker> endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
-    PassRefPtr<AccessibilityTextMarker> endTextMarkerForBounds(int x, int y, int width, int height);
-    PassRefPtr<AccessibilityTextMarker> startTextMarkerForBounds(int x, int y, int width, int height);
-    PassRefPtr<AccessibilityTextMarker> textMarkerForPoint(int x, int y);
-    PassRefPtr<AccessibilityTextMarker> previousTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityUIElement> accessibilityElementForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
+    RefPtr<AccessibilityTextMarker> endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
+    RefPtr<AccessibilityTextMarker> endTextMarkerForBounds(int x, int y, int width, int height);
+    RefPtr<AccessibilityTextMarker> startTextMarkerForBounds(int x, int y, int width, int height);
+    RefPtr<AccessibilityTextMarker> textMarkerForPoint(int x, int y);
+    RefPtr<AccessibilityTextMarker> previousTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityUIElement> accessibilityElementForTextMarker(AccessibilityTextMarker*);
     JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
-    PassRefPtr<AccessibilityTextMarker> startTextMarker();
-    PassRefPtr<AccessibilityTextMarker> endTextMarker();
+    RefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
+    RefPtr<AccessibilityTextMarker> startTextMarker();
+    RefPtr<AccessibilityTextMarker> endTextMarker();
     bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
-    PassRefPtr<AccessibilityTextMarkerRange> leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarkerRange> rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> nextWordEndTextMarkerForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarkerRange> paragraphTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> nextParagraphEndTextMarkerForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> previousParagraphStartTextMarkerForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarkerRange> sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker*);
-    PassRefPtr<AccessibilityTextMarker> previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> nextWordEndTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> paragraphTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> nextParagraphEndTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> previousParagraphStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*);
 
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions() const;
@@ -283,8 +282,8 @@ public:
     JSValueRef elementsForRange(unsigned location, unsigned length);
     void increaseTextSelection();
     void decreaseTextSelection();
-    PassRefPtr<AccessibilityUIElement> linkedElement();
-    PassRefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned index);
+    RefPtr<AccessibilityUIElement> linkedElement();
+    RefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned index);
     void assistiveTechnologySimulatedFocus();
     bool isSearchField() const;
     bool isTextArea() const;
@@ -296,7 +295,7 @@ public:
     
     // Fieldset
     bool hasContainedByFieldsetTrait();
-    PassRefPtr<AccessibilityUIElement> fieldsetAncestorElement();
+    RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
     
 private:
     AccessibilityUIElement(PlatformUIElement);
@@ -327,5 +326,3 @@ private:
 };
     
 } // namespace WTR
-    
-#endif // AccessibilityUIElement_h

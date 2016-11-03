@@ -33,14 +33,14 @@
 
 namespace WTR {
     
-PassRefPtr<AccessibilityTextMarker> AccessibilityTextMarker::create(PlatformTextMarker marker)
+Ref<AccessibilityTextMarker> AccessibilityTextMarker::create(PlatformTextMarker marker)
 {
-    return adoptRef(new AccessibilityTextMarker(marker));
+    return adoptRef(*new AccessibilityTextMarker(marker));
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityTextMarker::create(const AccessibilityTextMarker& marker)
+Ref<AccessibilityTextMarker> AccessibilityTextMarker::create(const AccessibilityTextMarker& marker)
 {
-    return adoptRef(new AccessibilityTextMarker(marker));
+    return adoptRef(*new AccessibilityTextMarker(marker));
 }
 
 AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)

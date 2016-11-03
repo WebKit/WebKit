@@ -56,9 +56,9 @@
 
 namespace WTR {
 
-PassRefPtr<TestRunner> TestRunner::create()
+Ref<TestRunner> TestRunner::create()
 {
-    return adoptRef(new TestRunner);
+    return adoptRef(*new TestRunner);
 }
 
 TestRunner::TestRunner()

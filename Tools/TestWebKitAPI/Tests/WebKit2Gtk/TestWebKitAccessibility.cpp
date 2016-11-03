@@ -32,7 +32,6 @@ extern "C" {
 #include <glib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 

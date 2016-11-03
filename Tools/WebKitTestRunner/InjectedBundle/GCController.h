@@ -23,17 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+#pragma once
 
 #include "JSWrappable.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WTR {
 
 class GCController : public JSWrappable {
 public:
-    static PassRefPtr<GCController> create();
+    static Ref<GCController> create();
     virtual ~GCController();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
@@ -50,5 +49,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // GCController_h

@@ -290,7 +290,9 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
+#if HAVE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
+#endif
 
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);

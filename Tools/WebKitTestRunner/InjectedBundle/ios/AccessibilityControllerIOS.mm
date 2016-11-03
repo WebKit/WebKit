@@ -68,10 +68,6 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
     return platformName;
 }
 
-void AccessibilityController::logAccessibilityEvents()
-{
-}
-
 void AccessibilityController::resetToConsistentState()
 {
     if (m_globalNotificationHandler)
@@ -94,7 +90,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     return nil;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     id root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
@@ -103,7 +99,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
     if (result)
         return AccessibilityUIElement::create(result);
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WTR

@@ -41,12 +41,6 @@
 
 namespace WTR {
 
-void AccessibilityController::logAccessibilityEvents()
-{
-    // No longer implemented for ATK. Use addNotificationListener() instead to
-    // check that relevant ATK signals are being emmitted in response to events.
-}
-
 void AccessibilityController::resetToConsistentState()
 {
     m_globalNotificationHandler = nullptr;
@@ -82,7 +76,7 @@ static AtkObject* childElementById(AtkObject* parent, const char* id)
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef id)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef id)
 {
     AtkObject* root = ATK_OBJECT(WKAccessibilityRootObject(InjectedBundle::singleton().page()->page()));
     if (!root)
@@ -105,7 +99,7 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
     return platformName;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
+Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityRootObject(page);
@@ -113,7 +107,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityFocusedObject(page);

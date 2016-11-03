@@ -166,9 +166,9 @@ static WKEventModifiers parseModifierArray(JSContextRef context, JSValueRef arra
     return modifiers;
 }
 
-PassRefPtr<EventSendingController> EventSendingController::create()
+Ref<EventSendingController> EventSendingController::create()
 {
-    return adoptRef(new EventSendingController);
+    return adoptRef(*new EventSendingController);
 }
 
 EventSendingController::EventSendingController()

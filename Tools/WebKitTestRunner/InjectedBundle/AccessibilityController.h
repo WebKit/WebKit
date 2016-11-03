@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityController_h
-#define AccessibilityController_h
+#pragma once
+
+#if HAVE(ACCESSIBILITY)
 
 #include "AccessibilityUIElement.h"
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/Platform.h>
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if PLATFORM(GTK) || PLATFORM(EFL)
 #include "AccessibilityNotificationHandlerAtk.h"
 #endif
 
@@ -38,7 +39,7 @@ namespace WTR {
     
 class AccessibilityController : public JSWrappable {
 public:
-    static PassRefPtr<AccessibilityController> create();
+    static Ref<AccessibilityController> create();
     ~AccessibilityController();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
@@ -51,10 +52,10 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
-    PassRefPtr<AccessibilityUIElement> rootElement();
-    PassRefPtr<AccessibilityUIElement> focusedElement();
-    PassRefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
-    PassRefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
+    Ref<AccessibilityUIElement> rootElement();
+    Ref<AccessibilityUIElement> focusedElement();
+    RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
+    RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
     bool addNotificationListener(JSValueRef functionCallback);
     bool removeNotificationListener();
@@ -63,22 +64,20 @@ public:
     void logFocusEvents() { }
     void logValueChangeEvents() { }
     void logScrollingStartEvents() { }
-    void logAccessibilityEvents();
+    void logAccessibilityEvents() { };
 
     void resetToConsistentState();
 
 private:
     AccessibilityController();
 
-#if PLATFORM(COCOA) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
-#endif
-
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#else
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };
 
 } // namespace WTR
 
-#endif // AccessibilityController_h
+#endif // HAVE(ACCESSIBILITY)

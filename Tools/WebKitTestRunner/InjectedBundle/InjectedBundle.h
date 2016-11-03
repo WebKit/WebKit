@@ -23,10 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundle_h
-#define InjectedBundle_h
+#pragma once
 
-#include "AccessibilityController.h"
 #include "EventSendingController.h"
 #include "GCController.h"
 #include "TestRunner.h"
@@ -37,6 +35,10 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+
+#if HAVE(ACCESSIBILITY)
+#include "AccessibilityController.h"
+#endif
 
 namespace WTR {
 
@@ -56,7 +58,9 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
+#if HAVE(ACCESSIBILITY)
     AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
+#endif
 
     InjectedBundlePage* page() const;
     size_t pageCount() const { return m_pages.size(); }
@@ -152,7 +156,9 @@ private:
     WKBundlePageGroupRef m_pageGroup;
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
+#if HAVE(ACCESSIBILITY)
     RefPtr<AccessibilityController> m_accessibilityController;
+#endif
     RefPtr<TestRunner> m_testRunner;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;
@@ -181,5 +187,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // InjectedBundle_h

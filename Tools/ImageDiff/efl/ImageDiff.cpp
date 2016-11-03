@@ -42,7 +42,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/efl/UniquePtrEfl.h>
 

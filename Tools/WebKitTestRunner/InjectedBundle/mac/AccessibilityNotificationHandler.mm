@@ -133,7 +133,7 @@ static JSValueRef makeValueRefForValue(JSContextRef context, id value)
         return JSValueMakeNumber(context, [value doubleValue]);
     }
     if ([value isKindOfClass:webAccessibilityObjectWrapperClass()])
-        return toJS(context, WTR::AccessibilityUIElement::create(static_cast<PlatformUIElement>(value)).get());
+        return toJS(context, WTR::AccessibilityUIElement::create(static_cast<PlatformUIElement>(value)).ptr());
     if ([value isKindOfClass:[NSDictionary class]])
         return makeObjectRefForDictionary(context, value);
     if ([value isKindOfClass:[NSArray class]])
@@ -189,7 +189,7 @@ static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary 
     } else {
         // A global listener gets the element, notification name and userInfo.
         JSValueRef arguments[3];
-        arguments[0] = toJS(context, WTR::AccessibilityUIElement::create([notification object]).get());
+        arguments[0] = toJS(context, WTR::AccessibilityUIElement::create([notification object]).ptr());
         arguments[1] = notificationNameArgument;
         arguments[2] = userInfoArgument;
         JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_notificationFunctionCallback), 0, 3, arguments, 0);

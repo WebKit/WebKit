@@ -23,19 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventSendingController_h
-#define EventSendingController_h
+#pragma once
 
 #include "JSWrappable.h"
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKGeometry.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WTR {
 
 class EventSendingController : public JSWrappable {
 public:
-    static PassRefPtr<EventSendingController> create();
+    static Ref<EventSendingController> create();
     virtual ~EventSendingController();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
@@ -92,5 +91,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // EventSendingController_h

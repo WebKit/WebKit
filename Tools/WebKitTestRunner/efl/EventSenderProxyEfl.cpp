@@ -167,7 +167,7 @@ static void dispatchMouseScrollByEvent(Evas* evas, int horizontal, int vertical)
         evas_event_feed_mouse_wheel(evas, 0, vertical, 0, 0);
 }
 
-static const PassRefPtr<KeyEventInfo> keyPadName(WKStringRef keyRef)
+static const RefPtr<KeyEventInfo> keyPadName(WKStringRef keyRef)
 {
     if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
         return adoptRef(new KeyEventInfo("KP_Left", ""));
@@ -196,7 +196,7 @@ static const PassRefPtr<KeyEventInfo> keyPadName(WKStringRef keyRef)
     return adoptRef(new KeyEventInfo(buffer.get(), buffer.get()));
 }
 
-static const PassRefPtr<KeyEventInfo> keyName(WKStringRef keyRef)
+static const RefPtr<KeyEventInfo> keyName(WKStringRef keyRef)
 {
     if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
         return adoptRef(new KeyEventInfo("Left", ""));

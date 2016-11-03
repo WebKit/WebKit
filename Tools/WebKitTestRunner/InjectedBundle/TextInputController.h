@@ -23,17 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextInputController_h
-#define TextInputController_h
+#pragma once
 
 #include "JSWrappable.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WTR {
 
 class TextInputController : public JSWrappable {
 public:
-    static PassRefPtr<TextInputController> create();
+    static Ref<TextInputController> create();
     virtual ~TextInputController();
 
     // JSWrappable
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // TextInputController_h

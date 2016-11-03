@@ -730,7 +730,7 @@ int AccessibilityUIElement::childrenCount()
     return atk_object_get_n_accessible_children(ATK_OBJECT(m_element.get()));
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
     if (!ATK_IS_COMPONENT(m_element.get()))
         return nullptr;
@@ -755,7 +755,7 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
     return 0;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
 {
     if (!ATK_IS_OBJECT(m_element.get()))
         return nullptr;
@@ -769,7 +769,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned
     return nullptr;
 }
 
-static PassRefPtr<AccessibilityUIElement> accessibilityElementAtIndex(AtkObject* element, AtkRelationType relationType, unsigned index)
+static RefPtr<AccessibilityUIElement> accessibilityElementAtIndex(AtkObject* element, AtkRelationType relationType, unsigned index)
 {
     if (!ATK_IS_OBJECT(element))
         return nullptr;
@@ -789,38 +789,38 @@ static PassRefPtr<AccessibilityUIElement> accessibilityElementAtIndex(AtkObject*
     AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, index));
     g_object_unref(relationSet);
 
-    return target ? AccessibilityUIElement::create(target) : nullptr;
+    return target ? AccessibilityUIElement::create(target).ptr() : nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
     return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_FLOWS_TO, index);
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
     return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_CONTROLLER_FOR, index);
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
 {
     // ATK doesn't have API to get an accessible row by index directly. It does, however, have
     // API to get cells in the row specified by index. The parent of a cell should be the row.
@@ -830,20 +830,20 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned i
         // Find the first cell in this row that only spans one row.
         if (atk_table_get_row_extent_at(axTable, index, col) == 1) {
             AtkObject* cell = atk_table_ref_at(axTable, index, col);
-            return cell ? AccessibilityUIElement::create(atk_object_get_parent(cell)) : nullptr;
+            return cell ? AccessibilityUIElement::create(atk_object_get_parent(cell)).ptr() : nullptr;
         }
     }
 
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
 {
     if (!ATK_SELECTION(m_element.get()))
         return nullptr;
 
     GRefPtr<AtkObject> child = adoptGRef(atk_selection_ref_selection(ATK_SELECTION(m_element.get()), index));
-    return child ? AccessibilityUIElement::create(child.get()) : nullptr;
+    return child ? AccessibilityUIElement::create(child.get()).ptr() : nullptr;
 }
 
 unsigned AccessibilityUIElement::selectedChildrenCount() const
@@ -853,13 +853,13 @@ unsigned AccessibilityUIElement::selectedChildrenCount() const
     return atk_selection_get_selection_count(ATK_SELECTION(m_element.get()));
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 {
     if (!ATK_IS_OBJECT(m_element.get()))
         return nullptr;
@@ -880,19 +880,19 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
     }
 
     g_object_unref(set);
-    return target ? AccessibilityUIElement::create(target) : nullptr;
+    return target ? AccessibilityUIElement::create(target).ptr() : nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
 {
     if (!ATK_IS_OBJECT(m_element.get()))
         return nullptr;
 
     AtkObject* parent = atk_object_get_parent(ATK_OBJECT(m_element.get()));
-    return parent ? AccessibilityUIElement::create(parent) : nullptr;
+    return parent ? AccessibilityUIElement::create(parent).ptr() : nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow()
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow()
 {
     // FIXME: implement
     return nullptr;
@@ -1028,7 +1028,7 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
 #endif
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     if (!ATK_IS_OBJECT(m_element.get()))
         return nullptr;
@@ -1614,7 +1614,7 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
     return 0;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     // FIXME: implement
     return nullptr;
@@ -1705,7 +1705,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
     return indexRangeInTable(m_element.get(), false);
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
 {
     if (!ATK_IS_TABLE(m_element.get()))
         return nullptr;
@@ -1713,16 +1713,16 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(u
     // Adopt the AtkObject representing the cell because
     // at_table_ref_at() transfers full ownership.
     GRefPtr<AtkObject> foundCell = adoptGRef(atk_table_ref_at(ATK_TABLE(m_element.get()), row, col));
-    return foundCell ? AccessibilityUIElement::create(foundCell.get()) : nullptr;
+    return foundCell ? AccessibilityUIElement::create(foundCell.get()).ptr() : nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
 {
     // FIXME: implement
     return nullptr;
@@ -1933,13 +1933,13 @@ void AccessibilityUIElement::removeSelection()
 }
 
 // Text markers
-PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
     // FIXME: implement
     return nullptr;
@@ -1951,13 +1951,13 @@ int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* 
     return 0;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker* textMarker)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker* textMarker)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker* textMarker)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker* textMarker)
 {
     // FIXME: implement
     return nullptr;
@@ -1969,43 +1969,43 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(Access
     return JSStringCreateWithCharacters(0, 0);
 }
 
-PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)
 {
     // FIXME: implement
     return nullptr;
 }
 
-PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
 {
     // FIXME: implement
     return nullptr;
@@ -2029,19 +2029,19 @@ bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMark
     return false;
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int textIndex)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int textIndex)
 {
     // FIXME: implement
     return nullptr;
 }
     
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
 {
     // FIXME: implement
     return nullptr;    
 }
 
-PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
 {
     // FIXME: implement
     return nullptr;

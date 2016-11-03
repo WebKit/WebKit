@@ -32,9 +32,9 @@
 
 namespace WTR {
 
-PassRefPtr<GCController> GCController::create()
+Ref<GCController> GCController::create()
 {
-    return adoptRef(new GCController);
+    return adoptRef(*new GCController);
 }
 
 GCController::GCController()

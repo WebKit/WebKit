@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityTextMarkerRange_h
-#define AccessibilityTextMarkerRange_h
+#pragma once
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Platform.h>
+#include <wtf/Ref.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
@@ -42,8 +41,8 @@ namespace WTR {
     
 class AccessibilityTextMarkerRange : public JSWrappable {
 public:
-    static PassRefPtr<AccessibilityTextMarkerRange> create(PlatformTextMarkerRange);
-    static PassRefPtr<AccessibilityTextMarkerRange> create(const AccessibilityTextMarkerRange&);
+    static Ref<AccessibilityTextMarkerRange> create(PlatformTextMarkerRange);
+    static Ref<AccessibilityTextMarkerRange> create(const AccessibilityTextMarkerRange&);
     
     ~AccessibilityTextMarkerRange();
     
@@ -69,5 +68,3 @@ inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*)
 #endif
     
 } // namespace WTR
-
-#endif // AccessibilityTextMarkerRange_h
