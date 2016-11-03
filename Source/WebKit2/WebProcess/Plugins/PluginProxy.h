@@ -147,10 +147,6 @@ private:
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const override { return String(); }
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override { return false; }
 
-#if PLATFORM(COCOA)
-    WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
-#endif
-
     float contentsScaleFactor();
     bool needsBackingStore() const;
     bool updateBackingStore();

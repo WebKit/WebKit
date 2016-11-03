@@ -46,7 +46,6 @@ PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager*
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginProcessToken(pluginProcessToken)
     , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
-    , m_audioHardwareActivity(WebCore::AudioHardwareActivityType::Unknown)
 {
     m_connection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
 
@@ -91,11 +90,6 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
 
 void PluginProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (!decoder.destinationID()) {
-        didReceivePluginProcessConnectionMessage(connection, decoder);
-        return;
-    }
-    
     ASSERT(decoder.destinationID());
 
     PluginProxy* pluginProxy = m_plugins.get(decoder.destinationID());
@@ -145,16 +139,6 @@ void PluginProcessConnection::setException(const String& exceptionString)
     NPRuntimeObjectMap::setGlobalException(exceptionString);
 }
     
-void PluginProcessConnection::audioHardwareDidBecomeActive()
-{
-    m_audioHardwareActivity = WebCore::AudioHardwareActivityType::IsActive;
-}
-
-void PluginProcessConnection::audioHardwareDidBecomeInactive()
-{
-    m_audioHardwareActivity = WebCore::AudioHardwareActivityType::IsInactive;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

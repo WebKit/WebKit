@@ -116,7 +116,6 @@ public:
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
-    WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);

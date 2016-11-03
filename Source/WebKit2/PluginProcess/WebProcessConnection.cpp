@@ -322,16 +322,6 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
     m_connection->sendSync(Messages::PluginProxy::DidCreatePlugin(wantsWheelEvents, remoteLayerClientID), Messages::PluginProxy::DidCreatePlugin::Reply(), creationParameters.pluginInstanceID);
 }
     
-void WebProcessConnection::audioHardwareDidBecomeActive()
-{
-    m_connection->send(Messages::PluginProcessConnection::AudioHardwareDidBecomeActive(), 0);
-}
-
-void WebProcessConnection::audioHardwareDidBecomeInactive()
-{
-    m_connection->send(Messages::PluginProcessConnection::AudioHardwareDidBecomeInactive(), 0);
-}
-    
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

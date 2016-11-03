@@ -2049,7 +2049,6 @@ set(WebCore_SOURCES
     page/PageOverlay.cpp
     page/PageOverlayController.cpp
     page/PageSerializer.cpp
-    page/PageThrottler.cpp
     page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceEntry.cpp

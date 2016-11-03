@@ -42,7 +42,6 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
-#include <WebCore/PageThrottler.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -188,15 +187,6 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString
     Strong<JSGlobalObject> globalObject(this->globalObject()->vm(), this->globalObject());
     if (!globalObject)
         return false;
-
-#if PLATFORM(COCOA)
-    if (m_pluginView && !m_pluginView->isBeingDestroyed()) {
-        if (Page* page = m_pluginView->frame()->page()) {
-            if (m_pluginView->audioHardwareActivity() != WebCore::AudioHardwareActivityType::IsInactive)
-                page->pageThrottler().pluginDidEvaluateWhileAudioIsPlaying();
-        }
-    }
-#endif
 
     ExecState* exec = globalObject->globalExec();
     

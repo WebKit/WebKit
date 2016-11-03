@@ -26,7 +26,6 @@
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "MediaProducer.h"
-#include "PageThrottler.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
@@ -34,6 +33,7 @@
 #include "ScrollTypes.h"
 #include "SessionID.h"
 #include "Supplementable.h"
+#include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
 #include "WheelEventTestTrigger.h"
@@ -104,7 +104,6 @@ class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
 class PageGroup;
-class PageThrottler;
 class PlugInClient;
 class PluginData;
 class PluginInfoProvider;
@@ -137,7 +136,6 @@ class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class Settings;
-    friend class PageThrottler;
 
 public:
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
@@ -336,7 +334,6 @@ public:
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
     bool isVisibleAndActive() const;
-    void pageActivityStateChanged() { }
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
     bool isVisible() const { return m_activityState & ActivityState::IsVisible; }
@@ -436,8 +433,6 @@ public:
     bool hasSeenAnyMediaEngine() const;
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
-
-    PageThrottler& pageThrottler() { return m_pageThrottler; }
 
     PageConsoleClient& console() { return *m_consoleClient; }
 
@@ -667,7 +662,6 @@ private:
     bool m_isEditable;
     bool m_isPrerender;
     ActivityState::Flags m_activityState;
-    PageActivityState::Flags m_pageActivityState;
 
     LayoutMilestones m_requestedLayoutMilestones;
 
@@ -685,7 +679,6 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    PageThrottler m_pageThrottler;
     const std::unique_ptr<PageConsoleClient> m_consoleClient;
 
 #if ENABLE(REMOTE_INSPECTOR)

@@ -54,9 +54,6 @@ public:
 
     static void setGlobalException(const String&);
     
-    void audioHardwareDidBecomeActive();
-    void audioHardwareDidBecomeInactive();
-
 private:
     WebProcessConnection(IPC::Connection::Identifier);
 

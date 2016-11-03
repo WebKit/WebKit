@@ -37,7 +37,6 @@
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
 #include "MediaProducer.h"
-#include "PageThrottler.h"
 #include "UserInterfaceLayoutDirection.h"
 
 #if ENABLE(VIDEO_TRACK)
@@ -771,8 +770,6 @@ private:
 
     bool effectiveMuted() const;
 
-    void updateAudioAssertionState();
-
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
@@ -1007,7 +1004,6 @@ private:
 #endif
 
     std::unique_ptr<MediaElementSession> m_mediaSession;
-    PageActivityAssertionToken m_audioActivityToken;
     size_t m_reportedExtraMemoryCost { 0 };
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

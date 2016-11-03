@@ -32,7 +32,6 @@
 #include "HostWindow.h"
 #include "LayerFlushThrottleState.h"
 #include "MediaProducer.h"
-#include "PageThrottler.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RenderEmbeddedObject.h"

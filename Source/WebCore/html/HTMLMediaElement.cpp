@@ -74,7 +74,6 @@
 #include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PageThrottler.h"
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"
@@ -3276,7 +3275,6 @@ void HTMLMediaElement::setMuted(bool muted)
     }
 
     scheduleUpdatePlaybackControlsManager();
-    updateAudioAssertionState();
 }
 
 void HTMLMediaElement::togglePlayState()
@@ -4791,8 +4789,6 @@ void HTMLMediaElement::updateVolume()
     if (hasMediaControls())
         mediaControls()->changedVolume();
 #endif
-
-    updateAudioAssertionState();
 }
 
 void HTMLMediaElement::updatePlayState(UpdateState updateState)
@@ -4812,7 +4808,6 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
         m_playbackProgressTimer.stop();
         if (hasMediaControls())
             mediaControls()->playbackStopped();
-        updateAudioAssertionState();
         return;
     }
     
@@ -4878,8 +4873,6 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
 
     m_hasEverHadAudio |= hasAudio();
     m_hasEverHadVideo |= hasVideo();
-
-    updateAudioAssertionState();
 }
 
 void HTMLMediaElement::setPlaying(bool playing)
@@ -6945,42 +6938,6 @@ void HTMLMediaElement::pageMutedStateDidChange()
 bool HTMLMediaElement::effectiveMuted() const
 {
     return muted() || (document().page() && document().page()->isAudioMuted());
-}
-
-void HTMLMediaElement::updateAudioAssertionState()
-{
-    auto* page = document().page();
-    if (!page) {
-        m_audioActivityToken = nullptr;
-        return;
-    }
-
-#define RELEASE_AUDIO_TOKEN(REASON) \
-    RELEASE_LOG_IF(page->isAlwaysOnLoggingAllowed() && m_audioActivityToken, Media, "%p - HTMLMediaElement releases audio activity token, reason: " REASON, this); \
-    m_audioActivityToken = nullptr
-
-    if (!hasAudio()) {
-        RELEASE_AUDIO_TOKEN("No audio");
-        return;
-    }
-    if (!isPlaying()) {
-        RELEASE_AUDIO_TOKEN("Not playing");
-        return;
-    }
-    if (effectiveMuted()) {
-        RELEASE_AUDIO_TOKEN("Audio is muted");
-        return;
-    }
-    if (!volume()) {
-        RELEASE_AUDIO_TOKEN("Volume is 0");
-        return;
-    }
-    if (!m_audioActivityToken) {
-        RELEASE_LOG_IF(page->isAlwaysOnLoggingAllowed(), Media, "%p - HTMLMediaElement takes audio activity token because there is audible audio", this);
-        m_audioActivityToken = page->pageThrottler().mediaActivityToken();
-    }
-
-#undef RELEASE_AUDIO_TOKEN
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const

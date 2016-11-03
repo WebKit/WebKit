@@ -26,7 +26,6 @@
 #ifndef Plugin_h
 #define Plugin_h
 
-#include <WebCore/AudioHardwareListener.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/URL.h>
@@ -292,8 +291,6 @@ public:
     virtual String getSelectionString() const = 0;
     virtual String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const = 0;
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
-
-    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
     virtual void mutedStateChanged(bool) { }
 

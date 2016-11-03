@@ -740,13 +740,6 @@ RefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
     return nullptr;
 }
 
-#if PLATFORM(COCOA)
-WebCore::AudioHardwareActivityType PluginProxy::audioHardwareActivity() const
-{
-    return m_connection->audioHardwareActivity();
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
