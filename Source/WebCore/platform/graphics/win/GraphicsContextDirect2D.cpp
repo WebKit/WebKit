@@ -268,7 +268,21 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     HRESULT hr = platformContext()->CreateBitmap(pixelData.size(), pixelData.buffer(), pixelData.bytesPerRow(), &bitmapProperties, &bitmap);
     ASSERT(SUCCEEDED(hr));
 
-    platformContext()->DrawBitmap(bitmap.get(), dstRect);
+    D2DContextStateSaver stateSaver(*m_data);
+
+    // Note: The content in the HDC is inverted compared to Direct2D, so it needs to be flipped.
+    auto context = platformContext();
+
+    D2D1_MATRIX_3X2_F currentTransform;
+    context->GetTransform(&currentTransform);
+
+    AffineTransform transform(currentTransform);
+    transform.translate(dstRect.location());
+    transform.scale(1.0, -1.0);
+    transform.translate(0, -dstRect.height());
+
+    context->SetTransform(transform);
+    context->DrawBitmap(bitmap.get(), D2D1::RectF(0, 0, dstRect.width(), dstRect.height()));
 
     ::DeleteDC(hdc);
 }

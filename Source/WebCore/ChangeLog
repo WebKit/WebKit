@@ -1,3 +1,19 @@
+2016-11-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Native Windows widgets are drawn upside-down
+        https://bugs.webkit.org/show_bug.cgi?id=164370
+
+        Reviewed by Alex Christensen.
+
+        When we return from drawing in GDI code, we need to flip the resulting
+        bitmap so that it draws in the proper orientation in Direct2D.
+
+        Tested by existing widget tests.
+
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Flip before drawing
+        to our Direct2D context.
+
 2016-11-01  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageThrottler & all related code
