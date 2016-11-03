@@ -55,6 +55,8 @@ public:
     const AtomicString& name() const { return m_keyframes.animationName(); }
 
     bool hasAnimationForProperty(CSSPropertyID) const;
+
+    bool triggersStackingContext() const { return m_triggersStackingContext; }
     
     void setUnanimatedStyle(std::unique_ptr<RenderStyle> style) { m_unanimatedStyle = WTFMove(style); }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
@@ -81,6 +83,7 @@ protected:
 
     bool computeExtentOfAnimationForMatchingTransformLists(const FloatRect& rendererBox, LayoutRect&) const;
 
+    void computeStackingContextImpact();
     void validateTransformFunctionList();
     void checkForMatchingFilterFunctionLists();
 #if ENABLE(FILTERS_LEVEL_2)
@@ -98,6 +101,7 @@ private:
     std::unique_ptr<RenderStyle> m_unanimatedStyle; // The style just before we started animation
 
     bool m_startEventDispatched { false };
+    bool m_triggersStackingContext { false };
 };
 
 } // namespace WebCore
