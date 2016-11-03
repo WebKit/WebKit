@@ -23,12 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBKey_h
-#define IDBKey_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IndexedDB.h"
+#include "ThreadSafeDataBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
@@ -36,6 +36,11 @@
 #include <wtf/text/WTFString.h>
 
 using WebCore::IndexedDB::KeyType;
+
+namespace JSC {
+class JSArrayBuffer;
+class JSArrayBufferView;
+}
 
 namespace WebCore {
 
@@ -96,6 +101,10 @@ public:
         return adoptRef(*new IDBKey(array, sizeEstimate));
     }
 
+    static Ref<IDBKey> createBinary(const ThreadSafeDataBuffer&);
+    static Ref<IDBKey> createBinary(JSC::JSArrayBuffer&);
+    static Ref<IDBKey> createBinary(JSC::JSArrayBufferView&);
+
     WEBCORE_EXPORT ~IDBKey();
 
     KeyType type() const { return m_type; }
@@ -123,6 +132,12 @@ public:
     {
         ASSERT(m_type == KeyType::Number);
         return WTF::get<double>(m_value);
+    }
+
+    const ThreadSafeDataBuffer& binary() const
+    {
+        ASSERT(m_type == KeyType::Binary);
+        return WTF::get<ThreadSafeDataBuffer>(m_value);
     }
 
     int compare(const IDBKey& other) const;
@@ -153,9 +168,10 @@ private:
     IDBKey(KeyType, double number);
     explicit IDBKey(const String& value);
     IDBKey(const Vector<RefPtr<IDBKey>>& keyArray, size_t arraySize);
+    explicit IDBKey(const ThreadSafeDataBuffer&);
 
     const KeyType m_type;
-    Variant<Vector<RefPtr<IDBKey>>, String, double> m_value;
+    Variant<Vector<RefPtr<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
 
     const size_t m_sizeEstimate;
 
@@ -163,8 +179,43 @@ private:
     enum { OverheadSize = 16 };
 };
 
+inline int compareBinaryKeyData(const Vector<uint8_t>& a, const Vector<uint8_t>& b)
+{
+    size_t length = std::min(a.size(), b.size());
+
+    for (size_t i = 0; i < length; ++i) {
+        if (a[i] > b[i])
+            return 1;
+        if (a[i] < b[i])
+            return -1;
+    }
+
+    if (a.size() == b.size())
+        return 0;
+
+    if (a.size() > b.size())
+        return 1;
+
+    return -1;
+}
+
+inline int compareBinaryKeyData(const ThreadSafeDataBuffer& a, const ThreadSafeDataBuffer& b)
+{
+    auto* aData = a.data();
+    auto* bData = b.data();
+
+    // Covers the cases where both pointers are null as well as both pointing to the same buffer.
+    if (aData == bData)
+        return 0;
+
+    if (aData && !bData)
+        return 1;
+    if (!aData && bData)
+        return -1;
+
+    return compareBinaryKeyData(*aData, *bData);
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBKey_h

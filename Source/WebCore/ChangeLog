@@ -1,3 +1,49 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support binary keys.
+        <rdar://problem/28806927> and https://bugs.webkit.org/show_bug.cgi?id=164359
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/binary-keys-1-private.html
+               storage/indexeddb/modern/binary-keys-1.html
+               Changes to other existing tests.
+
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::createBinary):
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::compare):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::binary):
+        (WebCore::compareBinaryKeyData):
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::maybeCreateIDBKey):
+        (WebCore::IDBKeyData::isolatedCopy):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+        (WebCore::IDBKeyData::compare):
+        (WebCore::IDBKeyData::loggingString):
+        (WebCore::IDBKeyData::operator==):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::hash):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+
+        * Modules/indexeddb/IndexedDB.h: Add new enum for the new key type.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        (WebCore::createIDBKeyFromValue):
+
+        * platform/ThreadSafeDataBuffer.h:
+        (WebCore::ThreadSafeDataBufferImpl::ThreadSafeDataBufferImpl):
+        (WebCore::ThreadSafeDataBuffer::copyData):
+        (WebCore::ThreadSafeDataBuffer::size):
+        (WebCore::ThreadSafeDataBuffer::operator==):
+        (WebCore::ThreadSafeDataBuffer::ThreadSafeDataBuffer):
+
 2016-11-03  Tim Horton  <timothy_horton@apple.com>
 
         Printing to PDF should produce internal links when HTML has internal links

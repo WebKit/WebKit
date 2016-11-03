@@ -49,6 +49,15 @@ function testValidKeys()
         "'\uD834\uDD1E'", // U+1D11E MUSICAL SYMBOL G-CLEF (UTF-16 surrogate pair)
         "'\uFFFD'", // U+FFFD REPLACEMENT CHARACTER
 
+        "new Uint8Array()",
+        "new Uint8Array([0])",
+        "new Uint8Array([0, 0])",
+        "new Uint8Array([0, 1])",
+        "new Uint8Array([1])",
+        "new Uint8Array([1, 0])",
+        "new Uint8Array([1, 1])",
+        "new Uint8Array([255])",
+
         "[]",
 
         "[-Infinity]",
@@ -77,13 +86,22 @@ function testValidKeys()
         "['\uD834\uDD1E']", // U+1D11E MUSICAL SYMBOL G-CLEF (UTF-16 surrogate pair)
         "['\uFFFD']", // U+FFFD REPLACEMENT CHARACTER
 
+        "[new Uint8Array()]",
+        "[new Uint8Array([0])]",
+        "[new Uint8Array([0, 0])]",
+        "[new Uint8Array([0, 1])]",
+        "[new Uint8Array([1])]",
+        "[new Uint8Array([1, 0])]",
+        "[new Uint8Array([1, 1])]",
+        "[new Uint8Array([255])]",
+
         "[[]]",
 
         "[[], []]",
         "[[], [], []]",
 
         "[[[]]]",
-        "[[[[]]]]"
+        "[[[[]]]]",
     ];
 
     var i, key1, key2;
@@ -115,22 +133,6 @@ function testInvalidKeys()
         "self",
         "self.document",
         "self.document.body",
-        "new Uint8Array()",
-        "new Uint8Array([0])",
-        "new Uint8Array([0, 0])",
-        "new Uint8Array([0, 1])",
-        "new Uint8Array([1])",
-        "new Uint8Array([1, 0])",
-        "new Uint8Array([1, 1])",
-        "new Uint8Array([255])",
-        "[new Uint8Array()]",
-        "[new Uint8Array([0])]",
-        "[new Uint8Array([0, 0])]",
-        "[new Uint8Array([0, 1])]",
-        "[new Uint8Array([1])]",
-        "[new Uint8Array([1, 0])]",
-        "[new Uint8Array([1, 1])]",
-        "[new Uint8Array([255])]",
     ];
 
     var i, key1, key2;

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBKeyData_h
-#define IDBKeyData_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -120,6 +119,14 @@ public:
         case KeyType::String:
             hashCodes.append(StringHash::hash(WTF::get<String>(m_value)));
             break;
+        case KeyType::Binary: {
+            auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
+            if (!data)
+                hashCodes.append(0);
+            else
+                hashCodes.append(StringHasher::hashMemory(data->data(), data->size()));
+            break;
+        }
         case KeyType::Array:
             for (auto& key : WTF::get<Vector<IDBKeyData>>(m_value))
                 hashCodes.append(key.hash());
@@ -160,7 +167,7 @@ private:
     static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
 
     KeyType m_type;
-    Variant<Vector<IDBKeyData>, String, double> m_value;
+    Variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
 
     bool m_isNull { false };
     bool m_isDeletedValue { false };
@@ -214,6 +221,9 @@ void IDBKeyData::encode(Encoder& encoder) const
     case KeyType::Array:
         encoder << WTF::get<Vector<IDBKeyData>>(m_value);
         break;
+    case KeyType::Binary:
+        encoder << WTF::get<ThreadSafeDataBuffer>(m_value);
+        break;
     case KeyType::String:
         encoder << WTF::get<String>(m_value);
         break;
@@ -246,6 +256,11 @@ bool IDBKeyData::decode(Decoder& decoder, IDBKeyData& keyData)
         if (!decoder.decode(WTF::get<Vector<IDBKeyData>>(keyData.m_value)))
             return false;
         break;
+    case KeyType::Binary:
+        keyData.m_value = ThreadSafeDataBuffer();
+        if (!decoder.decode(WTF::get<ThreadSafeDataBuffer>(keyData.m_value)))
+            return false;
+        break;
     case KeyType::String:
         keyData.m_value = String();
         if (!decoder.decode(WTF::get<String>(keyData.m_value)))
@@ -265,4 +280,3 @@ bool IDBKeyData::decode(Decoder& decoder, IDBKeyData& keyData)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBKeyData_h

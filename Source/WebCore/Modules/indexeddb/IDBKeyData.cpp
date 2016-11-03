@@ -53,6 +53,9 @@ IDBKeyData::IDBKeyData(const IDBKey* key)
             array.append(IDBKeyData(key2.get()));
         break;
     }
+    case KeyType::Binary:
+        m_value = key->binary();
+        break;
     case KeyType::String:
         m_value = key->string();
         break;
@@ -84,6 +87,8 @@ RefPtr<IDBKey> IDBKeyData::maybeCreateIDBKey() const
         }
         return IDBKey::createArray(array);
     }
+    case KeyType::Binary:
+        return IDBKey::createBinary(WTF::get<ThreadSafeDataBuffer>(m_value));
     case KeyType::String:
         return IDBKey::createString(WTF::get<String>(m_value));
     case KeyType::Date:
@@ -125,6 +130,9 @@ void IDBKeyData::isolatedCopy(const IDBKeyData& source, IDBKeyData& destination)
             destinationArray.append(key.isolatedCopy());
         return;
     }
+    case KeyType::Binary:
+        destination.m_value = WTF::get<ThreadSafeDataBuffer>(source.m_value);
+        return;
     case KeyType::String:
         destination.m_value = WTF::get<String>(source.m_value).isolatedCopy();
         return;
@@ -158,6 +166,13 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
         });
         return;
     }
+    case KeyType::Binary: {
+        auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
+        encoder.encodeBool("hasBinary", !!data);
+        if (data)
+            encoder.encodeBytes("binary", data->data(), data->size());
+        return;
+    }
     case KeyType::String:
         encoder.encodeString("string", WTF::get<String>(m_value));
         return;
@@ -185,6 +200,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
         return value == KeyType::Max
             || value == KeyType::Invalid
             || value == KeyType::Array
+            || value == KeyType::Binary
             || value == KeyType::String
             || value == KeyType::Date
             || value == KeyType::Number
@@ -210,6 +226,24 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
     if (result.m_type == KeyType::Number || result.m_type == KeyType::Date) {
         result.m_value = 0.0;
         return decoder.decodeDouble("number", WTF::get<double>(result.m_value));
+    }
+
+    if (result.m_type == KeyType::Binary) {
+        result.m_value = ThreadSafeDataBuffer();
+
+        bool hasBinaryData;
+        if (!decoder.decodeBool("hasBinary", hasBinaryData))
+            return false;
+
+        if (!hasBinaryData)
+            return true;
+
+        Vector<uint8_t> bytes;
+        if (!decoder.decodeBytes("binary", bytes))
+            return false;
+
+        result.m_value = ThreadSafeDataBuffer::adoptVector(bytes);
+        return true;
     }
 
     ASSERT(result.m_type == KeyType::Array);
@@ -255,6 +289,8 @@ int IDBKeyData::compare(const IDBKeyData& other) const
             return 1;
         return 0;
     }
+    case KeyType::Binary:
+        return compareBinaryKeyData(WTF::get<ThreadSafeDataBuffer>(m_value), WTF::get<ThreadSafeDataBuffer>(other.m_value));
     case KeyType::String:
         return codePointCompare(WTF::get<String>(m_value), WTF::get<String>(other.m_value));
     case KeyType::Date:
@@ -299,6 +335,27 @@ String IDBKeyData::loggingString() const
         result = builder.toString();
         break;
     }
+    case KeyType::Binary: {
+        StringBuilder builder;
+        builder.append("<binary> - ");
+
+        auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
+        if (!data) {
+            builder.append("(null)");
+            result = builder.toString();
+            break;
+        }
+
+        size_t i = 0;
+        for (; i < 8 && i < data->size(); ++i)
+            builder.append(String::format("%02x", data->at(i)));
+
+        if (data->size() > 8)
+            builder.append("...");
+
+        result = builder.toString();
+        break;
+    }
     case KeyType::String:
         result = "<string> - " + WTF::get<String>(m_value);
         break;
@@ -310,8 +367,6 @@ String IDBKeyData::loggingString() const
         return "<maximum>";
     case KeyType::Min:
         return "<minimum>";
-    default:
-        return String();
     }
 
     if (result.length() > 150) {
@@ -382,6 +437,8 @@ bool IDBKeyData::operator==(const IDBKeyData& other) const
         return WTF::get<double>(m_value) == WTF::get<double>(other.m_value);
     case KeyType::String:
         return WTF::get<String>(m_value) == WTF::get<String>(other.m_value);
+    case KeyType::Binary:
+        return WTF::get<ThreadSafeDataBuffer>(m_value) == WTF::get<ThreadSafeDataBuffer>(other.m_value);
     case KeyType::Array:
         return WTF::get<Vector<IDBKeyData>>(m_value) == WTF::get<Vector<IDBKeyData>>(other.m_value);
     }

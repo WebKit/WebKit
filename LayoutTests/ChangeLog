@@ -1,3 +1,22 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support binary keys.
+        <rdar://problem/28806927> and https://bugs.webkit.org/show_bug.cgi?id=164359
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/factory-cmp-private-expected.txt:
+        * storage/indexeddb/key-type-binary-expected.txt:
+        * storage/indexeddb/key-type-binary-private-expected.txt:
+        * storage/indexeddb/modern/binary-keys-1-expected.txt: Added.
+        * storage/indexeddb/modern/binary-keys-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/binary-keys-1-private.html: Added.
+        * storage/indexeddb/modern/binary-keys-1.html: Added.
+        * storage/indexeddb/modern/resources/binary-keys-1.js: Added.
+        * storage/indexeddb/resources/factory-cmp.js:
+        * storage/indexeddb/resources/key-type-binary.js:
+
 2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSS.supports("font-variation-settings", "'wght' 500") erroneously returns false

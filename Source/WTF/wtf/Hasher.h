@@ -240,16 +240,18 @@ public:
 
     static unsigned hashMemory(const void* data, unsigned length)
     {
-        // FIXME: Why does this function use the version of the hash that drops the top 8 bits?
-        // We want that for all string hashing so we can use those bits in StringImpl and hash
-        // strings consistently, but I don't see why we'd want that for general memory hashing.
-        ASSERT(!(length % 2));
-        return computeHashAndMaskTop8Bits<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
+        size_t lengthInUChar = length / sizeof(UChar);
+        StringHasher hasher;
+        hasher.addCharactersAssumingAligned(static_cast<const UChar*>(data), lengthInUChar);
+
+        for (size_t i = 0; i < length % sizeof(UChar); ++i)
+            hasher.addCharacter(static_cast<const char*>(data)[lengthInUChar * sizeof(UChar) + i]);
+
+        return hasher.hash();
     }
 
     template<size_t length> static unsigned hashMemory(const void* data)
     {
-        static_assert(!(length % 2), "length must be a multiple of two!");
         return hashMemory(data, length);
     }
 

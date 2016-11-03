@@ -45,6 +45,7 @@
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include "ThreadSafeDataBuffer.h"
+#include <runtime/ArrayBuffer.h>
 #include <runtime/DateInstance.h>
 #include <runtime/ObjectConstructor.h>
 
@@ -103,6 +104,20 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
         for (size_t i = 0; i < size; ++i)
             outArray->putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));
         return outArray;
+    }
+    case KeyType::Binary: {
+        auto* data = key->binary().data();
+        if (!data) {
+            ASSERT_NOT_REACHED();
+            return jsNull();
+        }
+
+        auto arrayBuffer = ArrayBuffer::create(data->data(), data->size());
+        Structure* structure = globalObject.arrayBufferStructure(arrayBuffer->sharingMode());
+        if (!structure)
+            return jsNull();
+
+        return JSArrayBuffer::create(state.vm(), structure, WTFMove(arrayBuffer));
     }
     case KeyType::String:
         return jsStringWithCache(&state, key->string());
@@ -163,6 +178,12 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
             stack.removeLast();
             return IDBKey::createArray(subkeys);
         }
+
+        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(value))
+            return IDBKey::createBinary(*arrayBuffer);
+
+        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(value))
+            return IDBKey::createBinary(*arrayBufferView);
     }
     return nullptr;
 }

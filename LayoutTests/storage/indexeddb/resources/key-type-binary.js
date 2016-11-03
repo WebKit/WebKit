@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("Test IndexedDB binary keys");
 
-indexedDBTest(prepareDatabase, testInvalidBinaryKeys1);
+indexedDBTest(prepareDatabase, testBinaryKeys1);
 function prepareDatabase()
 {
     db = event.target.result;
@@ -14,7 +14,7 @@ function prepareDatabase()
     debug("");
 }
 
-function testInvalidBinaryKeys1()
+function testBinaryKeys1()
 {
     preamble();
     evalAndLog("trans = db.transaction('store', 'readwrite')");
@@ -39,14 +39,14 @@ function testInvalidBinaryKeys1()
             key = cases.shift();
             value = n++;
             debug("");
-            evalAndExpectException("store.put(" + JSON.stringify(value) + ", new Uint8Array(" + key + "));", "0", "'DataError'");
+            evalAndLog("store.put(" + JSON.stringify(value) + ", new Uint8Array(" + key + "));");
         }
     }());
 
-    trans.oncomplete = testInvalidBinaryKeys2;
+    trans.oncomplete = testBinaryKeys2;
 }
 
-function testInvalidBinaryKeys2()
+function testBinaryKeys2()
 {
     preamble();
     evalAndLog("trans = db.transaction('store', 'readwrite')");
@@ -67,7 +67,7 @@ function testInvalidBinaryKeys2()
 
     cases.forEach(function(testCase) {
         debug("");
-        evalAndExpectException("store.put('value', " + testCase + ")", "0", "'DataError'");
+        evalAndLog("store.put('value', " + testCase + ")");
     });
 
     finishJSTest();

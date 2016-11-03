@@ -1,3 +1,14 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support binary keys.
+        <rdar://problem/28806927> and https://bugs.webkit.org/show_bug.cgi?id=164359
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/IndexedDB/idb_binary_key_conversion-expected.txt:
+        * web-platform-tests/IndexedDB/idbfactory_cmp3-expected.txt:
+        * web-platform-tests/IndexedDB/idbfactory_cmp4-expected.txt:
+
 2016-11-01  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBIndex getAll/getAllKeys.

@@ -79,6 +79,7 @@ enum KeyType {
     Max = -1,
     Invalid = 0,
     Array,
+    Binary,
     String,
     Date,
     Number,

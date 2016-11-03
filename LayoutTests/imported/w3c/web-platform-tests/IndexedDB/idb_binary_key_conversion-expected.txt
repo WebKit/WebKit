@@ -1,7 +1,7 @@
 
-FAIL Empty ArrayBuffer The data provided does not meet requirements.
-FAIL ArrayBuffer The data provided does not meet requirements.
-FAIL DataView The data provided does not meet requirements.
-FAIL TypedArray(Int8Array) The data provided does not meet requirements.
-FAIL Array of TypedArray(Int8Array) The data provided does not meet requirements.
+PASS Empty ArrayBuffer 
+PASS ArrayBuffer 
+PASS DataView 
+PASS TypedArray(Int8Array) 
+PASS Array of TypedArray(Int8Array) 
 

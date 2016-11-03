@@ -29,10 +29,31 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyData.h"
+#include <runtime/ArrayBufferView.h>
+#include <runtime/JSArrayBuffer.h>
+#include <runtime/JSArrayBufferView.h>
+#include <runtime/JSCInlines.h>
 
 namespace WebCore {
 
 using IDBKeyVector = Vector<RefPtr<IDBKey>>;
+
+Ref<IDBKey> IDBKey::createBinary(const ThreadSafeDataBuffer& buffer)
+{
+    return adoptRef(*new IDBKey(buffer));
+}
+
+Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBuffer& arrayBuffer)
+{
+    auto* buffer = arrayBuffer.impl();
+    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(buffer->data(), buffer->byteLength())));
+}
+
+Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBufferView& arrayBufferView)
+{
+    auto bufferView = arrayBufferView.possiblySharedImpl();
+    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(bufferView->data(), bufferView->byteLength())));
+}
 
 IDBKey::IDBKey(KeyType type, double number)
     : m_type(type)
@@ -52,6 +73,13 @@ IDBKey::IDBKey(const IDBKeyVector& keyArray, size_t arraySize)
     : m_type(KeyType::Array)
     , m_value(keyArray)
     , m_sizeEstimate(OverheadSize + arraySize)
+{
+}
+
+IDBKey::IDBKey(const ThreadSafeDataBuffer& buffer)
+    : m_type(KeyType::Binary)
+    , m_value(buffer)
+    , m_sizeEstimate(OverheadSize + buffer.size())
 {
 }
 
@@ -93,6 +121,8 @@ int IDBKey::compare(const IDBKey& other) const
             return 1;
         return 0;
     }
+    case KeyType::Binary:
+        return compareBinaryKeyData(WTF::get<ThreadSafeDataBuffer>(m_value), WTF::get<ThreadSafeDataBuffer>(other.m_value));
     case KeyType::String:
         return -codePointCompare(WTF::get<String>(other.m_value), WTF::get<String>(m_value));
     case KeyType::Date:

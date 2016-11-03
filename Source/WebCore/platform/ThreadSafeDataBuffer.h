@@ -47,6 +47,12 @@ private:
     {
     }
 
+    ThreadSafeDataBufferImpl(const void* data, unsigned length)
+        : m_data(length)
+    {
+        memcpy(m_data.data(), data, length);
+    }
+
     Vector<uint8_t> m_data;
 };
 
@@ -62,6 +68,11 @@ public:
         return ThreadSafeDataBuffer(data);
     }
 
+    static ThreadSafeDataBuffer copyData(const void* data, unsigned length)
+    {
+        return ThreadSafeDataBuffer(data, length);
+    }
+
     ThreadSafeDataBuffer()
     {
     }
@@ -69,6 +80,19 @@ public:
     const Vector<uint8_t>* data() const
     {
         return m_impl ? &m_impl->m_data : nullptr;
+    }
+
+    size_t size() const
+    {
+        return m_impl ? m_impl->m_data.size() : 0;
+    }
+
+    bool operator==(const ThreadSafeDataBuffer& other) const
+    {
+        if (!m_impl)
+            return !other.m_impl;
+
+        return m_impl->m_data == other.m_impl->m_data;
     }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -83,6 +107,11 @@ private:
     explicit ThreadSafeDataBuffer(const Vector<uint8_t>& data)
     {
         m_impl = adoptRef(new ThreadSafeDataBufferImpl(data));
+    }
+
+    explicit ThreadSafeDataBuffer(const void* data, unsigned length)
+    {
+        m_impl = adoptRef(new ThreadSafeDataBufferImpl(data, length));
     }
 
     RefPtr<ThreadSafeDataBufferImpl> m_impl;
