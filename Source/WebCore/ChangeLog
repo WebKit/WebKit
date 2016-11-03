@@ -1,3 +1,16 @@
+2016-11-03  Antti Koivisto  <antti@apple.com>
+
+        imported/mozilla/svg/paint-order-01.svg and imported/mozilla/svg/paint-order-02.svg are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=164355
+
+        Reviewed by Ryosuke Niwa.
+
+        Revert one change from https://trac.webkit.org/changeset/207669 to see if it is causing flakiness in
+        some XML based tests.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end):
+
 2016-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix CLoop build after r208320.
