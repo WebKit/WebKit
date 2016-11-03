@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .background-image {
+        position: relative;
+        margin-top: -1px;
+        height: 0;
+        padding-bottom: 80%;
+        opacity: 0.1;
+    }
+
+    .tile {
+        animation: fade-in 0.4s;
+    }
+
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+    <div class="tile">
+        <div class="background-image"></div>
+        <p>This test should not crash or assert.</p>
+    </div>
+</body>
+</html>

@@ -124,7 +124,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }
 
-bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle)
+bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
 {
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();
@@ -179,6 +179,7 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
         CSSPropertyAnimation::blendProperties(this, propertyID, animatedStyle.get(), fromStyle, toStyle, progress);
     }
     
+    didBlendStyle = true;
     return state() != oldState;
 }
 

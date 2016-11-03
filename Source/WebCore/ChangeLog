@@ -1,3 +1,44 @@
+2016-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r208025) GraphicsContext state stack assertions loading webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=164350
+        rdar://problem/29053414
+
+        Reviewed by Dean Jackson.
+
+        After r208025 it as possible for KeyframeAnimation::animate() to produce a RenderStyle
+        with a non-1 opacity, but without the explicit z-index that triggers stacking context.
+        This confused the RenderLayer paintWithTransparency code, triggering mismsatched GraphicsContext
+        save/restores.
+
+        This occurred when the runningOrFillingForwards state was mis-computed. keyframeAnim->animate()
+        can spit out a new style when in the StartWaitTimer sometimes, so "!keyframeAnim->waitingToStart() && !keyframeAnim->postActive()"
+        gave the wrong answser.
+
+        Rather than depend on the super-confusing animation state, use a bool out param from animate() to say
+        when it actually produced a new style, and when true, do the setZIndex(0).
+
+        Test: animations/stacking-during-opacity-animation.html
+
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::blendProperties): Log after blending so the log shows the blended style.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::restore):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayer::drawLayerContents): No functional change, but created scope for the
+        GraphicsContext so that it didn't outlive the CGContextRestoreGState(context).
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers): New assertion that catches the problem earlier.
+
 2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] [WebGL] Multisample resolve step may operate on stale data
