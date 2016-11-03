@@ -234,6 +234,7 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
 #if PLATFORM(IOS)
     UNUSED_PARAM(rect);
+    ::glFlush();
     ::glResolveMultisampleFramebufferAPPLE();
     const GLenum discards[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
     ::glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, discards);

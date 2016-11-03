@@ -1,3 +1,35 @@
+2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] [WebGL] Multisample resolve step may operate on stale data
+        https://bugs.webkit.org/show_bug.cgi?id=164347
+
+        Reviewed by Dean Jackson.
+
+        When antialiasing is enabled, WebKit internally creates a multisampled FBO
+        and uses that as the target of all the drawing commands. Then, just before
+        we actually put the image on the glass, we perform a “resolve” step which
+        averages all the samples to create the final image. However, it appears
+        that this resolve step only waits for commands to complete which were
+        already submitted to the hardware. OpenGL is allowed (indeed, expected) to
+        batch up drawing commands in main memory so it can submit them to the
+        hardware in fewer batches, but this means that the hardware may not know
+        about all the commands that the application submitted. Because of this,
+        the data the resolve step saw is the result of only some of the previous
+        draw calls - not all of them.
+
+        This doesn’t occur on macOS because we have a different code path there
+        for performing the resolve step. On iOS 9 and below, WebKit didn’t
+        implement multisampling in WebGL at all, which explains why this only
+        occurs on iOS 10. 
+
+        Luckily, the OpenGL command glFlush() is exactly designed to submit any
+        pending commands to the hardware.
+
+        Test: fast/canvas/webgl/multisample-resolve-consistency.html
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+
 2016-11-02  Brady Eidson  <beidson@apple.com>
 
         Give IDBKey(Data) a WTF::Variant overhaul.

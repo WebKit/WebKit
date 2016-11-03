@@ -1,3 +1,16 @@
+2016-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] [WebGL] Multisample resolve step may operate on stale data
+        https://bugs.webkit.org/show_bug.cgi?id=164347
+
+        Reviewed by Dean Jackson.
+
+        Issue many draw calls into a multisampled context, and then use glReadPixels()
+        to make sure that all the commands completed.
+
+        * fast/canvas/webgl/multisample-resolve-consistency-expected.txt: Added.
+        * fast/canvas/webgl/multisample-resolve-consistency.html: Added.
+
 2016-11-01  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move interfaces and typed arrays over to JSDOMConvert
