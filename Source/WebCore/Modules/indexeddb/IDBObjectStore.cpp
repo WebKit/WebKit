@@ -106,13 +106,13 @@ ExceptionOr<void> IDBObjectStore::setName(const String& name)
         return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not a version change transaction.") };
 
     if (!m_transaction->isActive())
-        return Exception { TransactionInactiveError, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not active.") };
+        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not active.") };
 
     if (m_info.name() == name)
         return { };
 
     if (m_transaction->database().info().hasObjectStore(name))
-        return Exception { ConstraintError, makeString("Failed set property 'name' on 'IDBObjectStore': The database already has an object store named '", name, "'.") };
+        return Exception { IDBDatabaseException::ConstraintError, makeString("Failed set property 'name' on 'IDBObjectStore': The database already has an object store named '", name, "'.") };
 
     m_transaction->database().renameObjectStore(*this, name);
     m_info.rename(name);

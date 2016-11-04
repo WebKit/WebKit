@@ -2,7 +2,7 @@
 PASS IndexedDB deleted object store rename throws 
 PASS IndexedDB object store rename throws in a readonly transaction 
 PASS IndexedDB object store rename throws in a readwrite transaction 
-FAIL IndexedDB object store rename throws in an inactive transaction assert_throws: function "() => { bookStore.name = 'renamed_books'; }" threw object "TransactionInactiveError (DOM Exception 31): Failed set p..." that is not a DOMException TransactionInactiveError: property "code" is equal to 31, expected 0
-FAIL IndexedDB object store rename to the name of another store throws assert_throws: function "() => store.name = 'not_books'" threw object "ConstraintError (DOM Exception 29): Failed set property '..." that is not a DOMException ConstraintError: property "code" is equal to 29, expected 0
+PASS IndexedDB object store rename throws in an inactive transaction 
+PASS IndexedDB object store rename to the name of another store throws 
 PASS IndexedDB object store rename handles exceptions when stringifying names 
 
