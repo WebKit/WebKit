@@ -394,6 +394,15 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(s
 #endif
 }
 
+void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones()
+{
+    if (!m_pendingNewlyReachedLayoutMilestones)
+        return;
+
+    m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedLayoutMilestones));
+    m_pendingNewlyReachedLayoutMilestones = 0;
+}
+
 bool TiledCoreAnimationDrawingArea::flushLayers()
 {
     ASSERT(!m_layerTreeStateIsFrozen);
@@ -418,14 +427,21 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         if (m_viewOverlayRootLayer)
             m_viewOverlayRootLayer->flushCompositingState(visibleRect, m_webPage.mainFrameView()->viewportIsStable());
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
         RefPtr<WebPage> retainedPage = &m_webPage;
+#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
         [CATransaction addCommitHandler:[retainedPage] {
             if (Page* corePage = retainedPage->corePage()) {
                 if (Frame* coreFrame = retainedPage->mainFrame())
                     corePage->inspectorController().didComposite(*coreFrame);
             }
+            if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
+                drawingArea->sendPendingNewlyReachedLayoutMilestones();
         } forPhase:kCATransactionPhasePostCommit];
+#else
+        dispatch_async(dispatch_get_main_queue(), [retainedPage] {
+            if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
+                drawingArea->sendPendingNewlyReachedLayoutMilestones();
+        });
 #endif
 
         bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
@@ -438,10 +454,6 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
         if (m_transientZoomScale != 1)
             applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
-
-        if (m_pendingNewlyReachedLayoutMilestones)
-            m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedLayoutMilestones));
-        m_pendingNewlyReachedLayoutMilestones = 0;
 
         return returnValue;
     }

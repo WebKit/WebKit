@@ -274,7 +274,6 @@ static inline bool compositingLogEnabled()
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
-    , m_paintRelatedMilestonesTimer(*this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
     , m_layerFlushTimer(*this, &RenderLayerCompositor::layerFlushTimerFired)
 {
 }
@@ -569,8 +568,8 @@ void RenderLayerCompositor::didPaintBacking(RenderLayerBacking*)
 {
     FrameView& frameView = m_renderView.frameView();
     frameView.setLastPaintTime(monotonicallyIncreasingTime());
-    if (frameView.milestonesPendingPaint() && !m_paintRelatedMilestonesTimer.isActive())
-        m_paintRelatedMilestonesTimer.startOneShot(0);
+    if (frameView.milestonesPendingPaint())
+        frameView.firePaintRelatedMilestonesIfNeeded();
 }
 
 void RenderLayerCompositor::didChangeVisibleRect()
@@ -4201,20 +4200,6 @@ void RenderLayerCompositor::layerFlushTimerFired()
     if (!m_hasPendingLayerFlush)
         return;
     scheduleLayerFlushNow();
-}
-
-void RenderLayerCompositor::paintRelatedMilestonesTimerFired()
-{
-    Frame& frame = m_renderView.frameView().frame();
-    Page* page = frame.page();
-    if (!page)
-        return;
-
-    // If the layer tree is frozen, we'll paint when it's unfrozen and schedule the timer again.
-    if (page->chrome().client().layerTreeStateIsFrozen())
-        return;
-
-    m_renderView.frameView().firePaintRelatedMilestonesIfNeeded();
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
