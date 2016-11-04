@@ -31,6 +31,7 @@
 #include "DFGBranchDirection.h"
 #include "DFGGraph.h"
 #include "DFGNode.h"
+#include "DFGNodeFlowProjection.h"
 #include "DFGPhiChildren.h"
 
 namespace JSC { namespace DFG {
@@ -41,7 +42,7 @@ public:
     AbstractInterpreter(Graph&, AbstractStateType&);
     ~AbstractInterpreter();
     
-    AbstractValue& forNode(Node* node)
+    AbstractValue& forNode(NodeFlowProjection node)
     {
         return m_state.forNode(node);
     }

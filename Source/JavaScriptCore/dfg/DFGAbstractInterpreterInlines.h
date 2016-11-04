@@ -2817,6 +2817,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case Phi:
         RELEASE_ASSERT(m_graph.m_form == SSA);
+        forNode(node) = forNode(NodeFlowProjection(node, NodeFlowProjection::Shadow));
         // The state of this node would have already been decided, but it may have become a
         // constant, in which case we'd like to know.
         if (forNode(node).m_value)
@@ -2824,8 +2825,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case Upsilon: {
-        m_state.createValueForNode(node->phi());
-        forNode(node->phi()) = forNode(node->child1());
+        NodeFlowProjection shadow(node->phi(), NodeFlowProjection::Shadow);
+        if (shadow.isStillValid()) {
+            m_state.createValueForNode(shadow);
+            forNode(shadow) = forNode(node->child1());
+        }
         break;
     }
         
@@ -2977,11 +2981,18 @@ void AbstractInterpreter<AbstractStateType>::forAllValues(
     else
         clobberLimit++;
     ASSERT(clobberLimit <= m_state.block()->size());
-    for (size_t i = clobberLimit; i--;)
-        functor(forNode(m_state.block()->at(i)));
+    for (size_t i = clobberLimit; i--;) {
+        NodeFlowProjection::forEach(
+            m_state.block()->at(i),
+            [&] (NodeFlowProjection nodeProjection) {
+                functor(forNode(nodeProjection));
+            });
+    }
     if (m_graph.m_form == SSA) {
-        for (Node* node : m_state.block()->ssa->liveAtHead)
-            functor(forNode(node));
+        for (NodeFlowProjection node : m_state.block()->ssa->liveAtHead) {
+            if (node.isStillValid())
+                functor(forNode(node));
+        }
     }
     for (size_t i = m_state.variables().numberOfArguments(); i--;)
         functor(m_state.variables().argument(i));
@@ -3037,9 +3048,9 @@ template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
     CommaPrinter comma(" ");
-    HashSet<Node*> seen;
+    HashSet<NodeFlowProjection> seen;
     if (m_graph.m_form == SSA) {
-        for (Node* node : m_state.block()->ssa->liveAtHead) {
+        for (NodeFlowProjection node : m_state.block()->ssa->liveAtHead) {
             seen.add(node);
             AbstractValue& value = forNode(node);
             if (value.isClear())
@@ -3048,15 +3059,17 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
         }
     }
     for (size_t i = 0; i < m_state.block()->size(); ++i) {
-        Node* node = m_state.block()->at(i);
-        seen.add(node);
-        AbstractValue& value = forNode(node);
-        if (value.isClear())
-            continue;
-        out.print(comma, node, ":", value);
+        NodeFlowProjection::forEach(
+            m_state.block()->at(i), [&] (NodeFlowProjection nodeProjection) {
+                seen.add(nodeProjection);
+                AbstractValue& value = forNode(nodeProjection);
+                if (value.isClear())
+                    return;
+                out.print(comma, nodeProjection, ":", value);
+            });
     }
     if (m_graph.m_form == SSA) {
-        for (Node* node : m_state.block()->ssa->liveAtTail) {
+        for (NodeFlowProjection node : m_state.block()->ssa->liveAtTail) {
             if (seen.contains(node))
                 continue;
             AbstractValue& value = forNode(node);

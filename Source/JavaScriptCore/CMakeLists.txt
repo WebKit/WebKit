@@ -312,6 +312,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFailedFinalizer.cpp
     dfg/DFGFinalizer.cpp
     dfg/DFGFixupPhase.cpp
+    dfg/DFGFlowIndexing.cpp
     dfg/DFGFlushFormat.cpp
     dfg/DFGFlushedAt.cpp
     dfg/DFGLiveCatchVariablePreservationPhase.cpp
@@ -343,7 +344,9 @@ set(JavaScriptCore_SOURCES
     dfg/DFGMultiGetByOffsetData.cpp
     dfg/DFGNaturalLoops.cpp
     dfg/DFGNode.cpp
+    dfg/DFGNodeAbstractValuePair.cpp
     dfg/DFGNodeFlags.cpp
+    dfg/DFGNodeFlowProjection.cpp
     dfg/DFGNodeOrigin.cpp
     dfg/DFGOSRAvailabilityAnalysisPhase.cpp
     dfg/DFGOSREntry.cpp
