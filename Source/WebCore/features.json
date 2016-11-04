@@ -595,10 +595,10 @@
     {
         "name": "Download Attribute",
         "status": {
-            "status": "In Development"
+            "status": "Done"
         },
         "url": "https://html.spec.whatwg.org/multipage/semantics.html#downloading-resources",
-        "webkit-url": "https://webkit.org/b/102914",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=156056",
         "specification": "HTML5",
         "description": "An attribute to an anchor or area element to indicate that a resource is intended to be downloaded for use later rather than immediately.",
         "contact": {
