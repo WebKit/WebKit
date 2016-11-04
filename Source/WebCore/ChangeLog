@@ -1,3 +1,43 @@
+2016-11-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r207717): DumpRenderTree crashed in com.apple.WebCore: WebCore::Style::Scope::flushPendingUpdate + 16
+        https://bugs.webkit.org/show_bug.cgi?id=164397
+        <rdar://problem/29100135>
+
+        Reviewed by Ryosuke Niwa.
+
+        The problem here was that we were leaving stale pointers to Document::m_inDocumentShadowRoots set when
+        using fast-path document teardown.
+
+        (Patch and stories mostly by rniwa).
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::didInsertInDocumentShadowRoot):
+        (WebCore::Document::didRemoveInDocumentShadowRoot):
+
+            Improve asserts.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot):
+
+            Remove the superfluous call to notifyChildNodeRemoved in Element::removeShadowRoot to
+            avoid invoking notifyChildNodeRemoved during a document teardown, which is incorrect. It's sufficient that
+            ~ShadowRoot calls ContainerNode::removeDetachedChildren(), and in turn removeDetachedChildrenInContainer()
+            since the latter function tears down nodes via the deletion queue during a document destruction and use
+            notifyChildNodeRemoved() on nodes that outlive the shadow root.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::~ShadowRoot):
+
+            Take care to clean up inDocumentShadowRoots for fast-pathed destruction too.
+
+        (WebCore::ShadowRoot::insertedInto):
+        (WebCore::ShadowRoot::removedFrom):
+
+            Improve ShadowRoot's insertedInto and removedFrom so that they only try to add and remove itself from
+            m_inDocumentShadowRoots when the connected-ness changes.
+
 2016-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Give all the geometry classes a single-argument scale() function for consistency

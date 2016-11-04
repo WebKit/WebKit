@@ -591,6 +591,7 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
+    ASSERT(m_inDocumentShadowRoots.isEmpty());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     m_deviceMotionClient->deviceMotionControllerDestroyed();
@@ -6980,6 +6981,7 @@ DOMSelection* Document::getSelection()
 void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
     ASSERT(shadowRoot.inDocument());
+    ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.add(&shadowRoot);
 }
 
