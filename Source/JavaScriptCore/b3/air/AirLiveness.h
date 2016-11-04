@@ -46,7 +46,7 @@ struct TmpLivenessAdapter {
 
     TmpLivenessAdapter(Code&) { }
 
-    static unsigned maxIndex(Code& code)
+    static unsigned numIndices(Code& code)
     {
         unsigned numTmps = code.numTmps(adapterType);
         return AbsoluteTmpMapper<adapterType>::absoluteIndex(numTmps);
@@ -65,9 +65,9 @@ struct StackSlotLivenessAdapter {
     {
     }
 
-    static unsigned maxIndex(Code& code)
+    static unsigned numIndices(Code& code)
     {
-        return code.stackSlots().size() - 1;
+        return code.stackSlots().size();
     }
     static bool acceptsType(Arg::Type) { return true; }
     static unsigned valueToIndex(StackSlot* stackSlot) { return stackSlot->index(); }
@@ -83,9 +83,9 @@ struct RegLivenessAdapter {
 
     RegLivenessAdapter(Code&) { }
 
-    static unsigned maxIndex(Code&)
+    static unsigned numIndices(Code&)
     {
-        return Reg::maxIndex();
+        return Reg::maxIndex() + 1;
     }
 
     static bool acceptsType(Arg::Type) { return true; }
@@ -101,7 +101,7 @@ public:
     
     AbstractLiveness(Code& code)
         : Adapter(code)
-        , m_workset(Adapter::maxIndex(code))
+        , m_workset(Adapter::numIndices(code))
         , m_liveAtHead(code.size())
         , m_liveAtTail(code.size())
     {

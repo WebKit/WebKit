@@ -40,6 +40,8 @@
 #include "DFGClobbersExitState.h"
 #include "DFGControlEquivalenceAnalysis.h"
 #include "DFGDominators.h"
+#include "DFGFlowIndexing.h"
+#include "DFGFlowMap.h"
 #include "DFGJITCode.h"
 #include "DFGMayExit.h"
 #include "DFGNaturalLoops.h"
@@ -83,6 +85,9 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     ASSERT(m_profiledBlock);
     
     m_hasDebuggerEnabled = m_profiledBlock->wasCompiledWithDebuggingOpcodes() || Options::forceDebuggerBytecodeGeneration();
+    
+    m_indexingCache = std::make_unique<FlowIndexing>(*this);
+    m_abstractValuesCache = std::make_unique<FlowMap<AbstractValue>>(*this);
 }
 
 Graph::~Graph()

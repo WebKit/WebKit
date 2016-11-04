@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,10 @@ namespace JSC { namespace DFG {
 HashSet<Node*> liveNodesAtHead(Graph& graph, BasicBlock* block)
 {
     HashSet<Node*> seen;
-    for (Node* node : block->ssa->liveAtHead)
-        seen.add(node);
+    for (NodeFlowProjection node : block->ssa->liveAtHead) {
+        if (node.kind() == NodeFlowProjection::Primary)
+            seen.add(node.node());
+    }
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
     graph.forAllLocalsLiveInBytecode(

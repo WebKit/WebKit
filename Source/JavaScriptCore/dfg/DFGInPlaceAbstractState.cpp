@@ -41,7 +41,7 @@ static const bool verbose = false;
 
 InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
-    , m_abstractValues(graph.abstractValuesCache())
+    , m_abstractValues(*graph.m_abstractValuesCache)
     , m_variables(m_graph.m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
 {
@@ -57,19 +57,22 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
 
-    // Certain phases insert nodes in a block after running through it.
-    // We cannot reserve the space for AbstractValues when initializing AbstractState because the number of values
-    // can increase as we execute. Instead, we increase the size as needed before processing each block.
-    m_abstractValues.resize(m_graph.maxNodeCount());
+    m_abstractValues.resize();
     
-    for (size_t i = 0; i < basicBlock->size(); i++)
-        forNode(basicBlock->at(i)).clear();
+    for (size_t i = 0; i < basicBlock->size(); i++) {
+        NodeFlowProjection::forEach(
+            basicBlock->at(i), [&] (NodeFlowProjection nodeProjection) {
+                forNode(nodeProjection).clear();
+            });
+    }
 
     m_variables = basicBlock->valuesAtHead;
     
     if (m_graph.m_form == SSA) {
-        for (auto& entry : basicBlock->ssa->valuesAtHead)
-            forNode(entry.node) = entry.value;
+        for (NodeAbstractValuePair& entry : basicBlock->ssa->valuesAtHead) {
+            if (entry.node.isStillValid())
+                forNode(entry.node) = entry.value;
+        }
     }
     basicBlock->cfaShouldRevisit = false;
     basicBlock->cfaHasVisited = true;
@@ -80,12 +83,12 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_structureClobberState = basicBlock->cfaStructureClobberStateAtHead;
 }
 
-static void setLiveValues(Vector<BasicBlock::SSAData::NodeAbstractValuePair>& values, const Vector<Node*>& live)
+static void setLiveValues(Vector<NodeAbstractValuePair>& values, const Vector<NodeFlowProjection>& live)
 {
     values.resize(0);
     values.reserveCapacity(live.size());
-    for (Node* node : live)
-        values.uncheckedAppend(BasicBlock::SSAData::NodeAbstractValuePair { node, AbstractValue() });
+    for (NodeFlowProjection node : live)
+        values.uncheckedAppend(NodeAbstractValuePair { node, AbstractValue() });
 }
 
 void InPlaceAbstractState::initialize()
@@ -199,7 +202,7 @@ bool InPlaceAbstractState::endBasicBlock()
         for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
             block->valuesAtTail[i].merge(m_variables[i]);
 
-        for (auto& valueAtTail : block->ssa->valuesAtTail) {
+        for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail) {
             AbstractValue& valueAtNode = forNode(valueAtTail.node);
             valueAtTail.value.merge(valueAtNode);
             valueAtNode = valueAtTail.value;
@@ -291,13 +294,13 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
         for (size_t i = from->valuesAtTail.size(); i--;)
             changed |= to->valuesAtHead[i].merge(from->valuesAtTail[i]);
 
-        for (auto& entry : to->ssa->valuesAtHead) {
-            Node* node = entry.node;
+        for (NodeAbstractValuePair& entry : to->ssa->valuesAtHead) {
+            NodeFlowProjection node = entry.node;
             if (verbose)
                 dataLog("      Merging for ", node, ": from ", forNode(node), " to ", entry.value, "\n");
 #ifndef NDEBUG
             unsigned valueCountInFromBlock = 0;
-            for (auto& fromBlockValueAtTail : from->ssa->valuesAtTail) {
+            for (NodeAbstractValuePair& fromBlockValueAtTail : from->ssa->valuesAtTail) {
                 if (fromBlockValueAtTail.node == node) {
                     ASSERT(fromBlockValueAtTail.value == forNode(node));
                     ++valueCountInFromBlock;

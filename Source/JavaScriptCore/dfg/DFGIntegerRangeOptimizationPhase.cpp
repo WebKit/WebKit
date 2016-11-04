@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "DFGBlockSet.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
+#include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGVariableAccessDataDump.h"
@@ -121,7 +122,7 @@ public:
     {
     }
     
-    Relationship(Node* left, Node* right, Kind kind, int offset = 0)
+    Relationship(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
         : m_left(left)
         , m_right(right)
         , m_kind(kind)
@@ -132,17 +133,17 @@ public:
         RELEASE_ASSERT(m_left != m_right);
     }
     
-    static Relationship safeCreate(Node* left, Node* right, Kind kind, int offset = 0)
+    static Relationship safeCreate(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
     {
-        if (!left || !right || left == right)
+        if (!left.isStillValid() || !right.isStillValid() || left == right)
             return Relationship();
         return Relationship(left, right, kind, offset);
     }
 
-    explicit operator bool() const { return m_left; }
+    explicit operator bool() const { return !!m_left; }
     
-    Node* left() const { return m_left; }
-    Node* right() const { return m_right; }
+    NodeFlowProjection left() const { return m_left; }
+    NodeFlowProjection right() const { return m_right; }
     Kind kind() const { return m_kind; }
     int offset() const { return m_offset; }
 
@@ -258,7 +259,7 @@ public:
     // If possible, returns a form of this relationship where the given node is the left
     // side. Returns a null relationship if this relationship cannot say anything about this
     // node.
-    Relationship forNode(Node* node) const
+    Relationship forNode(NodeFlowProjection node) const
     {
         if (m_left == node)
             return *this;
@@ -267,7 +268,7 @@ public:
         return Relationship();
     }
     
-    void setLeft(Node* left)
+    void setLeft(NodeFlowProjection left)
     {
         RELEASE_ASSERT(left != m_right);
         m_left = left;
@@ -984,13 +985,13 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    Node* m_left;
-    Node* m_right;
+    NodeFlowProjection m_left;
+    NodeFlowProjection m_right;
     Kind m_kind;
     int m_offset; // This offset can be arbitrarily large.
 };
 
-typedef HashMap<Node*, Vector<Relationship>> RelationshipMap;
+typedef HashMap<NodeFlowProjection, Vector<Relationship>> RelationshipMap;
 
 class IntegerRangeOptimizationPhase : public Phase {
 public:
@@ -1314,7 +1315,7 @@ public:
                         if (relationship.minValueOfLeft() >= 0)
                             nonNegative = true;
                         
-                        if (relationship.right() == node->child2()) {
+                        if (relationship.right() == node->child2().node()) {
                             if (relationship.kind() == Relationship::Equal
                                 && relationship.offset() < 0)
                                 lessThanLength = true;
@@ -1491,23 +1492,16 @@ private:
         }
             
         case Upsilon: {
-            setRelationship(
-                Relationship::safeCreate(
-                    node->child1().node(), node->phi(), Relationship::Equal, 0));
+            setEquivalence(
+                node->child1().node(),
+                NodeFlowProjection(node->phi(), NodeFlowProjection::Shadow));
+            break;
+        }
             
-            auto iter = m_relationships.find(node->child1().node());
-            if (iter != m_relationships.end()) {
-                Vector<Relationship> toAdd;
-                for (Relationship relationship : iter->value) {
-                    Relationship newRelationship = relationship;
-                    if (node->phi() == newRelationship.right())
-                        continue;
-                    newRelationship.setLeft(node->phi());
-                    toAdd.append(newRelationship);
-                }
-                for (Relationship relationship : toAdd)
-                    setRelationship(relationship);
-            }
+        case Phi: {
+            setEquivalence(
+                NodeFlowProjection(node, NodeFlowProjection::Shadow),
+                node);
             break;
         }
             
@@ -1516,6 +1510,26 @@ private:
         }
     }
     
+    void setEquivalence(NodeFlowProjection oldNode, NodeFlowProjection newNode)
+    {
+        setRelationship(Relationship::safeCreate(oldNode, newNode, Relationship::Equal, 0));
+        
+        auto iter = m_relationships.find(oldNode);
+        if (iter != m_relationships.end()) {
+            Vector<Relationship> toAdd;
+            for (Relationship relationship : iter->value) {
+                Relationship newRelationship = relationship;
+                // Avoid creating any kind of self-relationship.
+                if (newNode.node() == newRelationship.right().node())
+                    continue;
+                newRelationship.setLeft(newNode);
+                toAdd.append(newRelationship);
+            }
+            for (Relationship relationship : toAdd)
+                setRelationship(relationship);
+        }
+    }
+            
     void setRelationship(Relationship relationship, unsigned timeToLive = 1)
     {
         setRelationship(m_relationships, relationship, timeToLive);
@@ -1669,7 +1683,7 @@ private:
         
         if (m_seenBlocks.add(target)) {
             // This is a new block. We copy subject to liveness pruning.
-            auto isLive = [&] (Node* node) {
+            auto isLive = [&] (NodeFlowProjection node) {
                 if (node == m_zero)
                     return true;
                 return target->ssa->liveAtHead.contains(node);
@@ -1701,7 +1715,7 @@ private:
         // assigned would only happen if we have not processed the node's predecessor. We
         // shouldn't process blocks until we have processed the block's predecessor because we
         // are using reverse postorder.
-        Vector<Node*> toRemove;
+        Vector<NodeFlowProjection> toRemove;
         bool changed = false;
         for (auto& entry : m_relationshipsAtHead[target]) {
             auto iter = relationshipMap.find(entry.key);
@@ -1791,7 +1805,7 @@ private:
             entry.value = mergedRelationships;
             changed = true;
         }
-        for (Node* node : toRemove)
+        for (NodeFlowProjection node : toRemove)
             m_relationshipsAtHead[target].remove(node);
         
         return changed;

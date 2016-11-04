@@ -1,3 +1,16 @@
+2016-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG plays fast and loose with the shadow values of a Phi
+        https://bugs.webkit.org/show_bug.cgi?id=164309
+
+        Reviewed by Saam Barati.
+        
+        Made this API use size rather than maxIndex as its initialization parameter, because that's
+        less confusing.
+
+        * wtf/IndexSparseSet.h:
+        (WTF::IndexSparseSet<OverflowHandler>::IndexSparseSet):
+
 2016-11-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r208364.

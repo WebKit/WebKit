@@ -1,3 +1,138 @@
+2016-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG plays fast and loose with the shadow values of a Phi
+        https://bugs.webkit.org/show_bug.cgi?id=164309
+
+        Reviewed by Saam Barati.
+        
+        Oh boy, what an embarrassing mistake! The style of SSA I like to use avoids block/value
+        tuples as parameters of a Phi, thereby simplifying CFG transformations and making Phi largely
+        not a special case for most compiler transforms. It does this by introducing another value
+        called Upsilon, which stores a value into some Phi.
+        
+        B3 uses this also. The easiest way to understand what Upsilon/Phi behave like is to look at
+        the B3->Air lowering. Air is not SSA - it has Tmps that you can assign to and use as many
+        times as you like. B3 allocates one Tmp per Value, and an extra "phiTmp" for Phis, so that
+        Phis get two Tmps total. Upsilon stores the value into the phiTmp of the Phi, while Phi moves
+        the value from its phiTmp to its tmp.
+        
+        This is necessary to support scenarios like this:
+        
+            a: Phi()
+            b: Upsilon(@x, ^a)
+            c: Use(@a)
+        
+        Here, we want @c to see @a's value before @b. That's a very basic requirement of SSA: that
+        the a value (like @a) doesn't change during its lifetime.
+        
+        Unfortunately, DFG's liveness analysis, abstract interpreter, and integer range optimization
+        all failed to correctly model Upsilon/Phi this way. They would assume that it's accurate to
+        model the Upsilon as storing into the Phi directly.
+        
+        Because DFG does flow analysis over SSA, making it correct means enabling it to speak of the
+        shadow value. This change addresses this problem by introducing the concept of a
+        NodeFlowProjection. This is a key that lets us speak of both a Node's primary value and its
+        optional "shadow" value. Liveness, AI, and integer range are now keyed by NodeFlowProjection
+        rather than Node*. Conceptually this turns out to be a very simple change, but it does touch
+        a good amount of code.
+        
+        This looks to be perf-neutral.
+
+        Rolled back in after fixing the debug build.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::StackSlotLivenessAdapter::numIndices):
+        (JSC::B3::Air::RegLivenessAdapter::numIndices):
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::TmpLivenessAdapter::maxIndex): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::maxIndex): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::maxIndex): Deleted.
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::forNode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::dump):
+        * dfg/DFGAtTailAbstractState.cpp:
+        (JSC::DFG::AtTailAbstractState::createValueForNode):
+        (JSC::DFG::AtTailAbstractState::forNode):
+        * dfg/DFGAtTailAbstractState.h:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGCombinedLiveness.cpp:
+        (JSC::DFG::liveNodesAtHead):
+        * dfg/DFGCombinedLiveness.h:
+        * dfg/DFGFlowIndexing.cpp: Added.
+        (JSC::DFG::FlowIndexing::FlowIndexing):
+        (JSC::DFG::FlowIndexing::~FlowIndexing):
+        (JSC::DFG::FlowIndexing::recompute):
+        * dfg/DFGFlowIndexing.h: Added.
+        (JSC::DFG::FlowIndexing::graph):
+        (JSC::DFG::FlowIndexing::numIndices):
+        (JSC::DFG::FlowIndexing::index):
+        (JSC::DFG::FlowIndexing::shadowIndex):
+        (JSC::DFG::FlowIndexing::nodeProjection):
+        * dfg/DFGFlowMap.h: Added.
+        (JSC::DFG::FlowMap::FlowMap):
+        (JSC::DFG::FlowMap::resize):
+        (JSC::DFG::FlowMap::graph):
+        (JSC::DFG::FlowMap::at):
+        (JSC::DFG::FlowMap::atShadow):
+        (WTF::printInternal):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::abstractValuesCache): Deleted.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::InPlaceAbstractState):
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::setLiveValues):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::merge):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::createValueForNode):
+        (JSC::DFG::InPlaceAbstractState::forNode):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::LivenessAnalysisPhase):
+        (JSC::DFG::LivenessAnalysisPhase::run):
+        (JSC::DFG::LivenessAnalysisPhase::processBlock):
+        (JSC::DFG::LivenessAnalysisPhase::addChildUse): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::NodeComparator::operator()):
+        (JSC::DFG::nodeListDump):
+        (JSC::DFG::nodeMapDump):
+        (JSC::DFG::nodeValuePairListDump):
+        (JSC::DFG::nodeComparator): Deleted.
+        * dfg/DFGNodeAbstractValuePair.cpp: Added.
+        (JSC::DFG::NodeAbstractValuePair::dump):
+        * dfg/DFGNodeAbstractValuePair.h: Added.
+        (JSC::DFG::NodeAbstractValuePair::NodeAbstractValuePair):
+        * dfg/DFGNodeFlowProjection.cpp: Added.
+        (JSC::DFG::NodeFlowProjection::dump):
+        * dfg/DFGNodeFlowProjection.h: Added.
+        (JSC::DFG::NodeFlowProjection::NodeFlowProjection):
+        (JSC::DFG::NodeFlowProjection::operator bool):
+        (JSC::DFG::NodeFlowProjection::kind):
+        (JSC::DFG::NodeFlowProjection::node):
+        (JSC::DFG::NodeFlowProjection::operator*):
+        (JSC::DFG::NodeFlowProjection::operator->):
+        (JSC::DFG::NodeFlowProjection::hash):
+        (JSC::DFG::NodeFlowProjection::operator==):
+        (JSC::DFG::NodeFlowProjection::operator!=):
+        (JSC::DFG::NodeFlowProjection::operator<):
+        (JSC::DFG::NodeFlowProjection::operator>):
+        (JSC::DFG::NodeFlowProjection::operator<=):
+        (JSC::DFG::NodeFlowProjection::operator>=):
+        (JSC::DFG::NodeFlowProjection::isHashTableDeletedValue):
+        (JSC::DFG::NodeFlowProjection::isStillValid):
+        (JSC::DFG::NodeFlowProjection::forEach):
+        (JSC::DFG::NodeFlowProjectionHash::hash):
+        (JSC::DFG::NodeFlowProjectionHash::equal):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+
 2016-11-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r208364.

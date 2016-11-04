@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGAtTailAbstractState.h"
-#include "DFGBlockMapInlines.h"
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
+#include "DFGAbstractValue.h"
+#include "DFGNodeFlowProjection.h"
 
 namespace JSC { namespace DFG {
 
-AtTailAbstractState::AtTailAbstractState(Graph& graph)
-    : m_graph(graph)
-    , m_valuesAtTailMap(m_graph)
-{
-    for (BasicBlock* block : graph.blocksInNaturalOrder()) {
-        auto& valuesAtTail = m_valuesAtTailMap.at(block);
-        valuesAtTail.clear();
-        for (auto& valueAtTailPair : block->ssa->valuesAtTail)
-            valuesAtTail.add(valueAtTailPair.node, valueAtTailPair.value);
+struct NodeAbstractValuePair {
+    NodeAbstractValuePair() { }
+    
+    NodeAbstractValuePair(NodeFlowProjection node, const AbstractValue& value)
+        : node(node)
+        , value(value)
+    {
     }
-}
-
-AtTailAbstractState::~AtTailAbstractState() { }
-
-void AtTailAbstractState::createValueForNode(NodeFlowProjection node)
-{
-    m_valuesAtTailMap.at(m_block).add(node, AbstractValue());
-}
-
-AbstractValue& AtTailAbstractState::forNode(NodeFlowProjection node)
-{
-    auto& valuesAtTail = m_valuesAtTailMap.at(m_block);
-    HashMap<NodeFlowProjection, AbstractValue>::iterator iter = valuesAtTail.find(node);
-    DFG_ASSERT(m_graph, node.node(), iter != valuesAtTail.end());
-    return iter->value;
-}
+    
+    void dump(PrintStream& out) const;
+    
+    NodeFlowProjection node;
+    AbstractValue value;
+};
 
 } } // namespace JSC::DFG
 

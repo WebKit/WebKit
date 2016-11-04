@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,51 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "DFGAtTailAbstractState.h"
-#include "DFGBlockMapInlines.h"
+#include "DFGFlowIndexing.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
-
 namespace JSC { namespace DFG {
 
-AtTailAbstractState::AtTailAbstractState(Graph& graph)
+FlowIndexing::FlowIndexing(Graph& graph)
     : m_graph(graph)
-    , m_valuesAtTailMap(m_graph)
+    , m_numIndices(0)
 {
-    for (BasicBlock* block : graph.blocksInNaturalOrder()) {
-        auto& valuesAtTail = m_valuesAtTailMap.at(block);
-        valuesAtTail.clear();
-        for (auto& valueAtTailPair : block->ssa->valuesAtTail)
-            valuesAtTail.add(valueAtTailPair.node, valueAtTailPair.value);
+    recompute();
+}
+
+FlowIndexing::~FlowIndexing()
+{
+}
+
+void FlowIndexing::recompute()
+{
+    unsigned numNodeIndices = m_graph.maxNodeCount();
+    
+    m_nodeIndexToShadowIndex.resize(numNodeIndices);
+    m_nodeIndexToShadowIndex.fill(UINT_MAX);
+    
+    m_shadowIndexToNodeIndex.resize(0);
+
+    m_numIndices = numNodeIndices;
+
+    for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+        for (Node* node : *block) {
+            if (node->op() != Phi)
+                continue;
+            
+            unsigned nodeIndex = node->index();
+            unsigned shadowIndex = m_numIndices++;
+            m_nodeIndexToShadowIndex[nodeIndex] = shadowIndex;
+            m_shadowIndexToNodeIndex.append(nodeIndex);
+            DFG_ASSERT(m_graph, nullptr, m_shadowIndexToNodeIndex.size() + numNodeIndices == m_numIndices);
+            DFG_ASSERT(m_graph, nullptr, m_shadowIndexToNodeIndex[shadowIndex - numNodeIndices] == nodeIndex);
+        }
     }
-}
-
-AtTailAbstractState::~AtTailAbstractState() { }
-
-void AtTailAbstractState::createValueForNode(NodeFlowProjection node)
-{
-    m_valuesAtTailMap.at(m_block).add(node, AbstractValue());
-}
-
-AbstractValue& AtTailAbstractState::forNode(NodeFlowProjection node)
-{
-    auto& valuesAtTail = m_valuesAtTailMap.at(m_block);
-    HashMap<NodeFlowProjection, AbstractValue>::iterator iter = valuesAtTail.find(node);
-    DFG_ASSERT(m_graph, node.node(), iter != valuesAtTail.end());
-    return iter->value;
 }
 
 } } // namespace JSC::DFG
