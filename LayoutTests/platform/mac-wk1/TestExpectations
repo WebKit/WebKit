@@ -240,6 +240,7 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
 
 # We do not support the new HTML validation UI on WebKit1 yet (rdar://problem/28944652).
+fast/forms/validation-custom-message.html [ Skip ]
 fast/forms/validation-messages.html [ Skip ]
 
 [ Yosemite ] http/tests/media/hls/video-controller-getStartDate.html [ Pass Timeout ]
