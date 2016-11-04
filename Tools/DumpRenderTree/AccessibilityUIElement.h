@@ -152,6 +152,7 @@ public:
     AccessibilityUIElement selectedChildAtIndex(unsigned) const;
     void setSelectedChildAtIndex(unsigned) const;
     void removeSelectionAtIndex(unsigned) const;
+    void clearSelectedChildren() const;
     
     bool isExpanded() const;
     bool isChecked() const;

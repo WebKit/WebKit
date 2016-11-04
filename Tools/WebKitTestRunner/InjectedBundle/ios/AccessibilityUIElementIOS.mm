@@ -832,6 +832,11 @@ void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
 {
 }
 
+void AccessibilityUIElement::clearSelectedChildren() const
+{
+    // FIXME: implement
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement

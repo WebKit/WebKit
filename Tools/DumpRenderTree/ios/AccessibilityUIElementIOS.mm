@@ -986,6 +986,11 @@ JSStringRef AccessibilityUIElement::accessibilityValue() const
     return JSStringCreateWithCharacters(0, 0);
 }
 
+void AccessibilityUIElement::clearSelectedChildren() const
+{
+    // FIXME: implement
+}
+
 JSStringRef AccessibilityUIElement::documentEncoding()
 {
     return JSStringCreateWithCharacters(0, 0);

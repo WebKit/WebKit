@@ -222,6 +222,10 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # TODO Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
 fast/spatial-navigation/ [ Skip ]
 
+# Need to implement AccessibilityUIElement::clearSelectedChildren()
+accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
+accessibility/listbox-clear-selection.html [ Skip ]
+
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]

@@ -59,6 +59,10 @@ accessibility/children-changed-sends-notification.html
 accessibility/menu-list-sends-change-notification.html
 accessibility/multiselect-list-reports-active-option.html
 
+# Need to implement AccessibilityUIElement::clearSelectedChildren()
+accessibility/aria-listbox-clear-selection-crash.html
+accessibility/listbox-clear-selection.html
+
 # Need to implement this in plugins code in WebKit
 plugins/reloadplugins-and-pages.html
 

@@ -1,3 +1,25 @@
+2016-11-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Attempting to clear selection on ARIA listboxes results in crash
+        https://bugs.webkit.org/show_bug.cgi?id=164331
+
+        Reviewed by Chris Fleizach.
+
+        The ATK code is using is<AccessibilityListBox>() to identify native listboxes.
+        But is<AccessibilityListBox>() returns the value of isListBox() which returns
+        true both for AccessibilityListBox instances as well as for AccessibilityObject
+        instances which have an AccessibilityRole value of ListBoxRole. Because only
+        native listboxes should be AccessibilityListBoxes, add isNativeListBox() so
+        that we can distinguish native and ARIA listboxes.
+
+        Tests: accessibility/aria-listbox-clear-selection-crash.html
+               accessibility/listbox-clear-selection.html
+
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isNativeListBox):
+        (WebCore::AccessibilityObject::isListBox):
+
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Throw the correct exceptions during IDBObjectStore/IDBIndex renaming.

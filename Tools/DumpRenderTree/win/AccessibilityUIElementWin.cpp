@@ -802,6 +802,10 @@ JSStringRef AccessibilityUIElement::accessibilityValue() const
     return JSStringCreateWithBSTR(valueBSTR);
 }
 
+void AccessibilityUIElement::clearSelectedChildren() const
+{
+    // FIXME: implement
+}
 
 JSStringRef AccessibilityUIElement::documentEncoding()
 {

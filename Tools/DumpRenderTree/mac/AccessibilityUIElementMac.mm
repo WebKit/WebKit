@@ -1440,6 +1440,11 @@ void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
     END_AX_OBJC_EXCEPTIONS
 }
 
+void AccessibilityUIElement::clearSelectedChildren() const
+{
+    // FIXME: implement
+}
+
 JSStringRef AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement

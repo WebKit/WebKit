@@ -1796,6 +1796,14 @@ void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
     atk_selection_remove_selection(ATK_SELECTION(m_element.get()), index);
 }
 
+void AccessibilityUIElement::clearSelectedChildren() const
+{
+    if (!ATK_IS_SELECTION(m_element.get()))
+        return;
+
+    atk_selection_clear_selection(ATK_SELECTION(m_element.get()));
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement

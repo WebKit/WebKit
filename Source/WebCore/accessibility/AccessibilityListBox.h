@@ -49,11 +49,11 @@ public:
 private:
     explicit AccessibilityListBox(RenderObject*);
 
-    bool isListBox() const override { return true; }
+    bool isNativeListBox() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 };
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBox, isListBox())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBox, isNativeListBox())

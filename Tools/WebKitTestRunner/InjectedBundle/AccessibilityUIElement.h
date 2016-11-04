@@ -143,6 +143,7 @@ public:
     void setSelectedChild(AccessibilityUIElement*) const;
     void setSelectedChildAtIndex(unsigned) const;
     void removeSelectionAtIndex(unsigned) const;
+    void clearSelectedChildren() const;
     unsigned selectedChildrenCount() const;
     RefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
     

@@ -494,7 +494,8 @@ public:
     bool isWebArea() const { return roleValue() == WebAreaRole; }
     virtual bool isCheckbox() const { return roleValue() == CheckBoxRole; }
     virtual bool isRadioButton() const { return roleValue() == RadioButtonRole; }
-    virtual bool isListBox() const { return roleValue() == ListBoxRole; }
+    virtual bool isNativeListBox() const { return false; }
+    bool isListBox() const { return roleValue() == ListBoxRole; }
     virtual bool isListBoxOption() const { return false; }
     virtual bool isAttachment() const { return false; }
     virtual bool isMediaTimeline() const { return false; }
