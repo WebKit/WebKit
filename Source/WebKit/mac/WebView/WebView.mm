@@ -2601,6 +2601,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAllowWindowOpenWithoutUserGesture(shouldAllowWindowOpenWithoutUserGesture());
 
     settings.setShouldConvertInvalidURLsToBlank(shouldConvertInvalidURLsToBlank());
+
+    settings.setAsyncImageDecodingEnabled([preferences asyncImageDecodingEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

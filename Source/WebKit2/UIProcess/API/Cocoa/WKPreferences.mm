@@ -325,6 +325,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setVisualViewportEnabled(_visualViewportEnabled);
 }
 
+- (BOOL)_asyncImageDecodingEnabled
+{
+    return _preferences->asyncImageDecodingEnabled();
+}
+
+- (void)_setAsyncImageDecodingEnabled:(BOOL)_asyncImageDecodingEnabled
+{
+    _preferences->setAsyncImageDecodingEnabled(_asyncImageDecodingEnabled);
+}
+
 - (BOOL)_textAutosizingEnabled
 {
     return _preferences->textAutosizingEnabled();

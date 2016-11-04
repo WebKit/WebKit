@@ -55,6 +55,7 @@ static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
 static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEnabled";
+static NSString * const AsyncImageDecodingEnabledPreferenceKey = @"AsyncImageDecodingEnabled";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -126,6 +127,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Visual Viewport" action:@selector(toggleVisualViewportEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Async Image Decoding" action:@selector(toggleAsyncImageDecodingEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -199,6 +201,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self displayListDrawingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
         [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleAsyncImageDecodingEnabled:))
+        [menuItem setState:[self asyncImageDecodingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleVisualViewportEnabled:))
         [menuItem setState:[self visualViewportEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -392,6 +396,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)resourceLoadStatisticsEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ResourceLoadStatisticsEnabledPreferenceKey];
+}
+
+- (void)toggleAsyncImageDecodingEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:AsyncImageDecodingEnabledPreferenceKey];
+}
+
+- (BOOL)asyncImageDecodingEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AsyncImageDecodingEnabledPreferenceKey];
 }
 
 - (void)toggleEnableSubPixelCSSOMMetrics:(id)sender

@@ -1,3 +1,18 @@
+2016-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add a setting and preferences to enable/disable async image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=164417
+
+        Reviewed by Simon Fraser.
+
+        Add an asyncImageDecodingEnabled setting. This setting controls whether an
+        image "can" be asynchronously decoded on a separate thread or not. The
+        function ImageSource::isAsyncDecodingRequired() will be used in conjunction
+        with this setting to decide whether an image "should" be asynchronously
+        decoded or not.
+
+        * page/Settings.in:
+
 2016-11-04  Tim Horton  <timothy_horton@apple.com>
 
         Apply post-landing review comments for r208347

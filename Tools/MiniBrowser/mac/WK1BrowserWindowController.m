@@ -282,6 +282,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     [[WebPreferences standardPreferences] setAcceleratedDrawingEnabled:settings.acceleratedDrawingEnabled];
     [[WebPreferences standardPreferences] setResourceLoadStatisticsEnabled:settings.resourceLoadStatisticsEnabled];
     [[WebPreferences standardPreferences] setVisualViewportEnabled:settings.visualViewportEnabled];
+    [[WebPreferences standardPreferences] setAsyncImageDecodingEnabled:settings.asyncImageDecodingEnabled];
 
     BOOL useTransparentWindows = settings.useTransparentWindows;
     if (useTransparentWindows != !self.window.isOpaque) {
