@@ -1,3 +1,19 @@
+2016-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Load stylesheets in link elements inside a connected shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=160683
+        <rdar://problem/29040652>
+
+        Reviewed by Antti Koivisto.
+
+        Added W3C style testharness.js tests for loading stylesheets via a link element inside a ahadow tree.
+
+        * fast/shadow-dom/link-element-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/link-element-in-shadow-tree.html: Added.
+        * fast/shadow-dom/resources/green-host.css: Added.
+        * fast/shadow-dom/selected-stylesheet-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/selected-stylesheet-in-shadow-tree.html: Added.
+
 2016-11-04  Chris Dumez  <cdumez@apple.com>
 
         Add layout test for input.setCustomValidity()

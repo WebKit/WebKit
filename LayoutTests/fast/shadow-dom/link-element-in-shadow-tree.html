@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: Link elements should load stylesheets inside shadow trees</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="Link elements should load inside shadow trees">
+<script src='../../resources/testharness.js'></script>
+<script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+<script>
+
+function wait_for_onload(element, callback = null) {
+    return new Promise(function (resolve, reject) {
+        element.onload = resolve;
+        element.onerror = reject;
+        setTimeout(() => reject('timeout'), 100);
+        if (callback)
+            return callback();
+    });
+}
+
+let test_iframe;
+function create_iframe() {
+    if (test_iframe)
+        test_iframe.remove();
+
+    test_iframe = document.createElement('iframe');
+    return wait_for_onload().then(() => test_iframe.contentWindow, () => {
+        document.body.appendChild(test_iframe);
+    }).then(function () {
+        const doc = test_iframe.contentWindow.document;
+        doc.open();
+        doc.write('<!DOCTYPE html><html><head><body>');
+        doc.close();
+        return test_iframe.contentWindow;
+    });
+}
+
+add_result_callback(() => {
+    if (test_iframe)
+        test_iframe.remove();
+});
+
+function test_stylesheet_load_in_connected_shadow_tree(mode) {
+    promise_test(() => {
+        return create_iframe().then(contentWindow => {
+            const doc = contentWindow.document;
+            const host = doc.createElement('div');
+            const link = doc.createElement('link');
+            return wait_for_onload(link, () => {
+                link.rel = 'stylesheet';
+                link.href = 'resources/green-host.css';
+                host.attachShadow({mode: mode}).appendChild(link);
+                contentWindow.document.body.appendChild(host);
+            });
+        });
+    }, `Link elements should load stylesheets inside a connected shadow tree with ${mode} mode`);
+}
+
+test_stylesheet_load_in_connected_shadow_tree('closed');
+test_stylesheet_load_in_connected_shadow_tree('open');
+
+function test_stylesheet_do_not_load_in_disconnected_shadow_tree(mode) {
+    promise_test(() => {
+        return create_iframe().then((contentWindow) => {
+            const doc = contentWindow.document;
+            const host = doc.createElement('div');
+            const link = doc.createElement('link');
+            return wait_for_onload(link, () => {
+                link.rel = 'stylesheet';
+                link.href = 'resources/green-host.css';
+                host.attachShadow({mode: mode}).appendChild(link);
+            });
+        }).then(() => {
+            assert_true(false, 'stylesheet must not load inside a disconnected shadow tree');
+        }, (error) => {
+            assert_equals(error, 'timeout');
+        });
+    }, `Link elements must not load stylesheets inside a disconnceted shadow tree with ${mode} mode`);
+}
+
+test_stylesheet_do_not_load_in_disconnected_shadow_tree('closed');
+test_stylesheet_do_not_load_in_disconnected_shadow_tree('open');
+
+function test_loaded_stylesheet_rule_in_shadow_tree_applies_to_div(mode) {
+    promise_test(() => {
+        let div;
+        return create_iframe().then(function (contentWindow) {
+            const doc = contentWindow.document;
+            const host = doc.createElement('div');
+            const shadowRoot = host.attachShadow({mode: mode});
+            shadowRoot.innerHTML = '<link rel="stylesheet" href="resources/green-host.css"><div>';
+            div = shadowRoot.querySelector('div');
+            return wait_for_onload(shadowRoot.querySelector('link'), () => { doc.body.appendChild(host) });
+        }).then(() => {
+            assert_equals(getComputedStyle(div).color, 'rgb(0, 128, 0)');
+        });
+    }, `Style rules loaded inside a shadow tree with ${mode} mode must apply to a div in the shadow tree`);
+}
+
+test_loaded_stylesheet_rule_in_shadow_tree_applies_to_div('closed');
+test_loaded_stylesheet_rule_in_shadow_tree_applies_to_div('open');
+
+function test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host(mode) {
+    promise_test(() => {
+        let host;
+        return create_iframe().then(function (contentWindow) {
+            const doc = contentWindow.document;
+            host = doc.createElement('div');
+            const shadowRoot = host.attachShadow({mode: mode});
+            shadowRoot.innerHTML = '<link rel="stylesheet" href="resources/green-host.css"><div>';
+            return wait_for_onload(shadowRoot.querySelector('link'), () => { doc.body.appendChild(host) });
+        }).then(() => {
+            assert_equals(getComputedStyle(host).color, 'rgb(0, 128, 0)');
+        });
+    }, `:host style rules loaded inside a shadow tree with ${mode} mode must apply to the host element`);
+}
+
+test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host('closed');
+test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host('open');
+
+function test_title_is_ignored_in_shadow_tree(mode) {
+    promise_test(() => {
+        let doc;
+        return create_iframe().then((contentWindow) => {
+            doc = contentWindow.document;
+            const host = doc.createElement('div');
+            const shadowRoot = host.attachShadow({mode: mode});
+            shadowRoot.innerHTML = `<style title="foo"></style>`;
+            doc.body.appendChild(host);
+        }).then(() => {
+            assert_equals(doc.selectedStylesheetSet, null);
+        });
+    }, `Link elements should load stylesheets inside a connected shadow tree with ${mode} mode`);
+}
+
+test_title_is_ignored_in_shadow_tree('closed');
+test_title_is_ignored_in_shadow_tree('open');
+
+</script>
+</html>
+</body>

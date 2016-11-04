@@ -1,3 +1,41 @@
+2016-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Load stylesheets in link elements inside a connected shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=160683
+        <rdar://problem/29040652>
+
+        Reviewed by Antti Koivisto.
+
+        Allow external stylesheets within a shadow tree by storing the appropriate style scope in HTMLLinkElement
+        when it's connected to a document instead of always talking to document's style scope.
+
+        Tests: fast/shadow-dom/link-element-in-shadow-tree.html
+               fast/shadow-dom/selected-stylesheet-in-shadow-tree.html
+
+       * html/HTMLLinkElement.cpp:
+       (WebCore::HTMLLinkElement::HTMLLinkElement):
+       (WebCore::HTMLLinkElement::~HTMLLinkElement):
+       (WebCore::HTMLLinkElement::setDisabledState): Exit early when the element is not in a document as invoking
+       didChangeActiveStyleSheetCandidates would require having a valid m_styleScope and process() already exits
+       early when inDocument() is false.
+       (WebCore::HTMLLinkElement::parseAttribute):
+       (WebCore::HTMLLinkElement::process): Removed the early exit for when the element is in a shadow tree.
+       (WebCore::HTMLLinkElement::insertedInto): Exit early unless this element has just become connected to
+       a document instead of whenever its self-inclusive ancestor is inserted into a container.
+       (WebCore::HTMLLinkElement::removedFrom): Ditto for removal. Also call removeStyleSheetCandidateNode after
+       calling removePendingSheet since the latter depends on m_styleScope being not null.
+       (WebCore::HTMLLinkElement::addPendingSheet):
+       (WebCore::HTMLLinkElement::removePendingSheet):
+       * html/HTMLLinkElement.h:
+       * html/HTMLStyleElement.cpp:
+       (WebCore::HTMLStyleElement::insertedInto): Only call inline style owner's insertedIntoDocument if this
+       element has just become connected to a document.
+       (WebCore::HTMLStyleElement::removedFrom): Ditto for the removal.
+       * style/StyleScope.h:
+       * svg/SVGStyleElement.cpp:
+       (WebCore::SVGStyleElement::insertedInto): Ditto.
+       (WebCore::SVGStyleElement::removedFrom): Ditto for the removal.
+
 2016-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add a setting and preferences to enable/disable async image decoding
