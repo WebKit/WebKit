@@ -375,6 +375,13 @@ void WebEditorClient::discardedComposition(Frame*)
     // The effects of this function are currently achieved via -[WebHTMLView _updateSelectionForInputManager].
 }
 
+void WebEditorClient::canceledComposition()
+{
+#if !PLATFORM(IOS)
+    [[NSTextInputContext currentInputContext] discardMarkedText];
+#endif
+}
+
 void WebEditorClient::didEndEditing()
 {
 #if !PLATFORM(IOS)

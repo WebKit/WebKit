@@ -1,3 +1,17 @@
+2016-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Safari does not emit composition end if blurred for dead key / Japanese IME
+        https://bugs.webkit.org/show_bug.cgi?id=164369
+        <rdar://problem/29050439>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a stub implementation of canceledComposition.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::canceledComposition):
+        * WebCoreSupport/WebEditorClient.h:
+
 2016-11-04  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Page visibility tests are timing out.

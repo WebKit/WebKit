@@ -65,6 +65,7 @@ private:
     void didChangeSelectionAndUpdateLayout() final;
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
     void discardedComposition(WebCore::Frame*) final;
+    void canceledComposition() final;
     void didEndEditing() final;
     void willWriteSelectionToPasteboard(WebCore::Range*) final;
     void didWriteSelectionToPasteboard() final;

@@ -242,6 +242,11 @@ void WebEditorClient::discardedComposition(Frame*)
     notImplemented();
 }
 
+void WebEditorClient::canceledComposition()
+{
+    notImplemented();
+}
+
 void WebEditorClient::didEndEditing()
 {
     static _bstr_t webViewDidEndEditingNotificationName(WebViewDidEndEditingNotification);

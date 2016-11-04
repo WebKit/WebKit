@@ -390,6 +390,7 @@ public:
 
     WEBCORE_EXPORT IntRect firstRectForRange(Range*) const;
 
+    void selectionWillChange();
     void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
     WEBCORE_EXPORT void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;

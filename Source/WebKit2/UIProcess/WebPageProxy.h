@@ -1320,7 +1320,7 @@ private:
 #endif
 
     void editorStateChanged(const EditorState&);
-    void compositionWasCanceled(const EditorState&);
+    void compositionWasCanceled();
     void setHasHadSelectionChangesFromUserInteraction(bool);
     void setNeedsHiddenContentEditableQuirk(bool);
     void setNeedsPlainTextQuirk(bool);

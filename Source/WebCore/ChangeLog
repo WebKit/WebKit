@@ -1,3 +1,35 @@
+2016-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Safari does not emit composition end if blurred for dead key / Japanese IME
+        https://bugs.webkit.org/show_bug.cgi?id=164369
+        <rdar://problem/29050439>
+
+        Reviewed by Ryosuke Niwa.
+
+        On Mac, _before_ changing selection, try to finalize the composition by calling Editor::cancelComposition early.
+        This is because the focused element may have changed after performing the selection change, so we would
+        otherwise be dispatching the `compositionend` to the new focused element (or no compositionend at all) instead
+        of the element with the composition.
+
+        Doing this allows us to match Chrome and Firefox behavior. After canceling the composition, we then need to also
+        clear the system IME state. We do this on Mac WK1/WK2 through the cancelComposition() codepath, which ends up
+        calling into -discardMarkedText, which resets the marked text state. Some minor refactoring was performed to
+        accomplish this -- currently, discardedComposition sends a CompositionWasCanceled message over to the UI process
+        that discards the marked text, and then updates the editor state. This patch splits this into two separate
+        steps -- see the WebKit2 ChangeLog for more details.
+
+        Test: fast/events/ime-compositionend-on-selection-change.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionWillChange):
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::selectionWillChange):
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up more transaction abort and exception throwing behavior from IDBObjectStore.

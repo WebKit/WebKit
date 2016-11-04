@@ -1,3 +1,22 @@
+2016-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Safari does not emit composition end if blurred for dead key / Japanese IME
+        https://bugs.webkit.org/show_bug.cgi?id=164369
+        <rdar://problem/29050439>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new test verifying that we dispatch `compositionend` events in various circumstances:
+            1. After composing in an editable area and then focusing another editable area.
+            2. After composing in an editable area and then blur()-ing.
+            3. After composing in an editable area and then changing the selection.
+
+        There should be no behavior change for other platforms, so no new tests are needed there with this change.
+
+        * fast/events/ime-compositionend-on-selection-change-expected.txt: Added.
+        * fast/events/ime-compositionend-on-selection-change.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up more transaction abort and exception throwing behavior from IDBObjectStore.

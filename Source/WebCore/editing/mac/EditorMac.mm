@@ -428,6 +428,15 @@ void Editor::fillInUserVisibleForm(PasteboardURL& pasteboardURL)
     pasteboardURL.userVisibleForm = client()->userVisibleString(pasteboardURL.url);
 }
 
+void Editor::selectionWillChange()
+{
+    if (!hasComposition() || ignoreCompositionSelectionChange() || m_frame.selection().isNone())
+        return;
+
+    cancelComposition();
+    client()->canceledComposition();
+}
+
 String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 {
     String string = text.text;

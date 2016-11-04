@@ -3244,6 +3244,12 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
     document().markers().repaintMarkers(DocumentMarker::TextMatch);
 }
 
+#if !PLATFORM(MAC)
+void Editor::selectionWillChange()
+{
+}
+#endif
+
 void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::SetSelectionOptions options)
 {
 #if PLATFORM(IOS)

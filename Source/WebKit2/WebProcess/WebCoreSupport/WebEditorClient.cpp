@@ -211,6 +211,11 @@ void WebEditorClient::discardedComposition(Frame*)
     m_page->discardedComposition();
 }
 
+void WebEditorClient::canceledComposition()
+{
+    m_page->canceledComposition();
+}
+
 void WebEditorClient::didEndEditing()
 {
     static NeverDestroyed<String> WebViewDidEndEditingNotification(ASCIILiteral("WebViewDidEndEditingNotification"));

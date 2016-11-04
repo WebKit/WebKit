@@ -4898,7 +4898,7 @@ void WebPage::didChangeSelection()
     // FIXME: We can't cancel composition when selection changes to NoSelection, but we probably should.
     if (frame.editor().hasComposition() && !frame.editor().ignoreCompositionSelectionChange() && !frame.selection().isNone()) {
         frame.editor().cancelComposition();
-        send(Messages::WebPageProxy::CompositionWasCanceled(editorState));
+        discardedComposition();
     } else
         send(Messages::WebPageProxy::EditorStateChanged(editorState));
 #else
@@ -4983,7 +4983,13 @@ void WebPage::sendPostLayoutEditorStateIfNeeded()
 
 void WebPage::discardedComposition()
 {
-    send(Messages::WebPageProxy::CompositionWasCanceled(editorState()));
+    send(Messages::WebPageProxy::CompositionWasCanceled());
+    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+}
+
+void WebPage::canceledComposition()
+{
+    send(Messages::WebPageProxy::CompositionWasCanceled());
 }
 
 void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)

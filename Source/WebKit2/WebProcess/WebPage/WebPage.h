@@ -659,6 +659,7 @@ public:
     void didApplyStyle();
     void didChangeSelection();
     void discardedComposition();
+    void canceledComposition();
 
 #if PLATFORM(COCOA)
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);

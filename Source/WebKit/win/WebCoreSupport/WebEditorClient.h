@@ -58,6 +58,7 @@ public:
     virtual void respondToChangedSelection(WebCore::Frame*);
     void didChangeSelectionAndUpdateLayout() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { } 
+    void canceledComposition() final;
     void discardedComposition(WebCore::Frame*) final;
 
     bool shouldDeleteRange(WebCore::Range*);

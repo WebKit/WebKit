@@ -4379,12 +4379,11 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
     count = m_backForwardList->forwardListCount();
 }
 
-void WebPageProxy::compositionWasCanceled(const EditorState& editorState)
+void WebPageProxy::compositionWasCanceled()
 {
 #if PLATFORM(COCOA)
     m_pageClient.notifyInputContextAboutDiscardedComposition();
 #endif
-    editorStateChanged(editorState);
 }
 
 // Undo management

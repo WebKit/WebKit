@@ -305,13 +305,17 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
         clearTypingStyle();
 
     VisibleSelection oldSelection = m_selection;
+    bool didMutateSelection = oldSelection != newSelection;
+    if (didMutateSelection)
+        m_frame->editor().selectionWillChange();
+
     m_selection = newSelection;
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
         textControl->selectionChanged(options & FireSelectEvent);
 
-    if (oldSelection == newSelection)
+    if (!didMutateSelection)
         return false;
 
     setCaretRectNeedsUpdate();

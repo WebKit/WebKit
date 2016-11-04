@@ -113,6 +113,7 @@ private:
     void didChangeSelectionAndUpdateLayout() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
     void discardedComposition(WebCore::Frame*) final;
+    void canceledComposition() final;
 
     void registerUndoStep(PassRefPtr<WebCore::UndoStep>) final;
     void registerRedoStep(PassRefPtr<WebCore::UndoStep>) final;
