@@ -65,6 +65,8 @@ private:
 
     bool WARN_UNUSED_RETURN popExpressionStack(ExpressionType& result);
 
+    void setErrorMessage(String&& message) { m_context.setErrorMessage(WTFMove(message)); }
+
     Context& m_context;
     ExpressionList m_expressionStack;
     Vector<ControlEntry> m_controlStack;
@@ -345,7 +347,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Else: {
         if (!m_controlStack.size()) {
-            m_context.setErrorMessage("Attempted to use else block at the top-level of a function");
+            setErrorMessage("Attempted to use else block at the top-level of a function");
             return false;
         }
 
@@ -373,6 +375,44 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.addBranch(data, condition, m_expressionStack);
     }
 
+    case OpType::BrTable: {
+        uint32_t numberOfTargets;
+        if (!parseVarUInt32(numberOfTargets))
+            return false;
+
+        Vector<ControlType*> targets;
+        if (!targets.tryReserveCapacity(numberOfTargets))
+            return false;
+
+        for (uint32_t i = 0; i < numberOfTargets; ++i) {
+            uint32_t target;
+            if (!parseVarUInt32(target))
+                return false;
+
+            if (target >= m_controlStack.size())
+                return false;
+
+            targets.uncheckedAppend(&m_controlStack[m_controlStack.size() - 1 - target].controlData);
+        }
+
+        uint32_t defaultTarget;
+        if (!parseVarUInt32(defaultTarget))
+            return false;
+
+        if (defaultTarget >= m_controlStack.size())
+            return false;
+
+        ExpressionType condition;
+        if (!popExpressionStack(condition))
+            return false;
+        
+        if (!m_context.addSwitch(condition, targets, m_controlStack[m_controlStack.size() - 1 - defaultTarget].controlData, m_expressionStack))
+            return false;
+
+        m_unreachableBlocks = 1;
+        return true;
+    }
+
     case OpType::Return: {
         return addReturn();
     }
@@ -394,7 +434,6 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::Select:
-    case OpType::BrTable:
     case OpType::Nop:
     case OpType::Drop:
     case OpType::TeeLocal:
@@ -453,7 +492,6 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
     }
 
     // one immediate cases
-    case OpType::Return:
     case OpType::F32Const:
     case OpType::I32Const:
     case OpType::F64Const:
@@ -478,7 +516,7 @@ bool FunctionParser<Context>::popExpressionStack(ExpressionType& result)
         return true;
     }
 
-    m_context.setErrorMessage("Attempted to use a stack value when none existed");
+    setErrorMessage("Attempted to use a stack value when none existed");
     return false;
 }
 

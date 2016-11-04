@@ -1,3 +1,31 @@
+2016-11-04  Keith Miller  <keith_miller@apple.com>
+
+        Add support for Wasm br_table
+        https://bugs.webkit.org/show_bug.cgi?id=164429
+
+        Reviewed by Michael Saboff.
+
+        This patch adds support for Wasm br_table. The Wasm br_table
+        opcode essentially directly maps to B3's switch opcode.
+
+        There are also three other minor changes:
+        1) all non-argument locals should be initialized to zero at function entry.
+        2) add new setErrorMessage member to WasmFunctionParser.h
+        3) return does not decode an extra immediate anymore.
+
+        * testWasm.cpp:
+        (runWasmTests):
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::setErrorMessage):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        (JSC::Wasm::FunctionParser<Context>::popExpressionStack):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::checkBranchTarget):
+        (JSC::Wasm::Validate::addBranch):
+        (JSC::Wasm::Validate::addSwitch):
+
 2016-11-04  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: implement more sections

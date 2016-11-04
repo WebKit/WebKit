@@ -296,6 +296,126 @@ static void runWasmTests()
     {
         // Generated from:
         //    (module
+        //     (func (export "br_table-with-loop") (param $x i32) (result i32)
+        //      (local $i i32)
+        //      (loop
+        //       (block
+        //        (get_local $x)
+        //        (set_local $i (i32.add (get_local $i) (i32.const 1)))
+        //        (set_local $x (i32.sub (get_local $x) (i32.const 1)))
+        //        (br_table 0 1)
+        //        )
+        //       )
+        //      (get_local $i)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x86, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x07, 0x96, 0x80, 0x80,
+            0x80, 0x00, 0x01, 0x12, 0x62, 0x72, 0x5f, 0x74, 0x61, 0x62, 0x6c, 0x65, 0x2d, 0x77, 0x69, 0x74,
+            0x68, 0x2d, 0x6c, 0x6f, 0x6f, 0x70, 0x00, 0x00, 0x0a, 0xa6, 0x80, 0x80, 0x80, 0x00, 0x01, 0xa0,
+            0x80, 0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x02, 0x00, 0x01, 0x00, 0x14, 0x00, 0x14, 0x01, 0x10,
+            0x01, 0x40, 0x15, 0x01, 0x14, 0x00, 0x10, 0x01, 0x41, 0x15, 0x00, 0x08, 0x01, 0x00, 0x01, 0x0f,
+            0x0f, 0x14, 0x01, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        checkPlan(plan, 1);
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(0) }), 1);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(1) }), 2);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(100) }), 101);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(122) }), 123);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (func (export "multiple-value") (param i32) (result i32)
+        //      (local i32)
+        //      (set_local 1 (block i32
+        //        (set_local 1 (block i32
+        //          (set_local 1 (block i32
+        //            (set_local 1 (block i32
+        //              (set_local 1 (block i32
+        //                (br_table 3 2 1 0 4 (i32.const 200) (get_local 0))
+        //                (return (i32.add (get_local 1) (i32.const 99)))
+        //                ))
+        //              (return (i32.add (get_local 1) (i32.const 10)))
+        //              ))
+        //            (return (i32.add (get_local 1) (i32.const 11)))
+        //            ))
+        //          (return (i32.add (get_local 1) (i32.const 12)))
+        //          ))
+        //        (return (i32.add (get_local 1) (i32.const 13)))
+        //        ))
+        //      (i32.add (get_local 1) (i32.const 14))
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x86, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x07, 0x92, 0x80, 0x80,
+            0x80, 0x00, 0x01, 0x0e, 0x6d, 0x75, 0x6c, 0x74, 0x69, 0x70, 0x6c, 0x65, 0x2d, 0x76, 0x61, 0x6c,
+            0x75, 0x65, 0x00, 0x00, 0x0a, 0xd3, 0x80, 0x80, 0x80, 0x00, 0x01, 0xcd, 0x80, 0x80, 0x80, 0x00,
+            0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x10, 0xc8, 0x01,
+            0x14, 0x00, 0x08, 0x04, 0x03, 0x02, 0x01, 0x00, 0x04, 0x14, 0x01, 0x10, 0xe3, 0x00, 0x40, 0x09,
+            0x0f, 0x15, 0x01, 0x14, 0x01, 0x10, 0x0a, 0x40, 0x09, 0x0f, 0x15, 0x01, 0x14, 0x01, 0x10, 0x0b,
+            0x40, 0x09, 0x0f, 0x15, 0x01, 0x14, 0x01, 0x10, 0x0c, 0x40, 0x09, 0x0f, 0x15, 0x01, 0x14, 0x01,
+            0x10, 0x0d, 0x40, 0x09, 0x0f, 0x15, 0x01, 0x14, 0x01, 0x10, 0x0e, 0x40, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        checkPlan(plan, 1);
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(0) }), 213);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(1) }), 212);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(2) }), 211);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(3) }), 210);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(3) }), 210);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(4) }), 214);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(5) }), 214);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(-1) }), 214);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(-1000) }), 214);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (func (export "singleton") (param i32) (result i32)
+        //      (block
+        //       (block
+        //        (br_table 1 0 (get_local 0))
+        //        (return (i32.const 21))
+        //        )
+        //       (return (i32.const 20))
+        //       )
+        //      (i32.const 22)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x86, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x07, 0x8d, 0x80, 0x80,
+            0x80, 0x00, 0x01, 0x09, 0x73, 0x69, 0x6e, 0x67, 0x6c, 0x65, 0x74, 0x6f, 0x6e, 0x00, 0x00, 0x0a,
+            0x9c, 0x80, 0x80, 0x80, 0x00, 0x01, 0x96, 0x80, 0x80, 0x80, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+            0x14, 0x00, 0x08, 0x01, 0x01, 0x00, 0x10, 0x15, 0x09, 0x0f, 0x10, 0x14, 0x09, 0x0f, 0x10, 0x16,
+            0x0f
+        };
+
+        Plan plan(*vm, vector);
+        checkPlan(plan, 1);
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(0) }), 22);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(1) }), 20);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(11) }), 20);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(-100) }), 20);
+    }
+
+    {
+        // Generated from:
+        //    (module
         //     (func (export "if-then-both-fallthrough") (param $x i32) (param $y i32) (result i32)
         //      (block $block i32
         //       (if i32 (i32.eq (get_local $x) (i32.const 0))
@@ -320,8 +440,8 @@ static void runWasmTests()
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
-        CHECK(isIdentical(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { boxf(0), boxf(32) }), 1));
-        CHECK(isIdentical(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { boxf(1), boxf(32) }), 2));
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(0), box(32) }), 1);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(1), box(32) }), 2);
     }
 
     {
@@ -347,8 +467,8 @@ static void runWasmTests()
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
-        CHECK(isIdentical(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { boxf(0), boxf(32) }), 1));
-        CHECK(isIdentical(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { boxf(1), boxf(32) }), 2));
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(0), box(32) }), 1);
+        CHECK_EQ(invoke<int>(*plan.compiledFunction(0)->jsEntryPoint, { box(1), box(32) }), 2);
     }
 
     {

@@ -102,7 +102,8 @@ public:
     bool WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
-    bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
+    bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& expressionStack);
+    bool WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
@@ -121,6 +122,8 @@ public:
 private:
     bool unify(Type, Type);
     bool unify(const ExpressionList&, const ControlData&);
+
+    bool checkBranchTarget(ControlData& target, const ExpressionList& expressionStack);
 
     ExpressionType m_returnType;
     Vector<Type> m_locals;
@@ -223,26 +226,52 @@ bool Validate::addReturn(const ExpressionList& returnValues)
     return false;
 }
 
+bool Validate::checkBranchTarget(ControlType& target, const ExpressionList& expressionStack)
+    {
+        if (target.type() == BlockType::Loop)
+            return true;
+
+        if (target.signature() == Void)
+            return true;
+
+        if (!expressionStack.size()) {
+            m_errorMessage = makeString("Attempting to branch to block with expected type: ", toString(target.signature()), " but the stack was empty");
+            return false;
+        }
+
+        if (target.signature() == expressionStack.last())
+            return true;
+
+        m_errorMessage = makeString("Attempting to branch to block with expected type: ", toString(target.signature()), " but stack has type: ", toString(target.signature()));
+        return false;
+    }
+
 bool Validate::addBranch(ControlType& target, ExpressionType condition, const ExpressionList& stack)
 {
-    // Void means this is not a conditional branch.
+    // Void means this is an unconditional branch.
     if (condition != Void && condition != I32) {
         m_errorMessage = makeString("Attempting to add a conditional branch with condition type: ", toString(condition), " but expected i32.");
         return false;
     }
 
-    if (target.type() == BlockType::Loop)
-        return true;
+    return checkBranchTarget(target, stack);
+}
 
-    if (target.signature() == Void)
-        return true;
+bool Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack)
+{
+    if (condition != I32) {
+        m_errorMessage = makeString("Attempting to add a br_table with condition type: ", toString(condition), " but expected i32.");
+        return false;
+    }
 
-    ASSERT(stack.size() == 1);
-    if (target.signature() == stack[0])
-        return true;
+    for (auto target : targets) {
+        if (defaultTarget.signature() != target->signature()) {
+            m_errorMessage = makeString("Attempting to add a br_table with different expected types. Default target has type: ", toString(defaultTarget.signature()), " but case has type: ", toString(target->signature()));
+            return false;
+        }
+    }
 
-    m_errorMessage = makeString("Attempting to branch to block with expected type: ", toString(target.signature()), " but branching with type: ", toString(target.signature()));
-    return false;
+    return checkBranchTarget(defaultTarget, expressionStack);
 }
 
 bool Validate::endBlock(ControlEntry& entry, ExpressionList& stack)

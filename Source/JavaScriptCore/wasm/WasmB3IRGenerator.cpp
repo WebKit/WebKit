@@ -32,6 +32,7 @@
 #include "B3ConstPtrValue.h"
 #include "B3FixSSA.h"
 #include "B3StackmapGenerationParams.h"
+#include "B3SwitchValue.h"
 #include "B3Validate.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
@@ -175,6 +176,7 @@ public:
 
     bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
     bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
+    bool WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
@@ -191,6 +193,7 @@ private:
 
     void unify(Variable* target, const ExpressionType source);
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
+    Value* zeroForType(Type);
 
     Memory* m_memory;
     Procedure& m_proc;
@@ -200,6 +203,7 @@ private:
     Vector<UnlinkedCall>& m_unlinkedCalls;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
+    Value* m_zeroValues[Type::LastValueType];
 };
 
 B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<UnlinkedCall>& unlinkedCalls)
@@ -208,6 +212,9 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
     , m_unlinkedCalls(unlinkedCalls)
 {
     m_currentBlock = m_proc.addBlock();
+
+    for (unsigned i = 0; i < Type::LastValueType; ++i)
+        m_zeroValues[i] = m_currentBlock->appendIntConstant(m_proc, Origin(), toB3Type(static_cast<Type>(i + 1)), 0);
 
     if (m_memory) {
         m_memoryBaseGPR = m_memory->pinnedRegisters().baseMemoryPointer;
@@ -225,13 +232,22 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
     }
 }
 
+Value* B3IRGenerator::zeroForType(Type type)
+{
+    ASSERT(type != Void);
+    return m_zeroValues[type - 1];
+}
+
 bool B3IRGenerator::addLocal(Type type, uint32_t count)
 {
     if (!m_locals.tryReserveCapacity(m_locals.size() + count))
         return false;
 
-    for (uint32_t i = 0; i < count; ++i)
-        m_locals.uncheckedAppend(m_proc.addVariable(toB3Type(type)));
+    for (uint32_t i = 0; i < count; ++i) {
+        Variable* local = m_proc.addVariable(toB3Type(type));
+        m_locals.uncheckedAppend(local);
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, zeroForType(type));
+    }
     return true;
 }
 
@@ -541,6 +557,20 @@ bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
         m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), FrequentedBlock(target));
         target->addPredecessor(m_currentBlock);
     }
+
+    return true;
+}
+
+bool B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack)
+{
+    for (size_t i = 0; i < targets.size(); ++i)
+        unifyValuesWithBlock(expressionStack, targets[i]->result);
+    unifyValuesWithBlock(expressionStack, defaultTarget.result);
+
+    SwitchValue* switchValue = m_currentBlock->appendNew<SwitchValue>(m_proc, Origin(), condition);
+    switchValue->setFallThrough(FrequentedBlock(defaultTarget.targetBlockForBranch()));
+    for (size_t i = 0; i < targets.size(); ++i)
+        switchValue->appendCase(SwitchCase(i, FrequentedBlock(targets[i]->targetBlockForBranch())));
 
     return true;
 }
