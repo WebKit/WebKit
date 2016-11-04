@@ -343,7 +343,7 @@ void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, Graphi
     RetainPtr<CGImageRef> image = IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTFMove(imageBuffer)));
     
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(resolutionScale, resolutionScale);
+    adjustedSrcRect.scale(resolutionScale);
     destContext.drawNativeImage(image.get(), backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
 #else
     imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
@@ -359,14 +359,14 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
         image = copyNativeImage(DontCopyBackingStore);
 
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
+    adjustedSrcRect.scale(m_resolutionScale);
     destContext.drawNativeImage(image.get(), m_data.backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
+    adjustedSrcRect.scale(m_resolutionScale);
 
     if (!context().isAcceleratedContext()) {
         if (&destContext == &context() || destContext.isAcceleratedContext()) {

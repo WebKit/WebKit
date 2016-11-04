@@ -105,20 +105,20 @@ void TileCoverageMap::update()
     float indicatorScale = scale * m_controller.tileGrid().scale();
 
     FloatRect mapBounds = containerBounds;
-    mapBounds.scale(indicatorScale, indicatorScale);
+    mapBounds.scale(indicatorScale);
 
     m_layer.get().setPosition(m_position + FloatPoint(2, 2));
     m_layer.get().setBounds(mapBounds);
     m_layer.get().setNeedsDisplay();
 
-    visibleRect.scale(indicatorScale, indicatorScale);
+    visibleRect.scale(indicatorScale);
     visibleRect.expand(2, 2);
     m_visibleViewportIndicatorLayer->setPosition(visibleRect.location());
     m_visibleViewportIndicatorLayer->setBounds(FloatRect(FloatPoint(), visibleRect.size()));
 
     if (auto layoutViewportRect = m_controller.layoutViewportRect()) {
         FloatRect layoutRect = layoutViewportRect.value();
-        layoutRect.scale(indicatorScale, indicatorScale);
+        layoutRect.scale(indicatorScale);
         layoutRect.expand(2, 2);
         m_layoutViewportIndicatorLayer->setPosition(layoutRect.location());
         m_layoutViewportIndicatorLayer->setBounds(FloatRect(FloatPoint(), layoutRect.size()));
@@ -128,7 +128,7 @@ void TileCoverageMap::update()
     } else if (m_layoutViewportIndicatorLayer->superlayer())
         m_layoutViewportIndicatorLayer->removeFromSuperlayer();
 
-    coverageRect.scale(indicatorScale, indicatorScale);
+    coverageRect.scale(indicatorScale);
     coverageRect.expand(2, 2);
     m_coverageRectIndicatorLayer->setPosition(coverageRect.location());
     m_coverageRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), coverageRect.size()));

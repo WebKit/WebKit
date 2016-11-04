@@ -126,6 +126,11 @@ public:
         m_p3.move(dx, dy);
         m_p4.move(dx, dy);
     }
+    
+    void scale(float s)
+    {
+        scale(s, s);
+    }
 
     void scale(float dx, float dy)
     {

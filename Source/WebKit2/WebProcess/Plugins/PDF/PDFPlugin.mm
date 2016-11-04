@@ -1592,7 +1592,7 @@ void PDFPlugin::scrollToPoint(IntPoint scrollPoint)
 {
     Frame* frame = pluginView()->frame();
     float scale = frame->page()->pageScaleFactor();
-    scrollPoint.scale(scale, scale);
+    scrollPoint.scale(scale);
     frame->view()->scrollToOffsetWithoutAnimation(scrollPoint);
 }
 

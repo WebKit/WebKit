@@ -280,7 +280,7 @@ FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 
         tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
         float scale = 1 / m_webPageProxy.pageScaleFactor();
-        tiledMapLocation.scale(scale, scale);
+        tiledMapLocation.scale(scale);
 #endif
         return tiledMapLocation;
     }
@@ -349,7 +349,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
         if (viewExposedRect())
             scaledExposedRect = viewExposedRect().value();
         float scale = 1 / m_webPageProxy.pageScaleFactor();
-        scaledExposedRect.scale(scale, scale);
+        scaledExposedRect.scale(scale);
 #endif
         [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
         [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];

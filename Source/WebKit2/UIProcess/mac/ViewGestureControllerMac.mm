@@ -117,7 +117,7 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
     FloatPoint scaledMagnificationOrigin(origin);
     scaledMagnificationOrigin.moveBy(m_visibleContentRect.location());
     float magnificationOriginScale = 1 - (scale / m_webPageProxy.pageScaleFactor());
-    scaledMagnificationOrigin.scale(magnificationOriginScale, magnificationOriginScale);
+    scaledMagnificationOrigin.scale(magnificationOriginScale);
     return scaledMagnificationOrigin;
 }
 

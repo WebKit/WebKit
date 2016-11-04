@@ -55,6 +55,13 @@ public:
     void move(const LayoutSize& s) { move(s.width(), s.height()); } 
     void moveBy(const LayoutPoint& offset) { move(offset.x(), offset.y()); }
     void move(LayoutUnit dx, LayoutUnit dy) { m_x += dx; m_y += dy; }
+    
+    void scale(float s)
+    {
+        m_x *= s;
+        m_y *= s;
+    }
+    
     void scale(float sx, float sy)
     {
         m_x *= sx;

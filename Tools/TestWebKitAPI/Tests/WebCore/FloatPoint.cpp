@@ -289,10 +289,15 @@ TEST(FloatPoint, Scale)
     EXPECT_FLOAT_EQ(100.0f, test.x());
     EXPECT_FLOAT_EQ(200.0f, test.y());
 
+    test.scale(2);
+
+    EXPECT_FLOAT_EQ(200.0f, test.x());
+    EXPECT_FLOAT_EQ(400.0f, test.y());
+
     test.scale(1.0f, 0.5f);
 
-    EXPECT_FLOAT_EQ(100.0f, test.x());
-    EXPECT_FLOAT_EQ(100.0f, test.y());
+    EXPECT_FLOAT_EQ(200.0f, test.x());
+    EXPECT_FLOAT_EQ(200.0f, test.y());
 }
 
 TEST(FloatPoint, Normalize)

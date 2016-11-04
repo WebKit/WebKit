@@ -1021,7 +1021,7 @@ void GraphicsContext::platformApplyDeviceScaleFactor(float)
 
 void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
 {
-    scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    scale(deviceScaleFactor);
 
     if (isRecording()) {
         m_displayListRecorder->applyDeviceScaleFactor(deviceScaleFactor);

@@ -759,7 +759,7 @@ RefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.
-    context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
+    context->scale(contentsScaleFactor());
 
     platformPaint(*context, IntRect(IntPoint(), m_pluginSize), true);
 

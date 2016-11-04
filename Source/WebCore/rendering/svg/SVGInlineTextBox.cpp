@@ -118,7 +118,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     const FontMetrics& scaledFontMetrics = scaledFont.fontMetrics();
     FloatPoint textOrigin(fragment.x, fragment.y);
     if (scalingFactor != 1)
-        textOrigin.scale(scalingFactor, scalingFactor);
+        textOrigin.scale(scalingFactor);
 
     textOrigin.move(0, -scaledFontMetrics.floatAscent());
 
@@ -527,8 +527,8 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, TextDe
     GraphicsContextStateSaver stateSaver(context);
     if (scalingFactor != 1) {
         width *= scalingFactor;
-        decorationOrigin.scale(scalingFactor, scalingFactor);
-        context.scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
+        decorationOrigin.scale(scalingFactor);
+        context.scale(1 / scalingFactor);
     }
 
     decorationOrigin.move(0, -scaledFontMetrics.floatAscent() + positionOffsetForDecoration(decoration, scaledFontMetrics, thickness));
@@ -553,7 +553,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
     FloatSize textSize(fragment.width, fragment.height);
 
     if (scalingFactor != 1) {
-        textOrigin.scale(scalingFactor, scalingFactor);
+        textOrigin.scale(scalingFactor);
         textSize.scale(scalingFactor);
     }
 
@@ -569,7 +569,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
 
             if (!shadowApplier.didSaveContext())
                 usedContext->save();
-            usedContext->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
+            usedContext->scale(1 / scalingFactor);
 
             scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 

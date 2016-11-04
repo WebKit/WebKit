@@ -345,7 +345,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         context.fillRect(scaledLayerBounds, Color(255, 0, 0));
 #endif
 
-    context.scale(FloatSize(m_scale, m_scale));
+    context.scale(m_scale);
 
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {

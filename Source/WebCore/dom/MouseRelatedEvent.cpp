@@ -94,8 +94,8 @@ void MouseRelatedEvent::init(bool isSimulated, const IntPoint& windowLocation)
             adjustedPageLocation = frameView->windowToContents(windowLocation);
             float scaleFactor = 1 / (frame->pageZoomFactor() * frame->frameScaleFactor());
             if (scaleFactor != 1.0f) {
-                adjustedPageLocation.scale(scaleFactor, scaleFactor);
-                scrollPosition.scale(scaleFactor, scaleFactor);
+                adjustedPageLocation.scale(scaleFactor);
+                scrollPosition.scale(scaleFactor);
             }
         }
     }
@@ -182,7 +182,7 @@ void MouseRelatedEvent::computeRelativePosition()
         m_offsetLocation = LayoutPoint(r->absoluteToLocal(absoluteLocation(), UseTransforms));
         float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
         if (scaleFactor != 1.0f)
-            m_offsetLocation.scale(scaleFactor, scaleFactor);
+            m_offsetLocation.scale(scaleFactor);
     }
 
     // Adjust layerLocation to be relative to the layer.

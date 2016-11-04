@@ -179,7 +179,7 @@ bool SVGPathParser::parseCurveToCubicSmoothSegment()
 
     if (m_pathParsingMode == NormalizedParsing) {
         FloatPoint point1 = m_currentPoint;
-        point1.scale(2, 2);
+        point1.scale(2);
         point1.move(-m_controlPoint.x(), -m_controlPoint.y());
         if (m_mode == RelativeCoordinates) {
             point2 += m_currentPoint;
@@ -212,8 +212,8 @@ bool SVGPathParser::parseCurveToQuadraticSegment()
             point2.move(3 * m_currentPoint.x(), 3 * m_currentPoint.y());
             targetPoint += m_currentPoint;
         }
-        point1.scale(gOneOverThree, gOneOverThree);
-        point2.scale(gOneOverThree, gOneOverThree);
+        point1.scale(gOneOverThree);
+        point2.scale(gOneOverThree);
 
         m_consumer.curveToCubic(point1, point2, targetPoint, AbsoluteCoordinates);
 
@@ -239,7 +239,7 @@ bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
 
     if (m_pathParsingMode == NormalizedParsing) {
         FloatPoint cubicPoint = m_currentPoint;
-        cubicPoint.scale(2, 2);
+        cubicPoint.scale(2);
         cubicPoint.move(-m_controlPoint.x(), -m_controlPoint.y());
         FloatPoint point1(m_currentPoint.x() + 2 * cubicPoint.x(), m_currentPoint.y() + 2 * cubicPoint.y());
         FloatPoint point2(targetPoint.x() + 2 * cubicPoint.x(), targetPoint.y() + 2 * cubicPoint.y());
@@ -247,8 +247,8 @@ bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
             point2 += m_currentPoint;
             targetPoint += m_currentPoint;
         }
-        point1.scale(gOneOverThree, gOneOverThree);
-        point2.scale(gOneOverThree, gOneOverThree);
+        point1.scale(gOneOverThree);
+        point2.scale(gOneOverThree);
 
         m_consumer.curveToCubic(point1, point2, targetPoint, AbsoluteCoordinates);
 
@@ -461,7 +461,7 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, FloatPo
 
     delta.scale(scaleFactor);
     FloatPoint centerPoint = point1 + point2;
-    centerPoint.scale(0.5f, 0.5f);
+    centerPoint.scale(0.5f);
     centerPoint.move(-delta.height(), delta.width());
 
     float theta1 = FloatPoint(point1 - centerPoint).slopeAngleRadians();

@@ -840,7 +840,7 @@ PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     // if we're compositing this image onto a solid color (e.g. the modern find indicator style).
     auto graphicsContext = sharedSnapshot->createGraphicsContext();
     float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
-    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    graphicsContext->scale(deviceScaleFactor);
     graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());
 
     return WTFMove(sharedSnapshot);

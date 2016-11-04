@@ -6460,9 +6460,9 @@ void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<Floa
     for (auto& quad : quads) {
         quad.move(-visibleContentRect.x(), -visibleContentRect.y());
         if (zoom != 1)
-            quad.scale(1 / zoom, 1 / zoom);
+            quad.scale(1 / zoom);
         if (inverseFrameScale != 1)
-            quad.scale(inverseFrameScale, inverseFrameScale);
+            quad.scale(inverseFrameScale);
     }
 }
 

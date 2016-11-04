@@ -188,7 +188,7 @@ void PluginControllerProxy::paint()
 #if PLATFORM(COCOA)
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.
-    graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
+    graphicsContext->scale(m_contentsScaleFactor);
 #endif
 
     if (m_plugin->isTransparent())

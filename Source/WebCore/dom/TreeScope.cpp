@@ -284,7 +284,7 @@ Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* loca
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
 
     LayoutPoint contentsPoint = clientPoint;
-    contentsPoint.scale(scaleFactor, scaleFactor);
+    contentsPoint.scale(scaleFactor);
     contentsPoint.moveBy(view->contentsScrollPosition());
 
     LayoutRect visibleRect;

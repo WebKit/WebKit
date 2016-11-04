@@ -463,6 +463,10 @@ public:
     void canvasClip(const Path&, WindRule = RULE_EVENODD);
     void clipOut(const Path&);
 
+    void scale(float s)
+    {
+        scale({ s, s });
+    }
     WEBCORE_EXPORT void scale(const FloatSize&);
     void rotate(float angleInRadians);
     void translate(const FloatSize& size) { translate(size.width(), size.height()); }

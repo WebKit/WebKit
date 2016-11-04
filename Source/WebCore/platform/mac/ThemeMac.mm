@@ -411,7 +411,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
         inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
         context.translate(inflatedRect.x(), inflatedRect.y());
-        context.scale(FloatSize(zoomFactor, zoomFactor));
+        context.scale(zoomFactor);
         context.translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
@@ -539,7 +539,7 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
             inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
             inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
             context.translate(inflatedRect.x(), inflatedRect.y());
-            context.scale(FloatSize(zoomFactor, zoomFactor));
+            context.scale(zoomFactor);
             context.translate(-inflatedRect.x(), -inflatedRect.y());
         }
     }
@@ -616,7 +616,7 @@ static void paintStepper(ControlStates& states, GraphicsContext& context, const 
         rect.setWidth(rect.width() / zoomFactor);
         rect.setHeight(rect.height() / zoomFactor);
         context.translate(rect.x(), rect.y());
-        context.scale(FloatSize(zoomFactor, zoomFactor));
+        context.scale(zoomFactor);
         context.translate(-rect.x(), -rect.y());
     }
     CGRect bounds(rect);

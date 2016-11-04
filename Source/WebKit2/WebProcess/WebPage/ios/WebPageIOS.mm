@@ -299,7 +299,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
             newCenter = FloatRect(historyItem.unobscuredContentRect()).center();
 
         FloatSize unobscuredRectAtNewScale = frameView.customSizeForResizeEvent();
-        unobscuredRectAtNewScale.scale(1 / newScale, 1 / newScale);
+        unobscuredRectAtNewScale.scale(1 / newScale);
 
         FloatRect oldExposedRect = frameView.exposedContentRect();
         FloatRect adjustedExposedRect = adjustExposedRectForNewScale(oldExposedRect, m_page->pageScaleFactor(), newScale);

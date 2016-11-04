@@ -76,36 +76,49 @@ public:
 
     void setX(float x) { m_x = x; }
     void setY(float y) { m_y = y; }
+
     void set(float x, float y)
     {
         m_x = x;
         m_y = y;
     }
+
     void move(float dx, float dy)
     {
         m_x += dx;
         m_y += dy;
     }
+
     void move(const IntSize& a)
     {
         m_x += a.width();
         m_y += a.height();
     }
+
     void move(const FloatSize& a)
     {
         m_x += a.width();
         m_y += a.height();
     }
+
     void moveBy(const IntPoint& a)
     {
         m_x += a.x();
         m_y += a.y();
     }
+
     void moveBy(const FloatPoint& a)
     {
         m_x += a.x();
         m_y += a.y();
     }
+
+    void scale(float scale)
+    {
+        m_x *= scale;
+        m_y *= scale;
+    }
+
     void scale(float sx, float sy)
     {
         m_x *= sx;
@@ -121,6 +134,7 @@ public:
 
     float slopeAngleRadians() const;
     float length() const;
+
     float lengthSquared() const
     {
         return m_x * m_x + m_y * m_y;
