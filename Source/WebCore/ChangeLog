@@ -1,3 +1,16 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Handle IDBIndex rename behavior properly when version change transaction aborts.
+        https://bugs.webkit.org/show_bug.cgi?id=164403
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing test).
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::rollbackInfoForVersionChangeAbort): Only rollback the info if this index
+          already existed before this version change transaction.
+
 2016-11-03  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Introduce asynchronous backend createOffer API

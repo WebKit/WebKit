@@ -134,6 +134,15 @@ bool IDBIndex::multiEntry() const
 void IDBIndex::rollbackInfoForVersionChangeAbort()
 {
     ASSERT(currentThread() == m_objectStore.transaction().database().originThreadID());
+
+    // Only rollback to the original info if this index still exists in the rolled-back database info.
+    auto* objectStoreInfo = m_objectStore.transaction().database().info().infoForExistingObjectStore(m_objectStore.info().identifier());
+    if (!objectStoreInfo)
+        return;
+
+    if (!objectStoreInfo->hasIndex(m_info.identifier()))
+        return;
+
     m_info = m_originalInfo;
 }
 
