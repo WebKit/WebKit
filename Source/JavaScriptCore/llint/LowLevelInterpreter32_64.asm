@@ -490,13 +490,6 @@ macro loadConstantOrVariablePayloadUnchecked(index, payload)
         payload)
 end
 
-macro storeStructureWithTypeInfo(cell, structure, scratch)
-    storep structure, JSCell::m_structureID[cell]
-
-    loadi Structure::m_blob + StructureIDBlob::u.words.word2[structure], scratch
-    storei scratch, JSCell::m_indexingType[cell]
-end
-
 macro writeBarrierOnOperand(cellOperand)
     loadisFromInstruction(cellOperand, t1)
     loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
@@ -1568,6 +1561,12 @@ _llint_op_put_by_id:
 
 .opPutByIdTransitionDirect:
     storei t1, JSCell::m_structureID[t0]
+    loadi 12[PC], t1
+    loadConstantOrVariable(t1, t2, t3)
+    loadi 20[PC], t1
+    storePropertyAtVariableOffset(t1, t0, t2, t3)
+    writeBarrierOnOperand(1)
+    dispatch(9)
 
 .opPutByIdNotTransition:
     # The only thing live right now is t0, which holds the base.
