@@ -3749,7 +3749,7 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     if (!isLink())
         return nullptr;
 
-    const AtomicString& href = getAttribute(HTMLNames::hrefAttr);
+    const AtomicString& href = attributeWithoutSynchronization(HTMLNames::hrefAttr);
     if (href.isNull())
         return nullptr;
 

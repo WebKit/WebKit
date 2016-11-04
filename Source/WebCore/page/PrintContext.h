@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class Document;
 class Element;
 class Frame;
 class FloatRect;
@@ -101,8 +102,8 @@ protected:
 private:
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
     bool beginAndComputePageRectsWithPageSize(Frame&, const FloatSize& pageSizeInPixels);
-    void collectLinkedDestinations(Node&);
-    void outputLinkedDestinations(GraphicsContext&, Node*, const IntRect& pageRect);
+    void collectLinkedDestinations(Document&);
+    void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting { false };

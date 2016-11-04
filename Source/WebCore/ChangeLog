@@ -1,3 +1,21 @@
+2016-11-04  Tim Horton  <timothy_horton@apple.com>
+
+        Apply post-landing review comments for r208347
+
+        * dom/Element.cpp:
+        (WebCore::Element::findAnchorElementForLink):
+        Use attributeWithoutSynchronization.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::spoolPage):
+        (WebCore::PrintContext::spoolRect):
+        (WebCore::PrintContext::collectLinkedDestinations):
+        (WebCore::PrintContext::outputLinkedDestinations):
+        * page/PrintContext.h:
+        Pass Document by reference instead of Node by pointer,
+        use ElementTraversal instead of NodeTraversal to avoid
+        having to locally check the type, and null-check renderers.
+
 2016-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement WebGL2RenderingContext::copyBufferSubData()

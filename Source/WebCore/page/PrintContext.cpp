@@ -21,11 +21,11 @@
 #include "config.h"
 #include "PrintContext.h"
 
+#include "ElementTraversal.h"
 #include "GraphicsContext.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "NodeTraversal.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -191,7 +191,7 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
     ctx.translate(-pageRect.x(), -pageRect.y());
     ctx.clip(pageRect);
     m_frame->view()->paintContents(ctx, pageRect);
-    outputLinkedDestinations(ctx, m_frame->document(), pageRect);
+    outputLinkedDestinations(ctx, *m_frame->document(), pageRect);
     ctx.restore();
 }
 
@@ -202,7 +202,7 @@ void PrintContext::spoolRect(GraphicsContext& ctx, const IntRect& rect)
     ctx.translate(-rect.x(), -rect.y());
     ctx.clip(rect);
     m_frame->view()->paintContents(ctx, rect);
-    outputLinkedDestinations(ctx, m_frame->document(), rect);
+    outputLinkedDestinations(ctx, *m_frame->document(), rect);
     ctx.restore();
 }
 
@@ -250,30 +250,31 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     return -1;
 }
 
-void PrintContext::collectLinkedDestinations(Node& node)
+void PrintContext::collectLinkedDestinations(Document& document)
 {
-    for (Node* child = &node; child; child = NodeTraversal::next(*child)) {
-        if (!is<Element>(child))
-            continue;
-
+    for (Element* child = document.documentElement(); child; child = ElementTraversal::next(*child)) {
         String outAnchorName;
-        if (Element* element = downcast<Element>(child)->findAnchorElementForLink(outAnchorName))
-            m_linkedDestinations->set(outAnchorName, *element);
+        if (Element* element = child->findAnchorElementForLink(outAnchorName))
+            m_linkedDestinations->add(outAnchorName, *element);
     }
 }
 
-void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Node* node, const IntRect& pageRect)
+void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Document& document, const IntRect& pageRect)
 {
     if (!graphicsContext.supportsInternalLinks())
         return;
 
     if (!m_linkedDestinations) {
         m_linkedDestinations = std::make_unique<HashMap<String, Ref<Element>>>();
-        collectLinkedDestinations(*node);
+        collectLinkedDestinations(document);
     }
 
     for (const auto& it : *m_linkedDestinations) {
-        FloatPoint point = it.value->renderer()->anchorRect().minXMinYCorner();
+        RenderElement* renderer = it.value->renderer();
+        if (!renderer)
+            continue;
+
+        FloatPoint point = renderer->anchorRect().minXMinYCorner();
         point.expandedTo(FloatPoint());
 
         if (!pageRect.contains(roundedIntPoint(point)))
