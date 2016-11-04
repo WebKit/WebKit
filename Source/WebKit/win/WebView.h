@@ -87,7 +87,7 @@ interface ID2D1RenderTarget;
 
 class WebView 
     : public IWebView
-    , public IWebViewPrivate3
+    , public IWebViewPrivate4
     , public IWebIBActions
     , public IWebViewCSS
     , public IWebViewEditing
@@ -398,6 +398,9 @@ public:
     // IWebViewPrivate3
     HRESULT STDMETHODCALLTYPE layerTreeAsString(_Deref_opt_out_ BSTR*);
     HRESULT STDMETHODCALLTYPE findString(_In_ BSTR, WebFindOptions, _Deref_opt_out_ BOOL*);
+
+    // IWebViewPrivate4
+    HRESULT STDMETHODCALLTYPE setVisibilityState(WebPageVisibilityState);
 
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;

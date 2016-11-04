@@ -1312,12 +1312,36 @@ void TestRunner::setBackingScaleFactor(double)
 
 void TestRunner::resetPageVisibility()
 {
-    // FIXME: Implement this.
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate4> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    viewPrivate->setVisibilityState(WebPageVisibilityStateVisible);
 }
 
-void TestRunner::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char* newVisibility)
 {
-    // FIXME: Implement this.
+    if (!newVisibility)
+        return;
+
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate4> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    if (!strcmp(newVisibility, "visible"))
+        viewPrivate->setVisibilityState(WebPageVisibilityStateVisible);
+    else if (!strcmp(newVisibility, "hidden"))
+        viewPrivate->setVisibilityState(WebPageVisibilityStateHidden);
+    else if (!strcmp(newVisibility, "prerender"))
+        viewPrivate->setVisibilityState(WebPageVisibilityStatePrerender);
 }
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)

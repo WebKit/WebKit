@@ -336,3 +336,15 @@ interface IWebViewPrivate3 : IWebViewPrivate2
     HRESULT layerTreeAsString([out] BSTR*);
     HRESULT findString([in] BSTR, [in] WebFindOptions, [out] BOOL* found); 
 }
+
+typedef enum {
+    WebPageVisibilityStateVisible,
+    WebPageVisibilityStateHidden,
+    WebPageVisibilityStatePrerender
+} WebPageVisibilityState;
+
+[ uuid(793565B9-5168-4FF4-B841-1BE78DB1B1F8) ]
+interface IWebViewPrivate4 : IWebViewPrivate3
+{
+    HRESULT setVisibilityState([in] WebPageVisibilityState);
+}

@@ -2887,6 +2887,8 @@ HRESULT WebView::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
         *ppvObject = static_cast<IWebViewPrivate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewPrivate3))
         *ppvObject = static_cast<IWebViewPrivate3*>(this);
+    else if (IsEqualGUID(riid, IID_IWebViewPrivate4))
+        *ppvObject = static_cast<IWebViewPrivate4*>(this);
     else if (IsEqualGUID(riid, IID_IWebIBActions))
         *ppvObject = static_cast<IWebIBActions*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewCSS))
@@ -7792,5 +7794,18 @@ HRESULT WebView::findString(_In_ BSTR string, WebFindOptions options, _Deref_opt
         return E_POINTER;
 
     *found = m_page->findString(toString(string), options);
+    return S_OK;
+}
+
+HRESULT WebView::setVisibilityState(WebPageVisibilityState visibilityState)
+{
+    if (!m_page)
+        return E_FAIL;
+    
+    m_page->setIsVisible(visibilityState == WebPageVisibilityStateVisible);
+
+    if (visibilityState == WebPageVisibilityStatePrerender)
+        m_page->setIsPrerender();
+
     return S_OK;
 }
