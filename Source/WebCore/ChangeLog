@@ -1,3 +1,87 @@
+2016-11-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add the asynchronous image decoding mode
+        https://bugs.webkit.org/show_bug.cgi?id=155546
+
+        Reviewed by Simon Fraser.
+
+        The asynchronous image decoding feature targets enhancing the rendering
+        in two scenarios: the animated images and scrolling a page which large
+        images. Enabling this feature for these two scenarios will be landed
+        separately. 
+
+        The goal of the asynchronous image decoding is to have the decoded image
+        frame ready before it has to be drawn. Drawing an image does not have to
+        wait the image frame to be decoded.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameImageAtIndex): Use the negation of frameHasValidNativeImageAtIndex().
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::frameIsBeingDecodedAtIndex): Answers whether a frame is being decoded.
+        (WebCore::BitmapImage::frameHasValidNativeImageAtIndex): Checks the validity of a frame.
+        (WebCore::BitmapImage::frameHasInvalidNativeImageAtIndex): Deleted.
+        * platform/graphics/Image.h:
+        (WebCore::Image::newFrameNativeImageAvailableAtIndex): Notifies the image with the availability of a frame NativeImage.
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::isBeingDecoded): Answers whether the frame is being decoded.
+        (WebCore::ImageFrame::hasValidNativeImage): Checks the validity of the frame.
+        (WebCore::ImageFrame::hasInvalidNativeImage): Deleted.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::~ImageFrameCache): Asserts the decoding loop was ended before deleting the ImageFrameCache.
+        (WebCore::ImageFrameCache::setFrameNativeImageAtIndex): Rename this function to matches the other which take the frame index.
+        (WebCore::ImageFrameCache::setFrameMetadataAtIndex): Ditto.
+        (WebCore::ImageFrameCache::replaceFrameNativeImageAtIndex): It setts the ImageFrame's members and updates the decoded size.
+        (WebCore::ImageFrameCache::cacheFrameNativeImageAtIndex): Replaces the frame NativeImage and notifies the Image with the new frame.
+        (WebCore::ImageFrameCache::decodingQueue): Ensures the decoding WorkQueue is created and returns it.
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue): Starts a decoding WorkQueue which loops until m_frameRequestQueue is closed.
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Allows ImageSource to send a request to start asynchronous frame image decoding.
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue): Stops the decoding WorkQueue by closing m_frameRequestQueue.
+        (WebCore::ImageFrameCache::frameAtIndex): Call replaceFrameNativeImageAtIndex().
+        (WebCore::ImageFrameCache::frameIsBeingDecodedAtIndex): Returns true if a request for the image frame is issued but not finished yet.
+        (WebCore::ImageFrameCache::frameHasValidNativeImageAtIndex): Checks the validity of a frame.
+        (WebCore::ImageFrameCache::setFrameNativeImage): Deleted. Was renamed to be setFrameNativeImageAtIndex.
+        (WebCore::ImageFrameCache::setFrameMetadata): Deleted. Was renamed to be setFrameMetadataAtIndex
+        (WebCore::ImageFrameCache::frameHasInvalidNativeImageAtIndex): Deleted. Was renamed to be frameHasValidNativeImageAtIndex.
+        * platform/graphics/ImageFrameCache.h:
+        (WebCore::ImageFrameCache::create): The decoding queue needs to hold a reference to this class so it can stop decoding safely without blocking.
+        (WebCore::ImageFrameCache::hasDecodingQueue): Returns true if a decoding queue has started.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource): Call ImageFrameCache::create().
+        (WebCore::ImageSource::clear): Deleting the decoder is unnecessary for asynchronous decoding because ImageFrameCache manages all the memory.
+        
+        (WebCore::ImageSource::destroyDecodedData):
+        (WebCore::ImageSource::destroyDecodedDataIfNecessary):
+        (WebCore::ImageSource::ensureDecoderAvailable):
+        (WebCore::ImageSource::dataChanged):
+        (WebCore::ImageSource::isAllDataReceived):
+        (WebCore::ImageSource::isAsyncDecodingRequired): Answers the question whether the async image decoding is required for this ImageSource.
+        (WebCore::ImageSource::frameImageAtIndex):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::decodedSize):
+        (WebCore::ImageSource::requestFrameAsyncDecodingAtIndex):
+        (WebCore::ImageSource::stopAsyncDecodingQueue):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::filenameExtension):
+        (WebCore::ImageSource::hotSpot):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::sizeRespectingOrientation):
+        (WebCore::ImageSource::singlePixelSolidColor):
+        (WebCore::ImageSource::frameIsBeingDecodedAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameHasImageAtIndex):
+        (WebCore::ImageSource::frameSubsamplingLevelAtIndex):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameOrientationAtIndex):
+         Make m_frameCache a type Ref<ImageFrameCache>. Use '->' instead of '.' when accessing its members.
+
+        (WebCore::ImageSource::frameHasValidNativeImageAtIndex): Checks the validity of a frame.
+        (WebCore::ImageSource::frameHasInvalidNativeImageAtIndex): Deleted. Was renamed to be frameHasValidNativeImageAtIndex.
+
 2016-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Implement getBufferSubData()

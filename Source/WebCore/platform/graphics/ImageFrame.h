@@ -82,7 +82,7 @@ class ImageFrame {
     friend class ImageFrameCache;
 public:
     enum class Caching { Empty, Metadata, MetadataAndImage };
-    enum class Decoding { Empty, Partial, Complete };
+    enum class Decoding { Empty, BeingDecoded, Partial, Complete };
 
     ImageFrame();
     ImageFrame(const ImageFrame& other) { operator=(other); }
@@ -104,6 +104,7 @@ public:
     void setDecoding(Decoding decoding) { m_decoding = decoding; }
     Decoding decoding() const { return m_decoding; }
     bool isEmpty() const { return m_decoding == Decoding::Empty; }
+    bool isBeingDecoded() const { return m_decoding == Decoding::BeingDecoded; }
     bool isPartial() const { return m_decoding == Decoding::Partial; }
     bool isComplete() const { return m_decoding == Decoding::Complete; }
 
@@ -130,7 +131,7 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage() const { return m_nativeImage; }
-    bool hasInvalidNativeImage(SubsamplingLevel subsamplingLevel) const { return hasNativeImage() && subsamplingLevel < m_subsamplingLevel; }
+    bool hasValidNativeImage(SubsamplingLevel subsamplingLevel) const { return hasNativeImage() && subsamplingLevel >= m_subsamplingLevel; }
     bool hasMetadata() const { return !size().isEmpty(); }
 
 #if !USE(CG)

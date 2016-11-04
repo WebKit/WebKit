@@ -46,12 +46,12 @@
 namespace WebCore {
 
 ImageSource::ImageSource(NativeImagePtr&& nativeImage)
-    : m_frameCache(WTFMove(nativeImage))
+    : m_frameCache(ImageFrameCache::create(WTFMove(nativeImage)))
 {
 }
     
 ImageSource::ImageSource(Image* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : m_frameCache(image)
+    : m_frameCache(ImageFrameCache::create(image))
     , m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
@@ -72,19 +72,19 @@ void ImageSource::clear(bool destroyAll, size_t count, SharedBuffer* data)
 {
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (!destroyAll) {
+    if (!destroyAll || m_frameCache->hasDecodingQueue()) {
         clearFrameBufferCache(count);
         return;
     }
 
     m_decoder = nullptr;
-    m_frameCache.setDecoder(nullptr);
+    m_frameCache->setDecoder(nullptr);
     setData(data, isAllDataReceived());
 }
 
 void ImageSource::destroyDecodedData(SharedBuffer* data, bool destroyAll, size_t count)
 {
-    m_frameCache.destroyDecodedData(destroyAll, count);
+    m_frameCache->destroyDecodedData(destroyAll, count);
     clear(destroyAll, count, data);
 }
 
@@ -92,10 +92,10 @@ bool ImageSource::destroyDecodedDataIfNecessary(SharedBuffer* data, bool destroy
 {
     // If we have decoded frames but there is no encoded data, we shouldn't destroy
     // the decoded image since we won't be able to reconstruct it later.
-    if (!data && m_frameCache.frameCount())
+    if (!data && m_frameCache->frameCount())
         return false;
 
-    if (!m_frameCache.destroyDecodedDataIfNecessary(destroyAll, count))
+    if (!m_frameCache->destroyDecodedDataIfNecessary(destroyAll, count))
         return false;
 
     clear(destroyAll, count, data);
@@ -111,7 +111,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     if (!isDecoderAvailable())
         return false;
 
-    m_frameCache.setDecoder(m_decoder.get());
+    m_frameCache->setDecoder(m_decoder.get());
     return true;
 }
 
@@ -138,7 +138,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 
 bool ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
 {
-    m_frameCache.destroyIncompleteDecodedData();
+    m_frameCache->destroyIncompleteDecodedData();
 
 #if PLATFORM(IOS)
     // FIXME: We should expose a setting to enable/disable progressive loading and make this
@@ -162,17 +162,23 @@ bool ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
     setData(data, allDataReceived);
 #endif
 
-    m_frameCache.clearMetadata();
+    m_frameCache->clearMetadata();
     if (!isSizeAvailable())
         return false;
 
-    m_frameCache.growFrames();
+    m_frameCache->growFrames();
     return true;
 }
 
 bool ImageSource::isAllDataReceived()
 {
-    return isDecoderAvailable() ? m_decoder->isAllDataReceived() : m_frameCache.frameCount();
+    return isDecoderAvailable() ? m_decoder->isAllDataReceived() : m_frameCache->frameCount();
+}
+
+bool ImageSource::isAsyncDecodingRequired()
+{
+    // FIXME: figure out the best heuristic for enabling async image decoding.
+    return size().area() * sizeof(RGBA32) >= 100 * KB;
 }
 
 SubsamplingLevel ImageSource::maximumSubsamplingLevel()
@@ -216,7 +222,7 @@ NativeImagePtr ImageSource::frameImageAtIndex(size_t index, SubsamplingLevel sub
 {
     setDecoderTargetContext(targetContext);
 
-    return m_frameCache.frameImageAtIndex(index, subsamplingLevel);
+    return m_frameCache->frameImageAtIndex(index, subsamplingLevel);
 }
 
 void ImageSource::dump(TextStream& ts)

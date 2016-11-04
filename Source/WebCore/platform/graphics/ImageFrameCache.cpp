@@ -39,7 +39,8 @@
 #endif
 
 #include <wtf/CheckedArithmetic.h>
-
+#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -62,6 +63,11 @@ ImageFrameCache::ImageFrameCache(NativeImagePtr&& nativeImage)
     // orientation. So set m_sizeRespectingOrientation to be the same as m_size.
     m_size = m_frames[0].size();
     m_sizeRespectingOrientation = m_size;
+}
+
+ImageFrameCache::~ImageFrameCache()
+{
+    ASSERT(!hasDecodingQueue());
 }
 
 void ImageFrameCache::destroyDecodedData(bool destroyAll, size_t count)
@@ -178,7 +184,7 @@ void ImageFrameCache::setNativeImage(NativeImagePtr&& nativeImage)
     frame.m_hasAlpha = nativeImageHasAlpha(frame.m_nativeImage);
 }
 
-void ImageFrameCache::setFrameNativeImage(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::setFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -186,10 +192,10 @@ void ImageFrameCache::setFrameNativeImage(NativeImagePtr&& nativeImage, size_t i
     ASSERT(isDecoderAvailable());
 
     frame.m_nativeImage = WTFMove(nativeImage);
-    setFrameMetadata(index, subsamplingLevel);
+    setFrameMetadataAtIndex(index, subsamplingLevel);
 }
 
-void ImageFrameCache::setFrameMetadata(size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::setFrameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -208,34 +214,121 @@ void ImageFrameCache::setFrameMetadata(size_t index, SubsamplingLevel subsamplin
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
 }
 
-const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching)
+void ImageFrameCache::replaceFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
-    if (!isDecoderAvailable() || caching == ImageFrame::Caching::Empty)
-        return frame;
+
+    if (!frame.hasValidNativeImage(subsamplingLevel)) {
+        // Clear the current image frame and update the observer with this clearance.
+        unsigned decodedSize = frame.clear();
+        decodedSizeDecreased(decodedSize);
+    }
+
+    // Do not cache the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
+    size_t frameBytes = size().unclampedArea() * sizeof(RGBA32);
+    if (!WTF::isInBounds<unsigned>(frameBytes + decodedSize()))
+        return;
+
+    // Copy the new image to the cache.
+    setFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel);
+
+    // Update the observer with the new image frame bytes.
+    decodedSizeIncreased(frame.frameBytes());
+}
+
+void ImageFrameCache::cacheFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
+{
+    if (!isDecoderAvailable())
+        return;
+
+    // Clean the old native image and set a new one
+    replaceFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel);
+
+    // Notify the image with the readiness of the new frame NativeImage.
+    if (m_image)
+        m_image->newFrameNativeImageAvailableAtIndex(index);
+}
+
+Ref<WorkQueue> ImageFrameCache::decodingQueue()
+{
+    if (!m_decodingQueue)
+        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
+    
+    return *m_decodingQueue;
+}
+
+void ImageFrameCache::startAsyncDecodingQueue()
+{
+    if (hasDecodingQueue() || !isDecoderAvailable())
+        return;
+
+    Ref<ImageFrameCache> protectedThis = Ref<ImageFrameCache>(*this);
+    Ref<WorkQueue> protectedQueue = decodingQueue();
+
+    // We need to protect this and m_decodingQueue from being deleted while we are in the decoding loop.
+    decodingQueue()->dispatch([this, protectedThis = WTFMove(protectedThis), protectedQueue = WTFMove(protectedQueue)] {
+        ImageFrameRequest frameRequest;
+
+        while (m_frameRequestQueue.dequeue(frameRequest)) {
+            // Get the frame NativeImage on the decoding thread.
+            NativeImagePtr nativeImage = m_decoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, DecodingMode::Immediate);
+
+            // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
+            callOnMainThread([this, nativeImage, frameRequest] () mutable {
+                // The queue may be closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called
+                if (hasDecodingQueue())
+                    cacheFrameNativeImageAtIndex(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel);
+            });
+        }
+    });
+}
+
+void ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+{
+    if (!isDecoderAvailable())
+        return;
+
+    if (!hasDecodingQueue())
+        startAsyncDecodingQueue();
+
+    ASSERT(index < m_frames.size());
+    ImageFrame& frame = m_frames[index];
     
     if (subsamplingLevel == SubsamplingLevel::Undefinded)
         subsamplingLevel = frame.subsamplingLevel();
     
-    if (frame.hasInvalidNativeImage(subsamplingLevel)) {
-        unsigned decodedSize = frame.clear();
-        decodedSizeDecreased(decodedSize);
-    }
+    if (frame.hasValidNativeImage(subsamplingLevel))
+        return;
     
-    if (!frame.isComplete() && caching == ImageFrame::Caching::Metadata)
-        setFrameMetadata(index, subsamplingLevel);
-    
-    if (!frame.hasNativeImage() && caching == ImageFrame::Caching::MetadataAndImage) {
-        size_t frameBytes = size().unclampedArea() * sizeof(RGBA32);
+    frame.setDecoding(ImageFrame::Decoding::BeingDecoded);
+    m_frameRequestQueue.enqueue({ index, subsamplingLevel });
+}
 
-        // Do not create the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
-        if (WTF::isInBounds<unsigned>(frameBytes + decodedSize())) {
-            setFrameNativeImage(m_decoder->createFrameImageAtIndex(index, subsamplingLevel), index, subsamplingLevel);
-            decodedSizeIncreased(frame.frameBytes());
-        }
-    }
+void ImageFrameCache::stopAsyncDecodingQueue()
+{
+    if (!hasDecodingQueue())
+        return;
     
+    m_frameRequestQueue.close();
+    m_decodingQueue = nullptr;
+}
+
+const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching)
+{
+    ASSERT(index < m_frames.size());
+    ImageFrame& frame = m_frames[index];
+    if (!isDecoderAvailable() || frame.isBeingDecoded() || caching == ImageFrame::Caching::Empty)
+        return frame;
+    
+    if (subsamplingLevel == SubsamplingLevel::Undefinded)
+        subsamplingLevel = frame.subsamplingLevel();
+
+    if (!frame.isComplete() && caching == ImageFrame::Caching::Metadata)
+        setFrameMetadataAtIndex(index, subsamplingLevel);
+    else if (!frame.hasValidNativeImage(subsamplingLevel) && caching == ImageFrame::Caching::MetadataAndImage)
+        replaceFrameNativeImageAtIndex(m_decoder->createFrameImageAtIndex(index, subsamplingLevel), index, subsamplingLevel);
+
     return frame;
 }
 
@@ -327,6 +420,11 @@ Color ImageFrameCache::singlePixelSolidColor()
     return frameCount() == 1 ? frameMetadataAtIndex<Color, (&ImageFrame::singlePixelSolidColor)>(0, SubsamplingLevel::Undefinded, ImageFrame::Caching::MetadataAndImage, &m_singlePixelSolidColor) : Color();
 }
 
+bool ImageFrameCache::frameIsBeingDecodedAtIndex(size_t index)
+{
+    return frameMetadataAtIndex<bool, (&ImageFrame::isBeingDecoded)>(index);
+}
+
 bool ImageFrameCache::frameIsCompleteAtIndex(size_t index)
 {
     return frameMetadataAtIndex<bool, (&ImageFrame::isComplete)>(index);
@@ -342,9 +440,9 @@ bool ImageFrameCache::frameHasImageAtIndex(size_t index)
     return frameMetadataAtIndex<bool, (&ImageFrame::hasNativeImage)>(index);
 }
 
-bool ImageFrameCache::frameHasInvalidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+bool ImageFrameCache::frameHasValidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
-    return frameHasImageAtIndex(index) && subsamplingLevel < frameSubsamplingLevelAtIndex(index);
+    return frameHasImageAtIndex(index) && subsamplingLevel >= frameSubsamplingLevelAtIndex(index);
 }
 
 SubsamplingLevel ImageFrameCache::frameSubsamplingLevelAtIndex(size_t index)

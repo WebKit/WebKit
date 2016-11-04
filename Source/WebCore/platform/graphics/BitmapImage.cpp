@@ -82,7 +82,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
 
 NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
 {
-    if (frameHasInvalidNativeImageAtIndex(index, subsamplingLevel)) {
+    if (!frameHasValidNativeImageAtIndex(index, subsamplingLevel)) {
         LOG(Images, "BitmapImage %p frameImageAtIndex - subsamplingLevel was %d, resampling", this, static_cast<int>(frameSubsamplingLevelAtIndex(index)));
         invalidatePlatformData();
     }

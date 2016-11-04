@@ -129,6 +129,7 @@ public:
     virtual void startAnimation() { }
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
+    virtual void newFrameNativeImageAvailableAtIndex(size_t) { }
     
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }

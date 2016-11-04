@@ -82,9 +82,10 @@ public:
 
     void setAllowSubsampling(bool allowSubsampling) { m_source.setAllowSubsampling(allowSubsampling); }
 
+    bool frameIsBeingDecodedAtIndex(size_t index) const { return m_source.frameIsBeingDecodedAtIndex(index); }
     bool frameIsCompleteAtIndex(size_t index) const { return m_source.frameIsCompleteAtIndex(index); }
     bool frameHasAlphaAtIndex(size_t index) const { return m_source.frameHasAlphaAtIndex(index); }
-    bool frameHasInvalidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const { return m_source.frameHasInvalidNativeImageAtIndex(index, subsamplingLevel); }
+    bool frameHasValidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const { return m_source.frameHasValidNativeImageAtIndex(index, subsamplingLevel); }
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source.frameSubsamplingLevelAtIndex(index); }
 
     float frameDurationAtIndex(size_t index) const { return m_source.frameDurationAtIndex(index); }
