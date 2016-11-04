@@ -129,13 +129,6 @@
 		0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */; };
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; };
 		0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FE51B1922A3BC006987C5 /* AbortReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F20177F1DCADC3300EA5950 /* DFGFlowIndexing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */; };
-		0F2017801DCADC3500EA5950 /* DFGFlowIndexing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F20177E1DCADC3000EA5950 /* DFGFlowIndexing.h */; };
-		0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017811DCADD4000EA5950 /* DFGFlowMap.h */; };
-		0F2017851DCAE14900EA5950 /* DFGNodeFlowProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017841DCAE14700EA5950 /* DFGNodeFlowProjection.h */; };
-		0F2017861DCAE14C00EA5950 /* DFGNodeFlowProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2017831DCAE14700EA5950 /* DFGNodeFlowProjection.cpp */; };
-		0F2017891DCB942400EA5950 /* DFGNodeAbstractValuePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017881DCB942200EA5950 /* DFGNodeAbstractValuePair.h */; };
-		0F20178A1DCB942600EA5950 /* DFGNodeAbstractValuePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2017871DCB942200EA5950 /* DFGNodeAbstractValuePair.cpp */; };
 		0F20C2591A8013AB00DA3229 /* VirtualRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */; };
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2524,13 +2517,6 @@
 		0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSlowPathGenerator.h; path = dfg/DFGSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSilentRegisterSavePlan.h; path = dfg/DFGSilentRegisterSavePlan.h; sourceTree = "<group>"; };
 		0F1FE51B1922A3BC006987C5 /* AbortReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortReason.h; sourceTree = "<group>"; };
-		0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlowIndexing.cpp; path = dfg/DFGFlowIndexing.cpp; sourceTree = "<group>"; };
-		0F20177E1DCADC3000EA5950 /* DFGFlowIndexing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlowIndexing.h; path = dfg/DFGFlowIndexing.h; sourceTree = "<group>"; };
-		0F2017811DCADD4000EA5950 /* DFGFlowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlowMap.h; path = dfg/DFGFlowMap.h; sourceTree = "<group>"; };
-		0F2017831DCAE14700EA5950 /* DFGNodeFlowProjection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeFlowProjection.cpp; path = dfg/DFGNodeFlowProjection.cpp; sourceTree = "<group>"; };
-		0F2017841DCAE14700EA5950 /* DFGNodeFlowProjection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeFlowProjection.h; path = dfg/DFGNodeFlowProjection.h; sourceTree = "<group>"; };
-		0F2017871DCB942200EA5950 /* DFGNodeAbstractValuePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeAbstractValuePair.cpp; path = dfg/DFGNodeAbstractValuePair.cpp; sourceTree = "<group>"; };
-		0F2017881DCB942200EA5950 /* DFGNodeAbstractValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeAbstractValuePair.h; path = dfg/DFGNodeAbstractValuePair.h; sourceTree = "<group>"; };
 		0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualRegister.cpp; sourceTree = "<group>"; };
 		0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSpecializationKind.h; sourceTree = "<group>"; };
 		0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeConventions.h; sourceTree = "<group>"; };
@@ -6743,6 +6729,8 @@
 				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0F2FC77016E12F6F0038D976 /* DFGDCEPhase.cpp */,
 				0F2FC77116E12F6F0038D976 /* DFGDCEPhase.h */,
+				E322E5A01DA64435006E7709 /* DFGDOMJITPatchpointParams.cpp */,
+				E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */,
 				0F8F2B97172F04FD007DBDA5 /* DFGDesiredIdentifiers.cpp */,
 				0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */,
 				0FFC92131B94E83E0071DD66 /* DFGDesiredInferredType.h */,
@@ -6757,8 +6745,6 @@
 				0F5A1271192D9FDF008764A3 /* DFGDoesGC.cpp */,
 				0F5A1272192D9FDF008764A3 /* DFGDoesGC.h */,
 				0FD81AD0154FB4EB00983E72 /* DFGDominators.h */,
-				E322E5A01DA64435006E7709 /* DFGDOMJITPatchpointParams.cpp */,
-				E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */,
 				0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
@@ -6775,9 +6761,6 @@
 				A78A976F179738B8009DF744 /* DFGFinalizer.h */,
 				0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */,
 				0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */,
-				0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */,
-				0F20177E1DCADC3000EA5950 /* DFGFlowIndexing.h */,
-				0F2017811DCADD4000EA5950 /* DFGFlowMap.h */,
 				0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */,
 				0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */,
 				A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */,
@@ -6845,13 +6828,9 @@
 				A737810B1799EA2E00817533 /* DFGNaturalLoops.h */,
 				0FB4B51E16B62772003F696B /* DFGNode.cpp */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
-				0F2017871DCB942200EA5950 /* DFGNodeAbstractValuePair.cpp */,
-				0F2017881DCB942200EA5950 /* DFGNodeAbstractValuePair.h */,
 				0FB4B51F16B62772003F696B /* DFGNodeAllocator.h */,
 				0FA581B7150E952A00B9A2D9 /* DFGNodeFlags.cpp */,
 				0FA581B8150E952A00B9A2D9 /* DFGNodeFlags.h */,
-				0F2017831DCAE14700EA5950 /* DFGNodeFlowProjection.cpp */,
-				0F2017841DCAE14700EA5950 /* DFGNodeFlowProjection.h */,
 				0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */,
 				0F300B7718AB051100A6D72E /* DFGNodeOrigin.h */,
 				0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */,
@@ -7633,7 +7612,6 @@
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
 				0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */,
 				0F338E161BF0276C0013C88F /* B3ValueKeyInlines.h in Headers */,
-				0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F3730931C0D67EE00052BFA /* AirUseCounts.h in Headers */,
@@ -8520,7 +8498,6 @@
 				A7C1EAF017987AB600299DB2 /* CLoopStackInlines.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
 				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
-				0F2017851DCAE14900EA5950 /* DFGNodeFlowProjection.h in Headers */,
 				E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterPatchpoint.h in Headers */,
 				70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */,
 				0F070A471D543A8B006E7232 /* CellContainer.h in Headers */,
@@ -8618,7 +8595,6 @@
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
 				142D6F1213539A4100B02E86 /* MarkStack.h in Headers */,
-				0F2017891DCB942400EA5950 /* DFGNodeAbstractValuePair.h in Headers */,
 				8612E4CD152389EC00C836BE /* MatchResult.h in Headers */,
 				4340A4851A9051AF00D73CCA /* MathCommon.h in Headers */,
 				BC18C43C0E16F5CD00B34460 /* MathObject.h in Headers */,
@@ -8687,7 +8663,6 @@
 				0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */,
 				DCEE220D1CEBAF75000C2396 /* DFGNullAbstractState.h in Headers */,
 				0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */,
-				0F2017801DCADC3500EA5950 /* DFGFlowIndexing.h in Headers */,
 				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
 				0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */,
 				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
@@ -9883,7 +9858,6 @@
 				A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */,
 				0FA762041DB9242600B7A2FD /* CollectionScope.cpp in Sources */,
 				148A7BEF1B82975A002D9157 /* InlineCallFrame.cpp in Sources */,
-				0F20178A1DCB942600EA5950 /* DFGNodeAbstractValuePair.cpp in Sources */,
 				0F24E55517F0B71C00ABB217 /* InlineCallFrameSet.cpp in Sources */,
 				A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */,
 				A593CF86184038CA00BFCE27 /* InspectorAgentRegistry.cpp in Sources */,
@@ -10113,7 +10087,6 @@
 				0F37308C1C0BD29100052BFA /* B3PhiChildren.cpp in Sources */,
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
-				0F20177F1DCADC3300EA5950 /* DFGFlowIndexing.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
 				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
 				E355F3521B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp in Sources */,
@@ -10211,7 +10184,6 @@
 				A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */,
 				A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */,
 				A5FD006F189B00AA00633231 /* ScriptCallStack.cpp in Sources */,
-				0F2017861DCAE14C00EA5950 /* DFGNodeFlowProjection.cpp in Sources */,
 				A5FD007D189B0B4C00633231 /* ScriptCallStackFactory.cpp in Sources */,
 				A503FA25188EFFFD00110F14 /* ScriptDebugServer.cpp in Sources */,
 				A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */,

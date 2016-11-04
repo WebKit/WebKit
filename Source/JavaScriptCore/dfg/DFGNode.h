@@ -2560,18 +2560,15 @@ public:
     BasicBlock* owner;
 };
 
-struct NodeComparator {
-    template<typename NodePtrType>
-    bool operator()(NodePtrType a, NodePtrType b) const
-    {
-        return a->index() < b->index();
-    }
-};
+inline bool nodeComparator(Node* a, Node* b)
+{
+    return a->index() < b->index();
+}
 
 template<typename T>
 CString nodeListDump(const T& nodeList)
 {
-    return sortedListDump(nodeList, NodeComparator());
+    return sortedListDump(nodeList, nodeComparator);
 }
 
 template<typename T>
@@ -2582,7 +2579,7 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
         typename T::const_iterator iter = nodeMap.begin();
         iter != nodeMap.end(); ++iter)
         keys.append(iter->key);
-    std::sort(keys.begin(), keys.end(), NodeComparator());
+    std::sort(keys.begin(), keys.end(), nodeComparator);
     StringPrintStream out;
     CommaPrinter comma;
     for(unsigned i = 0; i < keys.size(); ++i)
@@ -2596,7 +2593,7 @@ CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context =
     using V = typename T::ValueType;
     T sortedList = nodeValuePairList;
     std::sort(sortedList.begin(), sortedList.end(), [](const V& a, const V& b) {
-        return NodeComparator()(a.node, b.node);
+        return nodeComparator(a.node, b.node);
     });
 
     StringPrintStream out;

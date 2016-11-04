@@ -29,7 +29,6 @@
 
 #include "DFGAbstractValue.h"
 #include "DFGBranchDirection.h"
-#include "DFGFlowMap.h"
 #include "DFGGraph.h"
 #include "DFGNode.h"
 
@@ -44,11 +43,11 @@ public:
     
     explicit operator bool() const { return true; }
     
-    void createValueForNode(NodeFlowProjection) { }
+    void createValueForNode(Node*) { }
     
-    AbstractValue& forNode(NodeFlowProjection node)
+    AbstractValue& forNode(Node* node)
     {
-        return m_abstractValues.at(node);
+        return m_abstractValues[node->index()];
     }
     
     AbstractValue& forNode(Edge edge)
@@ -133,7 +132,7 @@ private:
     
     Graph& m_graph;
 
-    FlowMap<AbstractValue>& m_abstractValues;
+    Vector<AbstractValue, 0, UnsafeVectorOverflow>& m_abstractValues;
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     

@@ -31,7 +31,6 @@
 #include "DFGBasicBlock.h"
 #include "DFGBlockMap.h"
 #include "DFGGraph.h"
-#include "DFGNodeFlowProjection.h"
 
 namespace JSC { namespace DFG { 
 
@@ -48,8 +47,8 @@ public:
         m_block = block;
     }
     
-    void createValueForNode(NodeFlowProjection);
-    AbstractValue& forNode(NodeFlowProjection);
+    void createValueForNode(Node*);
+    AbstractValue& forNode(Node*);
     AbstractValue& forNode(Edge edge) { return forNode(edge.node()); }
     Operands<AbstractValue>& variables() { return m_block->valuesAtTail; }
     
@@ -67,7 +66,7 @@ public:
 
 private:
     Graph& m_graph;
-    BlockMap<HashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
+    BlockMap<HashMap<Node*, AbstractValue>> m_valuesAtTailMap;
     BasicBlock* m_block { nullptr };
 };
 

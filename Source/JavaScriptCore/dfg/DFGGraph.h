@@ -59,11 +59,8 @@ class BackwardsDominators;
 class CFG;
 class ControlEquivalenceAnalysis;
 class Dominators;
-class FlowIndexing;
 class NaturalLoops;
 class PrePostNumbering;
-
-template<typename> class FlowMap;
 
 #define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
         Node* _node = (node);                                           \
@@ -203,6 +200,8 @@ public:
     unsigned maxNodeCount() const { return m_nodesByIndex.size(); }
     Node* nodeAt(unsigned index) const { return m_nodesByIndex[index]; }
     void packNodeIndices();
+
+    Vector<AbstractValue, 0, UnsafeVectorOverflow>& abstractValuesCache() { return m_abstractValuesCache; }
 
     void dethread();
     
@@ -936,9 +935,6 @@ public:
     RefCountState m_refCountState;
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
-    std::unique_ptr<FlowIndexing> m_indexingCache;
-    std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;
-
 private:
     void addNodeToMapByIndex(Node*);
 
@@ -976,6 +972,7 @@ private:
 
     Vector<Node*, 0, UnsafeVectorOverflow> m_nodesByIndex;
     Vector<unsigned, 0, UnsafeVectorOverflow> m_nodeIndexFreeList;
+    Vector<AbstractValue, 0, UnsafeVectorOverflow> m_abstractValuesCache;
 };
 
 } } // namespace JSC::DFG

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
-#include "DFGNodeAbstractValuePair.h"
 #include "DFGNodeOrigin.h"
 #include "DFGStructureClobberState.h"
 #include "Operands.h"
@@ -249,8 +248,12 @@ struct BasicBlock : RefCounted<BasicBlock> {
         AvailabilityMap availabilityAtHead;
         AvailabilityMap availabilityAtTail;
 
-        Vector<NodeFlowProjection> liveAtHead;
-        Vector<NodeFlowProjection> liveAtTail;
+        Vector<Node*> liveAtHead;
+        Vector<Node*> liveAtTail;
+        struct NodeAbstractValuePair {
+            Node* node;
+            AbstractValue value;
+        };
         Vector<NodeAbstractValuePair> valuesAtHead;
         Vector<NodeAbstractValuePair> valuesAtTail;
         

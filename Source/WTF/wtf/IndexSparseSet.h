@@ -45,7 +45,7 @@ template<typename OverflowHandler = CrashOnOverflow>
 class IndexSparseSet {
     typedef Vector<unsigned, 0, OverflowHandler> ValueList;
 public:
-    explicit IndexSparseSet(unsigned size);
+    explicit IndexSparseSet(unsigned maxValue);
 
     bool add(unsigned);
     bool remove(unsigned);
@@ -65,9 +65,9 @@ private:
 };
 
 template<typename OverflowHandler>
-inline IndexSparseSet<OverflowHandler>::IndexSparseSet(unsigned size)
+inline IndexSparseSet<OverflowHandler>::IndexSparseSet(unsigned maxValue)
 {
-    m_map.resize(size);
+    m_map.resize(maxValue + 1);
 }
 
 template<typename OverflowHandler>

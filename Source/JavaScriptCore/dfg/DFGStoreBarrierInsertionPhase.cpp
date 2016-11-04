@@ -126,13 +126,11 @@ public:
                     // Construct the state-at-tail based on the epochs of live nodes and the
                     // current epoch. We grow state-at-tail monotonically to ensure convergence.
                     bool thisBlockChanged = false;
-                    for (NodeFlowProjection node : block->ssa->liveAtTail) {
-                        if (node.kind() == NodeFlowProjection::Shadow)
-                            continue;
+                    for (Node* node : block->ssa->liveAtTail) {
                         if (node->epoch() != m_currentEpoch) {
                             // If the node is older than the current epoch, then we may need to
                             // run a barrier on it in the future. So, add it to the state.
-                            thisBlockChanged |= m_stateAtTail->at(block).add(node.node()).isNewEntry;
+                            thisBlockChanged |= m_stateAtTail->at(block).add(node).isNewEntry;
                         }
                     }
                     
@@ -180,10 +178,8 @@ private:
                 return false;
             m_state->beginBasicBlock(block);
             
-            for (NodeFlowProjection node : block->ssa->liveAtHead) {
-                if (node.kind() == NodeFlowProjection::Shadow)
-                    continue;
-                if (m_stateAtHead->at(block).contains(node.node())) {
+            for (Node* node : block->ssa->liveAtHead) {
+                if (m_stateAtHead->at(block).contains(node)) {
                     // If previous blocks tell us that this node may need a barrier in the
                     // future, then put it in the ancient primordial epoch. This forces us to
                     // emit a barrier on any possibly-cell store, regardless of the epoch of the
@@ -330,8 +326,7 @@ private:
                 break;
                 
             case Upsilon:
-                // Assume the worst for Phis so that we don't have to worry about Phi shadows.
-                m_node->phi()->setEpoch(Epoch());
+                m_node->phi()->setEpoch(m_node->epoch());
                 m_node->setEpoch(Epoch());
                 break;
                 

@@ -47,16 +47,16 @@ AtTailAbstractState::AtTailAbstractState(Graph& graph)
 
 AtTailAbstractState::~AtTailAbstractState() { }
 
-void AtTailAbstractState::createValueForNode(NodeFlowProjection node)
+void AtTailAbstractState::createValueForNode(Node* node)
 {
     m_valuesAtTailMap.at(m_block).add(node, AbstractValue());
 }
 
-AbstractValue& AtTailAbstractState::forNode(NodeFlowProjection node)
+AbstractValue& AtTailAbstractState::forNode(Node* node)
 {
     auto& valuesAtTail = m_valuesAtTailMap.at(m_block);
-    HashMap<NodeFlowProjection, AbstractValue>::iterator iter = valuesAtTail.find(node);
-    DFG_ASSERT(m_graph, node.node(), iter != valuesAtTail.end());
+    HashMap<Node*, AbstractValue>::iterator iter = valuesAtTail.find(node);
+    DFG_ASSERT(m_graph, node, iter != valuesAtTail.end());
     return iter->value;
 }
 

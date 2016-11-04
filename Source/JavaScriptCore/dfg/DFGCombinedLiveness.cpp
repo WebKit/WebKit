@@ -38,10 +38,8 @@ namespace JSC { namespace DFG {
 HashSet<Node*> liveNodesAtHead(Graph& graph, BasicBlock* block)
 {
     HashSet<Node*> seen;
-    for (NodeFlowProjection node : block->ssa->liveAtHead) {
-        if (node.kind() == NodeFlowProjection::Primary)
-            seen.add(node.node());
-    }
+    for (Node* node : block->ssa->liveAtHead)
+        seen.add(node);
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
     graph.forAllLocalsLiveInBytecode(
