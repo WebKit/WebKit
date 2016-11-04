@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2016 Apple INC. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,19 +30,50 @@
  */
 
 #include "config.h"
-
-#if ENABLE(MEDIA_STREAM)
 #include "PeerConnectionBackend.h"
+
+#if ENABLE(WEB_RTC)
+
+#include "JSRTCSessionDescription.h"
+#include "RTCPeerConnection.h"
 
 namespace WebCore {
 
-static std::unique_ptr<PeerConnectionBackend> createPeerConnectionBackend(PeerConnectionBackendClient*)
+void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
 {
-    return nullptr;
+    ASSERT(!m_offerAnswerPromise);
+
+    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+        return;
+
+    m_offerAnswerPromise = WTFMove(promise);
+    doCreateOffer(WTFMove(options));
 }
 
-CreatePeerConnectionBackend PeerConnectionBackend::create = createPeerConnectionBackend;
+void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
+{
+    ASSERT(isMainThread());
+
+    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+        return;
+
+    ASSERT(m_offerAnswerPromise);
+    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Offer, WTFMove(sdp)));
+    m_offerAnswerPromise = Nullopt;
+}
+
+void PeerConnectionBackend::createOfferFailed(ExceptionCode ec, String&& error)
+{
+    ASSERT(isMainThread());
+
+    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+        return;
+
+    ASSERT(m_offerAnswerPromise);
+    m_offerAnswerPromise->reject(ec, WTFMove(error));
+    m_offerAnswerPromise = Nullopt;
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(WEB_RTC)

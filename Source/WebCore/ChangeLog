@@ -1,3 +1,56 @@
+2016-11-03  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Introduce asynchronous backend createOffer API
+        https://bugs.webkit.org/show_bug.cgi?id=164365
+
+        Reviewed by Sam Weinig.
+
+        Covered by existing tests.
+
+        Removing PeerEndpointBackendClient as it is only RTCPeerConnection.
+        This allows removing virtual for some functions.
+
+        Moving MediaEndpointPeerClient::m_client to PeerEndpointBackendClient::m_peerConnection and making it a reference.
+
+        Implementing createOffer at PeerConnectionBackend by splitting it in four sub-functions:
+        - main createOffer, implemented at PeerConnectionBackend.
+        - doCreateOffer implemented by subclasses (MediaEndpointPeerConnection).
+        - createOfferSucceeded/createOfferFailed implemented by PeerConnectionBackend.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::createMediaEndpointPeerConnection):
+        (WebCore::MediaEndpointPeerConnection::MediaEndpointPeerConnection):
+        (WebCore::MediaEndpointPeerConnection::doCreateOffer):
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::createAnswerTask):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::addIceCandidateTask):
+        (WebCore::MediaEndpointPeerConnection::createReceiver):
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        (WebCore::MediaEndpointPeerConnection::replaceTrackTask):
+        (WebCore::MediaEndpointPeerConnection::markAsNeedingNegotiation):
+        (WebCore::MediaEndpointPeerConnection::localDescriptionTypeValidForState):
+        (WebCore::MediaEndpointPeerConnection::remoteDescriptionTypeValidForState):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::doneGatheringCandidates):
+        (WebCore::MediaEndpointPeerConnection::iceTransportStateChanged):
+        (WebCore::MediaEndpointPeerConnection::createOffer): Deleted.
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOffer):
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::createPeerConnectionBackend): Deleted.
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::PeerConnectionBackend):
+        (WebCore::PeerConnectionBackendClient::~PeerConnectionBackendClient): Deleted.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r207717): DumpRenderTree crashed in com.apple.WebCore: WebCore::Style::Scope::flushPendingUpdate + 16

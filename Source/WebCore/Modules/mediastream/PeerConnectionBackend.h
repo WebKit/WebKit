@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeerConnectionBackend_h
-#define PeerConnectionBackend_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -45,6 +44,7 @@ class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCConfiguration;
 class RTCIceCandidate;
+class RTCPeerConnection;
 class RTCRtpReceiver;
 class RTCRtpSender;
 class RTCRtpSenderClient;
@@ -56,41 +56,28 @@ class ScriptExecutionContext;
 struct RTCAnswerOptions;
 struct RTCOfferOptions;
 
+using ExceptionCode = int;
+
 namespace PeerConnection {
 typedef DOMPromise<RTCSessionDescription> SessionDescriptionPromise;
 typedef DOMPromise<std::nullptr_t> VoidPromise;
 typedef DOMPromise<RTCStatsResponse> StatsPromise;
 }
 
-class PeerConnectionBackendClient {
-public:
-    virtual const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const = 0;
-    virtual RTCRtpSenderClient& senderClient() = 0;
-    virtual void fireEvent(Event&) = 0;
-
-    virtual void addTransceiver(RefPtr<RTCRtpTransceiver>&&) = 0;
-    virtual void setSignalingState(PeerConnectionStates::SignalingState) = 0;
-    virtual void updateIceGatheringState(PeerConnectionStates::IceGatheringState) = 0;
-    virtual void updateIceConnectionState(PeerConnectionStates::IceConnectionState) = 0;
-
-    virtual void scheduleNegotiationNeededEvent() = 0;
-
-    virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
-    virtual PeerConnectionStates::SignalingState internalSignalingState() const = 0;
-    virtual PeerConnectionStates::IceGatheringState internalIceGatheringState() const = 0;
-    virtual PeerConnectionStates::IceConnectionState internalIceConnectionState() const = 0;
-
-    virtual ~PeerConnectionBackendClient() { }
-};
-
-typedef std::unique_ptr<PeerConnectionBackend> (*CreatePeerConnectionBackend)(PeerConnectionBackendClient*);
+typedef std::unique_ptr<PeerConnectionBackend> (*CreatePeerConnectionBackend)(RTCPeerConnection&);
 
 class PeerConnectionBackend {
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
+
+    PeerConnectionBackend(RTCPeerConnection& peerConnection) : m_peerConnection(peerConnection) { }
     virtual ~PeerConnectionBackend() { }
 
-    virtual void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&) = 0;
+    void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
+    virtual void doCreateOffer(RTCOfferOptions&&) = 0;
+    void createOfferSucceeded(String&&);
+    void createOfferFailed(ExceptionCode, String&&);
+
     virtual void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&) = 0;
 
     virtual void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) = 0;
@@ -120,10 +107,12 @@ public:
     virtual void clearNegotiationNeededState() = 0;
 
     virtual void emulatePlatformEvent(const String& action) = 0;
+
+protected:
+    RTCPeerConnection& m_peerConnection;
+    Optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // PeerConnectionBackend_h

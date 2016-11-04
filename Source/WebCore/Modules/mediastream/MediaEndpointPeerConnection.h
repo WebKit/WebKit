@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaEndpointPeerConnection_h
-#define MediaEndpointPeerConnection_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -51,11 +50,11 @@ using MediaDescriptionVector = Vector<PeerMediaDescription>;
 using RtpSenderVector = Vector<RefPtr<RTCRtpSender>>;
 using RtpTransceiverVector = Vector<RefPtr<RTCRtpTransceiver>>;
 
-class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEndpointClient {
+class MediaEndpointPeerConnection final : public PeerConnectionBackend, public MediaEndpointClient {
 public:
-    MediaEndpointPeerConnection(PeerConnectionBackendClient*);
+    MediaEndpointPeerConnection(RTCPeerConnection&);
 
-    void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&) override;
+    void doCreateOffer(RTCOfferOptions&&) final;
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&) override;
 
     void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) override;
@@ -90,7 +89,7 @@ private:
     void runTask(Function<void ()>&&);
     void startRunningTasks();
 
-    void createOfferTask(const RTCOfferOptions&, PeerConnection::SessionDescriptionPromise&);
+    void createOfferTask(const RTCOfferOptions&);
     void createAnswerTask(const RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&);
 
     void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
@@ -113,7 +112,6 @@ private:
     void doneGatheringCandidates(const String& mid) override;
     void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) override;
 
-    PeerConnectionBackendClient* m_client;
     std::unique_ptr<MediaEndpoint> m_mediaEndpoint;
 
     Function<void ()> m_initialDeferredTask;
@@ -145,5 +143,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MediaEndpointPeerConnection_h

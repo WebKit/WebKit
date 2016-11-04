@@ -1607,6 +1607,7 @@
 		41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D015C90F4B5C71004A662F /* ContentType.cpp */; };
 		41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
+		41E408391DCB748900EFCE19 /* PeerConnectionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
 		41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */; };
 		41F066E40F64BCF600A07EAC /* ScriptGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F066E20F64BCF600A07EAC /* ScriptGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8675,6 +8676,7 @@
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
+		41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerConnectionBackend.cpp; sourceTree = "<group>"; };
 		41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseResource.h; sourceTree = "<group>"; };
 		41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseResource.cpp; sourceTree = "<group>"; };
 		41F066E20F64BCF600A07EAC /* ScriptGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptGlobalObject.h; sourceTree = "<group>"; };
@@ -14901,6 +14903,7 @@
 				0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */,
 				072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */,
 				072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */,
+				41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */,
 				5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */,
 				5E2C434F1BCEE2E50001E2BC /* RTCConfiguration.cpp */,
 				07AB996518DA3C010018771E /* RTCConfiguration.h */,
@@ -28639,6 +28642,7 @@
 				31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				94DE5C811D7F3A1400164F2A /* CSSAtRuleID.cpp in Sources */,
+				41E408391DCB748900EFCE19 /* PeerConnectionBackend.cpp in Sources */,
 				FBD6AF8B15EF25E5008B7110 /* CSSBasicShapes.cpp in Sources */,
 				E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,

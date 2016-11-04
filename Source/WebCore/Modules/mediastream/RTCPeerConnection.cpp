@@ -69,7 +69,7 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_backend(PeerConnectionBackend::create(this))
+    , m_backend(PeerConnectionBackend::create(*this))
 {
 }
 
