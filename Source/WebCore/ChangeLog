@@ -1,3 +1,25 @@
+2016-11-04  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Clean up more transaction abort and exception throwing behavior from IDBObjectStore.
+        https://bugs.webkit.org/show_bug.cgi?id=164424
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing tests).
+
+        This patch actually turns a handful of PASS to FAIL in the imported tests, but those are parts of the
+        spec in flux/under discussion.
+
+        We'll update either source or the tests as things are resolved.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::rollbackInfoForVersionChangeAbort):
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::putOrAdd):
+        (WebCore::IDBObjectStore::rollbackForVersionChangeAbort):
+
 2016-11-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Load stylesheets in link elements inside a connected shadow tree

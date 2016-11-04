@@ -100,18 +100,18 @@ function testInactiveAbortedTransaction()
 {
     debug("");
     debug("testInactiveAbortedTransaction():");
-    evalAndExpectException("index.openCursor()", "0", "'TransactionInactiveError'");
-    evalAndExpectException("index.openKeyCursor()", "0", "'TransactionInactiveError'");
-    evalAndExpectException("index.get(0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("index.getKey(0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("index.count()", "0", "'TransactionInactiveError'");
+    evalAndExpectException("index.openCursor()", "11", "'InvalidStateError'");
+    evalAndExpectException("index.openKeyCursor()", "11", "'InvalidStateError'");
+    evalAndExpectException("index.get(0)", "11", "'InvalidStateError'");
+    evalAndExpectException("index.getKey(0)", "11", "'InvalidStateError'");
+    evalAndExpectException("index.count()", "11", "'InvalidStateError'");
 
-    evalAndExpectException("store.put(0, 0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.add(0, 0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.delete(0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.clear()", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.get(0)", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.openCursor()", "0", "'TransactionInactiveError'");
+    evalAndExpectException("store.put(0, 0)", "11", "'InvalidStateError'");
+    evalAndExpectException("store.add(0, 0)", "11", "'InvalidStateError'");
+    evalAndExpectException("store.delete(0)", "11", "'InvalidStateError'");
+    evalAndExpectException("store.clear()", "11", "'InvalidStateError'");
+    evalAndExpectException("store.get(0)", "11", "'InvalidStateError'");
+    evalAndExpectException("store.openCursor()", "11", "'InvalidStateError'");
 }
 
 function testSetVersionAbort4()

@@ -1,3 +1,5 @@
 
-PASS IDBCursor.advance() - index - throw TransactionInactiveError 
+FAIL IDBCursor.advance() - index - throw TransactionInactiveError assert_throws: Calling advance() should throws an exception TransactionInactiveError when the transaction is not active. function "function () {
+                cursor.advance(1);
+        ..." threw object "InvalidStateError (DOM IDBDatabase Exception 11): Failed ..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
 

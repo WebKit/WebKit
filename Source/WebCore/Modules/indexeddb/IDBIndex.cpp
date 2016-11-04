@@ -140,8 +140,10 @@ void IDBIndex::rollbackInfoForVersionChangeAbort()
     if (!objectStoreInfo)
         return;
 
-    if (!objectStoreInfo->hasIndex(m_info.identifier()))
+    if (!objectStoreInfo->hasIndex(m_info.identifier())) {
+        m_deleted = true;
         return;
+    }
 
     m_info = m_originalInfo;
 }

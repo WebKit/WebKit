@@ -211,11 +211,11 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, JSValue k
     LOG(IndexedDB, "IDBObjectStore::get");
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
-    if (!m_transaction->isActive())
-        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.") };
-
     if (m_deleted)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted.") };
+
+    if (!m_transaction->isActive())
+        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.") };
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
@@ -229,11 +229,11 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, IDBKeyRan
     LOG(IndexedDB, "IDBObjectStore::get");
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
-    if (!m_transaction->isActive())
-        return Exception { IDBDatabaseException::TransactionInactiveError };
-
     if (m_deleted)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted.") };
+
+    if (!m_transaction->isActive())
+        return Exception { IDBDatabaseException::TransactionInactiveError };
 
     IDBKeyRangeData keyRangeData(keyRange);
     if (!keyRangeData.isValid())
@@ -275,11 +275,6 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     if (!context)
         return Exception { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to store record in object store because it does not have a valid script execution context") };
 
-    // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
-    // the exception for an object store being deleted.
-    // However, a handful of W3C IDB tests expect the deleted exception even though the transaction inactive exception also applies.
-    // Additionally, Chrome and Edge agree with the test, as does Legacy IDB in WebKit.
-    // Until this is sorted out, we'll agree with the test and the majority share browsers.
     if (m_deleted)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to store record in an IDBObjectStore: The object store has been deleted.") };
 
@@ -607,8 +602,21 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     String currentName = m_info.name();
     m_info = m_originalInfo;
 
-    if (!transaction().database().info().infoForExistingObjectStore(m_info.identifier()))
+    auto& databaseInfo = transaction().database().info();
+    auto* objectStoreInfo = databaseInfo.infoForExistingObjectStore(m_info.identifier());
+    if (!objectStoreInfo) {
         m_info.rename(currentName);
+        m_deleted = true;
+    } else {
+        HashSet<uint64_t> indexesToRemove;
+        for (auto indexIdentifier : objectStoreInfo->indexMap().keys()) {
+            if (!objectStoreInfo->hasIndex(indexIdentifier))
+                indexesToRemove.add(indexIdentifier);
+        }
+
+        for (auto indexIdentifier : indexesToRemove)
+            m_info.deleteIndex(indexIdentifier);
+    }
 
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())

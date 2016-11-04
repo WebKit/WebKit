@@ -1,5 +1,33 @@
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
+        IndexedDB 2.0: Clean up more transaction abort and exception throwing behavior from IDBObjectStore.
+        https://bugs.webkit.org/show_bug.cgi?id=164424
+
+        Reviewed by Alex Christensen.
+
+        This patch actually turns a handful of PASS to FAIL in the imported tests, but those are parts of the
+        spec in flux/under discussion.
+
+        We'll update either source or the tests as things are resolved.
+
+        * IndexedDB-private-browsing/idbcursor_advance_index7-expected.txt:
+        * IndexedDB-private-browsing/idbcursor_continue_index7-expected.txt:
+        * IndexedDB-private-browsing/idbindex_get7-expected.txt:
+        * IndexedDB-private-browsing/idbindex_getKey7-expected.txt:
+        * IndexedDB-private-browsing/idbindex_openCursor2-expected.txt:
+        * IndexedDB-private-browsing/idbindex_openKeyCursor3-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index7-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index7-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_get8-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_getKey8-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openCursor3-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor4-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-abort-index-metadata-revert-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-abort-multiple-metadata-revert-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert-expected.txt:
+
+2016-11-04  Brady Eidson  <beidson@apple.com>
+
         IndexedDB 2.0: Handle IDBObjectStore rename behavior properly when version change transaction aborts.
         https://bugs.webkit.org/show_bug.cgi?id=164416
 
