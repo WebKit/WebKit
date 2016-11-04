@@ -59,6 +59,7 @@
 
 #if PLATFORM(IOS)
 #import <OpenGLES/ES2/glext.h>
+#import <OpenGLES/ES3/gl.h>
 // From <OpenGLES/glext.h>
 #define GL_RGBA32F_ARB                      0x8814
 #define GL_RGB32F_ARB                       0x8815
@@ -66,7 +67,10 @@
 #if USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #elif PLATFORM(MAC)
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
+#include <OpenGL/gl3.h>
+#undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
@@ -546,6 +550,20 @@ void GraphicsContext3D::bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsi
     makeContextCurrent();
     ::glBufferSubData(target, offset, size, data);
 }
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+void* GraphicsContext3D::mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access)
+{
+    makeContextCurrent();
+    return ::glMapBufferRange(target, offset, length, access);
+}
+
+GC3Dboolean GraphicsContext3D::unmapBuffer(GC3Denum target)
+{
+    makeContextCurrent();
+    return ::glUnmapBuffer(target);
+}
+#endif
 
 GC3Denum GraphicsContext3D::checkFramebufferStatus(GC3Denum target)
 {

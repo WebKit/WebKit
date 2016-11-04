@@ -1,3 +1,38 @@
+2016-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Implement getBufferSubData()
+        https://bugs.webkit.org/show_bug.cgi?id=164111
+
+        Reviewed by Dean Jackson.
+
+        The call exists in OpenGL 3.2 but in order to have parity with
+        OpenGL ES 3 we back it with glMapBufferRange() instead.
+
+        This patch simply adds surface area to GraphicsContext3D
+        until we can get an ANGLE implementation of it.
+
+        When testing this patch I discovered that r207649 incorrectly
+        interpreted arguments to bufferData() and bufferSubData() as
+        byte offsets. Instead, they should be element indices. This
+        patch fixes those functions to work correctly so that
+        getBufferSubData() can be tested correctly.
+
+        Tests: fast/canvas/webgl/webgl2-buffers.html
+               fast/canvas/webgl/getBufferSubData-webgl1.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::arrayBufferViewElementSize):
+        (WebCore::WebGL2RenderingContext::bufferData):
+        (WebCore::WebGL2RenderingContext::bufferSubData):
+        (WebCore::WebGL2RenderingContext::getBufferSubData):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getBufferSubData):
+        (WebCore::GraphicsContext3D::mapBufferRange):
+        (WebCore::GraphicsContext3D::unmapBuffer):
+
 2016-11-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark support for the 'download' attribute as 'Done'.

@@ -712,7 +712,10 @@ public:
         TEXTURE_IMMUTABLE_FORMAT = 0x912F,
         MAX_ELEMENT_INDEX = 0x8D6B,
         NUM_SAMPLE_COUNTS = 0x9380,
-        TEXTURE_IMMUTABLE_LEVELS = 0x82DF
+        TEXTURE_IMMUTABLE_LEVELS = 0x82DF, 
+
+        // OpenGL ES 3 constants
+        MAP_READ_BIT = 0x0001
     };
 
     // Context creation attributes.
@@ -964,6 +967,9 @@ public:
     void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage);
     void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage);
     void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data);
+
+    void* mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access);
+    GC3Dboolean unmapBuffer(GC3Denum target);
 
     GC3Denum checkFramebufferStatus(GC3Denum target);
     void clear(GC3Dbitfield mask);

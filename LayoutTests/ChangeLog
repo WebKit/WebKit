@@ -1,3 +1,17 @@
+2016-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Implement getBufferSubData()
+        https://bugs.webkit.org/show_bug.cgi?id=164111
+
+        Reviewed by Dean Jackson.
+
+        Test every successful download/upload combination I can think of.
+
+        * fast/canvas/webgl/getBufferSubData-webgl1.html: Added.
+        * fast/canvas/webgl/getBufferSubData-webgl1-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-buffers-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-buffers.html: Added.
+
 2016-11-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Implement user interface for HTML form validation

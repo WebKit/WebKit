@@ -349,7 +349,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     // MapBufferRange, in particular its read-only and write-only modes,
     // can not be exposed safely to JavaScript. GetBufferSubData
     // replaces it for the purpose of fetching data back from the GPU.
-    void getBufferSubData(GLenum target, GLintptr offset, ArrayBuffer? returnedData);
+    void getBufferSubData(GLenum target, GLintptr srcByteOffset, ArrayBufferView dstData, optional GLuint dstOffset = 0, optional GLuint length = 0);
 
     /* Framebuffer objects */
     void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);

@@ -46,11 +46,10 @@ public:
     /* Buffer objects */
     using WebGLRenderingContextBase::bufferData;
     using WebGLRenderingContextBase::bufferSubData;
-    void bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length);
-    void bufferSubData(GC3Denum target, long long offset, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length);
+    void bufferData(GC3Denum target, const ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length);
+    void bufferSubData(GC3Denum target, long long offset, const ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length);
     void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size);
-    void getBufferSubData(GC3Denum target, GC3Dint64 offset, RefPtr<ArrayBufferView>&& returnedData);
-    void getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData);
+    void getBufferSubData(GC3Denum target, long long srcByteOffset, RefPtr<ArrayBufferView>&& dstData, GC3Duint dstOffset = 0, GC3Duint length = 0);
     
     /* Framebuffer objects */
     WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;

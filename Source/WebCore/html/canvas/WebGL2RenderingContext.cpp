@@ -88,13 +88,49 @@ void WebGL2RenderingContext::initializeShaderExtensions()
     m_context->getExtensions()->ensureEnabled("GL_EXT_frag_depth");
 }
 
-void WebGL2RenderingContext::bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length)
+inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
 {
-    if (srcOffset > data.byteLength() || length > data.byteLength() - srcOffset) {
+    switch (data.getType()) {
+    case JSC::NotTypedArray:
+    case JSC::TypeDataView:
+        return Nullopt;
+    case JSC::TypeInt8:
+    case JSC::TypeUint8:
+    case JSC::TypeUint8Clamped:
+    case JSC::TypeInt16:
+    case JSC::TypeUint16:
+    case JSC::TypeInt32:
+    case JSC::TypeUint32:
+    case JSC::TypeFloat32:
+    case JSC::TypeFloat64:
+        return elementSize(data.getType());
+    }
+}
+
+void WebGL2RenderingContext::bufferData(GC3Denum target, const ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length)
+{
+    auto optionalElementSize = arrayBufferViewElementSize(data);
+    if (!optionalElementSize) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "bufferData", "Invalid type of Array Buffer View");
+        return;
+    }
+    auto elementSize = optionalElementSize.value();
+    Checked<GC3Duint, RecordOverflow> checkedElementSize(elementSize);
+
+    Checked<GC3Duint, RecordOverflow> checkedSrcOffset(srcOffset);
+    Checked<GC3Duint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
+    Checked<GC3Duint, RecordOverflow> checkedlength(length);
+    Checked<GC3Duint, RecordOverflow> checkedByteLength = checkedlength * checkedElementSize;
+
+    if (checkedByteSrcOffset.hasOverflowed()
+        || checkedByteLength.hasOverflowed()
+        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
+        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "srcOffset or length is out of bounds");
         return;
     }
-    auto slice = Uint8Array::create(data.unsharedBuffer(), data.byteOffset() + srcOffset, length);
+
+    auto slice = Uint8Array::create(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
     if (!slice) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
         return;
@@ -102,17 +138,35 @@ void WebGL2RenderingContext::bufferData(GC3Denum target, ArrayBufferView& data, 
     WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.get()), usage);
 }
 
-void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length)
+void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, const ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length)
 {
-    if (srcOffset > data.byteLength() || length > data.byteLength() - srcOffset) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "srcOffset or length is out of bounds");
+    auto optionalElementSize = arrayBufferViewElementSize(data);
+    if (!optionalElementSize) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "bufferSubData", "Invalid type of Array Buffer View");
         return;
     }
-    auto slice = Uint8Array::create(data.unsharedBuffer(), data.byteOffset() + srcOffset, length);
+    auto elementSize = optionalElementSize.value();
+    Checked<GC3Duint, RecordOverflow> checkedElementSize(elementSize);
+
+    Checked<GC3Duint, RecordOverflow> checkedSrcOffset(srcOffset);
+    Checked<GC3Duint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
+    Checked<GC3Duint, RecordOverflow> checkedlength(length);
+    Checked<GC3Duint, RecordOverflow> checkedByteLength = checkedlength * checkedElementSize;
+
+    if (checkedByteSrcOffset.hasOverflowed()
+        || checkedByteLength.hasOverflowed()
+        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
+        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "srcOffset or length is out of bounds");
+        return;
+    }
+
+    auto slice = Uint8Array::create(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
     if (!slice) {
-        synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
+        synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferSubData", "Could not create intermediate ArrayBufferView");
         return;
     }
+
     WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
 }
 
@@ -120,8 +174,74 @@ void WebGL2RenderingContext::copyBufferSubData(GC3Denum, GC3Denum, GC3Dint64, GC
 {
 }
 
-void WebGL2RenderingContext::getBufferSubData(GC3Denum, GC3Dint64, ArrayBuffer*)
+void WebGL2RenderingContext::getBufferSubData(GC3Denum target, long long srcByteOffset, RefPtr<ArrayBufferView>&& dstData, GC3Duint dstOffset, GC3Duint length)
 {
+    if (isContextLostOrPending())
+        return;
+    WebGLBuffer* buffer = validateBufferDataParameters("bufferSubData", target, GraphicsContext3D::STATIC_DRAW);
+    if (!buffer) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "No WebGLBuffer is bound to target");
+        return;
+    }
+
+    // FIXME: Implement "If target is TRANSFORM_FEEDBACK_BUFFER, and any transform feedback object is currently active, an INVALID_OPERATION error is generated."
+
+    if (!dstData) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "Null dstData");
+        return;
+    }
+
+    auto optionalElementSize = arrayBufferViewElementSize(*dstData);
+    if (!optionalElementSize) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "Invalid type of Array Buffer View");
+        return;
+    }
+    auto elementSize = optionalElementSize.value();
+    auto dstDataLength = dstData->byteLength() / elementSize;
+
+    if (dstOffset > dstDataLength) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "dstOffset is larger than the length of the destination buffer.");
+        return;
+    }
+
+    GC3Duint copyLength = length ? length : dstDataLength - dstOffset;
+
+    Checked<GC3Duint, RecordOverflow> checkedDstOffset(dstOffset);
+    Checked<GC3Duint, RecordOverflow> checkedCopyLength(copyLength);
+    auto checkedDestinationEnd = checkedDstOffset + checkedCopyLength;
+    if (checkedDestinationEnd.hasOverflowed()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "dstOffset + copyLength is too high");
+        return;
+    }
+
+    if (checkedDestinationEnd.unsafeGet() > dstDataLength) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "end of written destination is past the end of the buffer");
+        return;
+    }
+
+    if (srcByteOffset < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "srcByteOffset is less than 0");
+        return;
+    }
+
+    Checked<GC3Dintptr, RecordOverflow> checkedSrcByteOffset(srcByteOffset);
+    Checked<GC3Dintptr, RecordOverflow> checkedCopyLengthPtr(copyLength);
+    Checked<GC3Dintptr, RecordOverflow> checkedElementSize(elementSize);
+    auto checkedSourceEnd = checkedSrcByteOffset + checkedCopyLengthPtr * checkedElementSize;
+    if (checkedSourceEnd.hasOverflowed() || checkedSourceEnd.unsafeGet() > buffer->byteLength()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "Parameters would read outside the bounds of the source buffer");
+        return;
+    }
+
+    m_context->moveErrorsToSyntheticErrorList();
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
+    void* ptr = m_context->mapBufferRange(target, checkedSrcByteOffset.unsafeGet(), static_cast<GC3Dsizeiptr>(checkedCopyLengthPtr.unsafeGet() * checkedElementSize.unsafeGet()), GraphicsContext3D::MAP_READ_BIT);
+    memcpy(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, ptr, copyLength * elementSize);
+    bool success = m_context->unmapBuffer(target);
+    ASSERT_UNUSED(success, success);
+#endif
+    m_context->moveErrorsToSyntheticErrorList();
 }
 
 void WebGL2RenderingContext::blitFramebuffer(GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
