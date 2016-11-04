@@ -52,7 +52,7 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
     scrollingTree().fixedOrStickyNodeRemoved();
 }
 
-void ScrollingTreeStickyNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     const ScrollingStateStickyNode& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
 

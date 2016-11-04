@@ -41,8 +41,6 @@ public:
     static Ref<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
     virtual ~ScrollingTreeIOS();
 
-    void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
-
     // No wheel events on iOS
     void handleWheelEvent(const PlatformWheelEvent&) override { }
     EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override { return DidNotHandleEvent; }

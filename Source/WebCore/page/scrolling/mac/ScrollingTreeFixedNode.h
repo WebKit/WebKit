@@ -46,7 +46,7 @@ public:
 private:
     ScrollingTreeFixedNode(ScrollingTree&, ScrollingNodeID);
 
-    void updateBeforeChildren(const ScrollingStateNode&) override;
+    void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
     FixedPositionViewportConstraints m_constraints;

@@ -1,3 +1,63 @@
+2016-11-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename some ScrollingTree/Node-related functions to reduce the number of uses of "update"
+        https://bugs.webkit.org/show_bug.cgi?id=164420
+
+        Reviewed by Tim Horton.
+
+        Rename:
+            commitNewTreeState -> commitTreeState ("new" was redundant)
+            updateBeforeChildren -> commitStateBeforeChildren
+            updateAfterChildren -> commitStateAfterChildren
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        (WebCore::ScrollingTree::commitNewTreeState): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNode::updateBeforeChildren): Deleted.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::commitStateAfterChildren):
+        (WebCore::ScrollingTreeNode::updateAfterChildren): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::commitStateAfterChildren):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::updateAfterChildren): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::commitTreeState):
+        (WebCore::ThreadedScrollingTree::commitNewTreeState): Deleted.
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateBeforeChildren): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateAfterChildren): Deleted.
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::commitNewTreeState): Deleted.
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFixedNode::updateBeforeChildren): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateAfterChildren): Deleted.
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeStickyNode::updateBeforeChildren): Deleted.
+
 2016-11-03  Anders Carlsson  <andersca@apple.com>
 
         Add new 'other' Apple Pay button style

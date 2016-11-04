@@ -115,7 +115,7 @@ void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID n
     scrollingTreeNodeDidScroll(nodeID, scrollPosition, inUserInteration ? SyncScrollingLayerPosition : SetScrollingLayerPosition);
 }
 
-void ScrollingTree::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
+void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
     
@@ -178,7 +178,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
         }
     }
 
-    node->updateBeforeChildren(*stateNode);
+    node->commitStateBeforeChildren(*stateNode);
     
     // Move all children into the orphanNodes map. Live ones will get added back as we recurse over children.
     if (auto nodeChildren = node->children()) {
@@ -195,7 +195,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
             updateTreeFromStateNode(child.get(), orphanNodes);
     }
 
-    node->updateAfterChildren(*stateNode);
+    node->commitStateAfterChildren(*stateNode);
 }
 
 void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)

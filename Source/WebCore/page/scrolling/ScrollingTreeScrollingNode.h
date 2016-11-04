@@ -41,8 +41,8 @@ class ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
     virtual ~ScrollingTreeScrollingNode();
 
-    WEBCORE_EXPORT void updateBeforeChildren(const ScrollingStateNode&) override;
-    WEBCORE_EXPORT void updateAfterChildren(const ScrollingStateNode&) override;
+    WEBCORE_EXPORT void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    WEBCORE_EXPORT void commitStateAfterChildren(const ScrollingStateNode&) override;
 
     WEBCORE_EXPORT void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 

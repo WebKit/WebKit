@@ -43,8 +43,9 @@ protected:
     ScrollingTreeFrameScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
-    void updateBeforeChildren(const ScrollingStateNode&) override;
-    void updateAfterChildren(const ScrollingStateNode&) override;
+    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    void commitStateAfterChildren(const ScrollingStateNode&) override;
+
     void handleWheelEvent(const PlatformWheelEvent&) override { }
 
     FloatPoint scrollPosition() const override;

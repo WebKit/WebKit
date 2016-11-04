@@ -70,11 +70,6 @@ void ScrollingTreeIOS::invalidate()
     });
 }
 
-void ScrollingTreeIOS::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
-{
-    ScrollingTree::commitNewTreeState(WTFMove(scrollingStateTree));
-}
-
 void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)

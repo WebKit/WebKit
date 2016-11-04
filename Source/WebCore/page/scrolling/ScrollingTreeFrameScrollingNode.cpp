@@ -42,9 +42,9 @@ ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode()
 {
 }
 
-void ScrollingTreeFrameScrollingNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeScrollingNode::updateBeforeChildren(stateNode);
+    ScrollingTreeScrollingNode::commitStateBeforeChildren(stateNode);
     
     const ScrollingStateFrameScrollingNode& state = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 

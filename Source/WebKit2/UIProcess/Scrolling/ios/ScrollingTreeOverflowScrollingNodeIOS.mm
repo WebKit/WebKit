@@ -154,7 +154,7 @@ ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
+void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
 {
     if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -165,7 +165,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::
         END_BLOCK_OBJC_EXCEPTIONS
     }
 
-    ScrollingTreeOverflowScrollingNode::updateBeforeChildren(stateNode);
+    ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
 
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
@@ -175,9 +175,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::
         m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNode::updateAfterChildren(stateNode);
+    ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
 
     TemporaryChange<bool> updatingChange(m_updatingFromStateNode, true);
 

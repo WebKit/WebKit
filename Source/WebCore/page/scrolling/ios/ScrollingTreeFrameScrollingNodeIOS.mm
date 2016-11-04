@@ -54,9 +54,9 @@ ScrollingTreeFrameScrollingNodeIOS::~ScrollingTreeFrameScrollingNodeIOS()
 {
 }
 
-void ScrollingTreeFrameScrollingNodeIOS::updateBeforeChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeFrameScrollingNodeIOS::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::updateBeforeChildren(stateNode);
+    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
     
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
@@ -86,9 +86,9 @@ void ScrollingTreeFrameScrollingNodeIOS::updateBeforeChildren(const ScrollingSta
     }
 }
 
-void ScrollingTreeFrameScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
+void ScrollingTreeFrameScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::updateAfterChildren(stateNode);
+    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 

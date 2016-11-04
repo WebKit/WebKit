@@ -193,7 +193,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
 #if ENABLE(ASYNC_SCROLLING)
     RemoteScrollingCoordinatorProxy::RequestedScrollInfo requestedScrollInfo;
-    m_webPageProxy.scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction, requestedScrollInfo);
+    m_webPageProxy.scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction, requestedScrollInfo);
 #endif
 
     m_webPageProxy.didCommitLayerTree(layerTreeTransaction);

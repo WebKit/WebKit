@@ -76,7 +76,7 @@ const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() cons
     return &remoteDrawingArea.remoteLayerTreeHost();
 }
 
-void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingCoordinatorTransaction& transaction, RequestedScrollInfo& requestedScrollInfo)
+void RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction& transaction, RequestedScrollInfo& requestedScrollInfo)
 {
     m_requestedScrollInfo = &requestedScrollInfo;
 
@@ -90,7 +90,7 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
     }
 
     connectStateNodeLayers(*stateTree, *layerTreeHost);
-    m_scrollingTree->commitNewTreeState(WTFMove(stateTree));
+    m_scrollingTree->commitTreeState(WTFMove(stateTree));
 
     m_requestedScrollInfo = nullptr;
 }

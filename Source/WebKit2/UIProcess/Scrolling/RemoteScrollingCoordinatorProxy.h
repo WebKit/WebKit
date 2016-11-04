@@ -75,7 +75,7 @@ public:
         bool requestIsProgrammaticScroll { };
         WebCore::FloatPoint requestedScrollPosition;
     };
-    void updateScrollingTree(const RemoteScrollingCoordinatorTransaction&, RequestedScrollInfo&);
+    void commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction&, RequestedScrollInfo&);
 
     void setPropagatesMainFrameScrolls(bool propagatesMainFrameScrolls) { m_propagatesMainFrameScrolls = propagatesMainFrameScrolls; }
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }

@@ -68,7 +68,7 @@ public:
     bool isScrollSnapInProgress();
 
     virtual void invalidate() { }
-    WEBCORE_EXPORT virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>);
+    WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 
