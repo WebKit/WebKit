@@ -1,3 +1,15 @@
+2016-11-04  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Throw the correct exceptions during IDBObjectStore/IDBIndex renaming.
+        https://bugs.webkit.org/show_bug.cgi?id=164405
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/index-rename-1-expected.txt:
+        * storage/indexeddb/modern/index-rename-1-private-expected.txt:
+        * storage/indexeddb/modern/objectstore-rename-1-expected.txt:
+        * storage/indexeddb/modern/objectstore-rename-1-private-expected.txt:
+
 2016-11-04  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ByteStreamController error()
