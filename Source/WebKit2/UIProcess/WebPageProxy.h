@@ -153,6 +153,7 @@ class ProtectionSpace;
 class RunLoopObserver;
 class SharedBuffer;
 class TextIndicator;
+class ValidationBubble;
 enum class HasInsecureContent;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
@@ -527,6 +528,7 @@ public:
     void getSelectionContext(std::function<void(const String&, const String&, const String&, CallbackBase::Error)>);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, uint64_t requestID);
     void setForceAlwaysUserScalable(bool);
+    void setIsScrollingOrZooming(bool);
 #endif
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);
@@ -1093,6 +1095,17 @@ public:
     void logSampledDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result);
     void logSampledDiagnosticMessageWithValue(const String& message, const String& description, const String& value);
 
+    // Form validation messages.
+    void showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message);
+    void hideValidationMessage();
+#if PLATFORM(COCOA)
+    WebCore::ValidationBubble* validationBubble() const { return m_validationBubble.get(); } // For testing.
+#endif
+
+#if PLATFORM(IOS)
+    void setIsKeyboardAnimatingIn(bool isKeyboardAnimatingIn) { m_isKeyboardAnimatingIn = isKeyboardAnimatingIn; }
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     void addPlaybackTargetPickerClient(uint64_t);
     void removePlaybackTargetPickerClient(uint64_t);
@@ -1626,6 +1639,8 @@ private:
     uint64_t m_layerTreeTransactionIdAtLastTouchStart;
     uint64_t m_currentDynamicViewportSizeUpdateID { 0 };
     bool m_hasNetworkRequestsOnSuspended;
+    bool m_isKeyboardAnimatingIn { false };
+    bool m_isScrollingOrZooming { false };
 #endif
 
 #if ENABLE(VIBRATION)
@@ -1776,6 +1791,9 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;
+#endif
+#if PLATFORM(COCOA)
+    std::unique_ptr<WebCore::ValidationBubble> m_validationBubble;
 #endif
 
     const uint64_t m_pageID;

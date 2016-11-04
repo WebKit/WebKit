@@ -27,10 +27,15 @@
 #import "UIScriptController.h"
 
 #import "PlatformWebView.h"
+#import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
+#import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <JavaScriptCore/JSValue.h>
+#import <JavaScriptCore/JavaScriptCore.h>
+#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 namespace WTR {
@@ -82,6 +87,18 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 #else
     UNUSED_PARAM(scale);
     UNUSED_PARAM(callback);
+#endif
+}
+
+JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+#else
+    UNUSED_PARAM(interfaceItem);
+    return nullptr;
 #endif
 }
 

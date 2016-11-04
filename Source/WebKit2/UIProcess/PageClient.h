@@ -49,6 +49,7 @@ OBJC_CLASS NSTextAlternatives;
 namespace WebCore {
 class Cursor;
 class TextIndicator;
+class ValidationBubble;
 class WebMediaSessionManager;
 enum class TextIndicatorWindowLifetime : uint8_t;
 enum class TextIndicatorWindowDismissalAnimation : uint8_t;
@@ -224,6 +225,10 @@ public:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
+#endif
+
+#if PLATFORM(COCOA)
+    virtual std::unique_ptr<WebCore::ValidationBubble> createValidationBubble(const String& message) = 0;
 #endif
 
 #if PLATFORM(COCOA)

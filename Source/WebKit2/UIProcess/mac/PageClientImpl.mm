@@ -67,6 +67,7 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
+#import <WebCore/ValidationBubble.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -438,6 +439,11 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
     return WebColorPickerMac::create(page, initialColor, rect, m_view);
 }
 #endif
+
+std::unique_ptr<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
+{
+    return std::make_unique<ValidationBubble>(m_view, message);
+}
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
 {

@@ -1,3 +1,47 @@
+2016-11-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Implement user interface for HTML form validation
+        https://bugs.webkit.org/show_bug.cgi?id=164143
+        <rdar://problem/28944652>
+
+        Reviewed by Simon Fraser.
+
+        Add ValidationBubble class to show HTML form validation messages
+        using native dialogs. It currently has an implementation for both
+        Mac and iOS. It is in WebCore under platform/ so that it can be
+        used by both WebKit1 and WebKit2.
+
+        Update ownership of ValidationMessageClient so that is is owned
+        by the Page using a unique_ptr<>, which seems to be the modern
+        way of handling lifetime for page clients.
+
+        Test: fast/forms/validation-messages.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::focusAndShowValidationMessage):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::updateValidationMessage):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * page/Page.h:
+        (WebCore::Page::validationMessageClient):
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        * platform/ValidationBubble.h: Copied from Tools/DumpRenderTree/mac/UIScriptControllerMac.mm.
+        (WebCore::ValidationBubble::message):
+        * platform/ios/ValidationBubbleIOS.mm: Added.
+        (-[WebValidationBubbleDelegate adaptivePresentationStyleForPresentationController:traitCollection:]):
+        (WebCore::ValidationBubble::ValidationBubble):
+        (WebCore::ValidationBubble::~ValidationBubble):
+        (WebCore::ValidationBubble::show):
+        (WebCore::ValidationBubble::setAnchorRect):
+        * platform/mac/ValidationBubbleMac.mm: Added.
+        (WebCore::ValidationBubble::ValidationBubble):
+        (WebCore::ValidationBubble::~ValidationBubble):
+        (WebCore::ValidationBubble::showRelativeTo):
+
 2016-11-03  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Rename IDBKeyRange.contains to IDBKeyRange.includes.

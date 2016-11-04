@@ -77,9 +77,9 @@ public:
     PlugInClient* plugInClient { nullptr };
     ProgressTrackerClient* progressTrackerClient { nullptr };
     RefPtr<BackForwardClient> backForwardClient;
-    ValidationMessageClient* validationMessageClient { nullptr };
+    std::unique_ptr<ValidationMessageClient> validationMessageClient;
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
-    std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient { nullptr };
+    std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;

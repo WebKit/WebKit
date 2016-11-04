@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UIScriptController.h"
+#pragma once
 
-#import "DumpRenderTree.h"
-#import "UIScriptContext.h"
-#import <WebKit/WebKit.h>
-#import <WebKit/WebViewPrivate.h>
+#include "IntRect.h"
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSPopover;
+#elif PLATFORM(IOS)
+OBJC_CLASS UIViewController;
+OBJC_CLASS WebValidationBubbleDelegate;
+#endif
 
-namespace WTR {
+#if PLATFORM(MAC)
+OBJC_CLASS NSView;
+using PlatformView = NSView;
+#elif PLATFORM(IOS)
+OBJC_CLASS UIView;
+using PlatformView = UIView;
+#else
+using PlatformView = void;
+#endif
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+namespace WebCore {
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
+class ValidationBubble {
+public:
+    WEBCORE_EXPORT ValidationBubble(PlatformView*, const String& message);
+    WEBCORE_EXPORT ~ValidationBubble();
+
+    const String& message() const { return m_message; }
+
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT void setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController);
+    WEBCORE_EXPORT void show();
+#else
+    WEBCORE_EXPORT void showRelativeTo(const IntRect& anchorRect);
+#endif
+
+private:
+    PlatformView* m_view;
+    String m_message;
+#if PLATFORM(MAC)
+    RetainPtr<NSPopover> m_popover;
+#elif PLATFORM(IOS)
+    RetainPtr<UIViewController> m_popoverController;
+    RetainPtr<WebValidationBubbleDelegate> m_popoverDelegate;
+    UIViewController *m_presentingViewController;
+#endif
+};
+
 }
-
-void UIScriptController::insertText(JSStringRef, int, int)
-{
-}
-
-void UIScriptController::zoomToScale(double scale, JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    WebView *webView = [mainFrame webView];
-    [webView _scaleWebView:scale atOrigin:NSZeroPoint];
-
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
-
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
-{
-    return nullptr;
-}
-
-}
-
-#endif // PLATFORM(MAC)

@@ -93,6 +93,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextStream.h>
+#import <WebCore/ValidationBubble.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -524,6 +525,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [center addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [center addObserver:self selector:@selector(_windowDidRotate:) name:UIWindowDidRotateNotification object:nil];
     [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
@@ -2177,6 +2179,13 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 {
     if ([self _shouldUpdateKeyboardWithInfo:notification.userInfo])
         [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
+
+    _page->setIsKeyboardAnimatingIn(true);
+}
+
+- (void)_keyboardDidShow:(NSNotification *)notification
+{
+    _page->setIsKeyboardAnimatingIn(false);
 }
 
 - (void)_keyboardWillHide:(NSNotification *)notification
@@ -4527,6 +4536,21 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 @implementation WKWebView (WKTesting)
 
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
+{
+    if ([userInterfaceItem isEqualToString:@"validationBubble"]) {
+        auto* validationBubble = _page->validationBubble();
+        String message = validationBubble ? validationBubble->message() : emptyString();
+        return @{ userInterfaceItem: @{ @"message": (NSString *)message } };
+    }
+
+#if PLATFORM(IOS)
+    return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
+#else
+    return nil;
+#endif
+}
+
 #if PLATFORM(IOS)
 
 - (CGRect)_contentVisibleRect
@@ -4562,11 +4586,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)selectFormAccessoryPickerRow:(int)rowIndex
 {
     [_contentView selectFormAccessoryPickerRow:rowIndex];
-}
-
-- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
-{
-    return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
 }
 
 - (void)didStartFormControlInteraction

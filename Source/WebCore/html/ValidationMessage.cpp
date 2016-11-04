@@ -76,6 +76,14 @@ ValidationMessageClient* ValidationMessage::validationMessageClient() const
 
 void ValidationMessage::updateValidationMessage(const String& message)
 {
+    // We want to hide the validation message as soon as the user starts
+    // typing, even if a constraint is still violated. Thefore, we hide the message instead
+    // of updating it if it is already visible.
+    if (isVisible()) {
+        requestToHideMessage();
+        return;
+    }
+
     String updatedMessage = message;
     if (!validationMessageClient()) {
         // HTML5 specification doesn't ask UA to show the title attribute value

@@ -35,6 +35,7 @@
 #include "SocketProvider.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"
+#include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
 
 namespace WebCore {

@@ -1591,10 +1591,13 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     [_webSelectionAssistant willStartScrollingOrZoomingPage];
     [_textSelectionAssistant willStartScrollingOverflow];
+    _page->setIsScrollingOrZooming(true);
 }
 
 - (void)scrollViewWillStartPanOrPinchGesture
 {
+    _page->hideValidationMessage();
+
     _canSendTouchEventsAsynchronously = YES;
 }
 
@@ -1602,6 +1605,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     [_webSelectionAssistant didEndScrollingOrZoomingPage];
     [_textSelectionAssistant didEndScrollingOverflow];
+    _page->setIsScrollingOrZooming(false);
 }
 
 - (BOOL)requiresAccessoryView

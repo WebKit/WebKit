@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UIScriptController.h"
+#include "config.h"
+#include "WebValidationMessageClient.h"
 
-#import "DumpRenderTree.h"
-#import "UIScriptContext.h"
-#import <WebKit/WebKit.h>
-#import <WebKit/WebViewPrivate.h>
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include <WebCore/Element.h>
+#include <WebCore/Frame.h>
 
-#if PLATFORM(MAC)
+namespace WebKit {
 
-namespace WTR {
+using namespace WebCore;
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
-
-void UIScriptController::insertText(JSStringRef, int, int)
+WebValidationMessageClient::WebValidationMessageClient(WebPage& page)
+    : m_page(page)
 {
 }
 
-void UIScriptController::zoomToScale(double scale, JSValueRef callback)
+WebValidationMessageClient::~WebValidationMessageClient()
 {
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    WebView *webView = [mainFrame webView];
-    [webView _scaleWebView:scale atOrigin:NSZeroPoint];
-
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
+    if (m_currentAnchor)
+        hideValidationMessage(*m_currentAnchor);
 }
 
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+void WebValidationMessageClient::showValidationMessage(const Element& anchor, const String& message)
 {
-    return nullptr;
+    if (m_currentAnchor)
+        hideValidationMessage(*m_currentAnchor);
+
+    m_currentAnchor = &anchor;
+    m_page.send(Messages::WebPageProxy::ShowValidationMessage(anchor.clientRect(), message));
 }
 
+void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
+{
+    if (!isValidationMessageVisible(anchor))
+        return;
+
+    m_currentAnchor = nullptr;
+    m_page.send(Messages::WebPageProxy::HideValidationMessage());
 }
 
-#endif // PLATFORM(MAC)
+bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)
+{
+    return m_currentAnchor == &anchor;
+}
+
+} // namespace WebKit

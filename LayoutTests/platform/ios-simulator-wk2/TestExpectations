@@ -1457,6 +1457,17 @@ http/tests/navigation/target-blank-opener-post.html [ Skip ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 fast/replaced/pdf-as-object-and-embed.html [ Pass ]
 
+# These tests test the Shadow DOM based HTML form validation UI but iOS WK2 is using native dialogs instead.
+fast/forms/validation-message-on-listbox.html
+fast/forms/validation-message-on-menulist.html
+fast/forms/validation-message-on-radio.html
+fast/forms/validation-message-on-checkbox.html
+fast/forms/validation-message-on-range.html
+fast/forms/validation-message-clone.html
+fast/forms/validation-message-in-relative-body.html
+fast/forms/validation-message-appearance.html
+fast/forms/validation-message-on-textarea.html 
+
 # Flaky as of 06/08/2015
 compositing/overflow/overflow-positioning.html [ Failure ImageOnlyFailure Pass ]
 editing/deleting/delete-3775172-fix.html [ Failure ImageOnlyFailure Pass ]

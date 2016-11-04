@@ -205,7 +205,7 @@ public:
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
-    ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
+    ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
 
     WEBCORE_EXPORT ScrollingCoordinator* scrollingCoordinator();
 
@@ -592,7 +592,7 @@ private:
 
     UniqueRef<EditorClient> m_editorClient;
     PlugInClient* m_plugInClient;
-    ValidationMessageClient* m_validationMessageClient;
+    std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
 
     int m_subframeCount;

@@ -1,0 +1,31 @@
+Tests the HTML form validation messages being shown on UI side.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS validationBubbleContents.message is "Please fill out this field."
+PASS validationBubbleContents.message is "Please check this box if you want to proceed."
+PASS validationBubbleContents.message is "Please select one of these options."
+PASS validationBubbleContents.message is "Please select a file."
+PASS validationBubbleContents.message is "Please enter an email address."
+PASS validationBubbleContents.message is "Please enter a URL."
+PASS validationBubbleContents.message is "Please match the requested format."
+PASS validationBubbleContents.message is "Please use at least 100 characters."
+PASS validationBubbleContents.message is "Value must be greater than or equal to 5."
+PASS validationBubbleContents.message is "Value must be less than or equal to 5."
+PASS validationBubbleContents.message is "Please enter a valid value."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Required text input: 
+Required checkbox input: 
+Required radio input: 
+Required radio input:   
+Required file input: 
+Required email input: 
+Required url input: 
+Required input with pattern: 
+Required input with minlength=100: 
+Required range with min=5: 
+Required range with max=5: 
+Required range with step=3 / min=0: 

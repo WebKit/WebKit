@@ -64,6 +64,11 @@ messages -> WebPageProxy {
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
     RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
 
+#if PLATFORM(COCOA)
+    ShowValidationMessage(WebCore::IntRect anchorRect, String message)
+    HideValidationMessage()
+#endif
+
 #if PLATFORM(IOS)
     AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)

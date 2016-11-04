@@ -1,3 +1,27 @@
+2016-11-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Implement user interface for HTML form validation
+        https://bugs.webkit.org/show_bug.cgi?id=164143
+        <rdar://problem/28944652>
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/validation-messages-expected.txt: Added.
+        * fast/forms/validation-messages.html: Added.
+        Add layout test coverage for checking that the right validation messages
+        are displayed when submitting forms with constraint violations. More
+        testing will be landed in follow up to cover other things besides the
+        messages (e.g. when does the bubble disappear).
+
+        * platform/mac-wk1/TestExpectations:
+        Skip new test on WebKit1 because the feature is WebKit2 only at the
+        moment.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        Skip tests for the Shadow DOM based HTML form validation UI on
+        Mac and iOS WK2 now that those ports use native popovers instead.
+
 2016-11-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update custom elements tests

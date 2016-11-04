@@ -1216,6 +1216,8 @@
 		83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BFAC401D96136000433490 /* BlobDownloadClient.h */; };
 		83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BFAC411D96136000433490 /* BlobDownloadClient.cpp */; };
 		83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */; };
+		83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */; };
+		83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
@@ -3321,6 +3323,8 @@
 		83BFAC401D96136000433490 /* BlobDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDownloadClient.h; path = NetworkProcess/Downloads/BlobDownloadClient.h; sourceTree = "<group>"; };
 		83BFAC411D96136000433490 /* BlobDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobDownloadClient.cpp; path = NetworkProcess/Downloads/BlobDownloadClient.cpp; sourceTree = "<group>"; };
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoadClient.h; path = NetworkProcess/NetworkLoadClient.h; sourceTree = "<group>"; };
+		83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebValidationMessageClient.cpp; sourceTree = "<group>"; };
+		83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
@@ -6035,6 +6039,8 @@
 				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
 				4A410F4819AF7B80002EBAB5 /* WebUserMediaClient.cpp */,
 				4A410F4919AF7B80002EBAB5 /* WebUserMediaClient.h */,
+				83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */,
+				83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */,
 			);
 			path = WebCoreSupport;
 			sourceTree = "<group>";
@@ -7808,6 +7814,7 @@
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
 				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
 				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
+				83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */,
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,
 				1AA56F2911E92BC80061B882 /* PluginController.h in Headers */,
 				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
@@ -9730,6 +9737,7 @@
 				0FCB4E5118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm in Sources */,
 				0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */,
 				B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */,
+				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
 				5110AE0C133C16CB0072717A /* WKIconDatabase.cpp in Sources */,
 				5123CF1B133D260A0056F800 /* WKIconDatabaseCG.cpp in Sources */,
 				BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */,

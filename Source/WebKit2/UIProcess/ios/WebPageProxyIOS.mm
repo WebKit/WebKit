@@ -50,6 +50,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
+#import <WebCore/ValidationBubble.h>
 
 #if USE(QUICK_LOOK)
 #import "APILoaderClient.h"
@@ -266,6 +267,8 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize,
 {
     if (!isValid())
         return;
+
+    hideValidationMessage();
 
     m_dynamicViewportSizeUpdateWaitingForTarget = true;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = true;
@@ -752,6 +755,7 @@ void WebPageProxy::willStartUserTriggeredZooming()
 
 void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
 {
+    hideValidationMessage();
     process().send(Messages::WebPage::PotentialTapAtPosition(requestID, position), m_pageID);
 }
 
@@ -1007,6 +1011,27 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     // We always need to notify the client on iOS to make sure the selection is redrawn,
     // even during composition to support phrase boundary gesture.
     m_pageClient.selectionDidChange();
+}
+
+void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const String& message)
+{
+    m_validationBubble = m_pageClient.createValidationBubble(message);
+    m_validationBubble->setAnchorRect(anchorClientRect, uiClient().presentingViewController());
+
+    // If we are currently doing a scrolling / zoom animation, then we'll delay showing the validation
+    // bubble until the animation is over.
+    if (!m_isScrollingOrZooming)
+        m_validationBubble->show();
+}
+
+void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
+{
+    m_isScrollingOrZooming = isScrollingOrZooming;
+
+    // We finished doing the scrolling / zoom animation so we can now show the validation
+    // bubble if we're supposed to.
+    if (!m_isScrollingOrZooming && m_validationBubble)
+        m_validationBubble->show();
 }
 
 #if USE(QUICK_LOOK)

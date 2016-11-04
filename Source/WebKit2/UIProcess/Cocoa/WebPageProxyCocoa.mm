@@ -30,8 +30,8 @@
 #import "DataDetectionResult.h"
 #import "LoadParameters.h"
 #import "WebProcessProxy.h"
-
 #import <WebCore/SearchPopupMenuCocoa.h>
+#import <WebCore/ValidationBubble.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {

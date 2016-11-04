@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if PLATFORM(IOS)
+#import "ValidationBubble.h"
+
+#import "SoftLinking.h"
+#import "UIKitSPI.h"
+#import <wtf/text/WTFString.h>
+
+SOFT_LINK_FRAMEWORK(UIKit);
+SOFT_LINK_CLASS(UIKit, UILabel);
+SOFT_LINK_CLASS(UIKit, UIView);
+SOFT_LINK_CLASS(UIKit, UIViewController);
+
+@interface WebValidationBubbleDelegate : NSObject <UIPopoverPresentationControllerDelegate> {
+}
+@end
+
+@implementation WebValidationBubbleDelegate
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection
+{
+    UNUSED_PARAM(controller);
+    UNUSED_PARAM(traitCollection);
+    // This is needed to force UIKit to use a popover on iPhone as well.
+    return UIModalPresentationNone;
+}
+
+@end
+
+namespace WebCore {
+
+static const CGFloat horizontalPadding = 8;
+static const CGFloat verticalPadding = 8;
+static const CGFloat maxLabelWidth = 300;
+
+ValidationBubble::ValidationBubble(UIView* view, const String& message)
+    : m_view(view)
+    , m_message(message)
+{
+    m_popoverController = adoptNS([[getUIViewControllerClass() alloc] init]);
+    [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
+
+    RetainPtr<UIView> popoverView = adoptNS([[getUIViewClass() alloc] initWithFrame:CGRectZero]);
+    [m_popoverController setView:popoverView.get()];
+
+    RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
+    [label setText:message];
+    [label setLineBreakMode:NSLineBreakByWordWrapping];
+    [label setNumberOfLines:0]; // No limit.
+    [popoverView addSubview:label.get()];
+
+    CGSize labelSize = [label sizeThatFits:CGSizeMake(maxLabelWidth, CGFLOAT_MAX)];
+    [label setFrame:CGRectMake(horizontalPadding, verticalPadding, labelSize.width, labelSize.height)];
+    [popoverView setFrame:CGRectMake(horizontalPadding, verticalPadding, labelSize.width + horizontalPadding * 2, labelSize.height + verticalPadding * 2)];
+
+    [m_popoverController setPreferredContentSize:popoverView.get().frame.size];
+}
+
+ValidationBubble::~ValidationBubble()
+{
+    [m_popoverController dismissViewControllerAnimated:NO completion:nil];
+}
+
+void ValidationBubble::show()
+{
+    [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:nil];
+}
+
+void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController)
+{
+    UIPopoverPresentationController *presentationController = [m_popoverController popoverPresentationController];
+    m_popoverDelegate = adoptNS([[WebValidationBubbleDelegate alloc] init]);
+    presentationController.delegate = m_popoverDelegate.get();
+    presentationController.passthroughViews = [NSArray arrayWithObjects:presentingViewController.view, m_view, nil];
+
+    presentationController.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    presentationController.sourceView = m_view;
+    presentationController.sourceRect = CGRectMake(anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
+    m_presentingViewController = presentingViewController;
+}
+
+} // namespace WebCore
+
+#endif // PLATFORM(IOS)

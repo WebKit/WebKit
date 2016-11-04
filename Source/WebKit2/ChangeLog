@@ -1,3 +1,70 @@
+2016-11-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Implement user interface for HTML form validation
+        https://bugs.webkit.org/show_bug.cgi?id=164143
+        <rdar://problem/28944652>
+
+        Reviewed by Simon Fraser.
+
+        Implement the ValidationMessageClient in WebKit2 and have it display
+        a ValidationBubble on Cocoa. ValidationBubble is implemented using
+        native popovers on both Mac and iOS. As a result, Mac and iOS WK2
+        now use native popover for HTML form validation instead of the old
+        Shadow DOM based UI in WebCore.
+
+        The native popover shows at the bottom (or top) of the input and it
+        disapears as soon as the user starts typing or interacts with the
+        view (e.g. tap / scroll / zoom).
+
+        The feature is still disabled at runtime.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _keyboardWillShow:]):
+        (-[WKWebView _keyboardDidShow:]):
+        (-[WKWebView _contentsOfUserInterfaceItem:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::setPageZoomFactor):
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::hideValidationMessage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::validationBubble):
+        (WebKit::WebPageProxy::setIsKeyboardAnimatingIn):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createValidationBubble):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView scrollViewWillStartPanOrPinchGesture]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::potentialTapAtPosition):
+        (WebKit::WebPageProxy::showValidationMessage):
+        (WebKit::WebPageProxy::setIsScrollingOrZooming):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createValidationBubble):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showValidationMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebValidationMessageClient.cpp: Copied from Tools/DumpRenderTree/mac/UIScriptControllerMac.mm.
+        (WebKit::WebValidationMessageClient::WebValidationMessageClient):
+        (WebKit::WebValidationMessageClient::~WebValidationMessageClient):
+        (WebKit::WebValidationMessageClient::showValidationMessage):
+        (WebKit::WebValidationMessageClient::hideValidationMessage):
+        (WebKit::WebValidationMessageClient::isValidationMessageVisible):
+        * WebProcess/WebCoreSupport/WebValidationMessageClient.h: Copied from Tools/DumpRenderTree/mac/UIScriptControllerMac.mm.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+
 2016-11-03  Tim Horton  <timothy_horton@apple.com>
 
         Printing to PDF should produce internal links when HTML has internal links

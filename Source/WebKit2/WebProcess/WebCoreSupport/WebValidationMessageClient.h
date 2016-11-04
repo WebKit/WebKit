@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UIScriptController.h"
+#pragma once
 
-#import "DumpRenderTree.h"
-#import "UIScriptContext.h"
-#import <WebKit/WebKit.h>
-#import <WebKit/WebViewPrivate.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/ValidationMessageClient.h>
 
-#if PLATFORM(MAC)
+namespace WebKit {
 
-namespace WTR {
+class WebPage;
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+class WebValidationMessageClient final : public WebCore::ValidationMessageClient {
+public:
+    explicit WebValidationMessageClient(WebPage&);
+    ~WebValidationMessageClient();
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
+    // ValidationMessageClient API.
+    void showValidationMessage(const WebCore::Element& anchor, const String& message) final;
+    void hideValidationMessage(const WebCore::Element& anchor) final;
+    bool isValidationMessageVisible(const WebCore::Element& anchor) final;
 
-void UIScriptController::insertText(JSStringRef, int, int)
-{
-}
-
-void UIScriptController::zoomToScale(double scale, JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    WebView *webView = [mainFrame webView];
-    [webView _scaleWebView:scale atOrigin:NSZeroPoint];
-
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
-
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
-{
-    return nullptr;
-}
+private:
+    WebPage& m_page;
+    const WebCore::Element* m_currentAnchor { nullptr };
+};
 
 }
-
-#endif // PLATFORM(MAC)

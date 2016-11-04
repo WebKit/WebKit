@@ -161,6 +161,11 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
 void UIScriptController::zoomToScale(double, JSValueRef)
 {
 }
+
+JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+    return nullptr;
+}
 #endif
 
 #if !PLATFORM(IOS)
@@ -234,11 +239,6 @@ void UIScriptController::dismissFormAccessoryView()
 
 void UIScriptController::selectFormAccessoryPickerRow(long)
 {
-}
-    
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
-{
-    return nullptr;
 }
 
 void UIScriptController::scrollToOffset(long x, long y)
