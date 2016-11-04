@@ -200,33 +200,22 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     m_features.collectFeatures(ruleData);
 
     unsigned classBucketSize = 0;
+    const CSSSelector* idSelector = nullptr;
     const CSSSelector* tagSelector = nullptr;
     const CSSSelector* classSelector = nullptr;
     const CSSSelector* linkSelector = nullptr;
     const CSSSelector* focusSelector = nullptr;
+    const CSSSelector* customPseudoElementSelector = nullptr;
+    const CSSSelector* slottedPseudoElementSelector = nullptr;
+    const CSSSelector* cuePseudoElementSelector = nullptr;
     const CSSSelector* selector = ruleData.selector();
     do {
-        if (selector->match() == CSSSelector::Id) {
-            addToRuleSet(selector->value().impl(), m_idRules, ruleData);
-            return;
-        }
-
-#if ENABLE(VIDEO_TRACK)
-        if (selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue) {
-            m_cuePseudoRules.append(ruleData);
-            return;
-        }
-#endif
-
-        if (selector->isCustomPseudoElement()) {
-            // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
-            ruleData.disableSelectorFiltering();
-            addToRuleSet(selector->value().impl(), m_shadowPseudoElementRules, ruleData);
-            return;
-        }
-
-        if (selector->match() == CSSSelector::Class) {
-            AtomicStringImpl* className = selector->value().impl();
+        switch (selector->match()) {
+        case CSSSelector::Id:
+            idSelector = selector;
+            break;
+        case CSSSelector::Class: {
+            auto* className = selector->value().impl();
             if (!classSelector) {
                 classSelector = selector;
                 classBucketSize = rulesCountForName(m_classRules, className);
@@ -237,12 +226,32 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
                     classBucketSize = newClassBucketSize;
                 }
             }
+            break;
         }
-
-        if (selector->match() == CSSSelector::Tag && selector->tagQName().localName() != starAtom)
-            tagSelector = selector;
-
-        if (SelectorChecker::isCommonPseudoClassSelector(selector)) {
+        case CSSSelector::Tag:
+            if (selector->tagQName().localName() != starAtom)
+                tagSelector = selector;
+            break;
+        case CSSSelector::PseudoElement:
+            switch (selector->pseudoElementType()) {
+            case CSSSelector::PseudoElementUserAgentCustom:
+            case CSSSelector::PseudoElementWebKitCustom:
+            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+                customPseudoElementSelector = selector;
+                break;
+            case CSSSelector::PseudoElementSlotted:
+                slottedPseudoElementSelector = selector;
+                break;
+#if ENABLE(VIDEO_TRACK)
+            case CSSSelector::PseudoElementCue:
+                cuePseudoElementSelector = selector;
+                break;
+#endif
+            default:
+                break;
+            }
+            break;
+        case CSSSelector::PseudoClass:
             switch (selector->pseudoClassType()) {
             case CSSSelector::PseudoClassLink:
             case CSSSelector::PseudoClassVisited:
@@ -253,25 +262,52 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             case CSSSelector::PseudoClassFocus:
                 focusSelector = selector;
                 break;
+            case CSSSelector::PseudoClassHost:
+                m_hostPseudoClassRules.append(ruleData);
+                return;
             default:
-                ASSERT_NOT_REACHED();
+                break;
             }
-        }
-
-        if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost) {
-            m_hostPseudoClassRules.append(ruleData);
-            return;
-        }
-        if (selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementSlotted) {
-            // ::slotted pseudo elements work accross shadow boundary making filtering difficult.
-            ruleData.disableSelectorFiltering();
-            m_slottedPseudoElementRules.append(ruleData);
-            return;
+            break;
+        case CSSSelector::Unknown:
+        case CSSSelector::Exact:
+        case CSSSelector::Set:
+        case CSSSelector::List:
+        case CSSSelector::Hyphen:
+        case CSSSelector::Contain:
+        case CSSSelector::Begin:
+        case CSSSelector::End:
+        case CSSSelector::PagePseudoClass:
+            break;
         }
         if (selector->relation() != CSSSelector::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);
+
+    if (cuePseudoElementSelector) {
+        m_cuePseudoRules.append(ruleData);
+        return;
+    }
+
+    if (slottedPseudoElementSelector) {
+        // ::slotted pseudo elements work accross shadow boundary making filtering difficult.
+        ruleData.disableSelectorFiltering();
+        m_slottedPseudoElementRules.append(ruleData);
+        return;
+    }
+
+    if (customPseudoElementSelector) {
+        // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
+        ruleData.disableSelectorFiltering();
+        addToRuleSet(customPseudoElementSelector->value().impl(), m_shadowPseudoElementRules, ruleData);
+        return;
+    }
+
+    if (idSelector) {
+        addToRuleSet(idSelector->value().impl(), m_idRules, ruleData);
+        return;
+    }
 
     if (classSelector) {
         addToRuleSet(classSelector->value().impl(), m_classRules, ruleData);

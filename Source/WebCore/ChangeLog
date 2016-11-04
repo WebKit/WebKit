@@ -1,3 +1,23 @@
+2016-11-04  Antti Koivisto  <antti@apple.com>
+
+        slotted() pseudo does not work with ID selector
+        https://bugs.webkit.org/show_bug.cgi?id=160538
+        <rdar://problem/28534529>
+
+        Reviewed by Andreas Kling.
+
+        When we saw an id selector while addin rules we immediately threw it into the m_idRules
+        optimization bucket and bailed out. However selectors containing ::slotted must always end
+        up in m_slottedPseudoElementRules list no matter what else is there.
+
+        Fix by treating id like other selectors and only choosing the bucket after analysing all
+        the selector components.
+
+        Test: fast/shadow-dom/css-scoping-slot-with-id.html
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule): Also made this use switch instead of a series of ifs.
+
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Handle IDBObjectStore rename behavior properly when version change transaction aborts.
