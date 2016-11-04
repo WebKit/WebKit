@@ -1,3 +1,15 @@
+2016-11-04  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r208349) StringHasher::hashMemory behavior changed, causing API tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=164390
+
+        Reviewed by Geoffrey Garen.
+
+        Operating under the assumption that the behavior change is okay/desirable, this updates the test.
+
+        * TestWebKitAPI/Tests/WTF/StringHasher.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-11-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Attempting to clear selection on ARIA listboxes results in crash
