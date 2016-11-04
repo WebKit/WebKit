@@ -42,7 +42,7 @@ class FileStreamClient;
 class FileStream;
 class URL;
 
-class AsyncFileStream {
+class WEBCORE_EXPORT AsyncFileStream {
 public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();

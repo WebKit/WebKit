@@ -52,7 +52,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
     , m_shouldContentSniff(shouldContentSniff)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
-    static_cast<NetworkSessionSoup&>(m_session.get()).registerNetworkDataTask(*this);
+    m_session->registerNetworkDataTask(*this);
     if (m_scheduledFailureType != NoFailure)
         return;
 
@@ -80,7 +80,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
 NetworkDataTaskSoup::~NetworkDataTaskSoup()
 {
     clearRequest();
-    static_cast<NetworkSessionSoup&>(m_session.get()).unregisterNetworkDataTask(*this);
+    m_session->unregisterNetworkDataTask(*this);
 }
 
 String NetworkDataTaskSoup::suggestedFilename() const
@@ -863,7 +863,7 @@ void NetworkDataTaskSoup::download()
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
     auto& downloadManager = NetworkProcess::singleton().downloadManager();
-    auto download = std::make_unique<Download>(downloadManager, m_pendingDownloadID, this, m_session->sessionID(), suggestedFilename());
+    auto download = std::make_unique<Download>(downloadManager, m_pendingDownloadID, *this, m_session->sessionID(), suggestedFilename());
     auto* downloadPtr = download.get();
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);

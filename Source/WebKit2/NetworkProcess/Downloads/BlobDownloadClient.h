@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !USE(NETWORK_SESSION)
+
 #include <WebCore/FileSystem.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <wtf/RefPtr.h>
@@ -55,3 +57,5 @@ private:
 };
 
 }
+
+#endif // !USE(NETWORK_SESSION)

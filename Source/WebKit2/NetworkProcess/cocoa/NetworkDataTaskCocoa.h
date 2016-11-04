@@ -61,6 +61,7 @@ public:
     void suspend() override;
     void cancel() override;
     void resume() override;
+    void invalidateAndCancel() override { }
     NetworkDataTask::State state() const override;
 
     void setPendingDownloadLocation(const String&, const SandboxExtension::Handle&, bool /*allowOverwrite*/) override;

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetworkLoad.h"
 
+#if !USE(NETWORK_SESSION)
+
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/ResourceHandle.h>
 
@@ -54,3 +56,5 @@ void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResp
 #endif // !USE(CFURLCONNECTION)
 
 } // namespace WebKit
+
+#endif // !USE(NETWORK_SESSION)
