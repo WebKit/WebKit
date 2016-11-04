@@ -624,7 +624,7 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
     }
 }
 
-Optional<uint16_t> defaultPortForProtocol(StringView scheme)
+Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
 {
     static const uint16_t ftpPort = 21;
     static const uint16_t gopherPort = 70;
@@ -687,11 +687,6 @@ Optional<uint16_t> defaultPortForProtocol(StringView scheme)
     default:
         return Nullopt;
     }
-}
-
-bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
-{
-    return defaultPortForProtocol(protocol) == port;
 }
 
 enum class Scheme {
@@ -2560,7 +2555,8 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
     if (!port && digitCount > 1)
         syntaxViolation(colonIterator);
 
-    if (UNLIKELY(isDefaultPortForProtocol(port, parsedDataView(0, m_url.m_schemeEnd))))
+    ASSERT(port == static_cast<uint16_t>(port));
+    if (UNLIKELY(defaultPortForProtocol(parsedDataView(0, m_url.m_schemeEnd)) == static_cast<uint16_t>(port)))
         syntaxViolation(colonIterator);
     else {
         appendToASCIIBuffer(':');

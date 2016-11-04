@@ -800,6 +800,16 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
+Optional<uint16_t> defaultPortForProtocol(StringView protocol)
+{
+    return URLParser::defaultPortForProtocol(protocol);
+}
+
+bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
+{
+    return defaultPortForProtocol(protocol) == port;
+}
+
 bool URL::protocolIs(const char* protocol) const
 {
     assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));

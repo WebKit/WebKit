@@ -49,6 +49,9 @@ public:
     static String serialize(const URLEncodedForm&);
 
 private:
+    static Optional<uint16_t> defaultPortForProtocol(StringView);
+    friend Optional<uint16_t> defaultPortForProtocol(StringView);
+
     URL m_url;
     Vector<LChar> m_asciiBuffer;
     bool m_urlIsSpecial { false };
