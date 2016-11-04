@@ -1,3 +1,15 @@
+2016-11-04  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Handle IDBObjectStore rename behavior properly when version change transaction aborts.
+        https://bugs.webkit.org/show_bug.cgi?id=164416
+
+        Reviewed by Beth Dakin.
+
+        No new tests (Covered by existing tests).
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::rollbackForVersionChangeAbort):
+
 2016-11-04  Keith Rollin  <krollin@apple.com>
 
         NetworkSession: Add NetworkDataTask implementation for blobs

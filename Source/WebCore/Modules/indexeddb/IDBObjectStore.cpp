@@ -603,7 +603,12 @@ void IDBObjectStore::markAsDeleted()
 void IDBObjectStore::rollbackForVersionChangeAbort()
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());
+
+    String currentName = m_info.name();
     m_info = m_originalInfo;
+
+    if (!transaction().database().info().infoForExistingObjectStore(m_info.identifier()))
+        m_info.rename(currentName);
 
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())
