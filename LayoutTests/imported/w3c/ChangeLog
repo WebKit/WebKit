@@ -1,3 +1,46 @@
+2016-11-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update custom elements tests
+        https://bugs.webkit.org/show_bug.cgi?id=164352
+
+        Reviewed by Antti Koivisto.
+
+        Reimported the custom elements tests as of 5047c27a5c61cc12eab75ac72b86125ec3cc8527.
+
+        * web-platform-tests/custom-elements/custom-element-reaction-queue-expected.txt: Added.
+        * web-platform-tests/custom-elements/custom-element-reaction-queue.html: Added.
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget.html:
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration-expected.txt: Moved from fast/custom-elements/reactions/.
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/Document.html: Updated.
+        * web-platform-tests/custom-elements/reactions/HTMLAnchorElement-expected.txt: Moved from fast/custom-elements/reactions/.
+        * web-platform-tests/custom-elements/reactions/HTMLAnchorElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOptionElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOptionElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOptionsCollection-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOptionsCollection.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOutputElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLOutputElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLSelectElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLSelectElement.html:  Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableRowElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableRowElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableSectionElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTableSectionElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTitleElement-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/HTMLTitleElement.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/ShadowRoot-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/reactions/ShadowRoot.html: Ditto.
+        * web-platform-tests/custom-elements/reactions/resources/reactions.js:
+        * web-platform-tests/custom-elements/reactions/w3c-import.log:
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+        * web-platform-tests/custom-elements/upgrading/upgrading-enqueue-reactions-expected.txt: Moved from fast/custom-elements/.
+        * web-platform-tests/custom-elements/upgrading/upgrading-enqueue-reactions.html: Ditto.
+        * web-platform-tests/custom-elements/upgrading/w3c-import.log:
+        * web-platform-tests/custom-elements/w3c-import.log:
+
 2016-11-03  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Rename IDBKeyRange.contains to IDBKeyRange.includes.

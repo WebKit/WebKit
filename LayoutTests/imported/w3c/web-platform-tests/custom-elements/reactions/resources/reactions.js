@@ -260,3 +260,102 @@ function testAttributeRemover(testFunction, name, options) {
         assert_array_equals(element.takeLog().types(), []);
     }, name + ' must not enqueue an attributeChanged reaction when removing an existing unobserved attribute');
 }
+
+function test_mutating_style_property_value(testFunction, name, options) {
+    const propertyName = (options || {}).propertyName || 'color';
+    const idlName = (options || {}).idlName || 'color';
+    const value1 = (options || {}).value1 || 'blue';
+    const rule1 = `${propertyName}: ${value1};`;
+    const value2 = (options || {}).value2 || 'red';
+    const rule2 = `${propertyName}: ${value2};`;
+
+    test(function () {
+        var element = define_new_custom_element(['style']);
+        var instance = document.createElement(element.name);
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        testFunction(instance, propertyName, idlName, value1);
+        assert_equals(instance.getAttribute('style'), rule1);
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: 'style', oldValue: null, newValue: rule1, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when it adds the observed style attribute');
+
+    test(function () {
+        var element = define_new_custom_element(['title']);
+        var instance = document.createElement(element.name);
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        testFunction(instance, propertyName, idlName, value1);
+        assert_equals(instance.getAttribute('style'), rule1);
+        assert_array_equals(element.takeLog().types(), []);
+    }, name + ' must not enqueue an attributeChanged reaction when it adds the style attribute but the style attribute is not observed');
+
+    test(function () {
+        var element = define_new_custom_element(['style']);
+        var instance = document.createElement(element.name);
+        testFunction(instance, propertyName, idlName, value1);
+        assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
+        testFunction(instance, propertyName, idlName, value2);
+        assert_equals(instance.getAttribute('style'), rule2);
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: 'style', oldValue: rule1, newValue: rule2, namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when it mutates the observed style attribute');
+
+    test(function () {
+        var element = define_new_custom_element([]);
+        var instance = document.createElement(element.name);
+        testFunction(instance, propertyName, idlName, value1);
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        testFunction(instance, propertyName, idlName, value2);
+        assert_equals(instance.getAttribute('style'), rule2);
+        assert_array_equals(element.takeLog().types(), []);
+    }, name + ' must not enqueue an attributeChanged reaction when it mutates the style attribute but the style attribute is not observed');
+}
+
+function test_removing_style_property_value(testFunction, name) {
+    test(function () {
+        var element = define_new_custom_element(['style']);
+        var instance = document.createElement(element.name);
+        instance.setAttribute('style', 'color: red; display: none;');
+        assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
+        testFunction(instance, 'color', 'color');
+        assert_equals(instance.getAttribute('style'), 'display: none;'); // Don't make this empty since browser behaviors are inconsistent now.
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: 'style', oldValue: 'color: red; display: none;', newValue: 'display: none;', namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when it removes a property from the observed style attribute');
+
+    test(function () {
+        var element = define_new_custom_element(['class']);
+        var instance = document.createElement(element.name);
+        instance.setAttribute('style', 'color: red; display: none;');
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        testFunction(instance, 'color', 'color');
+        assert_equals(instance.getAttribute('style'), 'display: none;'); // Don't make this empty since browser behaviors are inconsistent now.
+        assert_array_equals(element.takeLog().types(), []);
+    }, name + ' must not enqueue an attributeChanged reaction when it removes a property from the style attribute but the style attribute is not observed');
+}
+
+function test_mutating_style_property_priority(testFunction, name) {
+    test(function () {
+        var element = define_new_custom_element(['style']);
+        var instance = document.createElement(element.name);
+        instance.setAttribute('style', 'color: red');
+        assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
+        testFunction(instance, 'color', 'color', true);
+        assert_equals(instance.getAttribute('style'), 'color: red !important;');
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['attributeChanged']);
+        assert_attribute_log_entry(logEntries.last(), {name: 'style', oldValue: 'color: red', newValue: 'color: red !important;', namespace: null});
+    }, name + ' must enqueue an attributeChanged reaction when it makes a property important and the style attribute is observed');
+
+    test(function () {
+        var element = define_new_custom_element(['id']);
+        var instance = document.createElement(element.name);
+        instance.setAttribute('style', 'color: red');
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+        testFunction(instance, 'color', 'color', true);
+        assert_equals(instance.getAttribute('style'), 'color: red !important;');
+        assert_array_equals(element.takeLog().types(), []);
+    }, name + ' must enqueue an attributeChanged reaction when it makes a property important but the style attribute is not observed');
+}

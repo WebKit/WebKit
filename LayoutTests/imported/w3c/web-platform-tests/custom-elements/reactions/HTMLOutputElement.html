@@ -5,20 +5,17 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="value and defaultValue of HTMLOutputElement interface must have CEReactions">
 <meta name="help" content="https://dom.spec.whatwg.org/#node">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
-<script src="../../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
-<script src="../../../imported/w3c/web-platform-tests/custom-elements/reactions/resources/reactions.js"></script>
-<script src="../resources/additional-helpers.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../resources/custom-elements-helpers.js"></script>
+<script src="./resources/reactions.js"></script>
 </head>
 <body>
 <div id="log"></div>
 <script>
 
-test_with_window(function (contentWindow) {
+test_with_window(function (contentWindow, contentDocument) {
     const element = define_custom_element_in_window(contentWindow, 'custom-element', []);
-
-    const contentDocument = contentWindow.document;
     contentDocument.body.innerHTML = `<output><custom-element>hello</custom-element></output>`;
     const anchor = contentDocument.querySelector('output');
 
@@ -30,10 +27,8 @@ test_with_window(function (contentWindow) {
     assert_array_equals(element.takeLog().types(), ['disconnected']);
 }, 'value on HTMLOutputElement must enqueue disconnectedCallback when removing a custom element');
 
-test_with_window(function (contentWindow) {
+test_with_window(function (contentWindow, contentDocument) {
     const element = define_custom_element_in_window(contentWindow, 'custom-element', []);
-
-    const contentDocument = contentWindow.document;
     contentDocument.body.innerHTML = `<output><custom-element>hello</custom-element></output>`;
     const anchor = contentDocument.querySelector('output');
 

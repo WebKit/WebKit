@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: CEReactions on Attr interface</title>
+<title>Custom Elements: Upgrading custom elements should enqueue attributeChanged and connected callbacks</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="value of Attr interface must have CEReactions">
-<meta name="help" content="https://dom.spec.whatwg.org/#node">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
-<script src="resources/additional-helpers.js"></script>
+<meta name="assert" content="Upgrading custom elements should enqueue attributeChanged and connected callbacksml">
+<meta name="help" content="https://html.spec.whatwg.org/#upgrades">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>

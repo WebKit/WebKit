@@ -101,9 +101,9 @@ test_with_window(w => {
     function TestElement() {
       const o = Reflect.construct(w.HTMLParagraphElement, [], new.target);
 
-      assert_equals(Object.getPrototypeOf(o), window.HTMLParagraphElement,
+      assert_equals(Object.getPrototypeOf(o), window.HTMLParagraphElement.prototype,
         "Must use the HTMLParagraphElement from the realm of NewTarget");
-      assert_not_equals(Object.getPrototypeOf(o), w.HTMLParagraphElement,
+      assert_not_equals(Object.getPrototypeOf(o), w.HTMLParagraphElement.prototype,
         "Must not use the HTMLParagraphElement from the realm of the active function object (w.HTMLParagraphElement)");
 
       return o;

@@ -5,40 +5,13 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="Each element must have its own custom element reaction queue">
 <meta name="help" content="https://html.spec.whatwg.org/multipage/scripting.html#custom-element-reaction-queue">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="./resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
 <script>
-
-function create_constructor_log(element) {
-    return {type: 'constructed', element: element};
-}
-
-function assert_constructor_log_entry(log, element) {
-    assert_equals(log.type, 'constructed');
-    assert_equals(log.element, element);
-}
-
-function assert_adopted_log_entry(log, element) {
-    assert_equals(log.type, 'adopted');
-    assert_equals(log.element, element);
-}
-
-function create_adopted_callback_log(element) {
-    return {type: 'adopted', element: element};
-}
-
-function create_connected_callback_log(element) {
-    return {type: 'connected', element: element};
-}
-
-function assert_connected_log_entry(log, element) {
-    assert_equals(log.type, 'connected');
-    assert_equals(log.element, element);
-}
 
 test_with_window(function (contentWindow) {
     const contentDocument = contentWindow.document;
@@ -92,8 +65,11 @@ test_with_window(function (contentWindow) {
         constructor() {
             super();
             log.push(create_constructor_log(this));
-            if (this == element1)
+            if (this == element1) {
+                element2.setAttribute('title', 'hi');
+                element2.removeAttribute('title');
                 element2.setAttribute('class', 'foo');
+            }
         }
         connectedCallback(...args) {
             log.push(create_connected_callback_log(this, ...args));
@@ -101,7 +77,7 @@ test_with_window(function (contentWindow) {
         attributeChangedCallback(...args) {
             log.push(create_attribute_changed_callback_log(this, ...args));
         }
-        static get observedAttributes() { return ['id', 'class']; }
+        static get observedAttributes() { return ['id', 'class', 'title']; }
     }
     contentWindow.customElements.define('test-element', TestElement);
     assert_equals(Object.getPrototypeOf(element1), TestElement.prototype);
