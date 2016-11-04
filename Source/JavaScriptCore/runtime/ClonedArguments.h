@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,12 +53,15 @@ public:
     static ClonedArguments* createByCopyingFrom(ExecState*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+    static Structure* createSlowPutStructure(VM&, JSGlobalObject*, JSValue prototype);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
     DECLARE_INFO;
 
 private:
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype, IndexingType);
+
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);

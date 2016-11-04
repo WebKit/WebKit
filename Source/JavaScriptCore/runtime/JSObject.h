@@ -902,6 +902,7 @@ protected:
     void createInitialForValueAndSet(VM&, unsigned index, JSValue);
     void convertInt32ForValue(VM&, JSValue);
         
+    static Butterfly* createArrayStorageButterfly(VM&, JSCell* intendedOwner, Structure*, unsigned length, unsigned vectorLength, Butterfly* oldButterfly = nullptr);
     ArrayStorage* createArrayStorage(VM&, unsigned length, unsigned vectorLength);
     ArrayStorage* createInitialArrayStorage(VM&);
         

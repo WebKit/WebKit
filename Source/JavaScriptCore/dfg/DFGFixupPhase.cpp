@@ -1550,6 +1550,11 @@ private:
             break;
         }
 
+        case CreateClonedArguments: {
+            watchHavingABadTime(node);
+            break;
+        }
+
         case CreateScopedArguments:
         case CreateActivation:
         case NewFunction:
@@ -1776,7 +1781,6 @@ private:
         case IsObjectOrNull:
         case IsFunction:
         case CreateDirectArguments:
-        case CreateClonedArguments:
         case Jump:
         case Return:
         case TailCall:

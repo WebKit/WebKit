@@ -320,7 +320,6 @@ public:
     WriteBarrier<Structure> m_dollarVMStructure;
     WriteBarrier<Structure> m_iteratorResultObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
-    WriteBarrier<Structure> m_regExpMatchesArraySlowPutStructure;
     WriteBarrier<Structure> m_moduleRecordStructure;
     WriteBarrier<Structure> m_moduleNamespaceObjectStructure;
     WriteBarrier<Structure> m_proxyObjectStructure;

@@ -1,3 +1,83 @@
+2016-11-03  Mark Lam  <mark.lam@apple.com>
+
+        ClonedArguments need to also support haveABadTime mode.
+        https://bugs.webkit.org/show_bug.cgi?id=164200
+        <rdar://problem/27211336>
+
+        Reviewed by Geoffrey Garen.
+
+        For those who are not familiar with the parlance, "have a bad time" in the VM
+        means that Object.prototype has been modified in such a way that we can no longer
+        trivially do indexed property accesses without consulting the Object.prototype.
+        This defeats JIT indexed put optimizations, and hence, makes the VM "have a
+        bad time".
+
+        Once the VM enters haveABadTime mode, all existing objects are converted to use
+        slow put storage.  Thereafter, JSArrays are always created with slow put storage.
+        JSObjects are always created with a blank indexing type.  When a new indexed
+        property is put into the new object, its indexing type will be converted to the
+        slow put array indexing type just before we perform the put operation.  This is
+        how we ensure that the objects will also use slow put storage.
+
+        However, ClonedArguments is an object which was previously created unconditionally
+        to use contiguous storage.  Subsequently, if we try to call Object.preventExtensions()
+        on that ClonedArguments object, Object.preventExtensions() will:
+        1. make the ClonedArguments enter dictionary indexing mode, which means it will
+        2. first ensure that the ClonedArguments is using slow put array storage via
+           JSObject::ensureArrayStorageSlow().
+
+        However, JSObject::ensureArrayStorageSlow() expects that we never see an object
+        with contiguous storage once we're in haveABadTime mode.  Our ClonedArguments
+        object did not obey this invariant.
+
+        The fix is to make the ClonedArguments factories create objects that use slow put
+        array storage when in haveABadTime mode.  This means:
+
+        1. JSGlobalObject::haveABadTime() now changes m_clonedArgumentsStructure to use
+           its slow put version.
+
+           Also the caching of the slow put version of m_regExpMatchesArrayStructure,
+           because we only need to create it when we are having a bad time. 
+
+        2. The ClonedArguments factories now allocates a butterfly with slow put array
+           storage if we're in haveABadTime mode.
+
+           Also added some assertions in ClonedArguments' factory methods to ensure that
+           the created object has the slow put indexing type when it needsSlowPutIndexing().
+
+        3. DFGFixupPhase now watches the havingABadTimeWatchpoint because ClonedArguments'
+           structure will change when having a bad time.
+
+        4. DFGArgumentEliminationPhase and DFGVarargsForwardingPhase need not be changed
+           because it is still valid to eliminate the creation of the arguments object
+           even having a bad time, as long as the arguments object does not escape.
+
+        5. The DFGAbstractInterpreterInlines now checks for haveABadTime, and sets the
+           predicted type to be SpecObject.
+
+        Note: this issue does not apply to DirectArguments and ScopedArguments because
+        they use a blank indexing type (just like JSObject).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::dump):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createWithMachineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        (JSC::ClonedArguments::createStructure):
+        (JSC::ClonedArguments::createSlowPutStructure):
+        * runtime/ClonedArguments.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::haveABadTime):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+
 2016-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG plays fast and loose with the shadow values of a Phi

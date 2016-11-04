@@ -734,7 +734,7 @@ bool ArrayMode::permitsBoundsCheckLowering() const
 
 void ArrayMode::dump(PrintStream& out) const
 {
-    out.print(type(), arrayClass(), speculation(), conversion());
+    out.print(type(), "+", arrayClass(), "+", speculation(), "+", conversion());
 }
 
 } } // namespace JSC::DFG

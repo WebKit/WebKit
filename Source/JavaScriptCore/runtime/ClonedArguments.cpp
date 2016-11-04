@@ -48,16 +48,23 @@ ClonedArguments* ClonedArguments::createEmpty(
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
 
-    void* temp = vm.heap.tryAllocateAuxiliary(nullptr, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
-    if (!temp)
-        return 0;
-    Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
-    butterfly->setVectorLength(vectorLength);
-    butterfly->setPublicLength(length);
-    
-    for (unsigned i = length; i < vectorLength; ++i)
-        butterfly->contiguous()[i].clear();
+    Butterfly* butterfly;
+    if (UNLIKELY(structure->needsSlowPutIndexing())) {
+        butterfly = createArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
+        butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
 
+    } else {
+        void* temp = vm.heap.tryAllocateAuxiliary(nullptr, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
+        if (!temp)
+            return 0;
+        butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
+        butterfly->setVectorLength(vectorLength);
+        butterfly->setPublicLength(length);
+        
+        for (unsigned i = length; i < vectorLength; ++i)
+            butterfly->contiguous()[i].clear();
+    }
+    
     ClonedArguments* result =
         new (NotNull, allocateCell<ClonedArguments>(vm.heap))
         ClonedArguments(vm, structure, butterfly);
@@ -70,9 +77,12 @@ ClonedArguments* ClonedArguments::createEmpty(
 
 ClonedArguments* ClonedArguments::createEmpty(ExecState* exec, JSFunction* callee, unsigned length)
 {
+    VM& vm = exec->vm();
     // NB. Some clients might expect that the global object of of this object is the global object
     // of the callee. We don't do this for now, but maybe we should.
-    return createEmpty(exec->vm(), exec->lexicalGlobalObject()->clonedArgumentsStructure(), callee, length);
+    ClonedArguments* result = createEmpty(vm, exec->lexicalGlobalObject()->clonedArgumentsStructure(), callee, length);
+    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    return result;
 }
 
 ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, ExecState* targetFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)
@@ -117,12 +127,15 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     } }
 
     ASSERT(myFrame->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
+    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
     return result;
 }
 
 ClonedArguments* ClonedArguments::createWithMachineFrame(ExecState* myFrame, ExecState* targetFrame, ArgumentsMode mode)
 {
-    return createWithInlineFrame(myFrame, targetFrame, nullptr, mode);
+    ClonedArguments* result = createWithInlineFrame(myFrame, targetFrame, nullptr, mode);
+    ASSERT(!result->structure()->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+    return result;
 }
 
 ClonedArguments* ClonedArguments::createByCopyingFrom(
@@ -134,19 +147,28 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     
     for (unsigned i = length; i--;)
         result->initializeIndex(vm, i, argumentStart[i].jsValue());
-
+    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
     return result;
+}
+
+Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
+{
+    Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), indexingType);
+    PropertyOffset offset;
+    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, DontEnum, offset);
+    ASSERT(offset == clonedArgumentsLengthPropertyOffset);
+    return structure;
 }
 
 Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     // We use contiguous storage because optimizations in the FTL assume that cloned arguments creation always produces the same initial structure.
+    return createStructure(vm, globalObject, prototype, NonArrayWithContiguous);
+}
 
-    Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), NonArrayWithContiguous);
-    PropertyOffset offset;
-    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, DontEnum, offset);
-    ASSERT(offset == clonedArgumentsLengthPropertyOffset);
-    return structure;
+Structure* ClonedArguments::createSlowPutStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return createStructure(vm, globalObject, prototype, NonArrayWithSlowPutArrayStorage);
 }
 
 bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName ident, PropertySlot& slot)

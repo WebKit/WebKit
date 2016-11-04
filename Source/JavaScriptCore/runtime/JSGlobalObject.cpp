@@ -537,7 +537,6 @@ void JSGlobalObject::init(VM& vm)
     m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
     m_regExpMatchesArrayStructure.set(vm, this, createRegExpMatchesArrayStructure(vm, this));
-    m_regExpMatchesArraySlowPutStructure.set(vm, this, createRegExpMatchesArraySlowPutStructure(vm, this));
 
     m_moduleRecordStructure.set(vm, this, JSModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
     m_moduleNamespaceObjectStructure.set(vm, this, JSModuleNamespaceObject::createStructure(vm, this, jsNull()));
@@ -1052,8 +1051,12 @@ void JSGlobalObject::haveABadTime(VM& vm)
         m_arrayStructureForIndexingShapeDuringAllocation[i].set(vm, this, originalArrayStructureForIndexingType(ArrayWithSlowPutArrayStorage));
 
     // Same for any special array structures.
-    m_regExpMatchesArrayStructure.set(vm, this, m_regExpMatchesArraySlowPutStructure.get());
-    
+    Structure* slowPutStructure;
+    slowPutStructure = createRegExpMatchesArraySlowPutStructure(vm, this);
+    m_regExpMatchesArrayStructure.set(vm, this, slowPutStructure);
+    slowPutStructure = ClonedArguments::createSlowPutStructure(vm, this, m_objectPrototype.get());
+    m_clonedArgumentsStructure.set(vm, this, slowPutStructure);
+
     // Make sure that all objects that have indexed storage switch to the slow kind of
     // indexed storage.
     MarkedArgumentBuffer foundObjects; // Use MarkedArgumentBuffer because switchToSlowPutArrayStorage() may GC.
@@ -1191,7 +1194,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_generatorFunctionStructure);
     visitor.append(&thisObject->m_iteratorResultObjectStructure);
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
-    visitor.append(&thisObject->m_regExpMatchesArraySlowPutStructure);
     visitor.append(&thisObject->m_moduleRecordStructure);
     visitor.append(&thisObject->m_moduleNamespaceObjectStructure);
     visitor.append(&thisObject->m_dollarVMStructure);

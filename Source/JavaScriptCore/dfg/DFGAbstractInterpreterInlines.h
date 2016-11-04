@@ -1981,6 +1981,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case CreateClonedArguments:
+        if (!m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+            forNode(node).setType(m_graph, SpecObject);
+            break;
+        }
         forNode(node).set(m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->clonedArgumentsStructure());
         break;
 
