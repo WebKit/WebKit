@@ -1,3 +1,15 @@
+2016-11-04  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ByteStreamController error()
+        https://bugs.webkit.org/show_bug.cgi?id=164319
+
+        Reviewed by Youenn Fablet.
+
+        Updated test expectation for error() test (previously FAIL, now PASS).
+        Added IDL-related tests for ReadableByteStreamController.
+
+        * streams/readable-byte-stream-controller-expected.txt:
+
 2016-11-04  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Page visibility tests are timing out.

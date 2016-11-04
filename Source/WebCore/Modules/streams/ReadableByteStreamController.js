@@ -37,8 +37,13 @@ function error(error)
 {
     "use strict";
 
-    //FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController error() is not implemented");
+    if (!@isReadableByteStreamController(this))
+        throw @makeThisTypeError("ReadableByteStreamController", "error");
+
+    if (this.@controlledReadableStream.@state !== @streamReadable)
+        @throwTypeError("ReadableStream is not readable");
+
+    @readableByteStreamControllerError(this, error);
 }
 
 function close()

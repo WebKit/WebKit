@@ -39,18 +39,18 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
 
     this.@controlledReadableStream = stream;
     this.@underlyingByteSource = underlyingByteSource;
-    this.@queue = @newQueue();
-    this.@started = false;
-    this.@closeRequested = false;
     this.@pullAgain = false;
     this.@pulling = false;
+    @readableByteStreamControllerClearPendingPullIntos(this);
+    this.@queue = @newQueue();
+    this.@totalQueuedBytes = 0;
+    this.@started = false;
+    this.@closeRequested = false;
 
     let hwm = @Number(highWaterMark);
     if (@isNaN(hwm) || hwm < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
     this.@strategyHWM = hwm;
-
-    // FIXME: Implement readableByteStreamControllerClearPendingPullIntos.
 
     let autoAllocateChunkSize = underlyingByteSource.autoAllocateChunkSize;
     if (autoAllocateChunkSize !== @undefined) {
@@ -74,4 +74,30 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     // FIXME: Implement cancel and pull.
 
     return this;
+}
+
+function isReadableByteStreamController(controller)
+{
+    "use strict";
+
+    // Same test mechanism as in isReadableStreamDefaultController (ReadableStreamInternals.js).
+    // See corresponding function for explanations.
+    return @isObject(controller) && !!controller.@underlyingByteSource;
+}
+
+function readableByteStreamControllerError(controller, e)
+{
+    "use strict";
+
+    @assert(controller.@controlledReadableStream.@state === @streamReadable);
+    @readableByteStreamControllerClearPendingPullIntos(controller);
+    controller.@queue = @newQueue();
+    @readableStreamError(controller.@controlledReadableStream, e);
+}
+
+function readableByteStreamControllerClearPendingPullIntos(controller)
+{
+    "use strict";
+
+    // FIXME: To be implemented in conjunction with ReadableStreamBYOBRequest.
 }
