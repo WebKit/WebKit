@@ -63,7 +63,7 @@ public:
 
     static ExceptionOr<Ref<IDBKeyRange>> bound(JSC::ExecState&, JSC::JSValue lower, JSC::JSValue upper, bool lowerOpen, bool upperOpen);
 
-    ExceptionOr<bool> contains(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<bool> includes(JSC::ExecState&, JSC::JSValue key);
 
     WEBCORE_EXPORT bool isOnlyKey() const;
 

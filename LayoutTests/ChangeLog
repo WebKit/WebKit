@@ -1,3 +1,12 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Rename IDBKeyRange.contains to IDBKeyRange.includes.
+        https://bugs.webkit.org/show_bug.cgi?id=164383
+
+        Reviewed by Beth Dakin.
+
+        * storage/indexeddb/resources/keyrange.js:
+
 2016-11-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking two inspector/sampling-profiler tests as flaky.

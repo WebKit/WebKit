@@ -113,11 +113,11 @@ bool IDBKeyRange::isOnlyKey() const
     return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(*m_upper);
 }
 
-ExceptionOr<bool> IDBKeyRange::contains(JSC::ExecState& state, JSC::JSValue keyValue)
+ExceptionOr<bool> IDBKeyRange::includes(JSC::ExecState& state, JSC::JSValue keyValue)
 {
     auto key = scriptValueToIDBKey(state, keyValue);
     if (!key->isValid())
-        return Exception { IDBDatabaseException::DataError, "Failed to execute 'contains' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key." };
+        return Exception { IDBDatabaseException::DataError, "Failed to execute 'includes' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key." };
 
     if (m_lower) {
         int compare = m_lower->compare(key.get());

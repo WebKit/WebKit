@@ -1,3 +1,18 @@
+2016-11-03  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Rename IDBKeyRange.contains to IDBKeyRange.includes.
+        https://bugs.webkit.org/show_bug.cgi?id=164383
+
+        Reviewed by Beth Dakin.
+
+        No new tests (Updated existing tests).
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::includes):
+        (WebCore::IDBKeyRange::contains): Deleted.
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBKeyRange.idl:
+
 2016-11-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208302.

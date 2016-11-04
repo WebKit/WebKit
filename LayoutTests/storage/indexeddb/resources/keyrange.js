@@ -44,9 +44,9 @@ function checkSingleKeyRange(value)
     shouldBe("keyRange.upper", "" + value);
     shouldBeFalse("keyRange.lowerOpen");
     shouldBeFalse("keyRange.upperOpen");
-    shouldBeFalse("keyRange.contains(" + incrementedKey(value) + ")");
-    shouldBeFalse("keyRange.contains(" + decrementedKey(value) + ")");
-    shouldBeTrue("keyRange.contains(" + value + ")");
+    shouldBeFalse("keyRange.includes(" + incrementedKey(value) + ")");
+    shouldBeFalse("keyRange.includes(" + decrementedKey(value) + ")");
+    shouldBeTrue("keyRange.includes(" + value + ")");
 }
 
 function checkLowerBoundKeyRange(value, open)
@@ -60,12 +60,12 @@ function checkLowerBoundKeyRange(value, open)
     shouldBeTrue("keyRange.upperOpen");
 
     if (open)
-        shouldBeFalse("keyRange.contains(" + value + ")");
+        shouldBeFalse("keyRange.includes(" + value + ")");
     else
-        shouldBeTrue("keyRange.contains(" + value + ")");
+        shouldBeTrue("keyRange.includes(" + value + ")");
 
-    shouldBeTrue("keyRange.contains(" + incrementedKey(value) + ")");
-    shouldBeFalse("keyRange.contains(" + decrementedKey(value) + ")");
+    shouldBeTrue("keyRange.includes(" + incrementedKey(value) + ")");
+    shouldBeFalse("keyRange.includes(" + decrementedKey(value) + ")");
 }
 
 function checkUpperBoundKeyRange(value, open)
@@ -79,12 +79,12 @@ function checkUpperBoundKeyRange(value, open)
     shouldBeTrue("keyRange.lowerOpen");
 
     if (open)
-        shouldBeFalse("keyRange.contains(" + value + ")");
+        shouldBeFalse("keyRange.includes(" + value + ")");
     else
-        shouldBeTrue("keyRange.contains(" + value + ")");
+        shouldBeTrue("keyRange.includes(" + value + ")");
 
-    shouldBeFalse("keyRange.contains(" + incrementedKey(value) + ")");
-    shouldBeTrue("keyRange.contains(" + decrementedKey(value) + ")");
+    shouldBeFalse("keyRange.includes(" + incrementedKey(value) + ")");
+    shouldBeTrue("keyRange.includes(" + decrementedKey(value) + ")");
 }
 
 function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
@@ -100,14 +100,14 @@ function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
     shouldBe("keyRange.upperOpen", "" + upperOpen);
     
     if (lowerOpen)
-        shouldBeFalse("keyRange.contains(" + lower + ")");
+        shouldBeFalse("keyRange.includes(" + lower + ")");
     else
-        shouldBeTrue("keyRange.contains(" + lower + ")");
+        shouldBeTrue("keyRange.includes(" + lower + ")");
 
     if (upperOpen)
-        shouldBeFalse("keyRange.contains(" + upper + ")");
+        shouldBeFalse("keyRange.includes(" + upper + ")");
     else
-        shouldBeTrue("keyRange.contains(" + upper + ")");
+        shouldBeTrue("keyRange.includes(" + upper + ")");
 }
 
 function test()
@@ -117,7 +117,7 @@ function test()
     shouldBeFalse("'upper' in IDBKeyRange");
     shouldBeFalse("'lowerOpen' in IDBKeyRange");
     shouldBeFalse("'upperOpen' in IDBKeyRange");
-    shouldBeFalse("'contains' in IDBKeyRange");
+    shouldBeFalse("'includes' in IDBKeyRange");
     shouldBeTrue("'only' in IDBKeyRange");
     shouldBeTrue("'lowerBound' in IDBKeyRange");
     shouldBeTrue("'upperBound' in IDBKeyRange");
@@ -130,7 +130,7 @@ function test()
     shouldBeTrue("'upper' in instance");
     shouldBeTrue("'lowerOpen' in instance");
     shouldBeTrue("'upperOpen' in instance");
-    shouldBeTrue("'contains' in instance");
+    shouldBeTrue("'includes' in instance");
     shouldBeFalse("'only' in instance");
     shouldBeFalse("'lowerBound' in instance");
     shouldBeFalse("'upperBound' in instance");
@@ -214,9 +214,9 @@ function test()
     debug("Equal keys, none of the bounds is open, bound(4, 4, false, false)");
     IDBKeyRange.bound(4, 4, false, false);
 
-    debug("Passing an invalid key in to IDBKeyRange.contains({})");
+    debug("Passing an invalid key in to IDBKeyRange.includes({})");
     eval("invalidKeyKeyRange = IDBKeyRange.only('a')");
-    evalAndExpectException("invalidKeyKeyRange.contains({})", "0", "'DataError'");
+    evalAndExpectException("invalidKeyKeyRange.includes({})", "0", "'DataError'");
 }
 
 test();
