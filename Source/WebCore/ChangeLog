@@ -1,3 +1,40 @@
+2016-11-03  Anders Carlsson  <andersca@apple.com>
+
+        Add new 'other' Apple Pay button style
+        https://bugs.webkit.org/show_bug.cgi?id=164384
+        rdar://problem/28302528
+
+        Reviewed by Dean Jackson.
+
+        * DerivedSources.make:
+        * WebCorePrefix.h:
+        Add extension points.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Add ApplePayButtonType::Other.
+
+        (WebCore::CSSPrimitiveValue::operator ApplePayButtonType):
+        Add CSSValueOther.
+
+        * css/CSSValueKeywords.in:
+        Add other.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        Add CSSValueOther.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        Add CSSValueOther.
+
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::toPKPaymentButtonType):
+        Handle ApplePayButtonType::Other.
+
+        * rendering/style/RenderStyleConstants.h:
+        Add ApplePayButtonType::Other.
+
 2016-11-04  Antti Koivisto  <antti@apple.com>
 
         slotted() pseudo does not work with ID selector

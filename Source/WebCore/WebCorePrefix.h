@@ -172,6 +172,10 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayWebCorePrefixAdditions.h>
+#endif
+
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
  * to allow C++ code that expects exceptions to build. These definitions
  * interfere with Objective-C++ uses of Objective-C exception handlers, which
