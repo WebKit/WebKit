@@ -1,3 +1,31 @@
+2016-11-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r207669): Crash under media controls shadow root construction
+        https://bugs.webkit.org/show_bug.cgi?id=164381
+        <rdar://problem/28935401>
+
+        Reviewed by Simon Fraser.
+
+        The problem is that we are running a script for media control UA shadow tree in HTMLMediaElement::insertedInto.
+        It is not safe to run scripts in insertedInto as the tree is in inconsistent state. Instead finishedInsertingSubtree
+        callback should be used.
+
+        Test: media/media-controls-shadow-construction-crash.html
+
+        Seen on https://www.theguardian.com/artanddesign/video/2013/oct/14/banksy-central-park-new-york-video
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedInto):
+        (WebCore::HTMLMediaElement::finishedInsertingSubtree):
+
+            Move configureMediaControls() to finishedInsertingSubtree().
+
+        * html/HTMLMediaElement.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Add an assert to make the bad state easier to hit in tests.
+
 2016-11-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an assertion to diagnose stress GC bots test failures

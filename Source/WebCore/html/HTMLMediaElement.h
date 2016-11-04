@@ -521,6 +521,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void finishedInsertingSubtree() override;
     void removedFrom(ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
 

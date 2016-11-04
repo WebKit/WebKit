@@ -357,6 +357,7 @@ void TreeResolver::resolveComposedTree()
         auto& node = *it;
         auto& parent = this->parent();
 
+        ASSERT(node.inDocument());
         ASSERT(node.containingShadowRoot() == scope().shadowRoot);
         ASSERT(node.parentElement() == parent.element || is<ShadowRoot>(node.parentNode()) || node.parentElement()->shadowRoot());
 

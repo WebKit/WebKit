@@ -807,8 +807,12 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
         m_muted = hasAttributeWithoutSynchronization(mutedAttr);
     }
 
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void HTMLMediaElement::finishedInsertingSubtree()
+{
     configureMediaControls();
-    return InsertionDone;
 }
 
 void HTMLMediaElement::pauseAfterDetachedTask()

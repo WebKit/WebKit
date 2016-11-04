@@ -1,3 +1,14 @@
+2016-11-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r207669): Crash under SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending
+        https://bugs.webkit.org/show_bug.cgi?id=164381
+        <rdar://problem/28935401>
+
+        Reviewed by Simon Fraser.
+
+        * media/media-controls-shadow-construction-crash-expected.txt: Added.
+        * media/media-controls-shadow-construction-crash.html: Added.
+
 2016-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Implement getBufferSubData()
