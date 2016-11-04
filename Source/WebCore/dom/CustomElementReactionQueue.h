@@ -89,6 +89,9 @@ private:
 
     private:
         Vector<Ref<Element>> m_elements;
+#if !ASSERT_DISABLED
+        bool m_invoking { false };
+#endif
     };
 
     WEBCORE_EXPORT void processQueue();
