@@ -1,3 +1,16 @@
+2016-11-04  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r208293.
+
+        asserts in API tests.
+
+        Reverted changeset:
+
+        "NetworkSession: Network process crash when converting main
+        resource to download"
+        https://bugs.webkit.org/show_bug.cgi?id=164220
+        http://trac.webkit.org/changeset/208293
+
 2016-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add a setting and preferences to enable/disable async image decoding

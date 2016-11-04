@@ -158,7 +158,7 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     // Abort the load now, as the WebProcess won't be able to respond to messages any more which might lead
     // to leaked loader resources (connections, threads, etc).
     loader->abort();
-    ASSERT(!m_networkResourceLoaders.contains(identifier) || loader->isBecomingDownload());
+    ASSERT(!m_networkResourceLoaders.contains(identifier));
 }
 
 void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)

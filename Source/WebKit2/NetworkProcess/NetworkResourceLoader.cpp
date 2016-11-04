@@ -286,18 +286,9 @@ void NetworkResourceLoader::didBecomeDownload()
 {
     ASSERT(m_didConvertToDownload);
     ASSERT(m_networkLoad);
-    cleanup();
+    m_networkLoad = nullptr;
 }
 #endif
-
-bool NetworkResourceLoader::isBecomingDownload() const
-{
-#if USE(NETWORK_SESSION)
-    return m_networkLoad && m_didConvertToDownload;
-#else
-    return false;
-#endif
-}
 
 void NetworkResourceLoader::abort()
 {
@@ -316,9 +307,6 @@ void NetworkResourceLoader::abort()
 #endif
         m_networkLoad->cancel();
     }
-
-    if (isBecomingDownload())
-        return;
 
     cleanup();
 }
