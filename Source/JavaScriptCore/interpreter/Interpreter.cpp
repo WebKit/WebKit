@@ -109,6 +109,7 @@ JSValue eval(CallFrame* callFrame)
     RETURN_IF_EXCEPTION(scope, JSValue());
     
     CallFrame* callerFrame = callFrame->callerFrame();
+    CallSiteIndex callerCallSiteIndex = callerFrame->callSiteIndex();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     JSScope* callerScopeChain = callerFrame->uncheckedR(callerCodeBlock->scopeRegister().offset()).Register::scope();
     UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerCodeBlock->unlinkedCodeBlock();
@@ -130,7 +131,7 @@ JSValue eval(CallFrame* callFrame)
     else
         evalContextType = EvalContextType::None;
 
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, derivedContextType, evalContextType, isArrowFunctionContext, callerScopeChain);
+    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(programSource, callerCallSiteIndex);
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
@@ -147,7 +148,7 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!scope.exception());
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), derivedContextType, evalContextType, isArrowFunctionContext, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, callerCodeBlock->isStrictMode(), derivedContextType, evalContextType, isArrowFunctionContext, callerScopeChain);
 
         if (!eval)
             return jsUndefined();

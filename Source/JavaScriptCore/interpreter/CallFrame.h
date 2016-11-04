@@ -57,6 +57,7 @@ namespace JSC  {
 #endif
 
         explicit operator bool() const { return m_bits != UINT_MAX; }
+        bool operator==(const CallSiteIndex& other) const { return m_bits == other.m_bits; }
         
         inline uint32_t bits() const { return m_bits; }
 

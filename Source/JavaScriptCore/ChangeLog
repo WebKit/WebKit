@@ -1,3 +1,40 @@
+2016-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        EvalCodeCache should not give up in strict mode and other cases
+        https://bugs.webkit.org/show_bug.cgi?id=164357
+
+        Reviewed by Michael Saboff.
+
+        EvalCodeCache gives up in non-trivial cases because generated eval code
+        can't soundly migrate from, for example, a let scope to a non-let scope.
+        The number of cases has grown over time.
+
+        Instead, let's cache eval code based on the location of the call to
+        eval(). That way, we never relocate the code, and it's sound to make
+        normal assumptions about our surrounding scope.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::CacheKey): Use CallSiteIndex to uniquely
+        identify the location of our call to eval().
+
+        (JSC::EvalCodeCache::CacheKey::hash):
+        (JSC::EvalCodeCache::CacheKey::operator==):
+        (JSC::EvalCodeCache::CacheKey::Hash::equal): Use CallSiteIndex instead
+        of lots of other flags.
+
+        (JSC::EvalCodeCache::tryGet): No need to include details that are implied
+        by our CallSiteIndex.
+
+        (JSC::EvalCodeCache::getSlow): No need to skip caching in complex
+        situations. We promise we'll never relocate the cached code.
+
+        (JSC::EvalCodeCache::isCacheableScope): Deleted.
+        (JSC::EvalCodeCache::isCacheable): Deleted.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval): Pass through a CallSiteIndex to uniquely identify this call
+        to eval().
+
 2016-11-04  Keith Miller  <keith_miller@apple.com>
 
         Add support for Wasm br_table
