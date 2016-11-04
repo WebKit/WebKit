@@ -35,6 +35,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/LayoutMilestones.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SessionID.h>
@@ -137,6 +138,7 @@ struct WebPageCreationParameters {
     bool shouldScaleViewToFitDocument;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;
+    WebCore::LayoutMilestones observedLayoutMilestones;
 };
 
 } // namespace WebKit

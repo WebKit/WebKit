@@ -1,5 +1,42 @@
 2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r208340. rdar://problem/29092397
+
+    2016-11-03  Dan Bernstein  <mitz@apple.com>
+
+            WKWebView’s _observedRenderingProgressEvents not restored after web process crash
+            https://bugs.webkit.org/show_bug.cgi?id=164368
+            <rdar://problem/29091954>
+
+            Reviewed by Anders Carlsson.
+
+            Test: TestWebKitAPI/Tests/WebKit2Cocoa/ObservedRenderingProgressEventsAfterCrash.mm.
+
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode): Encode new observedLayoutMilestones member.
+            (WebKit::WebPageCreationParameters::decode): Decode it.
+            * Shared/WebPageCreationParameters.h: Declared new observedLayoutMilestones member variable.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy): Removed initializer for
+              m_wantsSessionRestorationRenderTreeSizeThresholdEvent.
+            (WebKit::WebPageProxy::listenForLayoutMilestones): Update new m_observedLayoutMilestones
+              member variable. Don’t update m_wantsSessionRestorationRenderTreeSizeThresholdEvent.
+            (WebKit::WebPageProxy::creationParameters): Set the observedLayoutMilestones member in the
+              creation parameters.
+
+            * UIProcess/WebPageProxy.h: Declared new member variable, deleted
+              m_wantsSessionRestorationRenderTreeSizeThresholdEvent declaration.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didCommitLayerTree): Rather than using
+              m_wantsSessionRestorationRenderTreeSizeThresholdEvent, use m_observedLayoutMilestones.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage): Add the observed layout milestones from the creation parameters.
+
+2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r208307. rdar://problem/29078457
 
     2016-11-02  David Kilzer  <ddkilzer@apple.com>

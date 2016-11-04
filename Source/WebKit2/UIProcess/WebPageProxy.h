@@ -1663,6 +1663,8 @@ private:
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
 
+    WebCore::LayoutMilestones m_observedLayoutMilestones { 0 };
+
     bool m_suppressScrollbarAnimations;
 
     WebCore::Pagination::Mode m_paginationMode;
@@ -1814,7 +1816,6 @@ private:
 
     uint64_t m_renderTreeSize;
     uint64_t m_sessionRestorationRenderTreeSize;
-    bool m_wantsSessionRestorationRenderTreeSizeThresholdEvent;
     bool m_hitRenderTreeSizeThreshold;
 
     bool m_suppressVisibilityUpdates;

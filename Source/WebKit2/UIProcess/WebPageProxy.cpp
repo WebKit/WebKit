@@ -429,7 +429,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_sessionRestorationRenderTreeSize(0)
-    , m_wantsSessionRestorationRenderTreeSizeThresholdEvent(false)
     , m_hitRenderTreeSizeThreshold(false)
     , m_suppressVisibilityUpdates(false)
     , m_autoSizingShouldExpandToViewHeight(false)
@@ -2593,8 +2592,10 @@ void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestone
     if (!isValid())
         return;
     
-    m_wantsSessionRestorationRenderTreeSizeThresholdEvent = milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold;
+    if (milestones == m_observedLayoutMilestones)
+        return;
 
+    m_observedLayoutMilestones = milestones;
     m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
 }
 
@@ -5464,6 +5465,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = m_pageClient.userInterfaceLayoutDirection();
+    parameters.observedLayoutMilestones = m_observedLayoutMilestones;
 
     return parameters;
 }
