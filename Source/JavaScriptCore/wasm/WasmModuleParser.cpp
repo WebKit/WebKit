@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmFormat.h"
+#include "WasmMemory.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
 
@@ -40,6 +41,8 @@ static const bool verbose = false;
 
 bool ModuleParser::parse()
 {
+    m_module = std::make_unique<ModuleInformation>();
+
     const size_t minSize = 8;
     if (length() < minSize) {
         m_errorMessage = "Module is " + String::number(length()) + " bytes, expected at least " + String::number(minSize) + " bytes";
@@ -111,54 +114,20 @@ bool ModuleParser::parse()
         auto end = m_offset + sectionLength;
 
         switch (section) {
+        // FIXME improve error message in macro below https://bugs.webkit.org/show_bug.cgi?id=163919
+#define WASM_SECTION_PARSE(NAME, ID, DESCRIPTION) \
+        case Sections::NAME: { \
+            if (verbose) \
+                dataLogLn("Parsing " DESCRIPTION); \
+            if (!parse ## NAME()) { \
+                m_errorMessage = "couldn't parse section " #NAME ": " DESCRIPTION; \
+                return false; \
+            } \
+        } break;
+        FOR_EACH_WASM_SECTION(WASM_SECTION_PARSE)
+#undef WASM_SECTION_PARSE
 
-        case Sections::Memory: {
-            if (verbose)
-                dataLogLn("Parsing Memory.");
-            if (!parseMemory()) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "couldn't parse memory";
-                return false;
-            }
-            break;
-        }
-
-        case Sections::FunctionTypes: {
-            if (verbose)
-                dataLogLn("Parsing types.");
-            if (!parseFunctionTypes()) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "couldn't parse types";
-                return false;
-            }
-            break;
-        }
-
-        case Sections::Signatures: {
-            if (verbose)
-                dataLogLn("Parsing function signatures.");
-            if (!parseFunctionSignatures()) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "couldn't parse function signatures";
-                return false;
-            }
-            break;
-        }
-
-        case Sections::Definitions: {
-            if (verbose)
-                dataLogLn("Parsing function definitions.");
-            if (!parseFunctionDefinitions()) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "couldn't parse function definitions";
-                return false;
-            }
-            break;
-        }
-
-        case Sections::Unknown:
-        // FIXME: Delete this when we support all the sections.
-        default: {
+        case Sections::Unknown: {
             if (verbose)
                 dataLogLn("Unknown section, skipping.");
             // Ignore section's name LEB and bytes: they're already included in sectionLength.
@@ -181,6 +150,142 @@ bool ModuleParser::parse()
 
     // TODO
     m_failed = false;
+    return true;
+}
+
+bool ModuleParser::parseType()
+{
+    uint32_t count;
+    if (!parseVarUInt32(count))
+        return false;
+    if (verbose)
+        dataLogLn("count: ", count);
+    if (!m_module->signatures.tryReserveCapacity(count))
+        return false;
+
+    for (uint32_t i = 0; i < count; ++i) {
+        int8_t type;
+        if (!parseInt7(type))
+            return false;
+        if (type != -0x20) // Function type constant.
+            return false;
+
+        if (verbose)
+            dataLogLn("Got function type.");
+
+        uint32_t argumentCount;
+        if (!parseVarUInt32(argumentCount))
+            return false;
+
+        if (verbose)
+            dataLogLn("argumentCount: ", argumentCount);
+
+        Vector<Type> argumentTypes;
+        if (!argumentTypes.tryReserveCapacity(argumentCount))
+            return false;
+
+        for (unsigned i = 0; i != argumentCount; ++i) {
+            uint8_t argumentType;
+            if (!parseUInt7(argumentType) || !isValueType(static_cast<Type>(argumentType)))
+                return false;
+            argumentTypes.uncheckedAppend(static_cast<Type>(argumentType));
+        }
+
+        uint8_t returnCount;
+        if (!parseVarUInt1(returnCount))
+            return false;
+        Type returnType;
+
+        if (verbose)
+            dataLogLn(returnCount);
+
+        if (returnCount) {
+            Type value;
+            if (!parseValueType(value))
+                return false;
+            returnType = static_cast<Type>(value);
+        } else
+            returnType = Type::Void;
+
+        m_module->signatures.uncheckedAppend({ returnType, WTFMove(argumentTypes) });
+    }
+    return true;
+}
+
+bool ModuleParser::parseImport()
+{
+    uint32_t importCount;
+    if (!parseVarUInt32(importCount))
+        return false;
+    if (!m_module->imports.tryReserveCapacity(importCount))
+        return false;
+
+    for (uint32_t importNumber = 0; importNumber != importCount; ++importNumber) {
+        Import i;
+        uint32_t moduleLen;
+        uint32_t fieldLen;
+        if (!parseVarUInt32(moduleLen))
+            return false;
+        if (!consumeUTF8String(i.module, moduleLen))
+            return false;
+        if (!parseVarUInt32(fieldLen))
+            return false;
+        if (!consumeUTF8String(i.field, fieldLen))
+            return false;
+        if (!parseExternalKind(i.kind))
+            return false;
+        switch (i.kind) {
+        case External::Function: {
+            uint32_t functionSignatureIndex;
+            if (!parseVarUInt32(functionSignatureIndex))
+                return false;
+            if (functionSignatureIndex > m_module->signatures.size())
+                return false;
+            i.functionSignature = &m_module->signatures[functionSignatureIndex];
+        } break;
+        case External::Table:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
+            break;
+        case External::Memory:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            break;
+        case External::Global:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
+            // In the MVP, only immutable global variables can be imported.
+            break;
+        }
+
+        m_module->imports.uncheckedAppend(i);
+    }
+
+    return true;
+}
+
+bool ModuleParser::parseFunction()
+{
+    uint32_t count;
+    if (!parseVarUInt32(count))
+        return false;
+    if (!m_module->functions.tryReserveCapacity(count))
+        return false;
+
+    for (uint32_t i = 0; i != count; ++i) {
+        uint32_t typeNumber;
+        if (!parseVarUInt32(typeNumber))
+            return false;
+
+        if (typeNumber >= m_module->signatures.size())
+            return false;
+
+        m_module->functions.uncheckedAppend({ &m_module->signatures[typeNumber], 0, 0 });
+    }
+
+    return true;
+}
+
+bool ModuleParser::parseTable()
+{
+    // FIXME
     return true;
 }
 
@@ -208,109 +313,100 @@ bool ModuleParser::parseMemory()
     size *= pageSize;
 
     Vector<unsigned> pinnedSizes = { 0 };
-    m_memory = std::make_unique<Memory>(size, capacity, pinnedSizes);
-    return m_memory->memory();
+    m_module->memory = std::make_unique<Memory>(size, capacity, pinnedSizes);
+    return m_module->memory->memory();
 }
 
-bool ModuleParser::parseFunctionTypes()
+bool ModuleParser::parseGlobal()
 {
-    uint32_t count;
-    if (!parseVarUInt32(count))
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
+    return true;
+}
+
+bool ModuleParser::parseExport()
+{
+    uint32_t exportCount;
+    if (!parseVarUInt32(exportCount))
+        return false;
+    if (!m_module->exports.tryReserveCapacity(exportCount))
         return false;
 
-    if (verbose)
-        dataLogLn("count: ", count);
-
-    m_signatures.resize(count);
-
-    for (uint32_t i = 0; i < count; ++i) {
-        uint8_t type;
-        if (!parseUInt7(type))
+    for (uint32_t exportNumber = 0; exportNumber != exportCount; ++exportNumber) {
+        Export e;
+        uint32_t fieldLen;
+        if (!parseVarUInt32(fieldLen))
             return false;
-        if (type != 0x40) // Function type constant.
+        if (!consumeUTF8String(e.field, fieldLen))
             return false;
-
-        if (verbose)
-            dataLogLn("Got function type.");
-
-        uint32_t argumentCount;
-        if (!parseVarUInt32(argumentCount))
+        if (!parseExternalKind(e.kind))
             return false;
-
-        if (verbose)
-            dataLogLn("argumentCount: ", argumentCount);
-
-        Vector<Type> argumentTypes;
-        argumentTypes.resize(argumentCount);
-
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            if (!parseUInt7(type) || !isValueType(static_cast<Type>(type)))
+        switch (e.kind) {
+        case External::Function: {
+            uint32_t functionSignatureIndex;
+            if (!parseVarUInt32(functionSignatureIndex))
                 return false;
-            argumentTypes[i] = static_cast<Type>(type);
+            if (functionSignatureIndex > m_module->signatures.size())
+                return false;
+            e.functionSignature = &m_module->signatures[functionSignatureIndex];
+        } break;
+        case External::Table:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
+            break;
+        case External::Memory:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            break;
+        case External::Global:
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
+            // In the MVP, only immutable global variables can be exported.
+            break;
         }
 
-        if (!parseVarUInt1(type))
-            return false;
-        Type returnType;
-
-        if (verbose)
-            dataLogLn(type);
-
-        if (type) {
-            Type value;
-            if (!parseValueType(value))
-                return false;
-            returnType = static_cast<Type>(value);
-        } else
-            returnType = Type::Void;
-
-        m_signatures[i] = { returnType, WTFMove(argumentTypes) };
-    }
-    return true;
-}
-
-bool ModuleParser::parseFunctionSignatures()
-{
-    uint32_t count;
-    if (!parseVarUInt32(count))
-        return false;
-
-    m_functions.resize(count);
-
-    for (uint32_t i = 0; i < count; ++i) {
-        uint32_t typeNumber;
-        if (!parseVarUInt32(typeNumber))
-            return false;
-
-        if (typeNumber >= m_signatures.size())
-            return false;
-
-        m_functions[i].signature = &m_signatures[typeNumber];
+        m_module->exports.uncheckedAppend(e);
     }
 
     return true;
 }
 
-bool ModuleParser::parseFunctionDefinitions()
+bool ModuleParser::parseStart()
+{
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
+    return true;
+}
+
+bool ModuleParser::parseElement()
+{
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
+    return true;
+}
+
+bool ModuleParser::parseCode()
 {
     uint32_t count;
     if (!parseVarUInt32(count))
         return false;
 
-    if (count != m_functions.size())
+    if (count != m_module->functions.size())
         return false;
 
-    for (uint32_t i = 0; i < count; ++i) {
+    for (uint32_t i = 0; i != count; ++i) {
         uint32_t functionSize;
         if (!parseVarUInt32(functionSize))
             return false;
+        if (functionSize > length() || functionSize > length() - m_offset)
+            return false;
 
-        FunctionInformation& info = m_functions[i];
+        FunctionInformation& info = m_module->functions[i];
         info.start = m_offset;
         info.end = m_offset + functionSize;
         m_offset = info.end;
     }
 
+    return true;
+}
+
+bool ModuleParser::parseData()
+{
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
     return true;
 }
 

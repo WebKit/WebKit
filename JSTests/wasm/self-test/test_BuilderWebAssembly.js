@@ -30,16 +30,3 @@ import Builder from '../Builder.js';
               ["00000000 00 61 73 6d 0c 00 00 00 00 0f 0a 4f 00 48 00 48  |·asm·······O·H·H|",
                "00000010 00 41 00 49 00 de ad c0 fe                       |·A·I·····       |"].join("\n"));
 })();
-
-(function Basic() {
-    const bin = (new Builder())
-        .Code()
-            .Function()
-                .Nop()
-                .Nop()
-            .End()
-        .End()
-        .WebAssembly();
-    assert.eq(bin.hexdump().trim(),
-              "00000000 00 61 73 6d 0c 00 00 00 0a 06 01 04 00 0a 0a 0f  |·asm············|");
-})();

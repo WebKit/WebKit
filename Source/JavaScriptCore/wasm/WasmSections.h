@@ -29,12 +29,24 @@
 
 namespace JSC { namespace Wasm {
 
+#define FOR_EACH_WASM_SECTION(macro) \
+    macro(Type,     1, "Function signature declarations") \
+    macro(Import,   2, "Import declarations") \
+    macro(Function, 3, "Function declarations") \
+    macro(Table,    4, "Indirect function table and other tables") \
+    macro(Memory,   5, "Memory attributes") \
+    macro(Global,   6, "Global declarations") \
+    macro(Export,   7, "Exports") \
+    macro(Start,    8, "Start function declaration") \
+    macro(Element,  9, "Elements section") \
+    macro(Code,    10, "Function bodies (code)") \
+    macro(Data,    11, "Data segments")
+
 struct Sections {
     enum Section : uint8_t {
-        FunctionTypes = 1,
-        Signatures = 3,
-        Memory = 5,
-        Definitions = 10,
+#define DEFINE_WASM_SECTION_ENUM(NAME, ID, DESCRIPTION) NAME = ID,
+        FOR_EACH_WASM_SECTION(DEFINE_WASM_SECTION_ENUM)
+#undef DEFINE_WASM_SECTION_ENUM
         Unknown
     };
     static bool validateOrder(Section previous, Section next)

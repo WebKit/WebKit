@@ -21,23 +21,6 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * =========================================================================
- *
- * Copyright (c) 2015 by the repository authors of
- * WebAssembly/polyfill-prototype-1.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 #pragma once
@@ -98,29 +81,49 @@ inline bool isValueType(Type type)
 }
 
 const char* toString(Type);
+    
+struct External {
+    enum Kind : uint8_t {
+        Function = 0,
+        Table = 1,
+        Memory = 2,
+        Global = 3,
+    };
+    template<typename Int>
+    static bool isValid(Int val)
+    {
+        switch (val) {
+        case Function:
+        case Table:
+        case Memory:
+        case Global:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    static_assert(Function == 0, "Wasm needs Function to have the value 0");
+    static_assert(Table    == 1, "Wasm needs Table to have the value 1");
+    static_assert(Memory   == 2, "Wasm needs Memory to have the value 2");
+    static_assert(Global   == 3, "Wasm needs Global to have the value 3");
+};
 
 struct Signature {
     Type returnType;
     Vector<Type> arguments;
 };
-
-struct FunctionImport {
-    String functionName;
-};
-
-struct FunctionImportSignature {
-    uint32_t signatureIndex;
-    uint32_t functionImportIndex;
-};
-
-struct FunctionDeclaration {
-    uint32_t signatureIndex;
-};
-
-struct FunctionPointerTable {
-    uint32_t signatureIndex;
-    Vector<uint32_t> functionIndices;
-    Vector<JSFunction*> functions;
+    
+struct Import {
+    String module;
+    String field;
+    External::Kind kind;
+    union {
+        Signature* functionSignature;
+        // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
+        // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
+        // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
+    };
 };
 
 struct FunctionInformation {
@@ -128,6 +131,32 @@ struct FunctionInformation {
     size_t start;
     size_t end;
 };
+
+class Memory;
+
+struct Export {
+    String field;
+    External::Kind kind;
+    union {
+        Signature* functionSignature;
+        // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
+        // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
+        // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
+    };
+};
+
+struct ModuleInformation {
+    Vector<Signature> signatures;
+    Vector<Import> imports;
+    Vector<FunctionInformation> functions;
+    std::unique_ptr<Memory> memory;
+    Vector<Export> exports;
+
+    ~ModuleInformation();
+};
+
+struct FunctionCompilation;
+typedef Vector<std::unique_ptr<FunctionCompilation>> CompiledFunctions;
 
 struct UnlinkedCall {
     CodeLocationCall callLocation;

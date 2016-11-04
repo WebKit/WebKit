@@ -47,6 +47,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* stat
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
     return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the Memory constructor property"))));
 }
 

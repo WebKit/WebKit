@@ -31,9 +31,11 @@
 #include "B3Compilation.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallingConvention.h"
+#include "WasmMemory.h"
 #include "WasmModuleParser.h"
 #include "WasmValidate.h"
 #include <wtf/DataLog.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
 
@@ -48,40 +50,50 @@ Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
 {
     if (verbose)
         dataLogLn("Starting plan.");
-    ModuleParser moduleParser(source, sourceLength);
-    if (!moduleParser.parse()) {
-        dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
-        m_errorMessage = moduleParser.errorMessage();
-        return;
+    {
+        ModuleParser moduleParser(source, sourceLength);
+        if (!moduleParser.parse()) {
+            dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
+            m_errorMessage = moduleParser.errorMessage();
+            return;
+        }
+        m_moduleInformation = WTFMove(moduleParser.moduleInformation());
     }
-
     if (verbose)
         dataLogLn("Parsed module.");
 
-    for (const FunctionInformation& info : moduleParser.functionInformation()) {
+    if (!m_compiledFunctions.tryReserveCapacity(m_moduleInformation->functions.size())) {
+        StringBuilder builder;
+        builder.appendLiteral("Failed allocating enough space for ");
+        builder.appendNumber(m_moduleInformation->functions.size());
+        builder.appendLiteral(" compiled functions");
+        m_errorMessage = builder.toString();
+        return;
+    }
+
+    for (const FunctionInformation& info : m_moduleInformation->functions) {
         if (verbose)
-            dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
+            dataLogLn("Processing function starting at: ", info.start, " and ending at: ", info.end);
         const uint8_t* functionStart = source + info.start;
         size_t functionLength = info.end - info.start;
         ASSERT(functionLength <= sourceLength);
 
-        String error = validateFunction(functionStart, functionLength, info.signature, moduleParser.functionInformation());
+        String error = validateFunction(functionStart, functionLength, info.signature, m_moduleInformation->functions);
         if (!error.isNull()) {
             m_errorMessage = error;
             return;
         }
 
-        m_result.append(parseAndCompile(vm, functionStart, functionLength, moduleParser.memory().get(), info.signature, moduleParser.functionInformation()));
+        m_compiledFunctions.uncheckedAppend(parseAndCompile(vm, functionStart, functionLength, m_moduleInformation->memory.get(), info.signature, m_moduleInformation->functions));
     }
 
     // Patch the call sites for each function.
-    for (std::unique_ptr<FunctionCompilation>& functionPtr : m_result) {
+    for (std::unique_ptr<FunctionCompilation>& functionPtr : m_compiledFunctions) {
         FunctionCompilation* function = functionPtr.get();
         for (auto& call : function->unlinkedCalls)
-            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_result[call.functionIndex]->code->code()));
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_compiledFunctions[call.functionIndex]->code->code()));
     }
 
-    m_memory = WTFMove(moduleParser.memory());
     m_failed = false;
 }
 

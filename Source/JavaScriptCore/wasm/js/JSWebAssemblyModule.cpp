@@ -35,9 +35,9 @@
 
 namespace JSC {
 
-JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, Vector<std::unique_ptr<Wasm::FunctionCompilation>>* compiledFunctions, std::unique_ptr<Wasm::Memory>* memory)
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, compiledFunctions, memory);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, moduleInformation, compiledFunctions);
     instance->finishCreation(vm);
     return instance;
 }
@@ -47,10 +47,10 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Vector<std::unique_ptr<Wasm::FunctionCompilation>>* compiledFunctions, std::unique_ptr<Wasm::Memory>* memory)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions)
     : Base(vm, structure)
-    , m_compiledFunctions(WTFMove(*compiledFunctions))
-    , m_memory(WTFMove(*memory))
+    , m_moduleInformation(WTFMove(moduleInformation))
+    , m_compiledFunctions(WTFMove(compiledFunctions))
 {
 }
 

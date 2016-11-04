@@ -64,8 +64,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
     if (!importArgument.isUndefined() && !importObject)
         return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
-    // FIXME use the importObject. https://bugs.webkit.org/show_bug.cgi?id=164039
     // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
+    if (module->moduleInformation()->imports.size() && !importObject)
+        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be Object because the WebAssembly.Module has imports"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     // FIXME String things from https://bugs.webkit.org/show_bug.cgi?id=164023
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:

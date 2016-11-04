@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmMemory.h"
+#include "WasmFormat.h"
 #include "WasmOps.h"
 #include "WasmParser.h"
 #include <wtf/Vector.h>
@@ -56,27 +56,18 @@ public:
         return m_errorMessage;
     }
 
-    const Vector<FunctionInformation>& functionInformation() const
+    std::unique_ptr<ModuleInformation>& moduleInformation()
     {
         RELEASE_ASSERT(!failed());
-        return m_functions;
-    }
-    std::unique_ptr<Memory>& memory()
-    {
-        RELEASE_ASSERT(!failed());
-        return m_memory;
+        return m_module;
     }
 
 private:
-    bool WARN_UNUSED_RETURN parseMemory();
-    bool WARN_UNUSED_RETURN parseFunctionTypes();
-    bool WARN_UNUSED_RETURN parseFunctionSignatures();
-    bool WARN_UNUSED_RETURN parseFunctionDefinitions();
-    bool WARN_UNUSED_RETURN parseFunctionDefinition(uint32_t number);
+#define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
+    FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
+#undef WASM_SECTION_DECLARE_PARSER
 
-    Vector<FunctionInformation> m_functions;
-    Vector<Signature> m_signatures;
-    std::unique_ptr<Memory> m_memory;
+    std::unique_ptr<ModuleInformation> m_module;
     bool m_failed { true };
     String m_errorMessage;
 };

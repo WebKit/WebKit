@@ -25,9 +25,18 @@
 
 import * as utilities from 'utilities.js';
 
+const _mapValues = from => {
+    let values = {};
+    for (const key in from)
+        values[key] = from[key].value;
+    return values;
+};
+
 export const description = utilities.json("wasm.json");
 export const valueType = Object.keys(description.value_type);
 const _valueTypeSet = new Set(valueType);
 export const isValidValueType = v => _valueTypeSet.has(v);
+export const valueTypeValue = _mapValues(description.value_type);
+export const externalKindValue = _mapValues(description.external_kind);
 export const sections = Object.keys(description.section);
 export const sectionEncodingType = description.section[sections[0]].type;

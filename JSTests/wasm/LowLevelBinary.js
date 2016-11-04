@@ -27,6 +27,8 @@ const _initialAllocationSize = 1024;
 const _growAllocationSize = allocated => allocated * 2;
 
 export const varuintMin = 0;
+export const varint7Min = -0b1000000;
+export const varint7Max = 0b111111;
 export const varuint7Max = 0b1111111;
 export const varuintMax = ((((1 << 31) >>> 0) - 1) * 2) + 1;
 export const varintMin = -((1 << 31) >>> 0);
@@ -128,6 +130,16 @@ export default class LowLevelBinary {
             }
             this.uint8(0x80 | b);
         } while (true);
+    }
+    varuint1(v) {
+        if (v !== 0 && v !== 1)
+            throw new RangeError(`Invalid varuint1 ${v} range is [0, 1]`);
+        this.varuint(v);
+    }
+    varint7(v) {
+        if (v < varint7Min || varint7Max < v)
+            throw new RangeError(`Invalid varint7 ${v} range is [${varint7Min}, ${varint7Max}]`);
+        this.varint(v);
     }
     varuint7(v) {
         if (v < varuintMin || varuint7Max < v)

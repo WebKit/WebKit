@@ -33,6 +33,8 @@
 #include "WasmOps.h"
 #include "WasmSections.h"
 #include <wtf/LEBDecoder.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Wasm {
 
@@ -42,14 +44,17 @@ protected:
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
+    bool WARN_UNUSED_RETURN consumeUTF8String(String&, size_t);
 
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t& result);
+    bool WARN_UNUSED_RETURN parseInt7(int8_t& result);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t& result);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t& result);
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return WTF::LEBDecoder::decodeUInt32(m_source, m_sourceLength, m_offset, result); }
     bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t& result) { return WTF::LEBDecoder::decodeUInt64(m_source, m_sourceLength, m_offset, result); }
 
     bool WARN_UNUSED_RETURN parseValueType(Type& result);
+    bool WARN_UNUSED_RETURN parseExternalKind(External::Kind& result);
 
     const uint8_t* source() const { return m_source; }
     size_t length() const { return m_sourceLength; }
@@ -92,6 +97,21 @@ ALWAYS_INLINE bool Parser::consumeString(const char* str)
     return true;
 }
 
+ALWAYS_INLINE bool Parser::consumeUTF8String(String& result, size_t stringLength)
+{
+    if (stringLength == 0) {
+        result = String();
+        return true;
+    }
+    if (length() < stringLength || m_offset > length() - stringLength)
+        return false;
+    result = String::fromUTF8(static_cast<const LChar*>(&source()[m_offset]), stringLength);
+    m_offset += stringLength;
+    if (result.isEmpty())
+        return false;
+    return true;
+}
+
 ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
 {
     if (length() < 4 || m_offset > length() - 4)
@@ -99,6 +119,15 @@ ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
     result = *reinterpret_cast<const uint32_t*>(source() + m_offset);
     m_offset += 4;
     return true;
+}
+
+ALWAYS_INLINE bool Parser::parseInt7(int8_t& result)
+{
+    if (m_offset >= length())
+        return false;
+    uint8_t v = source()[m_offset++];
+    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    return (v & 0x80) == 0;
 }
 
 ALWAYS_INLINE bool Parser::parseUInt7(uint8_t& result)
@@ -126,6 +155,17 @@ ALWAYS_INLINE bool Parser::parseValueType(Type& result)
     if (value >= static_cast<uint8_t>(Type::LastValueType))
         return false;
     result = static_cast<Type>(value);
+    return true;
+}
+    
+ALWAYS_INLINE bool Parser::parseExternalKind(External::Kind& result)
+{
+    uint8_t value;
+    if (!parseUInt7(value))
+        return false;
+    if (!External::isValid(value))
+        return false;
+    result = static_cast<External::Kind>(value);
     return true;
 }
 

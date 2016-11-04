@@ -1,3 +1,77 @@
+2016-11-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement more sections
+        https://bugs.webkit.org/show_bug.cgi?id=164023
+
+        Reviewed by Keith Miller.
+
+        On the JSC side:
+
+         - Put in parser stubs for all WebAssembly sections.
+         - Parse Import, Export sections.
+         - Use tryReserveCapacity instead of reserve, and bail out of the parser if it fails. This prevents the parser from bringing everything down when faced with a malicious input.
+         - Encapsulate all parsed module information into its own structure, making it easier to pass around (from parser to Plan to Module to Instance).
+         - Create WasmFormat.cpp to hold parsed module information's dtor to avoid including WasmMemory.h needlessly.
+         - Remove all remainders of polyfill-prototype-1, and update license.
+         - Add missing WasmOps.h and WasmValidateInlines.h auto-generation for cmake build.
+
+        On the Builder.js testing side:
+
+         - Implement Type, Import (function only), Export (function only) sections.
+         - Check section order and uniqueness.
+         - Optionally auto-generate the Type section from subsequent Export / Import / Code entries.
+         - Allow re-exporting an import.
+
+        * CMakeLists.txt: missing auto-genration
+        * JavaScriptCore.xcodeproj/project.pbxproj: merge conflict
+        * testWasm.cpp: update for API changes, no functional change
+        (checkPlan):
+        (runWasmTests):
+        * wasm/WasmFormat.cpp: add a dtor which requires extra headers which I'd rather not include in WasmFormat.h
+        (JSC::Wasm::ModuleInformation::~ModuleInformation):
+        * wasm/WasmFormat.h: Add External, Import, Functioninformation, Export, ModuleInformation, CompiledFunction, and remove obsolete stuff which was a holdover from the first implementation (all that code is now gone, so remove its license)
+        (JSC::Wasm::External::isValid):
+        * wasm/WasmModuleParser.cpp: simplify some, make names consistent with the WebAssembly section names, check memory allocations so they can fail early
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::ModuleParser::parseType):
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseFunction):
+        (JSC::Wasm::ModuleParser::parseTable):
+        (JSC::Wasm::ModuleParser::parseMemory):
+        (JSC::Wasm::ModuleParser::parseGlobal):
+        (JSC::Wasm::ModuleParser::parseExport):
+        (JSC::Wasm::ModuleParser::parseStart):
+        (JSC::Wasm::ModuleParser::parseElement):
+        (JSC::Wasm::ModuleParser::parseCode): avoid overflow through function size.
+        (JSC::Wasm::ModuleParser::parseData):
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::moduleInformation):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::consumeUTF8String): add as required by spec
+        (JSC::Wasm::Parser::parseExternalKind): add as per spec
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan): fix some ownership, improve some error messages
+        * wasm/WasmPlan.h: fix some ownership
+        (JSC::Wasm::Plan::getModuleInformation):
+        (JSC::Wasm::Plan::getMemory):
+        (JSC::Wasm::Plan::compiledFunctionCount):
+        (JSC::Wasm::Plan::compiledFunction):
+        (JSC::Wasm::Plan::getCompiledFunctions):
+        * wasm/WasmSections.h: macroize with description, so that error messages are super pretty. This could be auto-generated.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create): take module information
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule): ditto
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance): check that modules with imports are instantiated with an import object, as per spec. This needs to be tested.
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+
 2016-11-03  Mark Lam  <mark.lam@apple.com>
 
         ClonedArguments need to also support haveABadTime mode.

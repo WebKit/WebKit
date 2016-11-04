@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import LowLevelBinary from 'LowLevelBinary.js';
+import * as assert from 'assert.js';
+import * as BuildWebAssembly from 'Builder_WebAssemblyBinary.js';
 import * as WASM from 'WASM.js';
 
 const _toJavaScriptName = name => {
@@ -43,51 +44,114 @@ const _isValidValue = (value, type) => {
 };
 const _unknownSectionId = 0;
 
-const _BuildWebAssemblyBinary = (preamble, sections) => {
-    let wasmBin = new LowLevelBinary();
-    const put = (bin, type, value) => bin[type](value);
-    for (const p of WASM.description.preamble)
-        put(wasmBin, p.type, preamble[p.name]);
-    for (const section of sections) {
-        put(wasmBin, WASM.sectionEncodingType, section.id);
-        let sectionBin = wasmBin.newPatchable("varuint");
-        switch (section.name) {
-        case "Type": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Import": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Function": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Table": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Memory": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Global": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Export": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Start": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Element": throw new Error(`Unimplemented: section type "${section.name}"`);
-        case "Code":
-            const numberOfFunctionBodies = section.data.length;
-            put(sectionBin, "varuint", numberOfFunctionBodies);
-            for (const func of section.data) {
-                let funcBin = sectionBin.newPatchable("varuint");
-                const localCount = func.locals.length;
-                put(funcBin, "varuint", localCount);
-                if (localCount !== 0) throw new Error(`Unimplemented: locals`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
-                for (const op of func.code) {
-                    put(funcBin, "uint8", op.value);
-                    if (op.arguments.length !== 0) throw new Error(`Unimplemented: arguments`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
-                    if (op.immediates.length !== 0) throw new Error(`Unimplemented: immediates`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
-                }
-                funcBin.apply();
+const _normalizeFunctionSignature = (params, ret) => {
+    assert.isArray(params);
+    for (const p of params)
+        assert.truthy(WASM.isValidValueType(p), `Type parameter ${p} needs a valid value type`);
+    if (typeof(ret) === "undefined")
+        ret = "void";
+    assert.isNotArray(ret, `Multiple return values not supported by WebAssembly yet`);
+    assert.falsy(ret !== "void" && !WASM.isValidValueType(ret), `Type return ${ret} must be valid value type`);
+    return [params, ret];
+};
+
+const _maybeRegisterType = (builder, type) => {
+    const typeSection = builder._getSection("Type");
+    if (typeof(type) === "number") {
+        // Type numbers already refer to the type section, no need to register them.
+        if (builder._checked) {
+            assert.isNotUndef(typeSection, `Can't use type ${type} if a type section isn't present`);
+            assert.isNotUndef(typeSection.data[type], `Type ${type} doesn't exist in type section`);
+        }
+        return type;
+    }
+    assert.hasObjectProperty(type, "params", `Expected type to be a number or object with 'params' and optionally 'ret' fields`);
+    const [params, ret] = _normalizeFunctionSignature(type.params, type.ret);
+    assert.isNotUndef(typeSection, `Can't add type if a type section isn't present`);
+    // Try reusing an equivalent type from the type section.
+    types:
+    for (let i = 0; i !== typeSection.data.length; ++i) {
+        const t = typeSection.data[i];
+        if (t.ret === ret && params.length === t.params.length) {
+            for (let j = 0; j !== t.params.length; ++j) {
+                if (params[j] !== t.params[j])
+                    continue types;
             }
-            break;
-        case "Data": throw new Error(`Unimplemented: section type "${section.name}"`);
-        default:
-            if (section.id !== _unknownSectionId) throw new Error(`Unknown section "${section.name}" with number ${section.id}`);
-            put(sectionBin, "string", section.name);
-            for (const byte of section.data)
-                put(sectionBin, "uint8", byte);
+            type = i;
             break;
         }
-        sectionBin.apply();
     }
-    return wasmBin;
+    if (typeof(type) !== "number") {
+        // Couldn't reuse a pre-existing type, register this type in the type section.
+        typeSection.data.push({ params: params, ret: ret });
+        type = typeSection.data.length - 1;
+    }
+    return type;
+};
+
+const _importFunctionContinuation = (builder, section, nextBuilder) => {
+    return (module, field, type) => {
+        assert.isString(module, `Import function module should be a string, got "${module}"`);
+        assert.isString(field, `Import function field should be a string, got "${field}"`);
+        const typeSection = builder._getSection("Type");
+        type = _maybeRegisterType(builder, type);
+        section.data.push({ field: field, type: type, kind: "Function", module: module });
+        // Imports also count in the function index space. Map them as objects to avoid clashing with Code functions' names.
+        builder._registerFunctionToIndexSpace({ module: module, field: field });
+        return nextBuilder;
+    };
+};
+
+const _exportFunctionContinuation = (builder, section, nextBuilder) => {
+    return (field, index, type) => {
+        assert.isString(field, `Export function field should be a string, got "${field}"`);
+        const typeSection = builder._getSection("Type");
+        if (typeof(type) !== "undefined") {
+            // Exports can leave the type unspecified, letting the Code builder patch them up later.
+            type = _maybeRegisterType(builder, type);
+        }
+        // We can't check much about "index" here because the Code section succeeds the Export section. More work is done at Code().End() time.
+        switch (typeof(index)) {
+        case "string": break; // Assume it's a function name which will be revealed in the Code section.
+        case "number": break; // Assume it's a number in the "function index space".
+        case "object":
+            // Re-exporting an import.
+            assert.hasObjectProperty(index, "module", `Re-exporting "${field}" from an import`);
+            assert.hasObjectProperty(index, "field", `Re-exporting "${field}" from an import`);
+            break;
+        case "undefined":
+            // Assume it's the same as the field (i.e. it's not being renamed).
+            index = field;
+            break;
+        default: throw new Error(`Export section's index must be a string or a number, got ${index}`);
+        }
+        const correspondingImport = builder._getFunctionFromIndexSpace(index);
+        const importSection = builder._getSection("Import");
+        if (typeof(index) === "object") {
+            // Re-exporting an import using its module+field name.
+            assert.isNotUndef(correspondingImport, `Re-exporting "${field}" couldn't find import from module "${index.module}" field "${index.field}"`);
+            index = correspondingImport;
+            if (typeof(type) === "undefined")
+                type = importSection.data[index].type;
+            if (builder._checked)
+                assert.eq(type, importSection.data[index].type, `Re-exporting import "${importSection.data[index].field}" as "${field}" has mismatching type`);
+        } else if (typeof(correspondingImport) !== "undefined") {
+            // Re-exporting an import using its index.
+            let exportedImport;
+            for (const i of importSection.data) {
+                if (i.module === correspondingImport.module && i.field === correspondingImport.field) {
+                    exportedImport = i;
+                    break;
+                }
+            }
+            if (typeof(type) === "undefined")
+                type = exportedImport.type;
+            if (builder._checked)
+                assert.eq(type, exportedImport.type, `Re-exporting import "${exportedImport.field}" as "${field}" has mismatching type`);
+        }
+        section.data.push({ field: field, type: type, kind: "Function", index: index });
+        return nextBuilder;
+    };
 };
 
 export default class Builder {
@@ -98,6 +162,8 @@ export default class Builder {
             preamble[p.name] = p.value;
         this.setPreamble(preamble);
         this._sections = [];
+        this._functionIndexSpace = {};
+        this._functionIndexSpaceCount = 0;
         this._registerSectionBuilders();
     }
     setChecked(checked) {
@@ -108,25 +174,119 @@ export default class Builder {
         this._preamble = Object.assign(this._preamble || {}, p);
         return this;
     }
+    _registerFunctionToIndexSpace(name) {
+        if (typeof(name) === "undefined") {
+            // Registering a nameless function still adds it to the function index space. Register it as something that can't normally be registered.
+            name = {};
+        }
+        // Collisions are fine: we'll simply count the function and forget the previous one.
+        this._functionIndexSpace[name] = this._functionIndexSpaceCount++;
+        // Map it both ways, the number space is distinct from the name space.
+        this._functionIndexSpace[this._functionIndexSpace[name]] = name;
+    }
+    _getFunctionFromIndexSpace(name) {
+        return this._functionIndexSpace[name];
+    }
     _registerSectionBuilders() {
         for (const section in WASM.description.section) {
             switch (section) {
+            case "Type":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const builder = this;
+                    const typeBuilder = {
+                        End: () => builder,
+                        Func: (params, ret) => {
+                            [params, ret] = _normalizeFunctionSignature(params, ret);
+                            s.data.push({ params: params, ret: ret });
+                            return typeBuilder;
+                        },
+                    };
+                    return typeBuilder;
+                };
+                break;
+            case "Import":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const importBuilder = {
+                        End: () => this,
+                        Table: () => { throw new Error(`Unimplemented: import table`); },
+                        Memory: () => { throw new Error(`Unimplemented: import memory`); },
+                        Global: () => { throw new Error(`Unimplemented: import global`); },
+                    };
+                    importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
+                    return importBuilder;
+                };
+                break;
+            case "Export":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this,
+                        Table: () => { throw new Error(`Unimplemented: export table`); },
+                        Memory: () => { throw new Error(`Unimplemented: export memory`); },
+                        Global: () => { throw new Error(`Unimplemented: export global`); },
+                    };
+                    exportBuilder.Function = _exportFunctionContinuation(this, s, exportBuilder);
+                    return exportBuilder;
+                };
+                break;
             case "Code":
                 this[section] = function() {
                     const s = this._addSection(section);
                     const builder = this;
                     const codeBuilder =  {
-                        End: () => builder,
-                        Function: parameters => {
-                            parameters = parameters || [];
-                            const invalidParameterTypes = parameters.filter(p => !WASM.isValidValueType(p));
-                            if (invalidParameterTypes.length !== 0) throw new Error(`Function declared with parameters [${parameters}], invalid: [${invalidParameterTypes}]`);
+                        End: () => {
+                            // We now have enough information to remap the export section's "type" and "index" according to the Code section we're currently ending.
+                            const typeSection = builder._getSection("Type");
+                            const importSection = builder._getSection("Import");
+                            const exportSection = builder._getSection("Export");
+                            const codeSection = s;
+                            if (exportSection) {
+                                for (const e of exportSection.data) {
+                                    switch (typeof(e.index)) {
+                                    default: throw new Error(`Unexpected export index "${e.index}"`);
+                                    case "string": {
+                                        const index = builder._getFunctionFromIndexSpace(e.index);
+                                        assert.isNumber(index, `Export section contains undefined function "${e.index}"`);
+                                        e.index = index;
+                                    } // Fallthrough.
+                                    case "number": {
+                                        const index = builder._getFunctionFromIndexSpace(e.index);
+                                        if (builder._checked)
+                                            assert.isNotUndef(index, `Export "${e.field}" doesn't correspond to a defined value in the function index space`);
+                                    } break;
+                                    case "undefined":
+                                        throw new Error(`Unimplemented: Function().End() with undefined export index`); // FIXME
+                                    }
+                                    if (typeof(e.type) === "undefined") {
+                                        // This must be a function export from the Code section (re-exports were handled earlier).
+                                        const functionIndexSpaceOffset = importSection ? importSection.data.length : 0;
+                                        const functionIndex = e.index - functionIndexSpaceOffset;
+                                        e.type = codeSection.data[functionIndex].type;
+                                    }
+                                }
+                            }
+                            return builder;
+                        },
+                        Function: (a0, a1) => {
+                            let signature = typeof(a0) === "string" ? a1 : a0;
+                            const functionName = typeof(a0) === "string" ? a0 : undefined;
+                            if (typeof(signature) === "undefined")
+                                signature = { params: [] };
+                            assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
+                            const [params, ret] = _normalizeFunctionSignature(signature.params, signature.ret);
+                            signature = { params: params, ret: ret };
                             const func = {
-                                locals: parameters, // Parameters are the first locals.
-                                parameterCount: parameters.length,
+                                name: functionName,
+                                type: _maybeRegisterType(builder, signature),
+                                signature: signature,
+                                locals: params, // Parameters are the first locals.
+                                parameterCount: params.length,
                                 code: []
                             };
                             s.data.push(func);
+                            builder._registerFunctionToIndexSpace(functionName);
                             let functionBuilder = {};
                             for (const op in WASM.description.opcode) {
                                 const name = _toJavaScriptName(op);
@@ -174,19 +334,21 @@ export default class Builder {
                                     }
                                 } : () => {};
                                 const checkImms = builder._checked ? (op, imms) => {
-                                    if (imms.length != imm.length) throw new Error(`"${op}" expects ${imm.length} immediates, got ${imms.length}`);
+                                    assert.eq(imms.length, imm.length, `"${op}" expects ${imm.length} immediates, got ${imms.length}`);
                                     for (let idx = 0; idx !== imm.length; ++idx) {
                                         const got = imms[idx];
                                         const expect = imm[idx];
                                         switch (expect.name) {
                                         case "function_index":
-                                            if (!_isValidValue(got, "i32")) throw new Error(`Invalid value on ${op}: got "${got}", expected i32`);
+                                            assert.truthy(_isValidValue(got, "i32"), `Invalid value on ${op}: got "${got}", expected i32`);
                                             // FIXME check function indices. https://bugs.webkit.org/show_bug.cgi?id=163421
                                             break;
                                         case "local_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
                                         case "global_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
                                         case "type_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "value": if (!_isValidValue(got, ret[0])) throw new Error(`Invalid value on ${op}: got "${got}", expected ${ret[0]}`); break;
+                                        case "value":
+                                            assert.truthy(_isValidValue(got, ret[0]), `Invalid value on ${op}: got "${got}", expected ${ret[0]}`);
+                                            break;
                                         case "flags": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
                                         case "offset": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
                                         // Control:
@@ -226,7 +388,11 @@ export default class Builder {
             const builder = this;
             const unknownBuilder =  {
                 End: () => builder,
-                Byte: b => { if ((b & 0xFF) !== b) throw new RangeError(`Unknown section expected byte, got: "${b}"`); s.data.push(b); return unknownBuilder; }
+                Byte: b => {
+                    assert.eq(b & 0xFF, b, `Unknown section expected byte, got: "${b}"`);
+                    s.data.push(b);
+                    return unknownBuilder;
+                }
             };
             return unknownBuilder;
         };
@@ -234,9 +400,38 @@ export default class Builder {
     _addSection(nameOrNumber, extraObject) {
         const name = typeof(nameOrNumber) === "string" ? nameOrNumber : "";
         const number = typeof(nameOrNumber) === "number" ? nameOrNumber : (WASM.description.section[name] ? WASM.description.section[name].value : _unknownSectionId);
+        if (this._checked) {
+            // Check uniqueness.
+            for (const s of this._sections)
+                assert.falsy(s.name === name && s.id === number, `Cannot have two sections with the same name "${name}" and ID ${number}`);
+            // Check ordering.
+            if ((number !== _unknownSectionId) && (this._sections.length !== 0)) {
+                for (let i = this._sections.length - 1; i >= 0; --i) {
+                    if (this._sections[i].id === _unknownSectionId)
+                        continue;
+                    assert.le(this._sections[i].id, number, `Bad section ordering: "${this._sections[i].name}" cannot precede "${name}"`);
+                    break;
+                }
+            }
+        }
         const s = Object.assign({ name: name, id: number, data: [] }, extraObject || {});
         this._sections.push(s);
         return s;
+    }
+    _getSection(nameOrNumber) {
+        switch (typeof(nameOrNumber)) {
+        default: throw new Error(`Implementation problem: can't get section "${nameOrNumber}"`);
+        case "string":
+            for (const s of this._sections)
+                if (s.name === nameOrNumber)
+                    return s;
+            return undefined;
+        case "number":
+            for (const s of this._sections)
+                if (s.id === nameOrNumber)
+                    return s;
+            return undefined;
+        }
     }
     optimize() {
         // FIXME Add more optimizations. https://bugs.webkit.org/show_bug.cgi?id=163424
@@ -254,5 +449,5 @@ export default class Builder {
         // FIXME Create an asm.js equivalent string which can be eval'd. https://bugs.webkit.org/show_bug.cgi?id=163425
         throw new Error("asm.js not implemented yet");
     }
-    WebAssembly() { return _BuildWebAssemblyBinary(this._preamble, this._sections); }
+    WebAssembly() { return BuildWebAssembly.Binary(this._preamble, this._sections); }
 };

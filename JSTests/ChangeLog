@@ -1,3 +1,60 @@
+2016-11-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement more sections
+        https://bugs.webkit.org/show_bug.cgi?id=164023
+
+        Reviewed by Keith Miller.
+
+        On the JSC side:
+
+         - Put in parser stubs for all WebAssembly sections.
+         - Parse Import, Export sections.
+         - Use tryReserveCapacity instead of reserve, and bail out of the parser if it fails. This prevents the parser from bringing everything down when faced with a malicious input.
+         - Encapsulate all parsed module information into its own structure, making it easier to pass around (from parser to Plan to Module to Instance).
+         - Create WasmFormat.cpp to hold parsed module information's dtor to avoid including WasmMemory.h needlessly.
+         - parseCode: avoid overflow through function size.
+         - Remove all remainders of polyfill-prototype-1, and update license.
+         - Add missing WasmOps.h and WasmValidateInlines.h auto-generation for cmake build.
+
+        On the Builder.js testing side:
+
+         - Implement Type, Import (function only), Export (function only) sections.
+         - Check section order and uniqueness.
+         - Optionally auto-generate the Type section from subsequent Export / Import / Code entries.
+         - Allow re-exporting an import.
+
+        * wasm/Builder.js: build type, import, and export sections
+        (const._normalizeFunctionSignature):
+        * wasm/Builder_WebAssemblyBinary.js: Added. Forked from Builder.js
+        (const.emitters.Type):
+        (const.emitters.Import):
+        (const.emitters.Function):
+        (const.emitters.Table):
+        (const.emitters.Memory):
+        (const.emitters.Global):
+        (const.emitters.Export):
+        (const.emitters.Start):
+        (const.emitters.Element):
+        (const.emitters.Code):
+        (const.emitters.Data):
+        (export.const.Binary):
+        * wasm/LowLevelBinary.js: Add a few useful outputs
+        (export.default.LowLevelBinary.prototype.varuint1):
+        (export.default.LowLevelBinary.prototype.varint7):
+        * wasm/WASM.js: value type and external kind helpers
+        * wasm/assert.js: array element-wise equality comparison
+        (const._eq):
+        * wasm/js-api/test_Module.js:
+        (ModuleWithImports):
+        * wasm/self-test/test_BuilderJSON.js: many more tests for all the new Builder APIs, and update to some older tests which now require a Type section or rejiggered Function signature
+        (const.assertOpThrows):
+        (SectionsWithSameCustomName):
+        (TwoTypeSections):
+        (EmptyImportSection):
+        (ImportBeforeTypeSections):
+        * wasm/self-test/test_BuilderWebAssembly.js: remove a test which wasn't helpful and is now obsolete
+        (CustomSection):
+
 2016-11-03  Mark Lam  <mark.lam@apple.com>
 
         ClonedArguments need to also support haveABadTime mode.

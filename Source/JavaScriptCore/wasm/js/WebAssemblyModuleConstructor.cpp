@@ -73,13 +73,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
     if (plan.failed())
         return JSValue::encode(throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage())));
 
-    // The spec string values inside Ast.module are decoded as UTF8 as described in Web.md. FIXME https://bugs.webkit.org/show_bug.cgi?id=164023
-
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyModuleStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(JSWebAssemblyModule::create(vm, structure, plan.getFunctions(), plan.getMemory()));
+    return JSValue::encode(JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), plan.getCompiledFunctions()));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)

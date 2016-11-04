@@ -28,7 +28,7 @@ const constructorProperties = {
 };
 
 
-assert.notUndef(WebAssembly);
+assert.isNotUndef(WebAssembly);
 checkOwnPropertyDescriptor(utilities.global, "WebAssembly", { typeofvalue: "object", writable: true, configurable: true, enumerable: false });
 assert.eq(String(WebAssembly), "[object WebAssembly]");
 assert.isUndef(WebAssembly.length);
@@ -37,13 +37,13 @@ assert.throws(() => WebAssembly(), TypeError, `WebAssembly is not a function. (I
 assert.throws(() => new WebAssembly(), TypeError, `WebAssembly is not a constructor (evaluating 'new WebAssembly()')`);
 
 for (const f in functionProperties) {
-    assert.notUndef(WebAssembly[f]);
+    assert.isNotUndef(WebAssembly[f]);
     assert.eq(WebAssembly[f].name, f);
     assert.eq(WebAssembly[f].length, functionProperties[f].length);
 }
 
 for (const c in constructorProperties) {
-    assert.notUndef(WebAssembly[c]);
+    assert.isNotUndef(WebAssembly[c]);
     assert.eq(WebAssembly[c].name, c);
     assert.eq(WebAssembly[c].length, constructorProperties[c].length);
     checkOwnPropertyDescriptor(WebAssembly, c, constructorProperties[c]);
@@ -66,7 +66,7 @@ for (const c in constructorProperties) {
         assert.instanceof(instance, WebAssembly.Instance);
         for (const invalid of invalidInstanceImports)
             assert.throws(() => new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid), TypeError, `second argument to WebAssembly.Instance must be undefined or an Object (evaluating 'new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid)')`);
-        assert.notUndef(instance.exports);
+        assert.isNotUndef(instance.exports);
         checkOwnPropertyDescriptor(instance, "exports", { typeofvalue: "object", writable: true, configurable: true, enumerable: true });
         assert.isUndef(instance.exports.__proto__);
         assert.eq(Reflect.isExtensible(instance.exports), false);

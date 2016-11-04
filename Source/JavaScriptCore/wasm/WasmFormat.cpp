@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
+
 #include "WasmFormat.h"
 
 #if ENABLE(WEBASSEMBLY)
+
+#include "WasmMemory.h"
 
 namespace JSC { namespace Wasm {
 
@@ -46,6 +49,8 @@ const char* toString(Type type)
     }
 }
 
+ModuleInformation::~ModuleInformation() { }
+
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(B3_JIT)
+#endif // ENABLE(WEBASSEMBLY)

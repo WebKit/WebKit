@@ -38,8 +38,6 @@ class Memory;
 
 class Plan {
 public:
-    typedef Vector<std::unique_ptr<FunctionCompilation>> CompiledFunctions;
-
     JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>);
     JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
@@ -50,36 +48,37 @@ public:
         RELEASE_ASSERT(failed());
         return m_errorMessage;
     }
-    size_t resultSize() const
+    
+    std::unique_ptr<ModuleInformation>& getModuleInformation()
     {
         RELEASE_ASSERT(!failed());
-        return m_result.size();
-    }
-    const FunctionCompilation* result(size_t n) const
-    {
-        RELEASE_ASSERT(!failed());
-        return m_result.at(n).get();
+        return m_moduleInformation;
     }
     const Memory* memory() const
     {
         RELEASE_ASSERT(!failed());
-        return m_memory.get();
+        return m_moduleInformation->memory.get();
     }
-    
-    CompiledFunctions* getFunctions()
+    size_t compiledFunctionCount() const
     {
         RELEASE_ASSERT(!failed());
-        return &m_result;
+        return m_compiledFunctions.size();
     }
-    std::unique_ptr<Memory>* getMemory()
+    const FunctionCompilation* compiledFunction(size_t i) const
     {
         RELEASE_ASSERT(!failed());
-        return &m_memory;
+        return m_compiledFunctions.at(i).get();
+    }
+    CompiledFunctions& getCompiledFunctions()
+    {
+        RELEASE_ASSERT(!failed());
+        return m_compiledFunctions;
     }
 
 private:
-    CompiledFunctions m_result;
-    std::unique_ptr<Memory> m_memory;
+    std::unique_ptr<ModuleInformation> m_moduleInformation;
+    CompiledFunctions m_compiledFunctions;
+
     bool m_failed { true };
     String m_errorMessage;
 };
