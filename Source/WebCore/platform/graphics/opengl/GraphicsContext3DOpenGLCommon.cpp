@@ -563,6 +563,12 @@ GC3Dboolean GraphicsContext3D::unmapBuffer(GC3Denum target)
     makeContextCurrent();
     return ::glUnmapBuffer(target);
 }
+
+void GraphicsContext3D::copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr size)
+{
+    makeContextCurrent();
+    ::glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
+}
 #endif
 
 GC3Denum GraphicsContext3D::checkFramebufferStatus(GC3Denum target)

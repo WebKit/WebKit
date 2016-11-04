@@ -170,8 +170,49 @@ void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, co
     WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
 }
 
-void WebGL2RenderingContext::copyBufferSubData(GC3Denum, GC3Denum, GC3Dint64, GC3Dint64, GC3Dint64)
+void WebGL2RenderingContext::copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size)
 {
+    if (isContextLostOrPending())
+        return;
+    if ((readTarget == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && writeTarget != GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
+        || (writeTarget == GraphicsContext3D::ELEMENT_ARRAY_BUFFER && readTarget != GraphicsContext3D::ELEMENT_ARRAY_BUFFER)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "copyBufferSubData", "Either both targets need to be ELEMENT_ARRAY_BUFFER or neither should be ELEMENT_ARRAY_BUFFER.");
+        return;
+    }
+    if (readOffset < 0 || writeOffset < 0 || size < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "offset < 0");
+        return;
+    }
+    WebGLBuffer* readBuffer = validateBufferDataParameters("copyBufferSubData", readTarget, GraphicsContext3D::STATIC_DRAW);
+    WebGLBuffer* writeBuffer = validateBufferDataParameters("copyBufferSubData", writeTarget, GraphicsContext3D::STATIC_DRAW);
+    if (!readBuffer || !writeBuffer) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "Invalid readTarget or writeTarget");
+        return;
+    }
+
+    Checked<GC3Dintptr, RecordOverflow> checkedReadOffset(readOffset);
+    Checked<GC3Dintptr, RecordOverflow> checkedWriteOffset(writeOffset);
+    Checked<GC3Dsizeiptr, RecordOverflow> checkedSize(size);
+    if (checkedReadOffset.hasOverflowed() || checkedWriteOffset.hasOverflowed() || checkedSize.hasOverflowed()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "Offset or size is too big");
+        return;
+    }
+
+    if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
+        if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet())) {
+            this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "offset out of range");
+            return;
+        }
+    }
+
+    m_context->moveErrorsToSyntheticErrorList();
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    m_context->copyBufferSubData(readTarget, writeTarget, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet());
+#endif
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        writeBuffer->disassociateBufferData();
+    }
 }
 
 void WebGL2RenderingContext::getBufferSubData(GC3Denum target, long long srcByteOffset, RefPtr<ArrayBufferView>&& dstData, GC3Duint dstOffset, GC3Duint length)

@@ -176,6 +176,51 @@ bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBufferView* arr
     return associateBufferSubDataImpl(offset, array->baseAddress(), array->byteLength());
 }
 
+bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr size)
+{
+    if (readOffset < 0 || writeOffset < 0 || size < 0)
+        return false;
+
+    if (size) {
+        Checked<GC3Dintptr, RecordOverflow> checkedReadBufferOffset(readOffset);
+        Checked<GC3Dsizeiptr, RecordOverflow> checkedDataLength(size);
+        Checked<GC3Dintptr, RecordOverflow> checkedReadBufferMax = checkedReadBufferOffset + checkedDataLength;
+        if (checkedReadBufferMax.hasOverflowed() || readOffset > readBuffer.byteLength() || checkedReadBufferMax.unsafeGet() > readBuffer.byteLength())
+            return false;
+
+        Checked<GC3Dintptr, RecordOverflow> checkedWriteBufferOffset(writeOffset);
+        Checked<GC3Dintptr, RecordOverflow> checkedWriteBufferMax = checkedWriteBufferOffset + checkedDataLength;
+        if (checkedWriteBufferMax.hasOverflowed() || writeOffset > m_byteLength || checkedWriteBufferMax.unsafeGet() > m_byteLength)
+            return false;
+    }
+
+    switch (m_target) {
+    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+        clearCachedMaxIndices();
+        if (size) {
+            if (!m_elementArrayBuffer)
+                return false;
+            memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + writeOffset, static_cast<const unsigned char*>(readBuffer.elementArrayBuffer()->data()) + readOffset, size);
+        }
+        return true;
+    case GraphicsContext3D::ARRAY_BUFFER:
+        return true;
+    default:
+#if ENABLE(WEBGL2)
+        switch (m_target) {
+        case GraphicsContext3D::COPY_READ_BUFFER:
+        case GraphicsContext3D::COPY_WRITE_BUFFER:
+        case GraphicsContext3D::PIXEL_PACK_BUFFER:
+        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
+        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContext3D::UNIFORM_BUFFER:
+            return true;
+        }
+#endif
+        return false;
+    }
+}
+
 void WebGLBuffer::disassociateBufferData()
 {
     m_byteLength = 0;

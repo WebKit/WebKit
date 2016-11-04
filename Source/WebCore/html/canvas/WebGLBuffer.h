@@ -46,6 +46,7 @@ public:
     bool associateBufferData(JSC::ArrayBufferView*);
     bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBuffer*);
     bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBufferView*);
+    bool associateCopyBufferSubData(const WebGLBuffer& readBuffer, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr);
 
     void disassociateBufferData();
 

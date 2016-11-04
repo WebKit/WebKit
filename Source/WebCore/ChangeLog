@@ -1,3 +1,25 @@
+2016-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement WebGL2RenderingContext::copyBufferSubData()
+        https://bugs.webkit.org/show_bug.cgi?id=164008
+
+        Reviewed by Dean Jackson.
+
+        Similar to previous work regarding WebGL 2 buffers, this method implements
+        the ability to copy from one buffer to another without the data leaving
+        the GPU.
+
+        Test: fast/canvas/webgl/copyBufferSubData.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::copyBufferSubData):
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateCopyBufferSubData):
+        * html/canvas/WebGLBuffer.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::copyBufferSubData):
+
 2016-11-04  Simon Fraser  <simon.fraser@apple.com>
 
         Rename some ScrollingTree/Node-related functions to reduce the number of uses of "update"
