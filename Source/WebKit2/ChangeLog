@@ -1,3 +1,17 @@
+2016-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Layout test http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=139358
+
+        Reviewed by Michael Catanzaro.
+
+        Stop putting the credentials in the URL unconditionally and ensure we only do that when provided by the URL
+        itself. Libsoup has its own cache of SoupAuth, so we don't need to pass user/pass in the URL for every single
+        request, libsoup will authenticate those automatically.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::applyAuthenticationToRequest):
+
 2016-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::ParkingLot should stop using std::chrono because std::chrono::duration casts are prone to overflows

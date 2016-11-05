@@ -405,22 +405,16 @@ void NetworkDataTaskSoup::tlsErrorsChanged()
 
 void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 {
-    // We always put the credentials into the URL. In the Coca port HTTP family credentials are applied in
-    // the didReceiveChallenge callback, but libsoup requires us to use this method to override
-    // any previously remembered credentials. It has its own per-session credential storage.
+    if (m_user.isEmpty() && m_password.isEmpty())
+        return;
+
     auto url = request.url();
-    if (!m_initialCredential.isEmpty()) {
-        url.setUser(m_initialCredential.user());
-        url.setPass(m_initialCredential.password());
-    } else {
-        url.setUser(m_user);
-        url.setPass(m_password);
-    }
+    url.setUser(m_user);
+    url.setPass(m_password);
+    request.setURL(url);
 
     m_user = String();
     m_password = String();
-
-    request.setURL(url);
 }
 
 void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
