@@ -322,8 +322,8 @@ void InspectorOverlay::update()
         return;
 
     FrameView* overlayView = overlayPage()->mainFrame().view();
-    IntSize viewportSize = view->unscaledVisibleContentSizeIncludingObscuredArea();
-    IntSize frameViewFullSize = view->unscaledVisibleContentSizeIncludingObscuredArea(ScrollableArea::IncludeScrollbars);
+    IntSize viewportSize = view->sizeForVisibleContent();
+    IntSize frameViewFullSize = view->sizeForVisibleContent(ScrollableArea::IncludeScrollbars);
     overlayView->resize(frameViewFullSize);
 
     // Clear canvas and paint things.

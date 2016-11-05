@@ -1120,7 +1120,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
                 // down the frameView to to fit in the current viewport.
                 viewportRect.setSize(frameView.fixedLayoutSize());
             } else
-                viewportRect.setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
+                viewportRect.setSize(frameView.sizeForVisibleContent());
 
             if (fixedBackgroundPaintsInLocalCoordinates()) {
                 if (!useFixedLayout) {

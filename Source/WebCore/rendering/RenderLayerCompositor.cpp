@@ -458,7 +458,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         rootLayer->flushCompositingState(exposedRect, frameView.viewportIsStable());
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
-        FloatRect visibleRect = m_clipLayer ? FloatRect({ 0, 0 }, frameView.unscaledVisibleContentSizeIncludingObscuredArea()) : frameView.visibleContentRect();
+        FloatRect visibleRect = m_clipLayer ? FloatRect({ 0, 0 }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
 
         if (frameView.viewExposedRect())
             visibleRect.intersect(frameView.viewExposedRect().value());
@@ -1717,7 +1717,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
 {
     if (m_clipLayer) {
         const FrameView& frameView = m_renderView.frameView();
-        m_clipLayer->setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
+        m_clipLayer->setSize(frameView.sizeForVisibleContent());
         m_clipLayer->setPosition(positionForClipLayer());
 
         frameViewDidScroll();
@@ -2124,7 +2124,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
     if (m_clipLayer) {
-        m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSizeIncludingObscuredArea());
+        m_clipLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
         m_clipLayer->setPosition(positionForClipLayer());
     }
 
@@ -3443,7 +3443,7 @@ void RenderLayerCompositor::ensureRootLayer()
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
-            m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSizeIncludingObscuredArea());
+            m_clipLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
             m_clipLayer->setPosition(positionForClipLayer());
             m_clipLayer->setAnchorPoint(FloatPoint3D());
 

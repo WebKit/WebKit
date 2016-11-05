@@ -1,5 +1,44 @@
 2016-11-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename unscaledUnobscuredVisibleContentSize and unscaledVisibleContentSizeIncludingObscuredArea for attempted clarity
+        https://bugs.webkit.org/show_bug.cgi?id=164438
+
+        Reviewed by Tim Horton.
+
+        unscaledUnobscuredVisibleContentSize() and unscaledVisibleContentSizeIncludingObscuredArea() were an endless source
+        of confusion.
+        
+        Functions with "VisibleContent" in the name are usually expected to return document coordinates (affected by zooming),
+        so unscaledUnobscuredVisibleContentSize caused cognitive dissonance because of "unscaled" vs "visibleContent", and
+        "unobscured" vs "visible".
+        
+        So rename:
+            unscaledUnobscuredVisibleContentSize -> sizeForUnobscuredContent
+            unscaledVisibleContentSizeIncludingObscuredArea -> sizeForVisibleContent
+        
+        sizeForUnobscuredContent() can also be private to ScrollView.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::update):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unobscuredContentRectInternal):
+        (WebCore::ScrollView::sizeForVisibleContent):
+        (WebCore::ScrollView::sizeForUnobscuredContent): Don't compute unscaledVisibleContentSizeIncludingObscuredArea
+        before testing whether we have a platform widget.
+        (WebCore::ScrollView::layoutSize):
+        (WebCore::ScrollView::unscaledVisibleContentSizeIncludingObscuredArea): Deleted.
+        (WebCore::ScrollView::unscaledUnobscuredVisibleContentSize): Deleted.
+        * platform/ScrollView.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+2016-11-04  Simon Fraser  <simon.fraser@apple.com>
+
         Layout viewport wrong with RTL documents
         https://bugs.webkit.org/show_bug.cgi?id=164434
 

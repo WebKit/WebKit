@@ -199,13 +199,9 @@ public:
 
     virtual bool inProgrammaticScroll() const { return false; }
 
-    // visibleContentRect().size() is computed from unscaledUnobscuredVisibleContentSize() divided by the value of visibleContentScaleFactor.
-    // visibleContentScaleFactor is usually 1, except when the setting delegatesPageScaling is true and the
-    // ScrollView is the main frame; in that case, visibleContentScaleFactor is equal to the page's pageScaleFactor.
-    // Ports that don't use pageScaleFactor can treat unscaledUnobscuredVisibleContentSize and visibleContentRect().size() as equivalent.
-    // unscaledVisibleContentSizeIncludingObscuredArea() includes areas in the content that might be obscured by UI elements.
-    IntSize unscaledUnobscuredVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
-    IntSize unscaledVisibleContentSizeIncludingObscuredArea(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    // Size available for view contents, including content inset areas. Not affected by zooming.
+    IntSize sizeForVisibleContent(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    // FIXME: remove this. It's only used for the incorrectly behaving ScrollView::unobscuredContentRectInternal().
     virtual float visibleContentScaleFactor() const { return 1; }
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
@@ -213,6 +209,7 @@ public:
     WEBCORE_EXPORT IntSize layoutSize() const;
     int layoutWidth() const { return layoutSize().width(); }
     int layoutHeight() const { return layoutSize().height(); }
+
     WEBCORE_EXPORT IntSize fixedLayoutSize() const;
     WEBCORE_EXPORT void setFixedLayoutSize(const IntSize&);
     WEBCORE_EXPORT bool useFixedLayout() const;
@@ -425,6 +422,9 @@ protected:
 #endif
 
 private:
+    // Size available for view contents, excluding content insets. Not affected by zooming.
+    IntSize sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
 
