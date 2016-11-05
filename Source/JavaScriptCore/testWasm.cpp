@@ -46,7 +46,6 @@ public:
         parseArguments(argc, argv);
     }
 
-    Vector<String> m_arguments;
     bool m_runLEBTests { false };
     bool m_runWasmTests { false };
 
@@ -68,21 +67,30 @@ void CommandLine::parseArguments(int argc, char** argv)
 {
     int i = 1;
 
+    if (argc == i)
+        printUsageStatement(false);
+
     for (; i < argc; ++i) {
         const char* arg = argv[i];
-        if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
+
+        if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
             printUsageStatement(true);
+            RELEASE_ASSERT_NOT_REACHED();
+        }
 
-        if (!strcmp(arg, "-l") || !strcmp(arg, "--leb"))
+        if (!strcmp(arg, "-l") || !strcmp(arg, "--leb")) {
             m_runLEBTests = true;
+            continue;
+        }
 
-        if (!strcmp(arg, "-w") || !strcmp(arg, "--web"))
+        if (!strcmp(arg, "-w") || !strcmp(arg, "--web")) {
             m_runWasmTests = true;
+            continue;
+        }
+
+        fprintf(stderr, "Unknown option %s\n", arg);
+        printUsageStatement(false);
     }
-
-    for (; i < argc; ++i)
-        m_arguments.append(argv[i]);
-
 }
 
 StaticLock crashLock;
