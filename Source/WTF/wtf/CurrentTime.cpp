@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
@@ -340,7 +340,7 @@ void sleep(double value)
     Lock fakeLock;
     Condition fakeCondition;
     LockHolder fakeLocker(fakeLock);
-    fakeCondition.waitUntilMonotonicClockSeconds(fakeLock, monotonicallyIncreasingTime() + value);
+    fakeCondition.waitFor(fakeLock, Seconds(value));
 }
 
 } // namespace WTF

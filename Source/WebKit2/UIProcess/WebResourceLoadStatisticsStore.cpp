@@ -213,7 +213,7 @@ void WebResourceLoadStatisticsStore::applicationWillTerminate()
         // Make sure any ongoing work in our queue is finished before we terminate.
         semaphore.signal();
     });
-    semaphore.wait(std::numeric_limits<double>::max());
+    semaphore.wait(WallTime::infinity());
 }
 
 String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label) const

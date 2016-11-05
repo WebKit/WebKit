@@ -1,3 +1,239 @@
+2016-11-04  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::ParkingLot should stop using std::chrono because std::chrono::duration casts are prone to overflows
+        https://bugs.webkit.org/show_bug.cgi?id=152045
+
+        Reviewed by Andy Estes.
+        
+        We used to use 'double' for all time measurements. Sometimes it was milliseconds,
+        sometimes it was seconds. Sometimes we measured a span of time, sometimes we spoke of time
+        since some epoch. When we spoke of time since epoch, we either used a monotonic clock or
+        a wall clock. The type - always 'double' - never told us what kind of time we had, even
+        though there were roughly six of them (sec interval, ms interval, sec since epoch on wall,
+        ms since epoch on wall, sec since epoch monotonic, ms since epoch monotonic).
+        
+        At some point, we thought that it would be a good idea to replace these doubles with
+        std::chrono. But since replacing some things with std::chrono, we found it to be terribly
+        inconvenient:
+        
+        - Outrageous API. I never want to say std::chrono::milliseconds(blah). I never want to say
+          std::chrono::steady_clock::timepoint. The syntax for duration_cast is ugly, and ideally
+          duration_cast would not even be a thing.
+        
+        - No overflow protection. std::chrono uses integers by default and using anything else is
+          clumsy. But the integer math is done without regard for the rough edges of integer math,
+          so any cast between std::chrono types risks overflow. Any comparison risks overflow
+          because it may do conversions silently. We have even found bugs where some C++
+          implementations had more overflows than others, which ends up being a special kind of
+          hell. In many cases, the overflow also has nasal demons.
+        
+        It's an error to represent time using integers. It would have been excusable back when
+        floating point math was not guaranteed to be supported on all platforms, but that would
+        have been a long time ago. Time is a continuous, infinite concept and it's a perfect fit
+        for floating point:
+        
+        - Floating point preserves precision under multiplication in all but extreme cases, so
+          using floating point for time means that unit conversions are almost completely
+          lossless. This means that we don't have to think very hard about what units to use. In
+          this patch, we use seconds almost everywhere. We only convert at boundaries, like an API
+          boundary that wants something other than seconds.
+        
+        - Floating point makes it easy to reason about infinity, which is something that time code
+          wants to do a lot. Example: when would you like to timeout? Infinity please! This is the
+          most elegant way of having an API support both a timeout variant and a no-timeout
+          variant.
+
+        - Floating point does well-understood things when math goes wrong, and these things are
+          pretty well optimized to match what a mathematician would do when computing with real
+          numbers represented using scientific notation with a finite number of significant
+          digits. This means that time math under floating point looks like normal math. On the
+          other hand, std::chrono time math looks like garbage because you have to always check
+          for multiple possible UB corners whenever you touch large integers. Integers that
+          represent time are very likely to be large and you don't have to do much to overflow
+          them. At this time, based on the number of bugs we have already seen due to chrono
+          overflows, I am not certain that we even understand what are all of the corner cases
+          that we should even check for.
+        
+        This patch introduces a new set of timekeeping classes that are all based on double, and
+        all internally use seconds. These classes support algebraic typing. The classes are:
+        
+        - Seconds: this is for measuring a duration.
+        - WallTime: time since epoch according to a wall clock (aka real time clock).
+        - MonotonicTime: time since epoch according to a monotonic clock.
+        - ClockType: enum that says either Wall or Monotonic.
+        - TimeWithDynamicClockType: a tuple of double and ClockType, which represents either a
+          wall time or a monotonic time.
+        
+        All of these classes behave like C++ values and are cheap to copy around since they are
+        very nearly POD. This supports comprehensive conversions between the various time types.
+        Most of this is by way of algebra. Here are just some of the rules we recognize:
+        
+        WallTime = WallTime + Seconds
+        Seconds = WallTime - WallTime
+        MonotonicTime = MonotonicTime + Seconds
+        etc...
+        
+        We support negative, infinite, and NaN times because math.
+        
+        We support conversions between MonotonicTime and WallTime, like:
+        
+        WallTime wt = mt.approximateWallTime()
+        
+        This is called this "approximate" because the only way to do it is to get the current time
+        on both clocks and convert relative to that.
+        
+        Many of our APIs would be happy using whatever notion of time the user wanted to use. For
+        those APIs, which includes Condition and ParkingLot, we have TimeWithDynamicClockType. You
+        can automatically convert WallTime or MonotonicTime to TimeWithDynamicClockType. This
+        means that if you use a WallTime with Condition::waitUntil, then Condition's internal
+        logic for when it should wake up makes its decision based on the current WallTime - but if
+        you use MonotonicTime then waitUntil will make its decision based on current
+        MonotonicTime. This is a greater level of flexibility than chrono allowed, since chrono
+        did not have the concept of a dynamic clock type.
+        
+        This patch does not include conversions between std::chrono and these new time classes,
+        because past experience shows that we're quite bad at getting conversions between
+        std::chrono and anything else right. Also, I didn't need such conversion code because this
+        patch only converts code that transitively touches ParkingLot and Condition. It was easy
+        to get all of that code onto the new time classes.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::start):
+        * wtf/CMakeLists.txt:
+        * wtf/ClockType.cpp: Added.
+        (WTF::printInternal):
+        * wtf/ClockType.h: Added.
+        * wtf/Condition.h:
+        (WTF::ConditionBase::waitUntil):
+        (WTF::ConditionBase::waitFor):
+        (WTF::ConditionBase::wait):
+        (WTF::ConditionBase::waitUntilWallClockSeconds): Deleted.
+        (WTF::ConditionBase::waitUntilMonotonicClockSeconds): Deleted.
+        (WTF::ConditionBase::waitForSeconds): Deleted.
+        (WTF::ConditionBase::waitForSecondsImpl): Deleted.
+        (WTF::ConditionBase::waitForImpl): Deleted.
+        (WTF::ConditionBase::absoluteFromRelative): Deleted.
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        * wtf/CurrentTime.cpp:
+        (WTF::sleep):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::infiniteTime): Deleted.
+        * wtf/MonotonicTime.cpp: Added.
+        (WTF::MonotonicTime::now):
+        (WTF::MonotonicTime::approximateWallTime):
+        (WTF::MonotonicTime::dump):
+        (WTF::MonotonicTime::sleep):
+        * wtf/MonotonicTime.h: Added.
+        (WTF::MonotonicTime::MonotonicTime):
+        (WTF::MonotonicTime::fromRawDouble):
+        (WTF::MonotonicTime::infinity):
+        (WTF::MonotonicTime::secondsSinceEpoch):
+        (WTF::MonotonicTime::approximateMonotonicTime):
+        (WTF::MonotonicTime::operator bool):
+        (WTF::MonotonicTime::operator+):
+        (WTF::MonotonicTime::operator-):
+        (WTF::MonotonicTime::operator+=):
+        (WTF::MonotonicTime::operator-=):
+        (WTF::MonotonicTime::operator==):
+        (WTF::MonotonicTime::operator!=):
+        (WTF::MonotonicTime::operator<):
+        (WTF::MonotonicTime::operator>):
+        (WTF::MonotonicTime::operator<=):
+        (WTF::MonotonicTime::operator>=):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkOneImpl):
+        (WTF::ParkingLot::unparkCount):
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::compareAndPark):
+        * wtf/Seconds.cpp: Added.
+        (WTF::Seconds::operator+):
+        (WTF::Seconds::operator-):
+        (WTF::Seconds::dump):
+        (WTF::Seconds::sleep):
+        * wtf/Seconds.h: Added.
+        (WTF::Seconds::Seconds):
+        (WTF::Seconds::value):
+        (WTF::Seconds::seconds):
+        (WTF::Seconds::milliseconds):
+        (WTF::Seconds::microseconds):
+        (WTF::Seconds::nanoseconds):
+        (WTF::Seconds::fromMilliseconds):
+        (WTF::Seconds::fromMicroseconds):
+        (WTF::Seconds::fromNanoseconds):
+        (WTF::Seconds::infinity):
+        (WTF::Seconds::operator bool):
+        (WTF::Seconds::operator+):
+        (WTF::Seconds::operator-):
+        (WTF::Seconds::operator*):
+        (WTF::Seconds::operator/):
+        (WTF::Seconds::operator+=):
+        (WTF::Seconds::operator-=):
+        (WTF::Seconds::operator*=):
+        (WTF::Seconds::operator/=):
+        (WTF::Seconds::operator==):
+        (WTF::Seconds::operator!=):
+        (WTF::Seconds::operator<):
+        (WTF::Seconds::operator>):
+        (WTF::Seconds::operator<=):
+        (WTF::Seconds::operator>=):
+        * wtf/TimeWithDynamicClockType.cpp: Added.
+        (WTF::TimeWithDynamicClockType::now):
+        (WTF::TimeWithDynamicClockType::nowWithSameClock):
+        (WTF::TimeWithDynamicClockType::wallTime):
+        (WTF::TimeWithDynamicClockType::monotonicTime):
+        (WTF::TimeWithDynamicClockType::approximateWallTime):
+        (WTF::TimeWithDynamicClockType::approximateMonotonicTime):
+        (WTF::TimeWithDynamicClockType::operator-):
+        (WTF::TimeWithDynamicClockType::operator<):
+        (WTF::TimeWithDynamicClockType::operator>):
+        (WTF::TimeWithDynamicClockType::operator<=):
+        (WTF::TimeWithDynamicClockType::operator>=):
+        (WTF::TimeWithDynamicClockType::dump):
+        (WTF::TimeWithDynamicClockType::sleep):
+        * wtf/TimeWithDynamicClockType.h: Added.
+        (WTF::TimeWithDynamicClockType::TimeWithDynamicClockType):
+        (WTF::TimeWithDynamicClockType::fromRawDouble):
+        (WTF::TimeWithDynamicClockType::secondsSinceEpoch):
+        (WTF::TimeWithDynamicClockType::clockType):
+        (WTF::TimeWithDynamicClockType::withSameClockAndRawDouble):
+        (WTF::TimeWithDynamicClockType::operator bool):
+        (WTF::TimeWithDynamicClockType::operator+):
+        (WTF::TimeWithDynamicClockType::operator-):
+        (WTF::TimeWithDynamicClockType::operator+=):
+        (WTF::TimeWithDynamicClockType::operator-=):
+        (WTF::TimeWithDynamicClockType::operator==):
+        (WTF::TimeWithDynamicClockType::operator!=):
+        * wtf/WallTime.cpp: Added.
+        (WTF::WallTime::now):
+        (WTF::WallTime::approximateMonotonicTime):
+        (WTF::WallTime::dump):
+        (WTF::WallTime::sleep):
+        * wtf/WallTime.h: Added.
+        (WTF::WallTime::WallTime):
+        (WTF::WallTime::fromRawDouble):
+        (WTF::WallTime::infinity):
+        (WTF::WallTime::secondsSinceEpoch):
+        (WTF::WallTime::approximateWallTime):
+        (WTF::WallTime::operator bool):
+        (WTF::WallTime::operator+):
+        (WTF::WallTime::operator-):
+        (WTF::WallTime::operator+=):
+        (WTF::WallTime::operator-=):
+        (WTF::WallTime::operator==):
+        (WTF::WallTime::operator!=):
+        (WTF::WallTime::operator<):
+        (WTF::WallTime::operator>):
+        (WTF::WallTime::operator<=):
+        (WTF::WallTime::operator>=):
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::wait):
+        * wtf/threads/BinarySemaphore.h:
+
 2016-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG plays fast and loose with the shadow values of a Phi

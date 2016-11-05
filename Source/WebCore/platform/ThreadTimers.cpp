@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ void ThreadTimers::updateSharedTimer()
                 return;
         } 
         m_pendingSharedTimerFireTime = nextFireTime;
-        m_sharedTimer->setFireInterval(std::max(nextFireTime - currentMonotonicTime, 0.0));
+        m_sharedTimer->setFireInterval(Seconds(std::max(nextFireTime - currentMonotonicTime, 0.0)));
     }
 }
 

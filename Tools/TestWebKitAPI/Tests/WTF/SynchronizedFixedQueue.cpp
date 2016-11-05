@@ -116,7 +116,7 @@ public:
             return;
 
         m_lowerQueue.close();
-        m_produceCloseSemaphore.wait(std::numeric_limits<double>::max());
+        m_produceCloseSemaphore.wait(WallTime::infinity());
         m_produceQueue = nullptr;
     }
     
@@ -126,7 +126,7 @@ public:
             return;
 
         m_upperQueue.close();
-        m_consumeCloseSemaphore.wait(std::numeric_limits<double>::max());
+        m_consumeCloseSemaphore.wait(WallTime::infinity());
         m_consumeQueue = nullptr;
     }
     

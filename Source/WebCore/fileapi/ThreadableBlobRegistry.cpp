@@ -150,7 +150,7 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
             resultSize = blobRegistry().blobSize(url);
             semaphore.signal();
         });
-        semaphore.wait(std::numeric_limits<double>::max());
+        semaphore.wait(WallTime::infinity());
     }
     return resultSize;
 }

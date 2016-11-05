@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ public:
     }
 
     template<typename T>
-    bool sendSync(T&& message, typename T::Reply&& reply, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    bool sendSync(T&& message, typename T::Reply&& reply, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         static_assert(T::isSync, "Message is not sync!");
 
@@ -58,7 +58,7 @@ public:
     }
 
     template<typename T>
-    bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         ASSERT(messageSenderConnection());
 

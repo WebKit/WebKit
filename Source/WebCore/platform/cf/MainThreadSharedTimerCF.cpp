@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,11 +93,11 @@ void MainThreadSharedTimer::invalidate()
     sharedTimer = nullptr;
 }
 
-void MainThreadSharedTimer::setFireInterval(double interval)
+void MainThreadSharedTimer::setFireInterval(Seconds interval)
 {
     ASSERT(m_firedFunction);
 
-    CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
+    CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval.value();
     if (!sharedTimer) {
         sharedTimer = CFRunLoopTimerCreate(nullptr, fireDate, kCFTimeIntervalDistantFuture, 0, 0, timerFired, nullptr);
 #if PLATFORM(IOS)

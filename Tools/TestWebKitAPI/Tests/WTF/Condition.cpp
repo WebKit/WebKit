@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,9 @@ enum NotifyStyle {
 };
 
 template<typename Functor>
-void wait(Condition& condition, std::unique_lock<Lock>& locker, const Functor& predicate, std::chrono::microseconds timeout)
+void wait(Condition& condition, std::unique_lock<Lock>& locker, const Functor& predicate, Seconds timeout)
 {
-    if (timeout == std::chrono::microseconds::max())
+    if (timeout == Seconds::infinity())
         condition.wait(locker, predicate);
     else {
         // This tests timeouts in the sense that it verifies that we can call wait() again after a
@@ -80,8 +80,8 @@ void runTest(
     unsigned maxQueueSize,
     unsigned numMessagesPerProducer,
     NotifyStyle notifyStyle,
-    std::chrono::microseconds timeout = std::chrono::microseconds::max(),
-    std::chrono::microseconds delay = std::chrono::microseconds::zero())
+    Seconds timeout = Seconds::infinity(),
+    Seconds delay = Seconds(0))
 {
     Deque<unsigned> queue;
     bool shouldContinue = true;
@@ -128,7 +128,7 @@ void runTest(
         consumerThreads.append(threadIdentifier);
     }
 
-    std::this_thread::sleep_for(delay);
+    sleep(delay);
 
     for (unsigned i = numProducers; i--;) {
         ThreadIdentifier threadIdentifier = createThread(
@@ -186,8 +186,8 @@ TEST(WTF_Condition, OneProducerOneConsumerOneSlotTimeout)
 {
     runTest(
         1, 1, 1, 100000, TacticallyNotifyAll,
-        std::chrono::microseconds(10000),
-        std::chrono::microseconds(1000000));
+        Seconds::fromMilliseconds(10),
+        Seconds(1));
 }
 
 TEST(WTF_Condition, OneProducerOneConsumerHundredSlots)
@@ -247,7 +247,7 @@ TEST(WTF_Condition, TimeoutTimesOut)
 
     lock.lock();
     bool result = condition.waitFor(
-        lock, std::chrono::microseconds(10000), [] () -> bool { return false; });
+        lock, Seconds::fromMilliseconds(10), [] () -> bool { return false; });
     lock.unlock();
 
     EXPECT_FALSE(result);

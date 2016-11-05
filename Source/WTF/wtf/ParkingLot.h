@@ -26,11 +26,11 @@
 #ifndef WTF_ParkingLot_h
 #define WTF_ParkingLot_h
 
-#include <chrono>
 #include <functional>
 #include <wtf/Atomics.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/Threading.h>
+#include <wtf/TimeWithDynamicClockType.h>
 
 namespace WTF {
 
@@ -39,7 +39,15 @@ class ParkingLot {
     ParkingLot(const ParkingLot&) = delete;
 
 public:
-    typedef std::chrono::steady_clock Clock;
+    // ParkingLot will accept any kind of time and convert it internally, but this typedef tells
+    // you what kind of time ParkingLot would be able to use without conversions. It's sad that
+    // this is WallTime not MonotonicTime, but that's just how OS wait functions work. However,
+    // because ParkingLot evaluates whether it should wait by checking if your time has passed
+    // using whatever clock you used, specifying timeouts in MonotonicTime is semantically better.
+    // For example, if the user sets his computer's clock back during the time that you wanted to
+    // wait for one second, and you specified the timeout using the MonotonicTime, then ParkingLot
+    // will be smart enough to know that your one second has elapsed.
+    typedef WallTime Time;
     
     // Parks the thread in a queue associated with the given address, which cannot be null. The
     // parking only succeeds if the validation function returns true while the queue lock is held.
@@ -68,7 +76,7 @@ public:
         const void* address,
         const ValidationFunctor& validation,
         const BeforeSleepFunctor& beforeSleep,
-        Clock::time_point timeout)
+        const TimeWithDynamicClockType& timeout)
     {
         return parkConditionallyImpl(
             address,
@@ -89,7 +97,7 @@ public:
                 return value == expected;
             },
             [] () { },
-            Clock::time_point::max());
+            Time::infinity());
     }
 
     // Unparking status given to you anytime you unparkOne().
@@ -158,7 +166,7 @@ private:
         const void* address,
         const ScopedLambda<bool()>& validation,
         const ScopedLambda<void()>& beforeSleep,
-        Clock::time_point timeout);
+        const TimeWithDynamicClockType& timeout);
     
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
         const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);

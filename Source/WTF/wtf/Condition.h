@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 #ifndef WTF_Condition_h
 #define WTF_Condition_h
 
-#include <chrono>
 #include <functional>
 #include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ParkingLot.h>
+#include <wtf/TimeWithDynamicClockType.h>
 
 namespace WTF {
 
@@ -46,7 +46,10 @@ namespace WTF {
 // This is a struct without a constructor or destructor so that it can be statically initialized.
 // Use Lock in instance variables.
 struct ConditionBase {
-    typedef ParkingLot::Clock Clock;
+    // Condition will accept any kind of time and convert it internally, but this typedef tells
+    // you what kind of time Condition would be able to use without conversions. However, if you
+    // are unlikely to be affected by the cost of conversions, it is better to use MonotonicTime.
+    typedef ParkingLot::Time Time;
     
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
@@ -64,10 +67,10 @@ struct ConditionBase {
     // which may not release the lock for past timeout. But, this behavior is consistent with OpenGroup
     // documentation for timedwait().
     template<typename LockType>
-    bool waitUntil(LockType& lock, Clock::time_point timeout)
+    bool waitUntil(LockType& lock, const TimeWithDynamicClockType& timeout)
     {
         bool result;
-        if (timeout < Clock::now()) {
+        if (timeout < timeout.nowWithSameClock()) {
             lock.unlock();
             result = false;
         } else {
@@ -89,7 +92,8 @@ struct ConditionBase {
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
     template<typename LockType, typename Functor>
-    bool waitUntil(LockType& lock, Clock::time_point timeout, const Functor& predicate)
+    bool waitUntil(
+        LockType& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate)
     {
         while (!predicate()) {
             if (!waitUntil(lock, timeout))
@@ -100,17 +104,23 @@ struct ConditionBase {
 
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
-    template<typename LockType, typename DurationType, typename Functor>
+    template<typename LockType, typename Functor>
     bool waitFor(
-        LockType& lock, const DurationType& relativeTimeout, const Functor& predicate)
+        LockType& lock, Seconds relativeTimeout, const Functor& predicate)
     {
-        return waitUntil(lock, absoluteFromRelative(relativeTimeout), predicate);
+        return waitUntil(lock, MonotonicTime::now() + relativeTimeout, predicate);
+    }
+    
+    template<typename LockType>
+    bool waitFor(LockType& lock, Seconds relativeTimeout)
+    {
+        return waitUntil(lock, MonotonicTime::now() + relativeTimeout);
     }
 
     template<typename LockType>
     void wait(LockType& lock)
     {
-        waitUntil(lock, Clock::time_point::max());
+        waitUntil(lock, Time::infinity());
     }
 
     template<typename LockType, typename Functor>
@@ -118,53 +128,6 @@ struct ConditionBase {
     {
         while (!predicate())
             wait(lock);
-    }
-
-    template<typename LockType, typename TimeType>
-    bool waitUntil(LockType& lock, const TimeType& timeout)
-    {
-        if (timeout == TimeType::max()) {
-            wait(lock);
-            return true;
-        }
-        return waitForImpl(lock, timeout - TimeType::clock::now());
-    }
-
-    template<typename LockType>
-    bool waitUntilWallClockSeconds(LockType& lock, double absoluteTimeoutSeconds)
-    {
-        return waitForSecondsImpl(lock, absoluteTimeoutSeconds - currentTime());
-    }
-
-    template<typename LockType>
-    bool waitUntilMonotonicClockSeconds(LockType& lock, double absoluteTimeoutSeconds)
-    {
-        return waitForSecondsImpl(lock, absoluteTimeoutSeconds - monotonicallyIncreasingTime());
-    }
-    
-    template<typename LockType, typename Functor>
-    bool waitForSeconds(LockType& lock, double relativeTimeoutSeconds, const Functor& predicate)
-    {
-        double relativeTimeoutNanoseconds = relativeTimeoutSeconds * (1000.0 * 1000.0 * 1000.0);
-        
-        if (!(relativeTimeoutNanoseconds > 0)) {
-            // This handles insta-timeouts as well as NaN.
-            lock.unlock();
-            lock.lock();
-            return false;
-        }
-
-        if (relativeTimeoutNanoseconds > static_cast<double>(std::numeric_limits<int64_t>::max())) {
-            // If the timeout in nanoseconds cannot be expressed using a 64-bit integer, then we
-            // might as well wait forever.
-            wait(lock, predicate);
-            return true;
-        }
-        
-        auto relativeTimeout =
-            std::chrono::nanoseconds(static_cast<int64_t>(relativeTimeoutNanoseconds));
-
-        return waitFor(lock, relativeTimeout, predicate);
     }
 
     // Note that this method is extremely fast when nobody is waiting. It is not necessary to try to
@@ -207,58 +170,8 @@ struct ConditionBase {
     }
     
 protected:
-    template<typename LockType>
-    bool waitForSecondsImpl(LockType& lock, double relativeTimeoutSeconds)
-    {
-        double relativeTimeoutNanoseconds = relativeTimeoutSeconds * (1000.0 * 1000.0 * 1000.0);
-        
-        if (!(relativeTimeoutNanoseconds > 0)) {
-            // This handles insta-timeouts as well as NaN.
-            lock.unlock();
-            lock.lock();
-            return false;
-        }
-
-        if (relativeTimeoutNanoseconds > static_cast<double>(std::numeric_limits<int64_t>::max())) {
-            // If the timeout in nanoseconds cannot be expressed using a 64-bit integer, then we
-            // might as well wait forever.
-            wait(lock);
-            return true;
-        }
-        
-        auto relativeTimeout =
-            std::chrono::nanoseconds(static_cast<int64_t>(relativeTimeoutNanoseconds));
-
-        return waitForImpl(lock, relativeTimeout);
-    }
-    
-    template<typename LockType, typename DurationType>
-    bool waitForImpl(LockType& lock, const DurationType& relativeTimeout)
-    {
-        return waitUntil(lock, absoluteFromRelative(relativeTimeout));
-    }
-
-    template<typename DurationType>
-    Clock::time_point absoluteFromRelative(const DurationType& relativeTimeout)
-    {
-        if (relativeTimeout < DurationType::zero())
-            return Clock::time_point::min();
-
-        if (relativeTimeout > Clock::duration::max()) {
-            // This is highly unlikely. But if it happens, we want to not do anything dumb. Sleeping
-            // without a timeout seems sensible when the timeout duration is greater than what can be
-            // expressed using steady_clock.
-            return Clock::time_point::max();
-        }
-        
-        Clock::duration myRelativeTimeout =
-            std::chrono::duration_cast<Clock::duration>(relativeTimeout);
-
-        return Clock::now() + myRelativeTimeout;
-    }
-
     Atomic<bool> m_hasWaiters;
-};    
+};
 
 class Condition : public ConditionBase {
     WTF_MAKE_NONCOPYABLE(Condition);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
@@ -166,13 +166,13 @@ public:
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { });
     template<typename T> void sendWithReply(T&& message, uint64_t destinationID, FunctionDispatcher& replyDispatcher, Function<void (Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler);
-    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), OptionSet<SendSyncOption> sendSyncOptions = { });
-    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions = { });
+    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { });
+    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { });
 
     bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
     void sendMessageWithReply(uint64_t requestID, std::unique_ptr<Encoder>, FunctionDispatcher& replyDispatcher, Function<void (std::unique_ptr<Decoder>)>&& replyHandler);
     std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
+    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(std::unique_ptr<Encoder>);
 
     void wakeUpRunLoop();
@@ -208,9 +208,9 @@ private:
     void platformInitialize(Identifier);
     void platformInvalidate();
     
-    std::unique_ptr<Decoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption>);
+    std::unique_ptr<Decoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption>);
     
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption>);
+    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption>);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
@@ -238,7 +238,7 @@ private:
     void willSendSyncMessage(OptionSet<SendSyncOption>);
     void didReceiveSyncReply(OptionSet<SendSyncOption>);
 
-    std::chrono::milliseconds timeoutRespectingIgnoreTimeoutsForTesting(std::chrono::milliseconds) const;
+    Seconds timeoutRespectingIgnoreTimeoutsForTesting(Seconds) const;
     
     Client& m_client;
     bool m_isServer;
@@ -365,7 +365,7 @@ void Connection::sendWithReply(T&& message, uint64_t destinationID, FunctionDisp
     });
 }
 
-template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
 
@@ -389,7 +389,7 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     return replyDecoder->decode(reply);
 }
 
-template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions)
+template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)
 {
     std::unique_ptr<Decoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout, waitForOptions);
     if (!decoder)

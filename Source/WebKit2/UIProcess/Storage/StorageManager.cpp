@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -843,7 +843,7 @@ void StorageManager::applicationWillTerminate()
 
         semaphore.signal();
     });
-    semaphore.wait(std::numeric_limits<double>::max());
+    semaphore.wait(WallTime::infinity());
 }
 
 StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const

@@ -180,9 +180,8 @@ void AutomaticThread::start(const LockHolder&)
                             return stop(locker);
                         RELEASE_ASSERT(result == PollResult::Wait);
                         // Shut the thread down after one second.
-                        double timeout = monotonicallyIncreasingTime() + 1;
                         bool awokenByNotify =
-                            m_condition->m_condition.waitUntilMonotonicClockSeconds(*m_lock, timeout);
+                            m_condition->m_condition.waitFor(*m_lock, Seconds(1));
                         if (!awokenByNotify) {
                             if (verbose)
                                 dataLog(RawPointer(this), ": Going to sleep!\n");

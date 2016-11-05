@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
+#include <wtf/WallTime.h>
 
 namespace WTF {
 
@@ -65,7 +66,7 @@ namespace WTF {
         std::unique_ptr<DataType> tryGetMessage();
         std::unique_ptr<DataType> tryGetMessageIgnoringKilled();
         template<typename Predicate>
-        std::unique_ptr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, Predicate&&, double absoluteTime);
+        std::unique_ptr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, Predicate&&, WallTime absoluteTime);
 
         template<typename Predicate>
         void removeIf(Predicate&&);
@@ -75,8 +76,6 @@ namespace WTF {
 
         // The result of isEmpty() is only valid if no other thread is manipulating the queue at the same time.
         bool isEmpty();
-
-        static double infiniteTime() { return std::numeric_limits<double>::max(); }
 
     private:
         mutable Lock m_mutex;
@@ -130,14 +129,14 @@ namespace WTF {
     inline auto MessageQueue<DataType>::waitForMessage() -> std::unique_ptr<DataType>
     {
         MessageQueueWaitResult exitReason; 
-        std::unique_ptr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, [](const DataType&) { return true; }, infiniteTime());
+        std::unique_ptr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, [](const DataType&) { return true; }, WallTime::infinity());
         ASSERT(exitReason == MessageQueueTerminated || exitReason == MessageQueueMessageReceived);
         return result;
     }
 
     template<typename DataType>
     template<typename Predicate>
-    inline auto MessageQueue<DataType>::waitForMessageFilteredWithTimeout(MessageQueueWaitResult& result, Predicate&& predicate, double absoluteTime) -> std::unique_ptr<DataType>
+    inline auto MessageQueue<DataType>::waitForMessageFilteredWithTimeout(MessageQueueWaitResult& result, Predicate&& predicate, WallTime absoluteTime) -> std::unique_ptr<DataType>
     {
         LockHolder lock(m_mutex);
         bool timedOut = false;
@@ -151,10 +150,10 @@ namespace WTF {
             if (found != m_queue.end())
                 break;
 
-            timedOut = !m_condition.waitUntilWallClockSeconds(m_mutex, absoluteTime);
+            timedOut = !m_condition.waitUntil(m_mutex, absoluteTime);
         }
 
-        ASSERT(!timedOut || absoluteTime != infiniteTime());
+        ASSERT(!timedOut || absoluteTime != WallTime::infinity());
 
         if (m_killed) {
             result = MessageQueueTerminated;

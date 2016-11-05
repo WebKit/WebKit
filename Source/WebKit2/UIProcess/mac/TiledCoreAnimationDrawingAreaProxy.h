@@ -41,7 +41,7 @@ private:
     // DrawingAreaProxy
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
-    void waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout = didUpdateBackingStoreStateTimeout()) override;
+    void waitForPossibleGeometryUpdate(Seconds timeout = didUpdateBackingStoreStateTimeout()) override;
     void colorSpaceDidChange() override;
     void minimumLayoutSizeDidChange() override;
 

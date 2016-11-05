@@ -354,7 +354,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* 
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
         return false;
 
     return shouldClose;
@@ -400,7 +400,7 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), SecurityOriginData::fromFrame(frame), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), SecurityOriginData::fromFrame(frame), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 }
 
 bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
@@ -417,7 +417,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
     HangDetectionDisabler hangDetectionDisabler;
 
     bool result = false;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), SecurityOriginData::fromFrame(frame), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), SecurityOriginData::fromFrame(frame), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
         return false;
 
     return result;
@@ -436,7 +436,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, c
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), SecurityOriginData::fromFrame(frame), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), SecurityOriginData::fromFrame(frame), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
         return false;
 
     return !result.isNull();
@@ -668,7 +668,7 @@ void WebChromeClient::print(Frame* frame)
     }
 #endif
 
-    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 }
 
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails details)
@@ -688,7 +688,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     if (!newQuota) {
         WebProcess::singleton().parentProcessConnection()->sendSync(
             Messages::WebPageProxy::ExceededDatabaseQuota(webFrame->frameID(), origin->databaseIdentifier(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage()),
-            Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+            Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     }
 
     dbManager.setQuota(origin, newQuota);
@@ -713,7 +713,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin,
     uint64_t newQuota = 0;
     WebProcess::singleton().parentProcessConnection()->sendSync(
         Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin->databaseIdentifier(), currentQuota, totalBytesNeeded),
-        Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::Reply(newQuota), m_page->pageID(), std::chrono::milliseconds::max(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+        Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::Reply(newQuota), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 
     cacheStorage.storeUpdatedQuotaForOrigin(origin, newQuota);
 }

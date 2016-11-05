@@ -74,8 +74,7 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
         if (found != m_queue.end())
             break;
 
-        static const double infiniteTime = std::numeric_limits<double>::max();
-        m_condition.waitUntilWallClockSeconds(m_lock, infiniteTime);
+        m_condition.wait(m_lock);
     }
 
     return m_queue.takeFirst();

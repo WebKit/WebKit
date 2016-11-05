@@ -678,7 +678,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (CGPDFDocumentRef)_wk_printedDocument
 {
     if (_isPrintingToPDF) {
-        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->pageID(), std::chrono::milliseconds::max())) {
+        if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->pageID(), Seconds::infinity())) {
             ASSERT_NOT_REACHED();
             return nullptr;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,13 +45,14 @@ void BinarySemaphore::signal()
     m_condition.signal();
 }
 
-bool BinarySemaphore::wait(double absoluteTime)
+bool BinarySemaphore::wait(TimeWithDynamicClockType absoluteTime)
 {
     MutexLocker locker(m_mutex);
 
     bool timedOut = false;
     while (!m_isSet) {
-        timedOut = !m_condition.timedWait(m_mutex, absoluteTime);
+        timedOut = !m_condition.timedWait(
+            m_mutex, absoluteTime.approximateWallTime().secondsSinceEpoch().value());
         if (timedOut)
             return false;
     }

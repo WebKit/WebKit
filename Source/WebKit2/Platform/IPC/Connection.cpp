@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ public:
         m_waitForSyncReplySemaphore.signal();
     }
 
-    bool wait(double absoluteTime)
+    bool wait(TimeWithDynamicClockType absoluteTime)
     {
         return m_waitForSyncReplySemaphore.wait(absoluteTime);
     }
@@ -376,7 +376,7 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
         auto wrappedMessage = createSyncMessageEncoder("IPC", "WrappedAsyncMessageForTesting", encoder->destinationID(), syncRequestID);
         wrappedMessage->setFullySynchronousModeForTesting();
         wrappedMessage->wrapForTesting(WTFMove(encoder));
-        return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), std::chrono::milliseconds::max(), { }));
+        return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Seconds::infinity(), { }));
     }
 
     if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply)
@@ -420,12 +420,12 @@ bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
     return sendMessage(WTFMove(encoder), { });
 }
 
-std::chrono::milliseconds Connection::timeoutRespectingIgnoreTimeoutsForTesting(std::chrono::milliseconds timeout) const
+Seconds Connection::timeoutRespectingIgnoreTimeoutsForTesting(Seconds timeout) const
 {
-    return m_ignoreTimeoutsForTesting ? std::chrono::milliseconds::max() : timeout;
+    return m_ignoreTimeoutsForTesting ? Seconds::infinity() : timeout;
 }
 
-std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions)
+std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)
 {
     ASSERT(RunLoop::isMain());
 
@@ -469,10 +469,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
         m_waitingForMessage = &waitingForMessage;
     }
 
-    // Clamp the timeout to however much time is remaining on our clock.
-    auto now = Condition::Clock::now();
-    auto remainingClockTime = std::chrono::duration_cast<std::chrono::milliseconds>(Condition::Clock::time_point::max() - now);
-    auto absoluteTimeout = now + std::min(remainingClockTime, timeout);
+    MonotonicTime absoluteTimeout = MonotonicTime::now() + timeout;
 
     // Now wait for it to be set.
     while (true) {
@@ -496,7 +493,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
     return nullptr;
 }
 
-std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     ASSERT(RunLoop::isMain());
 
@@ -541,10 +538,10 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     return reply;
 }
 
-std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
-    double absoluteTime = currentTime() + (timeout.count() / 1000.0);
+    WallTime absoluteTime = WallTime::now() + timeout;
 
     willSendSyncMessage(sendSyncOptions);
     

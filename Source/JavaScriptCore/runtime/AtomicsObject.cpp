@@ -304,7 +304,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
         return JSValue::encode(jsUndefined());
     }
     
-    double timeoutInNanoseconds = timeoutInMilliseconds * 1000 * 1000;
+    Seconds timeout = Seconds::fromMilliseconds(timeoutInMilliseconds);
 
     // This covers the proposed rule:
     //
@@ -314,31 +314,10 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     //
     // exec->argument(3) returns undefined if it's not provided and ToNumber(undefined) returns NaN,
     // so NaN is the only special case.
-    if (timeoutInNanoseconds == timeoutInNanoseconds)
-        timeoutInNanoseconds = std::max(0., timeoutInNanoseconds);
+    if (timeout == timeout)
+        timeout = std::max(Seconds(0), timeout);
     else
-        timeoutInNanoseconds = std::numeric_limits<double>::infinity();
-    
-    // What happens next is a pile of nonsense, but it's all needed because of corner cases
-    // inside std::chrono.
-    // FIXME: Stop using std::chrono.
-    
-    ParkingLot::Clock::time_point timeout;
-    if (timeoutInNanoseconds > static_cast<double>(std::numeric_limits<int64_t>::max()))
-        timeout = ParkingLot::Clock::time_point::max();
-    else {
-        std::chrono::nanoseconds relativeTimeout =
-            std::chrono::nanoseconds(static_cast<int64_t>(timeoutInNanoseconds));
-        if (relativeTimeout < std::chrono::nanoseconds::zero())
-            timeout = ParkingLot::Clock::now();
-        else if (relativeTimeout > ParkingLot::Clock::duration::max())
-            timeout = ParkingLot::Clock::time_point::max();
-        else {
-            ParkingLot::Clock::duration myRelativeTimeout =
-                std::chrono::duration_cast<ParkingLot::Clock::duration>(relativeTimeout);
-            timeout = ParkingLot::Clock::now() + myRelativeTimeout;
-        }
-    }
+        timeout = Seconds::infinity();
     
     bool didPassValidation = false;
     ParkingLot::ParkResult result;
@@ -351,7 +330,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
                 return didPassValidation;
             },
             [] () { },
-            timeout);
+            MonotonicTime::now() + timeout);
     }
     const char* resultString;
     if (!didPassValidation)

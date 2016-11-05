@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * All rights reserved.
  *
@@ -39,10 +39,10 @@ MainThreadSharedTimer::MainThreadSharedTimer()
     m_timer.setPriority(G_PRIORITY_HIGH_IDLE + 20);
 }
 
-void MainThreadSharedTimer::setFireInterval(double interval)
+void MainThreadSharedTimer::setFireInterval(Seconds interval)
 {
     ASSERT(m_firedFunction);
-    m_timer.startOneShot(interval);
+    m_timer.startOneShot(interval.value());
 }
 
 void MainThreadSharedTimer::stop()

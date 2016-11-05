@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Igalia S.L.
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ public:
     static MainThreadSharedTimer& singleton();
 
     void setFiredFunction(std::function<void()>&&) override;
-    void setFireInterval(double) override;
+    void setFireInterval(Seconds) override;
     void stop() override;
     void invalidate() override;
 

@@ -29,6 +29,16 @@
 		0F43D8F21DB5ADDC00108FB6 /* AutomaticThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */; };
 		0F4570431BE5B58F0062A629 /* Dominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570421BE5B58F0062A629 /* Dominators.h */; };
 		0F4570451BE834410062A629 /* BubbleSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570441BE834410062A629 /* BubbleSort.h */; };
+		0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2801DC97BAB004A1D3F /* ClockType.cpp */; };
+		0F66B28B1DC97BAB004A1D3F /* ClockType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2811DC97BAB004A1D3F /* ClockType.h */; };
+		0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */; };
+		0F66B28D1DC97BAB004A1D3F /* MonotonicTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */; };
+		0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2841DC97BAB004A1D3F /* Seconds.cpp */; };
+		0F66B28F1DC97BAB004A1D3F /* Seconds.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2851DC97BAB004A1D3F /* Seconds.h */; };
+		0F66B2901DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */; };
+		0F66B2911DC97BAB004A1D3F /* TimeWithDynamicClockType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */; };
+		0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2881DC97BAB004A1D3F /* WallTime.cpp */; };
+		0F66B2931DC97BAB004A1D3F /* WallTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2891DC97BAB004A1D3F /* WallTime.h */; };
 		0F725CAC1C50461600AD943A /* RangeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAB1C50461600AD943A /* RangeSet.h */; };
 		0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */; };
 		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
@@ -372,6 +382,16 @@
 		0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomaticThread.h; sourceTree = "<group>"; };
 		0F4570421BE5B58F0062A629 /* Dominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dominators.h; sourceTree = "<group>"; };
 		0F4570441BE834410062A629 /* BubbleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleSort.h; sourceTree = "<group>"; };
+		0F66B2801DC97BAB004A1D3F /* ClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockType.cpp; sourceTree = "<group>"; };
+		0F66B2811DC97BAB004A1D3F /* ClockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockType.h; sourceTree = "<group>"; };
+		0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonotonicTime.cpp; sourceTree = "<group>"; };
+		0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonotonicTime.h; sourceTree = "<group>"; };
+		0F66B2841DC97BAB004A1D3F /* Seconds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Seconds.cpp; sourceTree = "<group>"; };
+		0F66B2851DC97BAB004A1D3F /* Seconds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Seconds.h; sourceTree = "<group>"; };
+		0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeWithDynamicClockType.cpp; sourceTree = "<group>"; };
+		0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeWithDynamicClockType.h; sourceTree = "<group>"; };
+		0F66B2881DC97BAB004A1D3F /* WallTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WallTime.cpp; sourceTree = "<group>"; };
+		0F66B2891DC97BAB004A1D3F /* WallTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallTime.h; sourceTree = "<group>"; };
 		0F725CAB1C50461600AD943A /* RangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeSet.h; sourceTree = "<group>"; };
 		0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastBitVector.cpp; sourceTree = "<group>"; };
 		0F824A641B7443A0002E345D /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
@@ -863,6 +883,8 @@
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
+				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,
+				0F66B2811DC97BAB004A1D3F /* ClockType.h */,
 				0FC4EDE51696149600F65041 /* CommaPrinter.h */,
 				0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */,
 				0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */,
@@ -946,6 +968,8 @@
 				A8A472CD151A825B004123FF /* MetaAllocator.cpp */,
 				A8A472CE151A825B004123FF /* MetaAllocator.h */,
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
+				0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */,
+				0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */,
 				FE8225301B2A1E5B00BA68FD /* NakedPtr.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
@@ -1007,6 +1031,8 @@
 				1469419516EAAFF80024E146 /* SchedulePairMac.mm */,
 				1A3524AA1D63A2FF0031729B /* Scope.h */,
 				0FEC84B01BDACD390080FF74 /* ScopedLambda.h */,
+				0F66B2841DC97BAB004A1D3F /* Seconds.cpp */,
+				0F66B2851DC97BAB004A1D3F /* Seconds.h */,
 				A8A47306151A825B004123FF /* SegmentedVector.h */,
 				A8A47307151A825B004123FF /* SentinelLinkedList.h */,
 				A8A47308151A825B004123FF /* SHA1.cpp */,
@@ -1043,6 +1069,8 @@
 				A8A47336151A825B004123FF /* ThreadingPthreads.cpp */,
 				A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */,
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
+				0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */,
+				0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */,
 				553071C91C40427200384898 /* TinyLRUCache.h */,
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
@@ -1054,6 +1082,8 @@
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
+				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
+				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
 				0F3501631BB258C800F0A2A3 /* WeakRandom.h */,
 				0FE4479A1B7AAA03009498EB /* WordLock.cpp */,
@@ -1259,7 +1289,9 @@
 				0FB14E19180FA218009B6B4D /* Bag.h in Headers */,
 				0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */,
 				8134013915B092FD001FF0B8 /* Base64.h in Headers */,
+				0F66B28F1DC97BAB004A1D3F /* Seconds.h in Headers */,
 				A8A473A9151A825B004123FF /* bignum-dtoa.h in Headers */,
+				0F66B2911DC97BAB004A1D3F /* TimeWithDynamicClockType.h in Headers */,
 				A8A473AB151A825B004123FF /* bignum.h in Headers */,
 				A8A47452151A825B004123FF /* BinarySemaphore.h in Headers */,
 				A8A4738A151A825B004123FF /* Bitmap.h in Headers */,
@@ -1340,6 +1372,7 @@
 				93AC91A818942FC400244939 /* LChar.h in Headers */,
 				539EB0631D55284200C82EF7 /* LEBDecoder.h in Headers */,
 				A70DA0851799F04D00529A9B /* ListDump.h in Headers */,
+				0F66B2931DC97BAB004A1D3F /* WallTime.h in Headers */,
 				A8A473E1151A825B004123FF /* ListHashSet.h in Headers */,
 				0FE1646B1B6FFC9600400E7C /* Lock.h in Headers */,
 				A8A473E3151A825B004123FF /* Locker.h in Headers */,
@@ -1399,6 +1432,7 @@
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
 				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
 				1A3524AB1D63A2FF0031729B /* Scope.h in Headers */,
+				0F66B28D1DC97BAB004A1D3F /* MonotonicTime.h in Headers */,
 				0FEC84B11BDACD390080FF74 /* ScopedLambda.h in Headers */,
 				A5098B021C16A4F900087797 /* SecuritySPI.h in Headers */,
 				A8A4741F151A825B004123FF /* SegmentedVector.h in Headers */,
@@ -1466,6 +1500,7 @@
 				E4A0AD3A1A96245500536DF6 /* WorkQueue.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
 				A8A47487151A825B004123FF /* WTFThreadData.h in Headers */,
+				0F66B28B1DC97BAB004A1D3F /* ClockType.h in Headers */,
 				CE73E02519DCB7AB00580D5C /* XPCSPI.h in Headers */,
 				C8B0E1A1E01A486EB95E0D11 /* IndexSet.h in Headers */,
 				C916B975F02F4F7E8B4AB12D /* IndexMap.h in Headers */,
@@ -1581,6 +1616,7 @@
 				A8A473AA151A825B004123FF /* bignum.cc in Sources */,
 				A8A47451151A825B004123FF /* BinarySemaphore.cpp in Sources */,
 				A8A4738B151A825B004123FF /* BitVector.cpp in Sources */,
+				0F66B2901DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp in Sources */,
 				DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */,
 				A8A473AC151A825B004123FF /* cached-powers.cc in Sources */,
 				A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */,
@@ -1641,6 +1677,9 @@
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
+				0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */,
+				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,
+				0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */,
 				0F43D8F11DB5ADDC00108FB6 /* AutomaticThread.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
@@ -1652,6 +1691,7 @@
 				A8A47448151A825B004123FF /* ThreadIdentifierDataPthreads.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,
 				A8A4744E151A825B004123FF /* ThreadingPthreads.cpp in Sources */,
+				0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */,
 				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
 				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
