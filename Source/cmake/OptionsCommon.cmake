@@ -50,6 +50,7 @@ endif ()
 
 if (WIN32 AND COMPILER_IS_GCC_OR_CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-ms-bitfields -Wno-unknown-pragmas")
+    add_definitions(-D__USE_MINGW_ANSI_STDIO=1)
 endif ()
 
 # Ensure that the default include system directories are added to the list of CMake implicit includes.

@@ -94,10 +94,13 @@
 #define WTF_PRETTY_FUNCTION __FUNCTION__
 #endif
 
+#if COMPILER(MINGW)
+/* By default MinGW emits warnings when C99 format attributes are used, even if __USE_MINGW_ANSI_STDIO is defined */
+#define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(gnu_printf, formatStringArgument, extraArguments)))
+#elif COMPILER(GCC_OR_CLANG) && !defined(__OBJC__)
 /* WTF logging functions can process %@ in the format string to log a NSObject* but the printf format attribute
    emits a warning when %@ is used in the format string.  Until <rdar://problem/5195437> is resolved we can't include
    the attribute when being used from Objective-C code in case it decides to use %@. */
-#if COMPILER(GCC_OR_CLANG) && !defined(__OBJC__)
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 #else
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments)

@@ -1,3 +1,16 @@
+2016-11-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [MinGW] Fixed C99/C++11 format attributes in printf-like functions
+        https://bugs.webkit.org/show_bug.cgi?id=164448
+
+        Reviewed by Michael Catanzaro.
+
+        By default MinGW uses printf-like function provided in msvcrt.dll,
+        however they miss support for C99/C++11 format attributes. Use MinGW
+        implementations instead.
+
+        * Source/cmake/OptionsCommon.cmake: Define __USE_MINGW_ANSI_STDIO
+
 2016-11-03  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixes to build JSCOnly on macOS
