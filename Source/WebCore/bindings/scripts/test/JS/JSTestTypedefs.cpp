@@ -26,7 +26,8 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSSVGPoint.h"
-#include "JSTestCallback.h"
+#include "JSTestCallbackFunction.h"
+#include "JSTestCallbackInterface.h"
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
 #include "SerializedScriptValue.h"
@@ -130,14 +131,17 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestTypedefsConstructor*>(state->callee());
     ASSERT(castedThis);
-    if (UNLIKELY(state->argumentCount() < 2))
+    if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto hello = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(!state->uncheckedArgument(1).isObject()))
-        return throwArgumentMustBeFunctionError(*state, throwScope, 1, "testCallback", "TestTypedefs", nullptr);
-    auto testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    auto object = TestTypedefs::create(WTFMove(hello), WTFMove(testCallback));
+    if (UNLIKELY(!state->uncheckedArgument(1).isFunction()))
+        return throwArgumentMustBeFunctionError(*state, throwScope, 1, "testCallbackFunction", "TestTypedefs", nullptr);
+    auto testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
+    if (UNLIKELY(!state->uncheckedArgument(2).isObject()))
+        return throwArgumentMustBeFunctionError(*state, throwScope, 2, "testCallbackInterface", "TestTypedefs", nullptr);
+    auto testCallbackInterface = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(2)), castedThis->globalObject());
+    auto object = TestTypedefs::create(WTFMove(hello), WTFMove(testCallbackFunction), WTFMove(testCallbackInterface));
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
@@ -151,7 +155,7 @@ template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlo
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestTypedefs"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(3), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestTypedefsConstructorTableValues, *this);
 }
 

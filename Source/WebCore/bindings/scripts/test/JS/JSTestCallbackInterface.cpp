@@ -22,7 +22,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "JSTestCallback.h"
+#include "JSTestCallbackInterface.h"
 
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
@@ -37,14 +37,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSTestCallback::JSTestCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallback()
+JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestCallbackInterface()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, this))
 {
 }
 
-JSTestCallback::~JSTestCallback()
+JSTestCallbackInterface::~JSTestCallbackInterface()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -58,49 +58,46 @@ JSTestCallback::~JSTestCallback()
 #endif
 }
 
-using JSTestCallbackConstructor = JSDOMConstructorNotConstructable<JSTestCallback>;
+using JSTestCallbackInterfaceConstructor = JSDOMConstructorNotConstructable<JSTestCallbackInterface>;
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestCallbackConstructorTableValues[] =
+static const HashTableValue JSTestCallbackInterfaceConstructorTableValues[] =
 {
     { "CONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
     { "CONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
 };
 
-static_assert(TestCallback::CONSTANT1 == 1, "CONSTANT1 in TestCallback does not match value from IDL");
-static_assert(TestCallback::CONSTANT2 == 2, "CONSTANT2 in TestCallback does not match value from IDL");
+static_assert(TestCallbackInterface::CONSTANT1 == 1, "CONSTANT1 in TestCallbackInterface does not match value from IDL");
+static_assert(TestCallbackInterface::CONSTANT2 == 2, "CONSTANT2 in TestCallbackInterface does not match value from IDL");
 
-template<> JSValue JSTestCallbackConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestCallbackInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.objectPrototype();
 }
 
-template<> void JSTestCallbackConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestCallbackInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(globalObject);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCallback"))), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCallbackInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
-    reifyStaticProperties(vm, JSTestCallbackConstructorTableValues, *this);
+    reifyStaticProperties(vm, JSTestCallbackInterfaceConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestCallbackConstructor::s_info = { "TestCallback", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackConstructor) };
+template<> const ClassInfo JSTestCallbackInterfaceConstructor::s_info = { "TestCallbackInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackInterfaceConstructor) };
 
-JSValue JSTestCallback::getConstructor(VM& vm, const JSGlobalObject* globalObject)
+JSValue JSTestCallbackInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallbackConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallbackInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-
-// Functions
-
-bool JSTestCallback::callbackWithNoParam()
+bool JSTestCallbackInterface::callbackWithNoParam()
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -114,12 +111,12 @@ bool JSTestCallback::callbackWithNoParam()
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
+bool JSTestCallbackInterface::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -134,19 +131,19 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strArg)
+bool JSTestCallbackInterface::callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strParam)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(srzParam ? srzParam->deserialize(*state, m_data->globalObject()) : jsNull());
-    args.append(toJS<IDLDOMString>(*state, strArg));
+    args.append(toJS<IDLDOMString>(*state, strParam));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithSerializedScriptValueParam"), returnedException);
@@ -155,12 +152,12 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(RefPtr<SerializedScr
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
+bool JSTestCallbackInterface::callbackWithStringList(DOMStringList* listParam)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -175,12 +172,12 @@ bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
     return !returnedException;
 }
 
-bool JSTestCallback::callbackWithBoolean(bool boolParam)
+bool JSTestCallbackInterface::callbackWithBoolean(bool boolParam)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -195,12 +192,12 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
     return !returnedException;
 }
 
-bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam)
+bool JSTestCallbackInterface::callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallback> protectedThis(*this);
+    Ref<JSTestCallbackInterface> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
@@ -216,15 +213,15 @@ bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* tes
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback& impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackInterface& impl)
 {
-    if (!static_cast<JSTestCallback&>(impl).callbackData())
+    if (!static_cast<JSTestCallbackInterface&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallback&>(impl).callbackData()->callback();
+    return static_cast<JSTestCallbackInterface&>(impl).callbackData()->callback();
 
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

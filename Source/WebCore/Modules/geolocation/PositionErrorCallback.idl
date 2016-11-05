@@ -24,7 +24,4 @@
 
 [
     Conditional=GEOLOCATION,
-    Callback=FunctionOnly,
-] callback interface PositionErrorCallback {
-    boolean handleEvent(PositionError error);
-};
+] callback PositionErrorCallback = void (PositionError error);

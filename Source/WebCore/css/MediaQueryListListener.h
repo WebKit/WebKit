@@ -32,7 +32,7 @@ public:
         JSMediaQueryListListenerType
     };
 
-    virtual bool queryChanged(MediaQueryList*) = 0;
+    virtual bool handleEvent(MediaQueryList*) = 0;
     virtual bool operator==(const MediaQueryListListener&) const = 0;
     virtual ~MediaQueryListListener() { }
 

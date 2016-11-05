@@ -24,7 +24,6 @@ AtomicString
 CEReactions
 CachedAttribute
 CallbackNeedsOperatorEqual
-Callback=FunctionOnly
 CallWith=Document|ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow|CallerDocument|CallerWindow
 CheckSecurity
 CheckSecurityForNode

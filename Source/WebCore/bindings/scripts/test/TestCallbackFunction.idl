@@ -26,18 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This IDL file is for testing the bindings code generator with function only callback
-// interface and for tracking changes in its ouput.
 [
     Conditional=SPEECH_SYNTHESIS,
-    Callback=FunctionOnly,
-] callback interface TestCallbackFunction {
-  boolean callbackWithNoParam();
-  boolean callbackWithArrayParam(Float32Array arrayParam);
-  boolean callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strArg);
-  long callbackWithNonBoolReturnType(DOMString strArg);
-  [Custom] long customCallback(Class5 class5Param, Class6 class6Param);
-  boolean callbackWithStringList(DOMStringList listParam);
-  boolean callbackWithBoolean(boolean boolParam);
-  boolean callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
-};
+] callback TestCallbackFunction = void (Float32Array arrayParam, SerializedScriptValue srzParam, DOMString strArg, boolean boolParam, long longParam, TestNode testNodeParam);

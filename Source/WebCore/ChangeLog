@@ -1,3 +1,89 @@
+2016-11-04  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for modern callback syntax
+        https://bugs.webkit.org/show_bug.cgi?id=164435
+
+        Reviewed by Chris Dumez.
+
+        Support new callback syntax:
+            callback Function = void (DOMString arg1, long arg2);
+
+        This replaces "callback interface" types with a Callback=FunctionOnly
+        extended attribute.
+
+        * Modules/geolocation/PositionCallback.idl:
+        * Modules/geolocation/PositionErrorCallback.idl:
+        * Modules/notifications/NotificationPermissionCallback.idl:
+        * Modules/quota/StorageErrorCallback.idl:
+        * Modules/quota/StorageQuotaCallback.idl:
+        * Modules/quota/StorageUsageCallback.idl:
+        * Modules/webaudio/AudioBufferCallback.idl:
+        * Modules/webdatabase/DatabaseCallback.idl:
+        * Modules/webdatabase/SQLStatementCallback.idl:
+        * Modules/webdatabase/SQLStatementErrorCallback.idl:
+        * Modules/webdatabase/SQLTransactionCallback.idl:
+        * Modules/webdatabase/SQLTransactionErrorCallback.idl:
+        * dom/RequestAnimationFrameCallback.idl:
+        * dom/StringCallback.idl:
+        * html/VoidCallback.idl:
+        * page/IntersectionObserverCallback.idl:
+        * css/MediaQueryListListener.idl:
+        Update to new syntax.
+
+        * css/MediaQueryListListener.h:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::styleResolverChanged):
+        Switch to using the now required 'handleEvent' name. This is an implementation detail
+        that we should change.
+
+        * bindings/scripts/CodeGenerator.pm:
+        Update document processing to allow a callback only file. Update callback
+        type checks to look for a regex that matches in the new format.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToImplIncludesForIDLType):
+        (AddToIncludesForIDLType):
+        (AddToImplIncludes):
+        (AddToIncludes):
+        Abstract includes functions to allow passing in an include hash.
+
+        (GenerateCallbackFunctionHeader):
+        (GenerateCallbackFunctionImplementation):
+        (GenerateCallbackInterfaceHeader):
+        (GenerateCallbackInterfaceImplementation):
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        Refactor callback generation code into GenerateCallbackHeaderContent and GenerateCallbackImplementationContent
+        to allow using it for both the new callbacks as well as the old callback interfaces.
+
+        * bindings/scripts/IDLParser.pm:
+        (Parse):
+        (applyTypedefs):
+        (applyTypedefsToOperation):
+        (parseCallbackRest):
+        Parse callbacks into the new IDLCallbackFunction type. Ensure that typedefs are applied as well.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Remove support for Callback=FunctionOnly.
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestCallback.h: Removed.
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h: Added.
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp: Copied from Source/WebCore/bindings/scripts/test/JS/JSTestCallback.cpp.
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h: Copied from Source/WebCore/bindings/scripts/test/JS/JSTestCallback.h.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/TestCallback.idl: Removed.
+        * bindings/scripts/test/TestCallbackFunction.idl:
+        * bindings/scripts/test/TestCallbackFunctionWithTypedefs.idl: Added.
+        * bindings/scripts/test/TestCallbackInterface.idl: Copied from Source/WebCore/bindings/scripts/test/TestCallback.idl.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        Update existing tests and add new ones to test callback functions specifically.
+
 2016-11-04  Alex Christensen  <achristensen@webkit.org>
 
         Move isDefaultPortForProtocol from URLParser.cpp back to URL.cpp

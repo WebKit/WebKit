@@ -20,47 +20,35 @@
 
 #pragma once
 
-#if ENABLE(SPEECH_SYNTHESIS)
-
 #include "ActiveDOMCallback.h"
 #include "JSCallbackData.h"
-#include "TestCallback.h"
+#include "TestCallbackFunctionWithTypedefs.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallback : public TestCallback, public ActiveDOMCallback {
+class JSTestCallbackFunctionWithTypedefs : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
 public:
-    static Ref<JSTestCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallback(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionWithTypedefs(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallback();
+    virtual ~JSTestCallbackFunctionWithTypedefs();
     JSCallbackDataStrong* callbackData() { return m_data; }
-    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
-    virtual bool callbackWithNoParam();
-    virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
-    virtual bool callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strArg);
-    virtual int32_t callbackWithNonBoolReturnType(const String& strArg);
-    virtual int32_t customCallback(Class5* class5Param, Class6* class6Param);
-    virtual bool callbackWithStringList(DOMStringList* listParam);
-    virtual bool callbackWithBoolean(bool boolParam);
-    virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
+    virtual bool handleEvent(Vector<RefPtr<LONG>> sequenceArg, int32_t longArg);
 
 private:
-    JSTestCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSTestCallbackFunctionWithTypedefs(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallback* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunctionWithTypedefs&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
 
 } // namespace WebCore
-
-#endif // ENABLE(SPEECH_SYNTHESIS)

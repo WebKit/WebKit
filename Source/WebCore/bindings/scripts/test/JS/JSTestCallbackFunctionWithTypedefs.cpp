@@ -19,29 +19,26 @@
 */
 
 #include "config.h"
-
-#if ENABLE(SPEECH_SYNTHESIS)
-
-#include "JSTestCallbackFunction.h"
+#include "JSTestCallbackFunctionWithTypedefs.h"
 
 #include "JSDOMConvert.h"
-#include "JSTestNode.h"
+#include "JSLONG.h"
 #include "ScriptExecutionContext.h"
-#include "SerializedScriptValue.h"
+#include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSTestCallbackFunction::JSTestCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunction()
+JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestCallbackFunctionWithTypedefs()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, this))
 {
 }
 
-JSTestCallbackFunction::~JSTestCallbackFunction()
+JSTestCallbackFunctionWithTypedefs::~JSTestCallbackFunctionWithTypedefs()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -55,23 +52,19 @@ JSTestCallbackFunction::~JSTestCallbackFunction()
 #endif
 }
 
-bool JSTestCallbackFunction::handleEvent(RefPtr<Float32Array> arrayParam, RefPtr<SerializedScriptValue>&& srzParam, const String& strArg, bool boolParam, int32_t longParam, TestNode* testNodeParam)
+bool JSTestCallbackFunctionWithTypedefs::handleEvent(Vector<RefPtr<LONG>> sequenceArg, int32_t longArg)
 {
     if (!canInvokeCallback())
         return true;
 
-    Ref<JSTestCallbackFunction> protectedThis(*this);
+    Ref<JSTestCallbackFunctionWithTypedefs> protectedThis(*this);
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLInterface<Float32Array>>(*state, *m_data->globalObject(), arrayParam));
-    args.append(srzParam ? srzParam->deserialize(*state, m_data->globalObject()) : jsNull());
-    args.append(toJS<IDLDOMString>(*state, strArg));
-    args.append(toJS<IDLBoolean>(boolParam));
-    args.append(toJS<IDLLong>(longParam));
-    args.append(toJS<IDLInterface<TestNode>>(*state, *m_data->globalObject(), testNodeParam));
+    args.append(toJS<IDLSequence<IDLNullable<IDLInterface<LONG>>>>(*state, *m_data->globalObject(), sequenceArg));
+    args.append(toJS<IDLLong>(longArg));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
@@ -80,15 +73,13 @@ bool JSTestCallbackFunction::handleEvent(RefPtr<Float32Array> arrayParam, RefPtr
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction& impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunctionWithTypedefs& impl)
 {
-    if (!static_cast<JSTestCallbackFunction&>(impl).callbackData())
+    if (!static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunction&>(impl).callbackData()->callback();
+    return static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData()->callback();
 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SPEECH_SYNTHESIS)

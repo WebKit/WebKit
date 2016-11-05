@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// highResTime is passed as high resolution timestamp, see
+// http://www.w3.org/TR/hr-time/ for details.
+
 [
     Conditional=REQUEST_ANIMATION_FRAME,
-    Callback=FunctionOnly,
-] callback interface RequestAnimationFrameCallback {
-    // highResTime is passed as high resolution timestamp, see
-    // http://www.w3.org/TR/hr-time/ for details.
-    boolean handleEvent(unrestricted double highResTime);
-};
+] callback RequestAnimationFrameCallback = void (unrestricted double highResTime);

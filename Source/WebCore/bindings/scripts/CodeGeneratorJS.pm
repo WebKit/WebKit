@@ -150,6 +150,14 @@ sub GenerateDictionary
     $object->GenerateDictionaryImplementation($dictionary, $className, $enumerations);
 }
 
+sub GenerateCallbackFunction
+{
+    my ($object, $callbackFunction, $enumerations, $dictionaries) = @_;
+
+    $object->GenerateCallbackFunctionHeader($callbackFunction, $enumerations, $dictionaries);
+    $object->GenerateCallbackFunctionImplementation($callbackFunction, $enumerations, $dictionaries);
+}
+
 sub GenerateInterface
 {
     my ($object, $interface, $defines, $enumerations, $dictionaries) = @_;
@@ -158,8 +166,8 @@ sub GenerateInterface
     AddStringifierOperationIfNeeded($interface);
 
     if ($interface->isCallback) {
-        $object->GenerateCallbackHeader($interface, $enumerations, $dictionaries);
-        $object->GenerateCallbackImplementation($interface, $enumerations, $dictionaries);
+        $object->GenerateCallbackInterfaceHeader($interface, $enumerations, $dictionaries);
+        $object->GenerateCallbackInterfaceImplementation($interface, $enumerations, $dictionaries);
     } else {
         $object->GenerateHeader($interface, $enumerations, $dictionaries);
         $object->GenerateImplementation($interface, $enumerations, $dictionaries);
@@ -222,9 +230,9 @@ sub GetCallbackClassName
 
 sub GetJSCallbackDataType
 {
-    my $callbackInterface = shift;
+    my $callback = shift;
 
-    return $callbackInterface->extendedAttributes->{IsWeakCallback} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
+    return $callback->extendedAttributes->{IsWeakCallback} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
 }
 
 sub GetExportMacroForJSClass
@@ -261,6 +269,13 @@ sub AddIncludesForImplementationType
 sub AddToImplIncludesForIDLType
 {
     my ($type, $conditional) = @_;
+
+    return AddToIncludesForIDLType($type, \%implIncludes, $conditional)
+}
+
+sub AddToIncludesForIDLType
+{
+    my ($type, $includesRef, $conditional) = @_;
     
     return if $codeGenerator->IsPrimitiveType($type);
     return if $codeGenerator->IsStringType($type);
@@ -269,49 +284,55 @@ sub AddToImplIncludesForIDLType
     return if $type->name eq "any";
 
     if ($type->isUnion) {
-        AddToImplIncludes("<wtf/Variant.h>", $conditional);
+        AddToIncludes("<wtf/Variant.h>", $includesRef, $conditional);
 
         foreach my $memberType (@{$type->subtypes}) {
-            AddToImplIncludesForIDLType($memberType, $conditional);
+            AddToIncludesForIDLType($memberType, $includesRef, $conditional);
         }
 
         return;
     }
 
     if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
-        AddToImplIncludes("<runtime/JSArray.h>", $conditional);
-        AddToImplIncludesForIDLType(@{$type->subtypes}[0], $conditional);
+        AddToIncludes("<runtime/JSArray.h>", $includesRef, $conditional);
+        AddToIncludesForIDLType(@{$type->subtypes}[0], $includesRef, $conditional);
         return;
     }
 
     if ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsExternalDictionaryType($type) || $codeGenerator->IsExternalEnumType($type)) {
-        AddToImplIncludes("JS" . $type->name . ".h", $conditional);
+        AddToIncludes("JS" . $type->name . ".h", $includesRef, $conditional);
         return;
     }
     
     if ($type->name eq "SerializedScriptValue") {
-        AddToImplIncludes("SerializedScriptValue.h", $conditional);
+        AddToIncludes("SerializedScriptValue.h", $includesRef, $conditional);
         return;
     }
 
     if ($type->name eq "Dictionary") {
-        AddToImplIncludes("Dictionary.h", $conditional);
+        AddToIncludes("Dictionary.h", $includesRef, $conditional);
         return;
     }
 }
 
 sub AddToImplIncludes
 {
-    my $header = shift;
-    my $conditional = shift;
+    my ($header, $conditional) = @_;
+
+    AddToIncludes($header, \%implIncludes, $conditional);
+}
+
+sub AddToIncludes
+{
+    my ($header, $includesRef, $conditional) = @_;
 
     if (not $conditional) {
-        $implIncludes{$header} = 1;
-    } elsif (not exists($implIncludes{$header})) {
-        $implIncludes{$header} = $conditional;
+        $includesRef->{$header} = 1;
+    } elsif (not exists($includesRef->{$header})) {
+        $includesRef->{$header} = $conditional;
     } else {
-        my $oldValue = $implIncludes{$header};
-        $implIncludes{$header} = "$oldValue|$conditional" if $oldValue ne 1;
+        my $oldValue = $includesRef->{$header};
+        $includesRef->{$header} = "$oldValue|$conditional" if $oldValue ne 1;
     }
 }
 
@@ -2028,7 +2049,7 @@ sub AreTypesDistinguishableForOverloadResolution
     };
     my $isCallbackFunctionOrDictionary = sub {
         my $type = shift;
-        return $codeGenerator->IsFunctionOnlyCallbackInterface($type) || &$isDictionary($type);
+        return $codeGenerator->IsCallbackFunction($type) || &$isDictionary($type);
     };
 
     # Two types are distinguishable for overload resolution if at most one of the two includes a nullable type.
@@ -2183,7 +2204,7 @@ sub GenerateOverloadedFunctionOrConstructor
     };
     my $isObjectOrCallbackFunctionParameter = sub {
         my ($type, $optionality) = @_;
-        return $type->name eq "object" || $codeGenerator->IsFunctionOnlyCallbackInterface($type);
+        return $type->name eq "object" || $codeGenerator->IsCallbackFunction($type);
     };
     my $isSequenceOrFrozenArrayParameter = sub {
         my ($type, $optionality) = @_;
@@ -2193,7 +2214,7 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($type, $optionality) = @_;
         return 1 if &$isDictionaryParameter($type, $optionality);
         return 1 if $type->name eq "object";
-        return 1 if $codeGenerator->IsCallbackInterface($type) && !$codeGenerator->IsFunctionOnlyCallbackInterface($type);
+        return 1 if $codeGenerator->IsCallbackInterface($type) && !$codeGenerator->IsCallbackFunction($type);
         return 0;
     };
     my $isBooleanParameter = sub {
@@ -4444,20 +4465,20 @@ sub GenerateParametersCheck
             $argument->default("null") if $type->isNullable;
 
             # For callback arguments, the generated bindings treat undefined as null, so use null as implicit default value.
-            $argument->default("null") if $codeGenerator->IsCallbackInterface($type);
+            $argument->default("null") if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type);
         }
 
         my $name = $argument->name;
         my $value = $name;
 
-        if ($codeGenerator->IsCallbackInterface($type)) {
+        if ($codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
             my $callbackClassName = GetCallbackClassName($type->name);
             my $typeName = $type->name;
             $implIncludes{"$callbackClassName.h"} = 1;
             if ($argument->isOptional) {
                 push(@$outputArray, "    RefPtr<$typeName> $name;\n");
                 push(@$outputArray, "    if (!state->argument($argumentIndex).isUndefinedOrNull()) {\n");
-                if ($codeGenerator->IsFunctionOnlyCallbackInterface($type)) {
+                if ($codeGenerator->IsCallbackFunction($type)) {
                     push(@$outputArray, "        if (!state->uncheckedArgument($argumentIndex).isFunction())\n");
                 } else {
                     push(@$outputArray, "        if (!state->uncheckedArgument($argumentIndex).isObject())\n");
@@ -4472,7 +4493,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    }\n");
             } else {
                 die "CallbackInterface does not support Variadic arguments" if $argument->isVariadic;
-                if ($codeGenerator->IsFunctionOnlyCallbackInterface($type)) {
+                if ($codeGenerator->IsCallbackFunction($type)) {
                     push(@$outputArray, "    if (UNLIKELY(!state->uncheckedArgument($argumentIndex).isFunction()))\n");
                 } else {
                     push(@$outputArray, "    if (UNLIKELY(!state->uncheckedArgument($argumentIndex).isObject()))\n");
@@ -4676,138 +4697,210 @@ sub GenerateDictionaryImplementation
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
-sub GenerateCallbackHeader
+sub GenerateCallbackFunctionHeader
 {
-    my ($object, $interface, $enumerations, $dictionaries) = @_;
+    my ($object, $callbackFunction, $enumerations, $dictionaries) = @_;
 
-    my $interfaceName = $interface->type->name;
-    my $className = "JS$interfaceName";
-
-    # - Add default header template and header protection
-    push(@headerContentHeader, GenerateHeaderContentHeader($interface));
-
-    $headerIncludes{"ActiveDOMCallback.h"} = 1;
-    $headerIncludes{"$interfaceName.h"} = 1;
-    $headerIncludes{"JSCallbackData.h"} = 1;
-    $headerIncludes{"<wtf/Forward.h>"} = 1;
+    push(@headerContentHeader, GenerateHeaderContentHeader($callbackFunction));
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
-    push(@headerContent, "class $className : public $interfaceName, public ActiveDOMCallback {\n");
-    push(@headerContent, "public:\n");
 
-    # The static create() method.
-    push(@headerContent, "    static Ref<$className> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)\n");
-    push(@headerContent, "    {\n");
-    push(@headerContent, "        return adoptRef(*new $className(callback, globalObject));\n");
-    push(@headerContent, "    }\n\n");
+    my @functions = ();
+    push(@functions, $callbackFunction->operation);
+    my @constants = ();
 
-    push(@headerContent, "    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
+    $object->GenerateCallbackHeaderContent($callbackFunction, \@functions, \@constants, \@headerContent, \%headerIncludes);
 
-    push(@headerContent, "    virtual ~$className();\n");
-
-    push(@headerContent, "    " . GetJSCallbackDataType($interface) . "* callbackData() { return m_data; }\n");
-
-    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n") if @{$interface->constants};
-
-    push(@headerContent, "    virtual bool operator==(const $interfaceName&) const;\n\n") if $interface->extendedAttributes->{CallbackNeedsOperatorEqual};
-
-    # Functions
-    my $numFunctions = @{$interface->functions};
-    if ($numFunctions > 0) {
-        push(@headerContent, "\n    // Functions\n");
-        foreach my $function (@{$interface->functions}) {
-            my @arguments = ();
-            foreach my $argument (@{$function->arguments}) {
-                push(@arguments, GetNativeTypeForCallbacks($interface, $argument->type) . " " . $argument->name);
-            }
-            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($interface, $function->type) . " " . $function->name . "(" . join(", ", @arguments) . ");\n");
-        }
-    }
-
-    push(@headerContent, "\nprivate:\n");
-
-    # Constructor
-    push(@headerContent, "    $className(JSC::JSObject* callback, JSDOMGlobalObject*);\n\n");
-
-    # Private members
-    push(@headerContent, "    " . GetJSCallbackDataType($interface) . "* m_data;\n");
-    push(@headerContent, "};\n\n");
-
-    # toJS().
-    push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName&);\n");
-    push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n\n");
-
-    push(@headerContent, GenerateEnumerationsHeaderContent($interface, $enumerations));
-    push(@headerContent, GenerateDictionariesHeaderContent($interface, $dictionaries));
+    push(@headerContent, GenerateEnumerationsHeaderContent($callbackFunction, $enumerations));
+    push(@headerContent, GenerateDictionariesHeaderContent($callbackFunction, $dictionaries));
 
     push(@headerContent, "} // namespace WebCore\n");
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($callbackFunction);
     push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
-sub GenerateCallbackImplementation
+sub GenerateCallbackFunctionImplementation
 {
-    my ($object, $interface, $enumerations, $dictionaries) = @_;
+    my ($object, $callbackFunction, $enumerations, $dictionaries) = @_;
 
-    my $interfaceName = $interface->type->name;
-    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-    my $className = "JS$interfaceName";
-
-    # - Add default header template
-    push(@implContentHeader, GenerateImplementationContentHeader($interface));
-
-    $implIncludes{"ScriptExecutionContext.h"} = 1;
-    $implIncludes{"<runtime/JSLock.h>"} = 1;
-
-    @implContent = ();
+    push(@implContentHeader, GenerateImplementationContentHeader($callbackFunction));
 
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
-    push(@implContent, GenerateDictionariesImplementationContent($interface, $dictionaries));
+    push(@implContent, GenerateEnumerationsImplementationContent($callbackFunction, $enumerations));
+    push(@implContent, GenerateDictionariesImplementationContent($callbackFunction, $dictionaries));
+
+    my @functions = ();
+    push(@functions, $callbackFunction->operation);
+    my @constants = ();
+
+    $object->GenerateCallbackImplementationContent($callbackFunction, \@functions, \@constants, \@implContent, \%implIncludes);
+
+    push(@implContent, "} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($callbackFunction);
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateCallbackInterfaceHeader
+{
+    my ($object, $callbackInterface, $enumerations, $dictionaries) = @_;
+
+    push(@headerContentHeader, GenerateHeaderContentHeader($callbackInterface));
+
+    push(@headerContent, "\nnamespace WebCore {\n\n");
+    
+    $object->GenerateCallbackHeaderContent($callbackInterface, $callbackInterface->functions, $callbackInterface->constants, \@headerContent, \%headerIncludes);
+
+    push(@headerContent, GenerateEnumerationsHeaderContent($callbackInterface, $enumerations));
+    push(@headerContent, GenerateDictionariesHeaderContent($callbackInterface, $dictionaries));
+
+    push(@headerContent, "} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($callbackInterface);
+    push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateCallbackInterfaceImplementation
+{
+    my ($object, $callbackInterface, $enumerations, $dictionaries) = @_;
+
+    push(@implContentHeader, GenerateImplementationContentHeader($callbackInterface));
+
+    push(@implContent, "\nusing namespace JSC;\n\n");
+    push(@implContent, "namespace WebCore {\n\n");
+
+    push(@implContent, GenerateEnumerationsImplementationContent($callbackInterface, $enumerations));
+    push(@implContent, GenerateDictionariesImplementationContent($callbackInterface, $dictionaries));
+
+    $object->GenerateCallbackImplementationContent($callbackInterface, $callbackInterface->functions, $callbackInterface->constants, \@implContent, \%implIncludes);
+
+    push(@implContent, "} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($callbackInterface);
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateCallbackHeaderContent
+{
+    my ($object, $interfaceOrCallback, $functions, $constants, $contentRef, $includesRef) = @_;
+
+    my $name = $interfaceOrCallback->type->name;
+    my $callbackDataType = GetJSCallbackDataType($interfaceOrCallback);
+    my $className = "JS${name}";
+
+    $includesRef->{"ActiveDOMCallback.h"} = 1;
+    $includesRef->{"JSCallbackData.h"} = 1;
+    $includesRef->{"<wtf/Forward.h>"} = 1;
+    $includesRef->{"${name}.h"} = 1;
+
+    push(@$contentRef, "class $className : public ${name}, public ActiveDOMCallback {\n");
+    push(@$contentRef, "public:\n");
+
+    # The static create() method.
+    push(@$contentRef, "    static Ref<$className> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)\n");
+    push(@$contentRef, "    {\n");
+    push(@$contentRef, "        return adoptRef(*new ${className}(callback, globalObject));\n");
+    push(@$contentRef, "    }\n\n");
+
+    push(@$contentRef, "    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
+
+    push(@$contentRef, "    virtual ~$className();\n");
+
+    push(@$contentRef, "    ${callbackDataType}* callbackData() { return m_data; }\n");
+
+    push(@$contentRef, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n") if @{$constants};
+
+    push(@$contentRef, "    virtual bool operator==(const ${name}&) const;\n\n") if $interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual};
+
+    # Functions
+    my $numFunctions = @{$functions};
+    if ($numFunctions > 0) {
+        push(@$contentRef, "\n    // Functions\n");
+        foreach my $function (@{$functions}) {
+            my @arguments = ();
+            foreach my $argument (@{$function->arguments}) {
+                push(@arguments, GetNativeTypeForCallbacks($argument->type, $interfaceOrCallback) . " " . $argument->name);
+            }
+
+            # FIXME: Add support for non-void return types (the bool actually is returning exception state), for non-custom functions.
+            my $nativeReturnType = $function->extendedAttributes->{Custom} ? GetNativeTypeForCallbacks($function->type, $interfaceOrCallback) : "bool";
+            
+            # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
+            my $functionName = $function->name ? $function->name : "handleEvent";
+
+            push(@$contentRef, "    virtual ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ");\n");
+        }
+    }
+
+    push(@$contentRef, "\nprivate:\n");
 
     # Constructor
-    push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
-    if ($interface->extendedAttributes->{CallbackNeedsOperatorEqual}) {
-        push(@implContent, "    : ${interfaceName}(${className}Type)\n");
+    push(@$contentRef, "    $className(JSC::JSObject* callback, JSDOMGlobalObject*);\n\n");
+
+    # Private members
+    push(@$contentRef, "    ${callbackDataType}* m_data;\n");
+    push(@$contentRef, "};\n\n");
+
+    # toJS().
+    push(@$contentRef, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, ${name}&);\n");
+    push(@$contentRef, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ${name}* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n\n");
+}
+
+sub GenerateCallbackImplementationContent
+{
+    my ($object, $interfaceOrCallback, $functions, $constants, $contentRef, $includesRef) = @_;
+
+    my $name = $interfaceOrCallback->type->name;
+    my $callbackDataType = GetJSCallbackDataType($interfaceOrCallback);
+    my $visibleName = $codeGenerator->GetVisibleInterfaceName($interfaceOrCallback);
+    my $className = "JS${name}";
+
+    $includesRef->{"ScriptExecutionContext.h"} = 1;
+    $includesRef->{"<runtime/JSLock.h>"} = 1;
+
+    # Constructor
+    push(@$contentRef, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
+    if ($interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual}) {
+        push(@$contentRef, "    : ${name}(${className}Type)\n");
     } else {
-        push(@implContent, "    : ${interfaceName}()\n");
+        push(@$contentRef, "    : ${name}()\n");
     }
-    push(@implContent, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
-    push(@implContent, "    , m_data(new " . GetJSCallbackDataType($interface) . "(callback, this))\n");
-    push(@implContent, "{\n");
-    push(@implContent, "}\n\n");
+    push(@$contentRef, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
+    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, this))\n");
+    push(@$contentRef, "{\n");
+    push(@$contentRef, "}\n\n");
 
     # Destructor
-    push(@implContent, "${className}::~${className}()\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    ScriptExecutionContext* context = scriptExecutionContext();\n");
-    push(@implContent, "    // When the context is destroyed, all tasks with a reference to a callback\n");
-    push(@implContent, "    // should be deleted. So if the context is 0, we are on the context thread.\n");
-    push(@implContent, "    if (!context || context->isContextThread())\n");
-    push(@implContent, "        delete m_data;\n");
-    push(@implContent, "    else\n");
-    push(@implContent, "        context->postTask(DeleteCallbackDataTask(m_data));\n");
-    push(@implContent, "#ifndef NDEBUG\n");
-    push(@implContent, "    m_data = nullptr;\n");
-    push(@implContent, "#endif\n");
-    push(@implContent, "}\n\n");
+    push(@$contentRef, "${className}::~${className}()\n");
+    push(@$contentRef, "{\n");
+    push(@$contentRef, "    ScriptExecutionContext* context = scriptExecutionContext();\n");
+    push(@$contentRef, "    // When the context is destroyed, all tasks with a reference to a callback\n");
+    push(@$contentRef, "    // should be deleted. So if the context is 0, we are on the context thread.\n");
+    push(@$contentRef, "    if (!context || context->isContextThread())\n");
+    push(@$contentRef, "        delete m_data;\n");
+    push(@$contentRef, "    else\n");
+    push(@$contentRef, "        context->postTask(DeleteCallbackDataTask(m_data));\n");
+    push(@$contentRef, "#ifndef NDEBUG\n");
+    push(@$contentRef, "    m_data = nullptr;\n");
+    push(@$contentRef, "#endif\n");
+    push(@$contentRef, "}\n\n");
 
-    if ($interface->extendedAttributes->{CallbackNeedsOperatorEqual}) {
-        push(@implContent, "bool ${className}::operator==(const ${interfaceName}& other) const\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    if (other.type() != type())\n");
-        push(@implContent, "        return false;\n");
-        push(@implContent, "    return static_cast<const ${className}*>(&other)->m_data->callback() == m_data->callback();\n");
-        push(@implContent, "}\n\n");
+    if ($interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual}) {
+        push(@$contentRef, "bool ${className}::operator==(const ${name}& other) const\n");
+        push(@$contentRef, "{\n");
+        push(@$contentRef, "    if (other.type() != type())\n");
+        push(@$contentRef, "        return false;\n");
+        push(@$contentRef, "    return static_cast<const ${className}*>(&other)->m_data->callback() == m_data->callback();\n");
+        push(@$contentRef, "}\n\n");
     }
 
     # Constants.
-    my $numConstants = @{$interface->constants};
+    my $numConstants = @{$constants};
     if ($numConstants > 0) {
-        GenerateConstructorDeclaration(\@implContent, $className, $interface, $interfaceName);
+        GenerateConstructorDeclaration($contentRef, $className, $interfaceOrCallback, $name);
 
         my $hashSize = 0;
         my $hashName = $className . "ConstructorTable";
@@ -4818,7 +4911,7 @@ sub GenerateCallbackImplementation
         my @hashSpecials = ();
         my %conditionals = ();
 
-        foreach my $constant (@{$interface->constants}) {
+        foreach my $constant (@{$constants}) {
             my $name = $constant->name;
             push(@hashKeys, $name);
             push(@hashValue1, $constant->value);
@@ -4835,93 +4928,71 @@ sub GenerateCallbackImplementation
         }
         $object->GenerateHashTable($hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, 1) if $hashSize > 0;
 
-        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
+        push(@$contentRef, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interfaceOrCallback));
 
-        GenerateConstructorDefinitions(\@implContent, $className, "", $visibleInterfaceName, $interface);
+        GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
 
-        push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
-        push(@implContent, "}\n\n");
+        push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n{\n");
+        push(@$contentRef, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
+        push(@$contentRef, "}\n\n");
     }
 
     # Functions.
-    my $numFunctions = @{$interface->functions};
+    my $numFunctions = @{$functions};
     if ($numFunctions > 0) {
-        push(@implContent, "\n// Functions\n");
-        foreach my $function (@{$interface->functions}) {
-            my @params = @{$function->arguments};
-            if ($function->extendedAttributes->{Custom} || GetNativeType($interface, $function->type) ne "bool") {
-                next;
-            }
+        foreach my $function (@{$functions}) {
+            next if $function->extendedAttributes->{Custom};
+        
+            assert("Unsupport return type: " . $function->type->name . ".") unless $function->type->name eq "void";
 
-            AddToImplIncludesForIDLType($function->type);
-            my $functionName = $function->name;
-            push(@implContent, "\n" . GetNativeTypeForCallbacks($interface, $function->type) . " ${className}::${functionName}(");
+            AddToIncludesForIDLType($function->type, $includesRef);
+            
+            # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
+            my $functionName = $function->name ? $function->name : "handleEvent";
 
             my @args = ();
-            my @argsCheck = ();
-            foreach my $param (@params) {
-                my $paramName = $param->name;
-                AddToImplIncludesForIDLType($param->type, 1);
-                push(@args, GetNativeTypeForCallbacks($interface, $param->type) . " " . $paramName);
+            foreach my $argument (@{$function->arguments}) {
+                AddToIncludesForIDLType($argument->type, $includesRef, 1);
+                push(@args, GetNativeTypeForCallbacks($argument->type, $interfaceOrCallback) . " " . $argument->name);
             }
-            push(@implContent, join(", ", @args));
-            push(@implContent, ")\n");
+            push(@$contentRef, "bool ${className}::${functionName}(" . join(", ", @args) . ")\n");
+            push(@$contentRef, "{\n");
+            push(@$contentRef, "    if (!canInvokeCallback())\n");
+            push(@$contentRef, "        return true;\n\n");
+            push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
+            push(@$contentRef, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
+            push(@$contentRef, "    ExecState* state = m_data->globalObject()->globalExec();\n");
+            push(@$contentRef, "    MarkedArgumentBuffer args;\n");
 
-            push(@implContent, "{\n");
-            push(@implContent, @argsCheck) if @argsCheck;
-            push(@implContent, "    if (!canInvokeCallback())\n");
-            push(@implContent, "        return true;\n\n");
-            push(@implContent, "    Ref<$className> protectedThis(*this);\n\n");
-            push(@implContent, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
-            push(@implContent, "    ExecState* state = m_data->globalObject()->globalExec();\n");
-            push(@implContent, "    MarkedArgumentBuffer args;\n");
-
-            foreach my $param (@params) {
-                my $paramName = $param->name;
-                push(@implContent, "    args.append(" . NativeToJSValueUsingPointers($param, 1, $interface, $paramName, "m_data") . ");\n");
+            foreach my $argument (@{$function->arguments}) {
+                push(@$contentRef, "    args.append(" . NativeToJSValueUsingPointers($argument, 1, $interfaceOrCallback, $argument->name, "m_data") . ");\n");
             }
 
-            push(@implContent, "\n    NakedPtr<JSC::Exception> returnedException;\n");
+            push(@$contentRef, "\n    NakedPtr<JSC::Exception> returnedException;\n");
 
-            my $propertyToLookup = "Identifier::fromString(state, \"${functionName}\")";
-            my $invokeMethod = "JSCallbackData::CallbackType::FunctionOrObject";
-            if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{Callback}, "FunctionOnly")) {
-                # For callback functions, do not look up callable property on the user object.
-                # https://heycam.github.io/webidl/#es-callback-function
-                $invokeMethod = "JSCallbackData::CallbackType::Function";
-                $propertyToLookup = "Identifier()";
-                push(@implContent, "    UNUSED_PARAM(state);\n");
-            } elsif ($numFunctions > 1) {
-                # The callback interface has more than one operation so we should not call the user object as a function.
-                # instead, we should look for a property with the same name as the operation on the user object.
-                # https://heycam.github.io/webidl/#es-user-objects
-                $invokeMethod = "JSCallbackData::CallbackType::Object";
+            if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
+                push(@$contentRef, "    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);\n");
+            } else {
+                my $callbackType = $numFunctions > 1 ? "Object" : "FunctionOrObject";
+                push(@$contentRef, "    m_data->invokeCallback(args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(state, \"${functionName}\"), returnedException);\n");
             }
-            push(@implContent, "    m_data->invokeCallback(args, $invokeMethod, $propertyToLookup, returnedException);\n");
 
             # FIXME: We currently just report the exception. We should probably add an extended attribute to indicate when
             # we want the exception to be rethrown instead.
-            push(@implContent, "    if (returnedException)\n");
-            push(@implContent, "        reportException(state, returnedException);\n");
-            push(@implContent, "    return !returnedException;\n");
-            push(@implContent, "}\n");
+            push(@$contentRef, "    if (returnedException)\n");
+            push(@$contentRef, "        reportException(state, returnedException);\n");
+            push(@$contentRef, "    return !returnedException;\n");
+            push(@$contentRef, "}\n\n");
         }
     }
 
     # toJS() implementation.
-    push(@implContent, "\nJSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName& impl)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    if (!static_cast<${className}&>(impl).callbackData())\n");
-    push(@implContent, "        return jsNull();\n\n");
-    push(@implContent, "    return static_cast<${className}&>(impl).callbackData()->callback();\n\n");
-    push(@implContent, "}\n");
-
-    push(@implContent, "\n}\n");
-    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
-    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
-
-    push(@implContent, split("\r", $endAppleCopyright)) if $interface->extendedAttributes->{AppleCopyright};
+    push(@$contentRef, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, ${name}& impl)\n");
+    push(@$contentRef, "{\n");
+    push(@$contentRef, "    if (!static_cast<${className}&>(impl).callbackData())\n");
+    push(@$contentRef, "        return jsNull();\n\n");
+    push(@$contentRef, "    return static_cast<${className}&>(impl).callbackData()->callback();\n\n");
+    push(@$contentRef, "}\n\n");
 }
 
 sub GenerateImplementationFunctionCall()
@@ -5282,7 +5353,7 @@ sub ShouldPassWrapperByReference
 {
     my ($parameter, $interface) = @_;
 
-    return 0 if $codeGenerator->IsCallbackInterface($parameter->type);
+    return 0 if $codeGenerator->IsCallbackInterface($parameter->type) || $codeGenerator->IsCallbackFunction($parameter->type);
 
     my $nativeType = GetNativeType($interface, $parameter->type);
     return $codeGenerator->ShouldPassWrapperByReference($parameter) && (substr($nativeType, -1) eq '*' || $nativeType =~ /^RefPtr/);
@@ -5300,7 +5371,7 @@ sub GetNativeVectorInnerType
 
 sub GetNativeTypeForCallbacks
 {
-    my ($interface, $type) = @_;
+    my ($type, $interface) = @_;
 
     return "RefPtr<SerializedScriptValue>&&" if $type->name eq "SerializedScriptValue";
     return "const String&" if $codeGenerator->IsStringType($type);

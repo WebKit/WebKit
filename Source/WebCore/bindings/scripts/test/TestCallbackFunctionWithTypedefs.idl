@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/IntersectionObserver/
+typedef long LONG;
+typedef sequence<LONG?> SEQUENCE_OF_NULLABLE_LONGS;
+typedef void VOID;
 
-[
-    Conditional=INTERSECTION_OBSERVER
-] callback IntersectionObserverCallback = void (sequence<IntersectionObserverEntry> entries, IntersectionObserver observer);
+callback TestCallbackFunctionWithTypedefs = VOID (SEQUENCE_OF_NULLABLE_LONGS sequenceArg, LONG longArg);

@@ -28,8 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Callback=FunctionOnly,
-] callback interface StringCallback {
-    boolean handleEvent(DOMString data);
-};
+callback StringCallback = void (DOMString data);

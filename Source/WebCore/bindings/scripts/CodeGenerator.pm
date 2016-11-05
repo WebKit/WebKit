@@ -64,17 +64,10 @@ my %floatingPointTypeHash = (
     "unrestricted double" => 1,
 );
 
-my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1 );
-
-# WebCore types used directly in IDL files.
-my %webCoreTypeHash = (
-    "Dictionary" => 1,
-    "SerializedScriptValue" => 1,
+my %stringTypeHash = (
+    "DOMString" => 1,
+    "USVString" => 1,
 );
-
-my %dictionaryTypeImplementationNameOverrides = ();
-my %enumTypeImplementationNameOverrides = ();
-
 
 my %typedArrayTypes = (
     "ArrayBuffer" => 1,
@@ -90,6 +83,21 @@ my %typedArrayTypes = (
     "Uint8Array" => 1,
     "Uint8ClampedArray" => 1,
 );
+
+my %primitiveTypeHash = ( 
+    "boolean" => 1, 
+    "void" => 1,
+    "Date" => 1
+);
+
+# WebCore types used directly in IDL files.
+my %webCoreTypeHash = (
+    "Dictionary" => 1,
+    "SerializedScriptValue" => 1,
+);
+
+my %dictionaryTypeImplementationNameOverrides = ();
+my %enumTypeImplementationNameOverrides = ();
 
 my %svgAttributesInHTMLHash = (
     "class" => 1,
@@ -206,6 +214,17 @@ sub ProcessDocument
         print "Generating $useGenerator bindings code for IDL interface \"" . $interface->type->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
         $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
+        return;
+    }
+
+    my $callbackFunctions = $useDocument->callbackFunctions;
+    if (@$callbackFunctions) {
+        die "Multiple standalone callback functions per document are not supported" if @$callbackFunctions > 1;
+
+        my $callbackFunction = @$callbackFunctions[0];
+        print "Generating $useGenerator bindings code for IDL callback function \"" . $callbackFunction->type->name . "\"...\n" if $verbose;
+        $codeGenerator->GenerateCallbackFunction($callbackFunction, $useDocument->enumerations, $useDocument->dictionaries);
+        $codeGenerator->WriteData($callbackFunction, $useOutputDir, $useOutputHeadersDir);
         return;
     }
 
@@ -364,8 +383,7 @@ sub SkipIncludeHeader
     return 1 if $integerTypeHash{$typeName};
     return 1 if $floatingPointTypeHash{$typeName};
     return 1 if $typedArrayTypes{$typeName};
-    return 1 if $typeName eq "DOMString";
-    return 1 if $typeName eq "USVString";
+    return 1 if $stringTypeHash{$typeName};
     return 1 if $typeName eq "BufferSource";
     return 1 if $typeName eq "SVGNumber";
     return 1 if $typeName eq "any";
@@ -426,15 +444,13 @@ sub IsPrimitiveType
     return 0;
 }
 
-# Currently used outside WebKit in an internal Apple project; can be removed soon.
 sub IsStringType
 {
     my ($object, $type) = @_;
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return 1 if $type->name eq "DOMString";
-    return 1 if $type->name eq "USVString";
+    return 1 if $stringTypeHash{$type->name};
     return 0;
 }
 
@@ -1031,16 +1047,13 @@ sub IsCallbackInterface
     return $result;
 }
 
-# Callback interface with [Callback=FunctionOnly].
-# FIXME: This should be a callback function:
-# https://heycam.github.io/webidl/#idl-callback-functions
-sub ComputeIsFunctionOnlyCallbackInterface
+sub ComputeIsCallbackFunction
 {
     my ($object, $type) = @_;
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return 0 unless $object->IsCallbackInterface($type);
+    return 0 unless $object->IsWrapperType($type);
 
     my $typeName = $type->name;
     my $idlFile = $object->IDLFileForInterface($typeName) or assert("Could NOT find IDL file for interface \"$typeName\"!\n");
@@ -1050,25 +1063,12 @@ sub ComputeIsFunctionOnlyCallbackInterface
     close FILE;
 
     my $fileContents = join('', @lines);
-    if ($fileContents =~ /\[(.*)\]\s+callback\s+interface\s+(\w+)/gs) {
-        my @parts = split(',', $1);
-        foreach my $part (@parts) {
-            my @keyValue = split('=', $part);
-            my $key = trim($keyValue[0]);
-            next unless length($key);
-            my $value = "VALUE_IS_MISSING";
-            $value = trim($keyValue[1]) if @keyValue > 1;
-
-            return 1 if ($key eq "Callback" && $value eq "FunctionOnly");
-        }
-    }
-
-    return 0;
+    return ($fileContents =~ /(.*)callback\s+(\w+)\s+=/gs);
 }
 
-my %isFunctionOnlyCallbackInterface = ();
+my %isCallbackFunction = ();
 
-sub IsFunctionOnlyCallbackInterface
+sub IsCallbackFunction
 {
     # FIXME: It's bad to have a function like this that opens another IDL file to answer a question.
     # Overusing this kind of function can make things really slow. Lets avoid these if we can.
@@ -1078,9 +1078,9 @@ sub IsFunctionOnlyCallbackInterface
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return $isFunctionOnlyCallbackInterface{$type->name} if exists $isFunctionOnlyCallbackInterface{$type->name};
-    my $result = $object->ComputeIsFunctionOnlyCallbackInterface($type);
-    $isFunctionOnlyCallbackInterface{$type->name} = $result;
+    return $isCallbackFunction{$type->name} if exists $isCallbackFunction{$type->name};
+    my $result = $object->ComputeIsCallbackFunction($type);
+    $isCallbackFunction{$type->name} = $result;
     return $result;
 }
 

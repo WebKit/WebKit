@@ -25,8 +25,5 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-[
-    Callback=FunctionOnly,
-] callback interface SQLStatementCallback {
-    boolean handleEvent(SQLTransaction transaction, SQLResultSet resultSet);
-};
+
+callback SQLStatementCallback = void (SQLTransaction transaction, SQLResultSet resultSet);

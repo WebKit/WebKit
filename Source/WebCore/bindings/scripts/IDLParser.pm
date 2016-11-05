@@ -41,6 +41,7 @@ struct( IDLDocument => {
     interfaces => '@', # List of 'IDLInterface'
     enumerations => '@', # List of 'IDLEnum'
     dictionaries => '@', # List of 'IDLDictionary'
+    callbackFunctions => '@', # List of 'IDLCallbackFunction'
     fileName => '$',
 });
 
@@ -135,7 +136,7 @@ struct( IDLEnum => {
     extendedAttributes => '$',
 });
 
-
+# https://heycam.github.io/webidl/#dfn-dictionary-member
 struct( IDLDictionaryMember => {
     name => '$',
     type => 'IDLType',
@@ -143,7 +144,6 @@ struct( IDLDictionaryMember => {
     default => '$',
     extendedAttributes => '$',
 });
-
 
 # https://heycam.github.io/webidl/#idl-dictionaries
 struct( IDLDictionary => {
@@ -153,7 +153,14 @@ struct( IDLDictionary => {
     extendedAttributes => '$',
 });
 
-# https://heycam.github.io/webidl/#idl-enums
+# https://heycam.github.io/webidl/#idl-callback-functions
+struct( IDLCallbackFunction => {
+    type => '$',
+    operation => 'IDLOperation',
+    extendedAttributes => '$',
+});
+
+# https://heycam.github.io/webidl/#idl-typedefs
 struct( IDLTypedef => {
     type => 'IDLType',
 });
@@ -276,6 +283,8 @@ sub Parse
             push(@{$document->enumerations}, $definition);
         } elsif (ref($definition) eq "IDLDictionary") {
             push(@{$document->dictionaries}, $definition);
+        } elsif (ref($definition) eq "IDLCallbackFunction") {
+            push(@{$document->callbackFunctions}, $definition);
         } else {
             die "Unrecognized IDL definition kind: \"" . ref($definition) . "\"";
         }
@@ -467,20 +476,30 @@ sub applyTypedefs
             foreach my $attribute (@{$definition->attributes}) {
                 $attribute->type($self->typeByApplyingTypedefs($attribute->type));
             }
-            foreach my $function (@{$definition->functions}, @{$definition->anonymousFunctions}, @{$definition->constructors}, @{$definition->customConstructors}) {
-                if ($function->type) {
-                    $function->type($self->typeByApplyingTypedefs($function->type));
-                }
-
-                foreach my $argument (@{$function->arguments}) {
-                    $argument->type($self->typeByApplyingTypedefs($argument->type));
-                }
+            foreach my $operation (@{$definition->functions}, @{$definition->anonymousFunctions}, @{$definition->constructors}, @{$definition->customConstructors}) {
+                $self->applyTypedefsToOperation($operation);
             }
         } elsif (ref($definition) eq "IDLDictionary") {
             foreach my $member (@{$definition->members}) {
                 $member->type($self->typeByApplyingTypedefs($member->type));
             }
+        } elsif (ref($definition) eq "IDLCallbackFunction") {
+            $self->applyTypedefsToOperation($definition->operation);
         }
+    }
+}
+
+sub applyTypedefsToOperation
+{
+    my $self = shift;
+    my $operation = shift;
+
+    if ($operation->type) {
+        $operation->type($self->typeByApplyingTypedefs($operation->type));
+    }
+
+    foreach my $argument (@{$operation->arguments}) {
+        $argument->type($self->typeByApplyingTypedefs($argument->type));
     }
 }
 
@@ -950,14 +969,30 @@ sub parseCallbackRest
 
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken) {
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        my $callback = IDLCallbackFunction->new();
+
+        my $nameToken = $self->getToken();
+        $self->assertTokenType($nameToken, IdentifierToken);
+
+        $callback->type(makeSimpleType($nameToken->value()));
+
         $self->assertTokenValue($self->getToken(), "=", __LINE__);
-        $self->parseReturnType();
+
+        my $operation = IDLOperation->new();
+        $operation->type($self->parseReturnType());
+        $operation->extendedAttributes($extendedAttributeList);
+
         $self->assertTokenValue($self->getToken(), "(", __LINE__);
-        $self->parseArgumentList();
+
+        push(@{$operation->arguments}, @{$self->parseArgumentList()});
+
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+
+        $callback->operation($operation);
+        $callback->extendedAttributes($extendedAttributeList);
+
+        return $callback;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

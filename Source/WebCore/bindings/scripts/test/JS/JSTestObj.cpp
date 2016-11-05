@@ -44,8 +44,8 @@
 #include "JSPromise.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
-#include "JSTestCallback.h"
 #include "JSTestCallbackFunction.h"
+#include "JSTestCallbackInterface.h"
 #include "JSTestInterface.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
@@ -1407,7 +1407,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->uncheckedArgument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 0, "testCallback", "TestObject", nullptr);
-    auto testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto testCallback = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     if (UNLIKELY(!state->uncheckedArgument(1).isFunction()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 1, "testCallbackFunction", "TestObject", nullptr);
     auto testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
@@ -6292,7 +6292,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAr
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->uncheckedArgument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 0, "callback", "TestObject", "methodWithCallbackArg");
-    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto callback = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -6315,7 +6315,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbac
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(!state->uncheckedArgument(1).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 1, "callback", "TestObject", "methodWithNonCallbackArgAndCallbackArg");
-    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
+    auto callback = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackArg(WTFMove(nonCallback), WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -6332,11 +6332,11 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAn
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    RefPtr<TestCallback> callback;
+    RefPtr<TestCallbackInterface> callback;
     if (!state->argument(0).isUndefinedOrNull()) {
         if (!state->uncheckedArgument(0).isObject())
             return throwArgumentMustBeFunctionError(*state, throwScope, 0, "callback", "TestObject", "methodWithCallbackAndOptionalArg");
-        callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+        callback = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     }
     impl.methodWithCallbackAndOptionalArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
@@ -6413,11 +6413,11 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    RefPtr<TestCallback> callback;
+    RefPtr<TestCallbackInterface> callback;
     if (!state->argument(0).isUndefinedOrNull()) {
         if (!state->uncheckedArgument(0).isObject())
             return throwArgumentMustBeFunctionError(*state, throwScope, 0, "callback", "TestObject", "staticMethodWithCallbackAndOptionalArg");
-        callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
+        callback = createFunctionOnlyCallback<JSTestCallbackInterface>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
     }
     TestObj::staticMethodWithCallbackAndOptionalArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
@@ -6432,7 +6432,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->uncheckedArgument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 0, "callback", "TestObject", "staticMethodWithCallbackArg");
-    auto callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
+    auto callback = createFunctionOnlyCallback<JSTestCallbackInterface>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -6594,7 +6594,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Cal
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->uncheckedArgument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 0, "callback", "TestObject", "overloadedMethod");
-    auto callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
+    auto callback = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.overloadedMethod(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
@@ -6772,7 +6772,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestCallback::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestCallbackInterface::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod5(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSDOMStringList::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod6(state);

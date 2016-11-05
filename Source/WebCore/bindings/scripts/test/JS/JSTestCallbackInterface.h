@@ -24,34 +24,41 @@
 
 #include "ActiveDOMCallback.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunction.h"
+#include "TestCallbackInterface.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunction : public TestCallbackFunction, public ActiveDOMCallback {
+class JSTestCallbackInterface : public TestCallbackInterface, public ActiveDOMCallback {
 public:
-    static Ref<JSTestCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackInterface> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunction(callback, globalObject));
+        return adoptRef(*new JSTestCallbackInterface(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackFunction();
+    virtual ~JSTestCallbackInterface();
     JSCallbackDataStrong* callbackData() { return m_data; }
+    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
-    virtual bool handleEvent(RefPtr<Float32Array> arrayParam, RefPtr<SerializedScriptValue>&& srzParam, const String& strArg, bool boolParam, int32_t longParam, TestNode* testNodeParam);
+    virtual bool callbackWithNoParam();
+    virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
+    virtual bool callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strParam);
+    virtual int32_t customCallback(Class5* class5Param, Class6* class6Param);
+    virtual bool callbackWithStringList(DOMStringList* listParam);
+    virtual bool callbackWithBoolean(bool boolParam);
+    virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
 
 private:
-    JSTestCallbackFunction(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSTestCallbackInterface(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackFunction* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackInterface&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackInterface* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
 
 } // namespace WebCore
 
