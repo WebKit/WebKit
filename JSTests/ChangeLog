@@ -1,3 +1,13 @@
+2016-11-04  Mark Lam  <mark.lam@apple.com>
+
+        Error description code should be able to handle Symbol values.
+        https://bugs.webkit.org/show_bug.cgi?id=164436
+        <rdar://problem/29115583>
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        * stress/error-description-on-symbols-should-not-crash.js: Added.
+
 2016-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         EvalCodeCache should not give up in strict mode and other cases

@@ -1,3 +1,23 @@
+2016-11-04  Mark Lam  <mark.lam@apple.com>
+
+        Error description code should be able to handle Symbol values.
+        https://bugs.webkit.org/show_bug.cgi?id=164436
+        <rdar://problem/29115583>
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        Previously, we try to toString() the Symbol value, resulting in it throwing an
+        exception in errorDescriptionForValue() which breaks the invariant that
+        errorDescriptionForValue() should not throw.
+
+        We fixed this by making errorDescriptionForValue() aware of the Symbol type, and
+        not so a toString() on Symbol values.  Also fixed notAFunctionSourceAppender()
+        to build a nicer message for Symbol values.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        (JSC::notAFunctionSourceAppender):
+
 2016-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         EvalCodeCache should not give up in strict mode and other cases

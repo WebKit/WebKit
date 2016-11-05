@@ -86,6 +86,8 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
 {
     if (v.isString())
         return jsNontrivialString(exec, makeString('"',  asString(v)->value(exec), '"'));
+    if (v.isSymbol())
+        return jsNontrivialString(exec, asSymbol(v)->descriptiveString());
     if (v.isObject()) {
         CallData callData;
         JSObject* object = asObject(v);
@@ -182,9 +184,13 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     builder.appendLiteral("', '");
     builder.append(base);
     builder.appendLiteral("' is ");
-    if (type == TypeObject)
-        builder.appendLiteral("an instance of ");
-    builder.append(displayValue);
+    if (type == TypeSymbol)
+        builder.appendLiteral("a Symbol");
+    else {
+        if (type == TypeObject)
+            builder.appendLiteral("an instance of ");
+        builder.append(displayValue);
+    }
     builder.append(')');
 
     return builder.toString();
