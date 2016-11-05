@@ -250,6 +250,8 @@ public:
     ScrollPosition unscaledMinimumScrollPosition() const;
     ScrollPosition unscaledMaximumScrollPosition() const;
 
+    IntPoint unscaledScrollOrigin() const;
+
     void setLayoutViewportOrigin(LayoutPoint);
     LayoutPoint layoutViewportOrigin() const { return m_layoutViewportOrigin; }
     

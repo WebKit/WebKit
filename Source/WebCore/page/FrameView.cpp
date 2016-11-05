@@ -1821,8 +1821,11 @@ void FrameView::setLayoutViewportOrigin(LayoutPoint origin)
     m_layoutViewportOrigin = origin;
     setViewportConstrainedObjectsNeedLayout();
     
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setLayoutViewportRect(FloatRect(layoutViewportRect()));
+    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        FloatRect layoutViewport = layoutViewportRect();
+        layoutViewport.moveBy(unscaledScrollOrigin()); // tiledBacking deals in top-left relative coordinates.
+        tiledBacking->setLayoutViewportRect(layoutViewport);
+    }
 }
 
 void FrameView::updateLayoutViewport()
@@ -1852,6 +1855,14 @@ LayoutPoint FrameView::minStableLayoutViewportOrigin() const
 LayoutPoint FrameView::maxStableLayoutViewportOrigin() const
 {
     return unscaledMaximumScrollPosition();
+}
+
+IntPoint FrameView::unscaledScrollOrigin() const
+{
+    if (RenderView* renderView = this->renderView())
+        return -renderView->unscaledDocumentRect().location(); // Akin to code in adjustViewSize().
+
+    return { };
 }
 
 // Size of initial containing block, anchored at scroll position, in document coordinates (unchanged by scale factor).
@@ -2038,16 +2049,14 @@ ScrollPosition FrameView::unscaledMinimumScrollPosition() const
 {
     if (RenderView* renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
-
-        IntPoint unscaledScrollOrigin = -unscaledDocumentRect.location();
-        ScrollPosition minimumPosition = scrollPositionFromOffset(ScrollOffset(), toIntSize(unscaledScrollOrigin));
+        ScrollPosition minimumPosition = unscaledDocumentRect.location() - visibleSize();
 
         if (frame().isMainFrame() && m_scrollPinningBehavior == PinToBottom)
             minimumPosition.setY(unscaledMaximumScrollPosition().y());
 
         return minimumPosition;
     }
-    
+
     return minimumScrollPosition();
 }
 
@@ -2056,11 +2065,7 @@ ScrollPosition FrameView::unscaledMaximumScrollPosition() const
     if (RenderView* renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         unscaledDocumentRect.expand(0, headerHeight() + footerHeight());
-        
-        // Max scroll position is size - visible - scrollOrigin, which is max - visible.
-        ScrollOffset maximumOffset = unscaledDocumentRect.maxXMaxYCorner() - visibleSize();
-        IntPoint unscaledScrollOrigin = -unscaledDocumentRect.location();
-        ScrollPosition maximumPosition = scrollPositionFromOffset(maximumOffset, toIntSize(unscaledScrollOrigin));
+        ScrollPosition maximumPosition = unscaledDocumentRect.maxXMaxYCorner() - visibleSize();
 
         if (frame().isMainFrame() && m_scrollPinningBehavior == PinToTop)
             maximumPosition.setY(unscaledMinimumScrollPosition().y());

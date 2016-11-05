@@ -1,3 +1,18 @@
+2016-11-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Layout viewport wrong with RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=164434
+
+        Reviewed by Tim Horton.
+
+        * fast/visual-viewport/rtl-nonzoomed-rects-expected.txt: Added.
+        * fast/visual-viewport/rtl-nonzoomed-rects.html: Added.
+        * fast/visual-viewport/rtl-zoomed-rects-expected.txt: Added.
+        * fast/visual-viewport/rtl-zoomed-rects.html: Added.
+        * platform/ios-simulator/fast/visual-viewport/rtl-nonzoomed-rects-expected.txt: Added.
+        * platform/ios-simulator/fast/visual-viewport/rtl-zoomed-rects-expected.txt: Added.
+        * platform/mac-wk1/fast/visual-viewport/rtl-zoomed-rects-expected.txt: Added. WK1 and RTL are weird.
+
 2016-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Safari does not emit composition end if blurred for dead key / Japanese IME
