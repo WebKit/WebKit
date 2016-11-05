@@ -1,3 +1,21 @@
+2016-11-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] RunLoopGeneric should adopt MonotonicTime / WallTime change
+        https://bugs.webkit.org/show_bug.cgi?id=164447
+
+        Reviewed by Csaba Osztrogonác.
+
+        Build fix for JSCOnly.
+
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::ScheduledTask::create):
+        (WTF::RunLoop::TimerBase::ScheduledTask::ScheduledTask):
+        (WTF::RunLoop::TimerBase::ScheduledTask::scheduledTimePoint):
+        (WTF::RunLoop::TimerBase::ScheduledTask::updateReadyTime):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::start):
+
 2016-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::ParkingLot should stop using std::chrono because std::chrono::duration casts are prone to overflows

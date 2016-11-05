@@ -32,14 +32,14 @@ namespace WTF {
 class RunLoop::TimerBase::ScheduledTask : public ThreadSafeRefCounted<ScheduledTask> {
 WTF_MAKE_NONCOPYABLE(ScheduledTask);
 public:
-    static RefPtr<ScheduledTask> create(Function<void ()>&& function, double interval, bool repeating)
+    static RefPtr<ScheduledTask> create(Function<void()>&& function, Seconds interval, bool repeating)
     {
         return adoptRef(new ScheduledTask(WTFMove(function), interval, repeating));
     }
 
-    ScheduledTask(Function<void ()>&& function, double interval, bool repeating)
+    ScheduledTask(Function<void()>&& function, Seconds interval, bool repeating)
         : m_function(WTFMove(function))
-        , m_fireInterval(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(interval)))
+        , m_fireInterval(interval)
         , m_isRepeating(repeating)
     {
         updateReadyTime();
@@ -59,15 +59,15 @@ public:
         return isActive();
     }
 
-    Condition::Clock::time_point scheduledTimePoint() const
+    MonotonicTime scheduledTimePoint() const
     {
         return m_scheduledTimePoint;
     }
 
     void updateReadyTime()
     {
-        m_scheduledTimePoint = Condition::Clock::now();
-        if (!m_fireInterval.count())
+        m_scheduledTimePoint = MonotonicTime::now();
+        if (!m_fireInterval)
             return;
         m_scheduledTimePoint += m_fireInterval;
     }
@@ -91,8 +91,8 @@ public:
 
 private:
     Function<void ()> m_function;
-    Condition::Clock::time_point m_scheduledTimePoint;
-    std::chrono::microseconds m_fireInterval;
+    MonotonicTime m_scheduledTimePoint;
+    Seconds m_fireInterval;
     std::atomic<bool> m_isActive { true };
     bool m_isRepeating;
 };
@@ -117,7 +117,7 @@ inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, De
     LockHolder locker(m_loopLock);
 
     if (runMode == RunMode::Drain) {
-        Condition::Clock::time_point sleepUntil = Condition::Clock::time_point::max();
+        MonotonicTime sleepUntil = MonotonicTime::infinity();
         if (!m_schedules.isEmpty())
             sleepUntil = m_schedules.first()->scheduledTimePoint();
 
@@ -137,7 +137,7 @@ inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, De
         statusOfThisLoop = Status::Stopping;
 
     // Check expired timers.
-    Condition::Clock::time_point now = Condition::Clock::now();
+    MonotonicTime now = MonotonicTime::now();
     while (!m_schedules.isEmpty()) {
         RefPtr<TimerBase::ScheduledTask> earliest = m_schedules.first();
         if (earliest->scheduledTimePoint() > now)
@@ -241,7 +241,7 @@ void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, Function<void ()>&& 
 {
     LockHolder locker(m_loopLock);
     bool repeating = false;
-    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), delay.count() / 1000.0 / 1000.0 / 1000.0, repeating));
+    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), Seconds(delay.count() / 1000.0 / 1000.0 / 1000.0), repeating));
     wakeUp(locker);
 }
 
@@ -268,7 +268,7 @@ void RunLoop::TimerBase::start(double interval, bool repeating)
     stop();
     m_scheduledTask = ScheduledTask::create([this] {
         fired();
-    }, interval, repeating);
+    }, Seconds(interval), repeating);
     m_runLoop.scheduleAndWakeUp(m_scheduledTask);
 }
 
