@@ -152,6 +152,16 @@ inline CCallHelpers::Jump branchIfNotElement(CCallHelpers& jit, GPRReg target)
         CCallHelpers::TrustedImm32(JSC::JSType(JSElementType)));
 }
 
+inline CCallHelpers::Jump branchIfDocumentFragment(CCallHelpers& jit, GPRReg target)
+{
+    return jit.branchIfType(target, JSC::JSType(JSDocumentFragmentNodeType));
+}
+
+inline CCallHelpers::Jump branchIfNotDocumentFragment(CCallHelpers& jit, GPRReg target)
+{
+    return jit.branchIfNotType(target, JSC::JSType(JSDocumentFragmentNodeType));
+}
+
 inline CCallHelpers::Jump branchIfDocumentWrapper(CCallHelpers& jit, GPRReg target)
 {
     return jit.branchIfType(target, JSC::JSType(JSDocumentWrapperType));

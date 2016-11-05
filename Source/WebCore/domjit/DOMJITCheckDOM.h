@@ -58,6 +58,14 @@ struct TypeChecker<Document> {
 };
 
 template<>
+struct TypeChecker<DocumentFragment> {
+    static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
+    {
+        return DOMJIT::branchIfNotDocumentFragment(jit, dom);
+    }
+};
+
+template<>
 struct TypeChecker<Event> {
     static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
     {

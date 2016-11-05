@@ -28,5 +28,5 @@
 [
     NoInterfaceObject,
 ] interface NonElementParentNode {
-    Element getElementById([RequiresExistingAtomicString] DOMString elementId);
+    [DOMJIT=ReadDOM] Element? getElementById([RequiresExistingAtomicString] DOMString elementId);
 };
