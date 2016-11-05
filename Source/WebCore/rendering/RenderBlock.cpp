@@ -768,7 +768,7 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     child->m_next = 0;
 
     // Remove all the information in the flow thread associated with the leftover anonymous block.
-    child->removeFromRenderFlowThread();
+    child->resetFlowThreadStateOnRemoval();
 
     child->setParent(0);
     child->setPreviousSibling(0);
@@ -812,9 +812,6 @@ void RenderBlock::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
 {
     parent.setNeedsLayoutAndPrefWidthsRecalc();
     parent.setChildrenInline(child.childrenInline());
-    if (auto* childFlowThread = child.flowThreadContainingBlock())
-        childFlowThread->removeFlowChildInfo(&child);
-
     RenderObject* nextSibling = child.nextSibling();
     parent.removeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
     child.moveAllChildrenTo(&parent, nextSibling, child.hasLayer());

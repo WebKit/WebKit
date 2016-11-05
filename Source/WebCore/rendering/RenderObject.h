@@ -818,6 +818,9 @@ protected:
     virtual RenderFlowThread* locateFlowThreadContainingBlock() const;
     static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
 
+    void initializeFlowThreadStateOnInsertion();
+    void resetFlowThreadStateOnRemoval();
+
 private:
 #ifndef NDEBUG
     bool isSetNeedsLayoutForbidden() const { return m_setNeedsLayoutForbidden; }

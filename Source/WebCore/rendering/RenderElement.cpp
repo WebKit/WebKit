@@ -572,6 +572,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         m_lastChild = newChild;
     }
 
+    newChild->initializeFlowThreadStateOnInsertion();
     if (!documentBeingDestroyed()) {
         if (notifyChildren == NotifyChildren)
             newChild->insertedIntoTree();
@@ -625,6 +626,8 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
 
     if (!documentBeingDestroyed() && notifyChildren == NotifyChildren)
         oldChild.willBeRemovedFromTree();
+
+    oldChild.resetFlowThreadStateOnRemoval();
 
     // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
@@ -1084,11 +1087,6 @@ void RenderElement::willBeRemovedFromTree()
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
-
-    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
-        containerFlowThread->removeFlowChild(*this);
-
-    removeFromRenderFlowThread();
 
     RenderObject::willBeRemovedFromTree();
 }
@@ -2208,9 +2206,9 @@ RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
 
 void RenderElement::removeFromRenderFlowThread()
 {
-    if (flowThreadState() == NotInsideFlowThread)
-        return;
-
+    ASSERT(flowThreadState() != NotInsideFlowThread);
+    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
+        containerFlowThread->removeFlowChild(*this);
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
     // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.
