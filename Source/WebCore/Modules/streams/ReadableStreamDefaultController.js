@@ -48,7 +48,8 @@ function error(error)
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "error");
 
-    if (this.@controlledReadableStream.@state !== @streamReadable)
+    const stream = this.@controlledReadableStream;
+    if (stream.@state !== @streamReadable)
         @throwTypeError("ReadableStream is not readable");
 
     @readableStreamDefaultControllerError(this, error);

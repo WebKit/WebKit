@@ -1,3 +1,17 @@
+2016-11-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208382.
+
+        This change appears to have caused 3
+        SerializedCryptoKeyWrapTest API tests to fail on macOS.
+
+        Reverted changeset:
+
+        "[Readable Streams API] Implement ByteStreamController
+        error()"
+        https://bugs.webkit.org/show_bug.cgi?id=164319
+        http://trac.webkit.org/changeset/208382
+
 2016-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::ParkingLot should stop using std::chrono because std::chrono::duration casts are prone to overflows

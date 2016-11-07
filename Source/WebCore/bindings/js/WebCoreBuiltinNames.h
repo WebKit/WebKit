@@ -97,7 +97,6 @@ namespace WebCore {
     macro(streamWritable) \
     macro(structuredCloneArrayBuffer) \
     macro(structuredCloneArrayBufferView) \
-    macro(totalQueuedBytes) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \
     macro(underlyingSource) \
