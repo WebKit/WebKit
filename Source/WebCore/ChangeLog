@@ -1,3 +1,18 @@
+2016-11-09  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r208149): Media scrubber is not displayed in media controls
+        https://bugs.webkit.org/show_bug.cgi?id=164514
+
+        Reviewed by Darin Adler.
+
+        Fixes broken Media Controls API tests.
+
+        Added a new PlatformMediaSessionType; need to add that same type to the TYPE_TRAITS section of 
+        MediaElementSession.h so that is<> and downcast<> work correctly.
+
+        * html/MediaElementSession.h:
+        (isType):
+
 2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         When editing IME, `compositionend` events should fire after input events
