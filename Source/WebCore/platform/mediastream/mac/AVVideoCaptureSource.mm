@@ -205,6 +205,7 @@ void AVVideoCaptureSource::setupCaptureSession()
                                                          [NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey
                                                          , nil]);
     [videoOutput setVideoSettings:settingsDictionary.get()];
+    [videoOutput setAlwaysDiscardsLateVideoFrames:YES];
     setVideoSampleBufferDelegate(videoOutput.get());
 
     if (![session() canAddOutput:videoOutput.get()]) {
@@ -258,11 +259,20 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
 
     updateFramerate(sampleBuffer.get());
 
-    bool settingsChanged = false;
+    CMSampleBufferRef newSampleBuffer = 0;
+    CMSampleBufferCreateCopy(kCFAllocatorDefault, sampleBuffer.get(), &newSampleBuffer);
+    ASSERT(newSampleBuffer);
 
-    m_buffer = sampleBuffer;
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
+    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+        CFMutableDictionaryRef attachments = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachmentsArray, i);
+        CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
+    }
+
+    m_buffer = newSampleBuffer;
     m_lastImage = nullptr;
 
+    bool settingsChanged = false;
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
     if (dimensions.width != m_width || dimensions.height != m_height) {
         m_width = dimensions.width;
@@ -273,7 +283,7 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (settingsChanged)
         settingsDidChange();
 
-    mediaDataUpdated(MediaSampleAVFObjC::create(sampleBuffer.get()));
+    mediaDataUpdated(MediaSampleAVFObjC::create(m_buffer.get()));
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)

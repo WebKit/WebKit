@@ -128,12 +128,27 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSampleBufferFromTrack(Med
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159836
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate& track, MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForMediaData()
 {
-    if (&track != m_mediaStreamPrivate->activeVideoTrack() || !shouldEnqueueVideoSampleBuffer())
-        return;
+    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
+        [m_sampleBufferDisplayLayer stopRequestingMediaData];
 
-    sample.setTimestamps(toMediaTime(CMTimebaseGetTime([m_synchronizer timebase])), MediaTime::invalidTime());
+        while (!m_sampleQueue.isEmpty()) {
+            if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+                requestNotificationWhenReadyForMediaData();
+                return;
+            }
+
+            auto sample = m_sampleQueue.takeFirst();
+            enqueueVideoSampleBuffer(sample.get());
+        }
+    }];
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBuffer(MediaSample& sample)
+{
+    ASSERT([m_sampleBufferDisplayLayer isReadyForMoreMediaData]);
+
     [m_sampleBufferDisplayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
     m_isFrameDisplayed = true;
 
@@ -144,11 +159,22 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack(Med
     }
 }
 
+void MediaPlayerPrivateMediaStreamAVFObjC::prepareVideoSampleBufferFromTrack(MediaStreamTrackPrivate& track, MediaSample& sample)
+{
+    if (&track != m_mediaStreamPrivate->activeVideoTrack() || !shouldEnqueueVideoSampleBuffer())
+        return;
+
+    if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+        m_sampleQueue.append(sample);
+        requestNotificationWhenReadyForMediaData();
+        return;
+    }
+
+    enqueueVideoSampleBuffer(sample);
+}
+
 bool MediaPlayerPrivateMediaStreamAVFObjC::shouldEnqueueVideoSampleBuffer() const
 {
-    if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData])
-        return false;
-
     if (m_displayMode == LivePreview)
         return true;
 
@@ -189,6 +215,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer()
     if (!m_sampleBufferDisplayLayer)
         return;
     
+    [m_sampleBufferDisplayLayer stopRequestingMediaData];
     [m_sampleBufferDisplayLayer flush];
     CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
     [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
@@ -525,7 +552,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159836
         break;
     case RealtimeMediaSource::Video:
-        enqueueVideoSampleBufferFromTrack(track, mediaSample);
+        prepareVideoSampleBufferFromTrack(track, mediaSample);
         m_hasReceivedMedia = true;
         scheduleDeferredTask([this] {
             updateReadyState();

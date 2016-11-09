@@ -123,9 +123,12 @@ private:
     void setSize(const IntSize&) override { /* No-op */ }
 
     void enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&);
-    void enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&);
+
+    void prepareVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&);
+    void enqueueVideoSampleBuffer(MediaSample&);
     bool shouldEnqueueVideoSampleBuffer() const;
     void flushAndRemoveVideoSampleBuffers();
+    void requestNotificationWhenReadyForMediaData();
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
@@ -194,6 +197,7 @@ private:
 
     HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
+    Deque<Ref<MediaSample>> m_sampleQueue;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };

@@ -1,3 +1,33 @@
+2016-11-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream][Mac] Mark captured video frames as ready for display immediately
+        https://bugs.webkit.org/show_bug.cgi?id=164482
+        <rdar://problem/29139073>
+
+        Reviewed by Jer Noble.
+
+        * platform/cf/CoreMediaSoftLink.cpp: Add new constant.
+        * platform/cf/CoreMediaSoftLink.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForMediaData):
+          New, ask register for a callback when the sample buffer display layer is ready
+          for more media data.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBuffer): Don't change
+          the sample timestamps, assume the caller has configured the sample correctly.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::prepareVideoSampleBufferFromTrack): Don't
+          drop frames when the display layer isn't ready.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer): Call stopRequestingMediaData.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack): Deleted.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setupCaptureSession): Tell the video output to always discard
+          late video frames, we don't need them.
+        (WebCore::AVVideoCaptureSource::processNewFrame): Add a kCMSampleAttachmentKey_DisplayImmediately
+          attachment.
+
 2016-11-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Wrong selected element at a given index in a list box (redux)
