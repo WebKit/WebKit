@@ -1,3 +1,9 @@
+2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r160616 to fix the build on case sensitive file systems.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+
 2016-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Layout test http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html fails

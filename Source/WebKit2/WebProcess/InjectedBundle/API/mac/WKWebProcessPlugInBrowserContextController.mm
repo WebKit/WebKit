@@ -44,7 +44,7 @@
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WKURLRequestNS.h"
-#import "WKWebProcessPluginFrameInternal.h"
+#import "WKWebProcessPlugInFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInFormDelegatePrivate.h"
 #import "WKWebProcessPlugInLoadDelegate.h"
