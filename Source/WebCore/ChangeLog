@@ -1,3 +1,63 @@
+2016-11-09  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Introduce asynchronous backend for other RTCPeerConnection API
+        https://bugs.webkit.org/show_bug.cgi?id=164409
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        Following on createOffer changes, applying the same changes to createAnswer, setLocalDescription, setRemoteDescription and addIceCandidate.
+        Also refactored ICE candidate event generation (done at PeerConnectionBackend).
+        Updated stop implementation to clean any promise that may be stored in PeerConnectionBackend.
+
+        The goal of this is to be more aligned with https://www.w3.org/TR/webrtc/.
+        Implementation of the various functions such as //www.w3.org/TR/webrtc/#set-description would be done in PeerConnectionBackend.
+        This will require additional code moved from MediaEndpointPeerConnection up to PeerConnectionBackend.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::doCreateAnswer):
+        (WebCore::MediaEndpointPeerConnection::createAnswerTask):
+        (WebCore::MediaEndpointPeerConnection::doSetLocalDescription):
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::doSetRemoteDescription):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::doAddIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::addIceCandidateTask):
+        (WebCore::MediaEndpointPeerConnection::doStop):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::doneGatheringCandidates):
+        (WebCore::MediaEndpointPeerConnection::createAnswer): Deleted.
+        (WebCore::MediaEndpointPeerConnection::setLocalDescription): Deleted.
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescription): Deleted.
+        (WebCore::MediaEndpointPeerConnection::addIceCandidate): Deleted.
+        (WebCore::MediaEndpointPeerConnection::stop): Deleted.
+        (WebCore::MediaEndpointPeerConnection::localDescriptionTypeValidForState): Deleted.
+        (WebCore::MediaEndpointPeerConnection::remoteDescriptionTypeValidForState): Deleted.
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOffer):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswer):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::isLocalDescriptionTypeValidForState):
+        (WebCore::PeerConnectionBackend::setLocalDescription):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionFailed):
+        (WebCore::isRemoteDescriptionTypeValidForState):
+        (WebCore::PeerConnectionBackend::setRemoteDescription):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionFailed):
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateFailed):
+        (WebCore::PeerConnectionBackend::fireICECandidateEvent):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        (WebCore::PeerConnectionBackend::stop):
+        * Modules/mediastream/PeerConnectionBackend.h:
+
 2016-11-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream][Mac] Mark captured video frames as ready for display immediately

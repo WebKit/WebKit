@@ -1,3 +1,15 @@
+2016-11-09  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Introduce asynchronous backend for other RTCPeerConnection API
+        https://bugs.webkit.org/show_bug.cgi?id=164409
+
+        Reviewed by Eric Carlson.
+
+        Rebasing test as patch changes the order in which error cases are checked in case of setRemoteDescription/setLocalDescription.
+        New order tries to follow more closely https://www.w3.org/TR/webrtc/#set-description.
+
+        * fast/mediastream/RTCPeerConnection-stable-expected.txt:
+
 2016-11-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Wrong selected element at a given index in a list box (redux)

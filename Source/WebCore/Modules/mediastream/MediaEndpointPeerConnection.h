@@ -54,21 +54,15 @@ class MediaEndpointPeerConnection final : public PeerConnectionBackend, public M
 public:
     MediaEndpointPeerConnection(RTCPeerConnection&);
 
-    void doCreateOffer(RTCOfferOptions&&) final;
-    void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&) override;
-
-    void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) override;
     RefPtr<RTCSessionDescription> localDescription() const override;
     RefPtr<RTCSessionDescription> currentLocalDescription() const override;
     RefPtr<RTCSessionDescription> pendingLocalDescription() const override;
 
-    void setRemoteDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&) override;
     RefPtr<RTCSessionDescription> remoteDescription() const override;
     RefPtr<RTCSessionDescription> currentRemoteDescription() const override;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const override;
 
     void setConfiguration(RTCConfiguration&) override;
-    void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&) override;
 
     void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) override;
 
@@ -76,8 +70,6 @@ public:
 
     RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
-
-    void stop() override;
 
     bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
     void markAsNeedingNegotiation() override;
@@ -89,13 +81,20 @@ private:
     void runTask(Function<void ()>&&);
     void startRunningTasks();
 
+    void doCreateOffer(RTCOfferOptions&&) final;
+    void doCreateAnswer(RTCAnswerOptions&&) final;
+    void doSetLocalDescription(RTCSessionDescription&) final;
+    void doSetRemoteDescription(RTCSessionDescription&) final;
+    void doAddIceCandidate(RTCIceCandidate&) final;
+    void doStop() final;
+
     void createOfferTask(const RTCOfferOptions&);
-    void createAnswerTask(const RTCAnswerOptions&, PeerConnection::SessionDescriptionPromise&);
+    void createAnswerTask(const RTCAnswerOptions&);
 
-    void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
-    void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&, PeerConnection::VoidPromise&);
+    void setLocalDescriptionTask(RefPtr<RTCSessionDescription>&&);
+    void setRemoteDescriptionTask(RefPtr<RTCSessionDescription>&&);
 
-    void addIceCandidateTask(RTCIceCandidate&, PeerConnection::VoidPromise&);
+    void addIceCandidateTask(RTCIceCandidate&);
 
     void replaceTrackTask(RTCRtpSender&, const String& mid, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&);
 
