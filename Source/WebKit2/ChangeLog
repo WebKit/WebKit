@@ -1,3 +1,24 @@
+2016-11-09  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208437. rdar://problem/29032334
+
+    2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+            [WK2] Network cache speculative revalidation can cause loads to hang
+            https://bugs.webkit.org/show_bug.cgi?id=164532
+            <rdar://problem/28519331>
+
+            Reviewed by Alex Christensen.
+
+            Network cache speculative revalidation could cause loads to hang when HTTP
+            authentication was involved because NetworkCacheSpeculativeLoad failed to
+            call NetworkLoad::continueCanAuthenticateAgainstProtectionSpace() in its
+            canAuthenticateAgainstProtectionSpaceAsync() callback.
+
+            * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+            (WebKit::NetworkCache::SpeculativeLoad::canAuthenticateAgainstProtectionSpaceAsync):
+            * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+
 2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r208328. rdar://problem/29084886

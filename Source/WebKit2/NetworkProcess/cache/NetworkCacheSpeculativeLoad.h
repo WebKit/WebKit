@@ -54,7 +54,7 @@ public:
 private:
     // NetworkLoadClient.
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
-    void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override { }
+    void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
     bool isSynchronous() const override { return false; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) override;
     ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) override;

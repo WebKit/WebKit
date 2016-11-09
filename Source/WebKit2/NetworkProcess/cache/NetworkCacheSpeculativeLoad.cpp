@@ -114,6 +114,11 @@ void SpeculativeLoad::didFinishLoading(double finishTime)
     didComplete();
 }
 
+void SpeculativeLoad::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&)
+{
+    m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(false);
+}
+
 void SpeculativeLoad::didFailLoading(const ResourceError&)
 {
     m_cacheEntryForValidation = nullptr;
