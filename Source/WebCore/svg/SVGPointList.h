@@ -26,6 +26,9 @@
 
 namespace WebCore {
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGPointList final : public Vector<SVGPoint> {
 public:
     String valueAsString() const;
@@ -33,7 +36,9 @@ public:
 
 template<> struct SVGPropertyTraits<SVGPointList> {
     static SVGPointList initialValue() { return SVGPointList(); }
-    typedef SVGPoint ListItemType;
+
+    using ListItemType = SVGPoint;
+    using ListItemTearOff = SVGPropertyTearOff<SVGPoint>;
 };
 
 } // namespace WebCore

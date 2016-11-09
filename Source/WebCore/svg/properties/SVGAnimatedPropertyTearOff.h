@@ -18,19 +18,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedPropertyTearOff_h
-#define SVGAnimatedPropertyTearOff_h
+#pragma once
 
 #include "SVGAnimatedProperty.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
 
-template<typename PropertyType>
+template<typename T>
 class SVGAnimatedPropertyTearOff final : public SVGAnimatedProperty {
 public:
-    typedef SVGPropertyTearOff<PropertyType> PropertyTearOff;
-    typedef PropertyType ContentType;
+    using PropertyTearOff = T;
+    using PropertyType = typename PropertyTearOff::PropertyType;
+    using ContentType = PropertyType;
 
     RefPtr<PropertyTearOff> baseVal()
     {
@@ -62,10 +62,10 @@ public:
             m_animVal = nullptr;
     }
 
-    static Ref<SVGAnimatedPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
+    static Ref<SVGAnimatedPropertyTearOff<PropertyTearOff>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
     {
         ASSERT(contextElement);
-        return adoptRef(*new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, property));
+        return adoptRef(*new SVGAnimatedPropertyTearOff<PropertyTearOff>(contextElement, attributeName, animatedPropertyType, property));
     }
 
     PropertyType& currentAnimatedValue()
@@ -121,5 +121,3 @@ private:
 };
 
 }
-
-#endif // SVGAnimatedPropertyTearOff_h

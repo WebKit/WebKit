@@ -86,7 +86,7 @@ template<> struct SVGPropertyTraits<SVGMarkerOrientType> {
 
     // toString is not needed, synchronizeOrientType() handles this on its own.
 
-    static SVGMarkerOrientType fromString(const String& value, SVGAngle& angle)
+    static SVGMarkerOrientType fromString(const String& value, SVGAngleValue& angle)
     {
         if (value == "auto")
             return SVGMarkerOrientAuto;
@@ -122,7 +122,7 @@ public:
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
     void setOrientToAuto();
-    void setOrientToAngle(const SVGAngle&);
+    void setOrientToAngle(SVGAngle&);
 
     static const SVGPropertyInfo* orientTypePropertyInfo();
 
@@ -141,7 +141,7 @@ private:
 
     bool selfHasRelativeLengths() const override;
 
-    void setOrient(SVGMarkerOrientType, const SVGAngle&);
+    void setOrient(SVGMarkerOrientType, const SVGAngleValue&);
 
     void synchronizeOrientType();
 

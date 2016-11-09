@@ -26,14 +26,14 @@ namespace WebCore {
 template<typename PropertyType>
 class SVGListPropertyTearOff : public SVGListProperty<PropertyType> {
 public:
-    typedef SVGListProperty<PropertyType> Base;
-    typedef SVGListPropertyTearOff<PropertyType> Self;
+    using Base = SVGListProperty<PropertyType>;
+    using Self = SVGListPropertyTearOff<PropertyType>;
 
-    typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
-    typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
-    typedef RefPtr<ListItemTearOff> PtrListItemTearOff;
-    typedef SVGAnimatedListPropertyTearOff<PropertyType> AnimatedListPropertyTearOff;
-    typedef typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache ListWrapperCache;
+    using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
+    using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
+    using PtrListItemTearOff = RefPtr<ListItemTearOff>;
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<PropertyType>;
+    using ListWrapperCache = typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache;
 
     using Base::m_role;
     using Base::m_values;

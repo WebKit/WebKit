@@ -29,7 +29,6 @@
 #include "SVGAltGlyphDefElement.cpp"
 #include "SVGAltGlyphElement.cpp"
 #include "SVGAltGlyphItemElement.cpp"
-#include "SVGAngle.cpp"
 #include "SVGAnimateColorElement.cpp"
 #include "SVGAnimateElement.cpp"
 #include "SVGAnimateElementBase.cpp"

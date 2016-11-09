@@ -29,6 +29,9 @@ namespace WebCore {
 
 class SVGElement;
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGPathSegList : public Vector<RefPtr<SVGPathSeg>> {
 public:
     explicit SVGPathSegList(SVGPathSegRole role)
@@ -47,7 +50,9 @@ private:
 
 template<> struct SVGPropertyTraits<SVGPathSegList> {
     static SVGPathSegList initialValue() { return SVGPathSegList(PathSegUndefinedRole); }
-    typedef RefPtr<SVGPathSeg> ListItemType;
+
+    using ListItemType = RefPtr<SVGPathSeg>;
+    using ListItemTearOff = SVGPropertyTearOff<RefPtr<SVGPathSeg>>;
 };
 
 } // namespace WebCore

@@ -90,7 +90,7 @@ SVGAnimatedType::~SVGAnimatedType()
     }
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngle, unsigned>> angleAndEnumeration)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngleValue, unsigned>> angleAndEnumeration)
 {
     ASSERT(angleAndEnumeration);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedAngle);

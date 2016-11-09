@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "SVGAngle.h"
+#include "SVGAngleValue.h"
 
 #include "ExceptionCode.h"
 #include "SVGParserUtilities.h"
@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-float SVGAngle::value() const
+float SVGAngleValue::value() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_GRAD:
@@ -45,7 +45,7 @@ float SVGAngle::value() const
     return 0;
 }
 
-void SVGAngle::setValue(float value)
+void SVGAngleValue::setValue(float value)
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_GRAD:
@@ -63,7 +63,7 @@ void SVGAngle::setValue(float value)
     ASSERT_NOT_REACHED();
 }
 
-String SVGAngle::valueAsString() const
+String SVGAngleValue::valueAsString() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_DEG:
@@ -81,26 +81,26 @@ String SVGAngle::valueAsString() const
     return String();
 }
 
-static inline SVGAngle::SVGAngleType parseAngleType(const UChar* ptr, const UChar* end)
+static inline SVGAngleValue::Type parseAngleType(const UChar* ptr, const UChar* end)
 {
     switch (end - ptr) {
     case 0:
-        return SVGAngle::SVG_ANGLETYPE_UNSPECIFIED;
+        return SVGAngleValue::SVG_ANGLETYPE_UNSPECIFIED;
     case 3:
         if (ptr[0] == 'd' && ptr[1] == 'e' && ptr[2] == 'g')
-            return SVGAngle::SVG_ANGLETYPE_DEG;
+            return SVGAngleValue::SVG_ANGLETYPE_DEG;
         if (ptr[0] == 'r' && ptr[1] == 'a' && ptr[2] == 'd')
-            return SVGAngle::SVG_ANGLETYPE_RAD;
+            return SVGAngleValue::SVG_ANGLETYPE_RAD;
         break;
     case 4:
         if (ptr[0] == 'g' && ptr[1] == 'r' && ptr[2] == 'a' && ptr[3] == 'd')
-            return SVGAngle::SVG_ANGLETYPE_GRAD;
+            return SVGAngleValue::SVG_ANGLETYPE_GRAD;
         break;
     }
-    return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
+    return SVGAngleValue::SVG_ANGLETYPE_UNKNOWN;
 }
 
-ExceptionOr<void> SVGAngle::setValueAsString(const String& value)
+ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
 {
     if (value.isEmpty()) {
         m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
@@ -124,17 +124,17 @@ ExceptionOr<void> SVGAngle::setValueAsString(const String& value)
     return { };
 }
 
-ExceptionOr<void> SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
+ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
     if (unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
         return Exception { NOT_SUPPORTED_ERR };
 
-    m_unitType = static_cast<SVGAngleType>(unitType);
+    m_unitType = static_cast<Type>(unitType);
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
     return { };
 }
 
-ExceptionOr<void> SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
+ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType)
 {
     if (unitType == SVG_ANGLETYPE_UNKNOWN || m_unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
         return Exception { NOT_SUPPORTED_ERR };
@@ -196,7 +196,7 @@ ExceptionOr<void> SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
         break;
     }
 
-    m_unitType = static_cast<SVGAngleType>(unitType);
+    m_unitType = static_cast<Type>(unitType);
 
     return { };
 }

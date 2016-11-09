@@ -26,6 +26,9 @@
 
 namespace WebCore {
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGTransformList final : public Vector<SVGTransform, 1> {
 public:
     SVGTransform createSVGTransformFromMatrix(const SVGMatrix&) const;
@@ -40,7 +43,9 @@ public:
 template<> struct SVGPropertyTraits<SVGTransformList> {
     static SVGTransformList initialValue() { return SVGTransformList(); }
     static String toString(const SVGTransformList& type) { return type.valueAsString(); }
-    typedef SVGTransform ListItemType;
+
+    using ListItemType = SVGTransform;
+    using ListItemTearOff = SVGPropertyTearOff<SVGTransform>;
 };
 
 } // namespace WebCore

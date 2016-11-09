@@ -25,6 +25,7 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 

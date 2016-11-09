@@ -26,7 +26,10 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedPropertyTearOff<SVGPreserveAspectRatio> SVGAnimatedPreserveAspectRatio;
+template<typename T> 
+class SVGPropertyTearOff;
+
+using SVGAnimatedPreserveAspectRatio = SVGAnimatedPropertyTearOff<SVGPropertyTearOff<SVGPreserveAspectRatio>>;
 
 // Helper macros to declare/define a SVGAnimatedPreserveAspectRatio object
 #define DECLARE_ANIMATED_PRESERVEASPECTRATIO(UpperProperty, LowerProperty) \

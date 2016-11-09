@@ -1,3 +1,105 @@
+2016-11-09  Sam Weinig  <sam@webkit.org>
+
+        [SVG] Start moving special casing of SVG out of the bindings - SVGAngle
+        https://bugs.webkit.org/show_bug.cgi?id=164496
+
+        Reviewed by Darin Adler.
+
+        There is quite a bit of special casing of SVG types in the bindings that adds
+        a lot of complexity and is relatively fragile, as it is based on type naming.
+
+        Instead of keeping the complexity in the bindings, I am going to move it into
+        the implementation, where it has also longed to be. 
+
+        Starting small, with just SVGAngle. It has been split in two, with the existing
+        SVGAngle being renamed SVGAngleValue, and the bound instance, which used to be name
+        SVGPropertyTearOff<SVGAngle>, taking the name SVGAngle (and inheriting from 
+        SVGPropertyTearOff<SVGAngleValue>).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add SVGAngleValue.cpp
+
+        * bindings/scripts/CodeGenerator.pm:
+        Remove SVGAngle as a special case.
+
+        * svg/SVGAngle.cpp: Removed.
+        * svg/SVGAngle.h:
+        Added. Implements the SVGAngle interface explicitly, getting to
+        the SVGAngleValue through propertyReference().
+
+        * svg/SVGAngle.idl:
+        * svg/SVGAngleValue.cpp: Copied from Source/WebCore/svg/SVGAngle.cpp.
+        * svg/SVGAngleValue.h: Copied from Source/WebCore/svg/SVGAngle.h.
+        Move old SVGAngle implementation to SVGAngleValue.
+
+        * svg/SVGAnimatedAngle.cpp:
+        Replace SVGAngle usage with SVGAngleValue.
+
+        * svg/SVGAnimatedAngle.h:
+        Switch SVGAnimatedAngle to be a type alias. This remains SVGAnimatedPropertyTearOff<SVGAngle>
+        as SVGAnimatedPropertyTearOff has been changed to take the TearOff type as its parameter.
+
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.h:
+        Switch to using type aliases and pass the TearOff to SVGAnimatedPropertyTearOff.
+
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::createAngleAndEnumeration):
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::angleAndEnumeration):
+        Use SVGAngleValue.
+
+        * svg/SVGComponentTransferFunctionElement.h:
+        Add missing include of SVGElement.h (need because it removed from SVGPropertyTearOff).
+
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseAttribute):
+        (WebCore::SVGMarkerElement::setOrient):
+        Switch to take an SVGAngleValue.
+
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        Update to pull the value out via propertyReference().
+
+        * svg/SVGMarkerElement.h:
+        Switch to take an SVGAngleValue.
+
+        * svg/SVGLengthList.h:
+        * svg/SVGNumberList.h:
+        * svg/SVGPathSegList.h:
+        * svg/SVGPointList.h:
+        * svg/SVGStringList.h:
+        * svg/SVGTransformList.h:
+        Switch to using type aliases in SVGPropertyTraits and add an alias for
+        ListItemTearOff.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGAngle):
+        * svg/SVGSVGElement.h:
+        Change createSVGAngle to return a Ref<SVGAngle> and create one.
+
+        * svg/SVGSVGElement.idl:
+        Annotate IDL to indicate that a new value is being returned.
+
+        * svg/SVGTransform.cpp:
+        Remove unnecessary include of SVGAngle.h.
+
+        * svg/SVGViewSpec.cpp:
+        Add missing include of SVGElement.h (need because it removed from SVGPropertyTearOff).
+
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        Change to be parameterized on the TearOffType, rather than the PropertyType itself. Get the
+        Property type from the TearOffType.
+
+        * svg/properties/SVGListProperty.h:
+        * svg/properties/SVGListPropertyTearOff.h:
+        Fix assumption that all TearOffTypes are just a SVGPropertyTearOff templatized on a property
+        type. This is no longer true for SVGAngle. Instead, get the TearOffType for lists via SVGPropertyTraits.
+
+        * svg/properties/SVGPropertyTearOff.h:
+        Make the PropertyType available by exposing it as a type alias.
+
 2016-11-09  Darin Adler  <darin@apple.com>
 
         Move Range from ExceptionCode to ExceptionOr

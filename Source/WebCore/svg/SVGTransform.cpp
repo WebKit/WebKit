@@ -24,7 +24,6 @@
 #include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
-#include "SVGAngle.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>

@@ -21,7 +21,7 @@
 #define SVGAnimatedType_h
 
 #include "FloatRect.h"
-#include "SVGAngle.h"
+#include "SVGAngleValue.h"
 #include "SVGColor.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
@@ -41,7 +41,7 @@ public:
     SVGAnimatedType(AnimatedPropertyType);
     virtual ~SVGAnimatedType();
 
-    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngle, unsigned>>);
+    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngleValue, unsigned>>);
     static std::unique_ptr<SVGAnimatedType> createBoolean(std::unique_ptr<bool>);
     static std::unique_ptr<SVGAnimatedType> createColor(std::unique_ptr<Color>);
     static std::unique_ptr<SVGAnimatedType> createEnumeration(std::unique_ptr<unsigned>);
@@ -63,7 +63,7 @@ public:
     AnimatedPropertyType type() const { return m_type; }
 
     // Non-mutable accessors.
-    const std::pair<SVGAngle, unsigned>& angleAndEnumeration() const
+    const std::pair<SVGAngleValue, unsigned>& angleAndEnumeration() const
     {
         ASSERT(m_type == AnimatedAngle);
         return *m_data.angleAndEnumeration;
@@ -166,7 +166,7 @@ public:
     }
 
     // Mutable accessors.
-    std::pair<SVGAngle, unsigned>& angleAndEnumeration()
+    std::pair<SVGAngleValue, unsigned>& angleAndEnumeration()
     {
         ASSERT(m_type == AnimatedAngle);
         return *m_data.angleAndEnumeration;
@@ -280,7 +280,7 @@ private:
         {
         }
 
-        std::pair<SVGAngle, unsigned>* angleAndEnumeration;
+        std::pair<SVGAngleValue, unsigned>* angleAndEnumeration;
         bool* boolean;
         Color* color;
         unsigned* enumeration;

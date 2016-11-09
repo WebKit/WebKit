@@ -2837,6 +2837,7 @@
 		7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
+		7C8F22441DD3C2F600E92DA3 /* SVGAngleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */; };
 		7C93F3491AA6BA5E00A98BAB /* CompiledContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */; };
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34D1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */; };
@@ -4470,7 +4471,6 @@
 		B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DC0D00BF1F0071B782 /* RadialGradientAttributes.h */; };
 		B22279730D00BF220071B782 /* SVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */; };
 		B22279740D00BF220071B782 /* SVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DE0D00BF1F0071B782 /* SVGAElement.h */; };
-		B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E00D00BF1F0071B782 /* SVGAngle.cpp */; };
 		B22279770D00BF220071B782 /* SVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E10D00BF1F0071B782 /* SVGAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */; };
 		B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E40D00BF1F0071B782 /* SVGAnimateColorElement.h */; };
@@ -10207,6 +10207,8 @@
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
+		7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAngleValue.cpp; sourceTree = "<group>"; };
+		7C8F22431DD3B3B900E92DA3 /* SVGAngleValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAngleValue.h; sourceTree = "<group>"; };
 		7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompiledContentExtension.cpp; sourceTree = "<group>"; };
 		7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledContentExtension.h; sourceTree = "<group>"; };
 		7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionCompiler.cpp; sourceTree = "<group>"; };
@@ -12062,7 +12064,6 @@
 		B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAElement.cpp; sourceTree = "<group>"; };
 		B22277DE0D00BF1F0071B782 /* SVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGAElement.h; sourceTree = "<group>"; };
 		B22277DF0D00BF1F0071B782 /* SVGAElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAElement.idl; sourceTree = "<group>"; };
-		B22277E00D00BF1F0071B782 /* SVGAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAngle.cpp; sourceTree = "<group>"; };
 		B22277E10D00BF1F0071B782 /* SVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGAngle.h; sourceTree = "<group>"; };
 		B22277E20D00BF1F0071B782 /* SVGAngle.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAngle.idl; sourceTree = "<group>"; };
 		B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateColorElement.cpp; sourceTree = "<group>"; };
@@ -20687,9 +20688,10 @@
 				24D912B413CA9A6900D21915 /* SVGAltGlyphItemElement.cpp */,
 				24D912B513CA9A6900D21915 /* SVGAltGlyphItemElement.h */,
 				24D912B613CA9A6900D21915 /* SVGAltGlyphItemElement.idl */,
-				B22277E00D00BF1F0071B782 /* SVGAngle.cpp */,
 				B22277E10D00BF1F0071B782 /* SVGAngle.h */,
 				B22277E20D00BF1F0071B782 /* SVGAngle.idl */,
+				7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */,
+				7C8F22431DD3B3B900E92DA3 /* SVGAngleValue.h */,
 				B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */,
 				B22277E40D00BF1F0071B782 /* SVGAnimateColorElement.h */,
 				B22277E50D00BF1F0071B782 /* SVGAnimateColorElement.idl */,
@@ -30929,7 +30931,6 @@
 				24D912B013CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp in Sources */,
 				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
 				24D912B713CA9A6900D21915 /* SVGAltGlyphItemElement.cpp in Sources */,
-				B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */,
 				B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */,
 				4362C7B913AC6F1A00344BEB /* SVGAnimatedAngle.cpp in Sources */,
 				431A308813B8F978007791E4 /* SVGAnimatedBoolean.cpp in Sources */,
@@ -31134,6 +31135,7 @@
 				CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */,
 				93309E1B099E64920056E581 /* TextIterator.cpp in Sources */,
 				E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */,
+				7C8F22441DD3C2F600E92DA3 /* SVGAngleValue.cpp in Sources */,
 				1C18DA58181AF6A500C4EF22 /* TextPainter.cpp in Sources */,
 				E4C91A101802343900A17F6D /* TextPaintStyle.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */,

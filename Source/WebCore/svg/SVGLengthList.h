@@ -25,6 +25,9 @@
 
 namespace WebCore {
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGLengthList final : public Vector<SVGLength> {
 public:
     void parse(const String& value, SVGLengthMode);
@@ -32,7 +35,8 @@ public:
 };
 
 template<> struct SVGPropertyTraits<SVGLengthList> {
-    typedef SVGLength ListItemType;
+    using ListItemType = SVGLength;
+    using ListItemTearOff = SVGPropertyTearOff<SVGLength>;
 
     static SVGLengthList initialValue() { return SVGLengthList(); }
     static String toString(const SVGLengthList& type) { return type.valueAsString(); }

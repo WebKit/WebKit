@@ -119,7 +119,6 @@ my %svgAttributesInHTMLHash = (
 );
 
 my %svgTypeNeedingTearOff = (
-    "SVGAngle" => "SVGPropertyTearOff<SVGAngle>",
     "SVGLength" => "SVGPropertyTearOff<SVGLength>",
     "SVGLengthList" => "SVGListPropertyTearOff<SVGLengthList>",
     "SVGMatrix" => "SVGPropertyTearOff<SVGMatrix>",

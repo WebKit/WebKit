@@ -42,7 +42,7 @@ public:
     typedef SVGListProperty<PropertyType> Self;
 
     using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
-    using ListItemTearOff = SVGPropertyTearOff<ListItemType>;
+    using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
     using PtrListItemTearOff = RefPtr<ListItemTearOff>;
     using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<PropertyType>;
     using ListWrapperCache = typename AnimatedListPropertyTearOff::ListWrapperCache;

@@ -33,6 +33,7 @@
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SMILTimeContainer.h"
+#include "SVGAngle.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #include "StaticNodeList.h"
@@ -350,9 +351,9 @@ SVGLength SVGSVGElement::createSVGLength()
     return { };
 }
 
-SVGAngle SVGSVGElement::createSVGAngle()
+Ref<SVGAngle> SVGSVGElement::createSVGAngle()
 {
-    return { };
+    return SVGAngle::create();
 }
 
 SVGPoint SVGSVGElement::createSVGPoint()

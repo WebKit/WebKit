@@ -64,7 +64,7 @@ interface SVGSVGElement : SVGGraphicsElement {
 
     SVGNumber createSVGNumber();
     SVGLength createSVGLength();
-    SVGAngle createSVGAngle();
+    [NewObject] SVGAngle createSVGAngle();
     SVGPoint createSVGPoint();
     SVGMatrix createSVGMatrix();
     SVGRect createSVGRect();

@@ -29,8 +29,8 @@ interface SVGAngle {
     const unsigned short SVG_ANGLETYPE_GRAD = 4;
 
     readonly attribute unsigned short unitType;
-    attribute unrestricted float value;
-    attribute unrestricted float valueInSpecifiedUnits;
+    [SetterMayThrowException, ImplementedAs=valueForBindings] attribute unrestricted float value;
+    [SetterMayThrowException] attribute unrestricted float valueInSpecifiedUnits;
 
     [SetterMayThrowException] attribute DOMString valueAsString;
 

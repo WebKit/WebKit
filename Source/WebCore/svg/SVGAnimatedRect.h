@@ -27,7 +27,10 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedPropertyTearOff<FloatRect> SVGAnimatedRect;
+template<typename T> 
+class SVGPropertyTearOff;
+
+using SVGAnimatedRect = SVGAnimatedPropertyTearOff<SVGPropertyTearOff<FloatRect>>;
 
 // Helper macros to declare/define a SVGAnimatedRect object
 #define DECLARE_ANIMATED_RECT(UpperProperty, LowerProperty) \

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class SVGAngle;
 class SVGViewSpec;
 class SMILTimeContainer;
 
@@ -90,7 +91,7 @@ public: // DOM
 
     static float createSVGNumber();
     static SVGLength createSVGLength();
-    static SVGAngle createSVGAngle();
+    static Ref<SVGAngle> createSVGAngle();
     static SVGPoint createSVGPoint();
     static SVGMatrix createSVGMatrix();
     static FloatRect createSVGRect();

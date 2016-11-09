@@ -20,22 +20,25 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "SVGAnimatedProperty.h"
-#include "SVGElement.h"
 #include "SVGProperty.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class SVGElement;
 
 class SVGPropertyTearOffBase : public SVGProperty {
 public:
     virtual void detachWrapper() = 0;
 };
 
-template<typename PropertyType>
+template<typename T>
 class SVGPropertyTearOff : public SVGPropertyTearOffBase {
 public:
-    typedef SVGPropertyTearOff<PropertyType> Self;
+    using PropertyType = T;
+    using Self = SVGPropertyTearOff<PropertyType>;
 
     // Used for child types (baseVal/animVal) of a SVGAnimated* property (for example: SVGAnimatedLength::baseVal()).
     // Also used for list tear offs (for example: text.x.baseVal.getItem(0)).
@@ -56,7 +59,7 @@ public:
         return adoptRef(*new Self(initialValue));
     }
 
-    template<typename T> static ExceptionOr<Ref<Self>> create(ExceptionOr<T>&& initialValue)
+    template<typename U> static ExceptionOr<Ref<Self>> create(ExceptionOr<U>&& initialValue)
     {
         if (initialValue.hasException())
             return initialValue.releaseException();

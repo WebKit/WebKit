@@ -2680,7 +2680,7 @@ set(WebCore_SOURCES
     svg/SVGAltGlyphDefElement.cpp
     svg/SVGAltGlyphElement.cpp
     svg/SVGAltGlyphItemElement.cpp
-    svg/SVGAngle.cpp
+    svg/SVGAngleValue.cpp
     svg/SVGAnimateColorElement.cpp
     svg/SVGAnimateElement.cpp
     svg/SVGAnimateElementBase.cpp

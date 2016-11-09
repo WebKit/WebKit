@@ -132,7 +132,7 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 
     if (name == SVGNames::orientAttr) {
-        SVGAngle angle;
+        SVGAngleValue angle;
         auto orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(value, angle);
         if (orientType > 0)
             setOrientTypeBaseValue(orientType);
@@ -189,7 +189,7 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-void SVGMarkerElement::setOrient(SVGMarkerOrientType orientType, const SVGAngle& angle)
+void SVGMarkerElement::setOrient(SVGMarkerOrientType orientType, const SVGAngleValue& angle)
 {
     setOrientTypeBaseValue(orientType);
     setOrientAngleBaseValue(angle);
@@ -206,9 +206,9 @@ void SVGMarkerElement::setOrientToAuto()
     setOrient(SVGMarkerOrientAuto, { });
 }
 
-void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
+void SVGMarkerElement::setOrientToAngle(SVGAngle& angle)
 {
-    setOrient(SVGMarkerOrientAngle, angle);
+    setOrient(SVGMarkerOrientAngle, angle.propertyReference());
 }
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

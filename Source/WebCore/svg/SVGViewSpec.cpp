@@ -22,6 +22,7 @@
 
 #include "Document.h"
 #include "SVGAnimatedTransformList.h"
+#include "SVGElement.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

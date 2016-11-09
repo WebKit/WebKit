@@ -26,7 +26,10 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedPropertyTearOff<SVGLength> SVGAnimatedLength;
+template<typename T> 
+class SVGPropertyTearOff;
+
+using SVGAnimatedLength = SVGAnimatedPropertyTearOff<SVGPropertyTearOff<SVGLength>>;
 
 // Helper macros to declare/define a SVGAnimatedLength object
 #define DECLARE_ANIMATED_LENGTH(UpperProperty, LowerProperty) \

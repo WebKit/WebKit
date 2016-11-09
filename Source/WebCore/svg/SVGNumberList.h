@@ -25,6 +25,9 @@
 
 namespace WebCore {
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGNumberList final : public Vector<float> {
 public:
     void parse(const String&);
@@ -32,10 +35,11 @@ public:
 };
 
 template<> struct SVGPropertyTraits<SVGNumberList> {
-    typedef float ListItemType;
-
     static SVGNumberList initialValue() { return SVGNumberList(); }
     static String toString(const SVGNumberList& type) { return type.valueAsString(); }
+
+    using ListItemType = float;
+    using ListItemTearOff = SVGPropertyTearOff<float>;
 };
 
 } // namespace WebCore

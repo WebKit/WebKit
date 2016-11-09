@@ -28,6 +28,9 @@ namespace WebCore {
 
 class SVGElement;
 
+template<typename T> 
+class SVGPropertyTearOff;
+
 class SVGStringList final : public Vector<String> {
 public:
     SVGStringList(const QualifiedName& attributeName)
@@ -48,7 +51,8 @@ private:
 };
 
 template<> struct SVGPropertyTraits<SVGStringList> {
-    typedef String ListItemType;
+    using ListItemType = String;
+    using ListItemTearOff = SVGPropertyTearOff<String>;
 };
 
 } // namespace WebCore
