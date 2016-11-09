@@ -314,6 +314,8 @@ public:
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
 
+    void registerDefaultPortForProtocol(unsigned short port, const String& protocol);
+
     Ref<MallocStatistics> mallocStatistics() const;
     Ref<TypeConversions> typeConversions() const;
     Ref<MemoryInfo> memoryInfo() const;

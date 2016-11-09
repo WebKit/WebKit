@@ -304,6 +304,8 @@ enum UserInterfaceLayoutDirection {
     void registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(DOMString scheme);
 
+    void registerDefaultPortForProtocol(unsigned short port, DOMString scheme);
+
     MallocStatistics mallocStatistics();
     TypeConversions typeConversions();
     MemoryInfo memoryInfo();

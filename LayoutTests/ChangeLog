@@ -1,3 +1,46 @@
+2016-11-09  Daniel Bates  <dabates@apple.com>
+
+        Add test infrastructure and tests for existing HTTP 0.9 sandbox machinery
+        https://bugs.webkit.org/show_bug.cgi?id=164389
+        <rdar://problem/29101072>
+
+        Reviewed by Alex Christensen.
+
+        Add tests for the existing HTTP 0.9 sandbox machinery. Until we fix <https://bugs.webkit.org/show_bug.cgi?id=164387>,
+        these tests can only be run singly (i.e. pass --run-singly to run-webkit-tests). So, we skip
+        these tests to avoid test failures when run-webkit-tests runs in parallel mode (the default
+        mode and the mode used on the buildbots).
+
+        * TestExpectations:
+        * http/tests/security/http-0.9/default-port-plugin-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/default-port-plugin-blocked.html: Added.
+        * http/tests/security/http-0.9/default-port-script-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/default-port-script-blocked.html: Added.
+        * http/tests/security/http-0.9/iframe-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/iframe-blocked.html: Added.
+        * http/tests/security/http-0.9/image-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/image-blocked.html: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-expected.txt: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-ref-test-expected.html: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-ref-test.html: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed.html: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked.html: Added.
+        * http/tests/security/http-0.9/resources/blue-square.png: Added.
+        * http/tests/security/http-0.9/resources/nph-alert-fail.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-fail.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-image-on-HTTP-0.9-default-port-page-allowed.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-image-on-HTTP-0.9-page-blocked.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-image.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-load-plugin-fail.pl: Added.
+        * http/tests/security/http-0.9/resources/nph-worker-fail.pl: Added.
+        * http/tests/security/http-0.9/worker-connect-src-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/worker-connect-src-blocked.html: Added.
+        * http/tests/security/http-0.9/worker-importScripts-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/worker-importScripts-blocked.html: Added.
+        * http/tests/security/http-0.9/xhr-asynchronous-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/xhr-asynchronous-blocked.html: Added.
+
 2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         When editing IME, `compositionend` events should fire after input events

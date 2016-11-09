@@ -800,8 +800,29 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
+using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
+static DefaultPortForProtocolMapForTesting& defaultPortForProtocolMapForTesting()
+{
+    static NeverDestroyed<DefaultPortForProtocolMapForTesting> defaultPortForProtocolMap;
+    return defaultPortForProtocolMap;
+}
+
+void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol)
+{
+    defaultPortForProtocolMapForTesting().add(protocol, port);
+}
+
+void clearDefaultPortForProtocolMapForTesting()
+{
+    defaultPortForProtocolMapForTesting().clear();
+}
+
 Optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
+    const auto& defaultPortForProtocolMap = defaultPortForProtocolMapForTesting();
+    auto iterator = defaultPortForProtocolMap.find(protocol.toStringWithoutCopying());
+    if (iterator != defaultPortForProtocolMap.end())
+        return iterator->value;
     return URLParser::defaultPortForProtocol(protocol);
 }
 

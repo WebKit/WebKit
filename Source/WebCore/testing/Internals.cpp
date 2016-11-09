@@ -375,6 +375,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
     }
 
+    WebCore::clearDefaultPortForProtocolMapForTesting();
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
     WebCore::Settings::setUsesMockScrollAnimator(false);
@@ -2168,6 +2169,11 @@ void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& 
 void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
 {
     SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
+}
+
+void Internals::registerDefaultPortForProtocol(unsigned short port, const String& protocol)
+{
+    registerDefaultPortForProtocolForTesting(port, protocol);
 }
 
 Ref<MallocStatistics> Internals::mallocStatistics() const

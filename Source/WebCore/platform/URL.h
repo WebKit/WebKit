@@ -315,6 +315,9 @@ Optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WEBCORE_EXPORT bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
 WEBCORE_EXPORT bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
 
+WEBCORE_EXPORT void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
+WEBCORE_EXPORT void clearDefaultPortForProtocolMapForTesting();
+
 bool isValidProtocol(const String&);
 
 String mimeTypeFromDataURL(const String& url);

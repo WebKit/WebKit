@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    if (window.internals)
+        internals.registerDefaultPortForProtocol(8000, "http");
+}
+</script>
+</head>
+<body>
+<p id="description">This tests that loading of a plugin is blocked in a HTTP 0.9 response served over port 80. This test PASSED if you see content in the iframe below. Otherwise, it FAILED.</p>
+<iframe src="resources/nph-load-plugin-fail.pl"></iframe>
+</body>
+</html>

@@ -1,3 +1,49 @@
+2016-11-09  Daniel Bates  <dabates@apple.com>
+
+        Add test infrastructure and tests for existing HTTP 0.9 sandbox machinery
+        https://bugs.webkit.org/show_bug.cgi?id=164389
+        <rdar://problem/29101072>
+
+        Reviewed by Alex Christensen.
+
+        Add test infrastructure to support registering an arbitrary port as the default port
+        for a protocol. The behavior of various machinery, including the HTTP 0.9 machinery,
+        can be effected by whether the resource request was made using the default port for
+        the protocol. We expose window.internals.registerDefaultPortForProtocol() to allow
+        a test to override the default port associated with a protocol so as to support
+        testing these code paths using the existing port 8000 server started by run-webkit-httpd.
+        Without window.internals.registerDefaultPortForProtocol() we would need to teach
+        run-webkit-httpd to run a web server on port 80, which requires superuser privileges
+        (since it is a privileged port number) and is more likely to interfere with an
+        existing web server setup.
+
+        Tests: http/tests/security/http-0.9/default-port-plugin-blocked.html
+               http/tests/security/http-0.9/default-port-script-blocked.html
+               http/tests/security/http-0.9/iframe-blocked.html
+               http/tests/security/http-0.9/image-blocked.html
+               http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-ref-test.html
+               http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed.html
+               http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked.html
+               http/tests/security/http-0.9/worker-connect-src-blocked.html
+               http/tests/security/http-0.9/worker-importScripts-blocked.html
+               http/tests/security/http-0.9/xhr-asynchronous-blocked.html
+
+        * platform/URL.cpp:
+        (WebCore::defaultPortForProtocolMapForTesting): Added.
+        (WebCore::registerDefaultPortForProtocolForTesting): Adds the specified (protocol, port) to the
+        mapping used for testing.
+        (WebCore::clearDefaultPortForProtocolMapForTesting): Clears the protocol to default port testing map.
+        We call this function from Internals::resetToConsistentState() so that the mapping is cleared between
+        test runs.
+        (WebCore::defaultPortForProtocol): Modified to check the protocol to default port map for testing
+        before consulting URLParser::defaultPortForProtocol().
+        * platform/URL.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Clear the default port mapping used for testing.
+        (WebCore::Internals::registerDefaultPortForProtocol): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl: Added declaration for registerDefaultPortForProtocol().
+
 2016-11-09  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add proper parsing for Promises
