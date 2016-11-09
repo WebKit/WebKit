@@ -209,7 +209,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
 
 void ImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {
-    if (allDataReceived)
+    if (!allDataReceived)
         return;
 
     COMPtr<IWICStream> stream;

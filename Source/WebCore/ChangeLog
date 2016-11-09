@@ -1,3 +1,15 @@
+2016-11-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Direct2D] Incomplete image decoding.
+        https://bugs.webkit.org/show_bug.cgi?id=164511
+
+        Reviewed by Darin Adler.
+
+        Create native decoder when all image data has been received.
+
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::setData):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.
