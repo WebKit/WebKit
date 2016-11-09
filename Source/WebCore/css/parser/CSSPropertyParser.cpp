@@ -2755,7 +2755,7 @@ static RefPtr<CSSValue> consumeFitContent(CSSParserTokenRange& range, CSSParserM
     if (!length || !args.atEnd())
         return nullptr;
     range = rangeCopy;
-    RefPtr<CSSFunctionValue> result = CSSFunctionValue::create(CSSValueWebkitFitContent);
+    RefPtr<CSSFunctionValue> result = CSSFunctionValue::create(CSSValueFitContent);
     result->append(length.releaseNonNull());
     return result;
 }
@@ -2832,7 +2832,7 @@ static bool isGridTrackFixedSized(const CSSValue& value)
 
     ASSERT(value.isFunctionValue());
     auto& function = downcast<CSSFunctionValue>(value);
-    if (function.name() == CSSValueWebkitFitContent || function.arguments() == nullptr || function.arguments()->length() < 2)
+    if (function.name() == CSSValueFitContent || function.arguments() == nullptr || function.arguments()->length() < 2)
         return false;
 
     CSSValue* minPrimitiveValue = downcast<CSSPrimitiveValue>(function.arguments()->item(0));
@@ -2969,7 +2969,7 @@ static RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange& range, CSSPars
         return result;
     }
 
-    if (token.functionId() == CSSValueWebkitFitContent)
+    if (token.functionId() == CSSValueFitContent)
         return consumeFitContent(range, cssParserMode);
 
     return consumeGridBreadth(range, cssParserMode);
@@ -3041,7 +3041,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
         repetitions = std::min(repetitions, kGridMaxTracks / numberOfTracks);
         for (size_t i = 0; i < repetitions; ++i) {
             for (size_t j = 0; j < repeatedValues->length(); ++j)
-                list.append(adoptRef(*repeatedValues->itemWithoutBoundsCheck(j)));
+                list.append(*repeatedValues->itemWithoutBoundsCheck(j));
         }
     }
     return true;
@@ -3059,7 +3059,7 @@ static RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSSPars
             return nullptr;
         values->append(lineNames.releaseNonNull());
     }
-
+    
     bool allowRepeat = trackListType == GridTemplate;
     bool seenAutoRepeat = false;
     bool allTracksAreFixedSized = true;
@@ -4628,6 +4628,14 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
     return true;
 }
 
+// FIXME-NEWPARSER: Hack to work around the fact that we aren't using CSSCustomIdentValue
+// for stuff yet. This can be replaced by CSSValue::isCustomIdentValue() once we switch
+// to using CSSCustomIdentValue everywhere.
+static bool isCustomIdentValue(const CSSValue& value)
+{
+    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isString();
+}
+
 bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
@@ -4642,7 +4650,7 @@ bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthand
         if (!endValue)
             return false;
     } else {
-        endValue = startValue->isCustomIdentValue() ? startValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        endValue = isCustomIdentValue(*startValue) ? startValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
     }
     if (!m_range.atEnd())
         return false;
@@ -4677,11 +4685,11 @@ bool CSSPropertyParser::consumeGridAreaShorthand(bool important)
     if (!m_range.atEnd())
         return false;
     if (!columnStartValue)
-        columnStartValue = rowStartValue->isCustomIdentValue() ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        columnStartValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
     if (!rowEndValue)
-        rowEndValue = rowStartValue->isCustomIdentValue() ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        rowEndValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
     if (!columnEndValue)
-        columnEndValue = columnStartValue->isCustomIdentValue() ? columnStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        columnEndValue = isCustomIdentValue(*columnStartValue) ? columnStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 
     addProperty(CSSPropertyGridRowStart, CSSPropertyGridArea, rowStartValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridColumnStart, CSSPropertyGridArea, columnStartValue.releaseNonNull(), important);
@@ -4776,6 +4784,32 @@ bool CSSPropertyParser::consumeGridTemplateShorthand(CSSPropertyID shorthandId, 
     return consumeGridTemplateRowsAndAreasAndColumns(shorthandId, important);
 }
 
+static RefPtr<CSSValue> consumeImplicitGridAutoFlow(CSSParserTokenRange& range, Ref<CSSPrimitiveValue>&& flowDirection)
+{
+    // [ auto-flow && dense? ]
+    if (range.atEnd())
+        return nullptr;
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(WTFMove(flowDirection));
+    if (range.peek().id() == CSSValueAutoFlow) {
+        range.consumeIncludingWhitespace();
+        RefPtr<CSSValue> denseIdent = consumeIdent<CSSValueDense>(range);
+        if (denseIdent)
+            list->append(denseIdent.releaseNonNull());
+    } else {
+        // Dense case
+        if (range.peek().id() != CSSValueDense)
+            return nullptr;
+        range.consumeIncludingWhitespace();
+        if (range.atEnd() || range.peek().id() != CSSValueAutoFlow)
+            return nullptr;
+        range.consumeIncludingWhitespace();
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDense));
+    }
+    
+    return WTFMove(list);
+}
+
 bool CSSPropertyParser::consumeGridShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyGrid).length() == 8);
@@ -4796,45 +4830,68 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
 
     m_range = rangeCopy;
 
-    // 2- <grid-auto-flow> [ <grid-auto-rows> [ / <grid-auto-columns> ]? ]
-    RefPtr<CSSValueList> gridAutoFlow = consumeGridAutoFlow(m_range);
-    if (!gridAutoFlow)
-        return false;
-
     RefPtr<CSSValue> autoColumnsValue;
     RefPtr<CSSValue> autoRowsValue;
-
-    if (!m_range.atEnd()) {
-        autoRowsValue = consumeGridTrackList(m_range, m_context.mode, GridAuto);
-        if (!autoRowsValue)
+    RefPtr<CSSValue> templateRows;
+    RefPtr<CSSValue> templateColumns;
+    RefPtr<CSSValue> gridAutoFlow;
+    
+    if (m_range.peek().id() == CSSValueAutoFlow || m_range.peek().id() == CSSValueDense) {
+        // 2- [ auto-flow && dense? ] <grid-auto-rows>? / <grid-template-columns>
+        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSValuePool::singleton().createIdentifierValue(CSSValueRow));
+        if (!gridAutoFlow || m_range.atEnd())
             return false;
-        if (consumeSlashIncludingWhitespace(m_range)) {
+        if (consumeSlashIncludingWhitespace(m_range))
+            autoRowsValue = CSSValuePool::singleton().createImplicitInitialValue();
+        else {
+            autoRowsValue = consumeGridTrackList(m_range, m_context.mode, GridAuto);
+            if (!autoRowsValue)
+                return false;
+            if (!consumeSlashIncludingWhitespace(m_range))
+                return false;
+        }
+        if (m_range.atEnd())
+            return false;
+        templateColumns = consumeGridTemplatesRowsOrColumns(m_range, m_context.mode);
+        if (!templateColumns)
+            return false;
+        templateRows = CSSValuePool::singleton().createImplicitInitialValue();
+        autoColumnsValue = CSSValuePool::singleton().createImplicitInitialValue();
+    } else {
+        // 3- <grid-template-rows> / [ auto-flow && dense? ] <grid-auto-columns>?
+        templateRows = consumeGridTemplatesRowsOrColumns(m_range, m_context.mode);
+        if (!templateRows)
+            return false;
+        if (!consumeSlashIncludingWhitespace(m_range) || m_range.atEnd())
+            return false;
+        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSValuePool::singleton().createIdentifierValue(CSSValueColumn));
+        if (!gridAutoFlow)
+            return false;
+        if (m_range.atEnd())
+            autoColumnsValue = CSSValuePool::singleton().createImplicitInitialValue();
+        else {
             autoColumnsValue = consumeGridTrackList(m_range, m_context.mode, GridAuto);
             if (!autoColumnsValue)
                 return false;
         }
-        if (!m_range.atEnd())
-            return false;
-    } else {
-        // Other omitted values are set to their initial values.
-        autoColumnsValue = CSSValuePool::singleton().createImplicitInitialValue();
+        templateColumns = CSSValuePool::singleton().createImplicitInitialValue();
         autoRowsValue = CSSValuePool::singleton().createImplicitInitialValue();
     }
-
-    // if <grid-auto-columns> value is omitted, it is set to the value specified for grid-auto-rows.
-    if (!autoColumnsValue)
-        autoColumnsValue = autoRowsValue;
-
+    
+    if (!m_range.atEnd())
+        return false;
+    
     // It can only be specified the explicit or the implicit grid properties in a single grid declaration.
     // The sub-properties not specified are set to their initial value, as normal for shorthands.
-    addProperty(CSSPropertyGridTemplateColumns, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyGridTemplateRows, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridTemplateColumns, CSSPropertyGrid, templateColumns.releaseNonNull(), important);
+    addProperty(CSSPropertyGridTemplateRows, CSSPropertyGrid, templateRows.releaseNonNull(), important);
     addProperty(CSSPropertyGridTemplateAreas, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
     addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, gridAutoFlow.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, autoColumnsValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, autoRowsValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridColumnGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
     addProperty(CSSPropertyGridRowGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    
     return true;
 }
 

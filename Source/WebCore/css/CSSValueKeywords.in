@@ -1257,6 +1257,7 @@ span
 
 // grid-template-{columns|rows}
 minmax
+fit-content
 
 // grid-auto-flow
 auto-flow
