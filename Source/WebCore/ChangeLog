@@ -1,3 +1,24 @@
+2016-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Node::ownerDocument
+        https://bugs.webkit.org/show_bug.cgi?id=164004
+
+        Reviewed by Darin Adler.
+
+        Test: js/dom/domjit-accessor-owner-document.html
+
+        Still I cannot reproduce this crash in x64 environment, according to the crash log, it accesses 0x8 address.
+        This can happen if document() accidentally returns nullptr. In the C++ ownerDocument implementation,
+        if document() returns nullptr, it just returns nullptr. But in the DOMJIT implementation, we assume that
+        document() won't return nullptr and access the member of it.
+
+        This patch aligns the DOMJIT implementation strictly to the C++ one.
+
+        * dom/Node.idl:
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::NodeOwnerDocumentDOMJIT::checkDOM):
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOMGetter):
+
 2016-11-09  Sam Weinig  <sam@webkit.org>
 
         [SVG] Start moving special casing of SVG out of the bindings - SVGAngle

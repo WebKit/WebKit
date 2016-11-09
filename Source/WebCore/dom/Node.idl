@@ -53,7 +53,7 @@
     [DOMJIT] readonly attribute Node? lastChild;
     [DOMJIT] readonly attribute Node? previousSibling;
     [DOMJIT] readonly attribute Node? nextSibling;
-    readonly attribute Document? ownerDocument;
+    [DOMJIT] readonly attribute Document? ownerDocument;
 
     [CEReactions, Custom, MayThrowLegacyException] Node insertBefore(Node newChild, Node? refChild);
     [CEReactions, Custom, MayThrowLegacyException] Node replaceChild(Node newChild, Node oldChild);
