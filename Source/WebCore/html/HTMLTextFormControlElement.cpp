@@ -58,11 +58,11 @@ static Position positionForIndex(TextControlInnerTextElement*, unsigned);
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
-    , m_cachedSelectionStart(-1)
-    , m_cachedSelectionEnd(-1)
     , m_cachedSelectionDirection(SelectionHasNoDirection)
     , m_lastChangeWasUserEdit(false)
     , m_isPlaceholderVisible(false)
+    , m_cachedSelectionStart(-1)
+    , m_cachedSelectionEnd(-1)
 {
 }
 

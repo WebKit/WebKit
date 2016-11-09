@@ -1,3 +1,18 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Shave 16 bytes off HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=164488
+
+        Reviewed by Sam Weinig.
+
+        Shave 16 bytes off HTMLInputElement (232 -> 216) by packing data members
+        better.
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+        * html/HTMLTextFormControlElement.h:
+
 2016-11-09  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Introduce asynchronous backend for other RTCPeerConnection API

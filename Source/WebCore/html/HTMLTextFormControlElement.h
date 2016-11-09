@@ -151,6 +151,10 @@ private:
 
     bool placeholderShouldBeVisible() const;
 
+    unsigned m_cachedSelectionDirection : 2;
+    unsigned m_lastChangeWasUserEdit : 1;
+    unsigned m_isPlaceholderVisible : 1;
+
     String m_textAsOfLastFormControlChangeEvent;
 
     int m_cachedSelectionStart;
@@ -158,10 +162,6 @@ private:
 
     int m_maxLength { -1 };
     int m_minLength { -1 };
-
-    unsigned char m_cachedSelectionDirection : 2;
-    unsigned char m_lastChangeWasUserEdit : 1;
-    unsigned char m_isPlaceholderVisible : 1;
 };
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
