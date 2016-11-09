@@ -1101,8 +1101,7 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
         // effect, an alpha is applied to the underline color when text is at small scales.
         static const float minimumUnderlineAlpha = 0.4f;
         float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
-        int alpha = color.alpha() * shade;
-        color = Color(color.red(), color.green(), color.blue(), alpha);
+        color = color.colorWithAlphaMultipliedBy(shade);
     }
 
     FloatPoint devicePoint = transform.mapPoint(point);

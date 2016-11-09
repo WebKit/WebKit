@@ -1142,7 +1142,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     // Update the indicator style based on the lightness/darkness of the background color.
     double hue, saturation, lightness;
     color.getHSL(hue, saturation, lightness);
-    if (lightness <= .5 && color.alpha() > 0)
+    if (lightness <= .5 && color.isVisible())
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
     else
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleDefault];

@@ -96,7 +96,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
         if (visitedPaintType < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaintType != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
             const Color& visitedColor = applyToFill ? svgStyle.visitedLinkFillPaintColor() : svgStyle.visitedLinkStrokePaintColor();
             if (visitedColor.isValid())
-                color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
+                color = visitedColor.colorWithAlpha(color.alphaAsFloat());
         }
     }
 

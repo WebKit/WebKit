@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/PaymentHeaders.h>
@@ -566,6 +567,16 @@ template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
 } // namespace IPC
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::ColorSpace> {
+    using values = EnumValues<
+    WebCore::ColorSpace,
+    WebCore::ColorSpace::ColorSpaceDeviceRGB,
+    WebCore::ColorSpace::ColorSpaceSRGB,
+    WebCore::ColorSpace::ColorSpaceLinearRGB,
+    WebCore::ColorSpace::ColorSpaceDisplayP3
+    >;
+};
 
 template<> struct EnumTraits<WebCore::HasInsecureContent> {
     using values = EnumValues<

@@ -1,3 +1,162 @@
+2016-11-08  Dean Jackson  <dino@apple.com>
+
+        Rendering support for ExtendedColors
+        https://bugs.webkit.org/show_bug.cgi?id=164443
+        <rdar://problems/29123243>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Add support for rendering the new color() syntax, which
+        ends up as an ExtendedColor.
+
+        In order to make rendering code a little more readable, I
+        changed Color::hasAlpha to Color::isOpaque (since an alpha
+        of 100% is still an alpha), and added a Color::isVisible
+        helper (the color isn't completely transparent). These new
+        helpers support ExtendedColor forms.
+
+        Support for painting gradients and blending between colors
+        is still to come. I also added some FIXME comments
+        to show other places that don't handle ExtendedColors yet.
+
+        Tests: css3/color/backgrounds-and-borders.html
+               css3/color/box-shadows.html
+               css3/color/canvas.html
+               css3/color/composited-solid-backgrounds.html
+               css3/color/text.html
+
+        * css/CSSGradientValue.cpp: Add some notes that this is broken.
+        (WebCore::interpolate):
+        (WebCore::CSSGradientValue::knownToBeOpaque):
+
+        * editing/EditingStyle.cpp: Use new Color helpers.
+        (WebCore::isTransparentColorValue):
+
+        * editing/mac/EditorMac.mm: Use new Color helpers.
+        (WebCore::Editor::fontAttributesForSelectionStart):
+
+        * html/ColorInputType.cpp: No need to use the Color class at all here.
+        (WebCore::isValidSimpleColorString): Renamed from isValidColorString.
+        (WebCore::ColorInputType::sanitizeValue):
+        (WebCore::ColorInputType::typeMismatchFor):
+        (WebCore::isValidColorString): Deleted.
+
+        * html/canvas/CanvasRenderingContext2D.cpp: New helpers.
+        (WebCore::CanvasRenderingContext2D::shouldDrawShadows):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+
+        * page/FrameView.cpp: Ditto.
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle):
+        (WebCore::FrameView::hasOpaqueBackground):
+        (WebCore::FrameView::setBaseBackgroundColor):
+
+        * platform/graphics/Color.cpp:
+        (WebCore::differenceSquared): Support ExtendedColor, but also
+        add a note to indicate that this method and its call sites
+        should use floats.
+        (WebCore::Color::serialized): New helper.
+        (WebCore::Color::cssText): Ditto.
+        (WebCore::Color::blend): Ditto.
+        (WebCore::Color::blendWithWhite):
+        (WebCore::Color::colorWithAlphaMultipliedBy): Implementation of new function.
+        (WebCore::Color::colorWithAlpha): Ditto.
+        (WebCore::Color::opaqueColor): New method to return an opaque version of the given color.
+        (WebCore::blend):
+        * platform/graphics/Color.h:
+        (WebCore::Color::isOpaque): New helper that is !hasAlpha().
+        (WebCore::Color::isVisible): New helper.
+        (WebCore::Color::alphaAsFloat): Gets the alpha value as a float. This replaces
+        a bunch of places that were calculating it manually each time. Meanwhile, we
+        might consider always exposing the primaries as floats... or at least
+        have that option.
+        (WebCore::isBlackColor): New helper - it was used in a couple of places.
+        (WebCore::isWhiteColor): Ditto.
+        (WebCore::Color::hasAlpha): Deleted.
+
+        * platform/graphics/Gradient.cpp: Add FIXME.
+        (WebCore::Gradient::addColorStop):
+        * platform/graphics/Gradient.h:
+
+        * platform/graphics/GraphicsContext.cpp: Use new helpers.
+        (WebCore::GraphicsContext::computeLineBoundsAndAntialiasingModeForText):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::hasVisibleShadow):
+
+        * platform/graphics/Image.cpp: Ditto.
+        (WebCore::Image::fillWithSolidColor):
+
+        * platform/graphics/ShadowBlur.cpp: Ditto.
+        (WebCore::ShadowBlur::updateShadowBlurValues):
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Ditto.
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformGradient): Add a FIXME to note that we can
+        add ExtendedColor support simply by using CGColors, rather than fetching
+        the components ourselves.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: New helpers.
+        (WebCore::calculateDrawingMode):
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm: New helpers.
+        (WebCore::FontCascade::drawGlyphs):
+
+        * platform/graphics/mac/ColorMac.mm: Use the new helpers and Color::hash().
+        (WebCore::nsColor):
+
+        * platform/graphics/texmap/TextureMapperGL.cpp: New helpers.
+        (WebCore::TextureMapperGL::drawBorder):
+
+        * rendering/BorderEdge.cpp: Ditto.
+        (WebCore::BorderEdge::obscuresBackgroundEdge):
+        (WebCore::BorderEdge::obscuresBackground):
+
+        * rendering/RenderBox.cpp: Ditto.
+        (WebCore::RenderBox::getBackgroundPaintedExtent):
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect):
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer):
+
+        * rendering/RenderBoxModelObject.cpp: Ditto.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::colorNeedsAntiAliasAtCorner):
+        (WebCore::willBeOverdrawn):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintOutline):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::canCreateTiledImage):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::viewHasTransparentBackground):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::getItemBackgroundColor):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextWithShadows):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::isTransparent):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasBackground):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+
+        * svg/SVGAnimatedColor.cpp: Add a FIXME to note this is broken.
+        (WebCore::SVGAnimatedColorAnimator::calculateAnimatedValue):
+
 2016-11-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: StatusLabel

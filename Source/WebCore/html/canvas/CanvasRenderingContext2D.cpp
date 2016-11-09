@@ -1311,7 +1311,7 @@ void CanvasRenderingContext2D::applyShadow()
 
 bool CanvasRenderingContext2D::shouldDrawShadows() const
 {
-    return state().shadowColor.alpha() && (state().shadowBlur || !state().shadowOffset.isZero());
+    return state().shadowColor.isVisible() && (state().shadowBlur || !state().shadowOffset.isZero());
 }
 
 enum ImageSizeType {
@@ -1849,7 +1849,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         dirtyRect = ctm.mapRect(r);
     }
 
-    if (options & CanvasDidDrawApplyShadow && state().shadowColor.alpha()) {
+    if (options & CanvasDidDrawApplyShadow && state().shadowColor.isVisible()) {
         // The shadow gets applied after transformation
         FloatRect shadowRect(dirtyRect);
         shadowRect.move(state().shadowOffset);

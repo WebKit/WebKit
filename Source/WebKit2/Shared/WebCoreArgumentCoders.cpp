@@ -1096,6 +1096,18 @@ bool ArgumentCoder<WindowFeatures>::decode(Decoder& decoder, WindowFeatures& win
 
 void ArgumentCoder<Color>::encode(Encoder& encoder, const Color& color)
 {
+    if (color.isExtended()) {
+        encoder << true;
+        encoder << color.asExtended().red();
+        encoder << color.asExtended().green();
+        encoder << color.asExtended().blue();
+        encoder << color.asExtended().alpha();
+        encoder << color.asExtended().colorSpace();
+        return;
+    }
+
+    encoder << false;
+
     if (!color.isValid()) {
         encoder << false;
         return;
@@ -1107,6 +1119,30 @@ void ArgumentCoder<Color>::encode(Encoder& encoder, const Color& color)
 
 bool ArgumentCoder<Color>::decode(Decoder& decoder, Color& color)
 {
+    bool isExtended;
+    if (!decoder.decode(isExtended))
+        return false;
+
+    if (isExtended) {
+        float red;
+        float green;
+        float blue;
+        float alpha;
+        ColorSpace colorSpace;
+        if (!decoder.decode(red))
+            return false;
+        if (!decoder.decode(green))
+            return false;
+        if (!decoder.decode(blue))
+            return false;
+        if (!decoder.decode(alpha))
+            return false;
+        if (!decoder.decode(colorSpace))
+            return false;
+        color = Color(red, green, blue, alpha, colorSpace);
+        return true;
+    }
+
     bool isValid;
     if (!decoder.decode(isValid))
         return false;

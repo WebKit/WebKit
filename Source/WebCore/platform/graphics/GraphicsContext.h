@@ -427,7 +427,7 @@ public:
     WEBCORE_EXPORT void clearShadow();
     bool getShadow(FloatSize&, float&, Color&) const;
 
-    bool hasVisibleShadow() const { return m_state.shadowColor.isValid() && m_state.shadowColor.alpha(); }
+    bool hasVisibleShadow() const { return m_state.shadowColor.isVisible(); }
     bool hasShadow() const { return hasVisibleShadow() && (m_state.shadowBlur || m_state.shadowOffset.width() || m_state.shadowOffset.height()); }
     bool hasBlurredShadow() const { return hasVisibleShadow() && m_state.shadowBlur; }
 

@@ -218,7 +218,7 @@ void ShadowBlur::updateShadowBlurValues()
     m_blurRadius = m_blurRadius.shrunkTo(FloatSize(128, 128));
 
     // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
-    if (!m_color.isValid() || !m_color.alpha()) {
+    if (!m_color.isVisible()) {
         // Can't paint the shadow with invalid or invisible color.
         m_type = NoShadow;
     } else if (m_blurRadius.width() > 0 || m_blurRadius.height() > 0) {

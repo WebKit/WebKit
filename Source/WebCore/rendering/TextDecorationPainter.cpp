@@ -286,9 +286,9 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
     };
 
     bool linesAreOpaque = !m_isPrinting
-        && (!(m_decoration & TextDecorationUnderline) || m_styles.underlineColor.alpha() == 255)
-        && (!(m_decoration & TextDecorationOverline) || m_styles.overlineColor.alpha() == 255)
-        && (!(m_decoration & TextDecorationLineThrough) || m_styles.linethroughColor.alpha() == 255);
+        && (!(m_decoration & TextDecorationUnderline) || m_styles.underlineColor.isOpaque())
+        && (!(m_decoration & TextDecorationOverline) || m_styles.overlineColor.isOpaque())
+        && (!(m_decoration & TextDecorationLineThrough) || m_styles.linethroughColor.isOpaque());
 
     int extraOffset = 0;
     bool clipping = !linesAreOpaque && m_shadow && m_shadow->next();
@@ -360,7 +360,7 @@ static Color decorationColor(const RenderStyle& style)
     if (style.textStrokeWidth() > 0) {
         // Prefer stroke color if possible but not if it's fully transparent.
         result = style.visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
-        if (result.alpha())
+        if (result.isVisible())
             return result;
     }
     

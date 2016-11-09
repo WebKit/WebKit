@@ -47,7 +47,10 @@ CGGradientRef Gradient::platformGradient()
         return m_gradient;
 
     sortStopsIfNecessary();
-    
+
+    // FIXME: ExtendedColor - we should generate CGColorRefs here, so that
+    // we can handle color spaces.
+
     const int cReservedStops = 3;
     Vector<CGFloat, 4 * cReservedStops> colorComponents;
     colorComponents.reserveInitialCapacity(m_stops.size() * 4); // RGBA components per stop
@@ -63,7 +66,8 @@ CGGradientRef Gradient::platformGradient()
 
         locations.uncheckedAppend(m_stops[i].stop);
     }
-    
+
+    // FIXME: ExtendedColor - use CGGradientCreateWithColors so that we can have stops in different color spaces.
     m_gradient = CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), m_stops.size());
 
     return m_gradient;

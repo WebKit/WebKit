@@ -62,7 +62,7 @@ void BorderEdge::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle& style,
 
 bool BorderEdge::obscuresBackgroundEdge(float scale) const
 {
-    if (!m_isPresent || m_isTransparent || (m_width * scale) < borderWidthInDevicePixel(2) || m_color.hasAlpha() || m_style == BHIDDEN)
+    if (!m_isPresent || m_isTransparent || (m_width * scale) < borderWidthInDevicePixel(2) || !m_color.isOpaque() || m_style == BHIDDEN)
         return false;
 
     if (m_style == DOTTED || m_style == DASHED)
@@ -76,7 +76,7 @@ bool BorderEdge::obscuresBackgroundEdge(float scale) const
 
 bool BorderEdge::obscuresBackground() const
 {
-    if (!m_isPresent || m_isTransparent || m_color.hasAlpha() || m_style == BHIDDEN)
+    if (!m_isPresent || m_isTransparent || !m_color.isOpaque() || m_style == BHIDDEN)
         return false;
 
     if (m_style == DOTTED || m_style == DASHED || m_style == DOUBLE)

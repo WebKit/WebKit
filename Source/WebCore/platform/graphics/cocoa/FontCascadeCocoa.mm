@@ -273,7 +273,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context.clearShadow();
         Color fillColor = context.fillColor();
-        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        Color shadowFillColor = shadowColor.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
         context.setFillColor(shadowFillColor);
         float shadowTextX = point.x() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.

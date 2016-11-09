@@ -96,6 +96,7 @@ void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRe
 
 void Gradient::addColorStop(float value, const Color& color)
 {
+    // FIXME: ExtendedColor - update this to support colors with color spaces.
     float r;
     float g;
     float b;

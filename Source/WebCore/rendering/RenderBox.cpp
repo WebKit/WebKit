@@ -1402,7 +1402,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
     LayoutRect backgroundRect = snappedIntRect(borderBoxRect());
 
     Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
-    if (backgroundColor.isValid() && backgroundColor.alpha()) {
+    if (backgroundColor.isVisible()) {
         paintedExtent = backgroundRect;
         return true;
     }
@@ -1423,7 +1423,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
         return false;
 
     Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
-    if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+    if (!backgroundColor.isOpaque())
         return false;
 
     // If the element has appearance, it might be painted by theme.
@@ -1543,10 +1543,10 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
     if (fillLayer->hasOpaqueImage(*this) && fillLayer->hasRepeatXY() && fillLayer->image()->canRender(this, style().effectiveZoom()))
         return true;
 
-    // If there is only one layer and no image, check whether the background color is opaque
+    // If there is only one layer and no image, check whether the background color is opaque.
     if (!fillLayer->next() && !fillLayer->hasImage()) {
         Color bgColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
-        if (bgColor.isValid() && bgColor.alpha() == 255)
+        if (bgColor.isOpaque())
             return true;
     }
 

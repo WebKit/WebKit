@@ -535,16 +535,16 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     HTMLElement* element = listItems[listIndex];
 
     Color backgroundColor = element->computedStyle()->visitedDependentColor(CSSPropertyBackgroundColor);
-    itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.alpha();
+    itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
     // If the item has an opaque background color, return that.
-    if (!backgroundColor.hasAlpha()) {
+    if (backgroundColor.isOpaque()) {
         itemBackgroundColor = backgroundColor;
         return;
     }
 
     // Otherwise, the item's background is overlayed on top of the menu background.
     backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor).blend(backgroundColor);
-    if (!backgroundColor.hasAlpha()) {
+    if (backgroundColor.isOpaque()) {
         itemBackgroundColor = backgroundColor;
         return;
     }

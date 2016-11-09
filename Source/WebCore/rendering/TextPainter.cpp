@@ -102,7 +102,7 @@ void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCasca
     }
 
     Color fillColor = m_context.fillColor();
-    bool opaque = !fillColor.hasAlpha();
+    bool opaque = fillColor.isOpaque();
     bool lastShadowIterationShouldDrawText = !stroked && opaque;
     if (!opaque)
         m_context.setFillColor(Color::black);

@@ -1769,7 +1769,7 @@ static bool canCreateTiledImage(const RenderStyle& style)
 
     // FIXME: Allow color+image compositing when it makes sense.
     // For now bailing out.
-    if (color.isValid() && color.alpha())
+    if (color.isVisible())
         return false;
 
     StyleImage* styleImage = fillLayer->image();

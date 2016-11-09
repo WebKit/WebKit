@@ -229,7 +229,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
     m_context3D->lineWidth(width);
 
-    draw(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha() ? ShouldBlend : 0);
+    draw(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, !color.isOpaque() ? ShouldBlend : 0);
 }
 
 // FIXME: drawNumber() should save a number texture-atlas and re-use whenever possible.

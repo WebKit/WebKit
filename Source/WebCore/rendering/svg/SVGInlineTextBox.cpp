@@ -193,7 +193,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         return;
 
     Color backgroundColor = renderer().selectionBackgroundColor();
-    if (!backgroundColor.isValid() || !backgroundColor.alpha())
+    if (!backgroundColor.isVisible())
         return;
 
     if (!textShouldBePainted(renderer()))

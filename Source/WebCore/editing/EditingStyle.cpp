@@ -1837,7 +1837,7 @@ static bool isTransparentColorValue(CSSValue* value)
         return false;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
     if (primitiveValue.isRGBColor())
-        return !primitiveValue.color().alpha();
+        return !primitiveValue.color().isVisible();
     return primitiveValue.valueID() == CSSValueTransparent;
 }
 

@@ -1707,7 +1707,7 @@ Color RenderStyle::visitedDependentColor(int colorProperty) const
         return unvisitedColor;
 
     // Take the alpha from the unvisited color, but get the RGB values from the visited color.
-    return Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), unvisitedColor.alpha());
+    return visitedColor.colorWithAlpha(unvisitedColor.alphaAsFloat());
 }
 
 const BorderValue& RenderStyle::borderBefore() const

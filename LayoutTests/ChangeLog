@@ -1,3 +1,26 @@
+2016-11-08  Dean Jackson  <dino@apple.com>
+
+        Rendering support for ExtendedColors
+        https://bugs.webkit.org/show_bug.cgi?id=164443
+        <rdar://problems/29123243>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Tests that use the new color() syntax.
+
+        * css3/color/backgrounds-and-borders-expected.html: Added.
+        * css3/color/backgrounds-and-borders.html: Added.
+        * css3/color/box-shadows-expected.html: Added.
+        * css3/color/box-shadows.html: Added.
+        * css3/color/canvas-expected.html: Added.
+        * css3/color/canvas.html: Added.
+        * css3/color/composited-solid-backgrounds-expected.html: Added.
+        * css3/color/composited-solid-backgrounds.html: Added.
+        * css3/color/text-expected.html: Added.
+        * css3/color/text.html: Added.
+        * editing/mac/attributed-string/anchor-element-expected.txt: Updated.
+        * editing/mac/attributed-string/basic-expected.txt:
+
 2016-11-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: StatusLabel

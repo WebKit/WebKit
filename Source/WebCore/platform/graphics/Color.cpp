@@ -216,9 +216,19 @@ bool Color::parseHexColor(const StringView& name, RGBA32& rgb)
 
 int differenceSquared(const Color& c1, const Color& c2)
 {
-    int dR = c1.red() - c2.red();
-    int dG = c1.green() - c2.green();
-    int dB = c1.blue() - c2.blue();
+    // FIXME: This is assuming that the colors are in the same colorspace.
+    // FIXME: This should probably return a floating point number, but many of the call
+    // sites have picked comparison values based on feel. We'd need to break out
+    // our logarithm tables to change them :)
+    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.red();
+    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.green();
+    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.blue();
+    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.red();
+    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.green();
+    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.blue();
+    int dR = c1Red - c2Red;
+    int dG = c1Green - c2Green;
+    int dB = c1Blue - c2Blue;
     return dR * dR + dG * dG + dB * dB;
 }
 
@@ -334,7 +344,7 @@ String Color::serialized() const
     if (isExtended())
         return asExtended().cssText();
 
-    if (!hasAlpha()) {
+    if (isOpaque()) {
         StringBuilder builder;
         builder.reserveCapacity(7);
         builder.append('#');
@@ -354,7 +364,7 @@ String Color::cssText() const
 
     StringBuilder builder;
     builder.reserveCapacity(28);
-    bool colorHasAlpha = hasAlpha();
+    bool colorHasAlpha = !isOpaque();
     if (colorHasAlpha)
         builder.appendLiteral("rgba(");
     else
@@ -459,7 +469,7 @@ const int cAlphaIncrement = 17; // Increments in between.
 
 Color Color::blend(const Color& source) const
 {
-    if (!alpha() || !source.hasAlpha())
+    if (!isVisible() || source.isOpaque())
         return source;
 
     if (!source.alpha())
@@ -476,7 +486,7 @@ Color Color::blend(const Color& source) const
 Color Color::blendWithWhite() const
 {
     // If the color contains alpha already, we leave it alone.
-    if (hasAlpha())
+    if (!isOpaque())
         return *this;
 
     Color newColor;
@@ -493,6 +503,21 @@ Color Color::blendWithWhite() const
             break;
     }
     return newColor;
+}
+
+Color Color::colorWithAlphaMultipliedBy(float amount) const
+{
+    float newAlpha = amount * (isExtended() ? m_colorData.extendedColor->alpha() : static_cast<float>(alpha()) / 255);
+    return colorWithAlpha(newAlpha);
+}
+
+Color Color::colorWithAlpha(float alpha) const
+{
+    if (isExtended())
+        return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
+
+    int newAlpha = alpha * 255;
+    return Color { red(), green(), blue(), newAlpha };
 }
 
 void Color::getRGBA(float& r, float& g, float& b, float& a) const
@@ -601,6 +626,7 @@ RGBA32 premultipliedARGBFromColor(const Color& color)
 
 Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied)
 {
+    // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
     if (progress == 1 && !to.isValid())
         return Color();

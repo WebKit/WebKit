@@ -82,11 +82,11 @@ bool Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceived)
 
 void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
 {
-    if (!color.alpha())
+    if (!color.isVisible())
         return;
     
     CompositeOperator previousOperator = ctxt.compositeOperation();
-    ctxt.setCompositeOperation(!color.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+    ctxt.setCompositeOperation(color.isOpaque() && op == CompositeSourceOver ? CompositeCopy : op);
     ctxt.fillRect(dstRect, color);
     ctxt.setCompositeOperation(previousOperator);
 }

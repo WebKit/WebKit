@@ -85,6 +85,8 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     auto& toAtEndOfDurationColor = toAtEndOfDuration->color();
     auto& animatedColor = animated->color();
 
+    // FIXME: ExtendedColor - this will need to handle blending between colors in different color spaces,
+    // as well as work with non [0-255] Colors.
     float red = animatedColor.red();
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.red(), toColor.red(), toAtEndOfDurationColor.red(), red);
 

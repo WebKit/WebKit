@@ -465,7 +465,7 @@ void FrameView::recalculateScrollbarOverlayStyle()
         // heuristic.
         double hue, saturation, lightness;
         backgroundColor.getHSL(hue, saturation, lightness);
-        if (lightness <= .5 && backgroundColor.alpha() > 0)
+        if (lightness <= .5 && backgroundColor.isVisible())
             computedOverlayStyle = ScrollbarOverlayStyleLight;
     }
 
@@ -3063,7 +3063,7 @@ void FrameView::setTransparent(bool isTransparent)
 
 bool FrameView::hasOpaqueBackground() const
 {
-    return !m_isTransparent && !m_baseBackgroundColor.hasAlpha();
+    return !m_isTransparent && m_baseBackgroundColor.isOpaque();
 }
 
 Color FrameView::baseBackgroundColor() const
@@ -3073,7 +3073,7 @@ Color FrameView::baseBackgroundColor() const
 
 void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
-    bool hadAlpha = m_baseBackgroundColor.hasAlpha();
+    bool wasOpaque = m_baseBackgroundColor.isOpaque();
     
     if (!backgroundColor.isValid())
         m_baseBackgroundColor = Color::white;
@@ -3085,7 +3085,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 
     recalculateScrollbarOverlayStyle();
 
-    if (m_baseBackgroundColor.hasAlpha() != hadAlpha)
+    if (m_baseBackgroundColor.isOpaque() != wasOpaque)
         renderView()->compositor().rootBackgroundTransparencyChanged();
 }
 

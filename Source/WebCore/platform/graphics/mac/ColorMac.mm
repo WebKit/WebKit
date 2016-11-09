@@ -27,6 +27,7 @@
 #import "ColorMac.h"
 
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
@@ -74,44 +75,40 @@ Color colorFromNSColor(NSColor *c)
 
 NSColor *nsColor(const Color& color)
 {
-    RGBA32 c = color.rgb();
-    switch (c) {
-        case 0: {
-            // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-            static NSColor *clearColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:0] retain];
-            return clearColor;
-        }
-        case Color::black: {
-            static NSColor *blackColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:1] retain];
-            return blackColor;
-        }
-        case Color::white: {
-            static NSColor *whiteColor = [[NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1] retain];
-            return whiteColor;
-        }
-        default: {
-            const int cacheSize = 32;
-            static unsigned cachedRGBAValues[cacheSize];
-            static RetainPtr<NSColor>* cachedColors = new RetainPtr<NSColor>[cacheSize];
-
-            for (int i = 0; i != cacheSize; ++i) {
-                if (cachedRGBAValues[i] == c)
-                    return cachedColors[i].get();
-            }
-
-            NSColor *result = [NSColor colorWithDeviceRed:static_cast<CGFloat>(color.red()) / 255
-                                                    green:static_cast<CGFloat>(color.green()) / 255
-                                                     blue:static_cast<CGFloat>(color.blue()) / 255
-                                                    alpha:static_cast<CGFloat>(color.alpha()) / 255];
-
-            static int cursor;
-            cachedRGBAValues[cursor] = c;
-            cachedColors[cursor] = result;
-            if (++cursor == cacheSize)
-                cursor = 0;
-            return result;
-        }
+    if (!color.isValid()) {
+        // Need this to avoid returning nil because cachedRGBAValues will default to 0.
+        static NeverDestroyed<NSColor *> clearColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:0] retain];
+        return clearColor;
     }
+
+    if (Color::isBlackColor(color)) {
+        static NeverDestroyed<NSColor *> blackColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:1] retain];
+        return blackColor;
+    }
+
+    if (Color::isWhiteColor(color)) {
+        static NeverDestroyed<NSColor *> whiteColor = [[NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1] retain];
+        return whiteColor;
+    }
+
+    const int cacheSize = 32;
+    static unsigned cachedRGBAValues[cacheSize];
+    static RetainPtr<NSColor>* cachedColors = new RetainPtr<NSColor>[cacheSize];
+
+    unsigned hash = color.hash();
+    for (int i = 0; i < cacheSize; ++i) {
+        if (cachedRGBAValues[i] == hash)
+            return cachedColors[i].get();
+    }
+
+    NSColor *result = [NSColor colorWithCGColor:cachedCGColor(color)];
+
+    static int cursor;
+    cachedRGBAValues[cursor] = hash;
+    cachedColors[cursor] = result;
+    if (++cursor == cacheSize)
+        cursor = 0;
+    return result;
 }
 
 

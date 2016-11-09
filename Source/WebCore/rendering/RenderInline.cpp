@@ -1637,10 +1637,10 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     rects.append(LayoutRect());
 
     Color outlineColor = styleToUse.visitedDependentColor(CSSPropertyOutlineColor);
-    bool useTransparencyLayer = outlineColor.hasAlpha();
+    bool useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
-        graphicsContext.beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
-        outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
+        graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
+        outlineColor = outlineColor.opaqueColor();
     }
 
     for (unsigned i = 1; i < rects.size() - 1; i++)

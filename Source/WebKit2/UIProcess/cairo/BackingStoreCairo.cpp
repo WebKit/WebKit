@@ -106,9 +106,9 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 #if PLATFORM(GTK)
         if (!m_webPageProxy.drawsBackground()) {
             const WebCore::Color color = m_webPageProxy.backgroundColor();
-            if (color.hasAlpha())
+            if (!color.isOpaque())
                 graphicsContext.clearRect(srcRect);
-            if (color.alpha() > 0)
+            if (color.isVisible())
                 graphicsContext.fillRect(srcRect, color);
         }
 #endif

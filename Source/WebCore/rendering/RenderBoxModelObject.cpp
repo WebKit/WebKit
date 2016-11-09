@@ -657,7 +657,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // while rendering.)
     if (forceBackgroundToWhite) {
         // Note that we can't reuse this variable below because the bgColor might be changed
-        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && bgColor.alpha();
+        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isVisible();
         if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {
             bgColor = Color::white;
             shouldPaintBackgroundImage = false;
@@ -665,10 +665,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     bool baseBgColorOnly = (baseBgColorUsage == BaseBackgroundColorOnly);
-    if (baseBgColorOnly && (!isRoot || bgLayer->next() || (bgColor.isValid() && !bgColor.hasAlpha())))
+    if (baseBgColorOnly && (!isRoot || bgLayer->next() || bgColor.isOpaque()))
         return;
 
-    bool colorVisible = bgColor.isValid() && bgColor.alpha();
+    bool colorVisible = bgColor.isVisible();
     float deviceScaleFactor = document().deviceScaleFactor();
     FloatRect pixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
@@ -772,7 +772,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool isOpaqueRoot = false;
     if (isRoot) {
         isOpaqueRoot = true;
-        if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255)) {
+        if (!bgLayer->next() && !bgColor.isOpaque()) {
             HTMLFrameOwnerElement* ownerElement = document().ownerElement();
             if (ownerElement) {
                 if (!ownerElement->hasTagName(frameTag)) {
@@ -809,7 +809,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             bool shouldClearBackground = false;
             if ((baseBgColorUsage != BaseBackgroundColorSkip) && isOpaqueRoot) {
                 baseColor = view().frameView().baseBackgroundColor();
-                if (!baseColor.alpha())
+                if (!baseColor.isVisible())
                     shouldClearBackground = true;
             }
 
@@ -818,12 +818,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 applyBoxShadowForBackground(context, &style());
 
             FloatRect backgroundRectForPainting = snapRectToDevicePixels(backgroundRect, deviceScaleFactor);
-            if (baseColor.alpha()) {
-                if (!baseBgColorOnly && bgColor.alpha())
+            if (baseColor.isVisible()) {
+                if (!baseBgColorOnly && bgColor.isVisible())
                     baseColor = baseColor.blend(bgColor);
 
                 context.fillRect(backgroundRectForPainting, baseColor, CompositeCopy);
-            } else if (!baseBgColorOnly && bgColor.alpha()) {
+            } else if (!baseBgColorOnly && bgColor.isVisible()) {
                 CompositeOperator operation = shouldClearBackground ? CompositeCopy : context.compositeOperation();
                 context.fillRect(backgroundRectForPainting, bgColor, operation);
             } else if (shouldClearBackground)
@@ -1368,7 +1368,7 @@ static inline bool colorsMatchAtCorner(BoxSide side, BoxSide adjacentSide, const
 
 static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
 {
-    if (!edges[side].color().hasAlpha())
+    if (edges[side].color().isOpaque())
         return false;
 
     if (edges[side].shouldRender() != edges[adjacentSide].shouldRender())
@@ -1389,7 +1389,7 @@ static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const Bor
         if (edges[adjacentSide].presentButInvisible())
             return false;
 
-        if (!edgesShareColor(edges[side], edges[adjacentSide]) && edges[adjacentSide].color().hasAlpha())
+        if (!edgesShareColor(edges[side], edges[adjacentSide]) && !edges[adjacentSide].color().isOpaque())
             return false;
         
         if (!borderStyleFillsBorderArea(edges[adjacentSide].style()))
@@ -1656,10 +1656,10 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext& graphics
                 commonColorEdgeSet |= edgeFlagForSide(currSide);
         }
 
-        bool useTransparencyLayer = includesAdjacentEdges(commonColorEdgeSet) && commonColor.hasAlpha();
+        bool useTransparencyLayer = includesAdjacentEdges(commonColorEdgeSet) && !commonColor.isOpaque();
         if (useTransparencyLayer) {
-            graphicsContext.beginTransparencyLayer(static_cast<float>(commonColor.alpha()) / 255);
-            commonColor = Color(commonColor.red(), commonColor.green(), commonColor.blue());
+            graphicsContext.beginTransparencyLayer(commonColor.alphaAsFloat());
+            commonColor = commonColor.opaqueColor();
         }
 
         paintBorderSides(graphicsContext, style, outerBorder, innerBorder, innerBorderAdjustment, edges, commonColorEdgeSet, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, &commonColor);
@@ -1721,7 +1721,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         else if (currEdge.color() != edges[firstVisibleEdge].color())
             allEdgesShareColor = false;
 
-        if (currEdge.color().hasAlpha())
+        if (!currEdge.color().isOpaque())
             haveAlphaColor = true;
         
         if (currEdge.style() != SOLID)
@@ -2164,7 +2164,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
         return false;
 
     Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
-    if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+    if (!backgroundColor.isOpaque())
         return false;
 
     const FillLayer* lastBackgroundLayer = style().backgroundLayers();
@@ -2213,8 +2213,8 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
     bool hasBorderRadius = style.hasBorderRadius();
     bool isHorizontal = style.isHorizontalWritingMode();
     float deviceScaleFactor = document().deviceScaleFactor();
-    
-    bool hasOpaqueBackground = style.visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style.visitedDependentColor(CSSPropertyBackgroundColor).alpha() == 255;
+
+    bool hasOpaqueBackground = style.visitedDependentColor(CSSPropertyBackgroundColor).isOpaque();
     for (const ShadowData* shadow = style.boxShadow(); shadow; shadow = shadow->next()) {
         if (shadow->style() != shadowStyle)
             continue;

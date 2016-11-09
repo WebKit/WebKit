@@ -155,13 +155,13 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
 
-    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
+    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isVisible())
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
 
     if (auto ctFont = style->fontCascade().primaryFont().getCTFont())
         [result setObject:toNSFont(ctFont) forKey:NSFontAttributeName];
 
-    if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
+    if (style->visitedDependentColor(CSSPropertyColor).isValid() && !Color::isBlackColor(style->visitedDependentColor(CSSPropertyColor)))
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
 
     const ShadowData* shadow = style->textShadow();

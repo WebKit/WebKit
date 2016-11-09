@@ -2112,7 +2112,7 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
     Color outlineColor = styleToUse.visitedDependentColor(CSSPropertyOutlineColor);
 
-    bool useTransparencyLayer = outlineColor.hasAlpha();
+    bool useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
         if (outlineStyle == SOLID) {
             Path path;
@@ -2123,8 +2123,8 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
             graphicsContext.fillPath(path);
             return;
         }
-        graphicsContext.beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
-        outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
+        graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
+        outlineColor = outlineColor.opaqueColor();
     }
 
     float leftOuter = outer.x();

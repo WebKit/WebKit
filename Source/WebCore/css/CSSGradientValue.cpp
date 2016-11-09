@@ -143,6 +143,7 @@ static inline int interpolate(int min, int max, float position)
 
 static inline Color interpolate(const Color& color1, const Color& color2, float position)
 {
+    // FIXME: ExtendedColor - Doesn't work with extended colors, and really should be a helper in Color.h, not here.
     int red = interpolate(color1.red(), color2.red(), position);
     int green = interpolate(color1.green(), color2.green(), position);
     int blue = interpolate(color1.blue(), color2.blue(), position);
@@ -581,7 +582,7 @@ bool CSSGradientValue::isCacheable() const
 bool CSSGradientValue::knownToBeOpaque(const RenderElement*) const
 {
     for (size_t i = 0; i < m_stops.size(); ++i) {
-        if (m_stops[i].m_resolvedColor.hasAlpha())
+        if (!m_stops[i].m_resolvedColor.isOpaque())
             return false;
     }
     return true;

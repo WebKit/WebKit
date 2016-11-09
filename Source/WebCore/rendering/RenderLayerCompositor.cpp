@@ -3209,7 +3209,7 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
     if (backgroundColor)
         *backgroundColor = documentBackgroundColor;
         
-    return documentBackgroundColor.hasAlpha();
+    return !documentBackgroundColor.isOpaque();
 }
 
 // We can't rely on getting layerStyleChanged() for a style change that affects the root background, because the style change may

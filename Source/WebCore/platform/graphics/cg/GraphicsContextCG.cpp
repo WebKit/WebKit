@@ -597,8 +597,8 @@ void GraphicsContext::applyFillPattern()
 
 static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPathDrawingMode& mode)
 {
-    bool shouldFill = state.fillPattern || state.fillColor.alpha();
-    bool shouldStroke = state.strokePattern || (state.strokeStyle != NoStroke && state.strokeColor.alpha());
+    bool shouldFill = state.fillPattern || state.fillColor.isVisible();
+    bool shouldStroke = state.strokePattern || (state.strokeStyle != NoStroke && state.strokeColor.isVisible());
     bool useEOFill = state.fillRule == RULE_EVENODD;
 
     if (shouldFill) {

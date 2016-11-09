@@ -1004,7 +1004,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
     
     bool contentsLayerChanged = false;
 
-    if (m_contentsSolidColor.isValid() && m_contentsSolidColor.alpha()) {
+    if (m_contentsSolidColor.isVisible()) {
         if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForBackgroundColor) {
             m_contentsLayerPurpose = ContentsLayerForBackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
