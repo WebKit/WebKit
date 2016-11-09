@@ -53,7 +53,8 @@ Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
     {
         ModuleParser moduleParser(source, sourceLength);
         if (!moduleParser.parse()) {
-            dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
+            if (verbose)
+                dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
             m_errorMessage = moduleParser.errorMessage();
             return;
         }
