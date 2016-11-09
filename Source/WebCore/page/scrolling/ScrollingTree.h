@@ -59,6 +59,8 @@ public:
     virtual bool isRemoteScrollingTree() const { return false; }
     virtual bool isScrollingTreeIOS() const { return false; }
 
+    bool visualViewportEnabled() const { return m_visualViewportEnabled; }
+
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     WEBCORE_EXPORT bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
     
@@ -76,7 +78,7 @@ public:
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
-    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
+    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, const Optional<FloatPoint>& layoutViewportOrigin, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
 
     // Called for requested scroll position updates.
     virtual void scrollingTreeNodeRequestsScroll(ScrollingNodeID, const FloatPoint& /*scrollPosition*/, bool /*representsProgrammaticScroll*/) { }
@@ -145,6 +147,8 @@ public:
     
 protected:
     void setMainFrameScrollPosition(FloatPoint);
+    void setVisualViewportEnabled(bool b) { m_visualViewportEnabled = b; }
+
     WEBCORE_EXPORT virtual void handleWheelEvent(const PlatformWheelEvent&);
 
 private:
@@ -182,6 +186,7 @@ private:
     bool m_mainFrameIsScrollSnapping { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_isHandlingProgrammaticScroll { false };
+    bool m_visualViewportEnabled { false };
 };
     
 } // namespace WebCore

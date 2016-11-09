@@ -56,6 +56,7 @@ public:
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
 
     FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
+    FloatRect layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const;
 
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeID);
@@ -67,10 +68,18 @@ protected:
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
     float topContentInset() const { return m_topContentInset; }
-    
+
+    FloatRect layoutViewport() const { return m_layoutViewport; };
+    FloatPoint minLayoutViewportOrigin() const { return m_minLayoutViewportOrigin; }
+    FloatPoint maxLayoutViewportOrigin() const { return m_maxLayoutViewportOrigin; }
+
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
     
 private:
+    FloatRect m_layoutViewport;
+    FloatPoint m_minLayoutViewportOrigin;
+    FloatPoint m_maxLayoutViewportOrigin;
+    
     float m_frameScaleFactor { 1 };
     float m_topContentInset { 0 };
 

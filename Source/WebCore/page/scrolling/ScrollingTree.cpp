@@ -93,7 +93,7 @@ void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         downcast<ScrollingTreeScrollingNode>(*m_rootNode).handleWheelEvent(wheelEvent);
 }
 
-void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& fixedPositionRect, double scale)
+void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
     if (!is<ScrollingTreeScrollingNode>(node))
@@ -112,7 +112,7 @@ void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID n
     downcast<ScrollingTreeOverflowScrollingNode>(*node).updateLayersAfterDelegatedScroll(scrollPosition);
 
     // Update GraphicsLayers and scroll state.
-    scrollingTreeNodeDidScroll(nodeID, scrollPosition, inUserInteration ? SyncScrollingLayerPosition : SetScrollingLayerPosition);
+    scrollingTreeNodeDidScroll(nodeID, scrollPosition, Nullopt, inUserInteration ? SyncScrollingLayerPosition : SetScrollingLayerPosition);
 }
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
@@ -123,13 +123,18 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     if (rootNode
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)
-            || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))) {
+            || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)
+            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled))) {
         LockHolder lock(m_mutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
             m_mainFrameScrollPosition = FloatPoint();
+
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion))
             m_eventTrackingRegions = scrollingStateTree->rootStateNode()->eventTrackingRegions();
+
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled))
+            m_visualViewportEnabled = scrollingStateTree->rootStateNode()->visualViewportEnabled();
     }
     
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;

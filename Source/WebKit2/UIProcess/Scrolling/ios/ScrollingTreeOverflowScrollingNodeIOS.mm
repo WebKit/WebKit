@@ -254,7 +254,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeIOS::scrollPosition() const
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect&)
 {
     [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];
 

@@ -28,8 +28,11 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "FrameView.h"
+#include "Logging.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -68,6 +71,15 @@ void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
 
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::FixedElementsLayoutRelativeToFrame))
         m_fixedElementsLayoutRelativeToFrame = state.fixedElementsLayoutRelativeToFrame();
+
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::LayoutViewport))
+        m_layoutViewport = state.layoutViewport();
+
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin))
+        m_minLayoutViewportOrigin = state.minLayoutViewportOrigin();
+
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin))
+        m_maxLayoutViewportOrigin = state.maxLayoutViewportOrigin();
 }
 
 void ScrollingTreeFrameScrollingNode::scrollBy(const FloatSize& delta)
@@ -84,6 +96,36 @@ void ScrollingTreeFrameScrollingNode::setScrollPosition(const FloatPoint& scroll
 {
     FloatPoint newScrollPosition = scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
+}
+
+FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const
+{
+    ASSERT(scrollingTree().visualViewportEnabled());
+
+    FloatSize visibleContentSize = scrollableAreaSize();
+#if PLATFORM(MAC)
+    // On Mac, FrameView.visibleContentRect(), which was used to set scrollableAreaSize(), returns a rect with scale applied (so it's not really a "content rect"),
+    // so we have to convert back to unscaled coordinates here.
+    visibleContentSize.scale(1 / scale);
+#else
+    UNUSED_PARAM(scale);
+#endif
+    FloatRect visualViewport(visibleContentOrigin, visibleContentSize);
+    LayoutRect layoutViewport(m_layoutViewport);
+
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
+    LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewport);
+    LOG_WITH_STREAM(Scrolling, stream << "scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
+
+    LayoutPoint newLocation = FrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport);
+
+    if (layoutViewport.location() != newLocation) {
+        LOG_WITH_STREAM(Scrolling, stream << " new layoutViewport " << layoutViewport);
+        layoutViewport.setLocation(newLocation);
+    }
+
+    return layoutViewport;
 }
 
 FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const

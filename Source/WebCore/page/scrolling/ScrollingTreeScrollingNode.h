@@ -70,7 +70,7 @@ protected:
     WEBCORE_EXPORT virtual FloatPoint minimumScrollPosition() const;
     WEBCORE_EXPORT virtual FloatPoint maximumScrollPosition() const;
 
-    virtual void setScrollLayerPosition(const FloatPoint&) = 0;
+    virtual void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) = 0;
 
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }

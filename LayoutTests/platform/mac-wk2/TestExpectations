@@ -6,6 +6,7 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 tiled-drawing [ Pass ]
+fast/visual-viewport/tiled-drawing [ Pass ]
 swipe [ Pass ]
 
 fast/events/cancelled-force-click-link-navigation.html [ Pass ]

@@ -109,15 +109,16 @@ void ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeCons
 {
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, SetScrollingLayerPosition);
+        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, Nullopt, SetScrollingLayerPosition);
         return;
     }
 
-    setScrollLayerPosition(scrollPosition);
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
+    FloatRect layoutViewport; // FIXME: implement for iOS WK1.
+    setScrollLayerPosition(scrollPosition, layoutViewport);
+    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, Nullopt);
 }
 
-void ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect&)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
     [m_scrollLayer setPosition:-scrollPosition];

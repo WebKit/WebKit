@@ -51,6 +51,9 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
 #endif
     , m_eventTrackingRegions(stateNode.eventTrackingRegions())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
+    , m_layoutViewport(stateNode.layoutViewport())
+    , m_minLayoutViewportOrigin(stateNode.minLayoutViewportOrigin())
+    , m_maxLayoutViewportOrigin(stateNode.maxLayoutViewportOrigin())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
     , m_topContentInset(stateNode.topContentInset())
     , m_headerHeight(stateNode.headerHeight())
@@ -59,6 +62,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
+    , m_visualViewportEnabled(stateNode.visualViewportEnabled())
 {
     if (hasChangedProperty(ScrolledContentsLayer))
         setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -124,7 +128,34 @@ void ScrollingStateFrameScrollingNode::setScrollBehaviorForFixedElements(ScrollB
     m_behaviorForFixed = behaviorForFixed;
     setPropertyChanged(BehaviorForFixedElements);
 }
-    
+
+void ScrollingStateFrameScrollingNode::setLayoutViewport(const FloatRect& r)
+{
+    if (m_layoutViewport == r)
+        return;
+
+    m_layoutViewport = r;
+    setPropertyChanged(LayoutViewport);
+}
+
+void ScrollingStateFrameScrollingNode::setMinLayoutViewportOrigin(const FloatPoint& p)
+{
+    if (m_minLayoutViewportOrigin == p)
+        return;
+
+    m_minLayoutViewportOrigin = p;
+    setPropertyChanged(MinLayoutViewportOrigin);
+}
+
+void ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin(const FloatPoint& p)
+{
+    if (m_maxLayoutViewportOrigin == p)
+        return;
+
+    m_maxLayoutViewportOrigin = p;
+    setPropertyChanged(MaxLayoutViewportOrigin);
+}
+
 void ScrollingStateFrameScrollingNode::setHeaderHeight(int headerHeight)
 {
     if (m_headerHeight == headerHeight)
@@ -215,6 +246,16 @@ void ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame(boo
     setPropertyChanged(FixedElementsLayoutRelativeToFrame);
 }
 
+// Only needed while visual viewports are runtime-switchable.
+void ScrollingStateFrameScrollingNode::setVisualViewportEnabled(bool visualViewportEnabled)
+{
+    if (visualViewportEnabled == m_visualViewportEnabled)
+        return;
+    
+    m_visualViewportEnabled = visualViewportEnabled;
+    setPropertyChanged(VisualViewportEnabled);
+}
+
 #if !PLATFORM(MAC)
 void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
 {
@@ -230,6 +271,15 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent
     if (m_frameScaleFactor != 1) {
         writeIndent(ts, indent + 1);
         ts << "(frame scale factor " << m_frameScaleFactor << ")\n";
+    }
+    
+    if (m_visualViewportEnabled) {
+        writeIndent(ts, indent + 1);
+        ts << "(layout viewport " << m_layoutViewport << ")\n";
+        writeIndent(ts, indent + 1);
+        ts << "(min layout viewport origin " << m_minLayoutViewportOrigin << ")\n";
+        writeIndent(ts, indent + 1);
+        ts << "(max layout viewport origin " << m_maxLayoutViewportOrigin << ")\n";
     }
 
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {

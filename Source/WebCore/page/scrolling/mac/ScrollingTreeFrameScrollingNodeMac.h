@@ -71,7 +71,7 @@ private:
 
     void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
 
-    void setScrollLayerPosition(const FloatPoint&) override;
+    void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) override;
 
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;

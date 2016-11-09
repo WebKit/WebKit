@@ -109,8 +109,8 @@ void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosit
 
 void ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
 {
-    setScrollLayerPosition(scrollPosition);
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
+    setScrollLayerPosition(scrollPosition, { });
+    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, Nullopt);
 }
 
 FloatPoint ScrollingTreeScrollingNode::minimumScrollPosition() const

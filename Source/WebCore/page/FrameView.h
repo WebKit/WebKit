@@ -252,7 +252,11 @@ public:
 
     IntPoint unscaledScrollOrigin() const;
 
-    void setLayoutViewportOrigin(LayoutPoint);
+    enum class TriggerLayoutOrNot {
+        No,
+        Yes
+    };
+    void setLayoutViewportOrigin(LayoutPoint, TriggerLayoutOrNot = TriggerLayoutOrNot::Yes);
     LayoutPoint layoutViewportOrigin() const { return m_layoutViewportOrigin; }
     
     LayoutPoint minStableLayoutViewportOrigin() const;

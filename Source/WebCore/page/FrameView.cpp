@@ -1792,6 +1792,7 @@ void FrameView::removeViewportConstrainedObject(RenderElement* object)
     }
 }
 
+// visualViewport and layoutViewport are both in content coordinates (unzoomed).
 LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewport, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, const LayoutRect& layoutViewport)
 {
     LayoutPoint layoutViewportOrigin = layoutViewport.location();
@@ -1811,7 +1812,7 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
     return layoutViewportOrigin;
 }
 
-void FrameView::setLayoutViewportOrigin(LayoutPoint origin)
+void FrameView::setLayoutViewportOrigin(LayoutPoint origin, TriggerLayoutOrNot layoutTriggering)
 {
     ASSERT(frame().settings().visualViewportEnabled());
 
@@ -1819,7 +1820,8 @@ void FrameView::setLayoutViewportOrigin(LayoutPoint origin)
         return;
 
     m_layoutViewportOrigin = origin;
-    setViewportConstrainedObjectsNeedLayout();
+    if (layoutTriggering == TriggerLayoutOrNot::Yes)
+        setViewportConstrainedObjectsNeedLayout();
     
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
         FloatRect layoutViewport = layoutViewportRect();
@@ -1842,8 +1844,8 @@ void FrameView::updateLayoutViewport()
 
     LayoutPoint newLayoutViewportOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport);
     if (newLayoutViewportOrigin != layoutViewportOrigin()) {
-        LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewport);
         setLayoutViewportOrigin(newLayoutViewportOrigin);
+        LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
     }
 }
 
@@ -1875,7 +1877,7 @@ LayoutRect FrameView::visualViewportRect() const
 {
     // This isn't visibleContentRect(), because that uses a scaled scroll origin. Confused? Me too.
     FloatRect visibleContentRect = this->visibleContentRect(LegacyIOSDocumentVisibleRect);
-    visibleContentRect.scale(1 / frameScaleFactor());
+    visibleContentRect.scale(1 / frameScaleFactor()); // Note that frameScaleFactor() returns 1 for delegated scrolling (e.g. iOS WK2)
     return LayoutRect(visibleContentRect);
 }
 
@@ -2049,7 +2051,7 @@ ScrollPosition FrameView::unscaledMinimumScrollPosition() const
 {
     if (RenderView* renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
-        ScrollPosition minimumPosition = unscaledDocumentRect.location() - visibleSize();
+        ScrollPosition minimumPosition = unscaledDocumentRect.location();
 
         if (frame().isMainFrame() && m_scrollPinningBehavior == PinToBottom)
             minimumPosition.setY(unscaledMaximumScrollPosition().y());
@@ -2402,6 +2404,7 @@ void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& old
     scrollPositionChanged(scrollPositionFromOffset(oldOffset), scrollPositionFromOffset(newOffset));
 }
 
+// These scroll positions are affected by zooming.
 void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
     Page* page = frame().page();
@@ -2421,7 +2424,7 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
             renderView->compositor().frameViewDidScroll();
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "FrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
     updateLayoutViewport();
     viewportContentsChanged();
 }

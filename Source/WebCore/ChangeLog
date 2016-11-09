@@ -1,3 +1,86 @@
+2016-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement visual-viewport based position:fixed handling for Mac async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=164495
+
+        Reviewed by Tim Horton.
+
+        Educate the scrolling tree about visual and layout viewports. This is runtime-switchable,
+        so we push the enable flag to via the root state node, then push the layout viewport,
+        and the min/max scroll position that contstrain it, through frame state nodes.
+
+        When a scroll happens, we compute a new layout viewport when the visual viewport hits
+        an edge, and push that down through setScrollLayerPosition() since it's used to position
+        fixed and sticky layers.
+
+        When the main thread gets notified about an async scroll, we set the new layout viewport
+        on the FrameView, but do so in such a way that does not trigger layout. This is OK because
+        we do a RenderLayer update which udpates all the layoutViewport-dependent state, and is
+        necessary to avoid repaints every main thread update.
+
+        The iOS code is made to compile, but not work yet.
+
+        Tests: compositing/tiling/visiblerect-accumulated-offset.html
+               fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up.html
+               fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html
+               fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setLayoutViewportOrigin):
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::visualViewportRect):
+        (WebCore::FrameView::unscaledMinimumScrollPosition):
+        (WebCore::FrameView::scrollPositionChanged):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::visualViewportEnabled):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        (WebCore::AsyncScrollingCoordinator::ScheduledScrollUpdate::ScheduledScrollUpdate):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setLayoutViewport):
+        (WebCore::ScrollingStateFrameScrollingNode::setMinLayoutViewportOrigin):
+        (WebCore::ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin):
+        (WebCore::ScrollingStateFrameScrollingNode::setVisualViewportEnabled):
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling):
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling):
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::visualViewportEnabled):
+        (WebCore::ScrollingTree::setVisualViewportEnabled):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewport):
+        (WebCore::ScrollingTreeFrameScrollingNode::minLayoutViewportOrigin):
+        (WebCore::ScrollingTreeFrameScrollingNode::maxLayoutViewportOrigin):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+
 2016-11-09  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: W3C test IndexedDB/idbtransaction_objectStoreNames.html fails.

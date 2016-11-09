@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            background-color: gray;
+        }
+        
+        #top, #bottom {
+            width: 100%;
+            left: 0;
+            height: 100px;
+        }
+
+        #left, #right {
+            width: 100px;
+            top: 0;
+            height: 100%;
+        }
+
+        #top { top: 0; }
+        #bottom { bottom: 0; }
+
+        #left { left: 0; }
+        #right { right: 0; }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals)
+            internals.settings.setVisualViewportEnabled(true);
+        
+        function doAfterZooming()
+        {
+            window.scrollTo(20, 875);
+            window.scrollTo(20, 230);
+
+            if (window.internals) {
+                document.getElementById('scrolling-tree').textContent = internals.scrollingStateTreeAsText();
+                document.getElementById('layer-tree').textContent = internals.layerTreeAsText(document);
+            }
+            
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                doAfterZooming();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="top" class="fixed"></div>
+    <div id="bottom" class="fixed"></div>
+    <div id="left" class="fixed"></div>
+    <div id="right" class="fixed"></div>
+<pre id="scrolling-tree">Scrolling tree goes here</pre>
+<pre id="layer-tree">Layer tree goes here</pre>
+</body>
+</html>

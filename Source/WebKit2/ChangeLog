@@ -1,3 +1,35 @@
+2016-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement visual-viewport based position:fixed handling for Mac async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=164495
+
+        Reviewed by Tim Horton.
+
+        Educate the scrolling tree about visual and layout viewports. This is runtime-switchable,
+        so we push the enable flag to via the root state node, then push the layout viewport,
+        and the min/max scroll position that contstrain it, through frame state nodes.
+
+        When a scroll happens, we compute a new layout viewport when the visual viewport hits
+        an edge, and push that down through setScrollLayerPosition() since it's used to position
+        fixed and sticky layers.
+
+        The iOS code is made to compile, but not work yet.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition):
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         More attempted build fix.
