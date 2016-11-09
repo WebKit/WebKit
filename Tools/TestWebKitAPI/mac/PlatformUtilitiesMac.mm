@@ -32,6 +32,7 @@
 #include <WebKit/WKURLResponseNS.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -62,7 +63,7 @@ WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
 
 bool isKeyDown(WKNativeEventPtr event)
 {
-    return [event type] == NSKeyDown;
+    return [event type] == NSEventTypeKeyDown;
 }
 
 } // namespace Util

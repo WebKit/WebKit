@@ -1,3 +1,72 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Stop using deprecated AppKit enumeration values
+        https://bugs.webkit.org/show_bug.cgi?id=164494
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated AppKit enumeration values.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (eventTypeForMouseButtonAndAction):
+        (modifierFlags):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController contextClick]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        * DumpRenderTree/mac/TextInputController.m:
+        (-[TextInputController interpretKeyEvents:withSender:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CommandBackForward.mm:
+        (simulateCommandArrow):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenLayoutConstraints.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenTopContentInset.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ShouldOpenExternalURLsInNewWindowActions.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserInitiatedActionInNavigationAction.mm:
+        (UserInitiatedActionTest::SetUp):
+        (UserInitiatedActionTest::click):
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm:
+        (TestWebKitAPI::AcceptsFirstMouse::runTest):
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm:
+        (TestWebKitAPI::contextMenuCopyLink):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/ContextMenuDefaultItemsHaveTags.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        (TestWebKitAPI::FullscreenZoomInitialFrame::runTest):
+        * TestWebKitAPI/Tests/mac/MenuTypesForMouseEvents.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::isKeyDown):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::initialize):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        (TestWebKitAPI::eventTypeForButton):
+        (TestWebKitAPI::modifierFlagsForWKModifiers):
+        * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+        (__simulated_forceClickAssociatedEventsMask):
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebView _setUpTestWindow:]):
+        (-[TestWKWebView typeCharacter:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::eventTypeForMouseButtonAndAction):
+        (WTR::buildModifierFlags):
+        (WTR::EventSenderProxy::sendMouseDownToStartPressureEvents):
+        (WTR::EventSenderProxy::mouseForceClick):
+        (WTR::EventSenderProxy::startAndCancelMouseForceClick):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::swipeGestureWithWheelAndMomentumPhases):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Support TouchBar in WebKit

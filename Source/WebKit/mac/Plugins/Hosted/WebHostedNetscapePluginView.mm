@@ -443,10 +443,7 @@ extern "C" {
 {
     if (_cachedSnapshot) {
         NSRect sourceRect = { NSZeroPoint, [_cachedSnapshot.get() size] };
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [_cachedSnapshot.get() drawInRect:[self bounds] fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
-#pragma clang diagnostic pop
+        [_cachedSnapshot.get() drawInRect:[self bounds] fromRect:sourceRect operation:NSCompositingOperationSourceOver fraction:1];
         return;
     }
 

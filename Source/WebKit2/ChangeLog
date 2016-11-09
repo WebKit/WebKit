@@ -1,3 +1,54 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Stop using deprecated AppKit enumeration values
+        https://bugs.webkit.org/show_bug.cgi?id=164494
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated AppKit enumeration values.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::stopNSAppRunLoop):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent):
+        (WebKit::mouseEventTypeForEvent):
+        (WebKit::clickCountForEvent):
+        (WebKit::globalPointForEvent):
+        (WebKit::pointForEvent):
+        (WebKit::textFromEvent):
+        (WebKit::unmodifiedTextFromEvent):
+        (WebKit::isKeypadEvent):
+        (WebKit::isKeyUpEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::updateContentInsetsIfAutomatic):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        (WebKit::WebViewImpl::createFullScreenWindow):
+        (WebKit::WebViewImpl::sendToolTipMouseExited):
+        (WebKit::WebViewImpl::sendToolTipMouseEntered):
+        (WebKit::applicationFlagsForDrag):
+        (WebKit::WebViewImpl::setLastMouseDownEvent):
+        (WebKit::WebViewImpl::doneWithKeyEvent):
+        (WebKit::WebViewImpl::collectKeyboardLayoutCommandsForEvent):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::beginModal):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::modifierFlagsFromWebEvent):
+        (WebKit::getEventTypeFromWebEvent):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::cssAlignmentValueForNSTextAlignment):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Support TouchBar in WebKit

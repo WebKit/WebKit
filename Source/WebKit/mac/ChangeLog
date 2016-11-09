@@ -1,3 +1,67 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Stop using deprecated AppKit enumeration values
+        https://bugs.webkit.org/show_bug.cgi?id=164494
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated AppKit enumeration values.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter sendSuperEvent:]):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::syntheticKeyDownWithCommandModifier):
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+        (PopupMenuMac::show):
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::showContextMenu):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::canAttach):
+        (-[WebInspectorWindowController window]):
+        * WebInspector/WebNodeHighlight.mm:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController init]):
+        (createBackgroundFullscreenWindow):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        (-[WebHTMLView _setMouseDownEvent:_setMouseDownEvent:]):
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]):
+        (isQuickLookEvent):
+        (-[WebHTMLView hitTest:]):
+        (-[WebHTMLView _sendToolTipMouseExited]):
+        (-[WebHTMLView _sendToolTipMouseEntered]):
+        (mouseEventIsPartOfClickOrDrag):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView _autoscroll]):
+        (-[WebHTMLView acceptsFirstResponder]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView mouseDown:mouseDown:]):
+        (currentKeyboardEvent):
+        (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView hitTest:]):
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        (-[WebPDFView _fakeKeyEventWithFunctionKey:]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _buildUI]):
+        (-[WebTextCompletionController _placePopupWindow:]):
+        * WebView/WebView.mm:
+        (-[WebView applicationFlags:]):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Support TouchBar in WebKit

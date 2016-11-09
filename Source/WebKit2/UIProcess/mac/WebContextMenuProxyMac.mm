@@ -463,10 +463,7 @@ void WebContextMenuProxyMac::showContextMenuWithItems(const Vector<WebContextMen
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 
     NSPoint menuLocation = [m_webView convertPoint:m_context.menuLocation() toView:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
     [NSMenu popUpContextMenu:m_menu.get() withEvent:event forView:m_webView];
 
     if (m_contextMenuListener) {

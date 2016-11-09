@@ -29,6 +29,7 @@
 #import "PlatformWebView.h"
 #import <Carbon/Carbon.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface ContextMenuDefaultItemsHaveTagsDelegate : NSObject <WebFrameLoadDelegate>
 @end
@@ -49,7 +50,7 @@ namespace TestWebKitAPI {
 TEST(WebKit1, ContextMenuDefaultItemsHaveTags)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) frameName:nil groupName:nil]);
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     RetainPtr<ContextMenuDefaultItemsHaveTagsDelegate> delegate = adoptNS([[ContextMenuDefaultItemsHaveTagsDelegate alloc] init]);
 
     [window.get().contentView addSubview:webView.get()];
@@ -59,7 +60,7 @@ TEST(WebKit1, ContextMenuDefaultItemsHaveTags)
 
     Util::run(&didFinishLoad);
 
-    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseDown location:NSMakePoint(400, 300) modifierFlags:0 timestamp:[NSDate timeIntervalSinceReferenceDate]
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:NSMakePoint(400, 300) modifierFlags:0 timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[window windowNumber] context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0];
     NSView *subView = [webView hitTest:[event locationInWindow]];
     NSMenu *menu = [subView menuForEvent:event];

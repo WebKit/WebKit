@@ -45,6 +45,7 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;
@@ -103,7 +104,7 @@ void TestController::platformResetStateToConsistentValues()
 {
     cocoaResetStateToConsistentValues();
 
-    while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSScrollWheelMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {
+    while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventTypeScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {
         // Clear out (and ignore) any pending gesture and scroll wheel events.
     }
 }

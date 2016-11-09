@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 #if WK_API_ENABLED
 
@@ -72,7 +73,7 @@ public:
     {
         webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-        window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+        window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
         [[window contentView] addSubview:webView.get()];
 
         delegate = adoptNS([[UserInitiatedActionInNavigationActionDelegate alloc] init]);
@@ -99,8 +100,8 @@ public:
     {
         NSPoint clickPoint = NSMakePoint(100, 100);
 
-        [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-        [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+        [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+        [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     }
 };
 

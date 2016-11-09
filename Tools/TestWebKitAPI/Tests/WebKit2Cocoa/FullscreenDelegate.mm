@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFullscreenDelegate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool receivedLoadedMessage;
 static bool receivedWillEnterFullscreenMessage;
@@ -83,14 +84,14 @@ TEST(Fullscreen, Delegate)
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenChangeHandler"];
     [webView _setFullscreenDelegate:handler.get()];
 
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"FullscreenDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedLoadedMessage);
 
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
     [webView mouseDown:event];
 
     ASSERT_FALSE([webView _isInFullscreen]);

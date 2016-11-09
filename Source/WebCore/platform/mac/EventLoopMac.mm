@@ -31,10 +31,7 @@ namespace WebCore {
 void EventLoop::cycle()
 {
     [NSApp setWindowsNeedUpdate:YES];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [NSApp sendEvent:[NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES]];
-#pragma clang diagnostic pop
+    [NSApp sendEvent:[NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES]];
 }
 
 } // namespace WebCore

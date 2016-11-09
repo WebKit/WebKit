@@ -1278,33 +1278,28 @@ void PDFPlugin::didEvaluateJavaScript(uint64_t, const WTF::String&)
     
 static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return (event.shiftKey() ? NSShiftKeyMask : 0)
-        | (event.controlKey() ? NSControlKeyMask : 0)
-        | (event.altKey() ? NSAlternateKeyMask : 0)
-        | (event.metaKey() ? NSCommandKeyMask : 0);
-#pragma clang diagnostic pop
+    return (event.shiftKey() ? NSEventModifierFlagShift : 0)
+        | (event.controlKey() ? NSEventModifierFlagControl : 0)
+        | (event.altKey() ? NSEventModifierFlagOption : 0)
+        | (event.metaKey() ? NSEventModifierFlagCommand : 0);
 }
     
 static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventType)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (event.type()) {
     case WebEvent::KeyDown:
-        eventType = NSKeyDown;
+        eventType = NSEventTypeKeyDown;
         return true;
     case WebEvent::KeyUp:
-        eventType = NSKeyUp;
+        eventType = NSEventTypeKeyUp;
         return true;
     case WebEvent::MouseDown:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            eventType = NSLeftMouseDown;
+            eventType = NSEventTypeLeftMouseDown;
             return true;
         case WebMouseEvent::RightButton:
-            eventType = NSRightMouseDown;
+            eventType = NSEventTypeRightMouseDown;
             return true;
         default:
             return false;
@@ -1312,10 +1307,10 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
     case WebEvent::MouseUp:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            eventType = NSLeftMouseUp;
+            eventType = NSEventTypeLeftMouseUp;
             return true;
         case WebMouseEvent::RightButton:
-            eventType = NSRightMouseUp;
+            eventType = NSEventTypeRightMouseUp;
             return true;
         default:
             return false;
@@ -1323,13 +1318,13 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
     case WebEvent::MouseMove:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            eventType = NSLeftMouseDragged;
+            eventType = NSEventTypeLeftMouseDragged;
             return true;
         case WebMouseEvent::RightButton:
-            eventType = NSRightMouseDragged;
+            eventType = NSEventTypeRightMouseDragged;
             return true;
         case WebMouseEvent::NoButton:
-            eventType = NSMouseMoved;
+            eventType = NSEventTypeMouseMoved;
             return true;
         default:
             return false;
@@ -1337,7 +1332,6 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
     default:
         return false;
     }
-#pragma clang diagnostic pop
 }
     
 NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)

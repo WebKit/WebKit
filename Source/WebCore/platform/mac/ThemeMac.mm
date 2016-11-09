@@ -67,11 +67,8 @@ static BOOL themeWindowHasKeyAppearance;
 {
     // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
     // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100)
-        styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:YES];
-#pragma clang diagnostic pop
+        styleMask:NSWindowStyleMaskTitled backing:NSBackingStoreBuffered defer:YES];
     return window;
 }
 
@@ -144,15 +141,12 @@ Theme* platformTheme()
 
 static NSControlSize controlSizeForFont(const FontCascade& font)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     int fontSize = font.pixelSize();
     if (fontSize >= 16)
-        return NSRegularControlSize;
+        return NSControlSizeRegular;
     if (fontSize >= 11)
-        return NSSmallControlSize;
-    return NSMiniControlSize;
-#pragma clang diagnostic pop
+        return NSControlSizeSmall;
+    return NSControlSizeMini;
 }
 
 static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 3>& sizes)
@@ -175,16 +169,13 @@ static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomed
 
 static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (minZoomedSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomFactor) &&
-        minZoomedSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomFactor))
-        return NSRegularControlSize;
-    if (minZoomedSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomFactor) &&
-        minZoomedSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomFactor))
-        return NSSmallControlSize;
-    return NSMiniControlSize;
-#pragma clang diagnostic pop
+    if (minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomFactor)
+        && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomFactor))
+        return NSControlSizeRegular;
+    if (minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeSmall].width() * zoomFactor)
+        && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeSmall].height() * zoomFactor))
+        return NSControlSizeSmall;
+    return NSControlSizeMini;
 }
 
 static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
@@ -480,10 +471,7 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlS
 {
     // Set the control size based off the rectangle we're painting into.
     const std::array<IntSize, 3>& sizes = buttonSizes();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (part == SquareButtonPart || zoomedSize.height() > buttonSizes()[NSRegularControlSize].height() * zoomFactor) {
-#pragma clang diagnostic pop
+    if (part == SquareButtonPart || zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) {
         // Use the square button
         if ([cell bezelStyle] != NSShadowlessSquareBezelStyle)
             [cell setBezelStyle:NSShadowlessSquareBezelStyle];
@@ -579,15 +567,12 @@ static const std::array<IntSize, 3>& stepperSizes()
 // should be equal to or less than the corresponding text field height,
 static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     int fontSize = font.pixelSize();
     if (fontSize >= 18)
-        return NSRegularControlSize;
+        return NSControlSizeRegular;
     if (fontSize >= 13)
-        return NSSmallControlSize;
-    return NSMiniControlSize;
-#pragma clang diagnostic pop
+        return NSControlSizeSmall;
+    return NSControlSizeMini;
 }
 
 static void paintStepper(ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*)
@@ -600,15 +585,12 @@ static void paintStepper(ControlStates& states, GraphicsContext& context, const 
     drawInfo.state = convertControlStatesToThemeDrawState(kThemeIncDecButton, states);
     drawInfo.adornment = kThemeAdornmentDefault;
     ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), IntSize(zoomedRect.size()), zoomFactor);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (controlSize == NSSmallControlSize)
+    if (controlSize == NSControlSizeSmall)
         drawInfo.kind = kThemeIncDecButtonSmall;
-    else if (controlSize == NSMiniControlSize)
+    else if (controlSize == NSControlSizeMini)
         drawInfo.kind = kThemeIncDecButtonMini;
     else
         drawInfo.kind = kThemeIncDecButton;
-#pragma clang diagnostic pop
 
     IntRect rect(zoomedRect);
     GraphicsContextStateSaver stateSaver(context);
@@ -749,12 +731,9 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& fon
         case ButtonPart:
             return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
         case InnerSpinButtonPart:{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            IntSize base = stepperSizes()[NSMiniControlSize];
+            IntSize base = stepperSizes()[NSControlSizeMini];
             return LengthSize(Length(static_cast<int>(base.width() * zoomFactor), Fixed),
                               Length(static_cast<int>(base.height() * zoomFactor), Fixed));
-#pragma clang diagnostic pop
         }
         default:
             return Theme::minimumControlSize(part, font, zoomFactor);

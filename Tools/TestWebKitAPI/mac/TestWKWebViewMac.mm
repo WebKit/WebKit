@@ -36,6 +36,7 @@
 #import <WebKit/WebKitPrivate.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
@@ -70,21 +71,13 @@ static int gEventNumber = 1;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return NSEventMaskPressure | NSEventMaskLeftMouseDown | NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged;
-#else
-    return NSEventMaskPressure | (1 << NSLeftMouseDown) | (1 << NSLeftMouseUp) | (1 << NSLeftMouseDragged);
-#endif
 }
 #endif
 
 - (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSEventType mouseEventType = NSEventTypeLeftMouseDown;
-#else
-    NSEventType mouseEventType = NSLeftMouseDown;
-#endif
 
     NSEventMask modifierFlags = 0;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
@@ -157,7 +150,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (void)_setUpTestWindow:(NSRect)frame
 {
-    _hostWindow = [[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+    _hostWindow = [[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
     [_hostWindow setFrameOrigin:NSMakePoint(0, 0)];
     [[_hostWindow contentView] addSubview:self];
     [_hostWindow setIsVisible:YES];
@@ -193,13 +186,8 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (void)typeCharacter:(char)character {
     NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSEventType keyDownEventType = NSEventTypeKeyDown;
     NSEventType keyUpEventType = NSEventTypeKeyUp;
-#else
-    NSEventType keyDownEventType = NSKeyDown;
-    NSEventType keyUpEventType = NSKeyUp;
-#endif
     [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
     [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }

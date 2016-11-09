@@ -475,13 +475,13 @@ static uint32_t modifierFlags(const WebEvent& event)
     uint32_t modifiers = 0;
 
     if (event.shiftKey())
-        modifiers |= NSShiftKeyMask;
+        modifiers |= NSEventModifierFlagShift;
     if (event.controlKey())
-        modifiers |= NSControlKeyMask;
+        modifiers |= NSEventModifierFlagControl;
     if (event.altKey())
-        modifiers |= NSAlternateKeyMask;
+        modifiers |= NSEventModifierFlagOption;
     if (event.metaKey())
-        modifiers |= NSCommandKeyMask;
+        modifiers |= NSEventModifierFlagCommand;
     
     return modifiers;
 }
@@ -706,15 +706,15 @@ static unsigned modifierFlags(const WebKeyboardEvent& keyboardEvent)
     unsigned modifierFlags = 0;
 
     if (keyboardEvent.capsLockKey())
-        modifierFlags |= NSAlphaShiftKeyMask;
+        modifierFlags |= NSEventModifierFlagCapsLock;
     if (keyboardEvent.shiftKey())
-        modifierFlags |= NSShiftKeyMask;
+        modifierFlags |= NSEventModifierFlagShift;
     if (keyboardEvent.controlKey())
-        modifierFlags |= NSControlKeyMask;
+        modifierFlags |= NSEventModifierFlagControl;
     if (keyboardEvent.altKey())
-        modifierFlags |= NSAlternateKeyMask;
+        modifierFlags |= NSEventModifierFlagOption;
     if (keyboardEvent.metaKey())
-        modifierFlags |= NSCommandKeyMask;
+        modifierFlags |= NSEventModifierFlagCommand;
 
     return modifierFlags;
 }

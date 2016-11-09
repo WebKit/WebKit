@@ -140,12 +140,12 @@
 #import <wtf/RunLoop.h>
 
 #if !PLATFORM(IOS)
+#import "WebNSEventExtras.h"
+#import "WebNSPasteboardExtras.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
-#import "WebNSEventExtras.h"
-#import "WebNSPasteboardExtras.h"
 #endif
 
 #import <QuartzCore/QuartzCore.h>
@@ -1351,12 +1351,9 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
         context:nullptr eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
     [self mouseMoved:fakeEvent];
 }
 
@@ -1506,10 +1503,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #endif
 {
 #if !PLATFORM(IOS)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ASSERT(!event || [event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
-#pragma clang diagnostic pop
+    ASSERT(!event || [event type] == NSEventTypeLeftMouseDown || [event type] == NSEventTypeRightMouseDown || [event type] == NSEventTypeOtherMouseDown);
 #else
     ASSERT(!event || event.type == WebEventMouseDown);
 #endif
@@ -1661,16 +1655,17 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_updateMouseoverWithFakeEvent
 {
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
+        location:[[self window]
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-        location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
+        convertScreenToBase:[NSEvent mouseLocation]]
+#pragma clang diagnostic pop
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
         context:nullptr
         eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
 
     [self _updateMouseoverWithEvent:fakeEvent];
 }
@@ -1868,11 +1863,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #if !PLATFORM(IOS)
 static BOOL isQuickLookEvent(NSEvent *event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const int kCGSEventSystemSubtypeHotKeyCombinationReleased = 9;
-    return [event type] == NSSystemDefined && [event subtype] == kCGSEventSystemSubtypeHotKeyCombinationReleased && [event data1] == 'lkup';
-#pragma clang diagnostic pop
+    return [event type] == NSEventTypeSystemDefined && [event subtype] == kCGSEventSystemSubtypeHotKeyCombinationReleased && [event data1] == 'lkup';
 }
 #endif
 
@@ -1928,14 +1920,11 @@ static BOOL isQuickLookEvent(NSEvent *event)
     else {
         // FIXME: Why doesn't this include mouse entered/exited events, or other mouse button events?
         NSEvent *event = [[self window] currentEvent];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        captureHitsOnSubviews = !([event type] == NSMouseMoved
-            || [event type] == NSRightMouseDown
-            || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0)
-            || [event type] == NSFlagsChanged
+        captureHitsOnSubviews = !([event type] == NSEventTypeMouseMoved
+            || [event type] == NSEventTypeRightMouseDown
+            || ([event type] == NSEventTypeLeftMouseDown && [event modifierFlags] & NSEventModifierFlagControl)
+            || [event type] == NSEventTypeFlagsChanged
             || isQuickLookEvent(event));
-#pragma clang diagnostic pop
     }
 
     if (!captureHitsOnSubviews) {
@@ -2023,9 +2012,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
 - (void)_sendToolTipMouseExited
 {
     // Nothing matters except window, trackingNumber, and userData.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseExited
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSEventTypeMouseExited
         location:NSMakePoint(0, 0)
         modifierFlags:0
         timestamp:0
@@ -2034,16 +2021,13 @@ static BOOL isQuickLookEvent(NSEvent *event)
         eventNumber:0
         trackingNumber:TRACKING_RECT_TAG
         userData:_private->trackingRectUserData];
-#pragma clang diagnostic pop
     [_private->trackingRectOwner mouseExited:fakeEvent];
 }
 
 - (void)_sendToolTipMouseEntered
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Nothing matters except window, trackingNumber, and userData.
-    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseEntered
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSEventTypeMouseEntered
         location:NSMakePoint(0, 0)
         modifierFlags:0
         timestamp:0
@@ -2053,7 +2037,6 @@ static BOOL isQuickLookEvent(NSEvent *event)
         trackingNumber:TRACKING_RECT_TAG
         userData:_private->trackingRectUserData];
     [_private->trackingRectOwner mouseEntered:fakeEvent];
-#pragma clang diagnostic pop
 }
 #endif // !PLATFORM(IOS)
 
@@ -2089,21 +2072,18 @@ static BOOL isQuickLookEvent(NSEvent *event)
 static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
     switch ([event type]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-#pragma clang diagnostic pop
-            return true;
-        default:
-            return false;
+    case NSEventTypeLeftMouseDown:
+    case NSEventTypeLeftMouseUp:
+    case NSEventTypeLeftMouseDragged:
+    case NSEventTypeRightMouseDown:
+    case NSEventTypeRightMouseUp:
+    case NSEventTypeRightMouseDragged:
+    case NSEventTypeOtherMouseDown:
+    case NSEventTypeOtherMouseUp:
+    case NSEventTypeOtherMouseDragged:
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -2134,16 +2114,14 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         float yScroll = visibleRect.origin.y;
         float xScroll = visibleRect.origin.x;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        NSEvent *event = [NSEvent mouseEventWithType:NSMouseMoved
+        NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
             location:NSMakePoint(-1 - xScroll, -1 - yScroll)
             modifierFlags:[[NSApp currentEvent] modifierFlags]
             timestamp:[NSDate timeIntervalSinceReferenceDate]
             windowNumber:[[view window] windowNumber]
             context:nullptr
             eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
+
         if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
             lastHitCoreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
     }
@@ -2330,16 +2308,18 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     }
 
 #if !PLATFORM(IOS)
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged
+        location:[[self window]
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseDragged
-        location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
+        convertScreenToBase:[NSEvent mouseLocation]]
+#pragma clang diagnostic pop
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
         context:nullptr
         eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
+
     [self mouseDragged:fakeEvent];
 #endif
 }
@@ -3354,12 +3334,9 @@ WEBCORE_COMMAND(toggleUnderline)
     // or from calls back from WebCore once we begin mouse-down event handling.
 #if !PLATFORM(IOS)            
     NSEvent *event = [NSApp currentEvent];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([event type] == NSLeftMouseDown
+    if ([event type] == NSEventTypeLeftMouseDown
             && !_private->handlingMouseDownEvent
             && NSPointInRect([event locationInWindow], [self convertRect:[self visibleRect] toView:nil])) {
-#pragma clang diagnostic pop
         return NO;
     }
 #else
@@ -3528,13 +3505,10 @@ WEBCORE_COMMAND(toggleUnderline)
 
 #if !PLATFORM(IOS)
         if (!_private->flagsChangedEventMonitor) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            _private->flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
+            _private->flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:^(NSEvent *flagsChangedEvent) {
                 [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
                 return flagsChangedEvent;
             }];
-#pragma clang diagnostic pop
         }
     } else {
         [NSEvent removeMonitor:_private->flagsChangedEventMonitor];
@@ -4540,11 +4514,12 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
 
     if (![currentInputManager wantsToHandleMouseEvents] || ![currentInputManager handleMouseEvent:event]) {
+#pragma clang diagnostic pop
         [_private->completionController endRevertingChange:NO moveLeft:NO];
 
         // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
         // We don't want to pass them along to KHTML a second time.
-        if (!([event modifierFlags] & NSControlKeyMask)) {
+        if (!([event modifierFlags] & NSEventModifierFlagControl)) {
             _private->ignoringMouseDraggedEvents = NO;
 
             // Let WebCore get a chance to deal with the event. This will call back to us
@@ -4553,7 +4528,6 @@ static BOOL currentScrollIsBlit(NSView *clipView)
                 coreframe->eventHandler().mouseDown(event, [[self _webView] _pressureEvent]);
         }
     }
-#pragma clang diagnostic pop
 #endif
 
     _private->handlingMouseDownEvent = NO;
@@ -4642,7 +4616,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     
     // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
     // WebCore expects to get balanced down/up's, so we must fake up a mouseup.
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp
                                             location:windowMouseLoc
                                        modifierFlags:[[NSApp currentEvent] modifierFlags]
                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
@@ -4818,19 +4792,12 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         return 0;
 
     switch ([event type]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    case NSKeyDown: {
-#pragma clang diagnostic pop
-
+    case NSEventTypeKeyDown: {
         PlatformKeyboardEvent platformEvent = PlatformEventFactory::createPlatformKeyboardEvent(event);
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         return KeyboardEvent::create(platformEvent, coreFrame->document()->defaultView());
     }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    case NSKeyUp:
-#pragma clang diagnostic pop
+    case NSEventTypeKeyUp:
         return KeyboardEvent::create(PlatformEventFactory::createPlatformKeyboardEvent(event), coreFrame->document()->defaultView());
     default:
         return 0;
@@ -5524,11 +5491,8 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     if (![self _canEdit])
         return NO;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
+    if (([event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask) != NSEventModifierFlagCommand)
         return NO;
-#pragma clang diagnostic pop
 
     NSString *string = [event characters];
     if ([string caseInsensitiveCompare:@"b"] == NSOrderedSame) {
@@ -6448,14 +6412,11 @@ static BOOL writingDirectionKeyBindingsEnabled()
         return NO;
 
     NSEvent *macEvent = platformEvent->macEvent();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([macEvent type] == NSKeyDown && [_private->completionController filterKeyDown:macEvent])
+    if ([macEvent type] == NSEventTypeKeyDown && [_private->completionController filterKeyDown:macEvent])
         return YES;
     
-    if ([macEvent type] == NSFlagsChanged)
+    if ([macEvent type] == NSEventTypeFlagsChanged)
         return NO;
-#pragma clang diagnostic pop
     
     parameters.event = event;
     _private->interpretKeyEventsParameters = &parameters;

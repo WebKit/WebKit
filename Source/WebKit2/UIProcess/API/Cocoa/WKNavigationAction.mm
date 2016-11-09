@@ -79,7 +79,6 @@ static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers m
 {
     NSEventModifierFlags modifierFlags = 0;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if (modifiers & WebKit::WebEvent::CapsLockKey)
         modifierFlags |= NSEventModifierFlagCapsLock;
     if (modifiers & WebKit::WebEvent::ShiftKey)
@@ -90,18 +89,6 @@ static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers m
         modifierFlags |= NSEventModifierFlagOption;
     if (modifiers & WebKit::WebEvent::MetaKey)
         modifierFlags |= NSEventModifierFlagCommand;
-#else
-    if (modifiers & WebKit::WebEvent::CapsLockKey)
-        modifierFlags |= NSAlphaShiftKeyMask;
-    if (modifiers & WebKit::WebEvent::ShiftKey)
-        modifierFlags |= NSShiftKeyMask;
-    if (modifiers & WebKit::WebEvent::ControlKey)
-        modifierFlags |= NSControlKeyMask;
-    if (modifiers & WebKit::WebEvent::AltKey)
-        modifierFlags |= NSAlternateKeyMask;
-    if (modifiers & WebKit::WebEvent::MetaKey)
-        modifierFlags |= NSCommandKeyMask;
-#endif
 
     return modifierFlags;
 }

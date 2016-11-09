@@ -62,22 +62,22 @@ static EventModifiers modifiersForEvent(NSEvent *event)
     
     modifiers = 0;
     
-    if (eventType != NSLeftMouseDown && eventType != NSRightMouseDown)
+    if (eventType != NSEventTypeLeftMouseDown && eventType != NSEventTypeRightMouseDown)
         modifiers |= btnState;
     
-    if (modifierFlags & NSCommandKeyMask)
+    if (modifierFlags & NSEventModifierFlagCommand)
         modifiers |= cmdKey;
     
-    if (modifierFlags & NSShiftKeyMask)
+    if (modifierFlags & NSEventModifierFlagShift)
         modifiers |= shiftKey;
 
-    if (modifierFlags & NSAlphaShiftKeyMask)
+    if (modifierFlags & NSEventModifierFlagCapsLock)
         modifiers |= alphaLock;
 
-    if (modifierFlags & NSAlternateKeyMask)
+    if (modifierFlags & NSEventModifierFlagOption)
         modifiers |= optionKey;
 
-    if (modifierFlags & NSControlKeyMask || eventType == NSRightMouseDown)
+    if (modifierFlags & NSEventModifierFlagControl || eventType == NSEventTypeRightMouseDown)
         modifiers |= controlKey;
     
     return modifiers;

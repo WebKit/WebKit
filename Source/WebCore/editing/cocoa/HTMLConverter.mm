@@ -113,10 +113,6 @@ SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 #define PlatformFont                NSFont
 #define PlatformFontClass           NSFont
 
-#define NSTextAlignmentLeft         NSLeftTextAlignment
-#define NSTextAlignmentRight        NSRightTextAlignment
-#define NSTextAlignmentCenter       NSCenterTextAlignment
-#define NSTextAlignmentJustified    NSJustifiedTextAlignment
 #endif
 
 using namespace WebCore;
@@ -184,10 +180,10 @@ typedef NS_ENUM(NSInteger, NSWritingDirection) {
     NSWritingDirectionRightToLeft   =  1     // Right to left writing direction
 } NS_ENUM_AVAILABLE_IOS(6_0);
 
-typedef NS_ENUM(NSInteger, NSTextWritingDirection) {
-    NSTextWritingDirectionEmbedding     = (0 << 1),
-    NSTextWritingDirectionOverride      = (1 << 1)
-} NS_ENUM_AVAILABLE_IOS(7_0);
+typedef NS_ENUM(NSInteger, NSWritingDirectionFormatType) {
+    NSWritingDirectionEmbedding     = (0 << 1),
+    NSWritingDirectionOverride      = (1 << 1)
+} NS_ENUM_AVAILABLE_IOS(9_0);
 
 enum {
     NSEnterCharacter                = 0x0003,
@@ -1210,8 +1206,6 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         String textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyTextAlign);
         if (textAlign.length()) {
             // WebKit can return -khtml-left, -khtml-right, -khtml-center
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             if (textAlign.endsWith("left"))
                 [paragraphStyle setAlignment:NSTextAlignmentLeft];
             else if (textAlign.endsWith("right"))
@@ -1220,7 +1214,6 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 [paragraphStyle setAlignment:NSTextAlignmentCenter];
             else if (textAlign.endsWith("justify"))
                 [paragraphStyle setAlignment:NSTextAlignmentJustified];
-#pragma clang diagnostic pop
         }
 
         String direction = _caches->propertyValueForNode(coreBlockElement, CSSPropertyDirection);
@@ -1851,18 +1844,12 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
     else {
         String bidi = _caches->propertyValueForNode(element, CSSPropertyUnicodeBidi);
         if (bidi == "embed") {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            NSUInteger val = NSTextWritingDirectionEmbedding;
-#pragma clang diagnostic pop
+            NSUInteger val = NSWritingDirectionEmbedding;
             if (_caches->propertyValueForNode(element, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         } else if (bidi == "bidi-override") {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            NSUInteger val = NSTextWritingDirectionOverride;
-#pragma clang diagnostic pop
+            NSUInteger val = NSWritingDirectionOverride;
             if (_caches->propertyValueForNode(element, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
@@ -2063,14 +2050,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     tab = [[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation];
                     [newStyle addTabStop:tab];
                     [tab release];
-#if PLATFORM(IOS)
                     tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }];
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSNaturalTextAlignment location:listLocation options:@{ }];
-#pragma clang diagnostic pop
-#endif
                     [newStyle addTabStop:tab];
                     [tab release];
                     [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle range:paragraphRange];

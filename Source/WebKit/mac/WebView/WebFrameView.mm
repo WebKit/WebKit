@@ -915,9 +915,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     BOOL callSuper = YES;
     Frame* coreFrame = [self _web_frame];
     BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList*>(coreFrame->page()->backForward().client())->enabled() ? YES : NO;
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     count = [characters length];
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
@@ -928,7 +926,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 }
                 // This odd behavior matches some existing browsers,
                 // including Windows IE
-                if (modifierFlags & NSShiftKeyMask) {
+                if (modifierFlags & NSEventModifierFlagShift) {
                     [self _goForward];
                 } else {
                     [self _goBack];
@@ -943,7 +941,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                     callSuper = YES;
                     break;
                 }
-                if (modifierFlags & NSShiftKeyMask) {
+                if (modifierFlags & NSEventModifierFlagShift) {
                     [self scrollPageUp:nil];
                 } else {
                     [self scrollPageDown:nil];
@@ -984,7 +982,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 break;
             case NSUpArrowFunctionKey:
                 // We don't handle shifted or control-arrow keys here, so let super have a chance.
-                if (modifierFlags & (NSShiftKeyMask | NSControlKeyMask)) {
+                if (modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl)) {
                     callSuper = YES;
                     break;
                 }
@@ -998,9 +996,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                     break;
                 }
 #endif
-                if (modifierFlags & NSCommandKeyMask) {
+                if (modifierFlags & NSEventModifierFlagCommand) {
                     [self scrollToBeginningOfDocument:nil];
-                } else if (modifierFlags & NSAlternateKeyMask) {
+                } else if (modifierFlags & NSEventModifierFlagOption) {
                     [self scrollPageUp:nil];
                 } else {
                     [self scrollLineUp:nil];
@@ -1009,7 +1007,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 break;
             case NSDownArrowFunctionKey:
                 // We don't handle shifted or control-arrow keys here, so let super have a chance.
-                if (modifierFlags & (NSShiftKeyMask | NSControlKeyMask)) {
+                if (modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl)) {
                     callSuper = YES;
                     break;
                 }
@@ -1023,9 +1021,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                     break;
                 }
 #endif
-                if (modifierFlags & NSCommandKeyMask) {
+                if (modifierFlags & NSEventModifierFlagCommand) {
                     [self scrollToEndOfDocument:nil];
-                } else if (modifierFlags & NSAlternateKeyMask) {
+                } else if (modifierFlags & NSEventModifierFlagOption) {
                     [self scrollPageDown:nil];
                 } else {
                     [self scrollLineDown:nil];
@@ -1034,12 +1032,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 break;
             case NSLeftArrowFunctionKey:
                 // We don't handle shifted or control-arrow keys here, so let super have a chance.
-                if (modifierFlags & (NSShiftKeyMask | NSControlKeyMask)) {
+                if (modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl)) {
                     callSuper = YES;
                     break;
                 }
                 // Check back/forward related keys.
-                if (modifierFlags & NSCommandKeyMask) {
+                if (modifierFlags & NSEventModifierFlagCommand) {
                     if (!maintainsBackForwardList) {
                         callSuper = YES;
                         break;
@@ -1052,7 +1050,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                         break;
                     }
 
-                    if (modifierFlags & NSAlternateKeyMask) {
+                    if (modifierFlags & NSEventModifierFlagOption) {
                         [self _pageHorizontally:YES];
                     } else {
                         [self _scrollLineHorizontally:YES];
@@ -1062,12 +1060,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 break;
             case NSRightArrowFunctionKey:
                 // We don't handle shifted or control-arrow keys here, so let super have a chance.
-                if (modifierFlags & (NSShiftKeyMask | NSControlKeyMask)) {
+                if (modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl)) {
                     callSuper = YES;
                     break;
                 }
                 // Check back/forward related keys.
-                if (modifierFlags & NSCommandKeyMask) {
+                if (modifierFlags & NSEventModifierFlagCommand) {
                     if (!maintainsBackForwardList) {
                         callSuper = YES;
                         break;
@@ -1080,7 +1078,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                         break;
                     }
 
-                    if (modifierFlags & NSAlternateKeyMask) {
+                    if (modifierFlags & NSEventModifierFlagOption) {
                         [self _pageHorizontally:NO];
                     } else {
                         [self _scrollLineHorizontally:NO];
@@ -1090,7 +1088,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
                 break;
         }
     }
-#pragma clang diagnostic pop
     if (callSuper) {
         [super keyDown:event];
     } else {

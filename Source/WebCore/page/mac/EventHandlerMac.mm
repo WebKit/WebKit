@@ -150,10 +150,7 @@ bool EventHandler::keyEvent(NSEvent *event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
-#pragma clang diagnostic pop
+    ASSERT([event type] == NSEventTypeKeyDown || [event type] == NSEventTypeKeyUp);
 
     CurrentEventScope scope(event, nil);
     return keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
@@ -206,12 +203,9 @@ static bool lastEventIsMouseUp()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return EventHandler::currentNSEvent() != currentEventAfterHandlingMouseDown
-        && [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp
+        && [currentEventAfterHandlingMouseDown type] == NSEventTypeLeftMouseUp
         && [currentEventAfterHandlingMouseDown timestamp] >= [EventHandler::currentNSEvent() timestamp];
-#pragma clang diagnostic pop
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
@@ -375,58 +369,55 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch ([currentNSEvent() type]) {
-        case NSLeftMouseDragged:
-        case NSOtherMouseDragged:
-        case NSRightMouseDragged:
-            // This check is bogus and results in <rdar://6813830>, but removing it breaks a number of
-            // layout tests.
-            if (!m_mouseDownWasInSubframe)
-                return false;
-#if ENABLE(DRAG_SUPPORT)
-            if (subframe->page()->dragController().didInitiateDrag())
-                return false;
-#endif
-        case NSMouseMoved:
-            // Since we're passing in currentNSEvent() here, we can call
-            // handleMouseMoveEvent() directly, since the save/restore of
-            // currentNSEvent() that mouseMoved() does would have no effect.
-            ASSERT(!m_sendingEventToSubview);
-            m_sendingEventToSubview = true;
-            subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
-            m_sendingEventToSubview = false;
-            return true;
-        
-        case NSLeftMouseDown: {
-            Node* node = event.targetNode();
-            if (!node)
-                return false;
-            auto* renderer = node->renderer();
-            if (!is<RenderWidget>(renderer))
-                return false;
-            Widget* widget = downcast<RenderWidget>(*renderer).widget();
-            if (!widget || !widget->isFrameView())
-                return false;
-            if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
-                return false;
-            m_mouseDownWasInSubframe = true;
-            return true;
-        }
-        case NSLeftMouseUp: {
-            if (!m_mouseDownWasInSubframe)
-                return false;
-            ASSERT(!m_sendingEventToSubview);
-            m_sendingEventToSubview = true;
-            subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
-            m_sendingEventToSubview = false;
-            return true;
-        }
-        default:
+    case NSEventTypeLeftMouseDragged:
+    case NSEventTypeOtherMouseDragged:
+    case NSEventTypeRightMouseDragged:
+        // This check is bogus and results in <rdar://6813830>, but removing it breaks a number of
+        // layout tests.
+        if (!m_mouseDownWasInSubframe)
             return false;
+#if ENABLE(DRAG_SUPPORT)
+        if (subframe->page()->dragController().didInitiateDrag())
+            return false;
+#endif
+    case NSEventTypeMouseMoved:
+        // Since we're passing in currentNSEvent() here, we can call
+        // handleMouseMoveEvent() directly, since the save/restore of
+        // currentNSEvent() that mouseMoved() does would have no effect.
+        ASSERT(!m_sendingEventToSubview);
+        m_sendingEventToSubview = true;
+        subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
+        m_sendingEventToSubview = false;
+        return true;
+        
+    case NSEventTypeLeftMouseDown: {
+        Node* node = event.targetNode();
+        if (!node)
+            return false;
+        auto* renderer = node->renderer();
+        if (!is<RenderWidget>(renderer))
+            return false;
+        Widget* widget = downcast<RenderWidget>(*renderer).widget();
+        if (!widget || !widget->isFrameView())
+            return false;
+        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
+            return false;
+        m_mouseDownWasInSubframe = true;
+        return true;
     }
-#pragma clang diagnostic pop
+    case NSEventTypeLeftMouseUp: {
+        if (!m_mouseDownWasInSubframe)
+            return false;
+        ASSERT(!m_sendingEventToSubview);
+        m_sendingEventToSubview = true;
+        subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
+        m_sendingEventToSubview = false;
+        return true;
+    }
+    default:
+        return false;
+    }
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
@@ -479,11 +470,8 @@ bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEven
         return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([currentNSEvent() type] != NSScrollWheel || m_sendingEventToSubview)
+    if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)
         return false;
-#pragma clang diagnostic pop
 
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
@@ -586,12 +574,10 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
     m_sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (eventType == NSLeftMouseDown || eventType == NSKeyDown) {
+    if (eventType == NSEventTypeLeftMouseDown || eventType == NSEventTypeKeyDown) {
         NSEvent *fakeEvent = nil;
-        if (eventType == NSLeftMouseDown) {
-            fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+        if (eventType == NSEventTypeLeftMouseDown) {
+            fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp
                                            location:[initiatingEvent locationInWindow]
                                       modifierFlags:[initiatingEvent modifierFlags]
                                           timestamp:[initiatingEvent timestamp]
@@ -602,8 +588,8 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                            pressure:[initiatingEvent pressure]];
         
             [NSApp postEvent:fakeEvent atStart:YES];
-        } else { // eventType == NSKeyDown
-            fakeEvent = [NSEvent keyEventWithType:NSKeyUp
+        } else { // eventType == NSEventTypeKeyDown
+            fakeEvent = [NSEvent keyEventWithType:NSEventTypeKeyUp
                                          location:[initiatingEvent locationInWindow]
                                     modifierFlags:[initiatingEvent modifierFlags]
                                         timestamp:[initiatingEvent timestamp]
@@ -619,8 +605,12 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         // FIXME: We should really get the current modifierFlags here, but there's no way to poll
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
-        fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-                                       location:[[view->platformWidget() window] convertScreenToBase:[NSEvent mouseLocation]]
+        fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
+                                       location:[[view->platformWidget() window]
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                                  convertScreenToBase:[NSEvent mouseLocation]]
+#pragma clang diagnostic pop
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]
@@ -628,7 +618,6 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                     eventNumber:0
                                      clickCount:0
                                        pressure:0];
-#pragma clang diagnostic pop
         [NSApp postEvent:fakeEvent atStart:YES];
     }
     

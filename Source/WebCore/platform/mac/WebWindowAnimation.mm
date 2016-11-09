@@ -38,10 +38,7 @@ static const CGFloat slowMotionFactor = 10;
 
 static NSTimeInterval WebWindowAnimationDurationFromDuration(NSTimeInterval duration)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) ? duration * slowMotionFactor : duration;
-#pragma clang diagnostic pop
+    return ([[NSApp currentEvent] modifierFlags] & NSEventModifierFlagShift) ? duration * slowMotionFactor : duration;
 }
 
 static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat factor)

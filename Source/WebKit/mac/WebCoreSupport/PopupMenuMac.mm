@@ -90,17 +90,11 @@ void PopupMenuMac::populate()
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [paragraphStyle setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
-#pragma clang diagnostic pop
+        [paragraphStyle setAlignment:menuTextDirection == LTR ? NSTextAlignmentLeft : NSTextAlignmentRight];
         NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
         [paragraphStyle setBaseWritingDirection:writingDirection];
         if (style.hasTextDirectionOverride()) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
-#pragma clang diagnostic pop
+            RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
             RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
             [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
         }
@@ -206,18 +200,15 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 
     NSControlSize controlSize;
     switch (m_client->menuStyle().menuSize()) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     case PopupMenuStyle::PopupMenuSizeNormal:
-        controlSize = NSRegularControlSize;
+        controlSize = NSControlSizeRegular;
         break;
     case PopupMenuStyle::PopupMenuSizeSmall:
-        controlSize = NSSmallControlSize;
+        controlSize = NSControlSizeSmall;
         break;
     case PopupMenuStyle::PopupMenuSizeMini:
-        controlSize = NSMiniControlSize;
+        controlSize = NSControlSizeMini;
         break;
-#pragma clang diagnostic pop
     }
 
     WKPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());

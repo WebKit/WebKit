@@ -173,13 +173,14 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Figure out the window's style mask.
     styleMask = WKCarbonWindowMask();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (windowAttributes & kWindowCloseBoxAttribute) styleMask |= NSClosableWindowMask;
-    if (windowAttributes & kWindowResizableAttribute) styleMask |= NSResizableWindowMask;
-    if (windowFeatures & kWindowCanCollapse) styleMask |= NSMiniaturizableWindowMask;
-    if (windowFeatures & kWindowHasTitleBar) styleMask |= NSTitledWindowMask;
-#pragma clang diagnostic pop
+    if (windowAttributes & kWindowCloseBoxAttribute)
+        styleMask |= NSWindowStyleMaskClosable;
+    if (windowAttributes & kWindowResizableAttribute)
+        styleMask |= NSWindowStyleMaskResizable;
+    if (windowFeatures & kWindowCanCollapse)
+        styleMask |= NSWindowStyleMaskMiniaturizable;
+    if (windowFeatures & kWindowHasTitleBar)
+        styleMask |= NSWindowStyleMaskTitled;
 
     osStatus = GetWindowModality(_windowRef, &windowModality, NULL);
     if (osStatus != noErr) {
@@ -393,18 +394,12 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Ignore some unknown event that gets sent when NSTextViews in printing accessory views are focused.  M.P. Notice - 12/7/00
     BOOL ignoreEvent = NO;
     NSEventType eventType = [inEvent type];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (eventType==NSSystemDefined) {
-#pragma clang diagnostic pop
+    if (eventType == NSEventTypeSystemDefined) {
         short eventSubtype = [inEvent subtype];
-        if (eventSubtype==7) {
+        if (eventSubtype == 7) {
             ignoreEvent = YES;
         }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    } else if (eventType == NSKeyDown) {
-#pragma clang diagnostic pop
+    } else if (eventType == NSEventTypeKeyDown) {
         // Handle command-space as [NSApp sendEvent:] does.
         if ([NSInputContext processInputKeyBindings:inEvent]) {
             return;

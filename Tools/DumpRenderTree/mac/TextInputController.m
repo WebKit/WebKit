@@ -51,6 +51,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface TextInputController (DumpRenderTreeInputMethodHandler)
 - (BOOL)interpretKeyEvents:(NSArray *)eventArray withSender:(WebHTMLView *)sender;
@@ -507,21 +508,21 @@ NSString *NSTextInsertionUndoableAttributeName;
     NSEvent *event = [eventArray objectAtIndex:0];
     unsigned modifierFlags = [event modifierFlags]; 
     NSMutableArray *modifiers = [[NSMutableArray alloc] init];
-    if (modifierFlags & NSAlphaShiftKeyMask)
+    if (modifierFlags & NSEventModifierFlagCapsLock)
         [modifiers addObject:@"NSAlphaShiftKeyMask"];
-    if (modifierFlags & NSShiftKeyMask)
+    if (modifierFlags & NSEventModifierFlagShift)
         [modifiers addObject:@"NSShiftKeyMask"];
-    if (modifierFlags & NSControlKeyMask)
+    if (modifierFlags & NSEventModifierFlagControl)
         [modifiers addObject:@"NSControlKeyMask"];
-    if (modifierFlags & NSAlternateKeyMask)
+    if (modifierFlags & NSEventModifierFlagOption)
         [modifiers addObject:@"NSAlternateKeyMask"];
-    if (modifierFlags & NSCommandKeyMask)
+    if (modifierFlags & NSEventModifierFlagCommand)
         [modifiers addObject:@"NSCommandKeyMask"];
-    if (modifierFlags & NSNumericPadKeyMask)
+    if (modifierFlags & NSEventModifierFlagNumericPad)
         [modifiers addObject:@"NSNumericPadKeyMask"];
-    if (modifierFlags & NSHelpKeyMask)
+    if (modifierFlags & NSEventModifierFlagHelp)
         [modifiers addObject:@"NSHelpKeyMask"];
-    if (modifierFlags & NSFunctionKeyMask)
+    if (modifierFlags & NSEventModifierFlagFunction)
         [modifiers addObject:@"NSFunctionKeyMask"];
     
     WebScriptObject* eventParam = [inputMethodHandler evaluateWebScript:@"new Object();"];

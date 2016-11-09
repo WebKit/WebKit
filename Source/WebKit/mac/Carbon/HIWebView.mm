@@ -539,7 +539,7 @@ ContextMenuClick( HIWebView* inView, EventRef inEvent )
     NSPoint location = NSMakePoint(point.x, [window frame].size.height - point.y);
     
     // Make up an event with the point and send it to the window.
-    NSEvent *kitEvent = [NSEvent mouseEventWithType:NSRightMouseDown
+    NSEvent *kitEvent = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown
                                            location:location
                                       modifierFlags:0
                                           timestamp:GetEventTime(inEvent)

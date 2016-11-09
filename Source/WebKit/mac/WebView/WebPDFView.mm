@@ -321,10 +321,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // Override hitTest so we can override menuForEvent.
     NSEvent *event = [NSApp currentEvent];
     NSEventType type = [event type];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (type == NSRightMouseDown || (type == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask)))
-#pragma clang diagnostic pop
+    if (type == NSEventTypeRightMouseDown || (type == NSEventTypeLeftMouseDown && ([event modifierFlags] & NSEventModifierFlagControl)))
         return self;
 
     return [super hitTest:point];
@@ -1009,39 +1006,33 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     int button = noButton;
     RefPtr<Event> event;
     switch ([nsEvent type]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        case NSLeftMouseUp:
-            button = 0;
-            break;
-        case NSRightMouseUp:
-            button = 1;
-            break;
-        case NSOtherMouseUp:
-            button = [nsEvent buttonNumber];
-            break;
-        case NSKeyDown: {
-            PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
-            pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-            event = KeyboardEvent::create(pe, 0);
-            break;
-        }
-#pragma clang diagnostic pop
-        default:
-            break;
+    case NSEventTypeLeftMouseUp:
+        button = 0;
+        break;
+    case NSEventTypeRightMouseUp:
+        button = 1;
+        break;
+    case NSEventTypeOtherMouseUp:
+        button = [nsEvent buttonNumber];
+        break;
+    case NSEventTypeKeyDown: {
+        PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
+        pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
+        event = KeyboardEvent::create(pe, 0);
+        break;
+    }
+    default:
+        break;
     }
     if (button != noButton) {
         event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, [nsEvent clickCount], 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
             0, 0,
 #endif
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [nsEvent modifierFlags] & NSControlKeyMask,
-            [nsEvent modifierFlags] & NSAlternateKeyMask,
-            [nsEvent modifierFlags] & NSShiftKeyMask,
-            [nsEvent modifierFlags] & NSCommandKeyMask,
-#pragma clang diagnostic pop
+            [nsEvent modifierFlags] & NSEventModifierFlagControl,
+            [nsEvent modifierFlags] & NSEventModifierFlagOption,
+            [nsEvent modifierFlags] & NSEventModifierFlagShift,
+            [nsEvent modifierFlags] & NSEventModifierFlagCommand,
             button, 0, WebCore::ForceAtClick, 0, 0, true);
     }
 
@@ -1149,9 +1140,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // FIXME 4400480: when PDFView implements the standard scrolling selectors that this
     // method is used to mimic, we can eliminate this method and call them directly.
     NSString *keyAsString = [NSString stringWithCharacters:&functionKey length:1];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return [NSEvent keyEventWithType:NSKeyDown
+    return [NSEvent keyEventWithType:NSEventTypeKeyDown
                             location:NSZeroPoint
                        modifierFlags:0
                            timestamp:0
@@ -1161,7 +1150,6 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
          charactersIgnoringModifiers:keyAsString
                            isARepeat:NO
                              keyCode:0];
-#pragma clang diagnostic pop
 }
 
 - (void)_lookUpInDictionaryFromMenu:(id)sender

@@ -53,21 +53,18 @@ using namespace HTMLNames;
 
 static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignment)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (alignment) {
-    case NSLeftTextAlignment:
+    case NSTextAlignmentLeft:
         return "left";
-    case NSRightTextAlignment:
+    case NSTextAlignmentRight:
         return "right";
-    case NSCenterTextAlignment:
+    case NSTextAlignmentCenter:
         return "center";
-    case NSJustifiedTextAlignment:
+    case NSTextAlignmentJustified:
         return "justify";
-    case NSNaturalTextAlignment:
+    case NSTextAlignmentNatural:
         return "-webkit-start";
     }
-#pragma clang diagnostic pop
     ASSERT_NOT_REACHED();
     return String();
 }

@@ -34,6 +34,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface CommandBackForwardOffscreenWindow : NSWindow
 @end
@@ -62,9 +63,9 @@ static void simulateCommandArrow(NSView *view, ArrowDirection direction)
     NSString *eventCharacter = (direction == Left) ? [NSString stringWithCharacters:&left length:1] : [NSString stringWithCharacters:&right length:1];
     unsigned short keyCode = (direction == Left) ? 0x7B : 0x7C;
 
-    NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
+    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
                                       location:NSMakePoint(5, 5)
-                                 modifierFlags:NSCommandKeyMask
+                                 modifierFlags:NSEventModifierFlagCommand
                                      timestamp:GetCurrentEventTime()
                                   windowNumber:[view.window windowNumber]
                                        context:[NSGraphicsContext currentContext]
@@ -75,9 +76,9 @@ static void simulateCommandArrow(NSView *view, ArrowDirection direction)
 
     [view keyDown:event];
 
-    event = [NSEvent keyEventWithType:NSKeyUp
+    event = [NSEvent keyEventWithType:NSEventTypeKeyUp
                              location:NSMakePoint(5, 5)
-                        modifierFlags:NSCommandKeyMask
+                        modifierFlags:NSEventModifierFlagCommand
                             timestamp:GetCurrentEventTime()
                          windowNumber:[view.window windowNumber]
                               context:[NSGraphicsContext currentContext]

@@ -1,3 +1,14 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Stop using deprecated AppKit enumeration values
+        https://bugs.webkit.org/show_bug.cgi?id=164494
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated AppKit enumeration values.
+
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+
 2016-11-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of LLInt with MinGW

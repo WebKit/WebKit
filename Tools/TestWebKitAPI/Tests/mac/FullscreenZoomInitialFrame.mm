@@ -34,6 +34,7 @@
 #import <WebKit/WKViewPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface NSWindowController (WebKitFullScreenAdditions)
 - (NSRect)initialFrame;
@@ -150,12 +151,12 @@ void FullscreenZoomInitialFrame::sendMouseDownEvent(WKView *wkView, NSEvent *eve
 template <typename View>
 void FullscreenZoomInitialFrame::runTest(View view)
 {
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
 
     setPageScale(view, 2);
 
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
 
     isWaitingForPageSignalToContinue = true;
     didGetPageSignalToContinue = false;

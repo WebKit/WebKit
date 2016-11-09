@@ -32,6 +32,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool receivedLoadedMessage;
 static bool receivedFullscreenChangeMessage;
@@ -60,7 +61,7 @@ TEST(Fullscreen, LayoutConstraints)
     RetainPtr<FullscreenStateChangeMessageHandler> handler = adoptNS([[FullscreenStateChangeMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenStateChangeHandler"];
 
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     webView.get().translatesAutoresizingMaskIntoConstraints = NO;
     [[window contentView] addSubview:webView.get()];
     
@@ -74,14 +75,14 @@ TEST(Fullscreen, LayoutConstraints)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedLoadedMessage);
 
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
     [webView mouseDown:event];
 
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
     
     receivedFullscreenChangeMessage = false;
     
-    NSEvent *exitFSEvent = [NSEvent mouseEventWithType:NSLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
+    NSEvent *exitFSEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
     [webView mouseDown:exitFSEvent];
     
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);

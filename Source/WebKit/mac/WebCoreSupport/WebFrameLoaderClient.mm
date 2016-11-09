@@ -1561,17 +1561,14 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 #if !PLATFORM(IOS)
     const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
     if (keyStateEvent && keyStateEvent->isTrusted()) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (keyStateEvent->ctrlKey())
-            modifierFlags |= NSControlKeyMask;
+            modifierFlags |= NSEventModifierFlagControl;
         if (keyStateEvent->altKey())
-            modifierFlags |= NSAlternateKeyMask;
+            modifierFlags |= NSEventModifierFlagOption;
         if (keyStateEvent->shiftKey())
-            modifierFlags |= NSShiftKeyMask;
+            modifierFlags |= NSEventModifierFlagShift;
         if (keyStateEvent->metaKey())
-            modifierFlags |= NSCommandKeyMask;
-#pragma clang diagnostic pop
+            modifierFlags |= NSEventModifierFlagCommand;
     }
 #else
     // No modifier flags on iOS right now

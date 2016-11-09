@@ -33,6 +33,7 @@
 #import <WebKit/DOM.h>
 #import <Carbon/Carbon.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 
 @interface ContextMenuCanCopyURLDelegate : NSObject <WebFrameLoadDelegate> {
@@ -61,7 +62,7 @@ static void contextMenuCopyLink(WebView* webView, int itemIndex)
     DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[[documentElement querySelectorAll:@"a"] item:itemIndex];
 
     NSWindow *window = [webView window];
-    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseDown
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown
                                         location:NSMakePoint(anchor.offsetLeft + anchor.offsetWidth / 2, window.frame.size.height - (anchor.offsetTop + anchor.offsetHeight / 2))
                                    modifierFlags:0
                                        timestamp:GetCurrentEventTime()
@@ -89,7 +90,7 @@ static void contextMenuCopyLink(WebView* webView, int itemIndex)
 TEST(WebKit1, ContextMenuCanCopyURL)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0,0,800,600) frameName:nil groupName:nil]);
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     RetainPtr<ContextMenuCanCopyURLDelegate> delegate = adoptNS([[ContextMenuCanCopyURLDelegate alloc] init]);
 
     [window.get().contentView addSubview:webView.get()];

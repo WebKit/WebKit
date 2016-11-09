@@ -31,6 +31,7 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 #if WK_API_ENABLED
 
@@ -73,7 +74,7 @@ TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window contentView] addSubview:webView.get()];
 
     auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
@@ -86,8 +87,8 @@ TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
 
     NSPoint clickPoint = NSMakePoint(100, 100);
 
-    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     TestWebKitAPI::Util::run(&createdWebView);
     createdWebView = false;
 
@@ -108,8 +109,8 @@ TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
     TestWebKitAPI::Util::run(&finishedNavigation);
     finishedNavigation = false;
 
-    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     TestWebKitAPI::Util::run(&createdWebView);
     createdWebView = false;
 
@@ -134,7 +135,7 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window contentView] addSubview:webView.get()];
 
     auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
@@ -148,8 +149,8 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
     NSPoint clickPoint = NSMakePoint(100, 100);
 
     decidedPolicy = false;
-    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     TestWebKitAPI::Util::run(&decidedPolicy);
     decidedPolicy = false;
 
@@ -178,8 +179,8 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
     finishedNavigation = false;
 
     decidedPolicy = false;
-    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     TestWebKitAPI::Util::run(&decidedPolicy);
     decidedPolicy = false;
 
@@ -210,7 +211,7 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
 TEST(WebKit2, RestoreShouldOpenExternalURLsPolicyAfterCrash)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window contentView] addSubview:webView.get()];
     auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
     [webView setNavigationDelegate:controller.get()];

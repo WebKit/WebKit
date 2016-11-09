@@ -57,6 +57,10 @@ static const NSCompositingOperation NSCompositingOperationSourceOver = NSComposi
 
 static const NSControlSize NSControlSizeRegular = NSRegularControlSize;
 static const NSControlSize NSControlSizeSmall = NSSmallControlSize;
+static const NSControlSize NSControlSizeMini = NSMiniControlSize;
+
+static const NSSliderType NSSliderTypeLinear = NSLinearSlider;
+static const NSSliderType NSSliderTypeCircular = NSCircularSlider;
 
 static const NSEventMask NSEventMaskAny = NSAnyEventMask;
 static const NSEventMask NSEventMaskFlagsChanged = NSFlagsChangedMask;
@@ -83,12 +87,15 @@ static const NSEventModifierFlags NSEventModifierFlagNumericPad = NSNumericPadKe
 static const NSEventModifierFlags NSEventModifierFlagShift = NSShiftKeyMask;
 static const NSEventModifierFlags NSEventModifierFlagHelp = NSHelpKeyMask;
 
+static const NSEventType NSEventTypeApplicationDefined = NSApplicationDefined;
 static const NSEventType NSEventTypeFlagsChanged = NSFlagsChanged;
 static const NSEventType NSEventTypeKeyDown = NSKeyDown;
 static const NSEventType NSEventTypeKeyUp = NSKeyUp;
 static const NSEventType NSEventTypeLeftMouseDown = NSLeftMouseDown;
 static const NSEventType NSEventTypeLeftMouseDragged = NSLeftMouseDragged;
 static const NSEventType NSEventTypeLeftMouseUp = NSLeftMouseUp;
+static const NSEventType NSEventTypeMouseEntered = NSMouseEntered;
+static const NSEventType NSEventTypeMouseExited = NSMouseExited;
 static const NSEventType NSEventTypeMouseMoved = NSMouseMoved;
 static const NSEventType NSEventTypeOtherMouseDown = NSOtherMouseDown;
 static const NSEventType NSEventTypeOtherMouseDragged = NSOtherMouseDragged;
@@ -105,6 +112,11 @@ static const NSTextAlignment NSTextAlignmentRight = NSRightTextAlignment;
 static const NSTextAlignment NSTextAlignmentCenter = NSCenterTextAlignment;
 static const NSTextAlignment NSTextAlignmentLeft = NSLeftTextAlignment;
 static const NSTextAlignment NSTextAlignmentNatural = NSNaturalTextAlignment;
+static const NSTextAlignment NSTextAlignmentJustified = NSJustifiedTextAlignment;
+
+typedef NSInteger NSWritingDirectionFormatType;
+static const NSWritingDirectionFormatType = NSTextWritingDirectionOverride;
+static const NSWritingDirectionEmbedding = NSTextWritingDirectionEmbedding;
 #endif
 
 typedef NSUInteger NSWindowStyleMask;

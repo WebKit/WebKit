@@ -197,10 +197,7 @@ void ChildProcess::stopNSAppRunLoop()
     ASSERT([NSApp isRunning]);
     [NSApp stop:nil];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0.0 windowNumber:0 context:nil subtype:0 data1:0 data2:0];
-#pragma clang diagnostic pop
+    NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0.0 windowNumber:0 context:nil subtype:0 data1:0 data2:0];
     [NSApp postEvent:event atStart:true];
 }
 #endif

@@ -1,3 +1,73 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Stop using deprecated AppKit enumeration values
+        https://bugs.webkit.org/show_bug.cgi?id=164494
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated AppKit enumeration values.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement):
+        (HTMLConverter::_processElement):
+        (HTMLConverter::_addMarkersToList):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::widgetDidHandleWheelEvent):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::paint):
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPointForEvent):
+        (WebCore::pointForEvent):
+        (WebCore::mouseButtonForEvent):
+        (WebCore::mouseEventTypeForEvent):
+        (WebCore::clickCountForEvent):
+        (WebCore::isKeypadEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::isKeyUpEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::scrollbarControlSizeToNSControlSize):
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeView window]):
+        (WebCore::controlSizeForFont):
+        (WebCore::controlSizeFromPixelSize):
+        (WebCore::setUpButtonCell):
+        (WebCore::stepperControlSizeForFont):
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::minimumControlSize):
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenHUDWindow performKeyEquivalent:]):
+        (-[WebVideoFullscreenHUDWindowController init]):
+        (-[WebVideoFullscreenHUDWindowController keyDown:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+        * platform/mac/WebWindowAnimation.mm:
+        (WebWindowAnimationDurationFromDuration):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateCachedSystemFontDescription):
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::controlSizeForCell):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::popupMenuSize):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeMac::sliderThumbVertical):
+
 2016-11-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: iOS inline controls
