@@ -17,6 +17,7 @@ PASS mediaControls.skipBackButton instanceof SkipBackButton is true
 PASS mediaControls.airplayButton instanceof AirplayButton is true
 PASS mediaControls.pipButton instanceof PiPButton is true
 PASS mediaControls.fullscreenButton instanceof FullscreenButton is true
+PASS mediaControls.statusLabel instanceof StatusLabel is true
 PASS mediaControls.timeControl instanceof TimeControl is true
 PASS mediaControls.airplayPlacard instanceof AirplayPlacard is true
 PASS mediaControls.pipPlacard instanceof PiPPlacard is true

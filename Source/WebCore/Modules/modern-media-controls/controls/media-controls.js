@@ -42,6 +42,7 @@ class MediaControls extends LayoutNode
         this.pipButton = new PiPButton(this);
         this.fullscreenButton = new FullscreenButton(this);
 
+        this.statusLabel = new StatusLabel(this)
         this.timeControl = new TimeControl(this);
 
         this.controlsBar = new LayoutItem({

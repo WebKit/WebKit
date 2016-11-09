@@ -1,3 +1,35 @@
+2016-11-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: StatusLabel
+        https://bugs.webkit.org/show_bug.cgi?id=164544
+        <rdar://problem/29179541>
+
+        Reviewed by Dean Jackson.
+
+        Adding new tests for the core properties of the new StatusLabel class, as well as adding a test
+        to check we use the correct layout when the StatusLabel has its text set and the time controls
+        needs to be replaced with it. We also make a few existing tests use the script loader so that
+        they continue to pass with the addition of a new JS class.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * media/modern-media-controls/macos-media-controls/macos-media-controls.html:
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/media-controls/media-controls-placard.html:
+        * media/modern-media-controls/media-controls/media-controls-start-button.html:
+        * media/modern-media-controls/resources/media-controls-loader.js:
+        * media/modern-media-controls/status-label/status-label-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label.html: Added.
+
 2016-11-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: iOS inline controls

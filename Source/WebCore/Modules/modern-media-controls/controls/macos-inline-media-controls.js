@@ -74,19 +74,27 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this._leftContainer.layout();
         this._rightContainer.layout();
 
-        this.timeControl.width = this.width - this._leftContainer.width - this._rightContainer.width;
+        const middleContainer = !!this.statusLabel.text ? this.statusLabel : this.timeControl;
+        this.controlsBar.children = [this._leftContainer, middleContainer, this._rightContainer, this._volumeSliderContainer];
 
-        if (this.timeControl.isSufficientlyWide) {
-            this.controlsBar.insertBefore(this.timeControl, this._rightContainer);
+        if (middleContainer === this.timeControl)
+            this.timeControl.width = this.width - this._leftContainer.width - this._rightContainer.width;
+
+        if (middleContainer === this.timeControl && this.timeControl.isSufficientlyWide)
             this.timeControl.x = this._leftContainer.width;
-        } else {
+        else {
             this.timeControl.remove();
+
+            let droppedControls = false;
+
             // Since we don't have enough space to display the scrubber, we may also not have
             // enough space to display all buttons in the left and right containers, so gradually drop them.
             for (let button of [this.airplayButton, this.pipButton, this.tracksButton, this.muteButton, this.skipBackButton, this.fullscreenButton]) {
                 // Nothing left to do if the combined container widths is shorter than the available width.
                 if (this._leftContainer.width + this._rightContainer.width < this.width)
                     break;
+
+                droppedControls = true;
 
                 // If the button was already not participating in layout, we can skip it.
                 if (!button.visible)
@@ -97,6 +105,12 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
                 this._leftContainer.layout();
                 this._rightContainer.layout();
+            }
+
+            // We didn't need to drop controls and we have status text to show.
+            if (!droppedControls && middleContainer === this.statusLabel) {
+                this.statusLabel.x = this._leftContainer.width;
+                this.statusLabel.width = this.width - this._leftContainer.width - this._rightContainer.width;
             }
         }
 
