@@ -1,3 +1,21 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Ignore URL.origin in URL web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=164553
+
+        Reviewed by Tim Horton.
+
+        Spec-noncompliance in our SecurityOrigin class is covering up URLParser bugs.
+        Let's ignore those bugs for now in our copy of the web-platform-tests so we can see URLParser conformance improvement in our results.
+        I've proposed moving these URL.origin checks to different tests in https://github.com/w3c/web-platform-tests/pull/4182
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/a-element.js:
+        (runURLTests):
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-constructor.html:
+
 2016-11-04  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up more transaction abort and exception throwing behavior from IDBObjectStore.
