@@ -155,11 +155,13 @@ MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
-    if (name == styleAttr)
-        styleAttributeChanged(newValue, reason);
-    else if (isPresentationAttribute(name)) {
-        elementData()->setPresentationAttributeStyleIsDirty(true);
-        invalidateStyle();
+    if (oldValue != newValue) {
+        if (name == styleAttr)
+            styleAttributeChanged(newValue, reason);
+        else if (isPresentationAttribute(name)) {
+            elementData()->setPresentationAttributeStyleIsDirty(true);
+            invalidateStyle();
+        }
     }
 
     Element::attributeChanged(name, oldValue, newValue, reason);

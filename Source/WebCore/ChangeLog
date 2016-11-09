@@ -1,3 +1,16 @@
+2016-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        StyledElement::attributeChanged shouldn't do any work when the attribute value didn't change
+        https://bugs.webkit.org/show_bug.cgi?id=129476
+
+        Reviewed by Andreas Kling.
+
+        Avoid calling styleAttributeChanged and setPresentationAttributeStyleIsDirty
+        when the attribute value didn't change as in r164856.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
 2016-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node::ownerDocument
