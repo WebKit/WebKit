@@ -1,3 +1,18 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Use Blob URL instead of webkit-fake-url when pasting an image
+        https://bugs.webkit.org/show_bug.cgi?id=49141
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage checking that the image shows as expected and that the
+        resulting URL is indeed a Blob URL.
+
+        * editing/pasteboard/paste-image-as-blob-url-expected.txt: Added.
+        * editing/pasteboard/paste-image-as-blob-url.html: Added.
+        * editing/pasteboard/paste-image-using-image-data-expected.html: Added.
+        * editing/pasteboard/paste-image-using-image-data.html: Added.
+
 2016-11-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] The implementation of 8 bit operation in MacroAssembler should care about uint8_t / int8_t

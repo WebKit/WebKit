@@ -26,10 +26,12 @@
 #import "config.h"
 #import "Editor.h"
 
+#import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
+#import "DOMURL.h"
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -610,9 +612,14 @@ bool Editor::WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const Strin
     ASSERT(type.contains('/'));
     String typeAsFilenameWithExtension = type;
     typeAsFilenameWithExtension.replace('/', '.');
-    URL imageURL = URL::fakeURLWithRelativePart(typeAsFilenameWithExtension);
 
-    fragment = frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(WTFMove(buffer), imageURL, type, emptyString(), emptyString()));
+    Vector<uint8_t> data;
+    data.append(buffer->data(), buffer->size());
+    auto blob = Blob::create(WTFMove(data), type);
+    ASSERT(frame.document());
+    String blobURL = DOMURL::createObjectURL(*frame.document(), blob);
+
+    fragment = frame.editor().createFragmentForImageAndURL(blobURL);
     return fragment;
 }
 
@@ -669,6 +676,17 @@ RefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(Re
     fragment->appendChild(imageElement);
 
     return WTFMove(fragment);
+}
+
+Ref<DocumentFragment> Editor::createFragmentForImageAndURL(const String& url)
+{
+    auto imageElement = HTMLImageElement::create(*m_frame.document());
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
+
+    auto fragment = document().createDocumentFragment();
+    fragment->appendChild(imageElement);
+
+    return fragment;
 }
 
 RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)

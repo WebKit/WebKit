@@ -77,7 +77,7 @@ Blob::Blob()
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, Vector<BlobPart>(), String());
 }
 
-Blob::Blob(Vector<uint8_t> data, const String& contentType)
+Blob::Blob(Vector<uint8_t>&& data, const String& contentType)
     : m_type(contentType)
     , m_size(data.size())
 {
@@ -87,7 +87,7 @@ Blob::Blob(Vector<uint8_t> data, const String& contentType)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
-Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
+Blob::Blob(Vector<BlobPart>&& blobParts, const String& contentType)
     : m_type(contentType)
     , m_size(-1)
 {

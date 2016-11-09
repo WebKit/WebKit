@@ -42,7 +42,7 @@ public:
     {
     }
 
-    BlobPart(Vector<uint8_t> data)
+    BlobPart(Vector<uint8_t>&& data)
         : m_type(Data)
         , m_data(WTFMove(data))
     {
