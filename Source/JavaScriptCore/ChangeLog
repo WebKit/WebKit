@@ -1,3 +1,15 @@
+2016-11-08  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: date-format-tofte.js is super slow
+        https://bugs.webkit.org/show_bug.cgi?id=164499
+
+        Reviewed by Sam Weinig.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::operator==): Use character comparison,
+        not pointer comparison. (This function was always wrong, but I started
+        calling it in more places.)
+
 2016-11-08  Saam Barati  <sbarati@apple.com>
 
         REGRESSION: Crashes in StringImpl destructor during GC when clearing the HasOwnPropertyCache

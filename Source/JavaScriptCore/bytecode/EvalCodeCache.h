@@ -66,7 +66,7 @@ namespace JSC {
 
             bool operator==(const CacheKey& other) const
             {
-                return m_callSiteIndex == other.m_callSiteIndex && m_source == other.m_source;
+                return m_callSiteIndex == other.m_callSiteIndex && WTF::equal(m_source.get(), other.m_source.get());
             }
 
             bool isHashTableDeletedValue() const { return m_source.isHashTableDeletedValue(); }
