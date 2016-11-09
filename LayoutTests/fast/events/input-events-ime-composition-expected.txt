@@ -14,6 +14,7 @@ beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = fal
 input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
 beforeinput(inputType = 'insertFromComposition', data = 'abc', cancelable = true)
 input(inputType = 'insertFromComposition', data = 'abc', cancelable = false)
+compositionend(data = 'abc')
 * * * Second case: canceling a new composition * * *
 beforeinput(inputType = 'insertCompositionText', data = 'a', cancelable = false)
 input(inputType = 'insertCompositionText', data = 'a', cancelable = false)
@@ -23,6 +24,7 @@ beforeinput(inputType = 'insertCompositionText', data = ' ', cancelable = false)
 input(inputType = 'insertCompositionText', data = ' ', cancelable = false)
 beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
 input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
+compositionend(data = '')
 * * * Third case: replacing a composition * * *
 beforeinput(inputType = 'insertCompositionText', data = 'a', cancelable = false)
 input(inputType = 'insertCompositionText', data = 'a', cancelable = false)
@@ -36,6 +38,7 @@ beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = fal
 input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
 beforeinput(inputType = 'insertFromComposition', data = 'fg', cancelable = true)
 input(inputType = 'insertFromComposition', data = 'fg', cancelable = false)
+compositionend(data = 'fg')
 * * * Fourth case: partially committing a composition * * *
 beforeinput(inputType = 'insertCompositionText', data = 'a', cancelable = false)
 input(inputType = 'insertCompositionText', data = 'a', cancelable = false)
@@ -47,6 +50,7 @@ beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = fal
 input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
 beforeinput(inputType = 'insertFromComposition', data = 'a', cancelable = true)
 input(inputType = 'insertFromComposition', data = 'a', cancelable = false)
+compositionend(data = 'a')
 beforeinput(inputType = 'insertCompositionText', data = 'aa', cancelable = false)
 input(inputType = 'insertCompositionText', data = 'aa', cancelable = false)
 PASS successfullyParsed is true

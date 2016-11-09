@@ -15,6 +15,7 @@ beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = fal
 input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
 beforeinput(inputType = 'insertFromComposition', data = 'ghi', cancelable = true)
 input(inputType = 'insertFromComposition', data = 'ghi', cancelable = false)
+compositionend(data = 'ghi')
 PASS successfullyParsed is true
 
 TEST COMPLETE

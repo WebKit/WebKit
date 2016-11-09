@@ -1680,14 +1680,6 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
         setIgnoreCompositionSelectionChange(false);
         return;
     }
-    
-    // Dispatch a compositionend event to the focused node.
-    // We should send this event before sending a TextEvent as written in Section 6.2.2 and 6.2.3 of
-    // the DOM Event specification.
-    if (Element* target = document().focusedElement()) {
-        Ref<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text);
-        target->dispatchEvent(event);
-    }
 
     // Always delete the current composition before inserting the finalized composition text if we're confirming our composition.
     // Our default behavior (if the beforeinput event is not prevented) is to insert the finalized composition text back in.
@@ -1699,6 +1691,9 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_customCompositionUnderlines.clear();
 
     insertTextForConfirmedComposition(text);
+
+    if (auto* target = document().focusedElement())
+        target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text));
 
     if (mode == CancelComposition) {
         // An open typing command that disagrees about current selection would cause issues with typing later on.
@@ -1769,20 +1764,20 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
                 target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, document().domWindow(), originalText));
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, document().domWindow(), text);
             }
-        } else {
-            if (!text.isEmpty())
-                event = CompositionEvent::create(eventNames().compositionupdateEvent, document().domWindow(), text);
-            else
-                event = CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text);
-        }
+        } else if (!text.isEmpty())
+            event = CompositionEvent::create(eventNames().compositionupdateEvent, document().domWindow(), text);
+
         if (event)
             target->dispatchEvent(*event);
     }
 
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
-    if (text.isEmpty())
+    if (text.isEmpty()) {
         TypingCommand::deleteSelection(document(), TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
+        if (target)
+            target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text));
+    }
 
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();

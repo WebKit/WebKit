@@ -1,5 +1,19 @@
 2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        When editing IME, `compositionend` events should fire after input events
+        https://bugs.webkit.org/show_bug.cgi?id=164324
+        <rdar://problem/29050438>
+
+        Reviewed by Darin Adler.
+
+        Moves where we dispatch `compositionend` events to after applying editing commands that fire `beforeinput` or
+        `input` events. Also augments existing layout tests to verify the change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+
+2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Setting foreground color when text is selected should fire an input event with color data
         https://bugs.webkit.org/show_bug.cgi?id=164241
         <rdar://problem/29032759>
