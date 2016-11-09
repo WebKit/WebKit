@@ -23,36 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageAreaImpl_h
-#define StorageAreaImpl_h
+#pragma once
 
 #include <WebCore/StorageArea.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
 class SecurityOrigin;
 class StorageMap;
+}
+
+namespace WebKit {
+
 class StorageAreaSync;
 
-class StorageAreaImpl : public StorageArea {
+class StorageAreaImpl : public WebCore::StorageArea {
 public:
-    static Ref<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
+    static Ref<StorageAreaImpl> create(WebCore::StorageType, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
     virtual ~StorageAreaImpl();
 
     unsigned length() override;
     String key(unsigned index) override;
     String item(const String& key) override;
-    void setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException) override;
-    void removeItem(Frame* sourceFrame, const String& key) override;
-    void clear(Frame* sourceFrame) override;
+    void setItem(WebCore::Frame* sourceFrame, const String& key, const String& value, bool& quotaException) override;
+    void removeItem(WebCore::Frame* sourceFrame, const String& key) override;
+    void clear(WebCore::Frame* sourceFrame) override;
     bool contains(const String& key) override;
 
-    bool canAccessStorage(Frame* sourceFrame) override;
-    StorageType storageType() const override;
+    bool canAccessStorage(WebCore::Frame* sourceFrame) override;
+    WebCore::StorageType storageType() const override;
 
     size_t memoryBytesUsedByCache() override;
 
@@ -60,9 +61,9 @@ public:
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
 
-    SecurityOrigin& securityOrigin() override { return *m_securityOrigin; }
+    WebCore::SecurityOrigin& securityOrigin() override { return *m_securityOrigin.get(); }
 
-    PassRefPtr<StorageAreaImpl> copy();
+    Ref<StorageAreaImpl> copy();
     void close();
 
     // Only called from a background thread.
@@ -74,28 +75,26 @@ public:
     void sync();
 
 private:
-    StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
-    explicit StorageAreaImpl(StorageAreaImpl*);
+    StorageAreaImpl(WebCore::StorageType, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
+    explicit StorageAreaImpl(const StorageAreaImpl&);
 
     void blockUntilImportComplete() const;
     void closeDatabaseTimerFired();
 
-    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, WebCore::Frame* sourceFrame);
 
-    StorageType m_storageType;
-    RefPtr<SecurityOrigin> m_securityOrigin;
-    RefPtr<StorageMap> m_storageMap;
+    WebCore::StorageType m_storageType;
+    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
+    RefPtr<WebCore::StorageMap> m_storageMap;
 
     RefPtr<StorageAreaSync> m_storageAreaSync;
-    RefPtr<StorageSyncManager> m_storageSyncManager;
+    RefPtr<WebCore::StorageSyncManager> m_storageSyncManager;
 
 #ifndef NDEBUG
     bool m_isShutdown;
 #endif
     unsigned m_accessCount;
-    Timer m_closeDatabaseTimer;
+    WebCore::Timer m_closeDatabaseTimer;
 };
 
 } // namespace WebCore
-
-#endif // StorageAreaImpl_h

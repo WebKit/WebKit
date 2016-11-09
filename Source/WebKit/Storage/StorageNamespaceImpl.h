@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageNamespaceImpl_h
-#define StorageNamespaceImpl_h
+#pragma once
 
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
@@ -33,14 +32,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WebKit {
 
 class StorageAreaImpl;
 
-class StorageNamespaceImpl : public StorageNamespace {
+class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
-    WEBCORE_EXPORT static RefPtr<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota);
-    WEBCORE_EXPORT static RefPtr<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
+    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota);
+    static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
     virtual ~StorageNamespaceImpl();
 
     void close();
@@ -49,25 +48,25 @@ public:
     // we're just deleting the underlying db file. If an item is added immediately
     // after file deletion, we want the same StorageArea to eventually trigger
     // a sync and for StorageAreaSync to recreate the backing db file.
-    void clearOriginForDeletion(SecurityOrigin*);
+    void clearOriginForDeletion(WebCore::SecurityOrigin*);
     void clearAllOriginsForDeletion();
     void sync();
     void closeIdleLocalStorageDatabases();
 
 private:
-    StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
+    StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota);
 
-    RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&)  override;
-    RefPtr<StorageNamespace> copy(Page* newPage) override;
+    RefPtr<WebCore::StorageArea> storageArea(RefPtr<WebCore::SecurityOrigin>&&) override;
+    RefPtr<StorageNamespace> copy(WebCore::Page* newPage) override;
 
-    typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;
+    typedef HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;
 
-    StorageType m_storageType;
+    WebCore::StorageType m_storageType;
 
     // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
     String m_path;
-    RefPtr<StorageSyncManager> m_syncManager;
+    RefPtr<WebCore::StorageSyncManager> m_syncManager;
 
     // The default quota for each new storage area.
     unsigned m_quota;
@@ -76,5 +75,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StorageNamespaceImpl_h

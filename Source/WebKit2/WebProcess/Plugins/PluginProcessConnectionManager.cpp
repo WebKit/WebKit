@@ -58,7 +58,7 @@ PluginProcessConnectionManager::~PluginProcessConnectionManager()
 
 void PluginProcessConnectionManager::initializeConnection(IPC::Connection* connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::PluginProcessConnectionManager::messageReceiverName(), &m_queue.get(), this);
+    connection->addWorkQueueMessageReceiver(Messages::PluginProcessConnectionManager::messageReceiverName(), m_queue.get(), this);
 }
 
 PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnection(uint64_t pluginProcessToken)

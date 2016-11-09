@@ -1,3 +1,39 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up Storage code
+        https://bugs.webkit.org/show_bug.cgi?id=164562
+
+        Reviewed by Brady Eidson.
+
+        Use more Refs!
+
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        * Platform/IPC/Connection.h:
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::create):
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded):
+        (WebKit::StorageManager::StorageManager):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processWillOpenConnection):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::initializeConnection):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::initializeConnection):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::initializeConnection):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::initializeConnection):
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Another attempted build fix.

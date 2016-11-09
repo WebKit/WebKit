@@ -66,7 +66,7 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 {
     Vector<RefPtr<SecurityOrigin>> coreOrigins;
 
-    StorageTracker::tracker().origins(coreOrigins);
+    WebKit::StorageTracker::tracker().origins(coreOrigins);
 
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
 
@@ -81,7 +81,7 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (void)deleteAllOrigins
 {
-    StorageTracker::tracker().deleteAllOrigins();
+    WebKit::StorageTracker::tracker().deleteAllOrigins();
 #if PLATFORM(IOS)
     // FIXME: This needs to be removed once StorageTrackers in multiple processes
     // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
@@ -91,22 +91,22 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (void)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    StorageTracker::tracker().deleteOrigin([origin _core]);
+    WebKit::StorageTracker::tracker().deleteOrigin([origin _core]);
 }
 
 - (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
 {
-    return StorageTracker::tracker().diskUsageForOrigin([origin _core]);
+    return WebKit::StorageTracker::tracker().diskUsageForOrigin([origin _core]);
 }
 
 - (void)syncLocalStorage
 {
-    WebStorageNamespaceProvider::syncLocalStorage();
+    WebKit::WebStorageNamespaceProvider::syncLocalStorage();
 }
 
 - (void)syncFileSystemAndTrackerDatabase
 {
-    StorageTracker::tracker().syncFileSystemAndTrackerDatabase();
+    WebKit::StorageTracker::tracker().syncFileSystemAndTrackerDatabase();
 }
 
 + (NSString *)_storageDirectoryPath
@@ -117,12 +117,12 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 + (void)setStorageDatabaseIdleInterval:(double)interval
 {
-    StorageTracker::tracker().setStorageDatabaseIdleInterval(interval);
+    WebKit::StorageTracker::tracker().setStorageDatabaseIdleInterval(interval);
 }
 
 + (void)closeIdleLocalStorageDatabases
 {
-    WebStorageNamespaceProvider::closeIdleLocalStorageDatabases();
+    WebKit::WebStorageNamespaceProvider::closeIdleLocalStorageDatabases();
 }
 
 static void initializeLocalStoragePath()
@@ -143,7 +143,7 @@ void WebKitInitializeStorageIfNecessary()
     if (initialized)
         return;
     
-    StorageTracker::initializeTracker([WebStorageManager _storageDirectoryPath], WebStorageTrackerClient::sharedWebStorageTrackerClient());
+    WebKit::StorageTracker::initializeTracker([WebStorageManager _storageDirectoryPath], WebStorageTrackerClient::sharedWebStorageTrackerClient());
         
     initialized = YES;
 }

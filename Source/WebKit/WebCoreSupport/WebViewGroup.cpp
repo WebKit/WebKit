@@ -94,7 +94,7 @@ void WebViewGroup::removeWebView(WebView *webView)
 StorageNamespaceProvider& WebViewGroup::storageNamespaceProvider()
 {
     if (!m_storageNamespaceProvider)
-        m_storageNamespaceProvider = WebStorageNamespaceProvider::create(m_localStorageDatabasePath);
+        m_storageNamespaceProvider = WebKit::WebStorageNamespaceProvider::create(m_localStorageDatabasePath);
 
     return *m_storageNamespaceProvider;
 }

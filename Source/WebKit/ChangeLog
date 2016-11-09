@@ -1,3 +1,131 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up Storage code
+        https://bugs.webkit.org/show_bug.cgi?id=164562
+
+        Reviewed by Brady Eidson.
+
+        Some classes were in WebCore namespace instead of WebKit.
+
+        * Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::create):
+        (WebKit::StorageAreaImpl::copy):
+        (WebCore::StorageAreaImpl::~StorageAreaImpl): Deleted.
+        (WebCore::StorageAreaImpl::StorageAreaImpl): Deleted.
+        (WebCore::StorageAreaImpl::create): Deleted.
+        (WebCore::StorageAreaImpl::copy): Deleted.
+        (WebCore::StorageAreaImpl::canAccessStorage): Deleted.
+        (WebCore::StorageAreaImpl::storageType): Deleted.
+        (WebCore::StorageAreaImpl::length): Deleted.
+        (WebCore::StorageAreaImpl::key): Deleted.
+        (WebCore::StorageAreaImpl::item): Deleted.
+        (WebCore::StorageAreaImpl::setItem): Deleted.
+        (WebCore::StorageAreaImpl::removeItem): Deleted.
+        (WebCore::StorageAreaImpl::clear): Deleted.
+        (WebCore::StorageAreaImpl::contains): Deleted.
+        (WebCore::StorageAreaImpl::importItems): Deleted.
+        (WebCore::StorageAreaImpl::close): Deleted.
+        (WebCore::StorageAreaImpl::clearForOriginDeletion): Deleted.
+        (WebCore::StorageAreaImpl::sync): Deleted.
+        (WebCore::StorageAreaImpl::blockUntilImportComplete): Deleted.
+        (WebCore::StorageAreaImpl::memoryBytesUsedByCache): Deleted.
+        (WebCore::StorageAreaImpl::incrementAccessCount): Deleted.
+        (WebCore::StorageAreaImpl::decrementAccessCount): Deleted.
+        (WebCore::StorageAreaImpl::closeDatabaseTimerFired): Deleted.
+        (WebCore::StorageAreaImpl::closeDatabaseIfIdle): Deleted.
+        (WebCore::StorageAreaImpl::dispatchStorageEvent): Deleted.
+        * Storage/StorageAreaImpl.h:
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::StorageAreaSync):
+        (WebKit::StorageAreaSync::create):
+        (WebCore::StorageAreaSync::StorageAreaSync): Deleted.
+        (WebCore::StorageAreaSync::create): Deleted.
+        (WebCore::StorageAreaSync::~StorageAreaSync): Deleted.
+        (WebCore::StorageAreaSync::scheduleFinalSync): Deleted.
+        (WebCore::StorageAreaSync::scheduleItemForSync): Deleted.
+        (WebCore::StorageAreaSync::scheduleClear): Deleted.
+        (WebCore::StorageAreaSync::scheduleCloseDatabase): Deleted.
+        (WebCore::StorageAreaSync::syncTimerFired): Deleted.
+        (WebCore::StorageAreaSync::openDatabase): Deleted.
+        (WebCore::StorageAreaSync::migrateItemTableIfNeeded): Deleted.
+        (WebCore::StorageAreaSync::performImport): Deleted.
+        (WebCore::StorageAreaSync::markImported): Deleted.
+        (WebCore::StorageAreaSync::blockUntilImportComplete): Deleted.
+        (WebCore::StorageAreaSync::sync): Deleted.
+        (WebCore::StorageAreaSync::performSync): Deleted.
+        (WebCore::StorageAreaSync::deleteEmptyDatabase): Deleted.
+        (WebCore::StorageAreaSync::scheduleSync): Deleted.
+        * Storage/StorageAreaSync.h:
+        * Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::storageArea):
+        (WebCore::localStorageNamespaceMap): Deleted.
+        (WebCore::StorageNamespaceImpl::createSessionStorageNamespace): Deleted.
+        (WebCore::StorageNamespaceImpl::getOrCreateLocalStorageNamespace): Deleted.
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl): Deleted.
+        (WebCore::StorageNamespaceImpl::~StorageNamespaceImpl): Deleted.
+        (WebCore::StorageNamespaceImpl::copy): Deleted.
+        (WebCore::StorageNamespaceImpl::storageArea): Deleted.
+        (WebCore::StorageNamespaceImpl::close): Deleted.
+        (WebCore::StorageNamespaceImpl::clearOriginForDeletion): Deleted.
+        (WebCore::StorageNamespaceImpl::clearAllOriginsForDeletion): Deleted.
+        (WebCore::StorageNamespaceImpl::sync): Deleted.
+        (WebCore::StorageNamespaceImpl::closeIdleLocalStorageDatabases): Deleted.
+        * Storage/StorageNamespaceImpl.h:
+        * Storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::initializeTracker): Deleted.
+        (WebCore::StorageTracker::internalInitialize): Deleted.
+        (WebCore::StorageTracker::tracker): Deleted.
+        (WebCore::StorageTracker::StorageTracker): Deleted.
+        (WebCore::StorageTracker::setDatabaseDirectoryPath): Deleted.
+        (WebCore::StorageTracker::databaseDirectoryPath): Deleted.
+        (WebCore::StorageTracker::trackerDatabasePath): Deleted.
+        (WebCore::ensureDatabaseFileExists): Deleted.
+        (WebCore::StorageTracker::openTrackerDatabase): Deleted.
+        (WebCore::StorageTracker::importOriginIdentifiers): Deleted.
+        (WebCore::StorageTracker::finishedImportingOriginIdentifiers): Deleted.
+        (WebCore::StorageTracker::syncImportOriginIdentifiers): Deleted.
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase): Deleted.
+        (WebCore::StorageTracker::setOriginDetails): Deleted.
+        (WebCore::StorageTracker::syncSetOriginDetails): Deleted.
+        (WebCore::StorageTracker::origins): Deleted.
+        (WebCore::StorageTracker::deleteAllOrigins): Deleted.
+        (WebCore::truncateDatabaseFile): Deleted.
+        (WebCore::StorageTracker::syncDeleteAllOrigins): Deleted.
+        (WebCore::StorageTracker::deleteOriginWithIdentifier): Deleted.
+        (WebCore::StorageTracker::deleteOrigin): Deleted.
+        (WebCore::StorageTracker::syncDeleteOrigin): Deleted.
+        (WebCore::StorageTracker::willDeleteAllOrigins): Deleted.
+        (WebCore::StorageTracker::willDeleteOrigin): Deleted.
+        (WebCore::StorageTracker::canDeleteOrigin): Deleted.
+        (WebCore::StorageTracker::cancelDeletingOrigin): Deleted.
+        (WebCore::StorageTracker::isActive): Deleted.
+        (WebCore::StorageTracker::setIsActive): Deleted.
+        (WebCore::StorageTracker::databasePathForOrigin): Deleted.
+        (WebCore::StorageTracker::diskUsageForOrigin): Deleted.
+        * Storage/StorageTracker.h:
+        (WebCore::StorageTracker::storageDatabaseIdleInterval): Deleted.
+        (WebCore::StorageTracker::setStorageDatabaseIdleInterval): Deleted.
+        * Storage/WebStorageNamespaceProvider.cpp:
+        (storageNamespaceProviders): Deleted.
+        (WebStorageNamespaceProvider::create): Deleted.
+        (WebStorageNamespaceProvider::WebStorageNamespaceProvider): Deleted.
+        (WebStorageNamespaceProvider::~WebStorageNamespaceProvider): Deleted.
+        (WebStorageNamespaceProvider::closeLocalStorage): Deleted.
+        (WebStorageNamespaceProvider::clearLocalStorageForAllOrigins): Deleted.
+        (WebStorageNamespaceProvider::clearLocalStorageForOrigin): Deleted.
+        (WebStorageNamespaceProvider::closeIdleLocalStorageDatabases): Deleted.
+        (WebStorageNamespaceProvider::syncLocalStorage): Deleted.
+        (WebStorageNamespaceProvider::createSessionStorageNamespace): Deleted.
+        (WebStorageNamespaceProvider::createLocalStorageNamespace): Deleted.
+        (WebStorageNamespaceProvider::createTransientLocalStorageNamespace): Deleted.
+        * Storage/WebStorageNamespaceProvider.h:
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+        * WebCoreSupport/WebViewGroup.cpp:
+        (WebViewGroup::storageNamespaceProvider):
+
 2016-11-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Copy build results to AAS 'Program Files' folder.

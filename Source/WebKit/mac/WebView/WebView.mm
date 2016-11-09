@@ -5253,7 +5253,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pluginDatabaseClientCount)
         [WebPluginDatabase closeSharedDatabase];
 
-    WebStorageNamespaceProvider::closeLocalStorage();
+    WebKit::WebStorageNamespaceProvider::closeLocalStorage();
 }
 #endif // !PLATFORM(IOS)
 

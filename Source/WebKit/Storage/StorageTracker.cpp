@@ -43,9 +43,11 @@
 #include <sqlite3_private.h>
 #endif
 
-namespace WebCore {
+using namespace WebCore;
 
-static StorageTracker* storageTracker = 0;
+namespace WebKit {
+
+static StorageTracker* storageTracker = nullptr;
 
 // If there is no document referencing a storage database, close the underlying database
 // after it has been idle for m_StorageDatabaseIdleInterval seconds.

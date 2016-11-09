@@ -46,14 +46,14 @@ static const int maximumItemsToUpdate = 100;
 
 namespace WebKit {
 
-PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, Ref<SecurityOrigin>&& securityOrigin)
+Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, Ref<SecurityOrigin>&& securityOrigin)
 {
-    return adoptRef(new LocalStorageDatabase(queue, tracker, WTFMove(securityOrigin)));
+    return adoptRef(*new LocalStorageDatabase(WTFMove(queue), WTFMove(tracker), WTFMove(securityOrigin)));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, Ref<SecurityOrigin>&& securityOrigin)
-    : m_queue(queue)
-    , m_tracker(tracker)
+LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, Ref<SecurityOrigin>&& securityOrigin)
+    : m_queue(WTFMove(queue))
+    , m_tracker(WTFMove(tracker))
     , m_securityOrigin(WTFMove(securityOrigin))
     , m_databasePath(m_tracker->databasePath(m_securityOrigin.ptr()))
     , m_failedToOpenDatabase(false)

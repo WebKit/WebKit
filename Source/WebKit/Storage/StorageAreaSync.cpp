@@ -35,7 +35,9 @@
 #include <WebCore/SuddenTermination.h>
 #include <wtf/MainThread.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 // If the StorageArea undergoes rapid changes, don't sync each change to disk.
 // Instead, queue up a batch of items to sync and actually do the sync at the following interval.
@@ -45,12 +47,12 @@ static const double StorageSyncInterval = 1.0;
 // much harder to starve the rest of LocalStorage and the OS's IO subsystem in general.
 static const int MaxiumItemsToSync = 100;
 
-inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
+inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, const String& databaseIdentifier)
     : m_syncTimer(*this, &StorageAreaSync::syncTimerFired)
     , m_itemsCleared(false)
     , m_finalSyncScheduled(false)
-    , m_storageArea(storageArea)
-    , m_syncManager(storageSyncManager)
+    , m_storageArea(WTFMove(storageArea))
+    , m_syncManager(WTFMove(storageSyncManager))
     , m_databaseIdentifier(databaseIdentifier.isolatedCopy())
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
@@ -71,9 +73,9 @@ inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSy
     });
 }
 
-Ref<StorageAreaSync> StorageAreaSync::create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
+Ref<StorageAreaSync> StorageAreaSync::create(RefPtr<StorageSyncManager>&& storageSyncManager, Ref<StorageAreaImpl>&& storageArea, const String& databaseIdentifier)
 {
-    return adoptRef(*new StorageAreaSync(storageSyncManager, storageArea, databaseIdentifier));
+    return adoptRef(*new StorageAreaSync(WTFMove(storageSyncManager), WTFMove(storageArea), databaseIdentifier));
 }
 
 StorageAreaSync::~StorageAreaSync()

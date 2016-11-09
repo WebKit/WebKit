@@ -51,7 +51,7 @@ ViewUpdateDispatcher::~ViewUpdateDispatcher()
 
 void ViewUpdateDispatcher::initializeConnection(IPC::Connection* connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::ViewUpdateDispatcher::messageReceiverName(), &m_queue.get(), this);
+    connection->addWorkQueueMessageReceiver(Messages::ViewUpdateDispatcher::messageReceiverName(), m_queue.get(), this);
 }
 
 void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)

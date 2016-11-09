@@ -155,7 +155,7 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
 
-    void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
+    void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue&, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiver(StringReference messageReceiverName);
 
     bool open();

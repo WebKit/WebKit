@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalStorageDatabase_h
-#define LocalStorageDatabase_h
+#pragma once
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/Forward.h>
@@ -45,7 +44,7 @@ class LocalStorageDatabaseTracker;
 
 class LocalStorageDatabase : public ThreadSafeRefCounted<LocalStorageDatabase> {
 public:
-    static PassRefPtr<LocalStorageDatabase> create(PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>, Ref<WebCore::SecurityOrigin>&&);
+    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, Ref<WebCore::SecurityOrigin>&&);
     ~LocalStorageDatabase();
 
     // Will block until the import is complete.
@@ -59,7 +58,7 @@ public:
     void close();
 
 private:
-    LocalStorageDatabase(PassRefPtr<WorkQueue>, PassRefPtr<LocalStorageDatabaseTracker>, Ref<WebCore::SecurityOrigin>&&);
+    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, Ref<WebCore::SecurityOrigin>&&);
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
@@ -78,8 +77,8 @@ private:
 
     bool databaseIsEmpty();
 
-    RefPtr<WorkQueue> m_queue;
-    RefPtr<LocalStorageDatabaseTracker> m_tracker;
+    Ref<WorkQueue> m_queue;
+    Ref<LocalStorageDatabaseTracker> m_tracker;
     Ref<WebCore::SecurityOrigin> m_securityOrigin;
 
     String m_databasePath;
@@ -97,5 +96,3 @@ private:
 
 
 } // namespace WebKit
-
-#endif // LocalStorageDatabase_h

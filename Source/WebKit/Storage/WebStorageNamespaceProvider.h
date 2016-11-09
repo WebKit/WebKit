@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebStorageNamespaceProvider_h
-#define WebStorageNamespaceProvider_h
+#pragma once
 
 #include <WebCore/StorageNamespaceProvider.h>
+
+namespace WebKit {
 
 class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider {
 public:
@@ -51,4 +52,4 @@ private:
     const String m_localStorageDatabasePath;
 };
 
-#endif // WebStorageNamespaceProvider_h
+} // namespace WebKit

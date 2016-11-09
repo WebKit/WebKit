@@ -98,9 +98,9 @@ private:
     class TransientLocalStorageNamespace;
     TransientLocalStorageNamespace* getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOrigin& topLevelOrigin);
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
 
-    RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
+    Ref<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
     HashMap<uint64_t, RefPtr<LocalStorageNamespace>> m_localStorageNamespaces;
 
     HashMap<std::pair<uint64_t, RefPtr<WebCore::SecurityOrigin>>, RefPtr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
