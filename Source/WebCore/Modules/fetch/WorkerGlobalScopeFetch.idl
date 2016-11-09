@@ -30,7 +30,7 @@
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
 ] partial interface WorkerGlobalScope {
-    [JSBuiltin] Promise fetch(any input, optional Dictionary init);
+    [JSBuiltin] Promise<Response> fetch(any input, optional Dictionary init);
 
-    [PrivateIdentifier, ImplementedAs=fetch] Promise fetchRequest(FetchRequest request);
+    [PrivateIdentifier, ImplementedAs=fetch] Promise<Response> fetchRequest(FetchRequest request);
 };

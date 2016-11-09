@@ -148,7 +148,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
 
     ASSERT(m_setDescriptionPromise);
 
-    m_setDescriptionPromise->resolve(nullptr);
+    m_setDescriptionPromise->resolve();
     m_setDescriptionPromise = Nullopt;
 }
 
@@ -206,7 +206,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
 
     ASSERT(m_setDescriptionPromise);
 
-    m_setDescriptionPromise->resolve(nullptr);
+    m_setDescriptionPromise->resolve();
     m_setDescriptionPromise = Nullopt;
 }
 
@@ -245,7 +245,7 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
     // FIXME: Update remote description and set ICE connection state to checking if not already done so.
     ASSERT(m_addIceCandidatePromise);
 
-    m_addIceCandidatePromise->resolve(nullptr);
+    m_addIceCandidatePromise->resolve();
     m_addIceCandidatePromise = Nullopt;
 }
 

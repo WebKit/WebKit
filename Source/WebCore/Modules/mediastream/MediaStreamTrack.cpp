@@ -169,7 +169,7 @@ RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrack::getCapabilities() cons
     return m_private->capabilities();
 }
 
-void MediaStreamTrack::applyConstraints(Ref<MediaConstraints>&& constraints, ApplyConstraintsPromise&& promise)
+void MediaStreamTrack::applyConstraints(Ref<MediaConstraints>&& constraints, DOMPromise<void>&& promise)
 {
     if (!constraints->isValid()) {
         promise.reject(TypeError);
@@ -196,7 +196,7 @@ void MediaStreamTrack::applyConstraints(const MediaConstraints& constraints)
         if (!weakThis || !weakThis->m_promise)
             return;
 
-        weakThis->m_promise->resolve(nullptr);
+        weakThis->m_promise->resolve();
     };
 
     m_private->applyConstraints(constraints, successHandler, failureHandler);

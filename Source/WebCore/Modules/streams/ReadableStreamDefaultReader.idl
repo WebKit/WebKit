@@ -34,9 +34,9 @@
     JSBuiltin,
     NoInterfaceObject
 ] interface ReadableStreamDefaultReader {
-    [NotEnumerable] Promise read();
-    [NotEnumerable] Promise cancel(optional any reason);
+    [NotEnumerable] Promise<any> read();
+    [NotEnumerable] Promise<any> cancel(optional any reason);
     [NotEnumerable] void releaseLock();
 
-    [NotEnumerable] readonly attribute Promise closed;
+    [NotEnumerable] readonly attribute Promise<boolean> closed;
 };

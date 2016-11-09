@@ -82,8 +82,7 @@ public:
     RefPtr<MediaSourceSettings> getSettings() const;
     RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
 
-    using ApplyConstraintsPromise = DOMPromise<std::nullptr_t>;
-    void applyConstraints(Ref<MediaConstraints>&&, ApplyConstraintsPromise&&);
+    void applyConstraints(Ref<MediaConstraints>&&, DOMPromise<void>&&);
     void applyConstraints(const MediaConstraints&);
 
     RealtimeMediaSource& source() const { return m_private->source(); }
@@ -128,7 +127,7 @@ private:
     Ref<MediaStreamTrackPrivate> m_private;
 
     RefPtr<MediaConstraints> m_constraints;
-    Optional<ApplyConstraintsPromise> m_promise;
+    Optional<DOMPromise<void>> m_promise;
     WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
 
     bool m_ended { false };

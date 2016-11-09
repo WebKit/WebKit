@@ -716,7 +716,7 @@ void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<Medi
     if (mid.isNull()) {
         // Transceiver is not associated with a media description yet.
         sender.setTrack(WTFMove(withTrack));
-        promise.resolve(nullptr);
+        promise.resolve();
         return;
     }
 
@@ -733,7 +733,7 @@ void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const S
     m_mediaEndpoint->replaceSendSource(withTrack->source(), mid);
 
     sender.setTrack(WTFMove(withTrack));
-    promise.resolve(nullptr);
+    promise.resolve();
 }
 
 void MediaEndpointPeerConnection::doStop()

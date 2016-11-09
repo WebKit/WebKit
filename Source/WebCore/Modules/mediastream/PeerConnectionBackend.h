@@ -58,7 +58,7 @@ struct RTCOfferOptions;
 
 namespace PeerConnection {
 typedef DOMPromise<RTCSessionDescription> SessionDescriptionPromise;
-typedef DOMPromise<std::nullptr_t> VoidPromise;
+typedef DOMPromise<void> VoidPromise;
 typedef DOMPromise<RTCStatsResponse> StatsPromise;
 }
 

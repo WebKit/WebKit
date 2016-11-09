@@ -414,6 +414,7 @@ my $nextPrimitiveType_1 = '^(int|long|short|unsigned)$';
 my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
 my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
 my $nextNonAnyType_1 = '^(boolean|byte|double|float|long|octet|short|unrestricted|unsigned)$';
+my $nextStringType_1 = '^(ByteString|DOMString|USVString)$';
 my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|creator|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
 my $nextAttributeOrOperation_1 = '^(static|stringifier)$';
 my $nextAttributeOrOperation_2 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|creator|deleter|double|float|getter|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
@@ -2061,22 +2062,8 @@ sub parseNonAnyType
         $type->name($self->parsePrimitiveType());
         return $type;
     }
-    if ($next->value() eq "ByteString") {
-        $self->assertTokenValue($self->getToken(), "ByteString", __LINE__);
-
-        $type->name("ByteString");
-        return $type;
-    }
-    if ($next->value() eq "DOMString") {
-        $self->assertTokenValue($self->getToken(), "DOMString", __LINE__);
-
-        $type->name("DOMString");
-        return $type;
-    }
-    if ($next->value() eq "USVString") {
-        $self->assertTokenValue($self->getToken(), "USVString", __LINE__);
-
-        $type->name("USVString");
+    if ($next->value() =~ /$nextStringType_1/) {
+        $type->name($self->parseStringType());
         return $type;
     }
     if ($next->value() eq "object") {
@@ -2137,6 +2124,20 @@ sub parseNonAnyType
 
         return $type;
     }
+    if ($next->value() eq "Promise") {
+        $self->assertTokenValue($self->getToken(), "Promise", __LINE__);
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+
+        my $subtype = $self->parseReturnType();
+        my $subtypeName = $subtype->name;
+
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+        $type->name("Promise");
+        push(@{$type->subtypes}, $subtype);
+
+        return $type;
+    }
     if ($next->type() == IdentifierToken) {
         my $identifier = $self->getToken();
 
@@ -2165,6 +2166,25 @@ sub parseConstType
         $type->isNullable($self->parseNull());
 
         return $type;
+    }
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseStringType
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+    if ($next->value() eq "ByteString") {
+        $self->assertTokenValue($self->getToken(), "ByteString", __LINE__);
+        return "ByteString";
+    }
+    if ($next->value() eq "DOMString") {
+        $self->assertTokenValue($self->getToken(), "DOMString", __LINE__);
+        return "DOMString";
+    }
+    if ($next->value() eq "USVString") {
+        $self->assertTokenValue($self->getToken(), "USVString", __LINE__);
+        return "USVString";
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

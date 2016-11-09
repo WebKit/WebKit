@@ -54,11 +54,11 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
 
     // Copy of FetchBody IDL as we want to implement some of these as built-ins.
     [JSBuiltin] readonly attribute boolean bodyUsed;
-    [JSBuiltin] Promise arrayBuffer();
-    [JSBuiltin] Promise blob();
-    [JSBuiltin] Promise formData();
-    [JSBuiltin] Promise json();
-    [JSBuiltin] Promise text();
+    [JSBuiltin] Promise<ArrayBuffer> arrayBuffer();
+    [JSBuiltin] Promise<Blob> blob();
+    [JSBuiltin] Promise<Blob> formData();
+    [JSBuiltin] Promise<any> json();
+    [JSBuiltin] Promise<USVString> text();
 
     [JSBuiltin] FetchResponse clone();
 
@@ -66,9 +66,9 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
 
     [Conditional=READABLE_STREAM_API, PrivateIdentifier] void startConsumingStream(unsigned short type);
     [Conditional=READABLE_STREAM_API, PrivateIdentifier] void consumeChunk(Uint8Array chunk);
-    [Conditional=READABLE_STREAM_API, PrivateIdentifier] Promise finishConsumingStream();
+    [Conditional=READABLE_STREAM_API, PrivateIdentifier] Promise<any> finishConsumingStream();
 
-    [PrivateIdentifier] Promise consume(unsigned short type);
+    [PrivateIdentifier] Promise<any> consume(unsigned short type);
     [PrivateIdentifier] boolean isLoading();
     [MayThrowException, PrivateIdentifier] void setStatus(unsigned short status, DOMString statusText);
     [CallWith=ScriptState, PrivateIdentifier] void initializeWith(any body);

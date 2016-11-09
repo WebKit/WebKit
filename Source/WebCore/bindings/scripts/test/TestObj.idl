@@ -403,17 +403,17 @@ enum TestConfidence { "high", "kinda-low" };
     void _any(unrestricted float a, long b);
 
 
-    readonly attribute Promise testReadOnlyPromiseAttribute;
+    readonly attribute Promise<void> testReadOnlyPromiseAttribute;
     // Promise function
-    Promise testPromiseFunction();
-    Promise testPromiseFunctionWithFloatArgument(float a);
-    [MayThrowLegacyException] Promise testPromiseFunctionWithException();
-    Promise testPromiseFunctionWithOptionalIntArgument(optional long a);
-    Promise testPromiseOverloadedFunction(float a);
-    Promise testPromiseOverloadedFunction(FetchRequest request);
-    static Promise testStaticPromiseFunction();
-    [MayThrowLegacyException] static Promise testStaticPromiseFunctionWithException();
-    [Custom] Promise testCustomPromiseFunction();
+    Promise<void> testPromiseFunction();
+    Promise<void> testPromiseFunctionWithFloatArgument(float a);
+    [MayThrowLegacyException] Promise<void> testPromiseFunctionWithException();
+    Promise<void> testPromiseFunctionWithOptionalIntArgument(optional long a);
+    Promise<void> testPromiseOverloadedFunction(float a);
+    Promise<void> testPromiseOverloadedFunction(FetchRequest request);
+    static Promise<void> testStaticPromiseFunction();
+    [MayThrowLegacyException] static Promise<void> testStaticPromiseFunctionWithException();
+    [Custom] Promise<void> testCustomPromiseFunction();
 
     // PutForwards
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;

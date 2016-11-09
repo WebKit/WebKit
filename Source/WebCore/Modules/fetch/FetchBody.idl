@@ -35,9 +35,9 @@
 ]
 interface FetchBody {
     [ImplementedAs=isDisturbed] readonly attribute boolean bodyUsed;
-    [NewObject] Promise arrayBuffer();
-    [NewObject] Promise blob();
-    [NewObject] Promise formData();
-    [NewObject] Promise json();
-    [NewObject] Promise text();
+    [NewObject] Promise<ArrayBuffer> arrayBuffer();
+    [NewObject] Promise<Blob> blob();
+    [NewObject] Promise<Blob> formData();
+    [NewObject] Promise<any> json();
+    [NewObject] Promise<USVString> text();
 };

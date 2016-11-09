@@ -29,5 +29,6 @@
     GenerateIsReachable=ImplScriptExecutionContext,
     NoInterfaceObject,
 ] interface SubtleCrypto {
-    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<KeyUsage> keyUsages);
+    // FIXME: Should this return a Promise<(CryptoKey or CryptoKeyPair)>?
+    [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<KeyUsage> keyUsages);
 };

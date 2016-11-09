@@ -959,7 +959,7 @@ void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 
 void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
 {
-    Vector<PlayPromise> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
+    Vector<DOMPromise<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
         promise.reject(error);
@@ -967,10 +967,10 @@ void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
 
 void HTMLMediaElement::resolvePendingPlayPromises()
 {
-    Vector<PlayPromise> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
+    Vector<DOMPromise<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
-        promise.resolve(nullptr);
+        promise.resolve();
 }
 
 void HTMLMediaElement::scheduleNotifyAboutPlaying()
@@ -3025,7 +3025,7 @@ void HTMLMediaElement::setPreload(const String& preload)
     setAttributeWithoutSynchronization(preloadAttr, preload);
 }
 
-void HTMLMediaElement::play(PlayPromise&& promise)
+void HTMLMediaElement::play(DOMPromise<void>&& promise)
 {
     LOG(Media, "HTMLMediaElement::play(%p)", this);
 

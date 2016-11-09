@@ -1,3 +1,75 @@
+2016-11-09  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add proper parsing for Promises
+        https://bugs.webkit.org/show_bug.cgi?id=164497
+
+        Reviewed by Tim Horton.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseNonAnyType):
+        (parseStringType):
+        Require Promise types to declare the type they resolve to.
+        
+        * bindings/js/JSDOMPromise.h:
+        Allow DOMPromise to be be parameterized on void. Add an SFINAE guarded
+        overload of resolve that takes no arguments when in a DOMPromise<void>.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/fetch/DOMWindowFetch.idl:
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/WorkerGlobalScopeFetch.idl:
+        * Modules/mediastream/MediaDevices.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/ReadableStreamSource.idl:
+        * Modules/streams/WritableStream.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * crypto/SubtleCrypto.idl:
+        * crypto/WebKitSubtleCrypto.idl:
+        * css/FontFace.idl:
+        * css/FontFaceSet.idl:
+        * dom/CustomElementRegistry.idl:
+        * html/HTMLMediaElement.idl:
+        Update IDLs to specify the resolve type of promise types.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        (WebCore::MediaEndpointPeerConnection::replaceTrackTask):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/streams/ReadableStreamSource.h:
+        (WebCore::ReadableStreamSource::start):
+        (WebCore::ReadableStreamSource::pull):
+        (WebCore::ReadableStreamSource::startFinished):
+        (WebCore::ReadableStreamSource::pullFinished):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::addReaction):
+        (WebCore::AudioContext::setState):
+        (WebCore::AudioContext::suspend):
+        (WebCore::AudioContext::resume):
+        (WebCore::AudioContext::close):
+        * Modules/webaudio/AudioContext.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rejectPendingPlayPromises):
+        (WebCore::HTMLMediaElement::resolvePendingPlayPromises):
+        (WebCore::HTMLMediaElement::play):
+        * html/HTMLMediaElement.h:
+        Update implementations to use DOMPromise<void> rather than DOMPromise<nullptr_t>
+        and use the new resolve() overload.
+
 2016-11-07  Brady Eidson  <beidson@apple.com>
 
         Followup to https://bugs.webkit.org/show_bug.cgi?id=164466 - Make an IDBTransaction* be an IDBTransaction&

@@ -65,6 +65,12 @@ public:
     typedef DOMClass& Type;
 };
 
+template<>
+struct PromiseResultInspector<void> {
+public:
+    typedef int Type;
+};
+
 template<typename DOMClass>
 struct PromiseResultInspector<DOMClass, typename std::enable_if<TypeInspector<DOMClass>::isPassByValueType>::type> {
 public:
@@ -197,8 +203,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
 }
 
 // At the moment, Value cannot be a Ref<T> or RefPtr<T>, it should be a DOM class.
-template <typename Value>
-class DOMPromise {
+template<typename Value> class DOMPromise {
 public:
     DOMPromise(Ref<DeferredPromise>&& genericPromise) : m_promiseDeferred(WTFMove(genericPromise)) { }
 
@@ -207,7 +212,11 @@ public:
     DOMPromise(const DOMPromise&) = default;
     DOMPromise& operator=(DOMPromise const&) = default;
 
-    void resolve(typename PromiseResultInspector<Value>::Type value) { m_promiseDeferred->resolve(value); }
+    template<typename T = Value>
+    typename std::enable_if<!std::is_void<T>::value, void>::type resolve(typename PromiseResultInspector<Value>::Type value) { m_promiseDeferred->resolve(value); }
+
+    template<typename T = Value>
+    typename std::enable_if<std::is_void<T>::value, void>::type resolve() { m_promiseDeferred->resolve(nullptr); }
 
     template<typename... ErrorType> void reject(ErrorType&&... error) { m_promiseDeferred->reject(std::forward<ErrorType>(error)...); }
 

@@ -26,7 +26,7 @@
     attribute DOMString name;
 
     [EnabledAtRuntime=DOMIterator] iterable<TestNode>;
-    Promise testWorkerPromise();
+    Promise<void> testWorkerPromise();
 
     serializer;
 };

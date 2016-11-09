@@ -216,8 +216,7 @@ public:
     bool loop() const;
     void setLoop(bool b);
 
-    typedef DOMPromise<std::nullptr_t> PlayPromise;
-    void play(PlayPromise&&);
+    void play(DOMPromise<void>&&);
 
     WEBCORE_EXPORT void play() override;
     WEBCORE_EXPORT void pause() override;
@@ -820,7 +819,7 @@ private:
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
-    Vector<PlayPromise> m_pendingPlayPromises;
+    Vector<DOMPromise<void>> m_pendingPlayPromises;
 
     double m_requestedPlaybackRate { 1 };
     double m_reportedPlaybackRate { 1 };

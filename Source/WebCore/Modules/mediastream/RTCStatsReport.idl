@@ -32,6 +32,7 @@
     readonly attribute DOMString type;
     DOMString stat(DOMString name);
     sequence<DOMString> names();
+
     // DEPRECATED - fake for old RTCStatsElement object.
     readonly attribute RTCStatsReport local;
     readonly attribute RTCStatsReport remote;

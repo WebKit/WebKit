@@ -42,8 +42,8 @@
 
     [CallWith=ScriptExecutionContext, MayThrowException] static boolean supportsVersion(unsigned long version);
     [CallWith=ScriptExecutionContext, MayThrowException] static boolean canMakePayments();
-    [CallWith=ScriptExecutionContext, MayThrowException] static Promise canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
-    [CallWith=ScriptExecutionContext, MayThrowException] static Promise openPaymentSetup(DOMString merchantIdentifier);
+    [CallWith=ScriptExecutionContext, MayThrowException] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=ScriptExecutionContext, MayThrowException] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
 
     [MayThrowException] void begin();
     [MayThrowException] void abort();

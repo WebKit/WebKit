@@ -42,10 +42,8 @@ class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
     virtual ~ReadableStreamSource() { }
 
-    typedef DOMPromise<std::nullptr_t> Promise;
-
-    void start(ReadableStreamDefaultController&&, Promise&&);
-    void pull(Promise&&);
+    void start(ReadableStreamDefaultController&&, DOMPromise<void>&&);
+    void pull(DOMPromise<void>&&);
     void cancel(JSC::JSValue);
 
     bool isPulling() const { return !!m_promise; }
@@ -67,11 +65,11 @@ protected:
     virtual void doCancel() = 0;
 
 private:
-    Optional<Promise> m_promise;
+    Optional<DOMPromise<void>> m_promise;
     Optional<ReadableStreamDefaultController> m_controller;
 };
 
-inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, Promise&& promise)
+inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromise<void>&& promise)
 {
     ASSERT(!m_promise);
     m_promise = WTFMove(promise);
@@ -81,7 +79,7 @@ inline void ReadableStreamSource::start(ReadableStreamDefaultController&& contro
     doStart();
 }
 
-inline void ReadableStreamSource::pull(Promise&& promise)
+inline void ReadableStreamSource::pull(DOMPromise<void>&& promise)
 {
     ASSERT(!m_promise);
     ASSERT(m_controller);
@@ -95,14 +93,14 @@ inline void ReadableStreamSource::pull(Promise&& promise)
 inline void ReadableStreamSource::startFinished()
 {
     ASSERT(m_promise);
-    std::exchange(m_promise, Nullopt).value().resolve(nullptr);
+    std::exchange(m_promise, Nullopt).value().resolve();
     setInactive();
 }
 
 inline void ReadableStreamSource::pullFinished()
 {
     ASSERT(m_promise);
-    std::exchange(m_promise, Nullopt).value().resolve(nullptr);
+    std::exchange(m_promise, Nullopt).value().resolve();
     setInactive();
 }
 

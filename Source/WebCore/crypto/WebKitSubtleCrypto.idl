@@ -28,14 +28,14 @@
     GenerateIsReachable=ImplDocument,
     NoInterfaceObject,
 ] interface WebKitSubtleCrypto {
-    [Custom] Promise encrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise decrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
-    [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
-    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
-    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
-    [Custom] Promise exportKey(KeyFormat format, Key key);
-    [Custom] Promise wrapKey(KeyFormat format, Key key, Key wrappingKey, AlgorithmIdentifier wrapAlgorithm);
-    [Custom] Promise unwrapKey(KeyFormat format, CryptoOperationData wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom] Promise<ArrayBuffer> encrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
+    [Custom] Promise<ArrayBuffer> decrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
+    [Custom] Promise<ArrayBuffer> sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
+    [Custom] Promise<boolean> verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
+    [Custom] Promise<ArrayBuffer> digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
+    [Custom] Promise<(CryptoKey or CryptoKeyPair)> generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom] Promise<CryptoKey> importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom] Promise<ArrayBuffer> exportKey(KeyFormat format, Key key);
+    [Custom] Promise<ArrayBuffer> wrapKey(KeyFormat format, Key key, Key wrappingKey, AlgorithmIdentifier wrapAlgorithm);
+    [Custom] Promise<CryptoKey> unwrapKey(KeyFormat format, CryptoOperationData wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
 };

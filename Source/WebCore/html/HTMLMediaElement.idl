@@ -71,7 +71,7 @@
     readonly attribute boolean ended;
     [Reflect] attribute boolean autoplay;
     [Reflect] attribute boolean loop;
-    Promise play();
+    Promise<void> play();
     void pause();
     void fastSeek(unrestricted double time);
 

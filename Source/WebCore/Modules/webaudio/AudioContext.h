@@ -109,11 +109,9 @@ public:
     using ActiveDOMObject::suspend;
     using ActiveDOMObject::resume;
 
-    typedef DOMPromise<std::nullptr_t> Promise;
-
-    void suspend(Promise&&);
-    void resume(Promise&&);
-    void close(Promise&&);
+    void suspend(DOMPromise<void>&&);
+    void resume(DOMPromise<void>&&);
+    void close(DOMPromise<void>&&);
 
     enum class State { Suspended, Running, Interrupted, Closed };
     State state() const;
@@ -326,7 +324,7 @@ private:
     void handleDirtyAudioSummingJunctions();
     void handleDirtyAudioNodeOutputs();
 
-    void addReaction(State, Promise&&);
+    void addReaction(State, DOMPromise<void>&&);
     void updateAutomaticPullNodes();
 
     // Only accessed in the audio thread.
@@ -363,7 +361,7 @@ private:
     Vector<AudioNode*> m_renderingAutomaticPullNodes;
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_deferredFinishDerefList;
-    Vector<Vector<Promise>> m_stateReactions;
+    Vector<Vector<DOMPromise<void>>> m_stateReactions;
 
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
     std::unique_ptr<GenericEventQueue> m_eventQueue;
