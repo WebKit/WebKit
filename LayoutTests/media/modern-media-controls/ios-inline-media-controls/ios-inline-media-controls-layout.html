@@ -1,0 +1,41 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>IOSInlineMediaControls</code> layout.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 50 });
+
+const iconButtons = [
+    mediaControls.playPauseButton,
+    mediaControls.skipBackButton,
+    mediaControls.airplayButton,
+    mediaControls.pipButton,
+    mediaControls.fullscreenButton
+];
+
+scheduler.frameDidFire = function()
+{
+    if (iconButtons.some(button => button.width == 0))
+        return;
+
+    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof ButtonsContainer");
+    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof LayoutNode");
+    shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
+
+    shouldBe("mediaControls.timeControl.x", "118");
+
+    shouldBe("mediaControls.timeControl.width", "393");
+
+    shouldBe("mediaControls.controlsBar.children[0].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
+    shouldBe("mediaControls.controlsBar.children[2].children", "[mediaControls.airplayButton, mediaControls.pipButton, mediaControls.fullscreenButton]");
+
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

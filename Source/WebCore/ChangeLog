@@ -1,3 +1,44 @@
+2016-11-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: iOS inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=164513
+        <rdar://problem/27989475>
+
+        Reviewed by Dean Jackson.
+
+        We introduce a new IOSInlineMediaControls class which can be used to instantiate media controls
+        for inline playback on iOS.
+
+        Tests: media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html
+               media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor.html
+               media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-controls-bar-styles.html
+               media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-layout.html
+               media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-time-control-styles.html
+               media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css: Added.
+        (.media-controls.ios.inline > .controls-bar):
+        (.media-controls.ios.inline .time-control):
+        (.media-controls.ios.inline button):
+        (.media-controls.ios.inline button:active):
+        (.media-controls.ios.inline > .controls-bar button):
+        (.media-controls.ios.inline .buttons-container.right):
+        (.media-controls.ios.inline button.play-pause):
+        (.media-controls.ios.inline button.skip-back):
+        (.media-controls.ios.inline .scrubber.slider):
+        (.media-controls.ios.inline button.airplay):
+        (.media-controls.ios.inline button.pip):
+        (.media-controls.ios.inline button.fullscreen):
+        (.media-controls.ios.inline .time-label):
+        (.media-controls.ios.inline .scrubber.slider > .fill):
+        (.media-controls.ios.inline .scrubber.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js: Added.
+        (IOSInlineMediaControls.prototype.layout):
+        (IOSInlineMediaControls):
+        * Modules/modern-media-controls/images/iOS/slider-thumb@2x.png: Added.
+        * Modules/modern-media-controls/js-files:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-09  Beth Dakin  <bdakin@apple.com>
 
         Support TouchBar in WebKit

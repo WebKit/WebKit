@@ -9882,6 +9882,9 @@
 		713E70AF1733E8B300A22D00 /* plugIns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = plugIns.js; sourceTree = "<group>"; };
 		714131471DC9D6AF00336107 /* fullscreen-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "fullscreen-support.js"; sourceTree = "<group>"; };
 		714131481DC9D6EF00336107 /* js-files */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "js-files"; sourceTree = "<group>"; };
+		7152CEC11DD2235300FD5962 /* ios-inline-media-controls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "ios-inline-media-controls.css"; sourceTree = "<group>"; };
+		7152CEC21DD2235300FD5962 /* ios-inline-media-controls.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "ios-inline-media-controls.js"; sourceTree = "<group>"; };
+		7152CEC31DD2236B00FD5962 /* slider-thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slider-thumb@2x.png"; sourceTree = "<group>"; };
 		715379FE146BD9D6008BD615 /* SVGPathData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathData.cpp; sourceTree = "<group>"; };
 		715379FF146BD9D6008BD615 /* SVGPathData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathData.h; sourceTree = "<group>"; };
 		7157E3D11DC1EE4B0094550E /* scrubbing-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "scrubbing-support.js"; sourceTree = "<group>"; };
@@ -17869,6 +17872,8 @@
 				716FA0E21DB26591007323CC /* icon-button.css */,
 				716FA0E31DB26591007323CC /* icon-button.js */,
 				716FA0E41DB26591007323CC /* icon-service.js */,
+				7152CEC11DD2235300FD5962 /* ios-inline-media-controls.css */,
+				7152CEC21DD2235300FD5962 /* ios-inline-media-controls.js */,
 				716FA0E51DB26591007323CC /* layout-item.js */,
 				716FA0E61DB26591007323CC /* layout-node.js */,
 				712157C01DCCCA0700AA7A92 /* macos-fullscreen-media-controls.css */,
@@ -17972,6 +17977,7 @@
 				71D6AA881DA4EAF700B23969 /* play@1x.png */,
 				71D6AA891DA4EAF700B23969 /* play@2x.png */,
 				71D6AA8A1DA4EAF700B23969 /* play@3x.png */,
+				7152CEC31DD2236B00FD5962 /* slider-thumb@2x.png */,
 				71D6AA8C1DA4EAF700B23969 /* start@1x.png */,
 				71D6AA8D1DA4EAF700B23969 /* start@2x.png */,
 				71D6AA8E1DA4EAF700B23969 /* start@3x.png */,

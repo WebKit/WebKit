@@ -1,0 +1,126 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* Controls bar */
+
+.media-controls.ios.inline > .controls-bar {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+}
+
+.media-controls.ios.inline > .controls-bar:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: media-controls-light-bar-background;
+    will-change: transform;
+}
+
+.media-controls.ios.inline .time-control {
+    position: absolute;
+}
+
+/* Buttons */
+
+.media-controls.ios.inline button {
+    background-color: black;
+}
+
+.media-controls.ios.inline button:active {
+    background-color: white;
+}
+
+.media-controls.ios.inline > .controls-bar button {
+    height: 100% !important;
+}
+
+/* Make right container flush to the right */
+
+.media-controls.ios.inline .buttons-container.right {
+    right: 0;
+}
+
+/* Buttons placement */
+
+.media-controls.ios.inline button.play-pause {
+    -webkit-mask-position-y: 12px;
+}
+
+.media-controls.ios.inline button.skip-back {
+    -webkit-mask-position-y: 10px;
+}
+
+.media-controls.ios.inline .scrubber.slider {
+    top: 23px;
+}
+
+.media-controls.ios.inline button.airplay {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.ios.inline button.pip {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.ios.inline button.fullscreen {
+    -webkit-mask-position-y: 13px;
+}
+
+/* Time labels */
+
+.media-controls.ios.inline .time-label {
+    top: 14.5px;
+    color: black;
+}
+
+/* Scrubber */
+
+.media-controls.ios.inline .scrubber.slider {
+    background-color: black;
+}
+
+.media-controls.ios.inline .scrubber.slider > .fill {
+    background-color: white;
+}
+
+.media-controls.ios.inline .scrubber.slider > input::-webkit-slider-thumb {
+    width: 15px;
+    height: 50px;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAiCAYAAABIiGl0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iUGl4ZWxtYXRvciAyLjIiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NTkwQ0UwODdBQTcxMTFFNEE5QTZGQTVGMjFBNkUxN0UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NTkwQ0UwODhBQTcxMTFFNEE5QTZGQTVGMjFBNkUxN0UiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1OTBDRTA4NUFBNzExMUU0QTlBNkZBNUYyMUE2RTE3RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1OTBDRTA4NkFBNzExMUU0QTlBNkZBNUYyMUE2RTE3RSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pofoz4wAAAJGSURBVHjaxJfNTsJAEMfbLmoNaKIhIE18A+LReOXmi/gQnnwSLz6Fnjh4Id4kHElI5EDwpIkgImWdf/Nfs5ISCrR1kkmg7c5vZz/mw3WSy66oL7ojqqiQkPotOhGdaq1XGnMTvC+KlprN5kW9Xr8sFotnhUKhCsUHs9lsCB2NRu1Op3PfaDRa8vhDdCSqnQ0E3lX7/f6NGH7RCQXfYgzG0sZacthut6/G4/Gj3lAwFjZgKyn0qNfrXYdh+Ka3FNiALdhc6Sk+1CkL4Us997E0aXga5zmX3Y87vdVt9jTJnvPA/blJJZxEnbHwtJds8Mk6V2ZTAQMsAD1EJAQHpdSpk7GAARaYAPuISE5OQpYfeYwwmBeYrMhjZeJuHkKWAtj7B7DnJchQaQsylgvwHGktL6qwXsH0TE7NETw091gjiecFFtYzmNFSo3LICyysBzBxsI5xoWUJWllHL8lSfTnViFyTyGO4PhgMbrP2lgxNpnPAdBXkkBYDsg48lqbRDLrd7t18Pn9P21PYhG3zl8yoXsY+1zCjDEufgIxjMqPCHMm5wpdBBsVeQK2QpUzZs8dKsGY+SrG8DSxvj8j6DdOKHUPZhkO3KOiDBWiZDGW3MC4f7FPVYvKQyuE8YQvzFJMUcJg+qfit3YVKc4clqB8H3zAThWzmJmzstGN1fI511LVJXYzl7hZQ00F+2dA4sH3P7Am4a0zAeDklEODZYueoVgz+DS4rWk5tTdj2cmqt4tr9sccJFqyG3N4CGxrSu3AZ0MiPAAMAZrLkuVVmRJsAAAAASUVORK5CYII=");
+    background-repeat: no-repeat;
+    background-size: 15px 17px;
+    background-position: 0px 18px;
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+
+

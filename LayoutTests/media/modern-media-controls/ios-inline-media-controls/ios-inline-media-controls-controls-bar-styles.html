@@ -1,0 +1,48 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+.media-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+    
+</style>
+<script type="text/javascript">
+
+description("Testing the <code>IOSInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 300 });
+
+let style, bounds;
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(mediaControls.element);
+
+    style = window.getComputedStyle(mediaControls.controlsBar.element);
+    bounds = mediaControls.controlsBar.element.getBoundingClientRect();
+    
+    shouldBeEqualToString("style.left", "0px");
+    shouldBeEqualToString("style.bottom", "0px");
+    shouldBeEqualToString("style.width", "680px");
+    shouldBeEqualToString("style.height", "50px");
+
+    shouldBe("bounds.left", "0");
+    shouldBe("bounds.top", "250");
+    shouldBe("bounds.width", "680");
+    shouldBe("bounds.height", "50");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

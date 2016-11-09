@@ -1,0 +1,60 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>IOSInlineMediaControls</code> and dropping controls.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls;
+
+// There is a 4-pixel difference in metrics between 1x and 2x due to the volume button having a different width.
+const expectedWidthsForDrop = [
+    [mediaControls.timeControl, 548],
+    [mediaControls.airplayButton, 287],
+    [mediaControls.pipButton, 238],
+    [mediaControls.skipBackButton, 187],
+    [mediaControls.fullscreenButton, 139]
+];
+
+function dumpControlVisibility(control)
+{
+    let visibilityString = "visible";
+    if (!control.parent)
+        visibilityString = "not " + visibilityString;
+    debug(`${control.constructor.name} is ${visibilityString}`);
+}
+
+const iconButtons = [
+    mediaControls.playPauseButton,
+    mediaControls.skipBackButton,
+    mediaControls.airplayButton,
+    mediaControls.pipButton,
+    mediaControls.fullscreenButton
+];
+
+scheduler.frameDidFire = function()
+{
+    if (iconButtons.some(button => button.width == 0))
+        return;
+
+    for (let [control, width] of expectedWidthsForDrop) {
+        mediaControls.width = width + 1;
+        mediaControls.layout();
+        dumpControlVisibility(control);
+
+        mediaControls.width = width;
+        mediaControls.layout();
+        dumpControlVisibility(control);
+
+        debug("");
+    }
+
+    scheduler.frameDidFire = new Function;
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

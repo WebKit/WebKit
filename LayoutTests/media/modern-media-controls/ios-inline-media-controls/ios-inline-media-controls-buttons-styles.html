@@ -1,0 +1,42 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>IOSInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 300 });
+
+const buttonPositions = [
+    [mediaControls.playPauseButton, 12],
+    [mediaControls.skipBackButton, 10],
+    [mediaControls.airplayButton, 13],
+    [mediaControls.pipButton, 13],
+    [mediaControls.fullscreenButton, 13]
+];
+
+let style;
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(mediaControls.element);
+
+    for (let [button, y] of buttonPositions) {
+        style = window.getComputedStyle(button.element);
+        debug(button.constructor.name);
+        shouldBeEqualToRGBAColor("style.backgroundColor", "rgb(0, 0, 0)");
+        shouldBeEqualToString("style.height", "50px");
+        shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
+        debug("");
+    }
+
+    mediaControls.element.remove();
+
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
