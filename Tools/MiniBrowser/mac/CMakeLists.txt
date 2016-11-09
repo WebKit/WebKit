@@ -12,7 +12,7 @@ set(MiniBrowser_SOURCES
     ${MINIBROWSER_DIR}/WK2BrowserWindowController.m
     ${MINIBROWSER_DIR}/main.m
     ${TOOLS_DIR}/MiniBrowser/MBToolbarItem.m
-    ${TOOLS_DIR}/MiniBrowser/MiniBrowserWebProcessPlugin.m
+    ${TOOLS_DIR}/MiniBrowser/MiniBrowserWebProcessPlugIn.m
 )
 
 set(MiniBrowser_INCLUDE_DIRECTORIES

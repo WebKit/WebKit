@@ -12,7 +12,7 @@ set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
 endif ()
 link_directories(../../WebKitLibraries)
 
-list(APPEND TestNetscapePlugin_LIBRARIES
+list(APPEND TestNetscapePlugIn_LIBRARIES
     ${QUARTZ_LIBRARY}
     WebKit2
 )
@@ -47,18 +47,18 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${WTF_DIR}/icu
 )
 
-# Common ${TestNetscapePlugin_SOURCES} from CMakeLists.txt are C++ source files.
-list(APPEND TestNetscapePlugin_Cpp_SOURCES
-    ${TestNetscapePlugin_SOURCES}
+# Common ${TestNetscapePlugIn_SOURCES} from CMakeLists.txt are C++ source files.
+list(APPEND TestNetscapePlugIn_Cpp_SOURCES
+    ${TestNetscapePlugIn_SOURCES}
 )
 
-list(APPEND TestNetscapePlugin_ObjCpp_SOURCES
+list(APPEND TestNetscapePlugIn_ObjCpp_SOURCES
     TestNetscapePlugIn/PluginObjectMac.mm
 )
 
-set(TestNetscapePlugin_SOURCES
-    ${TestNetscapePlugin_Cpp_SOURCES}
-    ${TestNetscapePlugin_ObjCpp_SOURCES}
+set(TestNetscapePlugIn_SOURCES
+    ${TestNetscapePlugIn_Cpp_SOURCES}
+    ${TestNetscapePlugIn_ObjCpp_SOURCES}
 )
 
 # Common ${DumpRenderTree_SOURCES} from CMakeLists.txt are C++ source files.
@@ -124,11 +124,11 @@ foreach (_file ${DumpRenderTree_ObjC_SOURCES})
     set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-std=c99")
 endforeach ()
 
-foreach (_file ${DumpRenderTree_Cpp_SOURCES} ${TestNetscapePlugin_Cpp_SOURCES})
+foreach (_file ${DumpRenderTree_Cpp_SOURCES} ${TestNetscapePlugIn_Cpp_SOURCES})
     set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-std=c++14")
 endforeach ()
 
-foreach (_file ${DumpRenderTree_ObjCpp_SOURCES} ${TestNetscapePlugin_ObjCpp_SOURCES})
+foreach (_file ${DumpRenderTree_ObjCpp_SOURCES} ${TestNetscapePlugIn_ObjCpp_SOURCES})
     set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++14")
 endforeach ()
 

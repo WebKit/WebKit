@@ -1,6 +1,6 @@
 set(WEBKIT_TESTNETSCAPEPLUGIN_DIR "${TOOLS_DIR}/DumpRenderTree/TestNetscapePlugIn")
 
-set(WebKitTestNetscapePlugin_SOURCES
+set(WebKitTestNetscapePlugIn_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginObject.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginTest.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/TestObject.cpp
@@ -30,21 +30,21 @@ set(WebKitTestNetscapePlugin_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp
 )
 
-set(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
+set(WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/ForwardingHeaders
     ${WEBCORE_DIR}
     ${WTF_DIR}
 )
 
-set(WebKitTestNetscapePlugin_SYSTEM_INCLUDE_DIRECTORIES
+set(WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES
     ${X11_INCLUDE_DIR}
 )
 
-include_directories(${WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${WebKitTestNetscapePlugin_SYSTEM_INCLUDE_DIRECTORIES})
+include_directories(${WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES})
 
-set(WebKitTestNetscapePlugin_LIBRARIES
+set(WebKitTestNetscapePlugIn_LIBRARIES
     ${X11_LIBRARIES}
 )
 
@@ -52,10 +52,10 @@ if (WTF_OS_UNIX)
     add_definitions(-DXP_UNIX)
 endif ()
 
-add_library(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})
-target_link_libraries(TestNetscapePlugin ${WebKitTestNetscapePlugin_LIBRARIES})
-set_target_properties(TestNetscapePlugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(TestNetscapePlugin)
+add_library(TestNetscapePlugIn SHARED ${WebKitTestNetscapePlugIn_SOURCES})
+target_link_libraries(TestNetscapePlugIn ${WebKitTestNetscapePlugIn_LIBRARIES})
+set_target_properties(TestNetscapePlugIn PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)
+WEBKIT_SET_EXTRA_COMPILER_FLAGS(TestNetscapePlugIn)
 
 # Suppress unused parameter warnings for sources in WebKit2.
-ADD_TARGET_PROPERTIES(TestNetscapePlugin COMPILE_FLAGS "-Wno-unused-parameter")
+ADD_TARGET_PROPERTIES(TestNetscapePlugIn COMPILE_FLAGS "-Wno-unused-parameter")
