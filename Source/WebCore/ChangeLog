@@ -1,3 +1,12 @@
+2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Typo fix after r162782
+        https://bugs.webkit.org/show_bug.cgi?id=164473
+
+        Unreviewed trivial fix.
+
+        * platform/ThreadGlobalData.cpp:
+
 2016-11-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208382.

@@ -38,7 +38,7 @@
 #include <wtf/text/StringImpl.h>
 
 #if PLATFORM(MAC)
-#include "TextCodeCMac.h"
+#include "TextCodecMac.h"
 #endif
 
 namespace WebCore {
