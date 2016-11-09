@@ -1,3 +1,50 @@
+2016-11-09  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Allow FolderTreeElement to display content when selected
+        https://bugs.webkit.org/show_bug.cgi?id=164407
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.html:
+        Add CollectionContentView and TitleView.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        Add support for Collection as the representedObject of a content view.
+
+        * UserInterface/Views/CollectionContentView.css: Added.
+        (.content-view.collection):
+        (.content-view.collection > .content-view):
+        * UserInterface/Views/CollectionContentView.js: Added.
+        (WebInspector.CollectionContentView):
+        (WebInspector.CollectionContentView.prototype.initialLayout):
+        (WebInspector.CollectionContentView.prototype._addContentViewForItem):
+        (WebInspector.CollectionContentView.prototype._removeContentViewForItem):
+        (WebInspector.CollectionContentView.prototype._handleItemAdded):
+        (WebInspector.CollectionContentView.prototype._handleItemRemoved):
+        (WebInspector.CollectionContentView.prototype._handleContentError):
+        Takes in a Collection when constructed, and attempts to display a sub-ContentView for each
+        item in the collection if the type of the collection is viewable en masse.  Currently, this
+        is only supported for WebInspector.Resource.Type.Image collections.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype._contentError):
+        Dispatch an event whenever the content fails to load.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView.prototype.canShowRepresentedObject):
+        Allow FolderTreeElements to be selected.
+
+        * UserInterface/Views/TitleView.css: Added.
+        (.title-view):
+        * UserInterface/Views/TitleView.js: Added.
+        (WebInspector.TitleView):
+        Basic view that displays the given text in the center of the viewable area.
+
 2016-11-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Stack overflow when searching a timeline recording for JS function names

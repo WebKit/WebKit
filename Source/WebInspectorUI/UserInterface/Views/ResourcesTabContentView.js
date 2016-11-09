@@ -59,7 +59,8 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
         return representedObject instanceof WebInspector.Frame
             || representedObject instanceof WebInspector.Resource
             || representedObject instanceof WebInspector.Script
-            || representedObject instanceof WebInspector.ContentFlow;
+            || representedObject instanceof WebInspector.ContentFlow
+            || representedObject instanceof WebInspector.Collection;
     }
 };
 

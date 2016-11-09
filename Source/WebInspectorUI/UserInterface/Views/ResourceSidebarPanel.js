@@ -113,7 +113,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
     {
         // A custom implementation is needed for this since the frames are populated lazily.
 
-        if (!this._mainFrameTreeElement && (representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame)) {
+        if (!this._mainFrameTreeElement && (representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Collection)) {
             // All resources are under the main frame, so we need to return early if we don't have the main frame yet.
             return null;
         }
@@ -440,10 +440,11 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
     _treeSelectionDidChange(event)
     {
         let treeElement = event.data.selectedElement;
-        if (!treeElement || treeElement instanceof WebInspector.FolderTreeElement)
+        if (!treeElement)
             return;
 
-        if (treeElement instanceof WebInspector.ResourceTreeElement
+        if (treeElement instanceof WebInspector.FolderTreeElement
+            || treeElement instanceof WebInspector.ResourceTreeElement
             || treeElement instanceof WebInspector.ScriptTreeElement
             || treeElement instanceof WebInspector.ContentFlowTreeElement) {
             WebInspector.showRepresentedObject(treeElement.representedObject);

@@ -1110,6 +1110,9 @@ WebInspector.tabContentViewClassForRepresentedObject = function(representedObjec
         representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return WebInspector.ResourcesTabContentView;
 
+    if (representedObject instanceof WebInspector.Collection)
+        return WebInspector.CollectionContentView;
+
     return null;
 };
 
