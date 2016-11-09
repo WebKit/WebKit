@@ -53,16 +53,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-Ref<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
-{
-    return adoptRef(*new IDBObjectStore(context, info, transaction));
-}
-
 IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_info(info)
     , m_originalInfo(info)
-    , m_transaction(transaction)
+    , m_transaction(&transaction)
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
@@ -131,9 +126,12 @@ RefPtr<DOMStringList> IDBObjectStore::indexNames() const
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
-    for (auto& name : m_info.indexNames())
-        indexNames->append(name);
-    indexNames->sort();
+
+    if (!m_deleted) {
+        for (auto& name : m_info.indexNames())
+            indexNames->append(name);
+        indexNames->sort();
+    }
 
     return indexNames;
 }
@@ -141,7 +139,7 @@ RefPtr<DOMStringList> IDBObjectStore::indexNames() const
 IDBTransaction& IDBObjectStore::transaction()
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());
-    return m_transaction.get();
+    return *m_transaction;
 }
 
 bool IDBObjectStore::autoIncrement() const
@@ -165,7 +163,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, Re
     if (!direction)
         return Exception { TypeError };
 
-    auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyAndValue);
+    auto info = IDBCursorInfo::objectStoreCursor(*m_transaction, m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyAndValue);
     return m_transaction->requestOpenCursor(execState, *this, info);
 }
 
@@ -193,7 +191,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState,
     if (!direction)
         return Exception { TypeError };
 
-    auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyOnly);
+    auto info = IDBCursorInfo::objectStoreCursor(*m_transaction, m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyOnly);
     return m_transaction->requestOpenCursor(execState, *this, info);
 }
 
@@ -494,9 +492,8 @@ ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
         Locker<Lock> locker(m_referencedIndexLock);
         if (auto index = m_referencedIndexes.take(name)) {
             index->markAsDeleted();
-            m_deletedIndexes.add(WTFMove(index));
+            m_deletedIndexes.add(index->info().identifier(), WTFMove(index));
         }
-
     }
 
     m_transaction->deleteIndex(m_info.identifier(), name);
@@ -608,6 +605,8 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
         m_info.rename(currentName);
         m_deleted = true;
     } else {
+        m_deleted = false;
+        
         HashSet<uint64_t> indexesToRemove;
         for (auto indexIdentifier : objectStoreInfo->indexMap().keys()) {
             if (!objectStoreInfo->hasIndex(indexIdentifier))
@@ -619,6 +618,13 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     }
 
     Locker<Lock> locker(m_referencedIndexLock);
+    for (auto& iterator : m_deletedIndexes) {
+        if (m_info.hasIndex(iterator.key)) {
+            auto name = iterator.value->info().name();
+            m_referencedIndexes.set(name, WTFMove(iterator.value));
+        }
+    }
+
     for (auto& index : m_referencedIndexes.values())
         index->rollbackInfoForVersionChangeAbort();
 }
@@ -627,6 +633,8 @@ void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
 {
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())
+        visitor.addOpaqueRoot(index.get());
+    for (auto& index : m_deletedIndexes.values())
         visitor.addOpaqueRoot(index.get());
 }
 
@@ -643,6 +651,16 @@ void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newNam
     ASSERT(m_referencedIndexes.get(index.info().name()) == &index);
 
     m_referencedIndexes.set(newName, m_referencedIndexes.take(index.info().name()));
+}
+
+void IDBObjectStore::ref()
+{
+    m_transaction->ref();
+}
+
+void IDBObjectStore::deref()
+{
+    m_transaction->deref();
 }
 
 } // namespace WebCore

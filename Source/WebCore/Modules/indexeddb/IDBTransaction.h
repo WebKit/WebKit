@@ -146,6 +146,8 @@ public:
 
     void connectionClosedFromServer(const IDBError&);
 
+    void visitReferencedObjectStores(JSC::SlotVisitor&) const;
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 
@@ -234,7 +236,9 @@ private:
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
-    HashMap<String, RefPtr<IDBObjectStore>> m_referencedObjectStores;
+    mutable Lock m_referencedObjectStoreLock;
+    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores;
+    HashMap<uint64_t, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
 
     HashSet<RefPtr<IDBRequest>> m_openRequests;
 

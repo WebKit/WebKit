@@ -2256,6 +2256,7 @@
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
 		51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBD0C91C90400DC255B /* PageURLRecord.h */; };
+		51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */; };
 		51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E399011D6E4750009C8831 /* GameControllerGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */; };
 		51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9405,6 +9406,7 @@
 		51E1ECBB0C91C90400DC255B /* IconRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconRecord.h; sourceTree = "<group>"; };
 		51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageURLRecord.cpp; sourceTree = "<group>"; };
 		51E1ECBD0C91C90400DC255B /* PageURLRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageURLRecord.h; sourceTree = "<group>"; };
+		51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransactionCustom.cpp; sourceTree = "<group>"; };
 		51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepad.h; sourceTree = "<group>"; };
 		51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameControllerGamepad.mm; sourceTree = "<group>"; };
 		51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepadProvider.h; sourceTree = "<group>"; };
@@ -21828,6 +21830,7 @@
 				5141299A1C6C166D0059E714 /* JSIDBIndexCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				934F31B41CC0737200DB43DC /* JSIDBRequestCustom.cpp */,
+				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
@@ -28884,6 +28887,7 @@
 				FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */,
 				93309DE3099E64920056E581 /* EditCommand.cpp in Sources */,
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
+				51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,

@@ -1,3 +1,54 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Clean up more transaction abort behavior, including tweaks to Index/ObjectStore lifetime.
+        https://bugs.webkit.org/show_bug.cgi?id=164466
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing tests that now pass).
+        
+        Previously, IDBIndex ref/deref didn't track a traditional ref count but instead kept the owning object store alive.
+        Now, IDBObjectStore ref/deref do the same thing for the owning transaction.
+        
+        Now when a version change transaction is rolled back, some object stores and indexes get pulled out of the "deleted"
+        set and get promoted back up into the "referenced" set.
+        
+        Now deleted object stores/indexes are considered opaque roots, as live objects in the deleted state *can* get back
+        to the owning objects.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::rollbackInfoForVersionChangeAbort):
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::transaction):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::openKeyCursor):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::rollbackForVersionChangeAbort):
+        (WebCore::IDBObjectStore::visitReferencedIndexes):
+        (WebCore::IDBObjectStore::ref):
+        (WebCore::IDBObjectStore::deref):
+        (WebCore::IDBObjectStore::create): Deleted.
+        * Modules/indexeddb/IDBObjectStore.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::transitionedToFinishing):
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::visitReferencedObjectStores):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+
+        * bindings/js/JSIDBTransactionCustom.cpp: Added.
+        (WebCore::JSIDBTransaction::visitAdditionalChildren):
+
 2016-11-09  Simon Fraser  <simon.fraser@apple.com>
 
         Allow customization of TextStream-based logging for geometry types

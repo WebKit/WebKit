@@ -1,8 +1,8 @@
 
 PASS Created stores get their indexes marked as deleted after the transaction that created them aborts 
-FAIL Deleted stores get their indexes marked as not-deleted after the transaction that deleted them aborts assert_array_equals: IDBObjectStore.indexNames should be empty immediately after IDBDatabase.deleteObjectStore() returns lengths differ, expected 0 got 2
-FAIL Created+deleted stores still have their indexes marked as deleted after the transaction aborts assert_array_equals: IDBObjectStore.indexNames should be empty immediately after IDBDatabase.deleteObjectStore() returns lengths differ, expected 0 got 2
+PASS Deleted stores get their indexes marked as not-deleted after the transaction that deleted them aborts 
+PASS Created+deleted stores still have their indexes marked as deleted after the transaction aborts 
 PASS Created indexes get marked as deleted after their transaction aborts 
-FAIL Deleted indexes get marked as not-deleted after the transaction aborts assert_throws: IDBIndex.get should throw TransactionInactiveError, indicating that the index is no longer marked for deletion, immediately after IDBTransaction.abort() returns function "() => index.get('query')" threw object "InvalidStateError (DOM IDBDatabase Exception 11): Failed ..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
+PASS Deleted indexes get marked as not-deleted after the transaction aborts 
 PASS Created+deleted indexes are still marked as deleted after their transaction aborts 
 

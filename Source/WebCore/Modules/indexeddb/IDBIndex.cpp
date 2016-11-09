@@ -146,6 +146,7 @@ void IDBIndex::rollbackInfoForVersionChangeAbort()
     }
 
     m_info = m_originalInfo;
+    m_deleted = false;
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, IDBKeyRange* range, const String& directionString)

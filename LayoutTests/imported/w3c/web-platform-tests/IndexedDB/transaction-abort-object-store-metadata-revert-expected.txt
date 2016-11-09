@@ -1,6 +1,6 @@
 
 PASS Created stores get marked as deleted after their transaction aborts 
-FAIL Deleted stores get marked as not-deleted after the transaction aborts assert_throws: IDBObjectStore.get should throw TransactionInactiveError, indicating that the store is no longer marked for deletion, immediately after IDBTransaction.abort() returns function "() => store.get('query')" threw object "InvalidStateError (DOM IDBDatabase Exception 11): Failed ..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
+PASS Deleted stores get marked as not-deleted after the transaction aborts 
 PASS Created+deleted stores are still marked as deleted after their transaction aborts 
 PASS Un-instantiated deleted stores get marked as not-deleted after the transaction aborts 
 

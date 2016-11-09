@@ -1,3 +1,14 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Clean up more transaction abort behavior, including tweaks to Index/ObjectStore lifetime.
+        https://bugs.webkit.org/show_bug.cgi?id=164466
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/IndexedDB/transaction-abort-index-metadata-revert-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-abort-multiple-metadata-revert-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert-expected.txt:
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         Ignore URL.origin in URL web-platform-tests
