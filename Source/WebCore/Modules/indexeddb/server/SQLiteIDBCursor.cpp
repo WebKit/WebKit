@@ -440,7 +440,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     return AdvanceResult::Success;
 }
 
-bool SQLiteIDBCursor::iterate(const WebCore::IDBKeyData& targetKey)
+bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey)
 {
     ASSERT(m_transaction->sqliteTransaction());
     ASSERT(m_statement);
@@ -463,6 +463,22 @@ bool SQLiteIDBCursor::iterate(const WebCore::IDBKeyData& targetKey)
             break;
 
         result = advance(1);
+    }
+
+    if (targetPrimaryKey.isValid()) {
+        while (!m_completed && !m_currentKey.compare(targetKey)) {
+            if (!result)
+                return false;
+
+            // Search for the next primary key >= the primary target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
+            if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
+                if (m_currentPrimaryKey.compare(targetPrimaryKey) >= 0)
+                    break;
+            } else if (m_currentPrimaryKey.compare(targetPrimaryKey) <= 0)
+                break;
+
+            result = advance(1);
+        }
     }
 
     return result;

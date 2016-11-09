@@ -95,6 +95,21 @@ public:
     KeyType type() const { return m_type; }
 
     bool operator<(const IDBKeyData&) const;
+    bool operator>(const IDBKeyData& other) const
+    {
+        return !(*this < other) && !(*this == other);
+    }
+
+    bool operator<=(const IDBKeyData& other) const
+    {
+        return !(*this > other);
+    }
+
+    bool operator>=(const IDBKeyData& other) const
+    {
+        return !(*this < other);
+    }
+
     bool operator==(const IDBKeyData& other) const;
     bool operator!=(const IDBKeyData& other) const
     {

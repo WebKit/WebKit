@@ -24,8 +24,8 @@ PASS 'key' in cursor is true
 PASS 'primaryKey' in cursor is true
 PASS 'continue' in cursor is true
 PASS typeof cursor.continue is "function"
-FAIL 'continuePrimaryKey' in cursor should be true. Was false.
-FAIL typeof cursor.continuePrimaryKey should be function. Was undefined.
+PASS 'continuePrimaryKey' in cursor is true
+PASS typeof cursor.continuePrimaryKey is "function"
 PASS 'advance' in cursor is true
 PASS typeof cursor.advance is "function"
 PASS 'update' in cursor is true
@@ -46,8 +46,8 @@ PASS 'key' in cursor is true
 PASS 'primaryKey' in cursor is true
 PASS 'continue' in cursor is true
 PASS typeof cursor.continue is "function"
-FAIL 'continuePrimaryKey' in cursor should be true. Was false.
-FAIL typeof cursor.continuePrimaryKey should be function. Was undefined.
+PASS 'continuePrimaryKey' in cursor is true
+PASS typeof cursor.continuePrimaryKey is "function"
 PASS 'advance' in cursor is true
 PASS typeof cursor.advance is "function"
 PASS 'update' in cursor is true
@@ -68,8 +68,8 @@ PASS 'key' in cursor is true
 PASS 'primaryKey' in cursor is true
 PASS 'continue' in cursor is true
 PASS typeof cursor.continue is "function"
-FAIL 'continuePrimaryKey' in cursor should be true. Was false.
-FAIL typeof cursor.continuePrimaryKey should be function. Was undefined.
+PASS 'continuePrimaryKey' in cursor is true
+PASS typeof cursor.continuePrimaryKey is "function"
 PASS 'advance' in cursor is true
 PASS typeof cursor.advance is "function"
 PASS 'update' in cursor is true
@@ -82,7 +82,6 @@ PASS cursor instanceof IDBCursorWithValue is false
 PASS cursor.primaryKey is 0
 PASS 'value' in cursor is false
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

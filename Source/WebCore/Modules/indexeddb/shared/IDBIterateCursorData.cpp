@@ -32,7 +32,7 @@ namespace WebCore {
 
 IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
 {
-    return { keyData.isolatedCopy(), count };
+    return { keyData.isolatedCopy(), primaryKeyData.isolatedCopy(), count };
 }
 
 } // namespace WebCore

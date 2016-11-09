@@ -47,7 +47,7 @@ public:
 
 private:
     void currentData(IDBGetResult&) final;
-    void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) final;
+    void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) final;
 
     MemoryIndex& m_index;
 

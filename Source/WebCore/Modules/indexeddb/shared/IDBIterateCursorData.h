@@ -33,6 +33,7 @@ namespace WebCore {
 
 struct IDBIterateCursorData {
     IDBKeyData keyData;
+    IDBKeyData primaryKeyData;
     unsigned count;
 
     IDBIterateCursorData isolatedCopy() const;
@@ -44,13 +45,16 @@ struct IDBIterateCursorData {
 template<class Encoder>
 void IDBIterateCursorData::encode(Encoder& encoder) const
 {
-    encoder << keyData << static_cast<uint64_t>(count);
+    encoder << keyData << primaryKeyData << static_cast<uint64_t>(count);
 }
 
 template<class Decoder>
 bool IDBIterateCursorData::decode(Decoder& decoder, IDBIterateCursorData& iteratorCursorData)
 {
     if (!decoder.decode(iteratorCursorData.keyData))
+        return false;
+
+    if (!decoder.decode(iteratorCursorData.primaryKeyData))
         return false;
 
     uint64_t count;

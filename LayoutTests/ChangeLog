@@ -1,3 +1,18 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Implement new IDBCursor.continuePrimaryKey function.
+        https://bugs.webkit.org/show_bug.cgi?id=164404
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/cursor-basics-expected.txt:
+        * storage/indexeddb/cursor-basics-private-expected.txt:
+        * storage/indexeddb/modern/idbcursor-continue-primary-key-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbcursor-continue-primary-key-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbcursor-continue-primary-key-1-private.html: Added.
+        * storage/indexeddb/modern/idbcursor-continue-primary-key-1.html: Added.
+        * storage/indexeddb/modern/resources/idbcursor-continue-primary-key-1.js: Added.
+
 2016-11-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: set status label according to media state

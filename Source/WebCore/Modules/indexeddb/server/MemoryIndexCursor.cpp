@@ -81,12 +81,17 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
     }
 }
 
-void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetResult& getResult)
+void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult& getResult)
 {
     LOG(IndexedDB, "MemoryIndexCursor::iterate to key %s, %u count", key.loggingString().utf8().data(), count);
 
+#ifndef NDEBUG
+    if (primaryKey.isValid())
+        ASSERT(key.isValid());
+#endif
+
     if (key.isValid()) {
-        // Cannot iterator by both a count and to a key
+        // Cannot iterate by both a count and to a key
         ASSERT(!count);
 
         auto* valueStore = m_index.valueStore();
@@ -97,10 +102,17 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
             return;
         }
 
-        if (m_info.isDirectionForward())
-            m_currentIterator = valueStore->find(key);
-        else
-            m_currentIterator = valueStore->reverseFind(key, m_info.duplicity());
+        if (primaryKey.isValid()) {
+            if (m_info.isDirectionForward())
+                m_currentIterator = valueStore->find(key, primaryKey);
+            else
+                m_currentIterator = valueStore->reverseFind(key, primaryKey, m_info.duplicity());
+        } else {
+            if (m_info.isDirectionForward())
+                m_currentIterator = valueStore->find(key);
+            else
+                m_currentIterator = valueStore->reverseFind(key, m_info.duplicity());
+        }
 
         if (m_currentIterator.isValid() && !m_info.range().containsKey(m_currentIterator.key()))
             m_currentIterator.invalidate();

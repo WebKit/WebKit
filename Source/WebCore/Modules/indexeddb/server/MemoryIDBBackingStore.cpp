@@ -538,7 +538,7 @@ IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     if (!cursor)
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store cursor found in which to iterate cursor") };
 
-    cursor->iterate(data.keyData, data.count, outData);
+    cursor->iterate(data.keyData, data.primaryKeyData, data.count, outData);
 
     return { };
 }

@@ -1,3 +1,51 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Implement new IDBCursor.continuePrimaryKey function.
+        https://bugs.webkit.org/show_bug.cgi?id=164404
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/idbcursor-continue-primary-key-1-private.html
+               storage/indexeddb/modern/idbcursor-continue-primary-key-1.html
+               Also covered by existing tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::continuePrimaryKey):
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::operator>):
+        (WebCore::IDBKeyData::operator<=):
+        (WebCore::IDBKeyData::operator>=):
+
+        * Modules/indexeddb/server/MemoryCursor.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::iterate):
+        * Modules/indexeddb/server/MemoryIndexCursor.h:
+
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::iterate):
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::iterate):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        (WebCore::IDBIterateCursorData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        (WebCore::IDBIterateCursorData::encode):
+        (WebCore::IDBIterateCursorData::decode):
+
 2016-11-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: set status label according to media state

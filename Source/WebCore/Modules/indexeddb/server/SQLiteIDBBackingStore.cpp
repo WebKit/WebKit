@@ -2290,14 +2290,16 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     }
 
     auto key = data.keyData;
+    auto primaryKey = data.primaryKeyData;
     auto count = data.count;
 
     if (key.isValid()) {
-        if (!cursor->iterate(key)) {
+        if (!cursor->iterate(key, primaryKey)) {
             LOG_ERROR("Attempt to iterate cursor failed");
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to iterate cursor failed") };
         }
     } else {
+        ASSERT(!primaryKey.isValid());
         if (!count)
             count = 1;
         if (!cursor->advance(count)) {

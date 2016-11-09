@@ -314,9 +314,11 @@ void MemoryObjectStoreCursor::incrementReverseIterator(std::set<IDBKeyData>& set
     }
 }
 
-void MemoryObjectStoreCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetResult& outData)
+void MemoryObjectStoreCursor::iterate(const IDBKeyData& key, const IDBKeyData& primaryKeyData, uint32_t count, IDBGetResult& outData)
 {
     LOG(IndexedDB, "MemoryObjectStoreCursor::iterate to key %s", key.loggingString().utf8().data());
+
+    ASSERT_UNUSED(primaryKeyData, primaryKeyData.isNull());
 
     if (!m_objectStore.orderedKeys()) {
         m_currentPositionKey = { };

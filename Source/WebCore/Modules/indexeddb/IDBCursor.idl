@@ -39,5 +39,6 @@
     [CallWith=ScriptState, MayThrowException] IDBRequest update(any value);
     [MayThrowException] void advance([EnforceRange] unsigned long count);
     [CallWith=ScriptState, ImplementedAs=continueFunction, MayThrowException] void continue(optional any key);
+    [CallWith=ScriptState, MayThrowException] void continuePrimaryKey(any key, any primaryKey);
     [CallWith=ScriptState, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete();
 };

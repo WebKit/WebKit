@@ -43,7 +43,7 @@ public:
     virtual ~MemoryCursor();
 
     virtual void currentData(IDBGetResult&) = 0;
-    virtual void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) = 0;
+    virtual void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) = 0;
 
     static MemoryCursor* cursorForIdentifier(const IDBResourceIdentifier&);
 
