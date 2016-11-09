@@ -122,11 +122,7 @@ private:
 
     // IDBObjectStore objects are always owned by their referencing IDBTransaction.
     // ObjectStores will never outlive transactions so its okay to keep a raw C++ reference here.
-
-    // FIXME: This should be a reference instead of a pointer (as mentioned by the above comment)
-    // but leaving it a pointer for now makes this patch much easier to review.
-    // I'll make the ptr->ref change right after this patch lands.
-    IDBTransaction* m_transaction;
+    IDBTransaction& m_transaction;
 
     bool m_deleted { false };
 
