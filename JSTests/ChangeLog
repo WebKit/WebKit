@@ -1,3 +1,15 @@
+2016-11-09  Saam Barati  <sbarati@apple.com>
+
+        TypeProfiler and running GC collection on another thread don't play nicely with each other
+        https://bugs.webkit.org/show_bug.cgi?id=164441
+        <rdar://problem/29132174>
+
+        Reviewed by Geoffrey Garen.
+
+        * typeProfiler/type-profiler-gc.js: Added.
+        (bar):
+        (foo):
+
 2016-11-04  Mark Lam  <mark.lam@apple.com>
 
         Error description code should be able to handle Symbol values.

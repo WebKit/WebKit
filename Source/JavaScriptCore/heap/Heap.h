@@ -443,6 +443,7 @@ private:
     void visitStrongHandles(HeapRootVisitor&);
     void visitHandleStack(HeapRootVisitor&);
     void visitSamplingProfiler();
+    void visitTypeProfiler();
     void visitShadowChicken();
     void traceCodeBlocksAndJITStubRoutines();
     void visitWeakHandles(HeapRootVisitor&);

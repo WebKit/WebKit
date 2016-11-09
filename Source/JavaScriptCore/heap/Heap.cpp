@@ -539,6 +539,7 @@ void Heap::markRoots(double gcStartTime)
         visitStrongHandles(heapRootVisitor);
         visitHandleStack(heapRootVisitor);
         visitSamplingProfiler();
+        visitTypeProfiler();
         visitShadowChicken();
         traceCodeBlocksAndJITStubRoutines();
         m_slotVisitor.drainFromShared(SlotVisitor::MasterDrain);
@@ -775,6 +776,16 @@ void Heap::visitSamplingProfiler()
         samplingProfiler->getLock().unlock();
     }
 #endif // ENABLE(SAMPLING_PROFILER)
+}
+
+void Heap::visitTypeProfiler()
+{
+    if (vm()->typeProfiler()) {
+        vm()->typeProfilerLog()->visit(m_slotVisitor);
+        if (Options::logGC() == GCLogging::Verbose)
+            dataLog("Type Profiler visit data:\n", m_slotVisitor);
+        m_slotVisitor.donateAndDrain();
+    }
 }
 
 void Heap::visitShadowChicken()
@@ -1090,11 +1101,6 @@ void Heap::collectInThread()
     }
     
     double gcStartTime;
-    
-    if (vm()->typeProfiler()) {
-        DeferGCForAWhile awhile(*this);
-        vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
-    }
     
 #if ENABLE(JIT)
     {

@@ -64,6 +64,8 @@ public:
     JS_EXPORT_PRIVATE void processLogEntries(const String&);
     LogEntry* logEndPtr() const { return m_logEndPtr; }
 
+    void visit(SlotVisitor&);
+
     static ptrdiff_t logStartOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_logStartPtr); }
     static ptrdiff_t currentLogEntryOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_currentLogEntryPtr); }
 

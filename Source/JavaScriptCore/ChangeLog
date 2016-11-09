@@ -1,3 +1,28 @@
+2016-11-09  Saam Barati  <sbarati@apple.com>
+
+        TypeProfiler and running GC collection on another thread don't play nicely with each other
+        https://bugs.webkit.org/show_bug.cgi?id=164441
+        <rdar://problem/29132174>
+
+        Reviewed by Geoffrey Garen.
+
+        This fix here is simple: we now treat the type profiler log as a GC root.
+        GC will make sure that we mark any values/structures that are in the log.
+        It's easy to reason about the correctness of this, and it also solves
+        the problem that we were clearing the log on the GC thread. Clearing the
+        log on the GC thread was a problem because when we clear the log, we may
+        allocate, which we're not allowed to do from the GC thread.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitTypeProfiler):
+        (JSC::Heap::collectInThread):
+        * heap/Heap.h:
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        (JSC::TypeProfilerLog::visit):
+        * runtime/TypeProfilerLog.h:
+
 2016-11-09  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: Silence noisy warning

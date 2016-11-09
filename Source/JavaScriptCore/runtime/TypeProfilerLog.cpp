@@ -30,6 +30,7 @@
 #include "TypeProfilerLog.h"
 
 #include "JSCInlines.h"
+#include "SlotVisitor.h"
 #include "TypeLocation.h"
 #include <wtf/CurrentTime.h>
 
@@ -87,11 +88,27 @@ void TypeProfilerLog::processLogEntries(const String& reason)
         entry++;
     }
 
+    // Note that we don't update this cursor until we're done processing the log.
+    // This allows us to have a sane story in case we have to mark the log
+    // while processing through it. We won't be iterating over the log while
+    // marking it, but we may be in the middle of iterating over when the mutator
+    // pauses and causes the collector to mark the log.
     m_currentLogEntryPtr = m_logStartPtr;
 
     if (verbose) {
         double after = currentTimeMS();
         dataLogF(" Processing the log took: '%f' ms\n", after - before);
+    }
+}
+
+void TypeProfilerLog::visit(SlotVisitor& visitor)
+{
+    for (LogEntry* entry = m_logStartPtr; entry != m_currentLogEntryPtr; ++entry) {
+        visitor.appendUnbarrieredReadOnlyValue(entry->value);
+        if (StructureID id = entry->structureID) {
+            Structure* structure = visitor.heap()->structureIDTable().get(id); 
+            visitor.appendUnbarrieredReadOnlyPointer(structure);
+        }
     }
 }
 
