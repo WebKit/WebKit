@@ -58,10 +58,11 @@ function initializeReadableStream(underlyingSource, strategy)
         // Constructor is not necessarily available if the byteStream part of Readeable Stream API is not activated. Therefore, a
         // specific handling of error is done.
         try {
-            this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);
+            let readableByteStreamControllerConstructor = @ReadableByteStreamController;
         } catch (e) {
-            @throwTypeError("ReadableByteStreamController could not be created");
+            @throwTypeError("ReadableByteStreamController is not implemented");
         }
+        this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 1;

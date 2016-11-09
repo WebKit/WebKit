@@ -1,3 +1,16 @@
+2016-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208422.
+
+        Roll r208382 back in since it was not responsible for the API
+        test failures seen on macOS.
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r208382."
+        https://bugs.webkit.org/show_bug.cgi?id=164319
+        http://trac.webkit.org/changeset/208422
+
 2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r208361.
