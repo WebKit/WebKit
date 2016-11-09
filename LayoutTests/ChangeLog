@@ -1,3 +1,18 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Network cache speculative revalidation can cause loads to hang
+        https://bugs.webkit.org/show_bug.cgi?id=164532
+        <rdar://problem/28519331>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage. The test hangs without the fix.
+
+        * http/tests/cache/disk-cache/speculative-validation/http-auth-expected.txt: Added.
+        * http/tests/cache/disk-cache/speculative-validation/http-auth.html: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/frame-with-authenticated-resource.php: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/resource-with-auth.php: Added.
+
 2016-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208422.

@@ -1,0 +1,13 @@
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with testUsername:testPassword
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+Tests speculative revalidation of authenticated resources.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xhr.status is 401
+PASS Successfuly loaded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
