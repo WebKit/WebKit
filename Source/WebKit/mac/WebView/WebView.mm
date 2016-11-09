@@ -698,6 +698,8 @@ enum class WebListType {
 
 @implementation WebTextListTouchBarViewController
 
+@synthesize currentListType=_currentListType;
+
 static const CGFloat listControlSegmentWidth = 67.0;
 
 static const NSUInteger noListSegment = 0;
