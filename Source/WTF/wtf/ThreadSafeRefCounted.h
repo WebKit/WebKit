@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadSafeRefCounted_h
-#define ThreadSafeRefCounted_h
+#pragma once
 
 #include <atomic>
 #include <wtf/FastMalloc.h>
@@ -36,57 +35,46 @@ class ThreadSafeRefCountedBase {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ThreadSafeRefCountedBase(int initialRefCount = 1)
-        : m_refCount(initialRefCount)
-    {
-    }
+    ThreadSafeRefCountedBase() = default;
 
-    void ref()
+    void ref() const
     {
         ++m_refCount;
     }
 
-    bool hasOneRef()
+    bool hasOneRef() const
     {
         return refCount() == 1;
     }
 
-    int refCount() const
+    unsigned refCount() const
     {
         return m_refCount;
     }
 
 protected:
     // Returns whether the pointer should be freed or not.
-    bool derefBase()
+    bool derefBase() const
     {
-        if (--m_refCount <= 0) {
-            return true;
-        }
-
-        return false;
+        return !--m_refCount;
     }
 
 private:
-    std::atomic<int> m_refCount;
+    mutable std::atomic<unsigned> m_refCount { 1 };
 };
 
 template<class T> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
-    void deref()
+    void deref() const
     {
         if (derefBase())
-            delete static_cast<T*>(this);
+            delete static_cast<const T*>(this);
     }
 
 protected:
-    ThreadSafeRefCounted()
-    {
-    }
+    ThreadSafeRefCounted() = default;
 };
 
 } // namespace WTF
 
 using WTF::ThreadSafeRefCounted;
-
-#endif // ThreadSafeRefCounted_h
