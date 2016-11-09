@@ -80,6 +80,7 @@ class SecurityOrigin;
 class ShadowRoot;
 class ThreadableLoaderClient;
 class URL;
+class WebKitNamedFlow;
 class WorkerInspectorProxy;
 
 struct ReplayPosition;

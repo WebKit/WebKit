@@ -381,10 +381,7 @@ DOMNode *kit(Node* value)
     JSMainThreadNullState state;
     if (!event)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    BOOL result = unwrap(*self).dispatchEventForBindings(*core(event), ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(unwrap(*self).dispatchEventForBindings(*core(event)));
 }
 
 @end

@@ -445,9 +445,12 @@ HRESULT DOMNode::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
     if (!domEvent->coreEvent())
         return E_FAIL;
 
-    WebCore::ExceptionCode ec = 0;
-    *result = m_node->dispatchEventForBindings(*domEvent->coreEvent(), ec) ? TRUE : FALSE;
-    return ec ? E_FAIL : S_OK;
+    auto dispatchResult = m_node->dispatchEventForBindings(*domEvent->coreEvent());
+    if (dispatchResult.hasException())
+        return E_FAIL;
+
+    *result = dispatchResult.releaseReturnValue();
+    return S_OK;
 }
 
 // DOMNode - DOMNode ----------------------------------------------------------
@@ -952,9 +955,12 @@ HRESULT DOMWindow::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
     if (!domEvent->coreEvent())
         return E_FAIL;
 
-    WebCore::ExceptionCode ec = 0;
-    *result = m_window->dispatchEventForBindings(*domEvent->coreEvent(), ec) ? TRUE : FALSE;
-    return ec ? E_FAIL : S_OK;
+    auto dispatchResult = m_window->dispatchEventForBindings(*domEvent->coreEvent());
+    if (dispatchResult.hasException())
+        return E_FAIL;
+
+    *result = dispatchResult.releaseReturnValue();
+    return S_OK;
 }
 
 

@@ -63,6 +63,7 @@ class GainNode;
 class GenericEventQueue;
 class HTMLMediaElement;
 class MediaElementAudioSourceNode;
+class MediaStream;
 class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
 class OscillatorNode;

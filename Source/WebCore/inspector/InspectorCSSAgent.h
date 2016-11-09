@@ -54,6 +54,7 @@ class Node;
 class NodeList;
 class StyleResolver;
 class StyleRule;
+class WebKitNamedFlow;
 
 class InspectorCSSAgent final
     : public InspectorAgentBase

@@ -857,7 +857,7 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
             continue;
         // Get the list of event types this Node is concerned with
         for (auto& type : d->eventListenerMap.eventTypes()) {
-            const EventListenerVector& listeners = ancestor->getEventListeners(type);
+            auto& listeners = ancestor->eventListeners(type);
             EventListenerVector filteredListeners;
             filteredListeners.reserveInitialCapacity(listeners.size());
             for (auto& listener : listeners) {

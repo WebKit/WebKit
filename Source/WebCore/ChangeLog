@@ -1,3 +1,52 @@
+2016-11-09  Darin Adler  <darin@apple.com>
+
+        Move EventTarget from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164465
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/indexeddb/IDBRequest.h: Added now-needed forward
+        class declarations.
+        * Modules/webaudio/AudioContext.h: Ditto.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::eventHandlerAttribute): Updated for name change of the
+        attributeEventListener function.
+        (WebCore::documentEventHandlerAttribute): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::getWindowAttributeEventListener): Ditto.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::setAttributeEventListener): Updated for
+        name change.
+        (WebCore::EventTarget::attributeEventListener): Ditto.
+        (WebCore::EventTarget::dispatchEventForBindings): Use ExceptionOr.
+        (WebCore::legacyType): Use null instead of empty for no type, since
+        it's more efficient to check for null.
+        (WebCore::EventTarget::fireEventListeners): Check for null.
+        Also streamlined logic a little bit and removed a very old comment.
+        (WebCore::EventTarget::eventListeners): Renamed from getEventListeners.
+        * dom/EventTarget.h: Removed lots of unneeded declarations. Renamed
+        some functions to remove get prefix. Updated for above changes.
+        Moved one inline function out of the class header. Made the destructor
+        for EventTarget be inline to make the destructors for derived classes
+        slightly more efficient.
+        * dom/EventTarget.idl: Use non-legacy exception.
+
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument): Updated for name change.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Ditto.
+
+        * inspector/InspectorCSSAgent.h: Added now-needed forward declaration.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListeners): Updated for name change.
+
+        * inspector/InspectorInstrumentation.h: Added now-needed forward declaration.
+        * page/DOMWindow.h: Ditto.
+        * xml/XMLHttpRequest.h: Ditto.
+
 2016-11-09  Daniel Bates  <dabates@apple.com>
 
         Add test infrastructure and tests for existing HTTP 0.9 sandbox machinery

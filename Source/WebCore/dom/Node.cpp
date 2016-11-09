@@ -1908,7 +1908,7 @@ void Node::didMoveToNewDocument(Document* oldDocument)
             cache->remove(this);
     }
 
-    unsigned numWheelEventHandlers = getEventListeners(eventNames().mousewheelEvent).size() + getEventListeners(eventNames().wheelEvent).size();
+    unsigned numWheelEventHandlers = eventListeners(eventNames().mousewheelEvent).size() + eventListeners(eventNames().wheelEvent).size();
     for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
         oldDocument->didRemoveWheelEventHandler(*this);
         document().didAddWheelEventHandler(*this);
@@ -1916,7 +1916,7 @@ void Node::didMoveToNewDocument(Document* oldDocument)
 
     unsigned numTouchEventHandlers = 0;
     for (auto& name : eventNames().touchEventNames())
-        numTouchEventHandlers += getEventListeners(name).size();
+        numTouchEventHandlers += eventListeners(name).size();
 
     for (unsigned i = 0; i < numTouchEventHandlers; ++i) {
         oldDocument->didRemoveTouchEventHandler(*this);

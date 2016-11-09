@@ -68,6 +68,7 @@ class IDBFactory;
 class Location;
 class MediaQueryList;
 class MessageEvent;
+class MessagePort;
 class Navigator;
 class Node;
 class Page;

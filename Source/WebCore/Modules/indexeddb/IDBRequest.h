@@ -40,10 +40,12 @@ namespace WebCore {
 class DOMError;
 class Event;
 class IDBCursor;
+class IDBDatabase;
 class IDBIndex;
 class IDBKeyData;
 class IDBObjectStore;
 class IDBResultData;
+class IDBTransaction;
 class IDBValue;
 class ScopeGuard;
 class ThreadSafeDataBuffer;

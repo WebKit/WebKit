@@ -69,7 +69,7 @@ WebKitDOMNode* wrapNode(WebCore::Node* coreObject)
     return WEBKIT_DOM_NODE(g_object_new(WEBKIT_DOM_TYPE_NODE, "core-object", coreObject, nullptr));
 }
 
-} // namespace WebKit
+}
 
 static gboolean webkit_dom_node_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
@@ -78,13 +78,13 @@ static gboolean webkit_dom_node_dispatch_event(WebKitDOMEventTarget* target, Web
         return false;
     WebCore::Node* coreTarget = static_cast<WebCore::Node*>(WEBKIT_DOM_OBJECT(target)->coreObject);
 
-    WebCore::ExceptionCode ec = 0;
-    gboolean result = coreTarget->dispatchEventForBindings(*coreEvent, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription description(ec);
+    auto result = coreTarget->dispatchEventForBindings(*coreEvent);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
+        return false;
     }
-    return result;
+    return result.releaseReturnValue();
 }
 
 static gboolean webkit_dom_node_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)

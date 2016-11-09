@@ -206,7 +206,7 @@ static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribut
 
 JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomicString& eventType)
 {
-    return eventHandlerAttribute(target.getAttributeEventListener(eventType), *target.scriptExecutionContext());
+    return eventHandlerAttribute(target.attributeEventListener(eventType), *target.scriptExecutionContext());
 }
 
 void setEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, EventTarget& target, const AtomicString& eventType, JSC::JSValue value)
@@ -239,7 +239,7 @@ void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrappe
 JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
 {
     auto& document = element.document();
-    return eventHandlerAttribute(document.getAttributeEventListener(eventType), document);
+    return eventHandlerAttribute(document.attributeEventListener(eventType), document);
 }
 
 void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)

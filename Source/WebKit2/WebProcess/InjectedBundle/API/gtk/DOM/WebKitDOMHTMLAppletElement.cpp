@@ -64,13 +64,13 @@ static gboolean webkit_dom_html_applet_element_dispatch_event(WebKitDOMEventTarg
         return false;
     WebCore::HTMLAppletElement* coreTarget = static_cast<WebCore::HTMLAppletElement*>(WEBKIT_DOM_OBJECT(target)->coreObject);
 
-    WebCore::ExceptionCode ec = 0;
-    gboolean result = coreTarget->dispatchEventForBindings(*coreEvent, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription description(ec);
+    auto result = coreTarget->dispatchEventForBindings(*coreEvent);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
+        return false;
     }
-    return result;
+    return result.releaseReturnValue();
 }
 
 static gboolean webkit_dom_html_applet_element_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)

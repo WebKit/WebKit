@@ -1,3 +1,14 @@
+2016-11-09  Darin Adler  <darin@apple.com>
+
+        Move EventTarget from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164465
+
+        Reviewed by Youenn Fablet.
+
+        * DOMCoreClasses.cpp:
+        (DOMNode::dispatchEvent): Updated exception handling.
+        (DOMWindow::dispatchEvent): Ditto.
+
 2016-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Safari does not emit composition end if blurred for dead key / Japanese IME

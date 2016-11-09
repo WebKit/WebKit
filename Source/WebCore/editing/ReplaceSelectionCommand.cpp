@@ -168,10 +168,9 @@ ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* f
     
     Node* shadowAncestorNode = editableRoot->deprecatedShadowAncestorNode();
     
-    if (!editableRoot->getAttributeEventListener(eventNames().webkitBeforeTextInsertedEvent) &&
-        // FIXME: Remove these checks once textareas and textfields actually register an event handler.
-        !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextControl()) &&
-        editableRoot->hasRichlyEditableStyle()) {
+    if (!editableRoot->attributeEventListener(eventNames().webkitBeforeTextInsertedEvent)
+        && !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextControl())
+        && editableRoot->hasRichlyEditableStyle()) {
         removeInterchangeNodes(m_fragment.get());
         return;
     }
@@ -190,7 +189,7 @@ ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* f
     restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
     // Give the root a chance to change the text.
-    Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(text);
+    auto event = BeforeTextInsertedEvent::create(text);
     editableRoot->dispatchEvent(event);
     if (text != event->text() || !editableRoot->hasRichlyEditableStyle()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
