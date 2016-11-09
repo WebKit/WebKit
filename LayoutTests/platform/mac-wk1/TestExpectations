@@ -283,3 +283,5 @@ webkit.org/b/163361 [ Release ] imported/w3c/web-platform-tests/html/webappapis/
 webkit.org/b/163361 [ Release ] imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html [ Pass Failure ]
 
 webkit.org/b/163750 compositing/iframes/page-cache-layer-tree.html [ Pass Failure ]
+
+webkit.org/b/164491 [ Yosemite ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]

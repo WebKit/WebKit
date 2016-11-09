@@ -1,3 +1,13 @@
+2016-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        LayoutTest fast/visual-viewport/rtl-zoomed-rects.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=164491
+
+        Mark fast/visual-viewport/rtl-zoomed-rects.html as failing on Yosemite and El Capitan
+        in WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         Use Blob URL instead of webkit-fake-url when pasting an image
