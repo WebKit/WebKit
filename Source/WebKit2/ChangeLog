@@ -1,3 +1,10 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::~WebViewImpl):
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Stop using deprecated AppKit enumeration values

@@ -1228,7 +1228,7 @@ WebViewImpl::~WebViewImpl()
 
     [m_immediateActionController willDestroyView:m_view];
 
-#if HAVE(DFR)
+#if HAVE(TOUCH_BAR)
     [m_textTouchBarItemController didDestroyView];
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [m_mediaTouchBarProvider setPlaybackControlsController:nil];
