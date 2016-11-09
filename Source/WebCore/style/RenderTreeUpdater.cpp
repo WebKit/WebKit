@@ -429,10 +429,6 @@ static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePos
     if (!renderTreePosition.canInsert(*newRenderer))
         return;
 
-    // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
-    // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setFlowThreadState(renderTreePosition.parent().flowThreadState());
-
     textNode.setRenderer(newRenderer.get());
     renderTreePosition.insert(*newRenderer.leakPtr());
 }

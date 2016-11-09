@@ -1,3 +1,20 @@
+2016-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        No need to set setFlowThreadState on RenderText in createTextRenderer.
+        https://bugs.webkit.org/show_bug.cgi?id=164559
+
+        Reviewed by Antti Koivisto.
+
+       setFlowThreadState in create*Renderer ensures that by the time we issue the initial call to
+       styleWillChange/styleDidChange through initializeStyle, the state is already set.
+       However since RenderText does not have its own style, it's sufficient to have the flow state set
+       through the normal RenderElement::insertChildInternal code path.
+
+        No change in functionality.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::createTextRenderer):
+
 2016-11-09  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Encapsulate cursor iteration parameters for easy future expansion.
