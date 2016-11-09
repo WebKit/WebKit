@@ -1,0 +1,104 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                var eventStream = {
+                    events : [
+                        {
+                            inputType : "hand",
+                            timeOffset : 0,
+                            touches : [
+                                {
+                                    inputType : "finger",
+                                    phase : "began",
+                                    id : 1,
+                                    x : 20,
+                                    y : 40,
+                                    majorRadius: 0.10,
+                                    minorRadius: 0.10,
+                                }
+                            ]
+                        },
+                        {
+                            inputType : "hand",
+                            timeOffset : 0.0005,
+                            touches : [
+                                {
+                                    inputType : "finger",
+                                    phase : "ended",
+                                    id : 1,
+                                    x : 20,
+                                    y : 40,
+                                    majorRadius: 0.10,
+                                    minorRadius: 0.10,
+                                }
+                            ]
+                        },
+                    ]
+                };
+
+                uiController.sendEventStream(JSON.stringify(eventStream), function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var target = document.getElementById('target');
+            var forces = [];
+            
+            target.addEventListener('touchstart', function(event) {
+                var expected = Math.round(0.10 * 568 * 10) / 10;
+                var radiusX = Math.round(event.touches[0].radiusX * 10) / 10;
+                if (radiusX == expected)
+                    output += 'PASS: radiusX is ' + expected + '<br>';
+                else
+                    output += 'FAIL: radiusX should be ' + expected + ', was ' + radiusX + '<br>';
+
+                var radiusY = Math.round(event.touches[0].radiusY * 10) / 10;
+                if (radiusY == expected)
+                    output += 'PASS: radiusY is ' + expected + '<br>';
+                else
+                    output += 'FAIL: radiusY should be ' + expected + ', was ' + radiusY + '<br>';
+            });
+            
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+               });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>
