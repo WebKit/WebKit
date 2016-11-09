@@ -347,7 +347,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)documentView _selectionChanged];
-        [m_webView updateWebViewAdditions];
+        [m_webView updateTouchBar];
         m_lastEditorStateWasContentEditable = [(WebHTMLView *)documentView _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     }
 
@@ -674,7 +674,7 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
 
     EditorStateIsContentEditable editorStateIsContentEditable = [(WebHTMLView *)documentView _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
-        [m_webView updateWebViewAdditions];
+        [m_webView updateTouchBar];
 }
 
 void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> cmd)

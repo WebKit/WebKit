@@ -60,11 +60,13 @@
 #import "WebEventFactory.h"
 #import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
+#import "WebPlaybackSessionManagerProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
+#import <WebCore/AVKitSPI.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/ColorMac.h>
@@ -80,6 +82,7 @@
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NSTextFinderSPI.h>
+#import <WebCore/NSTouchBarSPI.h>
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/SoftLinking.h>
@@ -90,13 +93,19 @@
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebCoreNSStringExtras.h>
+#import <WebCore/WebPlaybackControlsManager.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TemporaryChange.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplIncludes.h>
-#endif
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+SOFT_LINK_FRAMEWORK(AVKit)
+SOFT_LINK_CLASS(AVKit, AVFunctionBarPlaybackControlsProvider)
+SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
+
+static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem";
+#endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 
@@ -433,14 +442,696 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditions.mm>
-#else
+using namespace WebKit;
+
+#if HAVE(TOUCH_BAR)
+
+@interface WKTextListTouchBarViewController : NSViewController {
+@private
+    WebViewImpl* _webViewImpl;
+}
+
+@property (nonatomic) ListType currentListType;
+
+- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl;
+
+@end
+
+@implementation WKTextListTouchBarViewController
+
+@synthesize currentListType=_currentListType;
+
+static const CGFloat listControlSegmentWidth = 67;
+static const CGFloat exitFullScreenButtonWidth = 64;
+
+static const NSUInteger noListSegment = 0;
+static const NSUInteger unorderedListSegment = 1;
+static const NSUInteger orderedListSegment = 2;
+
+- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webViewImpl = webViewImpl;
+
+    NSSegmentedControl *insertListControl = [NSSegmentedControl segmentedControlWithLabels:@[ WebCore::insertListTypeNone(), WebCore::insertListTypeBulleted(), WebCore::insertListTypeNumbered() ] trackingMode:NSSegmentSwitchTrackingSelectOne target:self action:@selector(_selectList:)];
+    [insertListControl setWidth:listControlSegmentWidth forSegment:noListSegment];
+    [insertListControl setWidth:listControlSegmentWidth forSegment:unorderedListSegment];
+    [insertListControl setWidth:listControlSegmentWidth forSegment:orderedListSegment];
+    insertListControl.font = [NSFont systemFontOfSize:15];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    id segmentElement = NSAccessibilityUnignoredDescendant(insertListControl);
+    NSArray *segments = [segmentElement accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    ASSERT(segments.count == 3);
+    [segments[noListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNone() forAttribute:NSAccessibilityDescriptionAttribute];
+    [segments[unorderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeBulletedAccessibilityTitle() forAttribute:NSAccessibilityDescriptionAttribute];
+    [segments[orderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNumberedAccessibilityTitle() forAttribute:NSAccessibilityDescriptionAttribute];
+#pragma clang diagnostic pop
+
+    self.view = insertListControl;
+
+    return self;
+}
+
+- (void)didDestroyView
+{
+    _webViewImpl = nullptr;
+}
+
+- (void)_selectList:(id)sender
+{
+    if (!_webViewImpl)
+        return;
+
+    NSSegmentedControl *insertListControl = (NSSegmentedControl *)self.view;
+    switch (insertListControl.selectedSegment) {
+    case noListSegment:
+        // There is no "remove list" edit command, but InsertOrderedList and InsertUnorderedList both
+        // behave as toggles, so we can invoke the appropriate edit command depending on our _currentListType
+        // to remove an existing list. We don't have to do anything if _currentListType is NoList.
+        if (_currentListType == OrderedList)
+            _webViewImpl->page().executeEditCommand(@"InsertOrderedList", @"");
+        else if (_currentListType == UnorderedList)
+            _webViewImpl->page().executeEditCommand(@"InsertUnorderedList", @"");
+        break;
+    case unorderedListSegment:
+        _webViewImpl->page().executeEditCommand(@"InsertUnorderedList", @"");
+        break;
+    case orderedListSegment:
+        _webViewImpl->page().executeEditCommand(@"InsertOrderedList", @"");
+        break;
+    }
+
+    _webViewImpl->dismissTextTouchBarPopoverItemWithIdentifier(NSTouchBarItemIdentifierTextList);
+}
+
+- (void)setCurrentListType:(ListType)listType
+{
+    NSSegmentedControl *insertListControl = (NSSegmentedControl *)self.view;
+    switch (listType) {
+    case NoList:
+        [insertListControl setSelected:YES forSegment:noListSegment];
+        break;
+    case OrderedList:
+        [insertListControl setSelected:YES forSegment:orderedListSegment];
+        break;
+    case UnorderedList:
+        [insertListControl setSelected:YES forSegment:unorderedListSegment];
+        break;
+    }
+
+    _currentListType = listType;
+}
+
+@end
+
+@interface WKTextTouchBarItemController : NSTextTouchBarItemController <NSCandidateListTouchBarItemDelegate, NSTouchBarDelegate> {
+@private
+    BOOL _textIsBold;
+    BOOL _textIsItalic;
+    BOOL _textIsUnderlined;
+    NSTextAlignment _currentTextAlignment;
+    RetainPtr<NSColor> _textColor;
+    RetainPtr<WKTextListTouchBarViewController> _textListTouchBarViewController;
+
+@private
+    WebViewImpl* _webViewImpl;
+}
+
+@property (nonatomic) BOOL textIsBold;
+@property (nonatomic) BOOL textIsItalic;
+@property (nonatomic) BOOL textIsUnderlined;
+@property (nonatomic) NSTextAlignment currentTextAlignment;
+@property (nonatomic, retain, readwrite) NSColor *textColor;
+
+- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl;
+@end
+
+@implementation WKTextTouchBarItemController
+
+@synthesize textIsBold=_textIsBold;
+@synthesize textIsItalic=_textIsItalic;
+@synthesize textIsUnderlined=_textIsUnderlined;
+@synthesize currentTextAlignment=_currentTextAlignment;
+
+- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webViewImpl = webViewImpl;
+
+    return self;
+}
+
+- (void)didDestroyView
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    _webViewImpl = nullptr;
+    [_textListTouchBarViewController didDestroyView];
+}
+
+#pragma mark NSTouchBarDelegate
+
+- (NSTouchBarItem *)touchBar:(NSTouchBar *)touchBar makeItemForIdentifier:(NSString *)identifier
+{
+    return [self itemForIdentifier:identifier];
+}
+
+- (nullable NSTouchBarItem *)itemForIdentifier:(NSString *)identifier
+{
+    NSTouchBarItem *item = [super itemForIdentifier:identifier];
+    BOOL isTextFormatItem = [identifier isEqualToString:NSTouchBarItemIdentifierTextFormat];
+
+    if (isTextFormatItem || [identifier isEqualToString:NSTouchBarItemIdentifierTextStyle])
+        self.textStyle.action = @selector(_wkChangeTextStyle:);
+
+    if (isTextFormatItem || [identifier isEqualToString:NSTouchBarItemIdentifierTextAlignment])
+        self.textAlignments.action = @selector(_wkChangeTextAlignment:);
+
+    NSColorPickerTouchBarItem *colorPickerItem = nil;
+    if ([identifier isEqualToString:NSTouchBarItemIdentifierTextColorPicker] && [item isKindOfClass:[NSColorPickerTouchBarItem class]])
+        colorPickerItem = (NSColorPickerTouchBarItem *)item;
+    if (isTextFormatItem)
+        colorPickerItem = self.colorPickerItem;
+    if (colorPickerItem) {
+        colorPickerItem.target = self;
+        colorPickerItem.action = @selector(_wkChangeColor:);
+        colorPickerItem.showsAlpha = NO;
+    }
+
+    return item;
+}
+
+#pragma mark NSCandidateListTouchBarItemDelegate
+
+- (void)candidateListTouchBarItem:(NSCandidateListTouchBarItem *)anItem endSelectingCandidateAtIndex:(NSInteger)index
+{
+    if (index == NSNotFound)
+        return;
+
+    if (!_webViewImpl)
+        return;
+
+    NSArray *candidates = anItem.candidates;
+    if ((NSUInteger)index >= candidates.count)
+        return;
+
+    NSTextCheckingResult *candidate = candidates[index];
+    ASSERT([candidate isKindOfClass:[NSTextCheckingResult class]]);
+
+    _webViewImpl->handleAcceptedCandidate(candidate);
+}
+
+- (void)candidateListTouchBarItem:(NSCandidateListTouchBarItem *)anItem changedCandidateListVisibility:(BOOL)isVisible
+{
+    if (!_webViewImpl)
+        return;
+
+    if (isVisible)
+        _webViewImpl->requestCandidatesForSelectionIfNeeded();
+
+    _webViewImpl->updateTouchBar();
+}
+
+#pragma mark NSNotificationCenter observers
+
+- (void)touchBarDidExitCustomization:(NSNotification *)notification
+{
+    if (!_webViewImpl)
+        return;
+
+    _webViewImpl->setIsCustomizingTouchBar(false);
+    _webViewImpl->updateTouchBar();
+}
+
+- (void)touchBarWillEnterCustomization:(NSNotification *)notification
+{
+    if (!_webViewImpl)
+        return;
+
+    _webViewImpl->setIsCustomizingTouchBar(true);
+}
+
+- (void)didChangeAutomaticTextCompletion:(NSNotification *)notification
+{
+    if (!_webViewImpl)
+        return;
+
+    _webViewImpl->updateTouchBarAndRefreshTextBarIdentifiers();
+}
+
+
+#pragma mark NSTextTouchBarItemController
+
+- (WKTextListTouchBarViewController *)textListTouchBarViewController
+{
+    return (WKTextListTouchBarViewController *)self.textListViewController;
+}
+
+- (void)setTextIsBold:(BOOL)bold
+{
+    _textIsBold = bold;
+    if ([self.textStyle isSelectedForSegment:0] != _textIsBold)
+        [self.textStyle setSelected:_textIsBold forSegment:0];
+}
+
+- (void)setTextIsItalic:(BOOL)italic
+{
+    _textIsItalic = italic;
+    if ([self.textStyle isSelectedForSegment:1] != _textIsItalic)
+        [self.textStyle setSelected:_textIsItalic forSegment:1];
+}
+
+- (void)setTextIsUnderlined:(BOOL)underlined
+{
+    _textIsUnderlined = underlined;
+    if ([self.textStyle isSelectedForSegment:2] != _textIsUnderlined)
+        [self.textStyle setSelected:_textIsUnderlined forSegment:2];
+}
+
+- (void)_wkChangeTextStyle:(id)sender
+{
+    if (!_webViewImpl)
+        return;
+
+    if ([self.textStyle isSelectedForSegment:0] != _textIsBold) {
+        _textIsBold = !_textIsBold;
+        _webViewImpl->page().executeEditCommand(@"ToggleBold", @"");
+    }
+
+    if ([self.textStyle isSelectedForSegment:1] != _textIsItalic) {
+        _textIsItalic = !_textIsItalic;
+        _webViewImpl->page().executeEditCommand("ToggleItalic", @"");
+    }
+
+    if ([self.textStyle isSelectedForSegment:2] != _textIsUnderlined) {
+        _textIsUnderlined = !_textIsUnderlined;
+        _webViewImpl->page().executeEditCommand("ToggleUnderline", @"");
+    }
+}
+
+- (void)setCurrentTextAlignment:(NSTextAlignment)alignment
+{
+    _currentTextAlignment = alignment;
+    [self.textAlignments selectSegmentWithTag:_currentTextAlignment];
+}
+
+- (void)_wkChangeTextAlignment:(id)sender
+{
+    if (!_webViewImpl)
+        return;
+
+    NSTextAlignment alignment = (NSTextAlignment)[self.textAlignments.cell tagForSegment:self.textAlignments.selectedSegment];
+    switch (alignment) {
+    case NSTextAlignmentLeft:
+        _currentTextAlignment = NSTextAlignmentLeft;
+        _webViewImpl->page().executeEditCommand("AlignLeft", @"");
+        break;
+    case NSTextAlignmentRight:
+        _currentTextAlignment = NSTextAlignmentRight;
+        _webViewImpl->page().executeEditCommand("AlignRight", @"");
+        break;
+    case NSTextAlignmentCenter:
+        _currentTextAlignment = NSTextAlignmentCenter;
+        _webViewImpl->page().executeEditCommand("AlignCenter", @"");
+        break;
+    case NSTextAlignmentJustified:
+        _currentTextAlignment = NSTextAlignmentJustified;
+        _webViewImpl->page().executeEditCommand("AlignJustified", @"");
+        break;
+    default:
+        break;
+    }
+
+    _webViewImpl->dismissTextTouchBarPopoverItemWithIdentifier(NSTouchBarItemIdentifierTextAlignment);
+}
+
+- (NSColor *)textColor
+{
+    return _textColor.get();
+}
+
+- (void)setTextColor:(NSColor *)color
+{
+    _textColor = color;
+    self.colorPickerItem.color = _textColor.get();
+}
+
+- (void)_wkChangeColor:(id)sender
+{
+    if (!_webViewImpl)
+        return;
+
+    _textColor = self.colorPickerItem.color;
+    _webViewImpl->page().executeEditCommand("ForeColor", WebCore::colorFromNSColor(_textColor.get()).serialized());
+}
+
+- (NSViewController *)textListViewController
+{
+    if (!_textListTouchBarViewController)
+        _textListTouchBarViewController = adoptNS([[WKTextListTouchBarViewController alloc] initWithWebViewImpl:_webViewImpl]);
+    return _textListTouchBarViewController.get();
+}
+
+@end
+
 namespace WebKit {
 
-void WebViewImpl::updateWebViewImplAdditions()
+NSTouchBar *WebViewImpl::makeTouchBar()
 {
+    if (!m_canCreateTouchBars) {
+        m_canCreateTouchBars = true;
+        updateTouchBar();
+    }
+    return m_currentTouchBar.get();
 }
+
+void WebViewImpl::updateTouchBar()
+{
+    if (!m_canCreateTouchBars)
+        return;
+
+    NSTouchBar *touchBar = nil;
+    bool userActionRequirementsHaveBeenMet = m_requiresUserActionForEditingControlsManager ? m_page->hasHadSelectionChangesFromUserInteraction() : true;
+    if (m_page->editorState().isContentEditable && !m_page->needsHiddenContentEditableQuirk()) {
+        updateTextTouchBar();
+        if (userActionRequirementsHaveBeenMet)
+            touchBar = textTouchBar();
+    }
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    else if (m_page->hasActiveVideoForControlsManager()) {
+        updateMediaTouchBar();
+        // If useMediaPlaybackControlsView() is true, then we are relying on the API client to display a popover version
+        // of the media timeline in their own function bar. If it is false, then we will display the media timeline in our
+        // function bar.
+        if (!useMediaPlaybackControlsView())
+            touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
+    } else if ([m_mediaTouchBarProvider playbackControlsController]) {
+        if (m_clientWantsMediaPlaybackControlsView) {
+            if ([m_view respondsToSelector:@selector(_web_didRemoveMediaControlsManager)] && m_view == m_view.window.firstResponder)
+                [m_view _web_didRemoveMediaControlsManager];
+        }
+        [m_mediaTouchBarProvider setPlaybackControlsController:nil];
+        [m_mediaPlaybackControlsView setPlaybackControlsController:nil];
+    }
+#endif
+
+    if (touchBar == m_currentTouchBar)
+        return;
+
+    // If m_editableElementIsFocused is true, then we may have a non-editable selection right now just because
+    // the user is clicking or tabbing between editable fields.
+    if (m_editableElementIsFocused && touchBar != textTouchBar())
+        return;
+
+    m_currentTouchBar = touchBar;
+    [m_view willChangeValueForKey:@"touchBar"];
+    [m_view setTouchBar:m_currentTouchBar.get()];
+    [m_view didChangeValueForKey:@"touchBar"];
+}
+
+NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
+{
+    return isRichlyEditable() ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get();
+}
+
+AVFunctionBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    if (m_page->hasActiveVideoForControlsManager())
+        return m_mediaPlaybackControlsView.get();
+#endif
+    return nil;
+}
+
+bool WebViewImpl::useMediaPlaybackControlsView() const
+{
+#if ENABLE(FULLSCREEN_API)
+    if (hasFullScreenWindowController())
+        return ![m_fullScreenWindowController isFullScreen];
+#endif
+    return m_clientWantsMediaPlaybackControlsView;
+}
+
+void WebViewImpl::dismissTextTouchBarPopoverItemWithIdentifier(NSString *identifier)
+{
+    NSTouchBarItem *foundItem = nil;
+    for (NSTouchBarItem *item in textTouchBar().items) {
+        if ([item.identifier isEqualToString:identifier]) {
+            foundItem = item;
+            break;
+        }
+
+        if ([item.identifier isEqualToString:NSTouchBarItemIdentifierTextFormat]) {
+            for (NSTouchBarItem *childItem in ((NSGroupTouchBarItem *)item).groupTouchBar.items) {
+                if ([childItem.identifier isEqualToString:identifier]) {
+                    foundItem = childItem;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    if ([foundItem isKindOfClass:[NSPopoverTouchBarItem class]])
+        [(NSPopoverTouchBarItem *)foundItem dismissPopover:nil];
+}
+
+static NSArray<NSString *> *textTouchBarCustomizationAllowedIdentifiers()
+{
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextColorPicker, NSTouchBarItemIdentifierTextStyle, NSTouchBarItemIdentifierTextAlignment, NSTouchBarItemIdentifierTextList, NSTouchBarItemIdentifierFlexibleSpace ];
+}
+
+static NSArray<NSString *> *plainTextTouchBarCustomizationDefaultItemIdentifiers()
+{
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierCandidateList ];
+}
+
+static NSArray<NSString *> *richTextTouchBarCustomizationDefaultItemIdentifiers()
+{
+    return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
+}
+
+void WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers()
+{
+    if (m_richTextTouchBar)
+        setUpTextTouchBar(m_richTextTouchBar.get());
+
+    if (m_plainTextTouchBar)
+        setUpTextTouchBar(m_plainTextTouchBar.get());
+
+    updateTouchBar();
+}
+
+void WebViewImpl::setUpTextTouchBar(NSTouchBar *touchBar)
+{
+    bool isRichTextTouchBar = touchBar == m_richTextTouchBar.get();
+    [touchBar setDelegate:m_textTouchBarItemController.get()];
+    [touchBar setDefaultItems:[NSMutableSet setWithObject:isRichTextTouchBar ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get()]];
+    [touchBar setCustomizationAllowedItemIdentifiers:textTouchBarCustomizationAllowedIdentifiers()];
+    [touchBar setCustomizationDefaultItemIdentifiers:isRichTextTouchBar ? richTextTouchBarCustomizationDefaultItemIdentifiers() : plainTextTouchBarCustomizationDefaultItemIdentifiers()];
+
+    if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[touchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
+        textFormatItem.groupTouchBar.customizationIdentifier = @"WKTextFormatTouchBar";
+}
+
+bool WebViewImpl::isRichlyEditable() const
+{
+    return m_page->editorState().isContentRichlyEditable && !m_page->needsPlainTextQuirk();
+}
+
+NSTouchBar *WebViewImpl::textTouchBar() const
+{
+    return isRichlyEditable() ? m_richTextTouchBar.get() : m_plainTextTouchBar.get();
+}
+
+static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignment)
+{
+    NSTextAlignment nsTextAlignment;
+    switch (textAlignment) {
+    case NoAlignment:
+        nsTextAlignment = NSTextAlignmentNatural;
+        break;
+    case LeftAlignment:
+        nsTextAlignment = NSTextAlignmentLeft;
+        break;
+    case RightAlignment:
+        nsTextAlignment = NSTextAlignmentRight;
+        break;
+    case CenterAlignment:
+        nsTextAlignment = NSTextAlignmentCenter;
+        break;
+    case JustifiedAlignment:
+        nsTextAlignment = NSTextAlignmentJustified;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    return nsTextAlignment;
+}
+
+void WebViewImpl::updateTextTouchBar()
+{
+    if (!m_page->editorState().isContentEditable)
+        return;
+
+    if (m_isUpdatingTextTouchBar)
+        return;
+
+    TemporaryChange<bool> isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
+
+    if (!m_textTouchBarItemController)
+        m_textTouchBarItemController = adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]);
+
+    if (!m_startedListeningToCustomizationEvents) {
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarDidExitCustomization:) name:NSTouchBarDidExitCustomization object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(touchBarWillEnterCustomization:) name:NSTouchBarWillEnterCustomization object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:m_textTouchBarItemController.get() selector:@selector(didChangeAutomaticTextCompletion:) name:NSSpellCheckerDidChangeAutomaticTextCompletionNotification object:nil];
+
+        m_startedListeningToCustomizationEvents = true;
+    }
+
+    if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem) {
+        m_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_richTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        m_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_plainTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        requestCandidatesForSelectionIfNeeded();
+    }
+
+    if (!m_richTextTouchBar) {
+        m_richTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        setUpTextTouchBar(m_richTextTouchBar.get());
+        [m_richTextTouchBar setCustomizationIdentifier:@"WKRichTextTouchBar"];
+    }
+
+    if (!m_plainTextTouchBar) {
+        m_plainTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+        setUpTextTouchBar(m_plainTextTouchBar.get());
+        [m_plainTextTouchBar setCustomizationIdentifier:@"WKPlainTextTouchBar"];
+    }
+
+    if ([NSSpellChecker isAutomaticTextCompletionEnabled] && !m_isCustomizingTouchBar) {
+        BOOL showCandidatesList = !m_page->editorState().selectionIsRange || m_isHandlingAcceptedCandidate;
+        [candidateListTouchBarItem() updateWithInsertionPointVisibility:showCandidatesList];
+        [m_view _didUpdateCandidateListVisibility:showCandidatesList];
+    }
+
+    if (m_page->editorState().isInPasswordField) {
+        // We don't request candidates for password fields. If the user was previously in a non-password field, then the
+        // old candidates will still show by default, so we clear them here by setting an empty array of candidates.
+        if (!m_emptyCandidatesArray)
+            m_emptyCandidatesArray = adoptNS([[NSArray alloc] init]);
+        [candidateListTouchBarItem() setCandidates:m_emptyCandidatesArray.get() forSelectedRange:NSMakeRange(0, 0) inString:nil];
+    }
+
+    NSTouchBar *textTouchBar = this->textTouchBar();
+    BOOL isShowingCombinedTextFormatItem = [textTouchBar.itemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
+    [textTouchBar setPrincipalItemIdentifier:isShowingCombinedTextFormatItem ? NSTouchBarItemIdentifierTextFormat : nil];
+
+    // Set current typing attributes for rich text. This will ensure that the buttons reflect the state of
+    // the text when changing selection throughout the document.
+    if (isRichlyEditable()) {
+        const EditorState& editorState = m_page->editorState();
+        if (!editorState.isMissingPostLayoutData) {
+            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
+            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
+            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
+            [m_textTouchBarItemController setTextColor:nsColor(editorState.postLayoutData().textColor)];
+            [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
+            [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
+        }
+        BOOL isShowingCandidateListItem = [textTouchBar.itemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
+        [m_textTouchBarItemController setUsesNarrowTextStyleItem:isShowingCombinedTextFormatItem && isShowingCandidateListItem];
+    }
+}
+
+void WebViewImpl::updateMediaTouchBar()
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    if (!m_mediaTouchBarProvider)
+        m_mediaTouchBarProvider = adoptNS([allocAVFunctionBarPlaybackControlsProviderInstance() init]);
+
+    if (!m_mediaPlaybackControlsView)
+        m_mediaPlaybackControlsView = adoptNS([allocAVFunctionBarScrubberInstance() init]);
+
+    if (!m_playbackControlsManager)
+        m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
+
+    if (PlatformWebPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface())
+        [m_playbackControlsManager setWebPlaybackSessionInterfaceMac:interface];
+
+    [m_mediaTouchBarProvider setPlaybackControlsController:m_playbackControlsManager.get()];
+    [m_mediaPlaybackControlsView setPlaybackControlsController:m_playbackControlsManager.get()];
+
+    if (!useMediaPlaybackControlsView()) {
+#if ENABLE(FULLSCREEN_API)
+        // If we can't have a media popover function bar item, it might be because we are in full screen.
+        // If so, customize the escape key.
+        NSTouchBar *touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
+        if (hasFullScreenWindowController() && [m_fullScreenWindowController isFullScreen]) {
+            if (!m_exitFullScreenButton) {
+                m_exitFullScreenButton = adoptNS([[NSCustomTouchBarItem alloc] initWithIdentifier:WKMediaExitFullScreenItem]);
+
+                NSImage *image = [NSImage imageNamed:NSImageNameTouchBarExitFullScreenTemplate];
+                [image setTemplate:YES];
+
+                NSButton *exitFullScreenButton = [NSButton buttonWithTitle:image ? @"" : @"Exit" image:image target:m_fullScreenWindowController.get() action:@selector(requestExitFullScreen)];
+                [exitFullScreenButton setAccessibilityTitle:WebCore::exitFullScreenButtonAccessibilityTitle()];
+
+                [[exitFullScreenButton.widthAnchor constraintLessThanOrEqualToConstant:exitFullScreenButtonWidth] setActive:YES];
+                [m_exitFullScreenButton setView:exitFullScreenButton];
+            }
+            touchBar.escapeKeyReplacementItem = m_exitFullScreenButton.get();
+        } else
+            touchBar.escapeKeyReplacementItem = nil;
+#endif
+        // The rest of the work to update the media function bar only applies to the popover version, so return early.
+        return;
+    }
+
+    if (m_playbackControlsManager && m_view == m_view.window.firstResponder && [m_view respondsToSelector:@selector(_web_didAddMediaControlsManager:)])
+        [m_view _web_didAddMediaControlsManager:m_mediaPlaybackControlsView.get()];
+#endif
+}
+
+void WebViewImpl::forceRequestCandidatesForTesting()
+{
+    m_canCreateTouchBars = true;
+#if HAVE(TOUCH_BAR)
+    updateTouchBar();
+#endif
+}
+
+bool WebViewImpl::shouldRequestCandidates() const
+{
+    return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
+}
+
+void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSRange selectedRange, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
+{
+    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:string];
+}
+
+void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+{
+    m_editableElementIsFocused = editableElementIsFocused;
+
+#if HAVE(TOUCH_BAR)
+    // If the editable elements have blurred, then we might need to get rid of the editing function bar.
+    if (!m_editableElementIsFocused)
+        updateTouchBar();
+#endif
+}
+
+} // namespace WebKit
+#else
+namespace WebKit {
 
 void WebViewImpl::forceRequestCandidatesForTesting()
 {
@@ -455,17 +1146,13 @@ void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect r
 {
 }
 
-void WebViewImpl::webViewImplAdditionsWillDestroyView()
-{
-}
-
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 {
     m_editableElementIsFocused = editableElementIsFocused;
 }
 
 } // namespace WebKit
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(TOUCH_BAR)
 
 namespace WebKit {
 
@@ -540,7 +1227,14 @@ WebViewImpl::~WebViewImpl()
     [m_layoutStrategy invalidate];
 
     [m_immediateActionController willDestroyView:m_view];
-    webViewImplAdditionsWillDestroyView();
+
+#if HAVE(DFR)
+    [m_textTouchBarItemController didDestroyView];
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [m_mediaTouchBarProvider setPlaybackControlsController:nil];
+    [m_mediaPlaybackControlsView setPlaybackControlsController:nil];
+#endif
+#endif
 
     m_page->close();
 
@@ -615,7 +1309,9 @@ bool WebViewImpl::becomeFirstResponder()
 
     m_inBecomeFirstResponder = false;
 
-    updateWebViewImplAdditions();
+#if HAVE(TOUCH_BAR)
+    updateTouchBar();
+#endif
 
     if (direction != NSDirectSelection) {
         NSEvent *event = [NSApp currentEvent];
@@ -1807,8 +2503,8 @@ void WebViewImpl::selectionDidChange()
     updateFontPanelIfNeeded();
     if (!m_isHandlingAcceptedCandidate)
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    updateWebViewImplAdditions();
+#if HAVE(TOUCH_BAR)
+    updateTouchBar();
     if (!m_page->editorState().isMissingPostLayoutData)
         requestCandidatesForSelectionIfNeeded();
 #endif
@@ -2447,8 +3143,8 @@ void WebViewImpl::didHandleAcceptedCandidate()
 
 void WebViewImpl::videoControlsManagerDidChange()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    updateWebViewImplAdditions();
+#if HAVE(TOUCH_BAR)
+    updateTouchBar();
 #endif
 }
 

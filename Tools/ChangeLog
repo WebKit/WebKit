@@ -1,3 +1,17 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Support TouchBar in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=164437
+        -and corresponding-
+        rdar://problem/28876524
+
+        Reviewed by Darin Adler.
+
+        This makes MiniBrowser support TouchBar customization. 
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate awakeFromNib]):
+
 2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Use libgcrypt instead of GnuTLS for CryptoDigest

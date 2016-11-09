@@ -3274,6 +3274,7 @@
 		93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309EA0099EB78C0056E581 /* SharedTimer.h */; };
 		93309EA4099EB78C0056E581 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309EA1099EB78C0056E581 /* Timer.cpp */; };
 		93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */; };
+		9335B49D1DCBEF7C00ED468E /* NSTouchBarSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9335B49B1DCBEF7100ED468E /* NSTouchBarSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		933A142E0B7D188600A53FFD /* TextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A142B0B7D188600A53FFD /* TextEvent.cpp */; };
 		933A14300B7D188600A53FFD /* TextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A142D0B7D188600A53FFD /* TextEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		933A14B80B7D1D5200A53FFD /* JSTextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */; };
@@ -10724,6 +10725,7 @@
 		9332AB8B1653A97900D827EC /* FELightingNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FELightingNEON.h; sourceTree = "<group>"; };
 		9332AB8C1653A97900D827EC /* NEONHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEONHelpers.h; sourceTree = "<group>"; };
 		93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIEventWithKeyState.cpp; sourceTree = "<group>"; };
+		9335B49B1DCBEF7100ED468E /* NSTouchBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTouchBarSPI.h; sourceTree = "<group>"; };
 		933A142B0B7D188600A53FFD /* TextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEvent.cpp; sourceTree = "<group>"; };
 		933A142C0B7D188600A53FFD /* TextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextEvent.idl; sourceTree = "<group>"; };
 		933A142D0B7D188600A53FFD /* TextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEvent.h; sourceTree = "<group>"; };
@@ -17257,6 +17259,7 @@
 				2DDB97F319F9AECA002025D8 /* NSExtensionSPI.h */,
 				CE12523A1A16711000864480 /* NSFileManagerSPI.h */,
 				CE1252521A1BEC0600864480 /* NSStringSPI.h */,
+				9335B49B1DCBEF7100ED468E /* NSTouchBarSPI.h */,
 				31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */,
 				CE1252541A1BEC0E00864480 /* NSURLDownloadSPI.h */,
 				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
@@ -27874,6 +27877,7 @@
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
 				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
 				1A569D1B0D7E2B82007C3983 /* WebScriptObjectProtocol.h in Headers */,
+				9335B49D1DCBEF7C00ED468E /* NSTouchBarSPI.h in Headers */,
 				97AABD1B14FA09D5007457AE /* WebSocket.h in Headers */,
 				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
 				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,

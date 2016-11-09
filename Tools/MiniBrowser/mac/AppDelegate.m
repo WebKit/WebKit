@@ -47,6 +47,10 @@ enum {
     WebKit2NewWindowTag = 2
 };
 
+@interface NSApplication (TouchBar)
+@property (getter=isAutomaticCustomizeTouchBarMenuItemEnabled) BOOL automaticCustomizeTouchBarMenuItemEnabled;
+@end
+
 @implementation BrowserAppDelegate
 
 - (id)init
@@ -73,6 +77,9 @@ enum {
 #endif
 
     [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
+
+    if ([NSApp respondsToSelector:@selector(setAutomaticCustomizeTouchBarMenuItemEnabled:)])
+        [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
 
 #if WK_API_ENABLED

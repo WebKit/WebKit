@@ -1,3 +1,17 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Support TouchBar in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=164437
+        -and corresponding-
+        rdar://problem/28876524
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/cocoa/AVKitSPI.h:
+        * platform/spi/cocoa/NSTouchBarSPI.h: Added.
+        * platform/spi/mac/NSSpellCheckerSPI.h:
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         Use Blob URL instead of webkit-fake-url when pasting an image

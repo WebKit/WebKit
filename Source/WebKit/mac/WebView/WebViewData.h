@@ -101,8 +101,10 @@ class WebViewGroup;
 class WebSelectionServiceController;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewDataAdditionsDeclarations.h>
+#if HAVE(TOUCH_BAR)
+@class WebTextTouchBarItemController;
+@class AVFunctionBarPlaybackControlsProvider;
+@class AVFunctionBarScrubber;
 #endif
 
 class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
@@ -178,9 +180,24 @@ private:
 #if PLATFORM(MAC)
     WebImmediateActionController *immediateActionController;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewDataAdditions.h>
-#endif
+#if HAVE(TOUCH_BAR)
+    RetainPtr<NSTouchBar> _currentTouchBar;
+    RetainPtr<NSTouchBar> _plainTextTouchBar;
+    RetainPtr<NSTouchBar> _richTextTouchBar;
+    RetainPtr<WebTextTouchBarItemController> _textTouchBarItemController;
+    RetainPtr<NSCandidateListTouchBarItem> _richTextCandidateListTouchBarItem;
+    RetainPtr<NSCandidateListTouchBarItem> _plainTextCandidateListTouchBarItem;
+    RetainPtr<NSArray> _emptyCandidatesArray;
+    RetainPtr<AVFunctionBarPlaybackControlsProvider> mediaTouchBarProvider;
+    RetainPtr<AVFunctionBarScrubber> mediaPlaybackControlsView;
+
+    BOOL _canCreateTouchBars;
+    BOOL _isUpdatingTextTouchBar;
+    BOOL _startedListeningToCustomizationEvents;
+    BOOL _isCustomizingTouchBar;
+    BOOL _isDeferringTextTouchBarUpdates;
+    BOOL _needsDeferredTextTouchBarUpdate;
+#endif // HAVE(TOUCH_BAR)
 
     std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
     BOOL hasInitializedLookupObserver;

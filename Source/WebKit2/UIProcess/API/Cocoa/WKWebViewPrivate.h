@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 #endif
 
+@class AVFunctionBarScrubber;
 @class WKBrowsingContextHandle;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
@@ -201,6 +202,12 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+
+// FIXME: This SPI should become a part of the WKUIDelegate. rdar://problem/26561537
+@property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly) AVFunctionBarScrubber *_mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_addMediaPlaybackControlsView:(AVFunctionBarScrubber *)mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_removeMediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 #endif
 

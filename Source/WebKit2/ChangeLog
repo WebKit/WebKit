@@ -1,3 +1,90 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Support TouchBar in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=164437
+        -and corresponding-
+        rdar://problem/28876524
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView makeTouchBar]):
+        (-[WKWebView candidateListTouchBarItem]):
+        (-[WKWebView _web_didAddMediaControlsManager:]):
+        (-[WKWebView _web_didRemoveMediaControlsManager]):
+        (-[WKWebView _interactWithMediaControlsForTesting]):
+        (-[WKWebView _wantsMediaPlaybackControlsView]):
+        (-[WKWebView _setWantsMediaPlaybackControlsView:]):
+        (-[WKWebView _mediaPlaybackControlsView]):
+        (-[WKWebView _addMediaPlaybackControlsView:]):
+        (-[WKWebView _removeMediaPlaybackControlsView]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView makeTouchBar]):
+        (-[WKView candidateListTouchBarItem]):
+        (-[WKView _web_didAddMediaControlsManager:]):
+        (-[WKView _web_didRemoveMediaControlsManager]):
+        (-[WKView _wantsMediaPlaybackControlsView]):
+        (-[WKView _setWantsMediaPlaybackControlsView:]):
+        (-[WKView _mediaPlaybackControlsView]):
+        (-[WKView _addMediaPlaybackControlsView:]):
+        (-[WKView _removeMediaPlaybackControlsView]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::currentTouchBar):
+        (WebKit::WebViewImpl::clientWantsMediaPlaybackControlsView):
+        (WebKit::WebViewImpl::setClientWantsMediaPlaybackControlsView):
+        (WebKit::WebViewImpl::setIsCustomizingTouchBar):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextListTouchBarViewController initWithWebViewImpl:]):
+        (-[WKTextListTouchBarViewController didDestroyView]):
+        (-[WKTextListTouchBarViewController _selectList:]):
+        (-[WKTextListTouchBarViewController setCurrentListType:]):
+        (-[WKTextTouchBarItemController initWithWebViewImpl:]):
+        (-[WKTextTouchBarItemController didDestroyView]):
+        (-[WKTextTouchBarItemController touchBar:makeItemForIdentifier:]):
+        (-[WKTextTouchBarItemController itemForIdentifier:]):
+        (-[WKTextTouchBarItemController candidateListTouchBarItem:endSelectingCandidateAtIndex:]):
+        (-[WKTextTouchBarItemController candidateListTouchBarItem:changedCandidateListVisibility:]):
+        (-[WKTextTouchBarItemController textListTouchBarViewController]):
+        (-[WKTextTouchBarItemController setTextIsBold:]):
+        (-[WKTextTouchBarItemController setTextIsItalic:]):
+        (-[WKTextTouchBarItemController setTextIsUnderlined:]):
+        (-[WKTextTouchBarItemController _wkChangeTextStyle:]):
+        (-[WKTextTouchBarItemController setCurrentTextAlignment:]):
+        (-[WKTextTouchBarItemController _wkChangeTextAlignment:]):
+        (-[WKTextTouchBarItemController textColor]):
+        (-[WKTextTouchBarItemController setTextColor:]):
+        (-[WKTextTouchBarItemController _wkChangeColor:]):
+        (-[WKTextTouchBarItemController textListViewController]):
+        (WebKit::WebViewImpl::makeTouchBar):
+        (WebKit::WebViewImpl::candidateListTouchBarItem):
+        (WebKit::WebViewImpl::mediaPlaybackControlsView):
+        (WebKit::WebViewImpl::useMediaPlaybackControlsView):
+        (WebKit::WebViewImpl::dismissTextTouchBarPopoverItemWithIdentifier):
+        (WebKit::textTouchBarCustomizationAllowedIdentifiers):
+        (WebKit::plainTextTouchBarCustomizationDefaultItemIdentifiers):
+        (WebKit::richTextTouchBarCustomizationDefaultItemIdentifiers):
+        (WebKit::touchBarDidExitCustomization):
+        (WebKit::touchBarWillEnterCustomization):
+        (WebKit::didChangeAutomaticTextCompletion):
+        (WebKit::WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers):
+        (WebKit::WebViewImpl::setUpTextTouchBar):
+        (WebKit::WebViewImpl::isRichlyEditable):
+        (WebKit::WebViewImpl::textTouchBar):
+        (WebKit::WebViewImpl::updateTextTouchBar):
+        (WebKit::WebViewImpl::updateMediaTouchBar):
+        (WebKit::WebViewImpl::forceRequestCandidatesForTesting):
+        (WebKit::WebViewImpl::updateTouchBar):
+        (WebKit::WebViewImpl::shouldRequestCandidates):
+        (WebKit::WebViewImpl::showCandidates):
+        (WebKit::WebViewImpl::webViewImplAdditionsWillDestroyView):
+        (WebKit::WebViewImpl::setEditableElementIsFocused):
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::selectionDidChange):
+        (WebKit::WebViewImpl::videoControlsManagerDidChange):
+        (WebKit::WebViewImpl::updateWebViewImplAdditions): Deleted.
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NETWORK_SESSION] Add support for downloading file backed blobs

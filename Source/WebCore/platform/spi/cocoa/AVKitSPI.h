@@ -61,6 +61,8 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 @property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
 @end
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class AVPlayerLayer;
 
 @interface AVPictureInPicturePlayerLayerView : UIView
@@ -95,10 +97,12 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (void)startPictureInPicture;
 - (void)stopPictureInPicture;
 
-@property (nonatomic, strong) AVPlayerController *playerController;
+@property (nonatomic, strong, nullable) AVPlayerController *playerController;
 @property (nonatomic, readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property (nonatomic, readonly) BOOL pictureInPictureWasStartedWhenEnteringBackground;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // PLATFORM(IOS)
@@ -132,6 +136,8 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying> 
 @end
 
@@ -139,3 +145,32 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 + (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
 @property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
 @end
+
+NS_ASSUME_NONNULL_END
+
+#if PLATFORM(MAC)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
+#import <AVKit/AVFunctionBarScrubber.h>
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol AVFunctionBarPlaybackControlsControlling <NSObject>
+@property (readonly) NSTimeInterval contentDuration;
+@property (readonly, nullable) AVValueTiming *timing;
+@property (readonly, getter=isSeeking) BOOL seeking;
+@property (readonly) NSTimeInterval seekToTime;
+- (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
+@property (readonly) BOOL hasEnabledAudio;
+@property (readonly) BOOL hasEnabledVideo;
+@end
+
+@interface AVFunctionBarScrubber : NSView
+@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#endif // PLATFORM(MAC)

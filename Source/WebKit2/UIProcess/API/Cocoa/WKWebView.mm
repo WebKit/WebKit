@@ -174,7 +174,12 @@ static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 
 @interface WKWebView () <WebViewImplDelegate, NSTextInputClient>
 @end
-#endif
+
+#if HAVE(TOUCH_BAR)
+@interface WKWebView () <NSTouchBarProvider>
+@end
+#endif // HAVE(TOUCH_BAR)
+#endif // PLATFORM(MAC)
 
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
 {
@@ -3155,6 +3160,38 @@ WEBCORE_COMMAND(yankAndSelect)
 
 #endif // PLATFORM(MAC)
 
+#if HAVE(TOUCH_BAR)
+
+@dynamic touchBar;
+
+- (NSTouchBar *)makeTouchBar
+{
+    return _impl->makeTouchBar();
+}
+
+- (NSCandidateListTouchBarItem *)candidateListTouchBarItem
+{
+    return _impl->candidateListTouchBarItem();
+}
+
+- (void)_web_didAddMediaControlsManager:(id)controlsManager
+{
+    [self _addMediaPlaybackControlsView:controlsManager];
+}
+
+- (void)_web_didRemoveMediaControlsManager
+{
+    [self _removeMediaPlaybackControlsView];
+}
+
+- (void)_interactWithMediaControlsForTesting
+{
+    [self _setWantsMediaPlaybackControlsView:YES];
+    [self makeTouchBar];
+}
+
+#endif // HAVE(TOUCH_BAR)
+
 @end
 
 @implementation WKWebView (WKPrivate)
@@ -4527,6 +4564,41 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [super setUserInterfaceLayoutDirection:userInterfaceLayoutDirection];
 
     _impl->setUserInterfaceLayoutDirection(userInterfaceLayoutDirection);
+}
+
+- (BOOL)_wantsMediaPlaybackControlsView
+{
+#if HAVE(TOUCH_BAR)
+    return _impl->clientWantsMediaPlaybackControlsView();
+#else
+    return NO;
+#endif
+}
+
+- (void)_setWantsMediaPlaybackControlsView:(BOOL)wantsMediaPlaybackControlsView
+{
+#if HAVE(TOUCH_BAR)
+    _impl->setClientWantsMediaPlaybackControlsView(wantsMediaPlaybackControlsView);
+#endif
+}
+
+- (AVFunctionBarScrubber *)_mediaPlaybackControlsView
+{
+#if HAVE(TOUCH_BAR)
+    return _impl->clientWantsMediaPlaybackControlsView() ? _impl->mediaPlaybackControlsView() : nil;
+#else
+    return nil;
+#endif
+}
+
+// This method is for subclasses to override.
+- (void)_addMediaPlaybackControlsView:(AVFunctionBarScrubber *)mediaPlaybackControlsView
+{
+}
+
+// This method is for subclasses to override.
+- (void)_removeMediaPlaybackControlsView
+{
 }
 
 #endif

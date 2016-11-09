@@ -889,6 +889,10 @@ Could be worth adding to the API.
 
 - (void)_setFontFallbackPrefersPictographs:(BOOL)flag;
 
+- (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
+- (void)forceRequestCandidatesForTesting;
+- (BOOL)shouldRequestCandidates;
+
 @end
 
 #if !TARGET_OS_IPHONE
@@ -1059,12 +1063,6 @@ Could be worth adding to the API.
 @interface NSObject (WebViewResourceLoadDelegatePrivate)
 // Addresses <rdar://problem/5008925> - SPI for now
 - (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
-@end
-
-@interface WebView (WebShowCandidates)
-- (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
-- (void)forceRequestCandidatesForTesting;
-- (BOOL)shouldRequestCandidates;
 @end
 
 #ifdef __cplusplus
