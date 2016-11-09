@@ -1,5 +1,21 @@
 2016-11-09  Saam Barati  <sbarati@apple.com>
 
+        Math.min()/Math.max() with no arguments is lowered incorrectly in the BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=164464
+        <rdar://problem/29131452>
+
+        Reviewed by Darin Adler.
+
+        We were incorrectly matching this pattern inside the bytecode parser
+        to return NaN. Instead, we must return:
+          Infinity for Math.min()
+         -Infinity for Math.max()
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+
+2016-11-09  Saam Barati  <sbarati@apple.com>
+
         TypeProfiler and running GC collection on another thread don't play nicely with each other
         https://bugs.webkit.org/show_bug.cgi?id=164441
         <rdar://problem/29132174>

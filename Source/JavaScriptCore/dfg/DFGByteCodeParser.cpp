@@ -2111,13 +2111,16 @@ bool ByteCodeParser::handleInlining(
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks)
 {
-    if (argumentCountIncludingThis == 1) { // Math.min()
+    ASSERT(op == ArithMin || op == ArithMax);
+
+    if (argumentCountIncludingThis == 1) {
         insertChecks();
-        set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
+        double result = op == ArithMax ? -std::numeric_limits<double>::infinity() : +std::numeric_limits<double>::infinity();
+        set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_graph.freeze(jsDoubleNumber(result)))));
         return true;
     }
      
-    if (argumentCountIncludingThis == 2) { // Math.min(x)
+    if (argumentCountIncludingThis == 2) {
         insertChecks();
         Node* result = get(VirtualRegister(virtualRegisterForArgument(1, registerOffset)));
         addToGraph(Phantom, Edge(result, NumberUse));
@@ -2125,7 +2128,7 @@ bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOf
         return true;
     }
     
-    if (argumentCountIncludingThis == 3) { // Math.min(x, y)
+    if (argumentCountIncludingThis == 3) {
         insertChecks();
         set(VirtualRegister(resultOperand), addToGraph(op, get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset))));
         return true;

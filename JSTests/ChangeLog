@@ -1,5 +1,19 @@
 2016-11-09  Saam Barati  <sbarati@apple.com>
 
+        Math.min()/Math.max() with no arguments is lowered incorrectly in the BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=164464
+        <rdar://problem/29131452>
+
+        Reviewed by Darin Adler.
+
+        * stress/math-max-min-no-arguments.js: Added.
+        (assert):
+        (min):
+        (max):
+        (test):
+
+2016-11-09  Saam Barati  <sbarati@apple.com>
+
         TypeProfiler and running GC collection on another thread don't play nicely with each other
         https://bugs.webkit.org/show_bug.cgi?id=164441
         <rdar://problem/29132174>
