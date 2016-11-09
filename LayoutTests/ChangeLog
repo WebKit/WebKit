@@ -1,3 +1,23 @@
+2016-11-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Wrong selected element at a given index in a list box (redux)
+        https://bugs.webkit.org/show_bug.cgi?id=164430
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure listboxes with no selected children do not report
+        a selected child. Modify select-element-at-index.html to reflect the
+        corrected behavior for ATK. Move the Mac port's expectations to the
+        shared expectations.
+
+        * accessibility/aria-listbox-no-selection-expected.txt: Added.
+        * accessibility/aria-listbox-no-selection.html: Added.
+        * accessibility/native-listbox-no-selection-expected.txt: Added.
+        * accessibility/native-listbox-no-selection.html: Added.
+        * accessibility/select-element-at-index-expected.txt: Modified.
+        * accessibility/select-element-at-index.html: Modified.
+        * platform/mac/accessibility/select-element-at-index-expected.txt: Removed.
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NETWORK_SESSION] Add support for downloading file backed blobs

@@ -14,7 +14,7 @@ PASS selectElement.selectedChildAtIndex(1).isEqual(option2) is true
 PASS option3.isSelected is false
 PASS selectElement.selectedChildrenCount is 3
 PASS option4.isSelected is true
-PASS selectElement.selectedChildAtIndex(3).isEqual(option4) is true
+PASS selectElement.selectedChildAtIndex(2).isEqual(option4) is true
 PASS option4.isSelected is false
 PASS selectElement.selectedChildrenCount is 2
 PASS option2.isSelected is false

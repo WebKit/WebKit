@@ -96,30 +96,21 @@ static AccessibilityObject* optionFromList(AtkSelection* selection, gint index)
 
 static AccessibilityObject* optionFromSelection(AtkSelection* selection, gint index)
 {
-    // i is the ith selection as opposed to the ith child.
-
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection || !coreSelection->isAccessibilityRenderObject() || index < 0)
         return nullptr;
 
-    int selectedIndex = index;
-    if (coreSelection->isMenuList()) {
-        RenderObject* renderer = coreSelection->renderer();
-        if (!renderer)
-            return nullptr;
+    // This method provides the functionality expected by atk_selection_ref_selection().
+    // According to the ATK documentation for this method, the index is "a gint specifying
+    // the index in the selection set. (e.g. the ith selection as opposed to the ith child)."
+    // There is different API, namely atk_object_ref_accessible_child(), when the ith child
+    // from the set of all children is sought.
+    AccessibilityObject::AccessibilityChildrenVector options;
+    coreSelection->selectedChildren(options);
+    if (index < static_cast<gint>(options.size()))
+        return options.at(index).get();
 
-        HTMLSelectElement* selectNode = downcast<HTMLSelectElement>(renderer->node());
-        if (!selectNode)
-            return nullptr;
-
-        selectedIndex = selectNode->selectedIndex();
-        const auto& listItems = selectNode->listItems();
-
-        if (selectedIndex < 0 || selectedIndex >= static_cast<int>(listItems.size()))
-            return nullptr;
-    }
-
-    return optionFromList(selection, selectedIndex);
+    return nullptr;
 }
 
 static gboolean webkitAccessibleSelectionAddSelection(AtkSelection* selection, gint index)
@@ -227,7 +218,6 @@ static gboolean webkitAccessibleSelectionRemoveSelection(AtkSelection* selection
     if (!coreSelection)
         return FALSE;
 
-    // TODO: This is only getting called if i == 0. What is preventing the rest?
     AccessibilityObject* option = optionFromSelection(selection, index);
     if (option && (coreSelection->isListBox() || coreSelection->isMenuList())) {
         option->setSelected(false);

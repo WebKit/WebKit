@@ -1,3 +1,25 @@
+2016-11-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Wrong selected element at a given index in a list box (redux)
+        https://bugs.webkit.org/show_bug.cgi?id=164430
+
+        Reviewed by Darin Adler.
+
+        This essentially undoes the implementation change resulting from r164577.
+        As stated in the ATK documentation, atk_selection_ref_selection() takes
+        "a gint specifying the index in the selection set. (e.g. the ith selection
+        as opposed to the ith child)." r164577 deliberately modified that, causing
+        atk_selection_ref_selection() to treat the index as if it were the position
+        with respect to all of the children. There is different API in ATK, namely
+        atk_object_ref_accessible_child(), when the ith child from the set of all
+        children is sought.
+
+        Tests: accessibility/aria-listbox-no-selection.html
+               accessibility/native-listbox-no-selection.html
+
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (optionFromSelection):
+
 2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Use libgcrypt instead of GnuTLS for CryptoDigest
