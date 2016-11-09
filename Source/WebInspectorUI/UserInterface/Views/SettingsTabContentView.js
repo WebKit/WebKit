@@ -73,8 +73,9 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
             titleContainer.textContent = title;
 
             let valueControllerContainer = container.createChild("div", "setting-value-controller");
+            let labelElement = valueControllerContainer.createChild("label");
             if (typeof createValueController === "function")
-                createValueController(valueControllerContainer);
+                createValueController(labelElement);
         };
 
         let createCheckbox = (setting) => {

@@ -1,3 +1,15 @@
+2016-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Settings tab: Checkbox labels should be clickable
+        https://bugs.webkit.org/show_bug.cgi?id=164470
+        <rdar://problem/29133787>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        Add a label element to make checkboxes clickable.
+
 2016-11-09  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Allow FolderTreeElement to display content when selected
