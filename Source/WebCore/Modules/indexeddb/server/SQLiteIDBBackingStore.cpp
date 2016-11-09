@@ -34,6 +34,7 @@
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"
 #include "IDBGetResult.h"
+#include "IDBIterateCursorData.h"
 #include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
 #include "IDBSerialization.h"
@@ -2268,7 +2269,7 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
     return { };
 }
 
-IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData& key, uint32_t count, IDBGetResult& result)
+IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData& data, IDBGetResult& result)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::iterateCursor");
 
@@ -2287,6 +2288,9 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
         LOG_ERROR("Attempt to iterate a cursor without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to iterate a cursor without an in-progress transaction") };
     }
+
+    auto key = data.keyData;
+    auto count = data.count;
 
     if (key.isValid()) {
         if (!cursor->iterate(key)) {

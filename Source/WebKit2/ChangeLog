@@ -1,3 +1,19 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Encapsulate cursor iteration parameters for easy future expansion.
+        https://bugs.webkit.org/show_bug.cgi?id=164504
+
+        Reviewed by Darin Adler.
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::iterateCursor):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::iterateCursor):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+
 2016-11-09  Darin Adler  <darin@apple.com>
 
         Move Range from ExceptionCode to ExceptionOr

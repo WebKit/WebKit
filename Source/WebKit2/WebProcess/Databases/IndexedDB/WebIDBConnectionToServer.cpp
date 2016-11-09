@@ -42,6 +42,7 @@
 #include <WebCore/IDBDatabaseException.h>
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBIndexInfo.h>
+#include <WebCore/IDBIterateCursorData.h>
 #include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/IDBObjectStoreInfo.h>
 #include <WebCore/IDBOpenDBRequest.h>
@@ -174,9 +175,9 @@ void WebIDBConnectionToServer::openCursor(const IDBRequestData& requestData, con
     send(Messages::WebIDBConnectionToClient::OpenCursor(requestData, info));
 }
 
-void WebIDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+void WebIDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBIterateCursorData& data)
 {
-    send(Messages::WebIDBConnectionToClient::IterateCursor(requestData, key, count));
+    send(Messages::WebIDBConnectionToClient::IterateCursor(requestData, data));
 }
 
 void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)

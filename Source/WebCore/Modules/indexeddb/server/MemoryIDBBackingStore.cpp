@@ -32,6 +32,7 @@
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetResult.h"
 #include "IDBIndexInfo.h"
+#include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryIndexCursor.h"
@@ -526,7 +527,7 @@ IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
     return { };
 }
 
-IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData& key, uint32_t count, IDBGetResult& outData)
+IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData& data, IDBGetResult& outData)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::iterateCursor");
 
@@ -537,7 +538,7 @@ IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     if (!cursor)
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store cursor found in which to iterate cursor") };
 
-    cursor->iterate(key, count, outData);
+    cursor->iterate(data.keyData, data.count, outData);
 
     return { };
 }

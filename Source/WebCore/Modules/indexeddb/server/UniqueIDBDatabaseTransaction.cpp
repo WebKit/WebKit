@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBError.h"
+#include "IDBIterateCursorData.h"
 #include "IDBResultData.h"
 #include "IDBServer.h"
 #include "Logging.h"
@@ -325,14 +326,14 @@ void UniqueIDBDatabaseTransaction::openCursor(const IDBRequestData& requestData,
     });
 }
 
-void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestData, const IDBIterateCursorData& data)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor");
 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
-    m_databaseConnection->database().iterateCursor(requestData, key, count, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
+    m_databaseConnection->database().iterateCursor(requestData, data, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor (callback)");
 
         if (error.isNull())

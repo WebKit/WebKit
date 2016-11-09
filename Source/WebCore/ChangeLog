@@ -1,3 +1,68 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Encapsulate cursor iteration parameters for easy future expansion.
+        https://bugs.webkit.org/show_bug.cgi?id=164504
+
+        Reviewed by Darin Adler.
+
+        No new tests (Refactor, no behavior change).
+
+        This patch literally just takes the "key" and "count" arguments and encapsulates them in a struct.
+        That struct will then be easily expandable in the future (e.g. bug 164404).
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::iterateCursorOnServer):
+        * Modules/indexeddb/IDBTransaction.h:
+        
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::iterateCursor):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::iterateCursor):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::iterateCursor):
+        * Modules/indexeddb/server/IDBServer.h:
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp: Added.
+        (WebCore::IDBIterateCursorData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBIterateCursorData.h: Added.
+        (WebCore::IDBIterateCursorData::encode):
+        (WebCore::IDBIterateCursorData::decode):
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::iterateCursor):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         StyledElement::attributeChanged shouldn't do any work when the attribute value didn't change

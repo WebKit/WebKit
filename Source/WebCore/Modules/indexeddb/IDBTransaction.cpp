@@ -41,6 +41,7 @@
 #include "IDBEventDispatcher.h"
 #include "IDBGetRecordData.h"
 #include "IDBIndex.h"
+#include "IDBIterateCursorData.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBObjectStore.h"
@@ -721,7 +722,7 @@ void IDBTransaction::didOpenCursorOnServer(IDBRequest& request, const IDBResultD
     request.didOpenOrIterateCursor(resultData);
 }
 
-void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBKeyData& key, unsigned long count)
+void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBIterateCursorData& data)
 {
     LOG(IndexedDB, "IDBTransaction::iterateCursor");
     ASSERT(isActive());
@@ -730,15 +731,16 @@ void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBKeyData& key, uns
 
     addRequest(*cursor.request());
 
-    scheduleOperation(IDBClient::createTransactionOperation(*this, *cursor.request(), &IDBTransaction::didIterateCursorOnServer, &IDBTransaction::iterateCursorOnServer, key, count));
+    scheduleOperation(IDBClient::createTransactionOperation(*this, *cursor.request(), &IDBTransaction::didIterateCursorOnServer, &IDBTransaction::iterateCursorOnServer, data));
 }
 
-void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& operation, const IDBKeyData& key, const unsigned long& count)
+// FIXME: changes here
+void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& operation, const IDBIterateCursorData& data)
 {
     LOG(IndexedDB, "IDBTransaction::iterateCursorOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    m_database->connectionProxy().iterateCursor(operation, key, count);
+    m_database->connectionProxy().iterateCursor(operation, data);
 }
 
 void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResultData& resultData)

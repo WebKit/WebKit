@@ -31,6 +31,7 @@
 #include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
 #include "IDBGetRecordData.h"
+#include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
@@ -221,12 +222,12 @@ void IDBConnectionProxy::openCursor(TransactionOperation& operation, const IDBCu
     callConnectionOnMainThread(&IDBConnectionToServer::openCursor, requestData, info);
 }
 
-void IDBConnectionProxy::iterateCursor(TransactionOperation& operation, const IDBKeyData& key, unsigned long count)
+void IDBConnectionProxy::iterateCursor(TransactionOperation& operation, const IDBIterateCursorData& data)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
 
-    callConnectionOnMainThread(&IDBConnectionToServer::iterateCursor, requestData, key, count);
+    callConnectionOnMainThread(&IDBConnectionToServer::iterateCursor, requestData, data);
 }
 
 void IDBConnectionProxy::saveOperation(TransactionOperation& operation)

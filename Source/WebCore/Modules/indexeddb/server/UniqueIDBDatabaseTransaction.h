@@ -45,6 +45,7 @@ class IDBValue;
 
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
+struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 
 namespace IDBServer {
@@ -81,7 +82,7 @@ public:
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void openCursor(const IDBRequestData&, const IDBCursorInfo&);
-    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
+    void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&);
 
     void didActivateInBackingStore(const IDBError&);
 

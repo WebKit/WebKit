@@ -2257,6 +2257,8 @@
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
 		51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBD0C91C90400DC255B /* PageURLRecord.h */; };
 		51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */; };
+		51E269361DD3BD97006B6A58 /* IDBIterateCursorData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E269341DD3BD91006B6A58 /* IDBIterateCursorData.cpp */; };
+		51E269371DD3BD9B006B6A58 /* IDBIterateCursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E269351DD3BD91006B6A58 /* IDBIterateCursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E399011D6E4750009C8831 /* GameControllerGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */; };
 		51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9407,6 +9409,8 @@
 		51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageURLRecord.cpp; sourceTree = "<group>"; };
 		51E1ECBD0C91C90400DC255B /* PageURLRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageURLRecord.h; sourceTree = "<group>"; };
 		51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransactionCustom.cpp; sourceTree = "<group>"; };
+		51E269341DD3BD91006B6A58 /* IDBIterateCursorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIterateCursorData.cpp; sourceTree = "<group>"; };
+		51E269351DD3BD91006B6A58 /* IDBIterateCursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIterateCursorData.h; sourceTree = "<group>"; };
 		51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepad.h; sourceTree = "<group>"; };
 		51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameControllerGamepad.mm; sourceTree = "<group>"; };
 		51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepadProvider.h; sourceTree = "<group>"; };
@@ -16889,6 +16893,8 @@
 				5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */,
 				51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */,
 				51F798EC1BE880D3008AE491 /* IDBIndexInfo.h */,
+				51E269341DD3BD91006B6A58 /* IDBIterateCursorData.cpp */,
+				51E269351DD3BD91006B6A58 /* IDBIterateCursorData.h */,
 				5160712C1BD8307200DBC4F2 /* IDBObjectStoreInfo.cpp */,
 				5160712D1BD8307200DBC4F2 /* IDBObjectStoreInfo.h */,
 				510A58F51BACC4A500C19282 /* IDBRequestData.cpp */,
@@ -25048,6 +25054,7 @@
 				CD19A2681A13E700008D650E /* DiagnosticLoggingClient.h in Headers */,
 				46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */,
 				8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */,
+				51E269371DD3BD9B006B6A58 /* IDBIterateCursorData.h in Headers */,
 				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
 				D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */,
@@ -30062,6 +30069,7 @@
 				6F995A371A70833700A735F4 /* JSWebGLTransformFeedback.cpp in Sources */,
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 				6F995A391A70833700A735F4 /* JSWebGLVertexArrayObject.cpp in Sources */,
+				51E269361DD3BD97006B6A58 /* IDBIterateCursorData.cpp in Sources */,
 				77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,

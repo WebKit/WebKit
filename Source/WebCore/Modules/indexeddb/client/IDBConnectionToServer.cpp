@@ -273,12 +273,12 @@ void IDBConnectionToServer::didOpenCursor(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+void IDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBIterateCursorData& data)
 {
     LOG(IndexedDB, "IDBConnectionToServer::iterateCursor");
     ASSERT(isMainThread());
 
-    m_delegate->iterateCursor(requestData, key, count);
+    m_delegate->iterateCursor(requestData, data);
 }
 
 void IDBConnectionToServer::didIterateCursor(const IDBResultData& resultData)

@@ -34,6 +34,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBGetResult.h"
 #include "IDBIndex.h"
+#include "IDBIterateCursorData.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
@@ -292,7 +293,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
     ++m_outstandingRequestCount;
 
     m_request->willIterateCursor(*this);
-    transaction().iterateCursor(*this, key, count);
+    transaction().iterateCursor(*this, { key, count });
 }
 
 ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state)

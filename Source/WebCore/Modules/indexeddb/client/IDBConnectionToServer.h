@@ -46,6 +46,7 @@ class SecurityOrigin;
 
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
+struct IDBIterateCursorData;
 
 namespace IDBClient {
 
@@ -102,7 +103,7 @@ public:
     void openCursor(const IDBRequestData&, const IDBCursorInfo&);
     WEBCORE_EXPORT void didOpenCursor(const IDBResultData&);
 
-    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
+    void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&);
     WEBCORE_EXPORT void didIterateCursor(const IDBResultData&);
 
     void commitTransaction(const IDBResourceIdentifier& transactionIdentifier);

@@ -57,6 +57,7 @@ class IDBObjectStoreInfo;
 class IDBResultData;
 class SerializedScriptValue;
 
+struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 
 namespace IDBClient {
@@ -124,7 +125,7 @@ public:
     Ref<IDBRequest> requestGetKey(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestOpenCursor(JSC::ExecState&, IDBObjectStore&, const IDBCursorInfo&);
     Ref<IDBRequest> requestOpenCursor(JSC::ExecState&, IDBIndex&, const IDBCursorInfo&);
-    void iterateCursor(IDBCursor&, const IDBKeyData&, unsigned long count);
+    void iterateCursor(IDBCursor&, const IDBIterateCursorData&);
 
     void deleteObjectStore(const String& objectStoreName);
     void deleteIndex(uint64_t objectStoreIdentifier, const String& indexName);
@@ -209,7 +210,7 @@ private:
     void openCursorOnServer(IDBClient::TransactionOperation&, const IDBCursorInfo&);
     void didOpenCursorOnServer(IDBRequest&, const IDBResultData&);
 
-    void iterateCursorOnServer(IDBClient::TransactionOperation&, const IDBKeyData&, const unsigned long& count);
+    void iterateCursorOnServer(IDBClient::TransactionOperation&, const IDBIterateCursorData&);
     void didIterateCursorOnServer(IDBRequest&, const IDBResultData&);
 
     void transitionedToFinishing(IndexedDB::TransactionState);

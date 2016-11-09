@@ -51,6 +51,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 
 struct IDBGetRecordData;
+struct IDBIterateCursorData;
 
 namespace IDBClient {
 
@@ -77,7 +78,7 @@ public:
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
     void openCursor(TransactionOperation&, const IDBCursorInfo&);
-    void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
+    void iterateCursor(TransactionOperation&, const IDBIterateCursorData&);
     void renameObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier, const String& newName);
     void renameIndex(TransactionOperation&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
 

@@ -42,6 +42,7 @@ class IDBValue;
 class SerializedScriptValue;
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
+struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 struct SecurityOriginData;
 }
@@ -107,7 +108,7 @@ public:
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
     void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);
-    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, unsigned long count);
+    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
 
     void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
