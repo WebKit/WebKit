@@ -492,6 +492,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/ThreadCheck.mm
     platform/mac/URLMac.mm
     platform/mac/UserActivityMac.mm
+    platform/mac/ValidationBubbleMac.mm
     platform/mac/WebCoreFullScreenPlaceholderView.mm
     platform/mac/WebCoreFullScreenWarningView.mm
     platform/mac/WebCoreFullScreenWindow.mm
