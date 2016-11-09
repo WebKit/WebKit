@@ -1157,3 +1157,6 @@ fast/events/will-reveal-edge-on-div.html
 fast/events/will-reveal-edges-body-attributes.html
 fast/events/will-reveal-edges-event-listeners.html
 fast/events/will-reveal-edges-window-attributes.html
+
+http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Slow ]
+http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Slow ]
