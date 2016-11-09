@@ -329,6 +329,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Scrolling/RemoteScrollingCoordinator.mm
 
     WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp
+    WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 
     WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp
     WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm

@@ -1,5 +1,11 @@
 2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        URTBF after r208361.
+
+        * PlatformMac.cmake:
+
+2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed typo fix after r160616 to fix the build on case sensitive file systems.
 
         * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
