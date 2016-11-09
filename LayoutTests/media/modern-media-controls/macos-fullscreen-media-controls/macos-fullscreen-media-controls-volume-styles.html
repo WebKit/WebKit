@@ -4,23 +4,22 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>MacOSInlineMediaControls</code> computed styles.");
+description("Testing the <code>MacOSFullscreenMediaControls</code> computed styles.");
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+const mediaControls = new MacOSFullscreenMediaControls;
 
 scheduler.frameDidFire = function()
 {
     document.body.appendChild(mediaControls.element);
 
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.scrubber.element).top", "23px");
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).top", "14.5px");
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).top", "14.5px");
-    debug("");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "31px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "23px");
 
     mediaControls.element.remove();
 
+    debug("");
     finishJSTest();
 };
 

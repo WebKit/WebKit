@@ -1,0 +1,46 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<div id="container" style="position: absolute; top: 0; left: 0;"></div>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSFullscreenMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSFullscreenMediaControls;
+const centerContainer = mediaControls.controlsBar.children[1];
+const rightContainer = mediaControls.controlsBar.children[2];
+const buttons = centerContainer.buttons.concat(rightContainer.buttons);
+
+let centerContainerBounds, rightContainerBounds;
+scheduler.frameDidFire = function()
+{
+    if (buttons.some(button => button.width == 0))
+        return;
+
+    document.getElementById("container").appendChild(mediaControls.element);
+
+    centerContainerBounds = centerContainer.element.getBoundingClientRect();
+    shouldBe("centerContainerBounds.left", "61");
+    shouldBe("centerContainerBounds.top", "50");
+    shouldBe("centerContainerBounds.width", "178");
+    shouldBe("centerContainerBounds.height", "44");
+
+    debug("");
+    rightContainerBounds = rightContainer.element.getBoundingClientRect();
+    shouldBeCloseTo("rightContainerBounds.left", 218, 0.5);
+    shouldBe("rightContainerBounds.top", "50");
+    shouldBeCloseTo("rightContainerBounds.width", 166, 0.5);
+    shouldBe("rightContainerBounds.height", "44");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

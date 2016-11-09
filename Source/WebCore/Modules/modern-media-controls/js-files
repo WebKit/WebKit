@@ -23,6 +23,7 @@ controls/forward-button.js
 controls/media-controls.js
 controls/macos-media-controls.js
 controls/macos-inline-media-controls.js
+controls/macos-fullscreen-media-controls.js
 controls/buttons-container.js
 controls/placard.js
 controls/airplay-placard.js

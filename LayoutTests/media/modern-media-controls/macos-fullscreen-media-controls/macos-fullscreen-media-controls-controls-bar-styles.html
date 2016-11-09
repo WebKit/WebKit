@@ -13,11 +13,11 @@
 </style>
 <script type="text/javascript">
 
-description("Testing the <code>MacOSInlineMediaControls</code> computed styles.");
+description("Testing the <code>MacOSFullscreenMediaControls</code> computed styles.");
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+const mediaControls = new MacOSFullscreenMediaControls;
 
 let style, bounds;
 scheduler.frameDidFire = function()
@@ -27,22 +27,24 @@ scheduler.frameDidFire = function()
     style = window.getComputedStyle(mediaControls.controlsBar.element);
     bounds = mediaControls.controlsBar.element.getBoundingClientRect();
     
-    shouldBeEqualToString("style.left", "0px");
-    shouldBeEqualToString("style.bottom", "0px");
-    shouldBeEqualToString("style.width", "680px");
-    shouldBeEqualToString("style.height", "50px");
+    shouldBeEqualToString("style.left", "50%");
+    shouldBeEqualToString("style.bottom", "25px");
+    shouldBeEqualToString("style.width", "468px");
+    shouldBeEqualToString("style.height", "75px");
+    shouldBeEqualToString("style.transform", "matrix(1, 0, 0, 1, -234, 0)");
+    shouldBeEqualToString("style.borderRadius", "8px");
 
-    shouldBe("bounds.left", "0");
-    shouldBe("bounds.top", "250");
-    shouldBe("bounds.width", "680");
-    shouldBe("bounds.height", "50");
+    shouldBe("bounds.left", "-84");
+    shouldBe("bounds.top", "50");
+    shouldBe("bounds.width", "468");
+    shouldBe("bounds.height", "75");
 
     shouldBeEqualToRGBAColor("style.backgroundColor", "rgba(30, 30, 30, 0.45)");
     shouldBeEqualToString("style.webkitBackdropFilter", "saturate(1.8) blur(20px)");
 
     mediaControls.element.remove();
 
-    debug();
+    debug("");
     finishJSTest();
 };
 

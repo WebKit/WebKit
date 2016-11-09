@@ -26,13 +26,9 @@
 class MacOSMediaControls extends MediaControls
 {
 
-    constructor(options = {})
+    constructor({ width, height, layoutTraits = LayoutTraits.macOS } = {})
     {
-        super({
-            width: options.width,
-            height: options.height,
-            layoutTraits: LayoutTraits.macOS
-        });
+        super({ width, height, layoutTraits });
 
         this.element.classList.add("mac");
 

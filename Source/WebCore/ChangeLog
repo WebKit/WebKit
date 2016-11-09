@@ -1,3 +1,77 @@
+2016-11-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: macOS fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=164414
+        <rdar://problem/27989474>
+
+        Reviewed by Dean Jackson.
+
+        We introduce a new MacOSFullscreenMediaControls class which can be used to instantiate media controls
+        for fullscreen playback on macOS. These controls can be dragged by the user.
+
+        Tests: media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles.html
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html
+
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype.set enabled):
+
+            Correctly notify the layoutDelegate when the enabled property changes, regardless of whether
+            the flag is on.
+
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype._updateImage):
+        (IconButton):
+
+            Correctly notify the layout delegate when the image metrics have changed so that it may perform
+            a layout. This issues became apparent with the new tests on Yosemite and caused some flakyness.
+
+        * Modules/modern-media-controls/controls/icon-service.js:
+        (const.iconService.new.IconService.prototype._fileNameAndPlatformForIconNameAndLayoutTraits):
+        (const.iconService.new.IconService):
+
+            Fix a typo.
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css: Added.
+        (.media-controls.mac.fullscreen > .controls-bar):
+        (.media-controls.mac.fullscreen .volume.slider):
+        (.media-controls.mac.fullscreen .buttons-container):
+        (.media-controls.mac.fullscreen .buttons-container.center):
+        (.media-controls.mac.fullscreen > .controls-bar button):
+        (.media-controls.mac.fullscreen button.rewind):
+        (.media-controls.mac.fullscreen button.play-pause):
+        (.media-controls.mac.fullscreen button.forward):
+        (.media-controls.mac.fullscreen .buttons-container.right):
+        (.media-controls.mac.fullscreen button.airplay):
+        (.media-controls.mac.fullscreen button.aspect-ratio):
+        (.media-controls.mac.fullscreen button.pip):
+        (.media-controls.mac.fullscreen button.tracks):
+        (.media-controls.mac.fullscreen button.fullscreen):
+        (.media-controls.mac.fullscreen .time-control):
+        (.media-controls.mac.fullscreen .time-label):
+        (.media-controls.mac.fullscreen .scrubber):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js: Added.
+        (MacOSFullscreenMediaControls.prototype.layout):
+        (MacOSFullscreenMediaControls):
+        * Modules/modern-media-controls/controls/macos-media-controls.js:
+        (MacOSMediaControls):
+        
+            Allow the layoutTraits property to be set to something other than just LayoutTraits.macOS
+            so that MacOSFullscreenMediaControls may set the LayoutTraits.Fullscreen bit.
+        
+        * Modules/modern-media-controls/js-files:
+        
+            Add a reference to the new macos-fullscreen-media-controls.js file.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Add references to the new macos-fullscreen-media-controls.js and
+            macos-fullscreen-media-controls.css files.
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         Shave 16 bytes off HTMLInputElement

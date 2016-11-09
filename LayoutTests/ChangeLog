@@ -1,3 +1,42 @@
+2016-11-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: macOS fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=164414
+        <rdar://problem/27989474>
+
+        Reviewed by Dean Jackson.
+
+        Adding new tests for the MacOSFullscreenMediaControls class as well as making other tests
+        adopt the media-controls-loader.js utility.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * media/modern-media-controls/macos-media-controls/macos-media-controls.html:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/media-controls/media-controls-placard.html:
+        * media/modern-media-controls/media-controls/media-controls-start-button.html:
+        * media/modern-media-controls/resources/media-controls-loader.js:
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         Add test coverage for radiusX / radiusY in WebPlatformTouchPoint.

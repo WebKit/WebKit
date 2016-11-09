@@ -1,0 +1,123 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* Controls bar */
+
+.media-controls.mac.fullscreen > .controls-bar {
+    left: 50%;
+    bottom: 25px;
+    width: 468px;
+    height: 75px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    border-radius: 8px;
+
+    /* FIXME: we want to use the real System Dark treatment here, see <rdar://problem/19993961> */
+    background-color: rgba(30, 30, 30, 0.45);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Volume slider */
+
+.media-controls.mac.fullscreen .volume.slider {
+    left: 31px;
+    top: 23px;
+}
+
+/* Button containers */
+
+.media-controls.mac.fullscreen .buttons-container {
+    height: 44px;
+}
+
+.media-controls.mac.fullscreen .buttons-container.center {
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+/* Buttons */
+
+.media-controls.mac.fullscreen > .controls-bar button {
+    height: 100% !important;
+}
+
+/* Buttons placement for center container */
+
+.media-controls.mac.fullscreen button.rewind {
+    -webkit-mask-position-y: 16px;
+}
+
+.media-controls.mac.fullscreen button.play-pause {
+    -webkit-mask-position-y: 12px;
+}
+
+.media-controls.mac.fullscreen button.forward {
+    -webkit-mask-position-y: 16px;
+}
+
+/* Make right container flush to the right */
+
+.media-controls.mac.fullscreen .buttons-container.right {
+    right: 0;
+}
+
+/* Buttons placement for right container */
+
+.media-controls.mac.fullscreen button.airplay {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.mac.fullscreen button.aspect-ratio {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.mac.fullscreen button.pip {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.mac.fullscreen button.tracks {
+    -webkit-mask-position-y: 15px;
+}
+
+.media-controls.mac.fullscreen button.fullscreen {
+    -webkit-mask-position-y: 13px;
+}
+
+/* Scrubber */
+
+.media-controls.mac.fullscreen .time-control {
+    position: absolute;
+    left: 10px;
+    top: 48px;
+}
+
+.media-controls.mac.fullscreen .time-label {
+    font-size: 12px;
+}
+
+.media-controls.mac.fullscreen .scrubber {
+    top: 7px;
+}

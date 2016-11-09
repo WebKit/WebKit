@@ -47,8 +47,11 @@ class Button extends LayoutItem
 
     set enabled(flag)
     {
+        if (this._enabled === flag)
+            return;
+
         this._enabled = flag;
-        if (flag && this.layoutDelegate && typeof this.layoutDelegate.layout === "function")
+        if (this.layoutDelegate && typeof this.layoutDelegate.layout === "function")
             this.layoutDelegate.layout();
     }
 
