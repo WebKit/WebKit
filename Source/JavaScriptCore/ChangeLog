@@ -1,3 +1,20 @@
+2016-11-08  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION: Crashes in StringImpl destructor during GC when clearing the HasOwnPropertyCache
+        https://bugs.webkit.org/show_bug.cgi?id=164433
+
+        Reviewed by Mark Lam.
+
+        Clearing the HasOwnPropertyCache will call deref() on the StringImpls
+        in the cache. We were doing this from the collector thread, which is
+        not allowed. It must be done from the mutator thread. We now clear the
+        cache in Heap::finalize() which happens before the mutator begins
+        executing JS after a collection happens.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectInThread):
+        (JSC::Heap::finalize):
+
 2016-11-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of LLInt with MinGW

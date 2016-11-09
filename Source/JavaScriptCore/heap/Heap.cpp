@@ -1130,9 +1130,6 @@ void Heap::collectInThread()
     prepareForMarking();
     flushWriteBarrierBuffer();
         
-    if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
-        cache->clear();
-        
     markRoots(gcStartTime);
         
     if (m_verifier) {
@@ -1470,6 +1467,8 @@ void Heap::finalize()
     deleteUnmarkedCompiledCode();
     deleteSourceProviderCaches();
     sweepLargeAllocations();
+    if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
+        cache->clear();
 }
 
 Heap::Ticket Heap::requestCollection(Optional<CollectionScope> scope)
