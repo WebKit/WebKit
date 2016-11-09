@@ -212,22 +212,6 @@ static Eina_Stringshare *_file_entry_dialog_show(Browser_Window *window, const c
 static Browser_Window *window_create(Ewk_View_Configuration* configuration, int width, int height);
 static Ewk_View_Configuration* configuration();
 
-static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
-{
-   Eina_List *l;
-   void *data;
-
-   if (!elm_window)
-     return NULL;
-
-   EINA_LIST_FOREACH(windows, l, data) {
-     Browser_Window *window = (Browser_Window *)data;
-     if (window->elm_window == elm_window)
-       return window;
-   }
-   return NULL;
-}
-
 static Browser_Window *window_find_with_ewk_view(Evas_Object *ewk_view)
 {
    Eina_List *l;

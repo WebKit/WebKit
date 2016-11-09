@@ -1,3 +1,13 @@
+2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Remove unused function in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=164398
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/efl/main.c:
+        (window_find_with_elm_window): Deleted because it is not used anywhere.
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NETWORK_SESSION] Add support for downloading file backed blobs
