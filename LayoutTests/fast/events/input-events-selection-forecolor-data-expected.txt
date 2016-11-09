@@ -1,0 +1,14 @@
+To manually test this, select the text and change the foreground color.
+
+The resulting debug message should show the input color.
+
+This is some text
+Received beforeinput event with data: "rgb(255, 255, 255)"
+Received input event with data: "rgb(255, 255, 255)"
+Received beforeinput event with data: "rgb(100, 255, 0)"
+Received input event with data: "rgb(100, 255, 0)"
+Received beforeinput event with data: "rgb(0, 0, 0)"
+Received input event with data: "rgb(0, 0, 0)"
+Received beforeinput event with data: "rgb(255, 0, 0)"
+Received input event with data: "rgb(255, 0, 0)"
+

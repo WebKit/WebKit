@@ -72,6 +72,7 @@ private:
     ApplyStyleCommand(Document&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     void doApply() override;
+    bool shouldDispatchInputEvents() const final { return false; }
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;

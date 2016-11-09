@@ -122,18 +122,22 @@ static void dispatchInputEvent(Element& element, const AtomicString& inputType, 
         element.dispatchInputEvent();
 }
 
-static String inputEventDataForEditingStyleAndAction(EditingStyle& style, EditAction action)
+static String inputEventDataForEditingStyleAndAction(const StyleProperties* style, EditAction action)
 {
-    auto* properties = style.style();
-    if (!properties)
+    if (!style)
         return { };
 
     switch (action) {
     case EditActionSetColor:
-        return properties->getPropertyValue(CSSPropertyColor);
+        return style->getPropertyValue(CSSPropertyColor);
     default:
         return { };
     }
+}
+
+static String inputEventDataForEditingStyleAndAction(EditingStyle& style, EditAction action)
+{
+    return inputEventDataForEditingStyleAndAction(style.style(), action);
 }
 
 class ClearTextCommand : public DeleteSelectionCommand {
@@ -772,34 +776,38 @@ Node* Editor::findEventTargetFromSelection() const
 
 void Editor::applyStyle(StyleProperties* style, EditAction editingAction)
 {
-    switch (m_frame.selection().selection().selectionType()) {
-    case VisibleSelection::NoSelection:
-        return;
-    case VisibleSelection::CaretSelection:
-        computeAndSetTypingStyle(EditingStyle::create(style), editingAction);
-        break;
-    case VisibleSelection::RangeSelection:
-        if (style)
-            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction));
-        break;
-    }
-    client()->didApplyStyle();
+    if (style)
+        applyStyle(EditingStyle::create(style), editingAction);
 }
 
 void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
 {
-    switch (m_frame.selection().selection().selectionType()) {
-    case VisibleSelection::NoSelection:
+    if (!style)
         return;
-    case VisibleSelection::CaretSelection:
-        computeAndSetTypingStyle(*style, editingAction);
-        break;
-    case VisibleSelection::RangeSelection:
-        if (style)
+
+    auto selectionType = m_frame.selection().selection().selectionType();
+    if (selectionType == VisibleSelection::NoSelection)
+        return;
+
+    String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    String inputEventData = inputEventDataForEditingStyleAndAction(*style, editingAction);
+    RefPtr<Element> element = m_frame.selection().selection().rootEditableElement();
+    if (!element || dispatchBeforeInputEvent(*element, inputTypeName, inputEventData)) {
+        switch(selectionType) {
+        case VisibleSelection::CaretSelection:
+            computeAndSetTypingStyle(*style, editingAction);
+            break;
+        case VisibleSelection::RangeSelection:
             applyCommand(ApplyStyleCommand::create(document(), style.get(), editingAction));
-        break;
+            break;
+        default:
+            break;
+        }
     }
+
     client()->didApplyStyle();
+    if (element)
+        dispatchInputEvent(*element, inputTypeName, inputEventData);
 }
     
 bool Editor::shouldApplyStyle(StyleProperties* style, Range* range)
@@ -809,16 +817,21 @@ bool Editor::shouldApplyStyle(StyleProperties* style, Range* range)
     
 void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingAction)
 {
-    switch (m_frame.selection().selection().selectionType()) {
-    case VisibleSelection::NoSelection:
+    if (!style)
         return;
-    case VisibleSelection::CaretSelection:
-    case VisibleSelection::RangeSelection:
-        if (style)
-            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
-        break;
-    }
+
+    auto selectionType = m_frame.selection().selection().selectionType();
+    if (selectionType == VisibleSelection::NoSelection)
+        return;
+
+    String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    RefPtr<Element> element = m_frame.selection().selection().rootEditableElement();
+    if (!element || dispatchBeforeInputEvent(*element, inputTypeName))
+        applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
+
     client()->didApplyStyle();
+    if (element)
+        dispatchInputEvent(*element, inputTypeName);
 }
 
 void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAction)
@@ -2985,12 +2998,6 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         return;
     }
 
-    String inputTypeName = inputTypeNameForEditingAction(editingAction);
-    String inputEventData = inputEventDataForEditingStyleAndAction(style, editingAction);
-    auto* element = m_frame.selection().selection().rootEditableElement();
-    if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
-        return;
-
     // Calculate the current typing style.
     RefPtr<EditingStyle> typingStyle;
     if (auto existingTypingStyle = m_frame.selection().typingStyle())
@@ -3003,9 +3010,6 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
     RefPtr<EditingStyle> blockStyle = typingStyle->extractAndRemoveBlockProperties();
     if (!blockStyle->isEmpty())
         applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
-
-    if (element)
-        dispatchInputEvent(*element, inputTypeName, inputEventData);
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(typingStyle);

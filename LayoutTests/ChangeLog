@@ -1,3 +1,18 @@
+2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Setting foreground color when text is selected should fire an input event with color data
+        https://bugs.webkit.org/show_bug.cgi?id=164241
+        <rdar://problem/29032759>
+
+        Reviewed by Darin Adler.
+
+        Adds a new layout test verifying that selecting text and setting its foreground color will fire input events
+        with the correct RGB values in the data attribute.
+
+        * fast/events/input-events-selection-forecolor-data-expected.txt: Added.
+        * fast/events/input-events-selection-forecolor-data.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-11-08  Dean Jackson  <dino@apple.com>
 
         Rendering support for ExtendedColors

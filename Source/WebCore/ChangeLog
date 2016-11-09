@@ -1,3 +1,25 @@
+2016-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Setting foreground color when text is selected should fire an input event with color data
+        https://bugs.webkit.org/show_bug.cgi?id=164241
+        <rdar://problem/29032759>
+
+        Reviewed by Darin Adler.
+
+        Refactors Editor::applyStyle and Editor::applyParagraphStyle to handle beforeinput and input event dispatch.
+        Instead of going through the ApplyStyleCommand to dispatch input events, override shouldDispatchInputEvents to
+        return false. This strategy also has the effect of unifying the way input events are dispatched in applyStyle,
+        in both codepaths where we computeAndSetTypingStyle and where we create and then apply a style command.
+
+        Test: fast/events/input-events-selection-forecolor-data.html
+
+        * editing/ApplyStyleCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::inputEventDataForEditingStyleAndAction):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::computeAndSetTypingStyle):
+
 2016-11-08  Dean Jackson  <dino@apple.com>
 
         Rendering support for ExtendedColors

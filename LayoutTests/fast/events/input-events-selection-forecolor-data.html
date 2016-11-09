@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>To manually test this, select the text and change the foreground color.</p>
+    <p>The resulting debug message should show the input color.</p>
+    <div id="editable" contenteditable onbeforeinput=handleInput(event) oninput=handleInput(event)>This is some text</div>
+    <div id="output"></div>
+    <script type="text/javascript">
+        let write = s => output.innerHTML += s + "<br>";
+        if (window.internals) {
+            testRunner.dumpAsText();
+            internals.settings.setInputEventsEnabled(true);
+        }
+
+        document.getElementById("editable").focus();
+
+        if (window.testRunner) {
+            document.execCommand("SelectAll");
+            setForeColor("rgb(255, 255, 255)");
+            setForeColor("rgb(100, 255, 0)");
+            setForeColor("rgb(0, 0, 0)");
+            setForeColor("rgb(255, 0, 0)");
+        }
+
+        function setForeColor(color) {
+            // FIXME: Color is passed twice here for compatibility with both DumpRenderTree and WebKitTestRunner.
+            testRunner.execCommand("ForeColor", color, color);
+        }
+
+        function handleInput(event)
+        {
+            if (event.inputType === "formatForeColor")
+                write(`Received ${event.type} event with data: "${event.data}"`);
+        }
+    </script>
+</body>
+</html>
