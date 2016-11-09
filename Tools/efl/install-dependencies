@@ -77,11 +77,10 @@ function installDependenciesWithApt {
         libfaad-dev \
         libffi-dev \
         libfreetype6-dev \
-        libgcrypt11-dev \
+        $(aptIfElse libgcrypt20-dev libgcrypt11-dev) \
         $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
         libgif-dev \
         libgl1-mesa-dev \
-        libgnutls28-dev \
         libgpg-error-dev \
         libhyphen-dev \
         libicu-dev \

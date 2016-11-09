@@ -139,7 +139,7 @@ WEBKIT_OPTION_END()
 # Begin to find necessary packages for EFL port.
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
-find_package(GnuTLS 3.0.0 REQUIRED)
+find_package(LibGcrypt 1.6.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
 find_package(LibXslt 1.1.7 REQUIRED)
 find_package(ICU REQUIRED)

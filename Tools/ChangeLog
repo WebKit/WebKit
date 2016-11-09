@@ -1,5 +1,16 @@
 2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Use libgcrypt instead of GnuTLS for CryptoDigest
+        https://bugs.webkit.org/show_bug.cgi?id=164461
+
+        Reviewed by Michael Catanzaro.
+
+        As GTK port in r208297, EFL port starts to use libgcrypt instead of GnuTLS as well.
+
+        * efl/install-dependencies: Add libgcript package dependecy.
+
+2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] Remove unused function in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=164398
 
