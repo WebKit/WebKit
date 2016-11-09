@@ -1044,9 +1044,6 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
 void RenderElement::insertedIntoTree()
 {
-    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
-        containerFlowThread->addFlowChild(*this);
-
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
     RenderLayer* layer = nullptr;
@@ -1124,7 +1121,6 @@ void RenderElement::willBeDestroyed()
     if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
         for (auto& flowThread : *view().flowThreadController().renderNamedFlowThreadList()) {
-            ASSERT(!flowThread->hasChild(*this));
             ASSERT(!flowThread->hasChildInfo(this));
         }
     }
@@ -1523,14 +1519,6 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
         downcast<RenderBoxModelObject>(*this).contentChanged(ImageChanged);
 
     return true;
-}
-
-RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()
-{
-    auto* renderer = this;
-    while (renderer && renderer->isAnonymousBlock() && !is<RenderNamedFlowThread>(*renderer))
-        renderer = renderer->parent();
-    return is<RenderNamedFlowThread>(renderer) ? downcast<RenderNamedFlowThread>(renderer) : nullptr;
 }
 
 const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle) const
@@ -2207,8 +2195,6 @@ RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
 void RenderElement::removeFromRenderFlowThread()
 {
     ASSERT(flowThreadState() != NotInsideFlowThread);
-    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
-        containerFlowThread->removeFlowChild(*this);
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
     // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.

@@ -1,3 +1,44 @@
+2016-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        Move RenderNamedFlowThread nextRendererForElement logic to RenderTreeUpdater.
+        https://bugs.webkit.org/show_bug.cgi?id=164503
+
+        Reviewed by Antti Koivisto.
+
+        When we insert a renderer into the render tree, we need to know both its parent
+        and its next sibling. Normally the parent and the sibling are based on the DOM, but
+        when this renderer is part of a flow thread, its insertion sibling is not necessarily the DOM sibling.
+        To find the correct sibling, we call RenderNamedFlowThread's nextRendererForElement().
+        RenderNamedFlowThread keeps track of its children so that it can compute the next sibling
+        for the insertion point.
+
+        This patch eliminates the need for keeping track of the child renderers of each
+        flow by moving the 'next sibling' logic to RenderTreePosition.
+
+        No change in functionality.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertedIntoTree):
+        (WebCore::RenderElement::willBeDestroyed):
+        (WebCore::RenderElement::removeFromRenderFlowThread):
+        (WebCore::RenderElement::renderNamedFlowThreadWrapper): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::nextRendererForElement): Deleted.
+        (WebCore::RenderNamedFlowThread::addFlowChild): Deleted.
+        (WebCore::RenderNamedFlowThread::removeFlowChild): Deleted.
+        * rendering/RenderNamedFlowThread.h:
+        * style/RenderTreePosition.cpp:
+        (WebCore::RenderTreePosition::previousSiblingRenderer):
+        (WebCore::RenderTreePosition::flowThreadInsertionContext):
+        * style/RenderTreePosition.h:
+        (WebCore::RenderTreePosition::RenderTreePosition):
+        (WebCore::RenderTreePosition::parent):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::registerElementForFlowThreadIfNeeded): We need to registed the element even when it does not create renderer (display: none).
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::moveToFlowThreadIfNeeded): Deleted.
+
 2016-11-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Direct2D] Incomplete image decoding.

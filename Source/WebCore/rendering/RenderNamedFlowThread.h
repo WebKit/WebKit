@@ -53,15 +53,6 @@ public:
 
     const RenderRegionList& invalidRenderRegionList() const { return m_invalidRegionList; }
 
-    RenderElement* nextRendererForElement(Element&) const;
-
-    void addFlowChild(RenderElement&);
-    void removeFlowChild(RenderElement&);
-    bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
-#ifndef NDEBUG
-    bool hasChild(RenderElement& child) const { return m_flowThreadChildList.contains(&child); }
-#endif
-
     static RenderBlock* fragmentFromRenderBoxAsRenderBlock(RenderBox*, const IntPoint& absolutePoint, const RenderBox& flowedBox);
 
     void pushDependencies(RenderNamedFlowThreadList&);
@@ -140,9 +131,6 @@ private:
     // That's because they contain a RenderRegion that should display this thread. The set makes it
     // easy to sort the order of threads layout.
     RenderNamedFlowThreadCountedSet m_layoutBeforeThreadsSet;
-
-    // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
-    ListHashSet<RenderElement*> m_flowThreadChildList;
 
     NamedFlowContentElements m_contentElements;
 

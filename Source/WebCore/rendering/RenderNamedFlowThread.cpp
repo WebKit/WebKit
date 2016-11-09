@@ -97,40 +97,6 @@ void RenderNamedFlowThread::updateWritingMode()
     setStyle(WTFMove(newStyle));
 }
 
-RenderElement* RenderNamedFlowThread::nextRendererForElement(Element& element) const
-{
-    for (auto& child : m_flowThreadChildList) {
-        ASSERT(!child->isAnonymous());
-        ASSERT_WITH_MESSAGE(child->element(), "Can only be null for anonymous renderers");
-
-        unsigned short position = element.compareDocumentPosition(*child->element());
-        if (position & Node::DOCUMENT_POSITION_FOLLOWING)
-            return child;
-    }
-
-    return nullptr;
-}
-
-void RenderNamedFlowThread::addFlowChild(RenderElement& newChild)
-{
-    // The child list is used to sort the flow thread's children render objects 
-    // based on their corresponding nodes DOM order. The list is needed to avoid searching the whole DOM.
-
-    if (newChild.isAnonymous())
-        return;
-
-    auto* beforeChild = nextRendererForElement(*newChild.element());
-    if (beforeChild)
-        m_flowThreadChildList.insertBefore(beforeChild, &newChild);
-    else
-        m_flowThreadChildList.add(&newChild);
-}
-
-void RenderNamedFlowThread::removeFlowChild(RenderElement& child)
-{
-    m_flowThreadChildList.remove(&child);
-}
-
 bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const
 {
     if (m_layoutBeforeThreadsSet.contains(otherRenderFlowThread))

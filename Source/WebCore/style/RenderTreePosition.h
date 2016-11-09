@@ -27,6 +27,7 @@
 #define RenderTreePosition_h
 
 #include "RenderElement.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderText.h"
 #include "RenderView.h"
 
@@ -45,15 +46,11 @@ public:
     {
     }
     
-    RenderTreePosition(RenderElement& parent, RenderObject* nextSibling)
-        : m_parent(parent)
-        , m_nextSibling(nextSibling)
-        , m_hasValidNextSibling(true)
-    {
-    }
+#if ENABLE(CSS_REGIONS)
+    static RenderTreePosition insertionPositionForFlowThread(Element* insertionParent, Element& child, const RenderStyle&);
+#endif
 
     RenderElement& parent() const { return m_parent; }
-
     void insert(RenderObject&);
     bool canInsert(RenderElement&) const;
     bool canInsert(RenderText&) const;
@@ -67,6 +64,15 @@ public:
     static bool isRendererReparented(const RenderObject&);
 
 private:
+#if ENABLE(CSS_REGIONS)
+    RenderTreePosition(RenderFlowThread& parent, RenderObject* nextSibling)
+        : m_parent(parent)
+        , m_nextSibling(nextSibling)
+        , m_hasValidNextSibling(true)
+    {
+    }
+#endif
+
     RenderElement& m_parent;
     RenderObject* m_nextSibling { nullptr };
     bool m_hasValidNextSibling { false };

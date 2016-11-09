@@ -306,37 +306,38 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
 }
 
 #if ENABLE(CSS_REGIONS)
-static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const RenderStyle& style)
+static void registerElementForFlowThreadIfNeeded(Element& element, const RenderStyle& style)
 {
     if (!element.shouldMoveToFlowThread(style))
-        return nullptr;
-
+        return;
     FlowThreadController& flowThreadController = element.document().renderView()->flowThreadController();
-    RenderNamedFlowThread& parentFlowRenderer = flowThreadController.ensureRenderFlowThreadWithName(style.flowThread());
-    flowThreadController.registerNamedFlowContentElement(element, parentFlowRenderer);
-    return &parentFlowRenderer;
+    flowThreadController.registerNamedFlowContentElement(element, flowThreadController.ensureRenderFlowThreadWithName(style.flowThread()));
 }
 #endif
 
 void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 {
+    auto computeInsertionPosition = [this, &element, &style] () {
+#if ENABLE(CSS_REGIONS)
+        if (element.shouldMoveToFlowThread(style))
+            return RenderTreePosition::insertionPositionForFlowThread(renderTreePosition().parent().element(), element, style);
+#endif
+        renderTreePosition().computeNextSibling(element);
+        return renderTreePosition();
+    };
+    
     if (!shouldCreateRenderer(element, renderTreePosition().parent()))
         return;
 
-    RenderNamedFlowThread* parentFlowRenderer = nullptr;
 #if ENABLE(CSS_REGIONS)
-    parentFlowRenderer = moveToFlowThreadIfNeeded(element, style);
+    // Even display: none elements need to be registered in FlowThreadController.
+    registerElementForFlowThreadIfNeeded(element, style);
 #endif
 
     if (!element.rendererIsNeeded(style))
         return;
 
-    renderTreePosition().computeNextSibling(element);
-
-    RenderTreePosition insertionPosition = parentFlowRenderer
-        ? RenderTreePosition(*parentFlowRenderer, parentFlowRenderer->nextRendererForElement(element))
-        : renderTreePosition();
-
+    RenderTreePosition insertionPosition = computeInsertionPosition();
     RenderElement* newRenderer = element.createElementRenderer(WTFMove(style), insertionPosition).leakPtr();
     if (!newRenderer)
         return;
