@@ -1,3 +1,13 @@
+2016-11-09  Jonathan Bedard  <jbedard@apple.com>
+
+        Make rpaths more robust for iOS Simulators
+        https://bugs.webkit.org/show_bug.cgi?id=164521
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._createSimulatorApp): Added more robust path.
+
 2016-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix Tools build on case sensitive file systems
