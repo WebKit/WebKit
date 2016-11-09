@@ -707,10 +707,9 @@ class SVNTest(SCMTest):
         actual_patch_contents = scm.create_patch()
         expected_patch_contents = """Index: test_dir2/test_file2
 ===================================================================
---- test_dir2/test_file2\t(revision 0)
+--- test_dir2/test_file2\t(nonexistent)
 +++ test_dir2/test_file2\t(working copy)
-@@ -0,0 +1 @@
-+test content
+@@ -0,0 +1 @@\n+test content
 \\ No newline at end of file
 """
         self.assertEqual(expected_patch_contents, actual_patch_contents)
