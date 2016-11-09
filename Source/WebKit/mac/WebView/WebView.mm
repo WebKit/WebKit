@@ -686,6 +686,7 @@ enum class WebListType {
 
 @interface WebTextListTouchBarViewController : NSViewController {
 @private
+    WebListType _currentListType;
     WebView *_webView;
 }
 
@@ -696,8 +697,6 @@ enum class WebListType {
 @end
 
 @implementation WebTextListTouchBarViewController
-
-@synthesize currentListType=_currentListType;
 
 static const CGFloat listControlSegmentWidth = 67.0;
 
