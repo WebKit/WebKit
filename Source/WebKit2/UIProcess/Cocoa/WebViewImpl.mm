@@ -449,6 +449,7 @@ using namespace WebKit;
 @interface WKTextListTouchBarViewController : NSViewController {
 @private
     WebViewImpl* _webViewImpl;
+    ListType _currentListType;
 }
 
 @property (nonatomic) ListType currentListType;
