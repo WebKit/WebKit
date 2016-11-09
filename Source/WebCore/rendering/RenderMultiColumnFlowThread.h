@@ -114,7 +114,7 @@ private:
     void willBeRemovedFromTree() override;
     RenderObject* resolveMovedChild(RenderObject* child) const override;
     void flowThreadDescendantInserted(RenderObject&) override;
-    void flowThreadRelativeWillBeRemoved(RenderObject*) override;
+    void flowThreadRelativeWillBeRemoved(RenderObject&) override;
     void flowThreadDescendantBoxLaidOut(RenderBox*) override;
     void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     LayoutUnit initialLogicalWidth() const override;
@@ -125,7 +125,7 @@ private:
     bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     bool isPageLogicalHeightKnown() const override;
 
-    void handleSpannerRemoval(RenderObject* spanner);
+    void handleSpannerRemoval(RenderObject& spanner);
     RenderObject* processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject& descendant);
     
 private:

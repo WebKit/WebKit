@@ -421,16 +421,16 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject& new
     }
 }
 
-void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject* spanner)
+void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject& spanner)
 {
      // The placeholder may already have been removed, but if it hasn't, do so now.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(downcast<RenderBox>(spanner))) {
+    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(&downcast<RenderBox>(spanner))) {
         placeholder->parent()->removeChild(*placeholder);
-        m_spannerMap.remove(downcast<RenderBox>(spanner));
+        m_spannerMap.remove(&downcast<RenderBox>(spanner));
     }
 
-    if (RenderObject* next = spanner->nextSibling()) {
-        if (RenderObject* previous = spanner->previousSibling()) {
+    if (RenderObject* next = spanner.nextSibling()) {
+        if (RenderObject* previous = spanner.previousSibling()) {
             if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
                 // Merge two sets that no longer will be separated by a spanner.
                 next->destroy();
@@ -440,21 +440,21 @@ void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject* spanner)
     }
 }
 
-void RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved(RenderObject* relative)
+void RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved(RenderObject& relative)
 {
     if (m_beingEvacuated)
         return;
     invalidateRegions();
-    if (is<RenderMultiColumnSpannerPlaceholder>(*relative)) {
+    if (is<RenderMultiColumnSpannerPlaceholder>(relative)) {
         // Remove the map entry for this spanner, but leave the actual spanner renderer alone. Also
         // keep the reference to the spanner, since the placeholder may be about to be re-inserted
         // in the tree.
-        ASSERT(relative->isDescendantOf(this));
-        m_spannerMap.remove(downcast<RenderMultiColumnSpannerPlaceholder>(*relative).spanner());
+        ASSERT(relative.isDescendantOf(this));
+        m_spannerMap.remove(downcast<RenderMultiColumnSpannerPlaceholder>(relative).spanner());
         return;
     }
-    if (relative->style().columnSpan() == ColumnSpanAll) {
-        if (relative->parent() != parent())
+    if (relative.style().columnSpan() == ColumnSpanAll) {
+        if (relative.parent() != parent())
             return; // not a valid spanner.
         
         handleSpannerRemoval(relative);

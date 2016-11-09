@@ -94,7 +94,7 @@ public:
     // Called when a descendant of the flow thread has been inserted.
     virtual void flowThreadDescendantInserted(RenderObject&) { }
     // Called when a sibling or descendant of the flow thread is about to be removed.
-    virtual void flowThreadRelativeWillBeRemoved(RenderObject*) { }
+    virtual void flowThreadRelativeWillBeRemoved(RenderObject&) { }
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void flowThreadDescendantBoxLaidOut(RenderBox*) { }
 

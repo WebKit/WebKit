@@ -3883,7 +3883,7 @@ void RenderBlockFlow::removeChild(RenderObject& oldChild)
     if (!documentBeingDestroyed()) {
         RenderFlowThread* flowThread = multiColumnFlowThread();
         if (flowThread && flowThread != &oldChild)
-            flowThread->flowThreadRelativeWillBeRemoved(&oldChild);
+            flowThread->flowThreadRelativeWillBeRemoved(oldChild);
     }
     RenderBlock::removeChild(oldChild);
 }

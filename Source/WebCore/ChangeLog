@@ -1,3 +1,20 @@
+2016-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        RenderFlowThread::flowThreadRelativeWillBeRemoved should take RenderObject& instead of RenderObject*
+        https://bugs.webkit.org/show_bug.cgi?id=164543
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::removeChild):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::handleSpannerRemoval):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        * rendering/RenderMultiColumnFlowThread.h:
+
 2016-11-09  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r208149): Media scrubber is not displayed in media controls
