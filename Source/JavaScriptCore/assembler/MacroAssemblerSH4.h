@@ -1605,9 +1605,9 @@ public:
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         RegisterID addressTempRegister = claimScratch();
-        load8(address, addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
         Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
@@ -1615,9 +1615,9 @@ public:
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         RegisterID addressTempRegister = claimScratch();
-        load8(address, addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
         Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
@@ -1625,10 +1625,10 @@ public:
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         RegisterID addressTempRegister = claimScratch();
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        load8(Address(addressTempRegister), addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
         Jump jmp = branchTest32(cond, addressTempRegister, mask8);
         releaseScratch(addressTempRegister);
         return jmp;
@@ -1646,9 +1646,9 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         RegisterID addressTempRegister = claimScratch();
-        load8(left, addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
         Jump jmp = branch32(cond, addressTempRegister, right8);
         releaseScratch(addressTempRegister);
         return jmp;
@@ -1656,9 +1656,9 @@ public:
 
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         RegisterID addressTempRegister = claimScratch();
-        load8(left, addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
         Jump jmp = branch32(cond, addressTempRegister, right8);
         releaseScratch(addressTempRegister);
         return jmp;
@@ -1666,9 +1666,9 @@ public:
 
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         RegisterID addressTempRegister = claimScratch();
-        load8(left, addressTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
         compare32(cond, addressTempRegister, right8, dest);
         releaseScratch(addressTempRegister);
     }
@@ -1841,10 +1841,10 @@ public:
     {
         ASSERT((cond == Zero) || (cond == NonZero));
 
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
 
-        load8(address, dest);
-        if (mask8.m_value == -1)
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dest);
+        if ((mask8.m_value & 0xff) == 0xff)
             compare32(0, dest, static_cast<RelationalCondition>(cond));
         else
             testlImm(mask8.m_value, dest);
@@ -1965,12 +1965,12 @@ public:
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
         RegisterID lefttmp = claimScratch();
 
         loadEffectiveAddress(left, lefttmp);
 
-        load8(lefttmp, lefttmp);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, lefttmp, lefttmp);
         RegisterID righttmp = claimScratch();
         m_assembler.loadConstant(right8.m_value, righttmp);
 

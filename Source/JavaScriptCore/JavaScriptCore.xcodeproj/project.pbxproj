@@ -2197,6 +2197,7 @@
 		E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D264281D38C042000BE174 /* BytecodeGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328DAEA1D38D005001A2529 /* BytecodeRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D264291D38C042000BE174 /* BytecodeRewriter.cpp */; };
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32FF1EA1DA7571C00A8BF21 /* DOMJITSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CB1E241DA7540A00FA1E56 /* DOMJITSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4665,6 +4666,7 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITPatchpointParams.h; sourceTree = "<group>"; };
 		E37AD83B1DA4928000F3D412 /* DOMJITReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITReg.h; sourceTree = "<group>"; };
+		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39D9D841D39000600667282 /* InterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterpreterInlines.h; sourceTree = "<group>"; };
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
@@ -7064,6 +7066,7 @@
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				0F6DB7EB1D617D0F00CDBF8E /* MacroAssemblerCodeRef.cpp */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
+				E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */,
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
 				FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */,
 				FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */,
@@ -8048,6 +8051,7 @@
 				0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
+				E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
 				0F2B9CEB19D0BA7D00B1D1B5 /* DFGPhiChildren.h in Headers */,
 				A78A977B179738B8009DF744 /* DFGPlan.h in Headers */,

@@ -1,3 +1,75 @@
+2016-11-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] The implementation of 8 bit operation in MacroAssembler should care about uint8_t / int8_t
+        https://bugs.webkit.org/show_bug.cgi?id=164432
+
+        Reviewed by Michael Saboff.
+
+        Except for X86, our supported MacroAssemblers do not have native 8bit instructions.
+        It means that all the 8bit instructions are converted to 32bit operations by using
+        scratch registers. For example, ARM64 branch8 implementation is the following.
+
+            Jump branch8(RelationCondition cord, Address left, TrustedImm32 right)
+            {
+                TrustedImm32 right8(static_cast<int8_t>(right.m_value));
+                load8(left, getCachedMemoryTempRegisterIDAndInvalidate());
+                return branch32(cone, memoryTempRegister, right8);
+            }
+
+        The problem is that we exclusively use zero-extended load instruction (load8). Even
+        for signed RelationConditions, we do not perform sign extension. It makes signed
+        operations with negative numbers incorrect! Consider the |left| address holds `-1`
+        in int8_t form. However load8 will load it as 255 into 32bit register. On the other hand,
+        |right| will be sign extended. If you pass 0 as |right| and LessThan condition, this
+        branch8 should jump based on the answer of `-1 < 0`. But the current MacroAssembler
+        performs `255 < 0` in int32_t context and returns the incorrect result.
+
+        We should follow the x86 model. So we should select the appropriate load operation and masking
+        operation based on the RelationCondition. This patch introduces mask8OnCondition and load8OnCondition.
+        And we use them in 8bit operations including branch8, branchTest8, compare8, and test8.
+
+        We intentionally do not change anything on x86 assembler since it has the native signed 8bit operations.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::isSigned):
+        (JSC::MacroAssembler::isUnsigned):
+        (JSC::MacroAssembler::branchTest8):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branchTest8):
+        (JSC::MacroAssemblerARM::compare8):
+        (JSC::MacroAssemblerARM::test8):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::branch8):
+        (JSC::MacroAssemblerARM64::branchTest8):
+        (JSC::MacroAssemblerARM64::compare8):
+        (JSC::MacroAssemblerARM64::test8):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::compare8):
+        (JSC::MacroAssemblerARMv7::test8):
+        * assembler/MacroAssemblerHelpers.h: Added.
+        (JSC::MacroAssemblerHelpers::isSigned):
+        (JSC::MacroAssemblerHelpers::isUnsigned):
+        (JSC::MacroAssemblerHelpers::mask8OnCondition):
+        (JSC::MacroAssemblerHelpers::load8OnCondition):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::compare8):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::test8):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchTest8):
+        (JSC::MacroAssemblerSH4::branch8):
+        (JSC::MacroAssemblerSH4::compare8):
+        (JSC::MacroAssemblerSH4::test8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branch8):
+
 2016-11-08  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: date-format-tofte.js is super slow

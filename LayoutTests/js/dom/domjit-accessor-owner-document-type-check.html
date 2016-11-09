@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test DOMJIT ownerDocument accessor works on ARM environments.');
+
+function runTest()
+{
+    function ownerDocument(doc)
+    {
+        // If DOMJIT is enabled, it will perform Document type check, and it uses branch8 with a number that has MSB.
+        return doc.ownerDocument;
+    }
+    noInline(ownerDocument);
+
+    for (var i = 0; i < 1e4; ++i) {
+        if (null !== ownerDocument(document))
+            throw new Error('Error');
+    }
+    testPassed("done");
+}
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

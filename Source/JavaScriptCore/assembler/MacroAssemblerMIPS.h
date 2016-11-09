@@ -1445,32 +1445,32 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
-        load8(left, dataTempRegister);
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, dataTempRegister);
         move(right8, immTempRegister);
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
-        load8(left, dataTempRegister);
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, dataTempRegister);
         move(right8, immTempRegister);
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
-        load8(left, dataTempRegister);
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, dataTempRegister);
         move(right8, immTempRegister);
         compare32(cond, dataTempRegister, immTempRegister, dest);
     }
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
-        load8(left, dataTempRegister);
+        TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, dataTempRegister);
         // Be careful that the previous load8() uses immTempRegister.
         // So, we need to put move() after load8().
         move(right8, immTempRegister);
@@ -1628,23 +1628,23 @@ public:
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
-        load8(address, dataTempRegister);
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
-        load8(address, dataTempRegister);
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         move(TrustedImmPtr(address.m_ptr), dataTempRegister);
-        load8(Address(dataTempRegister), dataTempRegister);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, Address(dataTempRegister), dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask8);
     }
 
@@ -2218,9 +2218,9 @@ public:
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
-        load8(address, dataTempRegister);
-        if (mask8.m_value == -1 && !m_fixedWidth) {
+        TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
+        if ((mask8.m_value & 0xff) == 0xff && !m_fixedWidth) {
             if (cond == Zero)
                 m_assembler.sltiu(dest, dataTempRegister, 1);
             else

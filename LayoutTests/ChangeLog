@@ -1,3 +1,15 @@
+2016-11-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] The implementation of 8 bit operation in MacroAssembler should care about uint8_t / int8_t
+        https://bugs.webkit.org/show_bug.cgi?id=164432
+
+        Reviewed by Michael Saboff.
+
+        Use ownerDocument. Once DOMJIT for ownerDocument is landed, this will use branch8.
+
+        * js/dom/domjit-accessor-owner-document-type-check-expected.txt: Added.
+        * js/dom/domjit-accessor-owner-document-type-check.html: Added.
+
 2016-11-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: macOS fullscreen controls

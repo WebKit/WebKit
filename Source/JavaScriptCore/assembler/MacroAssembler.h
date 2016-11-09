@@ -65,6 +65,8 @@ typedef MacroAssemblerSH4 MacroAssemblerBase;
 #error "The MacroAssembler is not supported on this platform."
 #endif
 
+#include "MacroAssemblerHelpers.h"
+
 namespace JSC {
 
 class MacroAssembler : public MacroAssemblerBase {
@@ -140,7 +142,6 @@ public:
     static const double twoToThe32; // This is super useful for some double code.
 
     // Utilities used by the DFG JIT.
-#if ENABLE(DFG_JIT)
     using MacroAssemblerBase::invert;
     
     static DoubleCondition invert(DoubleCondition cond)
@@ -233,44 +234,25 @@ public:
         return Equal;
     }
 
-    // True if this:
-    //     branch8(cond, value, value)
-    // Is the same as this:
-    //     branch32(cond, signExt8(value), signExt8(value))
     static bool isSigned(RelationalCondition cond)
     {
-        switch (cond) {
-        case Equal:
-        case NotEqual:
-        case GreaterThan:
-        case GreaterThanOrEqual:
-        case LessThan:
-        case LessThanOrEqual:
-            return true;
-        default:
-            return false;
-        }
+        return MacroAssemblerHelpers::isSigned<MacroAssembler>(cond);
     }
 
-    // True if this:
-    //     branch8(cond, value, value)
-    // Is the same as this:
-    //     branch32(cond, zeroExt8(value), zeroExt8(value))
     static bool isUnsigned(RelationalCondition cond)
     {
-        switch (cond) {
-        case Equal:
-        case NotEqual:
-        case Above:
-        case AboveOrEqual:
-        case Below:
-        case BelowOrEqual:
-            return true;
-        default:
-            return false;
-        }
+        return MacroAssemblerHelpers::isUnsigned<MacroAssembler>(cond);
     }
-#endif
+
+    static bool isSigned(ResultCondition cond)
+    {
+        return MacroAssemblerHelpers::isSigned<MacroAssembler>(cond);
+    }
+
+    static bool isUnsigned(ResultCondition cond)
+    {
+        return MacroAssemblerHelpers::isUnsigned<MacroAssembler>(cond);
+    }
 
     // Platform agnostic convenience functions,
     // described in terms of other macro assembly methods.
@@ -797,8 +779,7 @@ public:
     using MacroAssemblerBase::branchTest8;
     Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
-        return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask8);
+        return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
 
 #else // !CPU(X86_64)

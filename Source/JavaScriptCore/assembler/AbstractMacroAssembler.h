@@ -31,6 +31,7 @@
 #include "CPU.h"
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
+#include "MacroAssemblerHelpers.h"
 #include "Options.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>

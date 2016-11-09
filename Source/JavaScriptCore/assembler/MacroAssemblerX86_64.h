@@ -1220,9 +1220,8 @@ public:
     using MacroAssemblerX86Common::branch8;
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
-        TrustedImm32 right8(static_cast<int8_t>(right.m_value));
         MacroAssemblerX86Common::move(TrustedImmPtr(left.m_ptr), scratchRegister());
-        return MacroAssemblerX86Common::branch8(cond, Address(scratchRegister()), right8);
+        return MacroAssemblerX86Common::branch8(cond, Address(scratchRegister()), right);
     }
     
     using MacroAssemblerX86Common::branchTest8;
