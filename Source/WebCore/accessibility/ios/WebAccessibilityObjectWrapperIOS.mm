@@ -2175,11 +2175,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (!range)
         return NSMakeRange(NSNotFound, 0);
-    
+
     Document* document = m_object->document();
     Element* selectionRoot = document->frame()->selection().selection().rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : document->documentElement();
-    
+
     // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
     // that is not inside the current editable region.  These checks ensure we don't produce
     // potentially invalid data when responding to such requests.
@@ -2187,13 +2187,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return NSMakeRange(NSNotFound, 0);
     if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
         return NSMakeRange(NSNotFound, 0);
-    
+
     RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
     ASSERT(&testRange->startContainer() == scope);
     int startPosition = TextIterator::rangeLength(testRange.get());
-    
-    ExceptionCode ec;
-    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    testRange->setEnd(range->endContainer(), range->endOffset());
     ASSERT(&testRange->startContainer() == scope);
     int endPosition = TextIterator::rangeLength(testRange.get());
     return NSMakeRange(startPosition, endPosition - startPosition);

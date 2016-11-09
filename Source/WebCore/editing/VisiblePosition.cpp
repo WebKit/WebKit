@@ -740,9 +740,7 @@ bool setStart(Range* range, const VisiblePosition& visiblePosition)
     if (!p.containerNode())
         return false;
 
-    int ec = 0;
-    range->setStart(*p.containerNode(), p.offsetInContainerNode(), ec);
-    return !ec;
+    return !range->setStart(*p.containerNode(), p.offsetInContainerNode()).hasException();
 }
 
 bool setEnd(Range* range, const VisiblePosition& visiblePosition)
@@ -754,9 +752,7 @@ bool setEnd(Range* range, const VisiblePosition& visiblePosition)
     if (!p.containerNode())
         return false;
 
-    int ec = 0;
-    range->setEnd(*p.containerNode(), p.offsetInContainerNode(), ec);
-    return !ec;
+    return !range->setEnd(*p.containerNode(), p.offsetInContainerNode()).hasException();
 }
 
 // FIXME: Maybe this should be deprecated too, like the underlying function?

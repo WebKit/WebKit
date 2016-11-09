@@ -344,9 +344,7 @@ String WebFrame::contentsAsString() const
 
     RefPtr<Range> range = document->createRange();
 
-    ExceptionCode ec = 0;
-    range->selectNode(*documentElement, ec);
-    if (ec)
+    if (range->selectNode(*documentElement).hasException())
         return String();
 
     return plainText(range.get());

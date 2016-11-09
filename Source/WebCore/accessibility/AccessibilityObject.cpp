@@ -695,7 +695,7 @@ RefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Range*
                 Node* closestContainerNode = closestStringPosition.containerNode();
                 Node* searchContainerNode = searchStringPosition.containerNode();
                 
-                short result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset, ASSERT_NO_EXCEPTION);
+                short result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset).releaseReturnValue();
                 if ((!isBackwardSearch && result > 0) || (isBackwardSearch && result < 0))
                     closestStringRange = searchStringRange;
             }

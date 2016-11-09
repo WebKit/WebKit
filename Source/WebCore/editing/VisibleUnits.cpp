@@ -467,10 +467,10 @@ static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character
         buffer[oldSize + i] = character;
 }
 
-unsigned suffixLengthForRange(RefPtr<Range> forwardsScanRange, Vector<UChar, 1024>& string)
+unsigned suffixLengthForRange(const Range& forwardsScanRange, Vector<UChar, 1024>& string)
 {
     unsigned suffixLength = 0;
-    TextIterator forwardsIterator(forwardsScanRange.get());
+    TextIterator forwardsIterator(&forwardsScanRange);
     while (!forwardsIterator.atEnd()) {
         StringView text = forwardsIterator.text();
         unsigned i = endOfFirstWordBoundaryContext(text);
@@ -483,10 +483,10 @@ unsigned suffixLengthForRange(RefPtr<Range> forwardsScanRange, Vector<UChar, 102
     return suffixLength;
 }
 
-unsigned prefixLengthForRange(RefPtr<Range> backwardsScanRange, Vector<UChar, 1024>& string)
+unsigned prefixLengthForRange(const Range& backwardsScanRange, Vector<UChar, 1024>& string)
 {
     unsigned prefixLength = 0;
-    SimplifiedBackwardsTextIterator backwardsIterator(*backwardsScanRange);
+    SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange);
     while (!backwardsIterator.atEnd()) {
         StringView text = backwardsIterator.text();
         int i = startOfLastWordBoundaryContext(text);
@@ -579,20 +579,23 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     Vector<UChar, 1024> string;
     unsigned suffixLength = 0;
 
-    ExceptionCode ec = 0;
     if (requiresContextForWordBoundary(c.characterBefore())) {
-        RefPtr<Range> forwardsScanRange(boundaryDocument.createRange());
-        forwardsScanRange->setEndAfter(*boundary, ec);
-        forwardsScanRange->setStart(*end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
+        auto forwardsScanRange = boundaryDocument.createRange();
+        auto result = forwardsScanRange->setEndAfter(*boundary);
+        if (result.hasException())
+            return { };
+        result = forwardsScanRange->setStart(*end.deprecatedNode(), end.deprecatedEditingOffset());
+        if (result.hasException())
+            return { };
         suffixLength = suffixLengthForRange(forwardsScanRange, string);
     }
 
-    searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
-    searchRange->setEnd(*end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
-
-    ASSERT(!ec);
-    if (ec)
-        return VisiblePosition();
+    auto result = searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset());
+    if (result.hasException())
+        return { };
+    result = searchRange->setEnd(*end.deprecatedNode(), end.deprecatedEditingOffset());
+    if (result.hasException())
+        return { };
 
     SimplifiedBackwardsTextIterator it(searchRange);
     unsigned next = backwardSearchForBoundaryWithTextIterator(it, string, suffixLength, searchFunction);
@@ -628,15 +631,15 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     unsigned prefixLength = 0;
 
     if (requiresContextForWordBoundary(c.characterAfter())) {
-        RefPtr<Range> backwardsScanRange(boundaryDocument.createRange());
+        auto backwardsScanRange = boundaryDocument.createRange();
         if (start.deprecatedNode())
-            backwardsScanRange->setEnd(*start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
+            backwardsScanRange->setEnd(*start.deprecatedNode(), start.deprecatedEditingOffset());
         prefixLength = prefixLengthForRange(backwardsScanRange, string);
     }
 
-    searchRange->selectNodeContents(*boundary, IGNORE_EXCEPTION);
+    searchRange->selectNodeContents(*boundary);
     if (start.deprecatedNode())
-        searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
+        searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset());
     TextIterator it(searchRange.ptr(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     

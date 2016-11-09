@@ -102,7 +102,10 @@ int comparePositions(const Position& a, const Position& b)
             bias = 1;
     }
 
-    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB, IGNORE_EXCEPTION);
+    auto comparisonResult = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+    if (comparisonResult.hasException())
+        return bias;
+    auto result = comparisonResult.releaseReturnValue();
     return result ? result : bias;
 }
 
@@ -1125,7 +1128,7 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
         return { firstPositionInOrBeforeNode(&node), DOWNSTREAM };
 
     RefPtr<Range> range = Range::create(node.document());
-    range->selectNodeContents(node, IGNORE_EXCEPTION);
+    range->selectNodeContents(node);
     CharacterIterator it(*range);
     it.advance(index - 1);
     return { it.atEnd() ? range->endPosition() : it.range()->endPosition(), UPSTREAM };
@@ -1142,8 +1145,9 @@ static bool isVisiblyAdjacent(const Position& first, const Position& second)
 // Call this function to determine whether a node is visibly fit inside selectedRange
 bool isNodeVisiblyContainedWithin(Node& node, const Range& range)
 {
-    // If the node is inside the range, then it surely is contained within
-    if (range.compareNode(node, IGNORE_EXCEPTION) == Range::NODE_INSIDE)
+    // If the node is inside the range, then it surely is contained within.
+    auto comparisonResult = range.compareNode(node);
+    if (!comparisonResult.hasException() && comparisonResult.releaseReturnValue() == Range::NODE_INSIDE)
         return true;
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == range.startPosition();

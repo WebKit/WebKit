@@ -846,42 +846,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return kit(_private->coreFrame->editor().mark().toNormalizedRange().get());
 }
 
-// Given proposedRange, returns an extended range that includes adjacent whitespace that should
-// be deleted along with the proposed range in order to preserve proper spacing and punctuation of
-// the text surrounding the deletion.
-- (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
-{
-    Node* startContainer = core([proposedRange startContainer]);
-    Node* endContainer = core([proposedRange endContainer]);
-    if (startContainer == nil || endContainer == nil)
-        return nil;
-
-    ASSERT(&startContainer->document() == &endContainer->document());
-    
-    _private->coreFrame->document()->updateLayoutIgnorePendingStylesheets();
-
-    Position start = Position(startContainer, [proposedRange startOffset], Position::PositionIsOffsetInAnchor);
-    Position end = Position(endContainer, [proposedRange endOffset], Position::PositionIsOffsetInAnchor);
-    Position newStart = start.upstream().leadingWhitespacePosition(DOWNSTREAM, true);
-    if (newStart.isNull())
-        newStart = start;
-    Position newEnd = end.downstream().trailingWhitespacePosition(DOWNSTREAM, true);
-    if (newEnd.isNull())
-        newEnd = end;
-
-    newStart = newStart.parentAnchoredEquivalent();
-    newEnd = newEnd.parentAnchoredEquivalent();
-
-    Ref<Range> range = _private->coreFrame->document()->createRange();
-    if (newStart.containerNode()) {
-        int exception = 0;
-        range->setStart(*newStart.containerNode(), newStart.offsetInContainerNode(), exception);
-        range->setEnd(*newStart.containerNode(), newStart.offsetInContainerNode(), exception);
-    }
-    return kit(range.ptr());
-}
-
-- (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
+- (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
     Frame* frame = _private->coreFrame;
     if (!frame)

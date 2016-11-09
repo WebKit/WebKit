@@ -613,7 +613,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
         accumulator.appendString(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().deprecatedNode();
 
-        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0, ASSERT_NO_EXCEPTION) >= 0)
+        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0).releaseReturnValue() >= 0)
             return interchangeNewlineString;
     }
 

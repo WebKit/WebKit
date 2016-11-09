@@ -1,3 +1,168 @@
+2016-11-09  Darin Adler  <darin@apple.com>
+
+        Move Range from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164457
+
+        Reviewed by Alex Christensen.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rangeForNodeContents): Update to use ExceptionOr,
+        keeping behavior the same.
+        (WebCore::characterOffsetsInOrder): Ditto.
+        (WebCore::setRangeStartOrEndWithCharacterOffset): Changed argument to a
+        reference instead of a pointer. Use a boolean return value to indicate
+        success rather than an exception, since the callers don't need to know
+        which exception it is.
+        (WebCore::AXObjectCache::rangeForUnorderedCharacterOffsets): Updated for
+        the above.
+        (WebCore::AXObjectCache::nextBoundary): Ditto.
+        (WebCore::AXObjectCache::previousBoundary): Ditto.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection):
+        Update to use ExceptionOr, keeping behavior the same.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange): Ditto.
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (selectionBelongsToObject): Ditto.
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::textRects): Ditto.
+
+        * dom/Range.cpp:
+        (WebCore::Range::~Range): Remove old comment that no longer makes sense now
+        that the detach function no longer does anything.
+        (WebCore::checkForDifferentRootContainer): Updated to use ExceptionOr,
+        keeping behavior the same.
+        (WebCore::Range::setStart): Ditto.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::isPointInRange): Ditto.
+        (WebCore::Range::comparePoint): Ditto.
+        (WebCore::Range::compareNode): Ditto.
+        (WebCore::top): Added helper function so that compareBoundaryPoints doesn't
+        need to have two identical loops in it.
+        (WebCore::Range::compareBoundaryPoints): Updated to use ExceptionOr,
+        keeping behavior the same.
+        (WebCore::Range::compareBoundaryPointsForBindings): Ditto. Also use a switch
+        instead of relying on the order of the values to check for unsupported values.
+        (WebCore::Range::boundaryPointsValid): Ditto.
+        (WebCore::Range::deleteContents): Ditto.
+        (WebCore::Range::intersectsNode): Ditto.
+        (WebCore::Range::processContents): Ditto.
+        (WebCore::deleteCharacterData): Ditto.
+        (WebCore::processContentsBetweenOffsets): Ditto. Also changed to be a
+        non-member function and private to this file instead of in the class.
+        (WebCore::processNodes): Ditto. Also changed one argument to be a RefPtr
+        since the code relies on using it after mutating the DOM.
+        (WebCore::processAncestorsAndTheirSiblings): Ditto. Changed one argument type
+        to use ExceptionOr so the caller doesn't have to check the exception first.
+        (WebCore::Range::extractContents): Ditto.
+        (WebCore::Range::cloneContents): Ditto.
+        (WebCore::Range::insertNode): Ditto. Also fixed to only call nodeType once
+        instead of three times.
+        (WebCore::Range::toString): Ditto. Also fixed to call nodeType only once
+        per node instead of twice, to use downcast instead of static_cast, and to
+        use the word "node" instead of "n" for the local variable name.
+        (WebCore::Range::createContextualFragment): Ditto.
+        (WebCore::Range::checkNodeWOffset): Ditto.
+        (WebCore::Range::setStartAfter): Ditto.
+        (WebCore::Range::setEndBefore): Ditto.
+        (WebCore::Range::setEndAfter): Ditto.
+        (WebCore::Range::selectNode): Ditto.
+        (WebCore::Range::selectNodeContents): Ditto.
+        (WebCore::Range::surroundContents): Ditto.
+        (WebCore::Range::setStartBefore): Ditto.
+        (WebCore::Range::contains): Ditto. Except added code to handle exception
+        case to return false without asserting because I saw at least one crash
+        that seemed to imply this behavior was needed.
+        (WebCore::rangesOverlap): Ditto.
+        (WebCore::rangeOfContents): Ditto.
+        (WebCore::Range::expand): Ditto.
+        (WebCore::Range::getClientRects): Ditto.
+        (WebCore::Range::getBoundingClientRect): Ditto.
+        (WebCore::Range::borderAndTextQuads): Changed to use return value
+        instead of out argument, since it's a private function used only
+        within this class so it was easy to update all call sites.
+        (WebCore::Range::boundingRect): Updated for above. Also renamed since
+        there was no need for the name "internal" in this.
+        (WebCore::Range::absoluteBoundingRect): Ditto.
+        * dom/Range.h: Updated for above.
+        * dom/Range.idl: Use non-legacy exceptions. Also changed the default value
+        of the string argument to the expand function to the empty string rather
+        than "undefined", because the function silently does nothing when passed
+        any unrecognized string, and so this leaves behavior unchanged. I removed
+        the comment saying that the "undefined" default is wrong.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange): Updated
+        to use ExceptionOr but behave the same.
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling): Ditto.
+        (WebCore::Editor::markAndReplaceFor): Ditto.
+        (WebCore::isFrameInRange): Ditto. Also made a few style tweaks.
+        (WebCore::Editor::countMatchesForText): Ditto.
+        * editing/EditorCommand.cpp:
+        (WebCore::unionDOMRanges): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification): Ditto.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Ditto.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::offsetTo): Ditto.
+        * editing/TextCheckingHelper.h: Updated for above and also deleted
+        unneeded private function checkingRange, which just churned the
+        reference count unnecessarily; instead use m_checkingRange directly.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::getLocationAndLengthFromRange): Ditto.
+        * editing/VisiblePosition.cpp:
+        (WebCore::setStart): Ditto.
+        (WebCore::setEnd): Ditto.
+        * editing/VisibleSelection.cpp:
+        (WebCore::makeSearchRange): Ditto.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::suffixLengthForRange): Changed argument from RefPtr to
+        a reference.
+        (WebCore::prefixLengthForRange): Ditto.
+        (WebCore::previousBoundary): Updated for ExceptionOr and the change
+        above.
+        (WebCore::nextBoundary): Ditto.
+        * editing/VisibleUnits.h: Updated for above.
+
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions): Updated to use ExceptionOr but behave
+        the same.
+        (WebCore::visiblePositionForIndexUsingCharacterIterator): Ditto.
+        (WebCore::isNodeVisiblyContainedWithin): Ditto.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Ditto.
+        (WebCore::Editor::setTextAsChildOfElement): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::adjustedSelectionRange): Ditto.
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal): Ditto.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::addRange): Ditto.
+        (WebCore::DOMSelection::deleteFromDocument): Ditto.
+        (WebCore::DOMSelection::containsNode): Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Updated for change to
+        use ExceptionOr in Ragne::compareNode. Also refactored the function
+        to make the logic a little mroe straightforward and nest less of it
+        inside a loop.
+
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges): Updated for ExceptionOr
+        without changing behavior.
+        * page/TextIndicator.cpp:
+        (WebCore::hasNonInlineOrReplacedElements): Ditto.
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges): Ditto.
+
 2016-11-09  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix grid layout parsing

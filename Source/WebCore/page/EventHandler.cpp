@@ -2509,70 +2509,60 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
 {
     Ref<Frame> protectedFrame(m_frame);
-    if (FrameView* view = m_frame.view())
+
+    if (auto* view = m_frame.view())
         view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
     updateMouseEventTargetNode(targetNode, platformMouseEvent, setUnder);
 
-    bool swallowEvent = false;
+    if (m_elementUnderMouse && !m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount))
+        return false;
 
-    if (m_elementUnderMouse)
-        swallowEvent = !(m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount));
+    if (eventType != eventNames().mousedownEvent)
+        return true;
 
-    if (!swallowEvent && eventType == eventNames().mousedownEvent) {
+    // If clicking on a frame scrollbar, do not make any change to which element is focused.
+    auto* view = m_frame.view();
+    if (view && view->scrollbarAtPoint(platformMouseEvent.position()))
+        return true;
 
-        // If clicking on a frame scrollbar, do not mess up with content focus.
-        if (FrameView* view = m_frame.view()) {
-            if (view->scrollbarAtPoint(platformMouseEvent.position()))
+    // The layout needs to be up to date to determine if an element is focusable.
+    m_frame.document()->updateLayoutIgnorePendingStylesheets();
+
+    // Remove focus from the currently focused element when a link or button is clicked.
+    // This is expected by some sites that rely on change event handlers running
+    // from form fields before the button click is processed, behavior that was inherited
+    // from the user interface of Windows, where pushing a button moves focus to the button.
+
+    // Walk up the DOM tree to search for an element to focus.
+    Element* element;
+    for (element = m_elementUnderMouse.get(); element; element = element->parentOrShadowHostElement()) {
+        if (element->isMouseFocusable())
+            break;
+    }
+
+    // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus an
+    // element on mouse down if it's selected and inside a focused element. It will be
+    // focused if the user does a mouseup over it, however, because the mouseup
+    // will set a selection inside it, which will also set the focused element.
+    if (element && m_frame.selection().isRange()) {
+        if (auto range = m_frame.selection().toNormalizedRange()) {
+            auto result = range->compareNode(*element);
+            if (!result.hasException() && result.releaseReturnValue() == Range::NODE_INSIDE && element->isDescendantOf(m_frame.document()->focusedElement()))
                 return true;
-        }
-
-        // The layout needs to be up to date to determine if an element is focusable.
-        m_frame.document()->updateLayoutIgnorePendingStylesheets();
-
-        // Blur current focus node when a link/button is clicked; this
-        // is expected by some sites that rely on onChange handlers running
-        // from form fields before the button click is processed.
-
-        Element* element = m_elementUnderMouse.get();
-
-        // Walk up the DOM tree to search for an element to focus.
-        while (element) {
-            if (element->isMouseFocusable()) {
-                // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a
-                // node on mouse down if it's selected and inside a focused node. It will be
-                // focused if the user does a mouseup over it, however, because the mouseup
-                // will set a selection inside it, which will call setFocuseNodeIfNeeded.
-                if (m_frame.selection().isRange()) {
-                    if (auto range = m_frame.selection().toNormalizedRange()) {
-                        if (range->compareNode(*element, IGNORE_EXCEPTION) == Range::NODE_INSIDE && element->isDescendantOf(m_frame.document()->focusedElement()))
-                            return true;
-                    }
-                }
-                    
-                break;
-            }
-            element = element->parentOrShadowHostElement();
-        }
-
-        // Only change the focus when clicking scrollbars if it can transfered to a mouse focusable node.
-        if ((!element || !element->isMouseFocusable()) && isInsideScrollbar(platformMouseEvent.position()))
-            return false;
-
-        // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
-        // if the page already set it (e.g., by canceling default behavior).
-        if (Page* page = m_frame.page()) {
-            if (element && element->isMouseFocusable()) {
-                if (!page->focusController().setFocusedElement(element, &m_frame))
-                    swallowEvent = true;
-            } else if (!element || !element->focused()) {
-                if (!page->focusController().setFocusedElement(0, &m_frame))
-                    swallowEvent = true;
-            }
         }
     }
 
-    return !swallowEvent;
+    // Only change the focus when clicking scrollbars if it can be transferred to a mouse focusable node.
+    if (!element && isInsideScrollbar(platformMouseEvent.position()))
+        return false;
+
+    // If focus shift is blocked, we eat the event.
+    auto* page = m_frame.page();
+    if (page && !page->focusController().setFocusedElement(element, &m_frame))
+        return false;
+
+    return true;
 }
 
 bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const

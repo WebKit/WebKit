@@ -1,5 +1,50 @@
 2016-11-09  Darin Adler  <darin@apple.com>
 
+        Move Range from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164457
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp:
+        (webkit_dom_range_set_start): Updated exception handling.
+        (webkit_dom_range_set_end): Ditto.
+        (webkit_dom_range_set_start_before): Ditto.
+        (webkit_dom_range_set_start_after): Ditto.
+        (webkit_dom_range_set_end_before): Ditto.
+        (webkit_dom_range_set_end_after): Ditto.
+        (webkit_dom_range_select_node): Ditto.
+        (webkit_dom_range_select_node_contents): Ditto.
+        (webkit_dom_range_compare_boundary_points): Ditto.
+        (webkit_dom_range_delete_contents): Ditto.
+        (webkit_dom_range_extract_contents): Ditto.
+        (webkit_dom_range_clone_contents): Ditto.
+        (webkit_dom_range_insert_node): Ditto.
+        (webkit_dom_range_surround_contents): Ditto.
+        (webkit_dom_range_create_contextual_fragment): Ditto.
+        (webkit_dom_range_compare_node): Ditto.
+        (webkit_dom_range_intersects_node): Ditto.
+        (webkit_dom_range_compare_point): Ditto.
+        (webkit_dom_range_is_point_in_range): Ditto.
+        (webkit_dom_range_expand): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange setStart:offset:]): Ditto.
+        (-[WKDOMRange setEnd:offset:]): Ditto.
+        (-[WKDOMRange selectNode:]): Ditto.
+        (-[WKDOMRange selectNodeContents:]): Ditto.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentsAsString): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition): Ditto.
+        (WebKit::WebPage::rangeForBlockAtPoint): Ditto.
+        (WebKit::WebPage::selectWithGesture): Ditto.
+        (WebKit::containsRange): Ditto.
+        (WebKit::unionDOMRanges): Ditto.
+        (WebKit::WebPage::switchToBlockSelectionAtPoint): Ditto.
+        (WebKit::WebPage::getPositionInformation): Ditto.
+
+
+2016-11-09  Darin Adler  <darin@apple.com>
+
         Move EventTarget from ExceptionCode to ExceptionOr
         https://bugs.webkit.org/show_bug.cgi?id=164465
 

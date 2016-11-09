@@ -159,11 +159,14 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     // AND that the selection is not just "touching" one of the
     // boundaries for the selected node. We want to check whether the
     // node is actually inside the region, at least partially.
-    Node* node = coreObject->node();
-    Node* lastDescendant = node->lastDescendant();
-    return (range->intersectsNode(*node, IGNORE_EXCEPTION)
-        && (&range->endContainer() != node || range->endOffset())
-        && (&range->startContainer() != lastDescendant || static_cast<int>(range->startOffset()) != lastOffsetInNode(lastDescendant)));
+    auto& node = *coreObject->node();
+    auto* lastDescendant = node.lastDescendant();
+    unsigned lastOffset = lastOffsetInNode(lastDescendant);
+    auto intersectsResult = range->intersectsNode(node);
+    return !intersectsResult.hasException()
+        && intersectsResult.releaseReturnValue()
+        && (&range->endContainer() != &node || range->endOffset())
+        && (&range->startContainer() != lastDescendant || range->startOffset() != lastOffset);
 }
 
 #endif

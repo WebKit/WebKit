@@ -6321,9 +6321,8 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
         return 0;
     IntRect caret;
     if (RefPtr<Range> range = targetFrame->editor().hasComposition() ? targetFrame->editor().compositionRange() : targetFrame->selection().selection().toNormalizedRange()) {
-        ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange();
-        tempRange->setStart(tempRange->startContainer(), tempRange->startOffset() + charPos->dwCharPos, ec);
+        tempRange->setStart(tempRange->startContainer(), tempRange->startOffset() + charPos->dwCharPos);
         caret = targetFrame->editor().firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);

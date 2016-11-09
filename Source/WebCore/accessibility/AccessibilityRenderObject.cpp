@@ -1458,15 +1458,22 @@ PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
     Node* node = m_renderer->node();
     if (!node)
         return PlainTextRange();
-    
+
     VisibleSelection visibleSelection = selection();
     RefPtr<Range> currentSelectionRange = visibleSelection.toNormalizedRange();
-    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(*node, IGNORE_EXCEPTION))
+    if (!currentSelectionRange)
         return PlainTextRange();
-    
+    // FIXME: The reason this does the correct thing when the selection is in the
+    // shadow tree of an input element is that we get an exception below, and we
+    // choose to interpret all exceptions as "does not intersect". Seems likely
+    // that does not handle all cases correctly.
+    auto intersectsResult = currentSelectionRange->intersectsNode(*node);
+    if (!intersectsResult.hasException() && !intersectsResult.releaseReturnValue())
+        return PlainTextRange();
+
     int start = indexForVisiblePosition(visibleSelection.start());
     int end = indexForVisiblePosition(visibleSelection.end());
-    
+
     return PlainTextRange(start, end - start);
 }
 

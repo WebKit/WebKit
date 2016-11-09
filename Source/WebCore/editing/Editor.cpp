@@ -1889,7 +1889,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         
         Position rangeCompliantPosition = position.parentAnchoredEquivalent();
         if (rangeCompliantPosition.deprecatedNode())
-            spellingSearchRange->setStart(*rangeCompliantPosition.deprecatedNode(), rangeCompliantPosition.deprecatedEditingOffset(), IGNORE_EXCEPTION);
+            spellingSearchRange->setStart(*rangeCompliantPosition.deprecatedNode(), rangeCompliantPosition.deprecatedEditingOffset());
         startedWithSelection = false; // won't need to wrap
     }
     
@@ -1897,7 +1897,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     auto* topNode = highestEditableRoot(position);
     // FIXME: lastOffsetForEditing() is wrong here if editingIgnoresContent(highestEditableRoot()) returns true (e.g. a <table>)
     if (topNode)
-        spellingSearchRange->setEnd(*topNode, lastOffsetForEditing(*topNode), IGNORE_EXCEPTION);
+        spellingSearchRange->setEnd(*topNode, lastOffsetForEditing(*topNode));
 
     // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking
     // at a word boundary. Going back by one char and then forward by a word does the trick.
@@ -1951,7 +1951,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             // Stop looking at start of next misspelled word
             CharacterIterator chars(*grammarSearchRange);
             chars.advance(misspellingOffset);
-            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
+            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset());
         }
     
         if (isGrammarCheckingEnabled())
@@ -1963,9 +1963,9 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     // block rather than at a selection).
     if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
         if (topNode)
-            spellingSearchRange->setStart(*topNode, 0, IGNORE_EXCEPTION);
+            spellingSearchRange->setStart(*topNode, 0);
         // going until the end of the very first chunk we tested is far enough
-        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, IGNORE_EXCEPTION);
+        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap);
         
         if (unifiedTextCheckerEnabled()) {
             grammarSearchRange = spellingSearchRange->cloneRange();
@@ -1986,7 +1986,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
                 // Stop looking at start of next misspelled word
                 CharacterIterator chars(*grammarSearchRange);
                 chars.advance(misspellingOffset);
-                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
+                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset());
             }
 
             if (isGrammarCheckingEnabled())
@@ -2453,7 +2453,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
         if (m_frame.selection().selection().selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
             Position caretPosition = m_frame.selection().selection().end();
-            selectionOffset = paragraph.offsetTo(caretPosition, ASSERT_NO_EXCEPTION);
+            selectionOffset = paragraph.offsetTo(caretPosition).releaseReturnValue();
             restoreSelectionAfterChange = true;
             if (selectionOffset > 0 && (selectionOffset > paragraph.textLength() || paragraph.textCharAt(selectionOffset - 1) == newlineCharacter))
                 adjustSelectionForParagraphBoundaries = true;
@@ -3167,16 +3167,15 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
     return resultRange->collapsed() ? nullptr : resultRange;
 }
 
-static bool isFrameInRange(Frame* frame, Range* range)
+static bool isFrameInRange(Frame& frame, Range& range)
 {
-    bool inRange = false;
-    for (HTMLFrameOwnerElement* ownerElement = frame->ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        if (&ownerElement->document() == &range->ownerDocument()) {
-            inRange = range->intersectsNode(*ownerElement, IGNORE_EXCEPTION);
-            break;
+    for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+        if (&ownerElement->document() == &range.ownerDocument()) {
+            auto result = range.intersectsNode(*ownerElement);
+            return !result.hasException() && result.releaseReturnValue();
         }
     }
-    return inRange;
+    return false;
 }
 
 unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches, Vector<RefPtr<Range>>* matches)
@@ -3188,7 +3187,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
     if (range) {
         if (&range->ownerDocument() == &document())
             searchRange = range;
-        else if (!isFrameInRange(&m_frame, range))
+        else if (!isFrameInRange(m_frame, *range))
             return 0;
     }
     if (!searchRange)
@@ -3204,8 +3203,8 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             if (!resultRange->startContainer().isInShadowTree())
                 break;
 
-            searchRange->setStartAfter(*resultRange->startContainer().shadowHost(), IGNORE_EXCEPTION);
-            searchRange->setEnd(originalEndContainer, originalEndOffset, IGNORE_EXCEPTION);
+            searchRange->setStartAfter(*resultRange->startContainer().shadowHost());
+            searchRange->setEnd(originalEndContainer, originalEndOffset);
             continue;
         }
 
@@ -3224,11 +3223,11 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
         // text nodes. 
-        searchRange->setStart(resultRange->endContainer(), resultRange->endOffset(), IGNORE_EXCEPTION);
+        searchRange->setStart(resultRange->endContainer(), resultRange->endOffset());
 
         Node* shadowTreeRoot = searchRange->shadowRoot();
         if (searchRange->collapsed() && shadowTreeRoot)
-            searchRange->setEnd(*shadowTreeRoot, shadowTreeRoot->countChildNodes(), IGNORE_EXCEPTION);
+            searchRange->setEnd(*shadowTreeRoot, shadowTreeRoot->countChildNodes());
     } while (true);
 
     return matchCount;

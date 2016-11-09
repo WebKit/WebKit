@@ -100,9 +100,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStart(*core(refNode), offset, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setStart(*core(refNode), offset));
 }
 
 - (void)setEnd:(DOMNode *)refNode offset:(int)offset
@@ -110,9 +108,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setEnd(*core(refNode), offset, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setEnd(*core(refNode), offset));
 }
 
 - (void)setStartBefore:(DOMNode *)refNode
@@ -120,9 +116,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStartBefore(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setStartBefore(*core(refNode)));
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
@@ -130,9 +124,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStartAfter(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setStartAfter(*core(refNode)));
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
@@ -140,9 +132,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setEndBefore(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setEndBefore(*core(refNode)));
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
@@ -150,9 +140,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setEndAfter(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setEndAfter(*core(refNode)));
 }
 
 - (void)collapse:(BOOL)toStart
@@ -166,9 +154,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->selectNode(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->selectNode(*core(refNode)));
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
@@ -176,9 +162,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->selectNodeContents(*core(refNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->selectNodeContents(*core(refNode)));
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange
@@ -186,36 +170,25 @@
     WebCore::JSMainThreadNullState state;
     if (!sourceRange)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    short result = IMPL->compareBoundaryPointsForBindings(how, *core(sourceRange), ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->compareBoundaryPointsForBindings(how, *core(sourceRange)));
 }
 
 - (void)deleteContents
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteContents(ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteContents());
 }
 
 - (DOMDocumentFragment *)extractContents
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocumentFragment *result = kit(WTF::getPtr(IMPL->extractContents(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->extractContents()).ptr());
 }
 
 - (DOMDocumentFragment *)cloneContents
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocumentFragment *result = kit(WTF::getPtr(IMPL->cloneContents(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->cloneContents()).ptr());
 }
 
 - (void)insertNode:(DOMNode *)newNode
@@ -223,9 +196,7 @@
     WebCore::JSMainThreadNullState state;
     if (!newNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->insertNode(*core(newNode), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->insertNode(*core(newNode)));
 }
 
 - (void)surroundContents:(DOMNode *)newParent
@@ -233,9 +204,7 @@
     WebCore::JSMainThreadNullState state;
     if (!newParent)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->surroundContents(*core(newParent), ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->surroundContents(*core(newParent)));
 }
 
 - (DOMRange *)cloneRange
@@ -259,10 +228,7 @@
 - (DOMDocumentFragment *)createContextualFragment:(NSString *)html
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocumentFragment *result = kit(WTF::getPtr(IMPL->createContextualFragment(html, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createContextualFragment(html)).ptr());
 }
 
 - (short)compareNode:(DOMNode *)refNode
@@ -270,10 +236,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    short result = IMPL->compareNode(*core(refNode), ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->compareNode(*core(refNode)));
 }
 
 - (BOOL)intersectsNode:(DOMNode *)refNode
@@ -281,10 +244,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->intersectsNode(*core(refNode), ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->intersectsNode(*core(refNode)));
 }
 
 - (short)comparePoint:(DOMNode *)refNode offset:(int)offset
@@ -292,10 +252,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    short result = IMPL->comparePoint(*core(refNode), offset, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->comparePoint(*core(refNode), offset));
 }
 
 - (BOOL)isPointInRange:(DOMNode *)refNode offset:(int)offset
@@ -303,18 +260,13 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->isPointInRange(*core(refNode), offset, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->isPointInRange(*core(refNode), offset));
 }
 
 - (void)expand:(NSString *)unit
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->expand(unit, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->expand(unit));
 }
 
 @end

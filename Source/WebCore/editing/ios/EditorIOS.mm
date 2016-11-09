@@ -637,7 +637,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     ExceptionCode ec;
     RefPtr<Range> context = document().createRange();
-    context->selectNodeContents(element, ec);
+    context->selectNodeContents(element);
 
     StringBuilder dictationPhrasesBuilder;
     for (auto& interpretations : dictationPhrases)
@@ -719,7 +719,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
             element.remove();
 
         auto context = document().createRange();
-        context->selectNodeContents(element, ec);
+        context->selectNodeContents(element);
         element.appendChild(createFragmentFromText(context, text), ec);
 
         // restore element to document

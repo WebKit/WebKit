@@ -109,13 +109,12 @@ using WebCore::VisiblePosition;
     for (UInt32 i = 0; i < amount; i++)
         frameSelection.modify(FrameSelection::AlterationMove, (SelectionDirection)direction, granularity);
     
-    ExceptionCode ignored;
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range->setStart(*start.containerNode(), start.offsetInContainerNode(), ignored);
+        range->setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range->setEnd(*end.containerNode(), end.offsetInContainerNode(), ignored);
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
@@ -127,13 +126,12 @@ using WebCore::VisiblePosition;
     for (UInt32 i = 0; i < amount; i++)
         frameSelection.modify(FrameSelection::AlterationExtend, (SelectionDirection)direction, CharacterGranularity);    
     
-    ExceptionCode ignored;
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range->setStart(*start.containerNode(), start.offsetInContainerNode(), ignored);
+        range->setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range->setEnd(*end.containerNode(), end.offsetInContainerNode(), ignored);
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 - (DOMNode *)firstNode

@@ -257,11 +257,10 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     RefPtr<Range> correctionStartOffsetInParagraphAsRange = Range::create(paragraphRangeContainingCorrection->startContainer().document(), paragraphRangeContainingCorrection->startPosition(), paragraphRangeContainingCorrection->startPosition());
 
     Position startPositionOfRangeWithAlternative = range->startPosition();
-    ExceptionCode ec = 0;
     if (!startPositionOfRangeWithAlternative.containerNode())
         return;
-    correctionStartOffsetInParagraphAsRange->setEnd(*startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode(), ec);
-    if (ec)
+    auto setEndResult = correctionStartOffsetInParagraphAsRange->setEnd(*startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode());
+    if (setEndResult.hasException())
         return;
 
     // Take note of the location of autocorrection so that we can add marker after the replacement took place.

@@ -331,26 +331,30 @@ void DOMSelection::addRange(Range& range)
     if (!normalizedRange)
         return;
 
-    if (range.compareBoundaryPoints(Range::START_TO_START, *normalizedRange, IGNORE_EXCEPTION) == -1) {
-        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
-        if (range.compareBoundaryPoints(Range::START_TO_END, *normalizedRange, IGNORE_EXCEPTION) > -1) {
-            if (range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange, IGNORE_EXCEPTION) == -1) {
-                // The original range and r intersect.
+    auto result = range.compareBoundaryPoints(Range::START_TO_START, *normalizedRange);
+    if (!result.hasException() && result.releaseReturnValue() == -1) {
+        // We don't support discontiguous selection. We don't do anything if the two ranges don't intersect.
+        result = range.compareBoundaryPoints(Range::START_TO_END, *normalizedRange);
+        if (!result.hasException() && result.releaseReturnValue() > -1) {
+            result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
+            if (!result.hasException() && result.releaseReturnValue() == -1) {
+                // The ranges intersect.
                 selection.moveTo(range.startPosition(), normalizedRange->endPosition(), DOWNSTREAM);
             } else {
-                // r contains the original range.
+                // The new range contains the original range.
                 selection.moveTo(&range);
             }
         }
     } else {
-        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
-        ExceptionCode ec = 0;
-        if (range.compareBoundaryPoints(Range::END_TO_START, *normalizedRange, ec) < 1 && !ec) {
-            if (range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange, IGNORE_EXCEPTION) == -1) {
-                // The original range contains r.
+        // We don't support discontiguous selection. We don't do anything if the two ranges don't intersect.
+        result = range.compareBoundaryPoints(Range::END_TO_START, *normalizedRange);
+        if (!result.hasException() && result.releaseReturnValue() < 1) {
+            result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
+            if (!result.hasException() && result.releaseReturnValue() == -1) {
+                // The original range contains the new range.
                 selection.moveTo(normalizedRange.get());
             } else {
-                // The original range and r intersect.
+                // The ranges intersect.
                 selection.moveTo(normalizedRange->startPosition(), range.endPosition(), DOWNSTREAM);
             }
         }
@@ -371,7 +375,7 @@ void DOMSelection::deleteFromDocument()
         return;
 
     Ref<Frame> protector(*m_frame);
-    selectedRange->deleteContents(ASSERT_NO_EXCEPTION);
+    selectedRange->deleteContents();
     setBaseAndExtent(&selectedRange->startContainer(), selectedRange->startOffset(), &selectedRange->startContainer(), selectedRange->startOffset());
 }
 
@@ -392,17 +396,22 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
         return false;
     unsigned nodeIndex = node.computeNodeIndex();
 
-    ExceptionCode ec = 0;
-    bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->startContainer(), selectedRange->startOffset(), ec) >= 0 && !ec
-        && Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->endContainer(), selectedRange->endOffset(), ec) <= 0 && !ec;
-    ASSERT(!ec);
-    if (nodeFullySelected)
+    auto startsResult = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->startContainer(), selectedRange->startOffset());
+    ASSERT(!startsResult.hasException());
+    auto endsResult = Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->endContainer(), selectedRange->endOffset());
+    ASSERT(!endsResult.hasException());
+    bool isNodeFullySelected = !startsResult.hasException() && startsResult.releaseReturnValue() >= 0
+        && !endsResult.hasException() && endsResult.releaseReturnValue() <= 0;
+    if (isNodeFullySelected)
         return true;
 
-    bool nodeFullyUnselected = (Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->endContainer(), selectedRange->endOffset(), ec) > 0 && !ec)
-        || (Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->startContainer(), selectedRange->startOffset(), ec) < 0 && !ec);
-    ASSERT(!ec);
-    if (nodeFullyUnselected)
+    auto startEndResult = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->endContainer(), selectedRange->endOffset());
+    ASSERT(!startEndResult.hasException());
+    auto endStartResult = Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->startContainer(), selectedRange->startOffset());
+    ASSERT(!endStartResult.hasException());
+    bool isNodeFullyUnselected = (!startEndResult.hasException() && startEndResult.releaseReturnValue() > 0)
+        || (!endStartResult.hasException() && endStartResult.releaseReturnValue() < 0);
+    if (isNodeFullyUnselected)
         return false;
 
     return allowPartial || node.isTextNode();

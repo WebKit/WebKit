@@ -18,18 +18,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextCheckingHelper_h
-#define TextCheckingHelper_h
+#pragma once
 
 #include "EditorClient.h"
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "TextChecking.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Range;
 class Position;
+class Range;
+
 struct TextCheckingResult;
 
 class TextCheckingParagraph {
@@ -40,7 +39,7 @@ public:
 
     int rangeLength() const;
     PassRefPtr<Range> subrange(int characterOffset, int characterCount) const;
-    int offsetTo(const Position&, ExceptionCode&) const;
+    ExceptionOr<int> offsetTo(const Position&) const;
     void expandRangeToNextEnd();
 
     // FIXME: Consider changing this to return a StringView.
@@ -65,7 +64,6 @@ public:
 
 private:
     void invalidateParagraphRangeValues();
-    PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
     PassRefPtr<Range> offsetAsRange() const;
 
     RefPtr<Range> m_checkingRange;
@@ -108,5 +106,3 @@ void checkTextOfParagraph(TextCheckerClient&, StringView, TextCheckingTypeMask, 
 bool unifiedTextCheckerEnabled(const Frame*);
 
 } // namespace WebCore
-
-#endif // TextCheckingHelper_h

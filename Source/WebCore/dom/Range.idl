@@ -25,7 +25,6 @@
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface Range {
-
     readonly attribute Node startContainer;
     readonly attribute long startOffset;
     readonly attribute Node endContainer;
@@ -33,18 +32,17 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-    [MayThrowLegacyException] void setStart(Node refNode, unsigned long offset);
-    [MayThrowLegacyException] void setEnd(Node refNode, unsigned long offset);
+    [MayThrowException] void setStart(Node refNode, unsigned long offset);
+    [MayThrowException] void setEnd(Node refNode, unsigned long offset);
 
-    [MayThrowLegacyException] void setStartBefore(Node refNode);
-    [MayThrowLegacyException] void setStartAfter(Node refNode);
-    [MayThrowLegacyException] void setEndBefore(Node refNode);
-    [MayThrowLegacyException] void setEndAfter(Node refNode);
+    [MayThrowException] void setStartBefore(Node refNode);
+    [MayThrowException] void setStartAfter(Node refNode);
+    [MayThrowException] void setEndBefore(Node refNode);
+    [MayThrowException] void setEndAfter(Node refNode);
     void collapse(optional boolean toStart = false);
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowLegacyException] void expand(optional DOMString unit = "undefined");
-    [MayThrowLegacyException] void selectNode(Node refNode);
-    [MayThrowLegacyException] void selectNodeContents(Node refNode);
+    [MayThrowException] void expand(optional DOMString unit = "");
+    [MayThrowException] void selectNode(Node refNode);
+    [MayThrowException] void selectNodeContents(Node refNode);
 
     // CompareHow
     const unsigned short START_TO_START = 0;
@@ -52,13 +50,13 @@
     const unsigned short END_TO_END = 2;
     const unsigned short END_TO_START = 3;
 
-    [MayThrowLegacyException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+    [MayThrowException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-    [CEReactions, MayThrowLegacyException] void deleteContents();
-    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment extractContents();
-    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment cloneContents();
-    [CEReactions, MayThrowLegacyException] void insertNode(Node newNode);
-    [CEReactions, MayThrowLegacyException] void surroundContents(Node newParent);
+    [CEReactions, MayThrowException] void deleteContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment extractContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment cloneContents();
+    [CEReactions, MayThrowException] void insertNode(Node newNode);
+    [CEReactions, MayThrowException] void surroundContents(Node newParent);
     [NewObject] Range cloneRange();
     DOMString toString();
 
@@ -67,9 +65,9 @@
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
 
-    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment createContextualFragment(DOMString html);
+    [CEReactions, MayThrowException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
-    [MayThrowLegacyException] short compareNode(Node refNode);
+    [MayThrowException] short compareNode(Node refNode);
 
     // CompareResults
     const unsigned short NODE_BEFORE = 0;
@@ -77,8 +75,8 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE = 3;
 
-    [MayThrowLegacyException] boolean intersectsNode(Node refNode);
+    [MayThrowException] boolean intersectsNode(Node refNode);
 
-    [MayThrowLegacyException] short comparePoint(Node refNode, unsigned long offset);
-    [MayThrowLegacyException] boolean isPointInRange(Node refNode, unsigned long offset);
+    [MayThrowException] short comparePoint(Node refNode, unsigned long offset);
+    [MayThrowException] boolean isPointInRange(Node refNode, unsigned long offset);
 };
