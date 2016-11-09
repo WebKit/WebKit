@@ -1,0 +1,26 @@
+<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="/media-resources/modern-media-controls/resources/media-controls-loader.js"></script>
+<body>
+<video src="../../resources/hls/test-live.php" style="width: 320px; height: 240px;" autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>StatusSupport</code> behavior for the loading state.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+media.addEventListener("play", function() {
+    shouldBeEqualToString("mediaController.controls.statusLabel.text", "Live Broadcast");
+    debug("");
+    shadowRoot.host.remove();
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../../../resources/js-test-post.js"></script>
+</body>

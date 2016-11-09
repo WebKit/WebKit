@@ -1,3 +1,27 @@
+2016-11-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: set status label according to media state
+        https://bugs.webkit.org/show_bug.cgi?id=164557
+        <rdar://problem/29184097>
+
+        Reviewed by Dean Jackson.
+
+        Correctly set the StatusLabel text based on the media loading and network state.
+
+        Tests: http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html
+               http/tests/media/modern-media-controls/status-support/status-support-loading.html
+               media/modern-media-controls/status-support/status-support-error.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/status-support.js: Added.
+        (StatusSupport.prototype.get control):
+        (StatusSupport.prototype.get mediaEvents):
+        (StatusSupport.prototype.syncControl):
+        (StatusSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-09  Zalan Bujtas  <zalan@apple.com>
 
         No need to set setFlowThreadState on RenderText in createTextRenderer.

@@ -9945,6 +9945,7 @@
 		718C7F571DD385C500B733C8 /* status-label.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-label.js"; sourceTree = "<group>"; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
+		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
 		71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorLayerTreeAgent.cpp; sourceTree = "<group>"; };
 		71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorLayerTreeAgent.h; sourceTree = "<group>"; };
 		71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInterfaceLayoutDirection.h; sourceTree = "<group>"; };
@@ -17938,6 +17939,7 @@
 				7157E3D11DC1EE4B0094550E /* scrubbing-support.js */,
 				71D2554F1DB900020004D76B /* skip-back-support.js */,
 				7177E2481DB80D2F00919A0B /* start-support.js */,
+				71B0460A1DD3C2EE00EE19CF /* status-support.js */,
 				717F90571DC40ED60006F520 /* volume-support.js */,
 			);
 			path = media;

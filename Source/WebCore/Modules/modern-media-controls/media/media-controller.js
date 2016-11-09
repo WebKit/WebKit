@@ -49,6 +49,7 @@ class MediaController
         new ScrubbingSupport(this);
         new SkipBackSupport(this);
         new StartSupport(this);
+        new StatusSupport(this);
         new VolumeSupport(this);
 
         this._updateControlsSize();

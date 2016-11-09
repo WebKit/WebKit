@@ -1,3 +1,21 @@
+2016-11-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: set status label according to media state
+        https://bugs.webkit.org/show_bug.cgi?id=164557
+        <rdar://problem/29184097>
+
+        Reviewed by Dean Jackson.
+
+        Add new tests to check that we display the expected StatusLabel text when the media is in the
+        "Loading", "Error" and "Live Broadcast" states.
+
+        * http/tests/media/modern-media-controls/status-support/status-support-live-broadcast-expected.txt: Added.
+        * http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html: Added.
+        * http/tests/media/modern-media-controls/status-support/status-support-loading-expected.txt: Added.
+        * http/tests/media/modern-media-controls/status-support/status-support-loading.html: Added.
+        * media/modern-media-controls/status-support/status-support-error-expected.txt: Added.
+        * media/modern-media-controls/status-support/status-support-error.html: Added.
+
 2016-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node::ownerDocument
