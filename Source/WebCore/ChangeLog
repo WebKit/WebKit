@@ -1,3 +1,9 @@
+2016-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Fix STP build.
+
+        * WebCorePrefix.h:
+
 2016-11-09  Simon Fraser  <simon.fraser@apple.com>
 
         Implement visual-viewport based position:fixed handling for Mac async scrolling
