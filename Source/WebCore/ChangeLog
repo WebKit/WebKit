@@ -1,3 +1,9 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2016-11-09  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up more transaction abort behavior, including tweaks to Index/ObjectStore lifetime.
