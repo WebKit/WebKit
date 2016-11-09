@@ -1815,6 +1815,8 @@ webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
 # <a download> does not work on iOS.
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]

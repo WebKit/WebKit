@@ -1,3 +1,25 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NETWORK_SESSION] Add support for downloading file backed blobs
+        https://bugs.webkit.org/show_bug.cgi?id=164458
+        <rdar://problem/28905514>
+
+        Reviewed by Darin Adler.
+
+        Add testRunner.setShouldDownloadUndisplayableMIMETypes(bool) API so that layout
+        tests can request that such resources are downloaded instead of being ignored.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setShouldDownloadUndisplayableMIMETypes):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::decidePolicyForNavigationResponse):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setShouldDownloadUndisplayableMIMETypes):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2016-11-09  Jonathan Bedard  <jbedard@apple.com>
 
         Make rpaths more robust for iOS Simulators

@@ -493,6 +493,10 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 # rdar://problem/26885345
 [ Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
 
+# Download of file backed blob URLs is broken for !NETWORK_SESSION code path.
+webkit.org/b/164522 [ Yosemite ElCapitan ] fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Failure ]
+webkit.org/b/164522 [ Yosemite ElCapitan ] fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Failure ]
+
 # RTL Scrollbars are enabled on Sierra WebKit2.
 [ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-simple.html [ Pass ]

@@ -1,5 +1,44 @@
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][NETWORK_SESSION] Add support for downloading file backed blobs
+        https://bugs.webkit.org/show_bug.cgi?id=164458
+        <rdar://problem/28905514>
+
+        Reviewed by Darin Adler.
+
+        Add support for downloading file backed blobs on WebKit2.
+        It previously wasn't working because we weren't calling
+        BlobDataFileReference::prepareForFileAccess() for each blob file before
+        starting the download, similarly to what is done in NetworkResourceLoader's
+        consumeSandboxExtensions().
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::~NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::download):
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadRequest):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/PingLoad.h:
+
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Network cache speculative revalidation can cause loads to hang
         https://bugs.webkit.org/show_bug.cgi?id=164532
         <rdar://problem/28519331>

@@ -189,14 +189,14 @@ static NetworkStorageSession& storageSession(SessionID sessionID)
 
 void NetworkConnectionToWebProcess::startDownload(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
-    NetworkProcess::singleton().downloadManager().startDownload(sessionID, downloadID, request, suggestedName);
+    NetworkProcess::singleton().downloadManager().startDownload(this, sessionID, downloadID, request, suggestedName);
 }
 
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
     auto& networkProcess = NetworkProcess::singleton();
     if (!mainResourceLoadIdentifier) {
-        networkProcess.downloadManager().startDownload(sessionID, downloadID, request);
+        networkProcess.downloadManager().startDownload(this, sessionID, downloadID, request);
         return;
     }
 

@@ -1,5 +1,25 @@
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][NETWORK_SESSION] Add support for downloading file backed blobs
+        https://bugs.webkit.org/show_bug.cgi?id=164458
+        <rdar://problem/28905514>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage for downloading blobs, both via <a download> or
+        because a load is later converted into a download.
+
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Network cache speculative revalidation can cause loads to hang
         https://bugs.webkit.org/show_bug.cgi?id=164532
         <rdar://problem/28519331>

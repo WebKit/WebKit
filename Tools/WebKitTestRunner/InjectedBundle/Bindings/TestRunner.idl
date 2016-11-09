@@ -81,6 +81,7 @@ interface TestRunner {
     void setShouldDecideNavigationPolicyAfterDelay(boolean value);
     void setNavigationGesturesEnabled(boolean value);
     void setIgnoresViewportScaleLimits(boolean value);
+    void setShouldDownloadUndisplayableMIMETypes(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();

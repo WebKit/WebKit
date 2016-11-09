@@ -29,6 +29,7 @@
 #if USE(NETWORK_SESSION)
 
 #include "NetworkDataTaskBlob.h"
+#include "NetworkLoadParameters.h"
 #include "NetworkSession.h"
 #include <wtf/MainThread.h>
 
@@ -43,16 +44,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, StoredCredentials storedCredentials, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
 {
-    if (request.url().protocolIsBlob())
-        return NetworkDataTaskBlob::create(session, client, request, shouldContentSniff);
+    if (parameters.request.url().protocolIsBlob())
+        return NetworkDataTaskBlob::create(session, client, parameters.request, parameters.contentSniffingPolicy, parameters.blobFileReferences);
 
 #if PLATFORM(COCOA)
-    return NetworkDataTaskCocoa::create(session, client, request, storedCredentials, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect);
+    return NetworkDataTaskCocoa::create(session, client, parameters.request, parameters.allowStoredCredentials, parameters.contentSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 #endif
 #if USE(SOUP)
-    return NetworkDataTaskSoup::create(session, client, request, storedCredentials, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect);
+    return NetworkDataTaskSoup::create(session, client, parameters.request, parameters.allowStoredCredentials, parameters.contentSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 #endif
 }
 

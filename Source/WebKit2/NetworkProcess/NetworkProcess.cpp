@@ -466,7 +466,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<
 
 void NetworkProcess::downloadRequest(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)
 {
-    downloadManager().startDownload(sessionID, downloadID, request, suggestedFilename);
+    downloadManager().startDownload(nullptr, sessionID, downloadID, request, suggestedFilename);
 }
 
 void NetworkProcess::resumeDownload(SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)

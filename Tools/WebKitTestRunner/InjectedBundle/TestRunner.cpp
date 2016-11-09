@@ -1022,6 +1022,13 @@ void TestRunner::setIgnoresViewportScaleLimits(bool value)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
 }
 
+void TestRunner::setShouldDownloadUndisplayableMIMETypes(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetShouldDownloadUndisplayableMIMETypes"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
 static unsigned nextUIScriptCallbackID()
 {
     static unsigned callbackID = FirstUIScriptCallbackID;
