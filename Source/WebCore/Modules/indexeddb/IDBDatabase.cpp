@@ -185,6 +185,15 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
     if (m_versionChangeTransaction && !m_versionChangeTransaction->isFinishedOrFinishing())
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.") };
 
+    // It is valid for javascript to pass in a list of object store names with the same name listed twice,
+    // so we need to put them all in a set to get a unique list.
+    HashSet<String> objectStoreSet;
+    for (auto& objectStore : objectStores)
+        objectStoreSet.add(objectStore);
+
+    objectStores.clear();
+    copyToVector(objectStoreSet, objectStores);
+
     for (auto& objectStoreName : objectStores) {
         if (m_info.hasObjectStore(objectStoreName))
             continue;

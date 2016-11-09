@@ -5,6 +5,6 @@ PASS IDBTransaction.objectStoreNames - transaction scope
 PASS IDBTransaction.objectStoreNames - value after commit 
 PASS IDBTransaction.objectStoreNames - value after abort 
 PASS IDBTransaction.objectStoreNames - sorting 
-FAIL IDBTransaction.objectStoreNames - no duplicates assert_array_equals: transaction objectStoreNames should not have duplicates lengths differ, expected 2 got 3
-FAIL IDBTransaction.objectStoreNames - unusual names assert_array_equals: transaction should have names sorted with no duplicates lengths differ, expected 14 got 28
+PASS IDBTransaction.objectStoreNames - no duplicates 
+PASS IDBTransaction.objectStoreNames - unusual names 
 
