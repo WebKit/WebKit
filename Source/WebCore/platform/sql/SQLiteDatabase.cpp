@@ -59,7 +59,7 @@ static void initializeSQLiteIfNecessary()
         // std::call_once is used to stay on the safe side. See bug #143245.
         int ret = sqlite3_initialize();
         if (ret != SQLITE_OK) {
-#if PLATFORM(MAC) || SQLITE_VERSION_NUMBER >= 3007015
+#if SQLITE_VERSION_NUMBER >= 3007015
             WTFLogAlways("Failed to initialize SQLite: %s", sqlite3_errstr(ret));
 #else
             WTFLogAlways("Failed to initialize SQLite");
