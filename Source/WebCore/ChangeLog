@@ -1,3 +1,53 @@
+2016-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow customization of TextStream-based logging for geometry types
+        https://bugs.webkit.org/show_bug.cgi?id=164460
+
+        Reviewed by Zalan Bujtas.
+
+        TextStream-based logging was constrained by the requirement to maintain compatibility
+        with DRT-style output, which includes cumbersome rect logging ("at (5,0) size 40x40")
+        and dumping LayoutRects as IntRects.
+        
+        Add some formatting flags so that other TextStream clients (e.g. logging) can have
+        more readable output, and opt into automatic FormatNumberRespectingIntegers behavior.
+        
+        TextStreams whose output appears in test results are given flags to avoid behavior
+        changes, but in the longer term test results should be updated.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::replayDisplayListAsText):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::scrollingStateTreeAsText):
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::layerTreeAsText):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/LayoutPoint.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::replayDisplayListAsText):
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::asText):
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        * platform/text/TextStream.h:
+        (WebCore::TextStream::TextStream):
+        (WebCore::TextStream::formattingFlags):
+        (WebCore::TextStream::setFormattingFlags):
+        (WebCore::TextStream::hasFormattingFlag):
+        (WebCore::TextStream::increaseIndent):
+        (WebCore::TextStream::decreaseIndent):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+        (WebCore::counterValueForElement):
+
 2016-11-09  Zalan Bujtas  <zalan@apple.com>
 
         RenderFlowThread::flowThreadRelativeWillBeRemoved should take RenderObject& instead of RenderObject*

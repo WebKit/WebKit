@@ -1887,11 +1887,8 @@ String CanvasRenderingContext2D::displayListAsText(DisplayList::AsTextFlags flag
 String CanvasRenderingContext2D::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
 {
     auto it = contextDisplayListMap().find(this);
-    if (it != contextDisplayListMap().end()) {
-        TextStream stream;
-        stream << it->value->asText(flags);
-        return stream.release();
-    }
+    if (it != contextDisplayListMap().end())
+        return it->value->asText(flags);
 
     return String();
 }

@@ -40,9 +40,18 @@ public:
         double value;
     };
     
+    enum Formatting {
+        SVGStyleRect                = 1 << 0, // "at (0,0) size 10x10"
+        NumberRespectingIntegers    = 1 << 1,
+        LayoutUnitsAsIntegers       = 1 << 2,
+    };
+    
+    using FormattingFlags = unsigned;
+    
     enum class LineMode { SingleLine, MultipleLine };
-    TextStream(LineMode lineMode = LineMode::MultipleLine)
-        : m_multiLineMode(lineMode == LineMode::MultipleLine)
+    TextStream(LineMode lineMode = LineMode::MultipleLine, FormattingFlags formattingFlags = 0)
+        : m_formattingFlags(formattingFlags)
+        , m_multiLineMode(lineMode == LineMode::MultipleLine)
     {
     }
 
@@ -60,7 +69,13 @@ public:
     WEBCORE_EXPORT TextStream& operator<<(const char*);
     WEBCORE_EXPORT TextStream& operator<<(const void*);
     WEBCORE_EXPORT TextStream& operator<<(const String&);
+    // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WEBCORE_EXPORT TextStream& operator<<(const FormatNumberRespectingIntegers&);
+
+    FormattingFlags formattingFlags() const { return m_formattingFlags; }
+    void setFormattingFlags(FormattingFlags flags) { m_formattingFlags = flags; }
+
+    bool hasFormattingFlag(Formatting flag) const { return m_formattingFlags & flag; }
 
     template<typename T>
     void dumpProperty(const String& name, const T& value)
@@ -77,8 +92,8 @@ public:
     WEBCORE_EXPORT void endGroup();
     WEBCORE_EXPORT void nextLine(); // Output newline and indent.
 
-    void increaseIndent() { ++m_indent; }
-    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
+    void increaseIndent(int amount = 1) { m_indent += amount; }
+    void decreaseIndent(int amount = 1) { m_indent -= amount; ASSERT(m_indent >= 0); }
 
     WEBCORE_EXPORT void writeIndent();
 
@@ -100,6 +115,7 @@ public:
 
 private:
     StringBuilder m_text;
+    FormattingFlags m_formattingFlags { 0 };
     int m_indent { 0 };
     bool m_multiLineMode { true };
 };

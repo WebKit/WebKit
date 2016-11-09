@@ -89,12 +89,18 @@ TextStream& TextStream::operator<<(unsigned long long i)
 
 TextStream& TextStream::operator<<(float f)
 {
+    if (m_formattingFlags & Formatting::NumberRespectingIntegers)
+        return *this << FormatNumberRespectingIntegers(f);
+
     m_text.appendFixedWidthNumber(f, 2);
     return *this;
 }
 
 TextStream& TextStream::operator<<(double d)
 {
+    if (m_formattingFlags & Formatting::NumberRespectingIntegers)
+        return *this << FormatNumberRespectingIntegers(d);
+
     m_text.appendFixedWidthNumber(d, 2);
     return *this;
 }
@@ -120,8 +126,10 @@ TextStream& TextStream::operator<<(const String& string)
 
 TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberToFormat)
 {
-    if (hasFractions(numberToFormat.value))
-        return *this << numberToFormat.value;
+    if (hasFractions(numberToFormat.value)) {
+        m_text.appendFixedWidthNumber(numberToFormat.value, 2);
+        return *this;
+    }
 
     m_text.appendNumber(static_cast<int>(numberToFormat.value));
     return *this;

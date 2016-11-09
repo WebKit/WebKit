@@ -148,7 +148,10 @@ IntSize IntRect::differenceToPoint(const IntPoint& point) const
 
 TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
-    return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
+    if (ts.hasFormattingFlag(TextStream::Formatting::SVGStyleRect))
+        return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
+
+    return ts << r.location() << " " << r.size();
 }
 
 } // namespace WebCore

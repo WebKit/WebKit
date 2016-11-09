@@ -133,7 +133,7 @@ void ScrollingStateNode::dump(TextStream& ts, int indent, ScrollingStateTreeAsTe
 
 String ScrollingStateNode::scrollingStateTreeAsText() const
 {
-    TextStream ts;
+    TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
     dump(ts, 0, ScrollingStateTreeAsTextBehaviorNormal);
     return ts.release();

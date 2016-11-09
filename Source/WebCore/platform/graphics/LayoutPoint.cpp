@@ -40,8 +40,10 @@ LayoutPoint LayoutPoint::constrainedBetween(const LayoutPoint& min, const Layout
 
 TextStream& operator<<(TextStream& ts, const LayoutPoint& p)
 {
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with pervious test expectations.
-    return ts << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
+    if (ts.hasFormattingFlag(TextStream::Formatting::LayoutUnitsAsIntegers))
+        return ts << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
+
+    return ts << "(" << p.x().toFloat() << "," << p.y().toFloat() << ")";
 }
 
 } // namespace WebCore

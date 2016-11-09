@@ -3411,7 +3411,7 @@ String GraphicsLayerCA::replayDisplayListAsText(DisplayList::AsTextFlags flags) 
 {
     auto it = layerDisplayListMap().find(this);
     if (it != layerDisplayListMap().end()) {
-        TextStream stream;
+        TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
         
         TextStream::GroupScope scope(stream);
         stream.dumpProperty("clip", it->value.first);

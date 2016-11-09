@@ -87,7 +87,7 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)
 
 String DisplayList::asText(AsTextFlags flags) const
 {
-    TextStream stream;
+    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     for (auto& item : m_list) {
         if (!shouldDumpForFlags(flags, item))
             continue;

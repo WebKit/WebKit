@@ -228,8 +228,13 @@ IntRect roundedIntRect(const FloatRect& rect)
 
 TextStream& operator<<(TextStream& ts, const FloatRect &r)
 {
-    return ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x()) << "," << TextStream::FormatNumberRespectingIntegers(r.y())
-        << ") size " << TextStream::FormatNumberRespectingIntegers(r.width()) << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
+    if (ts.hasFormattingFlag(TextStream::Formatting::SVGStyleRect)) {
+        // FIXME: callers should use the NumberRespectingIntegers flag.
+        return ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x()) << "," << TextStream::FormatNumberRespectingIntegers(r.y())
+            << ") size " << TextStream::FormatNumberRespectingIntegers(r.width()) << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
+    }
+
+    return ts << r.location() << " " << r.size();
 }
 
 }

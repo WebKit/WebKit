@@ -90,6 +90,7 @@ FloatPoint FloatPoint::narrowPrecision(double x, double y)
 
 TextStream& operator<<(TextStream& ts, const FloatPoint& p)
 {
+    // FIXME: callers should use the NumberRespectingIntegers flag.
     return ts << "(" << TextStream::FormatNumberRespectingIntegers(p.x()) << "," << TextStream::FormatNumberRespectingIntegers(p.y()) << ")";
 }
 
