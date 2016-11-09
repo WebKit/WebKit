@@ -1,3 +1,9 @@
+2016-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Another attempted build fix.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
 2016-11-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Experimental features should not be enabled by default

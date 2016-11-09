@@ -463,7 +463,9 @@ using namespace WebKit;
 @synthesize currentListType=_currentListType;
 
 static const CGFloat listControlSegmentWidth = 67;
+#if ENABLE(FULLSCREEN_API)
 static const CGFloat exitFullScreenButtonWidth = 64;
+#endif
 
 static const NSUInteger noListSegment = 0;
 static const NSUInteger unorderedListSegment = 1;
