@@ -1,3 +1,21 @@
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused CFURLCACHE code
+        https://bugs.webkit.org/show_bug.cgi?id=164551
+
+        Reviewed by Antti Koivisto.
+
+        WebKit2 doesn't use CFURLCache, but we still have some unused code that seems to use it.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::partitionName): Deleted.
+        (WebKit::NetworkProcess::cfURLCacheOrigins): Deleted.
+        (WebKit::NetworkProcess::clearCFURLCacheForOrigins): Deleted.
+
 2016-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Memory process values shown by the WebMemorySampler in linux are wrong

@@ -336,15 +336,8 @@ static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetc
     }
 #endif
 
-    Vector<WebsiteData::Entry> entries;
-
-#if USE(CFURLCACHE)
-    for (auto& origin : NetworkProcess::cfURLCacheOrigins())
-        entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::DiskCache, 0 });
-#endif
-
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), entries = WTFMove(entries)] {
-        completionHandler(entries);
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
+        completionHandler({ });
     });
 }
 
@@ -436,10 +429,6 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
 
         return;
     }
-#endif
-
-#if USE(CFURLCACHE)
-    NetworkProcess::clearCFURLCacheForOrigins(origins);
 #endif
 
     RunLoop::main().dispatch(WTFMove(completionHandler));

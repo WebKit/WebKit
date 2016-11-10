@@ -147,19 +147,6 @@ void NetworkProcess::platformSetURLCacheSize(unsigned urlCacheMemoryCapacity, ui
         [nsurlCache setDiskCapacity:std::max<uint64_t>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
-static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
-{
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String highLevel = WebCore::topPrivatelyControlledDomain(domain);
-    if (highLevel.isNull())
-        return 0;
-    CString utf8String = highLevel.utf8();
-    return adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
-#else
-    return domain;
-#endif
-}
-
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 {
 #if PLATFORM(IOS)
@@ -171,43 +158,6 @@ RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 #else
     return nullptr;
 #endif
-}
-
-Vector<Ref<WebCore::SecurityOrigin>> NetworkProcess::cfURLCacheOrigins()
-{
-    Vector<Ref<WebCore::SecurityOrigin>> result;
-
-    WKCFURLCacheCopyAllPartitionNames([&result](CFArrayRef partitionNames) {
-        RetainPtr<CFArrayRef> hostNamesInPersistentStore = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
-        RetainPtr<CFMutableArrayRef> hostNames = adoptCF(CFArrayCreateMutableCopy(0, 0, hostNamesInPersistentStore.get()));
-        if (partitionNames) {
-            CFArrayAppendArray(hostNames.get(), partitionNames, CFRangeMake(0, CFArrayGetCount(partitionNames)));
-            CFRelease(partitionNames);
-        }
-
-        for (CFIndex i = 0, size = CFArrayGetCount(hostNames.get()); i < size; ++i) {
-            CFStringRef host = static_cast<CFStringRef>(CFArrayGetValueAtIndex(hostNames.get(), i));
-
-            result.append(WebCore::SecurityOrigin::create("http", host, 0));
-        }
-    });
-
-    return result;
-}
-
-void NetworkProcess::clearCFURLCacheForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
-{
-    auto hostNames = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
-    for (auto& origin : origins)
-        CFArrayAppendValue(hostNames.get(), origin.host.createCFString().get());
-
-    WKCFURLCacheDeleteHostNamesInPersistentStore(hostNames.get());
-
-    for (CFIndex i = 0, size = CFArrayGetCount(hostNames.get()); i < size; ++i) {
-        RetainPtr<CFStringRef> partition = partitionName(static_cast<CFStringRef>(CFArrayGetValueAtIndex(hostNames.get(), i)));
-        RetainPtr<CFArrayRef> partitionHostNames = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(partition.get()));
-        WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(partitionHostNames.get(), partition.get());
-    }
 }
 
 void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, std::chrono::system_clock::time_point modifiedSince)

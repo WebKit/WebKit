@@ -96,11 +96,6 @@ public:
     void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, const String& value, WebCore::ShouldSample);
 
-#if USE(CFURLCACHE)
-    static Vector<Ref<WebCore::SecurityOrigin>> cfURLCacheOrigins();
-    static void clearCFURLCacheForOrigins(const Vector<WebCore::SecurityOriginData>&);
-#endif
-
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void clearHSTSCache(WebCore::NetworkStorageSession&, std::chrono::system_clock::time_point modifiedSince);

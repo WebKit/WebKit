@@ -1,3 +1,12 @@
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused CFURLCACHE code
+        https://bugs.webkit.org/show_bug.cgi?id=164551
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Platform.h:
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         Allow RefPtrs of const ThreadSafeRefCounted types
