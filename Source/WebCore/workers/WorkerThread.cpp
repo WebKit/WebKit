@@ -72,9 +72,10 @@ unsigned WorkerThread::workerThreadCount()
 struct WorkerThreadStartupData {
     WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerThreadStartupData(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin);
+    WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin);
 
     URL m_scriptURL;
+    String m_identifier;
     String m_userAgent;
     String m_sourceCode;
     WorkerThreadStartMode m_startMode;
@@ -83,8 +84,9 @@ public:
     RefPtr<SecurityOrigin> m_topOrigin;
 };
 
-WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin)
+WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin)
     : m_scriptURL(scriptURL.isolatedCopy())
+    , m_identifier(identifier.isolatedCopy())
     , m_userAgent(userAgent.isolatedCopy())
     , m_sourceCode(sourceCode.isolatedCopy())
     , m_startMode(startMode)
@@ -94,12 +96,12 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
 {
 }
 
-WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+WorkerThread::WorkerThread(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
     : m_threadID(0)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)
-    , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, userAgent, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin))
+    , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, identifier, userAgent, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin))
 #if ENABLE(INDEXED_DATABASE)
     , m_idbConnectionProxy(connectionProxy)
 #endif
@@ -159,7 +161,7 @@ void WorkerThread::workerThread()
 
     {
         LockHolder lock(m_threadCreationMutex);
-        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, WTFMove(m_startupData->m_topOrigin));
+        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_identifier, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, WTFMove(m_startupData->m_topOrigin));
 
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,

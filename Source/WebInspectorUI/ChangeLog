@@ -1,3 +1,162 @@
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Associate Worker Resources with the Worker and not the Page
+        https://bugs.webkit.org/show_bug.cgi?id=164342
+        <rdar://problem/29075775>
+
+        Reviewed by Timothy Hatcher.
+
+        A Target may have its own list of Resource. For example, Workers may
+        request any resources via XHR/Fetch. So we associate a ResourceCollection
+        with a Target, and ensure we show them in Web Inspector as you would expect.
+        At this point, Target starts acting like Frame. Target has a resourceCollection
+        and extraScriptsCollection just like Frame. Target has events for ResourceAdded
+        just like Frame.
+
+        Even though Resource loads are happening in Workers, the Network data
+        still comes from the Page's Network agent. The added "targetId" data
+        with the Resource will let us associate a Resoure with a Target.
+
+        When opening inspector after a page has loaded, the frontend loads Resources
+        via the Page.getResourceTree path. In this case, the frontend may be
+        informed of Resources for a Target that it does not know about yet. In
+        these cases, it sets them aside as Orphaned resources for a target. Later,
+        when that Target is created, it will adopt its Orphaned resources.
+
+        Places that used to listen to just Frame.Event.ResourceWasAdded should now
+        also listen for Target.Event.ResourceAdded to ensure it sees the resources
+        associated with non-page targets.
+
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.Target):
+        (WebInspector.Target.prototype.get identifier):
+        (WebInspector.Target.prototype.get resourceCollection):
+        (WebInspector.Target.prototype.get extraScriptCollection):
+        (WebInspector.Target.prototype.addResource):
+        (WebInspector.Target.prototype.adoptResource):
+        (WebInspector.Target.prototype.addScript):
+        Give Target resource collections.
+
+        (WebInspector.MainTarget):
+        (WebInspector.MainTarget.prototype.get mainResource):
+        Pass through to the FrameResourceManager for the MainTarget.
+
+        (WebInspector.WorkerTarget):
+        (WebInspector.WorkerTarget.prototype.initialize):
+        Adopt orphaned resources on creation.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get target):
+        (WebInspector.Resource.prototype.get type):
+        Resource now has a Target. During creation, if there is a targetId
+        then we must produce a Target or null (orphaned).
+
+        (WebInspector.Resource.prototype.associateWithScript):
+        When associating a Resource with a Script, we can use this opportunity
+        to convert from an XML / Other type to Script.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype._resolveResource):
+        When associating Scripts with a resource we must associate resources
+        from within the proper Target. If it is the Main target we still use
+        the FrameResourceManager which keep searches across all Frames.
+
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.requestWillBeSent):
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.initialize):
+        (WebInspector.FrameResourceManager.prototype.frameDidNavigate):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveResponse):
+        (WebInspector.FrameResourceManager.prototype.adoptOrphanedResourcesForTarget):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrameOrTarget):
+        (WebInspector.FrameResourceManager.prototype._addResourceToTarget):
+        (WebInspector.FrameResourceManager.prototype._createResource):
+        (WebInspector.FrameResourceManager.prototype._addFrameTreeFromFrameResourceTreePayload):
+        (WebInspector.FrameResourceManager.prototype._addOrphanedResource):
+        (WebInspector.FrameResourceManager.prototype._mainFrameDidChange):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrame): Deleted.
+        When creating Resources from Network events we may now have a targetId.
+        Once created a Resource must be associated with a Frame, Target, or orphaned.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/TargetTreeElement.js: Removed.
+        * UserInterface/Views/WorkerTreeElement.js: Added.
+        (WebInspector.WorkerTreeElement):
+        (WebInspector.WorkerTreeElement.prototype.get target):
+        (WebInspector.WorkerTreeElement.prototype.onexpand):
+        (WebInspector.WorkerTreeElement.prototype.oncollapse):
+        (WebInspector.WorkerTreeElement.prototype.onpopulate):
+        (WebInspector.WorkerTreeElement.prototype.updateSourceMapResources):
+        (WebInspector.WorkerTreeElement.prototype.onattach):
+        (WebInspector.WorkerTreeElement.prototype.compareChildTreeElements):
+        (WebInspector.WorkerTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.WorkerTreeElement.prototype._scriptAdded):
+        (WebInspector.WorkerTreeElement.prototype._resourceAdded):
+        Convert TargetTreeElement to WorkerTreeElement as that is clearer.
+        Behave like FrameTreeElement and populate resources on creation,
+        handle SourceMapResource, etc.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype.registerFolderizeSettings):
+        (WebInspector.FolderizedTreeElement.prototype._compareTreeElementsByMainTitle):
+        (WebInspector.FolderizedTreeElement.prototype._parentTreeElementForRepresentedObject):
+        If the display name for a folder is `null` then there is no folder,
+        and place such child tree elements at the top level. This will be
+        the case for a Worker's Script's, which we choose not to folderize.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        * UserInterface/Controllers/TargetManager.js:
+        (WebInspector.TargetManager.prototype.targetForIdentifier):
+
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        * UserInterface/Controllers/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype.workerCreated):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog.prototype.didDismissDialog):
+        (WebInspector.OpenResourceDialog.prototype.didPresentDialog):
+        (WebInspector.OpenResourceDialog.prototype._addScriptsForTarget): Deleted.
+        (WebInspector.OpenResourceDialog.prototype._addResourcesForTarget): Added.
+        Ensure those that listen for Frame.Event.ResourceWasAdded now also
+        listen for Target.Event.ResourceAdded.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForSourceCode):
+        (WebInspector.appendContextMenuItemsForResource): Deleted.
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.appendContextMenuItems):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateTitles):
+        (WebInspector.ResourceTreeElement.prototype._handleContextMenuEvent):
+        Generalize ContextMenu helper to SourceCode so it can be used on a Script or Resource.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.inspect):
+        When looking at a WorkerTarget's mainResource (Script) show the
+        Resource Details sidebar for its Resource.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptsCleared):
+        (WebInspector.ResourceSidebarPanel.prototype._addTargetWithMainResource):
+        (WebInspector.ResourceSidebarPanel.prototype._targetRemoved):
+        (WebInspector.ResourceSidebarPanel.prototype._addScriptForNonMainTarget): Deleted.
+        Simplify ResourceSidebarPanel to only handle adding WorkerTreeElements,
+        which will do the rest of the work for their Resources/Scripts.
+
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WebInspector.SourceCodeTreeElement.prototype.descendantResourceTreeElementTypeDidChange):
+        When we were changing the type of a resource, it would remove and re-insert.
+        This would collapse the parent if it was the only child in removal, and not
+        expand the parent when re-inserting. This ensures we re-expand.
+
 2016-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Settings tab sections overlap each other in docked Inspector window

@@ -40,7 +40,7 @@ WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
     workerCreated(workerId, url)
     {
         let connection = new InspectorBackend.WorkerConnection(workerId);
-        let workerTarget = new WebInspector.WorkerTarget(url, connection);
+        let workerTarget = new WebInspector.WorkerTarget(workerId, url, connection);
         WebInspector.targetManager.addTarget(workerTarget);
 
         this._connections.set(workerId, connection);

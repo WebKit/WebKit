@@ -121,14 +121,21 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         var resourceToInspect = null;
 
         // Iterate over the objects to find a WebInspector.Resource to inspect.
-        for (var i = 0; i < objects.length; ++i) {
-            if (objects[i] instanceof WebInspector.Resource) {
-                resourceToInspect = objects[i];
+        for (let object of objects) {
+            if (object instanceof WebInspector.Resource) {
+                resourceToInspect = object;
                 break;
             }
 
-            if (objects[i] instanceof WebInspector.Frame) {
-                resourceToInspect = objects[i].mainResource;
+            if (object instanceof WebInspector.Frame) {
+                resourceToInspect = object.mainResource;
+                break;
+            }
+
+            // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
+            // If that was the case, then we could just have WorkerTreeElement contain the Resource and not a Script.
+            if (object instanceof WebInspector.Script && object.isMainResource() && object.resource) {
+                resourceToInspect = object.resource;
                 break;
             }
         }

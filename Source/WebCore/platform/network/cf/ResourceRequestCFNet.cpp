@@ -338,6 +338,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     RefPtr<FormData> oldHTTPBody = httpBody();
     bool isHiddenFromInspector = hiddenFromInspector();
     auto oldRequester = requester();
+    auto oldInitiatorIdentifier = initiatorIdentifier();
 
     *this = delegateProvidedRequest;
 
@@ -345,6 +346,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     setHTTPBody(WTFMove(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
+    setInitiatorIdentifier(oldInitiatorIdentifier);
 }
 
 bool ResourceRequest::httpPipeliningEnabled()

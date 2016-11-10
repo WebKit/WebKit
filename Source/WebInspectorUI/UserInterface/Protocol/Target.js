@@ -25,15 +25,18 @@
 
 WebInspector.Target = class Target extends WebInspector.Object
 {
-    constructor(name, type, connection)
+    constructor(identifier, name, type, connection)
     {
         super();
 
+        this._identifier = identifier;
         this._name = name;
         this._type = type;
         this._connection = connection;
         this._executionContext = null;
         this._mainResource = null;
+        this._resourceCollection = new WebInspector.ResourceCollection;
+        this._extraScriptCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
 
         this._connection.target = this;
 
@@ -48,13 +51,38 @@ WebInspector.Target = class Target extends WebInspector.Object
 
     // Public
 
+    get identifier() { return this._identifier; }
     get name() { return this._name; }
     get type() { return this._type; }
     get connection() { return this._connection; }
     get executionContext() { return this._executionContext; }
 
+    get resourceCollection() { return this._resourceCollection; }
+    get extraScriptCollection() { return this._extraScriptCollection; }
+
     get mainResource() { return this._mainResource; }
     set mainResource(resource) { this._mainResource = resource; }
+
+    addResource(resource)
+    {
+        this._resourceCollection.add(resource);
+
+        this.dispatchEventToListeners(WebInspector.Target.Event.ResourceAdded, {resource});
+    }
+
+    adoptResource(resource)
+    {
+        resource._target = this;
+
+        this.addResource(resource);
+    }
+
+    addScript(script)
+    {
+        this._extraScriptCollection.add(script);
+
+        this.dispatchEventToListeners(WebInspector.Target.Event.ScriptAdded, {script});
+    }
 };
 
 WebInspector.Target.Type = {
@@ -62,11 +90,16 @@ WebInspector.Target.Type = {
     Worker: Symbol("worker"),
 };
 
+WebInspector.Target.Event = {
+    ResourceAdded: "target-resource-added",
+    ScriptAdded: "target-script-added",
+};
+
 WebInspector.MainTarget = class MainTarget extends WebInspector.Target
 {
     constructor(connection)
     {
-        super("", WebInspector.Target.Type.Main, InspectorBackend.mainConnection);
+        super("", "", WebInspector.Target.Type.Main, InspectorBackend.mainConnection);
     }
 
     // Protected (Target)
@@ -78,6 +111,12 @@ WebInspector.MainTarget = class MainTarget extends WebInspector.Target
         return WebInspector.UIString("Main Context");
     }
 
+    get mainResource()
+    {
+        let mainFrame = WebInspector.frameResourceManager.mainFrame;
+        return mainFrame ? mainFrame.mainResource : null;
+    }
+
     initialize()
     {
         this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, true, null);
@@ -86,9 +125,9 @@ WebInspector.MainTarget = class MainTarget extends WebInspector.Target
 
 WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
 {
-    constructor(name, connection)
+    constructor(workerId, name, connection)
     {
-        super(name, WebInspector.Target.Type.Worker, connection);
+        super(workerId, name, WebInspector.Target.Type.Worker, connection);
     }
 
     // Protected (Target)
@@ -100,6 +139,8 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
 
     initialize()
     {
+        WebInspector.frameResourceManager.adoptOrphanedResourcesForTarget(this);
+
         if (this.RuntimeAgent) {
             this.RuntimeAgent.enable();
             this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);

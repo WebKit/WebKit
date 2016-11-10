@@ -309,7 +309,9 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     Inspector::Protocol::Page::ResourceType resourceType = InspectorPageAgent::resourceTypeJson(type);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
-    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr);
+    String targetId = request.initiatorIdentifier();
+
+    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
 }
 
 void InspectorNetworkAgent::markResourceAsCached(unsigned long identifier)

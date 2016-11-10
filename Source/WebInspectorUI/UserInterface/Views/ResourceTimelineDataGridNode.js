@@ -149,7 +149,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     appendContextMenuItems(contextMenu)
     {
-        WebInspector.appendContextMenuItemsForResource(contextMenu, this._resource);
+        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
     }
 
     // Protected

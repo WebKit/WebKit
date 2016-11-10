@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-    class ResourceRequest;
     class ResourceResponse;
     class ScriptExecutionContext;
     class TextResourceDecoder;
@@ -52,8 +51,8 @@ namespace WebCore {
             return adoptRef(*new WorkerScriptLoader);
         }
 
-        void loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement);
-        void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, WorkerScriptLoaderClient*);
+        void loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
+        void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient*);
 
         void notifyError();
 
@@ -63,7 +62,7 @@ namespace WebCore {
         bool failed() const { return m_failed; }
         unsigned long identifier() const { return m_identifier; }
 
-        void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) override;
+        void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
         void didReceiveData(const char* data, int dataLength) override;
         void didFinishLoading(unsigned long identifier, double) override;
         void didFail(const ResourceError&) override;
@@ -74,19 +73,19 @@ namespace WebCore {
         WorkerScriptLoader();
         ~WorkerScriptLoader();
 
-        std::unique_ptr<ResourceRequest> createResourceRequest();
+        std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
         void notifyFinished();
 
-        WorkerScriptLoaderClient* m_client;
+        WorkerScriptLoaderClient* m_client { nullptr };
         RefPtr<ThreadableLoader> m_threadableLoader;
         String m_responseEncoding;        
         RefPtr<TextResourceDecoder> m_decoder;
         StringBuilder m_script;
         URL m_url;
         URL m_responseURL;
-        bool m_failed;
-        unsigned long m_identifier;
-        bool m_finishing;
+        unsigned long m_identifier { 0 };
+        bool m_failed { false };
+        bool m_finishing { false };
     };
 
 } // namespace WebCore

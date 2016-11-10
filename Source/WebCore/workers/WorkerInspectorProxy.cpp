@@ -31,7 +31,6 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include "WorkerRunLoop.h"
-#include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -45,9 +44,9 @@ HashSet<WorkerInspectorProxy*>& WorkerInspectorProxy::allWorkerInspectorProxies(
     return proxies;
 }
 
-WorkerInspectorProxy::WorkerInspectorProxy()
+WorkerInspectorProxy::WorkerInspectorProxy(const String& identifier)
+    : m_identifier(identifier)
 {
-    m_identifier = "worker:" + IdentifiersFactory::createIdentifier();
 }
 
 WorkerInspectorProxy::~WorkerInspectorProxy()

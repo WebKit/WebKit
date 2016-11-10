@@ -100,7 +100,7 @@ public:
     Crypto& crypto();
 
 protected:
-    WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
@@ -123,6 +123,7 @@ private:
     void disableEval(const String& errorMessage) final;
     EventTarget* errorEventTarget() final;
     WorkerEventQueue& eventQueue() const final;
+    String resourceRequestIdentifier() const final { return m_identifier; }
 
 #if ENABLE(WEB_SOCKETS)
     SocketProvider* socketProvider() final;
@@ -145,6 +146,7 @@ private:
 #endif
 
     URL m_url;
+    String m_identifier;
     String m_userAgent;
 
     mutable RefPtr<WorkerLocation> m_location;

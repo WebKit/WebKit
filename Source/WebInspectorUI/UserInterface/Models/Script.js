@@ -266,36 +266,36 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         if (!this._url)
             return null;
 
-        // Only associate Scripts on the Page with Resources on the Page.
+        let resolver = WebInspector.frameResourceManager;
         if (this._target !== WebInspector.mainTarget)
-            return null;
+            resolver = this._target.resourceCollection;
 
         try {
             // Try with the Script's full URL.
-            var resource = WebInspector.frameResourceManager.resourceForURL(this.url);
+            let resource = resolver.resourceForURL(this._url);
             if (resource)
                 return resource;
 
             // Try with the Script's full decoded URL.
-            var decodedURL = decodeURI(this._url);
+            let decodedURL = decodeURI(this._url);
             if (decodedURL !== this._url) {
-                resource = WebInspector.frameResourceManager.resourceForURL(decodedURL);
+                resource = resolver.resourceForURL(decodedURL);
                 if (resource)
                     return resource;
             }
 
             // Next try removing any fragment in the original URL.
-            var urlWithoutFragment = removeURLFragment(this._url);
+            let urlWithoutFragment = removeURLFragment(this._url);
             if (urlWithoutFragment !== this._url) {
-                resource = WebInspector.frameResourceManager.resourceForURL(urlWithoutFragment);
+                resource = resolver.resourceForURL(urlWithoutFragment);
                 if (resource)
                     return resource;
             }
 
             // Finally try removing any fragment in the decoded URL.
-            var decodedURLWithoutFragment = removeURLFragment(decodedURL);
+            let decodedURLWithoutFragment = removeURLFragment(decodedURL);
             if (decodedURLWithoutFragment !== decodedURL) {
-                resource = WebInspector.frameResourceManager.resourceForURL(decodedURLWithoutFragment);
+                resource = resolver.resourceForURL(decodedURLWithoutFragment);
                 if (resource)
                     return resource;
             }

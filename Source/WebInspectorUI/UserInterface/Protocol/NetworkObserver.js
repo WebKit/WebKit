@@ -27,9 +27,9 @@ WebInspector.NetworkObserver = class NetworkObserver
 {
     // Events defined by the "Network" domain.
 
-    requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type)
+    requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type, targetId)
     {
-        WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator);
+        WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator, targetId);
     }
 
     requestServedFromCache(requestId)

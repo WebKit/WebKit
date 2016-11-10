@@ -649,6 +649,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 
     ResourceRequest request(m_url);
     request.setRequester(ResourceRequest::Requester::XHR);
+    request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
     request.setHTTPMethod(m_method);
 
     if (m_requestEntityBody) {

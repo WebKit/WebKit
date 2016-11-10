@@ -39,10 +39,6 @@
 namespace WebCore {
 
 WorkerScriptLoader::WorkerScriptLoader()
-    : m_client(nullptr)
-    , m_failed(false)
-    , m_identifier(0)
-    , m_finishing(false)
 {
 }
 
@@ -50,13 +46,13 @@ WorkerScriptLoader::~WorkerScriptLoader()
 {
 }
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
 
     m_url = url;
 
-    std::unique_ptr<ResourceRequest> request(createResourceRequest());
+    std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
         return;
 
@@ -74,7 +70,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(*scriptExecutionContext), WTFMove(*request), *this, options);
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     ASSERT(scriptExecutionContext);
@@ -82,7 +78,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     m_client = client;
     m_url = url;
 
-    std::unique_ptr<ResourceRequest> request(createResourceRequest());
+    std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
         return;
 
@@ -107,10 +103,11 @@ const URL& WorkerScriptLoader::responseURL() const
     return m_responseURL;
 }
 
-std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
+std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const String& initiatorIdentifier)
 {
     auto request = std::make_unique<ResourceRequest>(m_url);
     request->setHTTPMethod(ASCIILiteral("GET"));
+    request->setInitiatorIdentifier(initiatorIdentifier);
     return request;
 }
     

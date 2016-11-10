@@ -1,3 +1,22 @@
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Associate Worker Resources with the Worker and not the Page
+        https://bugs.webkit.org/show_bug.cgi?id=164342
+        <rdar://problem/29075775>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/worker/resources-in-worker-expected.txt: Added.
+        * inspector/worker/resources-in-worker.html: Added.
+        * inspector/worker/resources/dataFetch.json: Added.
+        * inspector/worker/resources/dataXHR.json: Added.
+        * inspector/worker/resources/resource-utilities.js: Added.
+        (loadResourceXHR):
+        (loadResourceFetch):
+        * inspector/worker/resources/worker-resources.js: Added.
+        (importScript):
+        (onmessage):
+
 2016-11-09  Brent Fulgham  <bfulgham@apple.com>
 
         Windows localStorage tests will fail until Bug 155185 is fixed.

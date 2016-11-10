@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, connectionProxy, socketProvider, runtimeFlags)
+DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+    : WorkerThread(url, identifier, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, connectionProxy, socketProvider, runtimeFlags)
     , m_workerObjectProxy(workerObjectProxy)
 {
 }
@@ -48,9 +48,9 @@ DedicatedWorkerThread::~DedicatedWorkerThread()
 {
 }
 
-Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& userAgent, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin)
+Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin)
 {
-    return DedicatedWorkerGlobalScope::create(url, userAgent, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, idbConnectionProxy(), socketProvider());
+    return DedicatedWorkerGlobalScope::create(url, identifier, userAgent, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, idbConnectionProxy(), socketProvider());
 }
 
 void DedicatedWorkerThread::runEventLoop()

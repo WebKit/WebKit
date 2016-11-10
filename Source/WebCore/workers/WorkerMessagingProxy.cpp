@@ -55,7 +55,7 @@ WorkerGlobalScopeProxy* WorkerGlobalScopeProxy::create(Worker* worker)
 
 WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     : m_scriptExecutionContext(workerObject->scriptExecutionContext())
-    , m_inspectorProxy(std::make_unique<WorkerInspectorProxy>())
+    , m_inspectorProxy(std::make_unique<WorkerInspectorProxy>(workerObject->identifier()))
     , m_workerObject(workerObject)
     , m_mayBeDestroyed(false)
     , m_unconfirmedMessageCount(0)
@@ -80,6 +80,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     ASSERT(m_scriptExecutionContext);
     Document& document = downcast<Document>(*m_scriptExecutionContext);
     WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*m_scriptExecutionContext.get());
+    String identifier = m_inspectorProxy->identifier();
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* proxy = document.idbConnectionProxy();
@@ -93,7 +94,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     SocketProvider* socketProvider = nullptr;
 #endif
 
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), proxy, socketProvider, runtimeFlags);
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), proxy, socketProvider, runtimeFlags);
 
     workerThreadCreated(thread);
     thread->start();

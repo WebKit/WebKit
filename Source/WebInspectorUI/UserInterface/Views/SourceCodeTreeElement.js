@@ -173,12 +173,16 @@ WebInspector.SourceCodeTreeElement = class SourceCodeTreeElement extends WebInsp
 
         console.assert(this.hasChildren);
 
-        var wasSelected = childTreeElement.selected;
+        let parentTreeElement = childTreeElement.parent;
 
-        var parentTreeElement = childTreeElement.parent;
+        let wasParentExpanded = parentTreeElement.expanded;
+        let wasSelected = childTreeElement.selected;
+
         parentTreeElement.removeChild(childTreeElement, true, true);
         parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, WebInspector.ResourceTreeElement.compareFolderAndResourceTreeElements));
 
+        if (wasParentExpanded)
+            parentTreeElement.expand();
         if (wasSelected)
             childTreeElement.revealAndSelect(true, false, true, true);
     }

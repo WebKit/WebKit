@@ -57,7 +57,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._allExceptionsBreakpoint.resolved = true;
 
         this._allUncaughtExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allUncaughtExceptionsBreakpointEnabledSetting.value);
-        
+
         this._assertionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._assertionsBreakpointEnabledSetting.value);
         this._assertionsBreakpoint.resolved = true;
 
@@ -644,12 +644,19 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         let script = new WebInspector.Script(target, scriptIdentifier, new WebInspector.TextRange(startLine, startColumn, endLine, endColumn), url, isContentScript, sourceURL, sourceMapURL);
 
-        if (!target.mainResource && target.type === WebInspector.Target.Type.Worker) {
-            if (script.url === target.name)
-                target.mainResource = script;
-        }
-
         targetData.addScript(script);
+
+        if (target !== WebInspector.mainTarget && !target.mainResource) {
+            // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
+            // We make the main resource of a WorkerTarget the Script instead of the Resource
+            // because the frontend may not be informed of the Resource. We should gaurantee
+            // the frontend is informed of the Resource.
+            if (script.url === target.name) {
+                target.mainResource = script;
+                if (script.resource)
+                    target.resourceCollection.remove(script.resource);
+            }
+        }
 
         if (isWebKitInternalScript(script.sourceURL)) {
             this._internalWebKitScripts.push(script);
@@ -662,6 +669,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script});
+
+        if (target !== WebInspector.mainTarget && !script.isMainResource() && !script.resource)
+            target.addScript(script);
     }
 
     // Private

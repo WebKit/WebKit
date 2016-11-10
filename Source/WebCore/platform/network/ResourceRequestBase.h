@@ -164,6 +164,10 @@ public:
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 
+    // Who initiated the request so the Inspector can associate it with a context. E.g. a Web Worker.
+    String initiatorIdentifier() const { return m_initiatorIdentifier; }
+    void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
+
 #if !PLATFORM(COCOA)
     bool encodingRequiresPlatformData() const { return true; }
 #endif
@@ -232,6 +236,7 @@ protected:
     bool m_ignoreForRequestCount { false };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
+    String m_initiatorIdentifier;
 
 private:
     const ResourceRequest& asResourceRequest() const;

@@ -52,6 +52,8 @@ public:
 
     bool hasPendingActivity() const final;
 
+    String identifier() const { return m_identifier; }
+
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
@@ -71,6 +73,7 @@ private:
     friend void networkStateChanged(bool isOnLine);
 
     RefPtr<WorkerScriptLoader> m_scriptLoader;
+    String m_identifier;
     WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     Optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
     bool m_shouldBypassMainWorldContentSecurityPolicy { false };

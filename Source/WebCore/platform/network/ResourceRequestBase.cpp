@@ -65,6 +65,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setHTTPMethod(other.httpMethod().isolatedCopy());
     setPriority(other.priority());
     setRequester(other.requester());
+    setInitiatorIdentifier(other.initiatorIdentifier().isolatedCopy());
 
     updateResourceRequest();
     m_httpHeaderFields = other.httpHeaderFields().isolatedCopy();

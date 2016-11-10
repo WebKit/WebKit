@@ -23,38 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.appendContextMenuItemsForResource = function(contextMenu, resource)
+WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCode)
 {
-
     console.assert(contextMenu instanceof WebInspector.ContextMenu);
     if (!(contextMenu instanceof WebInspector.ContextMenu))
         return;
 
-    console.assert(resource instanceof WebInspector.Resource);
-    if (!(resource instanceof WebInspector.Resource))
+    console.assert(sourceCode instanceof WebInspector.SourceCode);
+    if (!(sourceCode instanceof WebInspector.SourceCode))
         return;
 
-    contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
-        const frame = null;
-        const alwaysOpenExternally = true;
-        WebInspector.openURL(resource.url, frame, alwaysOpenExternally);
-    });
+    if (sourceCode.url) {
+        contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
+            const frame = null;
+            const alwaysOpenExternally = true;
+            WebInspector.openURL(sourceCode.url, frame, alwaysOpenExternally);
+        });
 
-    contextMenu.appendItem(WebInspector.UIString("Copy Link Address"), () => {
-        InspectorFrontendHost.copyText(resource.url);
-    });
-
-    if (resource.urlComponents.scheme !== "data") {
-        contextMenu.appendItem(WebInspector.UIString("Copy as cURL"), () => {
-            resource.generateCURLCommand();
+        contextMenu.appendItem(WebInspector.UIString("Copy Link Address"), () => {
+            InspectorFrontendHost.copyText(sourceCode.url);
         });
     }
 
+    if (sourceCode instanceof WebInspector.Resource) {
+        if (sourceCode.urlComponents.scheme !== "data") {
+            contextMenu.appendItem(WebInspector.UIString("Copy as cURL"), () => {
+                sourceCode.generateCURLCommand();
+            });
+        }
+    }
+
     contextMenu.appendItem(WebInspector.UIString("Save File"), () => {
-        resource.requestContent().then(() => {
+        sourceCode.requestContent().then(() => {
             WebInspector.saveDataToFile({
-                url: resource.url,
-                content: resource.content
+                url: sourceCode.url || "",
+                content: sourceCode.content
             });
         });
     });

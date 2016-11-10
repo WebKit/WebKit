@@ -54,13 +54,14 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
     registerFolderizeSettings(type, displayName, representedObject, treeElementConstructor)
     {
         console.assert(type);
-        console.assert(displayName);
+        console.assert(displayName || displayName === null);
         console.assert(representedObject);
         console.assert(typeof treeElementConstructor === "function");
 
         let settings = {
             type,
             displayName,
+            topLevel: displayName === null,
             representedObject,
             treeElementConstructor,
         };
@@ -227,6 +228,15 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
     _compareTreeElementsByMainTitle(a, b)
     {
+        // Folders before anything.
+        let aIsFolder = a instanceof WebInspector.FolderTreeElement;
+        let bIsFolder = b instanceof WebInspector.FolderTreeElement;
+        if (aIsFolder && !bIsFolder)
+            return -1;
+        if (bIsFolder && !aIsFolder)
+            return 1;
+
+        // Then sort by title.
         return a.mainTitle.localeCompare(b.mainTitle);
     }
 
@@ -289,6 +299,9 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
             console.error("Unknown representedObject", representedObject);
             return this;
         }
+
+        if (settings.topLevel)
+            return this;
 
         var folder = this._folderTypeMap.get(settings.type);
         if (folder)

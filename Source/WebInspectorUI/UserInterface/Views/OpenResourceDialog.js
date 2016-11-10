@@ -122,6 +122,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     {
         WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.Target.removeEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
         this._queryController.reset();
@@ -131,6 +132,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     {
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.Target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
         if (WebInspector.frameResourceManager.mainFrame)
@@ -138,7 +140,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
         for (let target of WebInspector.targets) {
             if (target !== WebInspector.mainTarget)
-                this._addScriptsForTarget(target);
+                this._addResourcesForTarget(target);
         }
 
         this._updateFilter();
@@ -285,12 +287,19 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         }
     }
 
-    _addScriptsForTarget(target)
+    _addResourcesForTarget(target)
     {
         const suppressFilterUpdate = true;
 
+        this._addResource(target.mainResource);
+
+        for (let resource of target.resourceCollection.items)
+            this._addResource(resource, suppressFilterUpdate);
+
         let targetData = WebInspector.debuggerManager.dataForTarget(target);
         for (let script of targetData.scripts) {
+            if (script.resource)
+                continue;
             if (isWebKitInternalScript(script.sourceURL) || isWebInspectorConsoleEvaluationScript(script.sourceURL))
                 continue;
             this._addResource(script, suppressFilterUpdate);
@@ -313,6 +322,9 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
     _scriptAdded(event)
     {
         let script = event.data.script;
+        if (script.resource)
+            return;
+
         if (script.target === WebInspector.mainTarget)
             return;
 

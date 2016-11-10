@@ -41,6 +41,19 @@ WebInspector.TargetManager = class TargetManager extends WebInspector.Object
         return this._targets;
     }
 
+    targetForIdentifier(targetId)
+    {
+        if (!targetId)
+            return null;
+
+        for (let target of this._targets) {
+            if (target.identifier === targetId)
+                return target;
+        }
+
+        return null;
+    }
+
     addTarget(target)
     {
         this._targets.add(target);

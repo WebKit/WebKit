@@ -542,6 +542,7 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
         return true;
 
     ResourceRequest newRequest = ResourceRequest(resource->url());
+    newRequest.setInitiatorIdentifier(request.resourceRequest().initiatorIdentifier());
     if (request.resourceRequest().hiddenFromInspector())
         newRequest.setHiddenFromInspector(true);
     frame()->loader().loadedResourceFromMemoryCache(resource, newRequest);

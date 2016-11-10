@@ -32,6 +32,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.Target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
 
         WebInspector.heapManager.addEventListener(WebInspector.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
         WebInspector.memoryManager.addEventListener(WebInspector.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);

@@ -185,7 +185,8 @@
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                 { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                 { "name": "redirectResponse", "optional": true, "$ref": "Response", "description": "Redirect response data." },
-                { "name": "type", "$ref": "Page.ResourceType", "optional": true, "description": "Resource type." }
+                { "name": "type", "$ref": "Page.ResourceType", "optional": true, "description": "Resource type." },
+                { "name": "targetId", "type": "string", "optional": true, "description": "Identifier for the context of where the load originated. In general this is the target identifier. For Workers this will be the workerId." }
             ]
         },
         {

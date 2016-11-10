@@ -58,6 +58,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const Blob& blob)
     ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), urlForReading, blob.url());
 
     ResourceRequest request(urlForReading);
+    request.setInitiatorIdentifier(context.resourceRequestIdentifier());
     request.setHTTPMethod("GET");
 
     ThreadableLoaderOptions options;

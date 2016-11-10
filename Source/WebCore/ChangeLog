@@ -1,3 +1,104 @@
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Associate Worker Resources with the Worker and not the Page
+        https://bugs.webkit.org/show_bug.cgi?id=164342
+        <rdar://problem/29075775>
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/worker/resources-in-worker.html
+
+        Provide a way to associate an initiator identifier with a ResourceRequest.
+        This will allow Web Inspector to identify who started particular resource
+        loads. This is important to associate Worker(...), importScript(...), and
+        XMLHttpRequest / Fetch loads with that specific Worker.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::initiatorIdentifier):
+        (WebCore::ResourceRequestBase::setInitiatorIdentifier):
+        Optional initiator identifier. Currently used only be Web Inspector.
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::resourceRequestIdentifier):
+        Non-page execution contexts, like WorkerGlobalScope, should provide
+        a unique identifier that may be used to distinguish loads initiated
+        from within that context.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+        XHR / Fetch loads should include the ScriptExecutionContext's
+        initiator identifier.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::WorkerScriptLoader):
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * workers/WorkerScriptLoader.h:
+        Provide a way to provide initiator identifier information for
+        Worker script loads. Currently this is `new Worker(...)` and
+        `importScripts(...)` resource loads.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::create):
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::importScripts):
+        * workers/WorkerGlobalScope.h:
+        Give Worker itself the unique identifier, because `new Worker(...)`
+        loads happen before the WorkerGlobalScript (ScriptExecutionContext)
+        is actually created, but we want to associate it with this Worker.
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::WorkerInspectorProxy):
+        * workers/WorkerInspectorProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        Pass the MainThread's Worker identifier through to the WorkerGlobalScope
+        created on the WorkerThread. They should be the same identifier.
+
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        Pass the initiator identifier data to the frontend. This identifier is
+        equivalent to a "target identifier" in the frontend. Currently the only
+        non-Page targets are Workers.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache):
+        When using the memory cache we create a new resource request. Be sure
+        to copy over useful inspector data, like the initiator identifier,
+        from the original request.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+        When rebuilding a ResourceRequest from NSURLRequest, copy over the
+        initiator identifier property that wouldn't otherwise have survived
+        the transition.
+
 2016-11-09  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up some exception ordering.

@@ -961,6 +961,9 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
         if (!sourceMappingURL.isEmpty())
             resourceObject->setSourceMapURL(sourceMappingURL);
+        String targetId = cachedResource->resourceRequest().initiatorIdentifier();
+        if (!targetId.isEmpty())
+            resourceObject->setTargetId(targetId);
         subresources->addItem(WTFMove(resourceObject));
     }
 

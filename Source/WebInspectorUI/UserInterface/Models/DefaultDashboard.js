@@ -37,6 +37,7 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
 
         // Necessary events required to track load of resources.
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WebInspector.Target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
         // Necessary events required to track console messages.

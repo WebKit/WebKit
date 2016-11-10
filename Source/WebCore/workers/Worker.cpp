@@ -38,6 +38,7 @@
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
+#include <inspector/IdentifiersFactory.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 
@@ -53,6 +54,7 @@ void networkStateChanged(bool isOnLine)
 
 inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags)
     : ActiveDOMObject(&context)
+    , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
     , m_runtimeFlags(runtimeFlags)
 {
@@ -88,7 +90,7 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, const S
 
     worker->m_scriptLoader = WorkerScriptLoader::create();
     auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
-    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL.releaseReturnValue(), FetchOptions::Mode::SameOrigin, contentSecurityPolicyEnforcement, worker.ptr());
+    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL.releaseReturnValue(), FetchOptions::Mode::SameOrigin, contentSecurityPolicyEnforcement, worker->m_identifier, worker.ptr());
     return WTFMove(worker);
 }
 
