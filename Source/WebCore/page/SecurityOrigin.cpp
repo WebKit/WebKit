@@ -328,7 +328,7 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAll
     if (isUnique())
         return false;
 
-    if (isLocal() && !needsStorageAccessFromFileURLsQuirk() && !m_universalAccess)
+    if (isLocal() && !needsStorageAccessFromFileURLsQuirk() && !m_universalAccess && shouldAllowFromThirdParty != AlwaysAllowFromThirdParty)
         return false;
     
     if (m_storageBlockingPolicy == BlockAllStorage)
