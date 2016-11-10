@@ -2661,7 +2661,7 @@ sub GenerateImplementation
             if ($function->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
                 my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
-                my $functionSignature = "JSC::EncodedJSValue JSC_HOST_CALL ${unsafeFunctionName}(JSC::ExecState*, $className*";
+                my $functionSignature = "JSC::EncodedJSValue JIT_OPERATION ${unsafeFunctionName}(JSC::ExecState*, $className*";
                 foreach my $argument (@{$function->arguments}) {
                     my $type = $argument->type;
                     my $argumentType = GetUnsafeArgumentType($interface, $type);
@@ -3909,7 +3909,7 @@ END
             if ($function->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"<interpreter/FrameTracers.h>"} = 1;
                 my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
-                push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${unsafeFunctionName}(JSC::ExecState* state, $className* castedThis");
+                push(@implContent, "JSC::EncodedJSValue JIT_OPERATION ${unsafeFunctionName}(JSC::ExecState* state, $className* castedThis");
                 foreach my $argument (@{$function->arguments}) {
                     my $type = $argument->type;
                     my $argumentType = GetUnsafeArgumentType($interface, $type);

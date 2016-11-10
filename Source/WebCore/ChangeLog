@@ -1,3 +1,21 @@
+2016-11-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win32] Crash in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=164411
+
+        Reviewed by Mark Lam.
+
+        Use the calling convention expected by the callers of the generated functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetAttribute):
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionItem):
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionHasAttribute):
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetElementById):
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetElementsByName):
+
 2016-11-10  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: clarify button roles (e.g. toggle or popup button)
