@@ -1,3 +1,12 @@
+2016-11-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking swipe/pushState-cached-back-swipe.html and swipe/main-frame-pinning-requirement.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=164572
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-11-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copied text would contain text inside CDATA sections and comments
