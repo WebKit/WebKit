@@ -1,3 +1,31 @@
+2016-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Memory values shown by memory pressure handler logger are not useful
+        https://bugs.webkit.org/show_bug.cgi?id=164589
+
+        Reviewed by Michael Catanzaro.
+
+        We are currently using the VmSize field from /proc/self/status which is the virtual memory size of the process
+        and doesn't normally change even when the memory pressure handler manages to release memory. So, most of the
+        time we see that there's no changes in memory usage in the logs.
+        We should use the actual memory used by the process, memory that the process can release and then it's relevant
+        for the memory pressure handler. Using other fields from /proc/self/status we could do something like VmRSS -
+        (RssFile + RssShme), but there's also /proc/self/statm that provides the same information in a single. The main
+        different is that statm provides both resident and shared memory directly, but in number of pages, so we need to
+        multiply by the size of the page.
+        This patch adds a method to parse /proc/self/statm in its given file, because I plan to use this for the linux
+        memory sampler that is incorrectly parsing /proc/self/statm.
+
+        * platform/Linux.cmake: Add new files to compilation.
+        * platform/linux/CurrentProcessMemoryStatus.cpp: Added.
+        (WebCore::systemPageSize): Return the page size.
+        (WebCore::currentProcessMemoryStatus): Parse /proc/self/statm and fill the given ProcessMemoryStatus.
+        * platform/linux/CurrentProcessMemoryStatus.h: Added.
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        (WebCore::MemoryPressureHandler::processMemoryUsage(): Helper function to return the memory used by the process
+        in bytes.
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage): Use processMemoryUsage().
+
 2016-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         MemoryPressureHandler shouldn't know how to release WebCore memory

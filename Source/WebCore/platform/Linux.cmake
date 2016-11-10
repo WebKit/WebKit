@@ -5,5 +5,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 
 list(APPEND WebCore_SOURCES
     platform/gamepad/linux/GamepadDeviceLinux.cpp
+
+    platform/linux/CurrentProcessMemoryStatus.cpp
     platform/linux/MemoryPressureHandlerLinux.cpp
 )
