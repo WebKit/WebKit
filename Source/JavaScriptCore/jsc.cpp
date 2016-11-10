@@ -966,6 +966,7 @@ public:
     String m_uncaughtExceptionName;
     bool m_alwaysDumpUncaughtException { false };
     bool m_dumpSamplingProfilerData { false };
+    bool m_enableRemoteDebugging { false };
 
     void parseArguments(int, char**);
 };
@@ -2784,6 +2785,11 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
 
+        if (!strcmp(arg, "--remote-debug")) {
+            m_enableRemoteDebugging = true;
+            continue;
+        }
+
         static const unsigned strictFileStrLength = strlen("--strict-file=");
         if (!strncmp(arg, "--strict-file=", strictFileStrLength)) {
             m_scripts.append(Script(Script::StrictMode::Strict, Script::CodeSource::File, Script::ScriptType::Script, argv[i] + strictFileStrLength));
@@ -2851,6 +2857,7 @@ static int NEVER_INLINE runJSC(VM* vm, CommandLine options)
         vm->m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*vm);
 
     GlobalObject* globalObject = GlobalObject::create(*vm, GlobalObject::createStructure(*vm, jsNull()), options.m_arguments);
+    globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
     bool success = runWithScripts(globalObject, options.m_scripts, options.m_uncaughtExceptionName, options.m_alwaysDumpUncaughtException, options.m_dump, options.m_module);
     if (options.m_interactive && success)
         runInteractive(globalObject);
