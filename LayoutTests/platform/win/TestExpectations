@@ -2517,6 +2517,8 @@ webkit.org/b/140703 security/block-test-no-port.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
+webkit.org/b/155185 storage/domstorage/localstorage [ Failure ]
+
 webkit.org/b/140725 fast/dom/34176.html [ Failure ]
 
 # Windows doesn't seem to have some of these fonts:

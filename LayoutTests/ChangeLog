@@ -1,3 +1,11 @@
+2016-11-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Windows localStorage tests will fail until Bug 155185 is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+
+        * platform/win/TestExpectations: Mark localStorage tests as expected
+        to fail for now.
+
 2016-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/pip-support/pip-support-enabled.html as flaky.
