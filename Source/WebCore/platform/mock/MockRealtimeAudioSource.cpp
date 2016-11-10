@@ -40,14 +40,18 @@
 
 namespace WebCore {
 
-Ref<MockRealtimeAudioSource> MockRealtimeAudioSource::create()
+RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
 {
-    return adoptRef(*new MockRealtimeAudioSource(MockRealtimeMediaSource::mockAudioSourceName()));
+    auto source = adoptRef(new MockRealtimeAudioSource(name));
+    if (constraints && source->applyConstraints(*constraints))
+        source = nullptr;
+
+    return source;
 }
 
-Ref<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
+RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
 {
-    auto source = adoptRef(*new MockRealtimeAudioSource(name));
+    auto source = adoptRef(new MockRealtimeAudioSource(name));
     source->m_muted = true;
     return source;
 }
@@ -61,18 +65,21 @@ void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settin
 {
     settings.setVolume(volume());
     settings.setEchoCancellation(echoCancellation());
+    settings.setSampleRate(44100);
 }
 
 void MockRealtimeAudioSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
     capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
     capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
+    capabilities.setSampleRate(CapabilityValueOrRange(44100, 44100));
 }
 
 void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
 {
     supportedConstraints.setSupportsVolume(true);
     supportedConstraints.setSupportsEchoCancellation(true);
+    supportedConstraints.setSupportsSampleRate(true);
 }
 
 } // namespace WebCore

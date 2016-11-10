@@ -34,6 +34,7 @@
 #include "RealtimeMediaSourceCenterMac.h"
 
 #include "AVCaptureDeviceManager.h"
+#include "Logging.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/MainThread.h>
 
@@ -65,48 +66,53 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void RealtimeMediaSourceCenterMac::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterMac::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<String> audioSourceUIDs;
+    Vector<String> videoSourceUIDs;
+    String invalidConstraint;
 
     if (audioConstraints.isValid()) {
-        String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Audio, audioConstraints, nullptr, invalidConstraint);
+        audioSourceUIDs = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints, invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             invalidHandler(invalidConstraint);
             return;
         }
-
-        audioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints);
     }
 
     if (videoConstraints.isValid()) {
-        String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Video, videoConstraints, nullptr, invalidConstraint);
+        videoSourceUIDs = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints, invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             invalidHandler(invalidConstraint);
             return;
         }
-
-        videoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
     }
 
-    validHandler(WTFMove(audioSources), WTFMove(videoSources));
+    validHandler(WTFMove(audioSourceUIDs), WTFMove(videoSourceUIDs));
 }
 
-void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
+void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    String invalidConstraint;
 
     if (!audioDeviceID.isEmpty()) {
-        auto audioSource = AVCaptureDeviceManager::singleton().sourceWithUID(audioDeviceID, RealtimeMediaSource::Audio, nullptr);
+        auto audioSource = AVCaptureDeviceManager::singleton().sourceWithUID(audioDeviceID, RealtimeMediaSource::Audio, audioConstraints, invalidConstraint);
+#if !LOG_DISABLED
+        if (!invalidConstraint.isEmpty())
+            LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), audio constraints failed to apply: %s", this, invalidConstraint.utf8().data());
+#endif
+
         if (audioSource)
             audioSources.append(WTFMove(audioSource));
     }
     if (!videoDeviceID.isEmpty()) {
-        auto videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, nullptr);
+        auto videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, videoConstraints, invalidConstraint);
+#if !LOG_DISABLED
+        if (!invalidConstraint.isEmpty())
+            LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), video constraints failed to apply: %s", this, invalidConstraint.utf8().data());
+#endif
         if (videoSource)
             videoSources.append(WTFMove(videoSource));
     }

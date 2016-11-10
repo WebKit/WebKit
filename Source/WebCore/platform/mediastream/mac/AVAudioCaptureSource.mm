@@ -62,13 +62,22 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 namespace WebCore {
 
-RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraint)
+RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
 {
-    return adoptRef(new AVAudioCaptureSource(device, id, constraint));
+    auto source = adoptRef(new AVAudioCaptureSource(device, id));
+    if (constraints) {
+        auto result = source->applyConstraints(*constraints);
+        if (result) {
+            invalidConstraint = result.value().first;
+            source = nullptr;
+        }
+    }
+
+    return source;
 }
-    
-AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraints)
-    : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio, constraints)
+
+AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
+    : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio)
 {
     m_inputDescription = std::make_unique<AudioStreamBasicDescription>();
 }

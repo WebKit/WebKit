@@ -45,8 +45,8 @@ namespace WebCore {
 class AVCaptureSessionInfo : public CaptureSessionInfo {
 public:
     AVCaptureSessionInfo(AVCaptureSession*);
-    bool supportsVideoSize(const String&) const override;
-    String bestSessionPresetForVideoDimensions(int width, int height) const override;
+    bool supportsVideoSize(const String&) const final;
+    String bestSessionPresetForVideoDimensions(int width, int height) const final;
 
 private:
     AVCaptureSession *m_platformSession;
@@ -55,36 +55,26 @@ private:
 class AVCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVCaptureDeviceManager>;
 public:
-    Vector<CaptureDeviceInfo>& captureDeviceList() override;
+    Vector<CaptureDeviceInfo>& captureDeviceList() final;
 
     static AVCaptureDeviceManager& singleton();
 
-    RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
-    Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&) override;
-
-    Vector<CaptureDevice> getSourcesInfo() override;
-    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, const MediaConstraints&, const CaptureSessionInfo*, String&) override;
+    Vector<CaptureDevice> getSourcesInfo() final;
 
     void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
-    
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
 protected:
     static bool isAvailable();
 
     AVCaptureDeviceManager();
-    ~AVCaptureDeviceManager() override;
-    bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const MediaConstraint&) override;
-    RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) override;
-    CaptureSessionInfo defaultCaptureSession() const override;
-    void refreshCaptureDeviceList() override;
-    bool isSupportedFrameRate(const MediaConstraint&) const override;
+    ~AVCaptureDeviceManager() final;
 
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, const MediaConstraints*, String&) final;
+    void refreshCaptureDeviceList() final;
     void registerForDeviceNotifications();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Vector<CaptureDeviceInfo> m_devices;
 };
 

@@ -1,3 +1,162 @@
+2016-11-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] apply constraints passed to getUserMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=164561
+
+        Reviewed by Youenn Fablet.
+        <rdar://problem/29191384>
+
+        No new tests, updated existing tests.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow): Pass constraints into createMediaStream instead of applying
+          them after the stream has been created.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove MediaConstraintsMock.cpp/.h.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updatePausedImage): Remove a bogus assert.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState): Drive-by fix: a stream
+          that is receiving media data is as ready as it will ever be so it's readyState should be
+          at HAVE_ENOUGH_DATA.
+
+        Simplify CaptureDeviceManager by removing all code for constraint validation because some
+        constraints can't be validated without a live capture device. Ports that are able to resolve
+        constraints without creating a live source can do so in a derived capture device class.
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::bestSourcesForTypeAndConstraints): Return a list of UIDs, not a list
+          of live sources, because that is all the caller will use. This will allows ports to avoid
+          source creation in some cases.
+        (CaptureDeviceManager::sourceWithUID): Add parameters for new source constraints and invalid
+          constraint.
+        (CaptureDeviceManager::verifyConstraintsForMediaType): Deleted.
+        (CaptureDeviceManager::bestDeviceForFacingMode): Deleted.
+        (facingModeFromString): Deleted.
+        (CaptureDeviceManager::sessionSupportsConstraint): Deleted.
+        (CaptureDeviceManager::isSupportedFrameRate): Deleted.
+        * platform/mediastream/CaptureDeviceManager.h:
+        (WebCore::CaptureDeviceManager::defaultCaptureSession): Deleted.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::FlattenedConstraint::find): New, make it possible to examine resolved constraints.
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::fitnessDistance): Reject invalid constraints.
+        (WebCore::NumericConstraint::valueForCapabilityRange): New, resolve a constraint for a 
+          capability range.
+        (WebCore::MediaTrackConstraintSetMap::width): Expose constraints held in the map.
+        (WebCore::MediaTrackConstraintSetMap::height):
+        (WebCore::MediaTrackConstraintSetMap::sampleRate):
+        (WebCore::MediaTrackConstraintSetMap::sampleSize):
+        (WebCore::MediaTrackConstraintSetMap::aspectRatio):
+        (WebCore::MediaTrackConstraintSetMap::frameRate):
+        (WebCore::MediaTrackConstraintSetMap::volume):
+        (WebCore::MediaTrackConstraintSetMap::echoCancellation):
+        (WebCore::MediaTrackConstraintSetMap::facingMode):
+        (WebCore::MediaTrackConstraintSetMap::deviceId):
+        (WebCore::MediaTrackConstraintSetMap::groupId):
+
+        Resolve and apply width, height, and frameRate all at once because the ability to support
+        one may depend on the value of another.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::supportsSizeAndFrameRate): 
+        (WebCore::applyNumericConstraint): Move the guts of the logic into valueForCapabilityRange.
+        (WebCore::RealtimeMediaSource::applySizeAndFrameRate):
+        (WebCore::RealtimeMediaSource::selectSettings):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+        (WebCore::RealtimeMediaSource::applyConstraints): Support null success/failure lambdas.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::create): Add parameter for creation constraints.
+        (WebCore::AVAudioCaptureSource::AVAudioCaptureSource): Ditto.
+
+        Remove all constraint validation code, it is done by the audio and video capture sources. Add
+        support for stream creation constraints.
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::captureDeviceList):
+        (WebCore::AVCaptureDeviceManager::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebCore::AVCaptureDeviceManager::bestSourcesForTypeAndConstraints): Deleted.
+        (WebCore::AVCaptureDeviceManager::sourceWithUID): Deleted.
+        (WebCore::AVCaptureDeviceManager::verifyConstraintsForMediaType): Deleted.
+        (WebCore::AVCaptureDeviceManager::defaultCaptureSession): Deleted.
+        (WebCore::AVCaptureDeviceManager::sessionSupportsConstraint): Deleted.
+        (WebCore::AVCaptureDeviceManager::isSupportedFrameRate): Deleted.
+        (WebCore::AVCaptureDeviceManager::supportedConstraints): Deleted.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        (WebCore::AVMediaCaptureSource::constraints): Deleted.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource):
+        (WebCore::AVMediaCaptureSource::~AVMediaCaptureSource):
+        (WebCore::AVMediaCaptureSource::startProducingData):
+        (WebCore::AVMediaCaptureSource::stopProducingData):
+        (WebCore::AVMediaCaptureSource::beginConfiguration):
+        (WebCore::AVMediaCaptureSource::commitConfiguration):
+        (WebCore::AVMediaCaptureSource::capabilities):
+        (WebCore::AVMediaCaptureSource::setupSession):
+        (WebCore::AVMediaCaptureSource::reset):
+
+        Validate and apply constraints, support source creation constraints, initialize capabilities
+        and supported constraints by examining device capabilities.
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::create):
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::updateSizeMinMax):
+        (WebCore::updateAspectRatioMinMax):
+        (WebCore::AVVideoCaptureSource::initializeCapabilities):
+        (WebCore::AVVideoCaptureSource::initializeSupportedConstraints):
+        (WebCore::AVVideoCaptureSource::applySize):
+        (WebCore::AVVideoCaptureSource::setPreset):
+        (WebCore::AVVideoCaptureSource::applyFrameRate):
+        (WebCore::AVVideoCaptureSource::applySizeAndFrameRate):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::currentFrameCGImage):
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions):
+        (WebCore::AVVideoCaptureSource::supportsSizeAndFrameRate):
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::create): Apply creation constraints, return null if they
+          can not be applied successfully.
+        (WebCore::MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac):
+        (WebCore::MockRealtimeVideoSource::createMuted):
+
+        Update RealtimeMediaSourceCenters for API changes.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::validateRequestConstraints):
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+        (WebCore::RealtimeMediaSourceCenterOwr::createMediaStream):
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+
+        Mock media sources support constraint validation and application directly so "mock constraints"
+        are no longer necessary.
+        * platform/mock/MediaConstraintsMock.cpp: Removed.
+        * platform/mock/MediaConstraintsMock.h: Removed.
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockRealtimeAudioSource::createMuted):
+        (WebCore::MockRealtimeAudioSource::updateSettings):
+        (WebCore::MockRealtimeAudioSource::initializeCapabilities):
+        (WebCore::MockRealtimeAudioSource::initializeSupportedConstraints):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::validateRequestConstraints):
+        (WebCore::MockRealtimeMediaSourceCenter::createMediaStream):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::create):
+        (WebCore::MockRealtimeVideoSource::createMuted):
+        * platform/mock/MockRealtimeVideoSource.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+
 2016-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Move SecurityOrigin::databaseIdentifier() to SecurityOriginData

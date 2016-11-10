@@ -29,7 +29,6 @@
 
 #include "RTCPeerConnectionHandlerMock.h"
 
-#include "MediaConstraintsMock.h"
 #include "NotImplemented.h"
 #include "RTCDTMFSenderHandler.h"
 #include "RTCDTMFSenderHandlerMock.h"

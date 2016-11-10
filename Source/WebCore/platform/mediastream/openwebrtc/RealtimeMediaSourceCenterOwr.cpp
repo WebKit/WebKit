@@ -76,7 +76,7 @@ RealtimeMediaSourceCenterOwr::~RealtimeMediaSourceCenterOwr()
 {
 }
 
-void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
 {
     m_validConstraintsHandler = WTFMove(validHandler);
     m_invalidConstraintsHandler = WTFMove(invalidHandler);
@@ -93,10 +93,12 @@ void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHa
     owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
 }
 
-void RealtimeMediaSourceCenterOwr::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
+void RealtimeMediaSourceCenterOwr::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints*, const MediaConstraints*)
 {
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
+
+    // FIXME: Actually apply constraints to newly created sources.
 
     if (!audioDeviceID.isEmpty()) {
         RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(audioDeviceID);
@@ -129,8 +131,8 @@ Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
 
 void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<String> audioSources;
+    Vector<String> videoSources;
 
     for (auto item = sources; item; item = item->next) {
         OwrMediaSource* source = OWR_MEDIA_SOURCE(item->data);
@@ -158,9 +160,9 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
             m_sourceMap.add(id, mediaSource);
 
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            audioSources.append(mediaSource);
+            audioSources.append(id);
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            videoSources.append(mediaSource);
+            videoSources.append(id);
     }
 
     // TODO: Make sure contraints are actually validated by checking source types.

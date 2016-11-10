@@ -165,23 +165,16 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
 void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData)
 {
 #if ENABLE(MEDIA_STREAM)
-    RealtimeMediaSourceCenter::InvalidConstraintsHandler invalidHandler = [this, userMediaID](const String& invalidConstraint) {
+    auto invalidHandler = [this, userMediaID](const String& invalidConstraint) {
         if (!m_page.isValid())
             return;
 
         denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, invalidConstraint);
     };
 
-    RealtimeMediaSourceCenter::ValidConstraintsHandler validHandler = [this, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier](const Vector<RefPtr<RealtimeMediaSource>>&& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>&& videoTracks) {
+    auto validHandler = [this, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier](const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs) {
         if (!m_page.isValid())
             return;
-
-        Vector<String> videoDeviceUIDs;
-        Vector<String> audioDeviceUIDs;
-        for (auto& audioTrack : audioTracks)
-            audioDeviceUIDs.append(audioTrack->persistentID());
-        for (auto& videoTrack : videoTracks)
-            videoDeviceUIDs.append(videoTrack->persistentID());
 
         if (videoDeviceUIDs.isEmpty() && audioDeviceUIDs.isEmpty()) {
             denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, "");

@@ -1,3 +1,14 @@
+2016-11-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] apply constraints passed to getUserMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=164561
+
+        Reviewed by Youenn Fablet.
+        <rdar://problem/29191384>
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+
 2016-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Move SecurityOrigin::databaseIdentifier() to SecurityOriginData

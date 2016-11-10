@@ -46,13 +46,13 @@ class GraphicsContext;
 class MockRealtimeVideoSource : public MockRealtimeMediaSource {
 public:
 
-    static Ref<MockRealtimeVideoSource> create();
-    static Ref<MockRealtimeVideoSource> createMuted(const String& name);
+    static RefPtr<MockRealtimeVideoSource> create(const String&, const MediaConstraints*);
+    static RefPtr<MockRealtimeVideoSource> createMuted(const String& name);
 
     virtual ~MockRealtimeVideoSource() { }
 
 protected:
-    MockRealtimeVideoSource(const String& name = ASCIILiteral("Mock video device"));
+    MockRealtimeVideoSource(const String&);
     virtual void updatePlatformLayer() const { }
     virtual void updateSampleBuffer() { }
 

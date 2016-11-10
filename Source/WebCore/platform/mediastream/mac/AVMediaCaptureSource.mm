@@ -122,10 +122,9 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     return globalQueue;
 }
 
-AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
+AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, RealtimeMediaSource::Type type)
     : RealtimeMediaSource(id, type, emptyString())
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
-    , m_constraints(constraints)
     , m_device(device)
 {
     setName(device.localizedName);
@@ -139,8 +138,8 @@ AVMediaCaptureSource::~AVMediaCaptureSource()
 
     if (m_session) {
         for (NSString *keyName in sessionKVOProperties())
-            [m_session.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
-        [m_session.get() stopRunning];
+            [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
+        [m_session stopRunning];
     }
 }
 
@@ -149,18 +148,30 @@ void AVMediaCaptureSource::startProducingData()
     if (!m_session)
         setupSession();
     
-    if ([m_session.get() isRunning])
+    if ([m_session isRunning])
         return;
     
-    [m_session.get() startRunning];
+    [m_session startRunning];
 }
 
 void AVMediaCaptureSource::stopProducingData()
 {
-    if (!m_session || ![m_session.get() isRunning])
+    if (!m_session || ![m_session isRunning])
         return;
 
-    [m_session.get() stopRunning];
+    [m_session stopRunning];
+}
+
+void AVMediaCaptureSource::beginConfiguration()
+{
+    if (m_session)
+        [m_session beginConfiguration];
+}
+
+void AVMediaCaptureSource::commitConfiguration()
+{
+    if (m_session)
+        [m_session commitConfiguration];
 }
 
 void AVMediaCaptureSource::initializeSettings()
@@ -191,7 +202,7 @@ RealtimeMediaSourceSupportedConstraints& AVMediaCaptureSource::supportedConstrai
 
 void AVMediaCaptureSource::initializeCapabilities()
 {
-    m_capabilities = RealtimeMediaSourceCapabilities::create(AVCaptureDeviceManager::singleton().supportedConstraints());
+    m_capabilities = RealtimeMediaSourceCapabilities::create(supportedConstraints());
     m_capabilities->setDeviceId(id());
 
     initializeCapabilities(*m_capabilities.get());
@@ -211,9 +222,11 @@ void AVMediaCaptureSource::setupSession()
 
     m_session = adoptNS([allocAVCaptureSessionInstance() init]);
     for (NSString *keyName in sessionKVOProperties())
-        [m_session.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)nil];
+        [m_session addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)nil];
 
+    [m_session beginConfiguration];
     setupCaptureSession();
+    [m_session commitConfiguration];
 }
 
 void AVMediaCaptureSource::reset()
@@ -221,7 +234,7 @@ void AVMediaCaptureSource::reset()
     RealtimeMediaSource::reset();
     m_isRunning = false;
     for (NSString *keyName in sessionKVOProperties())
-        [m_session.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
+        [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
     shutdownCaptureSession();
     m_session = nullptr;
 }

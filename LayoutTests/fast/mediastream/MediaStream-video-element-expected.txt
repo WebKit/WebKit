@@ -16,8 +16,8 @@ Event 'canplay'
 
 *** start playback ****
 video.play()
-Event 'play'
 Event 'canplaythrough'
+Event 'play'
 video.pause()
 
 **** check video element ****

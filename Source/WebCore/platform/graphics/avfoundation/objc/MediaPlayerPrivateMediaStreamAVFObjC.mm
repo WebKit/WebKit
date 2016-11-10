@@ -323,8 +323,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updatePausedImage()
 {
-    ASSERT(m_displayMode == currentDisplayMode());
-
     if (m_displayMode < PausedImage)
         return;
 
@@ -444,11 +442,8 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState(
 
     // https://w3c.github.io/mediacapture-main/ Change 8. from July 4, 2013.
     // FIXME: Only update readyState to HAVE_ENOUGH_DATA when all active tracks have sent a sample buffer.
-    if (m_mediaStreamPrivate->active() && m_hasReceivedMedia) {
-        if (!m_haveEverPlayed)
-            return MediaPlayer::ReadyState::HaveFutureData;
+    if (m_mediaStreamPrivate->active() && m_hasReceivedMedia)
         return MediaPlayer::ReadyState::HaveEnoughData;
-    }
 
     updateDisplayMode();
 

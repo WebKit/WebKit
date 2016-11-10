@@ -94,6 +94,9 @@ public:
     using SuccessHandler = std::function<void()>;
     using FailureHandler = std::function<void(const String& badConstraint, const String& errorString)>;
     void applyConstraints(const MediaConstraints&, SuccessHandler, FailureHandler);
+    Optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
+
+    virtual bool supportsConstraints(const MediaConstraints&, String&);
 
     virtual void settingsDidChange();
     void mediaDataUpdated(MediaSample&);
@@ -165,14 +168,21 @@ protected:
 
     void scheduleDeferredTask(std::function<void()>&&);
 
+    virtual void beginConfiguration() { }
+    virtual void commitConfiguration() { }
+
+    virtual bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
+    virtual double fitnessDistance(const MediaConstraint&);
+    virtual bool supportsSizeAndFrameRate(Optional<IntConstraint> width, Optional<IntConstraint> height, Optional<DoubleConstraint>, String&);
+    virtual bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
+    virtual void applyConstraint(const MediaConstraint&);
+    virtual void applyConstraints(const FlattenedConstraint&);
+    virtual void applySizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
+
     bool m_muted { false };
 
 private:
     WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-
-    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
-    double fitnessDistance(const MediaConstraint&);
-    void applyConstraint(const MediaConstraint&);
 
     WeakPtrFactory<RealtimeMediaSource> m_weakPtrFactory;
     String m_id;

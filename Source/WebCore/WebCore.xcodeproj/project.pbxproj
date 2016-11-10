@@ -146,8 +146,6 @@
 		07367DDF172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */; };
 		07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */; };
 		073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */; };
-		073794E119EE2D1B00E5A045 /* MediaConstraintsMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */; };
-		073794E219EE2D1B00E5A045 /* MediaConstraintsMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */; };
 		073794E519EE2FF200E5A045 /* JSRTCConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */; };
 		073794E619EE2FF200E5A045 /* JSRTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */; };
 		073794EB19EE341E00E5A045 /* JSRTCIceServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */; };
@@ -7140,8 +7138,6 @@
 		07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateLegacyAVFObjC.h; sourceTree = "<group>"; };
 		07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InbandTextTrackPrivateLegacyAVFObjC.mm; sourceTree = "<group>"; };
 		073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCOfferAnswerOptions.h; sourceTree = "<group>"; };
-		073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsMock.cpp; sourceTree = "<group>"; };
-		073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsMock.h; sourceTree = "<group>"; };
 		073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCConfiguration.cpp; sourceTree = "<group>"; };
 		073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCConfiguration.h; sourceTree = "<group>"; };
 		073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCIceServer.cpp; sourceTree = "<group>"; };
@@ -17249,8 +17245,6 @@
 				CDF2B005182053DF00F2B424 /* mediasource */,
 				59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */,
 				59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */,
-				073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */,
-				073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */,
 				077B64141B95F703003E9AD5 /* MediaPlaybackTargetMock.cpp */,
 				077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */,
 				077B64101B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.cpp */,
@@ -26597,7 +26591,6 @@
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
 				078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */,
 				078E091417D14D1C00420AA1 /* MediaConstraintsImpl.h in Headers */,
-				073794E219EE2D1B00E5A045 /* MediaConstraintsMock.h in Headers */,
 				417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */,
 				DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */,
 				CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */,
@@ -30407,7 +30400,6 @@
 				5CBC8DAC1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp in Sources */,
 				1BE5BFC21D515715001666D9 /* MediaConstraints.cpp in Sources */,
 				078E08FE17D14CEE00420AA1 /* MediaConstraintsImpl.cpp in Sources */,
-				073794E119EE2D1B00E5A045 /* MediaConstraintsMock.cpp in Sources */,
 				417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */,
 				DEBCCDD516646EB200A452E1 /* MediaControlElementTypes.cpp in Sources */,
 				CD27F6E7145770D30078207D /* MediaController.cpp in Sources */,

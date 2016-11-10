@@ -172,6 +172,16 @@ void FlattenedConstraint::append(const MediaConstraint& constraint)
     m_variants.append(ConstraintHolder::create(constraint));
 }
 
+const MediaConstraint* FlattenedConstraint::find(MediaConstraintType type) const
+{
+    for (auto& variant : m_variants) {
+        if (variant.constraintType() == type)
+            return &variant.constraint();
+    }
+
+    return nullptr;
+}
+
 void MediaTrackConstraintSetMap::forEach(std::function<void(const MediaConstraint&)> callback) const
 {
     filter([callback] (const MediaConstraint& constraint) mutable {

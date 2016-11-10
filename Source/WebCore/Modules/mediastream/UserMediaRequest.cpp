@@ -188,20 +188,16 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
             return;
         }
 
-        for (auto& track : stream->getAudioTracks()) {
-            track->applyConstraints(m_audioConstraints);
+        for (auto& track : stream->getAudioTracks())
             track->source().startProducingData();
-        }
 
-        for (auto& track : stream->getVideoTracks()) {
-            track->applyConstraints(m_videoConstraints);
+        for (auto& track : stream->getVideoTracks())
             track->source().startProducingData();
-        }
         
         m_promise.resolve(stream);
     };
 
-    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID);
+    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID, &m_audioConstraints.get(), &m_videoConstraints.get());
 }
 
 void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invalidConstraint)

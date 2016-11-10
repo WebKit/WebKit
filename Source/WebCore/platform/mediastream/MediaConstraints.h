@@ -158,14 +158,28 @@ public:
         //    dictionary's value for the constraint does not satisfy the constraint, the
         //    fitness distance is positive infinity.
         bool valid = validForRange(rangeMin, rangeMax);
-        if (m_exact && !valid)
-            return std::numeric_limits<double>::infinity();
+        if (m_exact) {
+            if (valid && m_min && m_exact.value() < m_min.value())
+                valid = false;
+            if (valid && m_max && m_exact.value() > m_max.value())
+                valid = false;
+            if (!valid)
+                return std::numeric_limits<double>::infinity();
+        }
 
-        if (m_min && !valid)
-            return std::numeric_limits<double>::infinity();
+        if (m_min) {
+            if (valid && m_max && m_min.value() > m_max.value())
+                valid = false;
+            if (!valid)
+                return std::numeric_limits<double>::infinity();
+        }
 
-        if (m_max && !valid)
-            return std::numeric_limits<double>::infinity();
+        if (m_max) {
+            if (valid && m_min && m_max.value() < m_min.value())
+                valid = false;
+            if (!valid)
+                return std::numeric_limits<double>::infinity();
+        }
 
         // 3. If no ideal value is specified, the fitness distance is 0.
         if (!m_ideal)
@@ -202,7 +216,6 @@ public:
                 return false;
         }
 
-
         if (m_max) {
             const ValueType constraintMax = m_max.value();
             if (constraintMax < rangeMin && !nearlyEqual(constraintMax, rangeMin))
@@ -227,6 +240,41 @@ public:
             return m_ideal.value();
 
         return 0;
+    }
+
+    ValueType valueForCapabilityRange(ValueType current, ValueType capabilityMin, ValueType capabilityMax) const
+    {
+        ValueType value;
+        ValueType min = capabilityMin;
+        ValueType max = capabilityMax;
+
+        if (m_exact) {
+            ASSERT(validForRange(capabilityMin, capabilityMax));
+            return m_exact.value();
+        }
+
+        if (m_min) {
+            value = m_min.value();
+            ASSERT(validForRange(value, capabilityMax));
+            if (value > min)
+                min = value;
+
+            // If there is no ideal, don't change if minimum is smaller than current.
+            if (!m_ideal && value < current)
+                value = current;
+        }
+
+        if (m_max) {
+            value = m_max.value();
+            ASSERT(validForRange(capabilityMin, value));
+            if (value < max)
+                max = value;
+        }
+
+        if (m_ideal)
+            value = std::max(min, std::min(max, m_ideal.value()));
+
+        return value;
     }
 
     bool isEmpty() const { return !m_min && !m_max && !m_exact && !m_ideal; }
@@ -540,6 +588,21 @@ public:
     WEBCORE_EXPORT void set(MediaConstraintType, Optional<BooleanConstraint>&&);
     WEBCORE_EXPORT void set(MediaConstraintType, Optional<StringConstraint>&&);
 
+    Optional<IntConstraint> width() const { return m_width; }
+    Optional<IntConstraint> height() const { return m_height; }
+    Optional<IntConstraint> sampleRate() const { return m_sampleRate; }
+    Optional<IntConstraint> sampleSize() const { return m_sampleSize; }
+
+    Optional<DoubleConstraint> aspectRatio() const { return m_aspectRatio; }
+    Optional<DoubleConstraint> frameRate() const { return m_frameRate; }
+    Optional<DoubleConstraint> volume() const { return m_volume; }
+
+    Optional<BooleanConstraint> echoCancellation() const { return m_echoCancellation; }
+
+    Optional<StringConstraint> facingMode() const { return m_facingMode; }
+    Optional<StringConstraint> deviceId() const { return m_deviceId; }
+    Optional<StringConstraint> groupId() const { return m_groupId; }
+
     template <class Encoder> void encode(Encoder& encoder) const
     {
         encoder << m_width;
@@ -612,6 +675,7 @@ public:
     void set(const MediaConstraint&);
     void merge(const MediaConstraint&);
     void append(const MediaConstraint&);
+    const MediaConstraint* find(MediaConstraintType) const;
     bool isEmpty() const { return m_variants.isEmpty(); }
 
     class iterator {

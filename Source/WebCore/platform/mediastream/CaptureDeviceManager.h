@@ -57,21 +57,14 @@ public:
     virtual Vector<CaptureDeviceInfo>& captureDeviceList() = 0;
     virtual void refreshCaptureDeviceList() { }
     virtual Vector<CaptureDevice> getSourcesInfo();
-    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&);
-    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*);
-
-    virtual bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, const MediaConstraints&, const CaptureSessionInfo*, String&);
+    virtual Vector<String> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, const MediaConstraints&, String&);
+    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, const MediaConstraints*, String&);
 
 protected:
     virtual ~CaptureDeviceManager();
-    virtual RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) = 0;
-
-    virtual CaptureSessionInfo defaultCaptureSession() const { return CaptureSessionInfo(); }
-    virtual bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const MediaConstraint&);
-    virtual bool isSupportedFrameRate(const MediaConstraint&) const;
+    virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, const MediaConstraints*, String&) = 0;
 
     bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDeviceInfo& source);
-    CaptureDeviceInfo* bestDeviceForFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
 };
 
 } // namespace WebCore

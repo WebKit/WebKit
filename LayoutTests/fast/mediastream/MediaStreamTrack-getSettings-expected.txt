@@ -12,6 +12,7 @@ video track settings:
 
 audio track settings:
   settings.volume = 1
+  settings.sampleRate = 44100
   settings.echoCancellation = false
   settings.deviceId = <UUID>
 
@@ -23,6 +24,7 @@ PASS "frameRate" in track.getCapabilities() is true
 PASS "facingMode" in track.getCapabilities() is true
 PASS "deviceId" in track.getCapabilities() is true
 PASS "volume" in track.getCapabilities() is true
+PASS "sampleRate" in track.getCapabilities() is true
 PASS "echoCancellation" in track.getCapabilities() is true
 PASS "deviceId" in track.getCapabilities() is true
 PASS successfullyParsed is true

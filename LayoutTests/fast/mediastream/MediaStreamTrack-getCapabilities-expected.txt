@@ -13,6 +13,7 @@ video track capabilities:
 
 audio track capabilities:
   capabilities.volume = { min: 0, max: 1 }
+  capabilities.sampleRate = { min: 44100, max: 44100 }
   capabilities.echoCancellation = [ true, true ]
   capabilities.deviceId = <UUID>
 

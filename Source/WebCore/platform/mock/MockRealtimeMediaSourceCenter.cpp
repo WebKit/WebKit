@@ -31,7 +31,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CaptureDevice.h"
-#include "MediaConstraintsMock.h"
+#include "Logging.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrack.h"
@@ -66,46 +66,54 @@ MockRealtimeMediaSourceCenter::MockRealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsDeviceId(true);
 }
 
-void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<String> audioSourceIds;
+    Vector<String> videoSourceIds;
+    String invalidConstraint;
 
     if (audioConstraints.isValid()) {
-        String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Audio, audioConstraints);
-        if (!invalidQuery.isEmpty()) {
-            invalidHandler(invalidQuery);
+        auto audioSource = MockRealtimeAudioSource::create(MockRealtimeMediaSource::mockAudioSourceName(), nullptr);
+        if (!audioSource->supportsConstraints(audioConstraints, invalidConstraint)) {
+            if (invalidHandler)
+                invalidHandler(invalidConstraint);
             return;
         }
 
-        auto audioSource = MockRealtimeAudioSource::create();
-        audioSources.append(WTFMove(audioSource));
+        audioSourceIds.append(MockRealtimeMediaSource::mockAudioSourcePersistentID());
     }
 
     if (videoConstraints.isValid()) {
-        String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Video, videoConstraints);
-        if (!invalidQuery.isEmpty()) {
-            invalidHandler(invalidQuery);
+        auto videoSource = MockRealtimeVideoSource::create(MockRealtimeMediaSource::mockVideoSourceName(), nullptr);
+        if (!videoSource->supportsConstraints(videoConstraints, invalidConstraint)) {
+            if (invalidHandler)
+                invalidHandler(invalidConstraint);
             return;
         }
 
-        auto videoSource = MockRealtimeVideoSource::create();
-        videoSources.append(WTFMove(videoSource));
+
+        videoSourceIds.append(MockRealtimeMediaSource::mockVideoSourcePersistentID());
     }
 
-    validHandler(WTFMove(audioSources), WTFMove(videoSources));
+    validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));
 }
 
-void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
+void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
-    if (audioDeviceID == MockRealtimeMediaSource::mockAudioSourcePersistentID())
-        audioSources.append(MockRealtimeAudioSource::create());
+    if (audioDeviceID == MockRealtimeMediaSource::mockAudioSourcePersistentID()) {
+        auto source = MockRealtimeAudioSource::create(MockRealtimeMediaSource::mockAudioSourceName(), audioConstraints);
+        if (source)
+            audioSources.append(source.leakRef());
+    }
 
-    if (videoDeviceID == MockRealtimeMediaSource::mockVideoSourcePersistentID())
-        videoSources.append(MockRealtimeVideoSource::create());
+    if (videoDeviceID == MockRealtimeMediaSource::mockVideoSourcePersistentID()) {
+        auto source = MockRealtimeVideoSource::create(MockRealtimeMediaSource::mockVideoSourceName(), videoConstraints);
+        if (source)
+            videoSources.append(source.leakRef());
+    }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())
         completionHandler(nullptr);

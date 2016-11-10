@@ -70,25 +70,9 @@ bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDevice
     return false;
 }
 
-bool CaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, const MediaConstraints& constraints, const CaptureSessionInfo* session, String& invalidConstraint)
+Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints, String& invalidConstraint)
 {
-    invalidConstraint = emptyString();
-    constraints.mandatoryConstraints().filter([&](const MediaConstraint& constraint) {
-        if (!sessionSupportsConstraint(session, type, constraint)) {
-            invalidConstraint = constraint.name();
-            return true;
-        }
-
-        return false;
-    });
-
-    return invalidConstraint.isEmpty();
-
-}
-
-Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, MediaConstraints& constraints)
-{
-    Vector<RefPtr<RealtimeMediaSource>> bestSourcesList;
+    Vector<RefPtr<RealtimeMediaSource>> bestSources;
 
     struct {
         bool operator()(RefPtr<RealtimeMediaSource> a, RefPtr<RealtimeMediaSource> b)
@@ -98,114 +82,39 @@ Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndC
     } sortBasedOnFitnessScore;
 
     for (auto& captureDevice : captureDeviceList()) {
-        if (!captureDevice.m_enabled || captureDevice.m_sourceId.isEmpty() || captureDevice.m_sourceType == RealtimeMediaSource::None)
+        if (!captureDevice.m_enabled)
             continue;
 
-        if (RefPtr<RealtimeMediaSource> captureSource = sourceWithUID(captureDevice.m_persistentDeviceID, type, &constraints))
-            bestSourcesList.append(captureSource.leakRef());
+        if (RefPtr<RealtimeMediaSource> captureSource = sourceWithUID(captureDevice.m_persistentDeviceID, type, &constraints, invalidConstraint))
+            bestSources.append(captureSource.leakRef());
     }
-    std::sort(bestSourcesList.begin(), bestSourcesList.end(), sortBasedOnFitnessScore);
-    return bestSourcesList;
+
+    Vector<String> sourceUIDs;
+    if (bestSources.isEmpty())
+        return sourceUIDs;
+
+    sourceUIDs.reserveInitialCapacity(bestSources.size());
+    std::sort(bestSources.begin(), bestSources.end(), sortBasedOnFitnessScore);
+    for (auto& device : bestSources)
+        sourceUIDs.append(device->persistentID());
+
+    return sourceUIDs;
 }
 
-RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
+RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, const MediaConstraints* constraints, String& invalidConstraint)
 {
     for (auto& captureDevice : captureDeviceList()) {
         if (captureDevice.m_persistentDeviceID != deviceUID || captureDevice.m_sourceType != type)
             continue;
 
-        if (!captureDevice.m_enabled || type == RealtimeMediaSource::None || captureDevice.m_sourceId.isEmpty())
+        if (!captureDevice.m_enabled)
             continue;
 
-        if (RealtimeMediaSource* mediaSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, constraints))
+        if (auto mediaSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, constraints, invalidConstraint))
             return mediaSource;
     }
+
     return nullptr;
-}
-
-CaptureDeviceInfo* CaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSourceSettings::VideoFacingMode facingMode)
-{
-    if (facingMode == RealtimeMediaSourceSettings::Unknown)
-        return nullptr;
-
-    for (auto& device : captureDeviceList()) {
-        if (device.m_sourceType == RealtimeMediaSource::Video && device.m_position == facingMode)
-            return &device;
-    }
-    return nullptr;
-}
-
-static inline RealtimeMediaSourceSettings::VideoFacingMode facingModeFromString(const String& facingModeString)
-{
-    static NeverDestroyed<AtomicString> userFacingModeString("user", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> environmentFacingModeString("environment", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> leftFacingModeString("left", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> rightFacingModeString("right", AtomicString::ConstructFromLiteral);
-    if (facingModeString == userFacingModeString)
-        return RealtimeMediaSourceSettings::User;
-    if (facingModeString == environmentFacingModeString)
-        return RealtimeMediaSourceSettings::Environment;
-    if (facingModeString == leftFacingModeString)
-        return RealtimeMediaSourceSettings::Left;
-    if (facingModeString == rightFacingModeString)
-        return RealtimeMediaSourceSettings::Right;
-    return RealtimeMediaSourceSettings::Unknown;
-}
-
-bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type type, const MediaConstraint& constraint)
-{
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = constraint.constraintType();
-    if (!supportedConstraints.supportsConstraint(constraintType))
-        return false;
-
-    switch (constraintType) {
-    case MediaConstraintType::Width:
-        return type == RealtimeMediaSource::Video;
-
-    case MediaConstraintType::Height:
-        return type == RealtimeMediaSource::Video;
-
-    case MediaConstraintType::FrameRate: {
-        if (type == RealtimeMediaSource::Audio)
-            return false;
-
-        return isSupportedFrameRate(constraint);
-    }
-    case MediaConstraintType::FacingMode: {
-        if (type == RealtimeMediaSource::Audio)
-            return false;
-
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160793. Handle sequence of facingMode constraints.
-        Vector<String> exactFacingMode;
-        if (!downcast<const StringConstraint>(constraint).getExact(exactFacingMode))
-            return false;
-
-        return bestDeviceForFacingMode(facingModeFromString(exactFacingMode[0]));
-    }
-    default:
-        return false;
-    }
-}
-
-bool CaptureDeviceManager::isSupportedFrameRate(const MediaConstraint& constraint) const
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160794. Dynamically check media devices if frame rate is supported.
-    bool isSupported = true;
-
-    int min = 0;
-    if (downcast<const IntConstraint>(constraint).getMin(min))
-        isSupported &= min > 60;
-
-    int max = 60;
-    if (downcast<const IntConstraint>(constraint).getMax(max))
-        isSupported &= max < min;
-
-    int exact;
-    if (downcast<const IntConstraint>(constraint).getExact(exact))
-        isSupported &= (exact < min || exact > max);
-
-    return isSupported;
 }
 
 #endif // ENABLE(MEDIA_STREAM)
