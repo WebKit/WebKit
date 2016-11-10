@@ -987,3 +987,5 @@ webkit.org/b/164229 media/modern-media-controls/volume-support/volume-support-cl
 
 webkit.org/b/164080 http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html [ Pass Failure ]
 webkit.org/b/164080 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Pass Failure ]
+
+webkit.org/b/164592 storage/domstorage/sessionstorage/blocked-file-access.html [ Failure ]
