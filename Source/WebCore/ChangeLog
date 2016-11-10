@@ -1,3 +1,49 @@
+2016-11-10  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r195004): Scripts and plugins blocked for subsequent loads in same WebContent
+        process after receiving HTTP 0.9 response
+        https://bugs.webkit.org/show_bug.cgi?id=164387
+        <rdar://problem/28987537>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where the HTTP 0.9 sandbox persisted across subsequent loads in the same
+        WebContent process.
+
+        Currently when an HTTP 0.9 response is received for a request made to a default port
+        (e.g. 80) we apply a sandbox policy on the FrameLoader for the main resource that
+        disallows scripts and plugins. A FrameLoader may be re-used for navigations. Therefore,
+        the sandbox policy applied to one site may be applied to another site. Moreover the
+        sandbox policy was applied to the FrameLoader of the main resource regardless of whether
+        the HTTP response was for a subresource. Instead we should apply the sandbox on a per-
+        Document basis and only if we receive an HTTP 0.9 response for the document when the
+        corresponding HTTP request was made to a default port.
+
+        As a side benefit of this change, we emit exactly one console message to Web Inspector
+        when the HTTP 0.9 sandbox is applied to a document as opposed to three console messages.
+        Moreover, we only emit this console message when the document load is not blocked.
+
+        Test: http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Disallow scripts and plugins if an HTTP 0.9
+        response was received for this document. Note that if this function is called for a
+        document associated with an HTTP 0.9 response then the corresponding HTTP request was
+        made to a default port. DocumentLoader::responseReceived() blocks the load for a document
+        with an HTTP 0.9 response corresponding to an HTTP request made to a non-default port.
+        This invariant is covered by the tests LayoutTests/http/tests/security/http-0.9/default-port-{plugin, script}-blocked.html.
+        (WebCore::Document::shouldEnforceHTTP0_9Sandbox): Added. Returns whether an HTTP 0.9 response
+        was received for this document.
+        * dom/Document.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Remove logic to apply sandbox policy to the
+        FrameLoader associated with the main resource. We will apply the sandbox during initialization
+        of the document.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse): Ditto.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Ditto.
+
 2016-11-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::importKey to match the latest spec

@@ -1,3 +1,35 @@
+2016-11-10  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r195004): Scripts and plugins blocked for subsequent loads in same WebContent
+        process after receiving HTTP 0.9 response
+        https://bugs.webkit.org/show_bug.cgi?id=164387
+        <rdar://problem/28987537>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new test to ensure that the HTTP 0.9 sandbox policy does not persist across navigations.
+
+        Unskip HTTP 0.9 tests and update expected results for existing tests as needed.
+
+        * TestExpectations: Unskip the HTTP 0.9 tests.
+        * http/tests/security/http-0.9/default-port-plugin-blocked-expected.txt: Remove duplicate console
+        messages now that we emit the console message exactly once per document.
+        * http/tests/security/http-0.9/default-port-script-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/iframe-blocked-expected.txt: Update expected result now that we
+        no longer emit a console message for a blocked load.
+        * http/tests/security/http-0.9/image-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-expected.txt: Remove
+        duplicate console messages now that we emit the console message exactly once per document.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/resources/sandbox-should-not-persist-on-navigation.html: Added.
+        * http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation-expected.txt: Added.
+        * http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation.html: Added.
+        * http/tests/security/http-0.9/worker-connect-src-blocked-expected.txt: Update expected result
+        now that we no longer apply a sandbox policy to the main resource if a subresource had an HTTP 0.9
+        response.
+        * http/tests/security/http-0.9/worker-importScripts-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/xhr-asynchronous-blocked-expected.txt: Ditto.
+
 2016-11-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::importKey to match the latest spec

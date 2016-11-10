@@ -1397,6 +1397,8 @@ private:
     void applyQuickLookSandbox();
 #endif
 
+    bool shouldEnforceHTTP0_9Sandbox() const;
+
     unsigned m_referencingNodeCount;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;

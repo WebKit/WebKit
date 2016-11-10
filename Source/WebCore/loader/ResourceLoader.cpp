@@ -456,10 +456,6 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
             didFail(error);
             return;
         }
-            
-        String message = "Sandboxing '" + m_response.url().string() + "' because it is using HTTP/0.9.";
-        m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, m_identifier);
-        frameLoader()->forceSandboxFlags(SandboxScripts | SandboxPlugins);
     }
 
     if (FormData* data = m_request.httpBody())

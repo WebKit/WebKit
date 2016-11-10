@@ -5122,6 +5122,12 @@ void Document::initSecurityContext()
         applyQuickLookSandbox();
 #endif
 
+    if (shouldEnforceHTTP0_9Sandbox()) {
+        String message = makeString("Sandboxing '", m_url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9.");
+        addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
+        enforceSandboxFlags(SandboxScripts | SandboxPlugins);
+    }
+
     if (Settings* settings = this->settings()) {
         if (settings->needsStorageAccessFromFileURLsQuirk())
             securityOrigin()->grantStorageAccessFromFileURLsQuirk();
@@ -6904,6 +6910,14 @@ ShouldOpenExternalURLsPolicy Document::shouldOpenExternalURLsPolicyToPropagate()
         return documentLoader->shouldOpenExternalURLsPolicyToPropagate();
 
     return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+}
+
+bool Document::shouldEnforceHTTP0_9Sandbox() const
+{
+    if (m_isSynthesized || !m_frame)
+        return false;
+    DocumentLoader* documentLoader = m_frame->loader().activeDocumentLoader();
+    return documentLoader && documentLoader->response().isHttpVersion0_9();
 }
 
 #if USE(QUICK_LOOK)

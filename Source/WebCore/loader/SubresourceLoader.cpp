@@ -262,14 +262,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
 
-    if (response.isHttpVersion0_9()) {
-        if (m_frame) {
-            String message = "Sandboxing '" + response.url().string() + "' because it is using HTTP/0.9.";
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier());
-            frameLoader()->forceSandboxFlags(SandboxScripts | SandboxPlugins);
-        }
-    }
-
     if (m_resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy

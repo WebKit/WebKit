@@ -67,9 +67,6 @@ fast/attachment/attachment-wrapping-action.html
 # Only iOS has selection UI drawn by UIKit
 editing/selection/character-granularity-rect.html [ Skip ]
 
-# Until we fix webkit.org/b/164387 these tests will only pass when run singly (i.e. pass --run-singly to run-webkit-tests).
-webkit.org/b/164387 http/tests/security/http-0.9 [ Skip ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

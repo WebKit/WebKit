@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    window.location.href = "resources/sandbox-should-not-persist-on-navigation.html";
+}
+</script>
+</head>
+<body>
+<img src="resources/nph-image.pl" onload="runTest()" onerror="runTest()"> <!-- Apply sandbox -->
+</body>
+</html>
