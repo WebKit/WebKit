@@ -3377,6 +3377,28 @@ RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
     return rareData->m_flowThreadContainingBlock.value();
 }
 
+void RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants()
+{
+    if (flowThreadState() == NotInsideFlowThread)
+        return;
+
+    if (cachedFlowThreadContainingBlockNeedsUpdate())
+        return;
+
+    auto* flowThread = cachedFlowThreadContainingBlock();
+    setCachedFlowThreadContainingBlockNeedsUpdate();
+
+    if (flowThread)
+        flowThread->removeFlowChildInfo(this);
+
+    for (auto& child : childrenOfType<RenderElement>(*this)) {
+        if (flowThread)
+            flowThread->removeFlowChildInfo(&child);
+        if (is<RenderBlock>(child))
+            downcast<RenderBlock>(child).invalidateFlowThreadContainingBlockIncludingDescendants();
+    }
+}
+
 LayoutUnit RenderBlock::paginationStrut() const
 {
     RenderBlockRareData* rareData = getBlockRareData(this);

@@ -224,7 +224,6 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
     void removeFromRenderFlowThread();
-    void invalidateFlowThreadContainingBlockIncludingDescendants(RenderFlowThread* = nullptr);
 
 protected:
     enum BaseTypeFlag {

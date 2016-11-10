@@ -307,6 +307,7 @@ public:
     RenderFlowThread* cachedFlowThreadContainingBlock() const;
     void setCachedFlowThreadContainingBlockNeedsUpdate();
     virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const;
+    void invalidateFlowThreadContainingBlockIncludingDescendants();
 
 protected:
     RenderFlowThread* locateFlowThreadContainingBlock() const override;

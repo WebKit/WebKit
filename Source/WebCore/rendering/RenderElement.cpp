@@ -2237,31 +2237,6 @@ void RenderElement::removeFromRenderFlowThreadIncludingDescendants(bool shouldUp
         setFlowThreadState(NotInsideFlowThread);
 }
 
-void RenderElement::invalidateFlowThreadContainingBlockIncludingDescendants(RenderFlowThread* flowThread)
-{
-    if (flowThreadState() == NotInsideFlowThread)
-        return;
-
-    if (is<RenderBlock>(*this)) {
-        RenderBlock& block = downcast<RenderBlock>(*this);
-
-        if (block.cachedFlowThreadContainingBlockNeedsUpdate())
-            return;
-
-        flowThread = block.cachedFlowThreadContainingBlock();
-        block.setCachedFlowThreadContainingBlockNeedsUpdate();
-    }
-
-    if (flowThread)
-        flowThread->removeFlowChildInfo(this);
-
-    if (!is<RenderElement>(*this))
-        return;
-
-    for (auto& child : childrenOfType<RenderElement>(*this))
-        child.invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
-}
-
 #if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
