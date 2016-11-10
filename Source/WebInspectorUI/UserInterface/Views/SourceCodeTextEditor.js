@@ -1909,6 +1909,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (!this._controlFlowScrollHandler)
                 this._enableScrollEventsForControlFlowAnnotator();
         } else {
+            RuntimeAgent.disableControlFlowProfiler();
             this._basicBlockAnnotator.clear();
 
             if (this._controlFlowScrollHandler)
