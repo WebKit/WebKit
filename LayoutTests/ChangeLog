@@ -1,5 +1,16 @@
 2016-11-10  Daniel Bates  <dabates@apple.com>
 
+        Add test that image load over default port using HTTP 0.9 protocol is blocked when page is
+        served with a different HTTP version
+        https://bugs.webkit.org/show_bug.cgi?id=164552
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/http-0.9/image-default-port-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/image-default-port-blocked.html: Added.
+
+2016-11-10  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r195004): Scripts and plugins blocked for subsequent loads in same WebContent
         process after receiving HTTP 0.9 response
         https://bugs.webkit.org/show_bug.cgi?id=164387
