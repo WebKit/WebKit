@@ -27,11 +27,14 @@
 #define CryptoKeyHMAC_h
 
 #include "CryptoKey.h"
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
+
+struct JsonWebKey;
 
 class HmacKeyAlgorithm final : public KeyAlgorithm {
 public:
@@ -60,8 +63,10 @@ public:
     }
     virtual ~CryptoKeyHMAC();
 
-    // If lengthBytes is 0, a recommended length is used, which is the size of the associated hash function's block size.
-    static RefPtr<CryptoKeyHMAC> generate(size_t lengthBytes, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyHMAC> generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyHMAC> importRaw(size_t lengthBits, CryptoAlgorithmIdentifier hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage);
+    using CheckAlgCallback = WTF::Function<bool(CryptoAlgorithmIdentifier, const Optional<String>&)>;
+    static RefPtr<CryptoKeyHMAC> importJwk(size_t lengthBits, CryptoAlgorithmIdentifier hash, JsonWebKey&&, bool extractable, CryptoKeyUsage, CheckAlgCallback&&);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::HMAC; }
 
@@ -71,6 +76,7 @@ public:
 
 private:
     CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+    CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
 
     std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
     std::unique_ptr<CryptoKeyData> exportData() const final;

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
+
 [
     Conditional=SUBTLE_CRYPTO,
     Exposed=(Window,Worker),
@@ -31,4 +33,5 @@
 ] interface SubtleCrypto {
     // FIXME: Should this return a Promise<(CryptoKey or CryptoKeyPair)>?
     [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<KeyUsage> keyUsages);
+    [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<KeyUsage> keyUsages);
 };

@@ -38,8 +38,9 @@ public:
     enum class Class {
         None,
         AesKeyGenParams,
-        HmacKeyGenParams,
+        HmacKeyParams,
         RsaHashedKeyGenParams,
+        RsaHashedImportParams,
         RsaKeyGenParams,
     };
 

@@ -1,3 +1,149 @@
+2016-11-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::importKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164446
+        <rdar://problem/29123621>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::importKey method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-importKey.
+           It also refers to the latest Editor's Draft at a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-importKey.
+        2. It implements importKey operations of following algorithms: AES-CBC, AES-KW,
+           HMAC, RSAES-PKCS1-V1_5, RSASSA-PKCS1-V1_5, and RSA-OAEP.
+        3. It fixes some minor problems of SubtleCrypto::generateKey.
+        4. It addes move constructors for CryptoKeyAES, CryptoKeyHMAC, CryptoKeyRSA and
+           CryptoKeyDataRSAComponents.
+        5. It renames HmacKeyGenParams to HmacKeyParams to serve the purpose of both
+           HmacKeyGenParams and HmacImportParams which are essentially the same.
+        6. It enforces the key length in bits of CryptoKeyHMAC to be multiples of 8.
+        7. It also fixes the following bugs:
+           https://bugs.webkit.org/show_bug.cgi?id=126033,
+           https://bugs.webkit.org/show_bug.cgi?id=126034,
+           https://bugs.webkit.org/show_bug.cgi?id=151308.
+        P.S. We currently only support Raw and Jwk key format.
+
+        Tests: crypto/subtle/aes-cbc-import-jwk-key-length-128.html
+               crypto/subtle/aes-cbc-import-jwk-key-length-192.html
+               crypto/subtle/aes-cbc-import-jwk-key-length-256.html
+               crypto/subtle/aes-cbc-import-jwk-key-minimum.html
+               crypto/subtle/aes-cbc-import-jwk-key-non-extractable.html
+               crypto/subtle/aes-cbc-import-raw-key-length-128.html
+               crypto/subtle/aes-cbc-import-raw-key-length-192.html
+               crypto/subtle/aes-cbc-import-raw-key-length-256.html
+               crypto/subtle/aes-import-key-malformed-parameters.html
+               crypto/subtle/aes-kw-import-jwk-key-length-128.html
+               crypto/subtle/aes-kw-import-jwk-key-length-192.html
+               crypto/subtle/aes-kw-import-jwk-key-length-256.html
+               crypto/subtle/aes-kw-import-raw-key.html
+               crypto/subtle/generate-key-malformed-parameters.html
+               crypto/subtle/hmac-import-jwk-key-minimum.html
+               crypto/subtle/hmac-import-jwk-key-non-extractable.html
+               crypto/subtle/hmac-import-jwk-key-sha1.html
+               crypto/subtle/hmac-import-jwk-key-sha224.html
+               crypto/subtle/hmac-import-jwk-key-sha256.html
+               crypto/subtle/hmac-import-jwk-key-sha384.html
+               crypto/subtle/hmac-import-jwk-key-sha512.html
+               crypto/subtle/hmac-import-malformed-parameters.html
+               crypto/subtle/hmac-import-raw-key-customized-length.html
+               crypto/subtle/hmac-import-raw-key.html
+               crypto/subtle/import-key-malformed-parameters.html
+               crypto/subtle/rsa-import-key-malformed-parameters.html
+               crypto/subtle/rsa-oaep-import-jwk-private-key.html
+               crypto/subtle/rsa-oaep-import-jwk-public-key-sha1.html
+               crypto/subtle/rsa-oaep-import-jwk-public-key-sha224.html
+               crypto/subtle/rsa-oaep-import-jwk-public-key-sha256.html
+               crypto/subtle/rsa-oaep-import-jwk-public-key-sha384.html
+               crypto/subtle/rsa-oaep-import-jwk-public-key-sha512.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-private-key.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-minimum.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-non-extractable.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-private-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha1.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha224.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha256.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha384.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha512.html
+               crypto/workers/subtle/aes-import-jwk-key.html
+               crypto/workers/subtle/aes-import-raw-key.html
+               crypto/workers/subtle/hmac-import-jwk-key.html
+               crypto/workers/subtle/hmac-import-raw-key.html
+               crypto/workers/subtle/rsa-import-jwk-private-key.html
+               crypto/workers/subtle/rsa-import-jwk-public-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::cryptoKeyUsageFromString):
+        (WebCore::cryptoKeyUsagesFromJSValue):
+        (WebCore::toKeyData):
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionImportKeyPromise):
+        (WebCore::JSSubtleCrypto::importKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::importKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/JsonWebKey.h: Added.
+        * crypto/JsonWebKey.idl: Added.
+        * crypto/RsaOtherPrimesInfo.h: Added.
+        * crypto/RsaOtherPrimesInfo.idl: Added.
+        * crypto/SubtleCrypto.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::generateKey):
+        (WebCore::CryptoAlgorithmAES_KW::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::CryptoKeyAES):
+        (WebCore::CryptoKeyAES::generate):
+        (WebCore::CryptoKeyAES::importRaw):
+        (WebCore::CryptoKeyAES::importJwk):
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyDataRSAComponents.cpp:
+        (WebCore::CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents):
+        * crypto/keys/CryptoKeyDataRSAComponents.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::CryptoKeyHMAC):
+        (WebCore::CryptoKeyHMAC::generate):
+        (WebCore::CryptoKeyHMAC::importRaw):
+        (WebCore::CryptoKeyHMAC::importJwk):
+        (WebCore::CryptoKeyHMAC::buildAlgorithm):
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp: Added.
+        (WebCore::CryptoKeyRSA::importJwk):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmHmacKeyGenParams.h.
+        * crypto/parameters/CryptoAlgorithmRsaHashedImportParams.h: Added.
+        * crypto/parameters/HmacKeyParams.idl: Renamed from Source/WebCore/crypto/parameters/HmacKeyGenParams.idl.
+        * crypto/parameters/RsaHashedImportParams.idl: Added.
+
 2016-11-10  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: REGRESSION(r208467) Fix flaky crashes in IDB GC-related code.

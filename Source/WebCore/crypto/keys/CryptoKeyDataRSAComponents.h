@@ -50,15 +50,27 @@ public:
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent));
     }
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPublic(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent)
+    {
+        return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(WTFMove(modulus), WTFMove(exponent)));
+    }
 
     static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivate(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent, privateExponent));
     }
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivate(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent)
+    {
+        return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent)));
+    }
 
     static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivateWithAdditionalData(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos));
+    }
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivateWithAdditionalData(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent, PrimeInfo&& firstPrimeInfo, PrimeInfo&& secondPrimeInfo, Vector<PrimeInfo>&& otherPrimeInfos)
+    {
+        return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), WTFMove(otherPrimeInfos)));
     }
 
     virtual ~CryptoKeyDataRSAComponents();
@@ -78,8 +90,13 @@ public:
 
 private:
     CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent);
+    CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent);
+
     CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent);
+    CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent);
+
     CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos);
+    CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent, PrimeInfo&& firstPrimeInfo, PrimeInfo&& secondPrimeInfo, Vector<PrimeInfo>&& otherPrimeInfos);
 
     Type m_type;
 

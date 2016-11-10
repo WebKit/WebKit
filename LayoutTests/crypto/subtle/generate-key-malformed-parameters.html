@@ -19,7 +19,6 @@ var extractable = true;
 shouldReject('crypto.subtle.generateKey()');
 shouldReject('crypto.subtle.generateKey(1)');
 shouldReject('crypto.subtle.generateKey(1, 2)');
-shouldReject('crypto.subtle.generateKey(1, 2, 3)');
 // Malformed AlgorithmIdentifiers.
 shouldReject('crypto.subtle.generateKey("foo", 2, 3)');
 shouldReject('crypto.subtle.generateKey({name: 1}, 2, 3)');
@@ -57,6 +56,7 @@ shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extracta
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, Symbol())');
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, { })');
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, "foo")');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, ["foo"])');
 // Syntax error.
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, [ ])');
 shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01])}, extractable, [ ])', finishJSTest);

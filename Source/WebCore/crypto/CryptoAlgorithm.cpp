@@ -45,6 +45,11 @@ void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameter
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
+void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsage, KeyCallback&&, ExceptionCallback&& exceptionCallback)
+{
+    exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
 void CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;

@@ -29,6 +29,7 @@ shouldReject('crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, extractab
 shouldReject('crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, extractable, ["unwrapKey"])');
 // Wrong length
 shouldReject('crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: 0}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: 5}, extractable, ["sign", "verify"])');
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

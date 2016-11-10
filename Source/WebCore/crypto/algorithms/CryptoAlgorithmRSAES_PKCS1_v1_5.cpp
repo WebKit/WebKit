@@ -88,6 +88,39 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAl
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, CryptoAlgorithmIdentifier::SHA_1, false, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), context);
 }
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    RefPtr<CryptoKeyRSA> result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
+        if ((key.d && (usages ^ CryptoKeyUsageDecrypt)) || (!key.d && (usages ^ CryptoKeyUsageEncrypt))) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        if (usages && key.use && key.use.value() != "enc") {
+            exceptionCallback(DataError);
+            return;
+        }
+        if (key.alg && key.alg.value() != "RSA1_5") {
+            exceptionCallback(DataError);
+            return;
+        }
+        result = CryptoKeyRSA::importJwk(parameters->identifier, Nullopt, WTFMove(key), extractable, usages);
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+    if (!result) {
+        exceptionCallback(DataError);
+        return;
+    }
+
+    callback(*result);
+}
+
 void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     if (!keyAlgorithmMatches(key)) {

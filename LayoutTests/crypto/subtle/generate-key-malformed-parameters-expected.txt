@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS crypto.subtle.generateKey() rejected promise  with TypeError: Not enough arguments.
 PASS crypto.subtle.generateKey(1) rejected promise  with TypeError: Not enough arguments.
 PASS crypto.subtle.generateKey(1, 2) rejected promise  with TypeError: Not enough arguments.
-PASS crypto.subtle.generateKey(1, 2, 3) rejected promise  with TypeError: Invalid AlgorithmIdentifier.
 PASS crypto.subtle.generateKey("foo", 2, 3) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS crypto.subtle.generateKey({name: 1}, 2, 3) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS crypto.subtle.generateKey({name: true}, 2, 3) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
@@ -18,7 +17,7 @@ PASS crypto.subtle.generateKey({name: "foo"}, 2, 3) rejected promise  with NotSu
 PASS crypto.subtle.generateKey({name: "hmac", hash: true}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Invalid AlgorithmIdentifier.
 PASS crypto.subtle.generateKey({name: "hmac", hash: 1}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Invalid AlgorithmIdentifier.
 PASS crypto.subtle.generateKey({name: "hmac", hash: null}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Invalid AlgorithmIdentifier.
-PASS crypto.subtle.generateKey({name: "hmac", hash: undefined}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Member HmacKeyGenParams.hash is required and must be an instance of any.
+PASS crypto.subtle.generateKey({name: "hmac", hash: undefined}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Member HmacKeyParams.hash is required and must be an instance of any.
 PASS crypto.subtle.generateKey({name: "hmac", hash: Symbol()}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Invalid AlgorithmIdentifier.
 PASS crypto.subtle.generateKey({name: "hmac", hash: { }}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Member CryptoAlgorithmParameters.name is required and must be an instance of DOMString.
 PASS crypto.subtle.generateKey({name: "hmac", hash: "foo"}, extractable, ["sign", "verify"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
@@ -40,6 +39,7 @@ PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, unde
 PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, Symbol()) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, { }) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, "foo") rejected promise  with TypeError: Invalid KeyUsages.
+PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, ["foo"]) rejected promise  with TypeError: Invalid KeyUsages.
 PASS crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, [ ]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01])}, extractable, [ ]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS successfullyParsed is true

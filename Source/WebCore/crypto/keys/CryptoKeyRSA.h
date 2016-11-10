@@ -48,6 +48,8 @@ class CryptoKeyPair;
 class PromiseWrapper;
 class ScriptExecutionContext;
 
+struct JsonWebKey;
+
 class RsaKeyAlgorithm : public KeyAlgorithm {
 public:
     RsaKeyAlgorithm(const String& name, size_t modulusLength, Vector<uint8_t>&& publicExponent)
@@ -99,6 +101,7 @@ public:
     using KeyPairCallback = WTF::Function<void(CryptoKeyPair&)>;
     using VoidCallback = WTF::Function<void()>;
     static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback, ScriptExecutionContext*);
+    static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsage);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
 

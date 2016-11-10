@@ -38,12 +38,30 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& mo
 {
 }
 
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Public)
+    , m_modulus(WTFMove(modulus))
+    , m_exponent(WTFMove(exponent))
+{
+}
+
 CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
     : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
     , m_type(Type::Private)
     , m_modulus(modulus)
     , m_exponent(exponent)
     , m_privateExponent(privateExponent)
+    , m_hasAdditionalPrivateKeyParameters(false)
+{
+}
+
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Private)
+    , m_modulus(WTFMove(modulus))
+    , m_exponent(WTFMove(exponent))
+    , m_privateExponent(WTFMove(privateExponent))
     , m_hasAdditionalPrivateKeyParameters(false)
 {
 }
@@ -58,6 +76,19 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& mo
     , m_firstPrimeInfo(firstPrimeInfo)
     , m_secondPrimeInfo(secondPrimeInfo)
     , m_otherPrimeInfos(otherPrimeInfos)
+{
+}
+
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent, PrimeInfo&& firstPrimeInfo, PrimeInfo&& secondPrimeInfo, Vector<PrimeInfo>&& otherPrimeInfos)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Private)
+    , m_modulus(WTFMove(modulus))
+    , m_exponent(WTFMove(exponent))
+    , m_privateExponent(WTFMove(privateExponent))
+    , m_hasAdditionalPrivateKeyParameters(true)
+    , m_firstPrimeInfo(WTFMove(firstPrimeInfo))
+    , m_secondPrimeInfo(WTFMove(secondPrimeInfo))
+    , m_otherPrimeInfos(WTFMove(otherPrimeInfos))
 {
 }
 

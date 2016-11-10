@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing an AES key with malformed parameters");
+
+var k128 = "YWJjZGVmZ2gxMjM0NTY3OA";
+var k192 = "A72FD48989ED7E92A3B3A080F74FA80B";
+var k256 = "YWJjZGVmZ2gxMjM0NTY3OGFiY2RlZmdoMTIzNDU2Nzg";
+var extractable = true;
+
+// Raw: wrong length
+shouldReject('crypto.subtle.importKey("raw", asciiToUint8Array("jnOw97"), "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: Wrong kty
+shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: missing k
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: wrong length and alg
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-cbc", extractable, ["wrapKey", "unwrapKey"])');
+// Jwk: wrong k format
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "!!!", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: wrong use
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", use: "sig"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: wrong key_ops
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", key_ops: ["encrypt", "decrypt"]}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+// Jwk: wrong ext
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", ext: false}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

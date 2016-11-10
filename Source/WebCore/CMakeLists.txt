@@ -327,11 +327,14 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/CryptoAlgorithmParameters.idl
     crypto/CryptoKey.idl
     crypto/CryptoKeyPair.idl
+    crypto/JsonWebKey.idl
+    crypto/RsaOtherPrimesInfo.idl
     crypto/SubtleCrypto.idl
     crypto/WebKitSubtleCrypto.idl
 
     crypto/parameters/AesKeyGenParams.idl
-    crypto/parameters/HmacKeyGenParams.idl
+    crypto/parameters/HmacKeyParams.idl
+    crypto/parameters/RsaHashedImportParams.idl
     crypto/parameters/RsaHashedKeyGenParams.idl
     crypto/parameters/RsaKeyGenParams.idl
 

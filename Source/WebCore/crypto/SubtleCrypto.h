@@ -35,6 +35,8 @@ namespace WebCore {
 
 class SubtleCrypto : public ContextDestructionObserver, public RefCounted<SubtleCrypto> {
 public:
+    enum class KeyFormat { Raw, Spki, Pkcs8, Jwk };
+
     static Ref<SubtleCrypto> create(ScriptExecutionContext& context) { return adoptRef(*new SubtleCrypto(context)); }
 
 private:

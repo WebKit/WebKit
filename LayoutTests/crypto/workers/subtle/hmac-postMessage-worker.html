@@ -23,7 +23,7 @@ crypto.webkitSubtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {nam
             shouldBe("key.type", "'secret'");
             shouldBe("key.extractable", "true");
             shouldBe("key.algorithm.name", "'HMAC'");
-            shouldBe("key.algorithm.length", "16");
+            shouldBe("key.algorithm.length", "128");
             shouldBe("key.algorithm.hash.name", "'SHA-1'");
             shouldBe("key.usages", '["sign", "verify"]');
         }

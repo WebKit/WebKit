@@ -28,11 +28,14 @@
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKey.h"
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
+
+struct JsonWebKey;
 
 class AesKeyAlgorithm final : public KeyAlgorithm {
 public:
@@ -52,6 +55,10 @@ private:
 
 class CryptoKeyAES final : public CryptoKey {
 public:
+    static const int s_length128 = 128;
+    static const int s_length192 = 192;
+    static const int s_length256 = 256;
+
     static Ref<CryptoKeyAES> create(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
     {
         return adoptRef(*new CryptoKeyAES(algorithm, key, extractable, usage));
@@ -61,6 +68,9 @@ public:
     static bool isValidAESAlgorithm(CryptoAlgorithmIdentifier);
 
     static RefPtr<CryptoKeyAES> generate(CryptoAlgorithmIdentifier, size_t lengthBits, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyAES> importRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage);
+    using CheckAlgCallback = WTF::Function<bool(size_t, const Optional<String>&)>;
+    static RefPtr<CryptoKeyAES> importJwk(CryptoAlgorithmIdentifier, JsonWebKey&&, bool extractable, CryptoKeyUsage, CheckAlgCallback&&);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::AES; }
 
@@ -68,6 +78,7 @@ public:
 
 private:
     CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage);
+    CryptoKeyAES(CryptoAlgorithmIdentifier, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsage);
 
     std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
     std::unique_ptr<CryptoKeyData> exportData() const final;

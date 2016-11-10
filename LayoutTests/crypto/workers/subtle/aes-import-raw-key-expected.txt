@@ -1,0 +1,17 @@
+[Worker] Test importing a raw AES key using AES-CBC algorithm in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/aes-import-raw-key.js
+[Worker] Importing a key...
+PASS [Worker] crypto.subtle.importKey("raw", asciiToUint8Array("jnOw97"), "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS [Worker] key.type is 'secret'
+PASS [Worker] key.extractable is true
+PASS [Worker] key.algorithm.name is 'AES-CBC'
+PASS [Worker] key.algorithm.length is 128
+PASS [Worker] key.usages is ['decrypt', 'encrypt', 'unwrapKey', 'wrapKey']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

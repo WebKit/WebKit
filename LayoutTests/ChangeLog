@@ -1,3 +1,136 @@
+2016-11-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::importKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164446
+        <rdar://problem/29123621>
+
+        Reviewed by Brent Fulgham.
+
+        Besides adding test cases for SubtleCrypto::importKey. This patch also corrects a typo:
+        generate-key-malformed-paramters*.
+
+        * crypto/subtle/aes-cbc-import-jwk-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-length-128.html: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-length-192.html: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-length-256.html: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-minimum-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-minimum.html: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-non-extractable-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk-key-non-extractable.html: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-128.html: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-192.html: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-raw-key-length-256.html: Added.
+        * crypto/subtle/aes-import-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-import-key-malformed-parameters.html: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-128.html: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-192.html: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-jwk-key-length-256.html: Added.
+        * crypto/subtle/aes-kw-import-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-raw-key.html: Added.
+        * crypto/subtle/generate-key-malformed-parameters-expected.txt: Renamed from LayoutTests/crypto/subtle/generate-key-malformed-paramters-expected.txt.
+        * crypto/subtle/generate-key-malformed-parameters.html: Renamed from LayoutTests/crypto/subtle/generate-key-malformed-paramters.html.
+        * crypto/subtle/hmac-generate-key-customized-length-expected.txt:
+        * crypto/subtle/hmac-generate-key-customized-length.html:
+        * crypto/subtle/hmac-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/hmac-generate-key-malformed-parameters.html:
+        * crypto/subtle/hmac-import-raw-key-customized-length-expected.txt:
+        * crypto/subtle/hmac-import-raw-key-customized-length.html:
+        * crypto/subtle/hmac-import-jwk-key-minimum-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-minimum.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-non-extractable-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-non-extractable.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha1-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha1.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha224-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha224.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha256-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha256.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha384-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha384.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha512-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk-key-sha512.html: Added.
+        * crypto/subtle/hmac-import-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/hmac-import-malformed-parameters.html: Added.
+        * crypto/subtle/hmac-import-raw-key-customized-length-expected.txt: Added.
+        * crypto/subtle/hmac-import-raw-key-customized-length.html: Added.
+        * crypto/subtle/hmac-import-raw-key-expected.txt: Added.
+        * crypto/subtle/hmac-import-raw-key.html: Added.
+        * crypto/subtle/import-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/import-key-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/rsa-import-key-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-private-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-private-key.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha1-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha1.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha224-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha224.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha256-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha256.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha384-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha384.html: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha512-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-jwk-public-key-sha512.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-private-key-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-private-key.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-minimum-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-minimum.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-non-extractable-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-non-extractable.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-private-key-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-private-key.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha1-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha1.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha224-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha224.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha256-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha256.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha384-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha384.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha512-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-public-key-sha512.html: Added.
+        * crypto/webkitSubtle/hmac-generate-key-expected.txt:
+        * crypto/webkitSubtle/hmac-generate-key.html:
+        * crypto/webkitSubtle/hmac-import-jwk-expected.txt:
+        * crypto/webkitSubtle/hmac-import-jwk.html:
+        * crypto/webkitSubtle/hmac-postMessage-expected.txt:
+        * crypto/webkitSubtle/hmac-postMessage.html:
+        * crypto/webkitSubtle/hmac-sign-verify-expected.txt:
+        * crypto/webkitSubtle/hmac-sign-verify.html:
+        * crypto/workers/subtle/aes-import-jwk-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-import-jwk-key.html: Added.
+        * crypto/workers/subtle/aes-import-raw-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-import-raw-key.html: Added.
+        * crypto/workers/subtle/hmac-import-jwk-key-expected.txt: Added.
+        * crypto/workers/subtle/hmac-import-jwk-key.html: Added.
+        * crypto/workers/subtle/hmac-import-raw-key-expected.txt: Added.
+        * crypto/workers/subtle/hmac-import-raw-key.html: Added.
+        * crypto/workers/subtle/hmac-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/hmac-postMessage-worker.html:
+        * crypto/workers/subtle/resources/aes-import-jwk-key.js: Added.
+        * crypto/workers/subtle/resources/aes-import-raw-key.js: Added.
+        * crypto/workers/subtle/resources/hmac-import-jwk-key.js: Added.
+        * crypto/workers/subtle/resources/hmac-import-raw-key.js: Added.
+        * crypto/workers/subtle/resources/hmac-postMessage-worker.js:
+        * crypto/workers/subtle/resources/rsa-import-jwk-private-key.js: Added.
+        * crypto/workers/subtle/resources/rsa-import-jwk-public-key.js: Added.
+        * crypto/workers/subtle/rsa-import-jwk-private-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-import-jwk-private-key.html: Added.
+        * crypto/workers/subtle/rsa-import-jwk-public-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-import-jwk-public-key.html: Added.
+
 2016-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html as flaky.

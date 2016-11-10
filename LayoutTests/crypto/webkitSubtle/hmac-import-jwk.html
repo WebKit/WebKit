@@ -32,7 +32,7 @@ crypto.webkitSubtle.importKey("jwk", hmacKeyAsArrayBuffer, null, extractable, ["
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "false");
     shouldBe("key.algorithm.name", "'HMAC'");
-    shouldBe("key.algorithm.length", "32");
+    shouldBe("key.algorithm.length", "256");
     shouldBe("key.usages", '["sign", "verify"]');
 
     debug("\nUsing the key to sign message 'foo'...");

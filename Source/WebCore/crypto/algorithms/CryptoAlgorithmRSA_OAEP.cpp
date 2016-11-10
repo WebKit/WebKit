@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmRsaHashedImportParams.h"
 #include "CryptoAlgorithmRsaHashedKeyGenParams.h"
 #include "CryptoAlgorithmRsaKeyGenParamsDeprecated.h"
 #include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
@@ -89,6 +90,75 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const std::unique_ptr<CryptoAlgorithmP
         capturedCallback(OperationError);
     };
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.hashIdentifier, true, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), context);
+}
+
+void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
+
+    RefPtr<CryptoKeyRSA> result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
+
+        bool isUsagesAllowed = false;
+        if (key.d) {
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDecrypt);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageUnwrapKey);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageDecrypt | CryptoKeyUsageUnwrapKey));
+        } else {
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageEncrypt);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageWrapKey);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey));
+        }
+        if (!isUsagesAllowed) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+
+        if (usages && key.use && key.use.value() != "enc") {
+            exceptionCallback(DataError);
+            return;
+        }
+
+        bool isMatched = false;
+        switch (rsaParameters.hashIdentifier) {
+        case CryptoAlgorithmIdentifier::SHA_1:
+            isMatched = !key.alg || key.alg.value() == "RSA-OAEP";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_224:
+            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-224";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_256:
+            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-256";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_384:
+            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-384";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_512:
+            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-512";
+            break;
+        default:
+            break;
+        }
+        if (!isMatched) {
+            exceptionCallback(DataError);
+            return;
+        }
+
+        result = CryptoKeyRSA::importJwk(rsaParameters.identifier, rsaParameters.hashIdentifier, WTFMove(key), extractable, usages);
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+    if (!result) {
+        exceptionCallback(DataError);
+        return;
+    }
+
+    callback(*result);
 }
 
 void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)

@@ -30,13 +30,27 @@
 
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataOctetSequence.h"
+#include "JsonWebKey.h"
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+static inline bool lengthIsValid(size_t length)
+{
+    return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);
+}
+
 CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
     , m_key(key)
+{
+    ASSERT(isValidAESAlgorithm(algorithm));
+}
+
+CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsage usage)
+    : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
+    , m_key(WTFMove(key))
 {
     ASSERT(isValidAESAlgorithm(algorithm));
 }
@@ -57,9 +71,37 @@ bool CryptoKeyAES::isValidAESAlgorithm(CryptoAlgorithmIdentifier algorithm)
 
 RefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsage usages)
 {
-    if ((lengthBits != 128) && (lengthBits != 192) && (lengthBits != 256))
+    if (!lengthIsValid(lengthBits))
         return nullptr;
     return adoptRef(new CryptoKeyAES(algorithm, randomData(lengthBits / 8), extractable, usages));
+}
+
+RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage usages)
+{
+    if (!lengthIsValid(keyData.size() * 8))
+        return nullptr;
+    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(keyData), extractable, usages));
+}
+
+RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsage usages, CheckAlgCallback&& callback)
+{
+    if (keyData.kty != "oct")
+        return nullptr;
+    if (!keyData.k)
+        return nullptr;
+    Vector<uint8_t> octetSequence;
+    if (!base64URLDecode(keyData.k.value(), octetSequence))
+        return nullptr;
+    if (!callback(octetSequence.size() * 8, keyData.alg))
+        return nullptr;
+    if (usages && keyData.use && keyData.use.value() != "enc")
+        return nullptr;
+    if (keyData.usages && ((keyData.usages & usages) != usages))
+        return nullptr;
+    if (keyData.ext && !keyData.ext.value() && extractable)
+        return nullptr;
+
+    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(octetSequence), extractable, usages));
 }
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyAES::buildAlgorithm() const

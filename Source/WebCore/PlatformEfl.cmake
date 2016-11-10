@@ -438,6 +438,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/keys/CryptoKeyDataOctetSequence.cpp
         crypto/keys/CryptoKeyDataRSAComponents.cpp
         crypto/keys/CryptoKeyHMAC.cpp
+        crypto/keys/CryptoKeyRSA.cpp
         crypto/keys/CryptoKeySerializationRaw.cpp
     )
 endif ()

@@ -17,7 +17,7 @@ window.addEventListener("message", function(evt) {
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'HMAC'");
-    shouldBe("key.algorithm.length", "16");
+    shouldBe("key.algorithm.length", "128");
     shouldBe("key.usages", '["sign", "verify"]');
 
     finishJSTest();

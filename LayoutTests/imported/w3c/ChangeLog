@@ -1,3 +1,13 @@
+2016-11-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::importKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164446
+        <rdar://problem/29123621>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCryptoAPI/idlharness-expected.txt:
+
 2016-11-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Add no-op Web-facing APIs

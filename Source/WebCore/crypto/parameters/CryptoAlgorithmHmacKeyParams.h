@@ -32,18 +32,18 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacKeyGenParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmHmacKeyParams final : public CryptoAlgorithmParameters {
 public:
     // FIXME: Consider merging hash and hashIdentifier.
     JSC::JSValue hash;
     CryptoAlgorithmIdentifier hashIdentifier;
     Optional<unsigned long> length;
 
-    Class parametersClass() const final { return Class::HmacKeyGenParams; }
+    Class parametersClass() const final { return Class::HmacKeyParams; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacKeyGenParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacKeyParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

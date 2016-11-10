@@ -16,13 +16,13 @@ jsTestIsAsync = true;
 var extractable = true;
 
 debug("\nGenerating a key...");
-crypto.subtle.generateKey({name: "hmac", hash: "sha-512", length: 111}, extractable, ["sign", "verify"]).then(function(result) {
+crypto.subtle.generateKey({name: "hmac", hash: "sha-512", length: 120}, extractable, ["sign", "verify"]).then(function(result) {
     key = result;
 
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'HMAC'");
-    shouldBe("key.algorithm.length", "111");
+    shouldBe("key.algorithm.length", "120");
     shouldBe("key.algorithm.hash.name", "'SHA-512'");
     shouldBe("key.usages", '["sign", "verify"]');
 

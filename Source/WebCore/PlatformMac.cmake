@@ -200,6 +200,7 @@ list(APPEND WebCore_SOURCES
     crypto/keys/CryptoKeyDataOctetSequence.cpp
     crypto/keys/CryptoKeyDataRSAComponents.cpp
     crypto/keys/CryptoKeyHMAC.cpp
+    crypto/keys/CryptoKeyRSA.cpp
     crypto/keys/CryptoKeySerializationRaw.cpp
 
     crypto/mac/CryptoAlgorithmAES_CBCMac.cpp

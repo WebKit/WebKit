@@ -28,9 +28,12 @@
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKeyUsage.h"
+#include "JsonWebKey.h"
+#include "SubtleCrypto.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -49,6 +52,8 @@ class ScriptExecutionContext;
 // Data is mutable, so async operations should copy it first.
 typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
+using KeyData = Variant<Vector<uint8_t>, JsonWebKey>;
+
 class CryptoAlgorithm : public RefCounted<CryptoAlgorithm> {
 public:
     virtual ~CryptoAlgorithm();
@@ -63,6 +68,7 @@ public:
     using ExceptionCallback = WTF::Function<void(ExceptionCode)>;
 
     virtual void generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext*);
+    virtual void importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsage, KeyCallback&&, ExceptionCallback&&);
 
     // The following will be deprecated.
     virtual void encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);

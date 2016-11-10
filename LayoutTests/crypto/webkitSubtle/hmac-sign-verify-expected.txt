@@ -7,7 +7,7 @@ Importing a raw HMAC key from string literal...
 PASS key.type is 'secret'
 PASS key.extractable is true
 PASS key.algorithm.name is 'HMAC'
-PASS key.algorithm.length is 1
+PASS key.algorithm.length is 8
 PASS key.algorithm.hash.name is 'SHA-1'
 PASS key.usages is ['sign', 'verify']
 Using the key to sign 'foo'...
