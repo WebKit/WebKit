@@ -1,5 +1,24 @@
 2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=161951
+        <rdar://problem/28295767>
+
+        Reviewed by Brian Burg.
+
+        Covered by existing tests that would ASSERT otherwise.
+
+        * inspector/InspectorClient.cpp:
+        (WebCore::InspectorClient::doDispatchMessageOnFrontendPage):
+        When paused on an exception in the inspected page and evaluating
+        commands in the inspector frontend page (which evaluates JavaScript)
+        we ASSERT when entering the Global DOM VM with an existing exception.
+        This makes it so when we evaluate JavaScript in the frontend we
+        suspend / ignore the state of the VM for the inspected page, and
+        restore it when we return from the inspector.
+
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Associate Worker Resources with the Worker and not the Page
         https://bugs.webkit.org/show_bug.cgi?id=164342
         <rdar://problem/29075775>

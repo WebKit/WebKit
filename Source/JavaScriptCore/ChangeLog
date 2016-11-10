@@ -1,3 +1,63 @@
+2016-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=161951
+        <rdar://problem/28295767>
+
+        Reviewed by Brian Burg.
+
+        This removes an ambiguity in the protocol when stepping through
+        JavaScript. Previously, when paused and issuing a Debugger.step*
+        command the frontend would always receive a Debugger.resumed event and
+        then, maybe, a Debugger.paused event indicating we paused again (after
+        stepping). However, this ambiguity means that the frontend needs to
+        wait for a short period of time to determine if we really resumed
+        or not. And even still that decision may be incorrect if the step
+        takes a sufficiently long period of time.
+
+        The new approach removes this ambiguity. Now, in response to a
+        Debugger.step* command the backend MUST send a single Debugger.paused
+        event or Debugger.resumed event. Now the frontend knows that the
+        next Debugger event it receives after issuing the step command is
+        the result (stepped and paused, or stepped and resumed).
+
+        To make resuming consistent in all cases, a Debugger.resume command
+        will always respond with a Debugger.resumed event.
+
+        Finally, Debugger.continueToLocation is treated like a "big step"
+        in cases where we can resolve the location. If we can't resolve the
+        location it is treated as a resume, maintaining the old behavior.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::stepOver):
+        (Inspector::InspectorDebuggerAgent::stepInto):
+        (Inspector::InspectorDebuggerAgent::stepOut):
+        (Inspector::InspectorDebuggerAgent::willStepAndMayBecomeIdle):
+        (Inspector::InspectorDebuggerAgent::didBecomeIdleAfterStepping):
+        When stepping register a VM exit observer so that we can issue
+        a Debugger.resumed event if the step caused us to exit the VM.
+
+        (Inspector::InspectorDebuggerAgent::resume):
+        Set a flag to issue a Debugger.resumed event once we break out
+        of the nested run loop.
+
+        (Inspector::InspectorDebuggerAgent::didPause):
+        We are issuing Debugger.paused so clear the state to indicate that
+        we no longer need to issue Debugger.resumed event, we have paused.
+
+        (Inspector::InspectorDebuggerAgent::didContinue):
+        Only issue the Debugger.resumed event if needed (explicitly asked
+        to resume).
+
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        All places that do continueProgram should be audited. In error cases,
+        if we are paused and continue we should remember to send Debugger.resumed.
+
+        * inspector/protocol/Debugger.json:
+        Clarify in the protocol description the contract of these methods.
+
 2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Associate Worker Resources with the Worker and not the Page

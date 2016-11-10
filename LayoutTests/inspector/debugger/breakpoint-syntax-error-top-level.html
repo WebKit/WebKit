@@ -20,7 +20,7 @@ function test()
     suite.addTestCase({
         name: "TopLevelSyntaxErrorDontCrash",
         description: "Make sure exceptions from top-level syntax errors don't cause us to crash.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject) {
                 InspectorProtocol.sendCommand("Debugger.resume");
 

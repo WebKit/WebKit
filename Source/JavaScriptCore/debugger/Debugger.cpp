@@ -34,7 +34,6 @@
 #include "MarkedSpaceInlines.h"
 #include "Parser.h"
 #include "Protect.h"
-#include "VMEntryScope.h"
 
 namespace {
 

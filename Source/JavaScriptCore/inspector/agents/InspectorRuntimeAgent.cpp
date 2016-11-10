@@ -45,7 +45,6 @@
 #include "SourceCode.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
-#include "VMEntryScope.h"
 #include <wtf/CurrentTime.h>
 
 using namespace JSC;

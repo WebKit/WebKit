@@ -59,7 +59,7 @@ function test()
 
     suite.addTestCase({
         name: "EnableDebuggerDomainAndCheckInitialScripts",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
 
             let initialScriptParsedMessages = [];
             let receivingInitialScripts = true;

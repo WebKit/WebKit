@@ -113,3 +113,5 @@ WebInspector.updateVisibilityState = () => {};
 window.InspectorTest = new FrontendTestHarness();
 
 InspectorTest.redirectConsoleToTestOutput();
+
+WebInspector.reportInternalError = (e) => { console.error(e); }

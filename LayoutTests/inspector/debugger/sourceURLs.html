@@ -30,7 +30,7 @@ function test()
 
     suite.addTestCase({
         name: "TestExpressionsForSourceURL",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             for (let expression of expressions)
                 ProtocolTest.evaluateInPage(expression);
 
@@ -54,7 +54,7 @@ function test()
 
     suite.addTestCase({
         name: "TestExpressionsForSourceMappingURL",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             // Rewrite the "sourceURL" to "sourceMappingURL" in the original expressions.
             for (let expression of expressions)
                 ProtocolTest.evaluateInPage(expression.replace(/sourceURL/g, "sourceMappingURL"));

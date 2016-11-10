@@ -332,3 +332,5 @@ CALLFRAME: entry
   SCOPE: Name () - Type (Global) - Hash ()
 
 
+-- Running test case: PausedCallFrameScope.Complete
+

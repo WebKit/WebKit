@@ -77,7 +77,7 @@ function test()
     suite.addTestCase({
         name: "ValidateCallFrames",
         description: "Test6 evaluate can access CommandLineAPI methods.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
             InspectorTest.expectThat(WebInspector.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");
             InspectorTest.expectThat(targetData.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
@@ -97,7 +97,7 @@ function test()
     suite.addTestCase({
         name: "AccessCommandLineAPI",
         description: "Test evaluate can access CommandLineAPI methods.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnStrictCallFrame("keys.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "CommandLineAPI `keys` can be accessed in the `bar` strict call frame.");
             });
@@ -114,7 +114,7 @@ function test()
     suite.addTestCase({
         name: "AccessGlobalVariable",
         description: "Test evaluate can access global variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnStrictCallFrame("varGlobalVariable", (x) => { InspectorTest.expectThat(x === 1, "Should be able to access var in global scope in strict call frame."); });
             testEvaluateOnStrictCallFrame("letGlobalVariable", (x) => { InspectorTest.expectThat(x === 2, "Should be able to access let in global scope in strict call frame."); });
             testEvaluateOnStrictCallFrame("constGlobalVariable", (x) => { InspectorTest.expectThat(x === 3, "Should be able to access const in global scope in strict call frame."); });
@@ -128,7 +128,7 @@ function test()
     suite.addTestCase({
         name: "NoVariablesCreatedOnCallFrame",
         description: "Test evaluate may not create new local variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnStrictCallFrame(`
                 var createdVarLocalVariable = 1;
                 let createdLetLocalVariable = 2;
@@ -152,7 +152,7 @@ function test()
     suite.addTestCase({
         name: "NonStrictAndStrictEvaluations",
         description: "Test evaluate can run strict and non-strict programs.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             // Non strict, this is okay.
             testEvaluateOnNonStrictCallFrame("arguments.callee.name", (resultValue) => {
                 InspectorTest.expectThat(resultValue === "foo", "Non-strict evaluation. Should be able to access arguments.callee.");
@@ -168,7 +168,7 @@ function test()
     suite.addTestCase({
         name: "CommandLineAPIDoesNotShadowLocalVariables",
         description: "Test CommandLineAPI does not shadow local variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnNonStrictCallFrame("keys", (resultValue) => {
                 InspectorTest.expectThat(resultValue === 123, "Local variable `keys` should not be shadowed by CommandLineAPI `keys` function in call frame for `foo`.");
                 resolve();
@@ -179,7 +179,7 @@ function test()
     suite.addTestCase({
         name: "CommandLineAPIDoesNotShadowGlobalVariables",
         description: "Test CommandLineAPI does not shadow global variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnStrictCallFrame("keys.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "CommandLineAPI `keys` can be accessed in the `bar` strict call frame.");
             });
@@ -200,7 +200,7 @@ function test()
     suite.addTestCase({
         name: "CommandLineAPIDoesNotShadowGlobalObjectProperties",
         description: "Test CommandLineAPI does not shadow global object properties.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluateOnStrictCallFrame("values.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue === "[object HTMLDivElement]", "`values` should be `window.values` and not shadowed by CommandLineAPI `values` function in strict call frame.");
             });
@@ -213,7 +213,7 @@ function test()
 
     suite.addTestCase({
         name: "Complete",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.debuggerManager.resume();
             resolve();
         }

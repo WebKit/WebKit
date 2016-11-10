@@ -15,7 +15,7 @@ function test()
     function addTestCase({name, description, expression}) {
         suite.addTestCase({
             name, description,
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
                     let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
@@ -53,7 +53,7 @@ function test()
     suite.addTestCase({
         name: "BreakOnUncaughtException.CaughtException",
         description: "No break on a caught exception.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage(`setTimeout(() => {
                 testCatch();
                 TestPage.dispatchEventToFrontend("AfterTestFunction");

@@ -19,30 +19,39 @@ PASS: $exception should be undefined if there is no exception.
 
 -- Running test case: UncaughtTypeException
 $exception => TypeError: undefined is not an object (evaluating '[].x.x')
+Uncaught exception in test page: TypeError: undefined is not an object (evaluating '[].x.x') [exceptions.js:4]
 
 -- Running test case: UncaughtReferenceException
 $exception => ReferenceError: Can't find variable: variableThatDoesNotExist
+Uncaught exception in test page: ReferenceError: Can't find variable: variableThatDoesNotExist [exceptions.js:10]
 
 -- Running test case: UncaughtSyntaxException
 $exception => SyntaxError: Unexpected token ')'
+Uncaught exception in test page: SyntaxError: Unexpected token ')' [exceptions.js:16]
 
 -- Running test case: UncaughtDOMException
 $exception => IndexSizeError (DOM Exception 1): The index is not in the allowed range.
+Uncaught exception in test page: IndexSizeError (DOM Exception 1): The index is not in the allowed range. [exceptions.js:22]
 
 -- Running test case: UncaughtString
 $exception => thrown string
+Uncaught exception in test page: thrown string [exceptions.js:27]
 
 -- Running test case: UncaughtNumber
 $exception => 123.456
+Uncaught exception in test page: 123.456 [exceptions.js:32]
 
 -- Running test case: UncaughtNull
 $exception => null
+Uncaught exception in test page: null [exceptions.js:37]
 
 -- Running test case: UncaughtObject
 $exception => Object
+Uncaught exception in test page: [object Object] [exceptions.js:42]
 
 -- Running test case: UncaughtNode
 $exception => <body>
+Uncaught exception in test page: [object HTMLBodyElement] [exceptions.js:47]
 
 -- Running test case: CatchTypeException
 PASS: Paused, stepping out to catch block...

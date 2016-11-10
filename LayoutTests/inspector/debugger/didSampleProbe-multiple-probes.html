@@ -39,7 +39,13 @@ function test()
         {
             message: "SampleIds from a any probe are sequential and start counting from one.",
             predicate: function samplesHaveSequentialIds() {
-                return samples.every(function(sample, idx) { return sample.sampleId === idx + 1; });
+                let initialSampleId = samples[0].sampleId;
+                for (let i = 0; i < samples.length; ++i) {
+                    let expectedSampleId = initialSampleId + i;
+                    if (samples[i].sampleId !== expectedSampleId)
+                        return false;
+                }
+                return true;
             },
             error: dumpSamples
         },
@@ -59,7 +65,7 @@ function test()
                 ]
             };
 
-            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location, options}, function(responseObject) {
                 InspectorProtocol.checkForError(responseObject);
 
                 ProtocolTest.log("Running breakpointActions to trigger probe samples.");

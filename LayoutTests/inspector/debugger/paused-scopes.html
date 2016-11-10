@@ -86,9 +86,9 @@ function test()
     suite.addTestCase({
         name: "PausedCallFrameScope.TriggerFirstPause",
         description: "Dump CallFrames and Scopes with the first pause.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(entry)");
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
                 dumpCallFrames().then(resolve, reject);
             });
         }
@@ -97,13 +97,10 @@ function test()
     suite.addTestCase({
         name: "PausedCallFrameScope.TriggerSecondPause",
         description: "Dump CallFrames and Scopes with the second pause.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.debuggerManager.resume();
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-                dumpCallFrames().then(() => {
-                    WebInspector.debuggerManager.resume();
-                    resolve();
-                }, reject);
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                dumpCallFrames().then(resolve, reject);
             });
         }
     });
@@ -111,14 +108,18 @@ function test()
     suite.addTestCase({
         name: "PausedCallFrameScope.TriggerThirdPause",
         description: "Dump CallFrames and Scopes with the third pause.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.debuggerManager.resume();
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-                dumpCallFrames().then(() => {
-                    WebInspector.debuggerManager.resume();
-                    resolve();
-                }, reject);
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                dumpCallFrames().then(resolve, reject);
             });
+        }
+    });
+
+    suite.addTestCase({
+        name: "PausedCallFrameScope.Complete",
+        test(resolve, reject) {
+            WebInspector.debuggerManager.resume().then(resolve, reject);
         }
     });
 

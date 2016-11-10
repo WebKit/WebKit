@@ -611,9 +611,18 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         // Called from WebInspector.DebuggerObserver.
 
-        // We delay clearing the state and firing events so the user interface does not flash
-        // between brief steps or successive breakpoints.
-        this._delayedResumeTimeout = setTimeout(this._didResumeInternal.bind(this, target), 50);
+        // COMPATIBILITY (iOS 10): Debugger.resumed event was ambiguous. When stepping
+        // we would receive a Debugger.resumed and we would not know if it really meant
+        // the backend resumed or would pause again due to a step. Legacy backends wait
+        // 50ms, and treat it as a real resume if we haven't paused in that time frame.
+        // This delay ensures the user interface does not flash between brief steps
+        // or successive breakpoints.
+        if (!DebuggerAgent.setPauseOnAssertions) {
+            this._delayedResumeTimeout = setTimeout(this._didResumeInternal.bind(this, target), 50);
+            return;
+        }
+
+        this._didResumeInternal(target);
     }
 
     playBreakpointActionSound(breakpointActionIdentifier)

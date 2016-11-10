@@ -21,7 +21,7 @@ function test()
     function addTestCase({name, description, expression}) {
         suite.addTestCase({
             name, description,
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
                 InspectorTest.evaluateInPage(`setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); }, 50)`);
 

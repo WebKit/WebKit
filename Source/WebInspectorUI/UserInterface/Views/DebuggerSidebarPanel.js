@@ -328,6 +328,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._debuggerPauseResumeButtonItem.toggled = true;
         this._debuggerStepOverButtonItem.enabled = true;
         this._debuggerStepIntoButtonItem.enabled = true;
+        this._debuggerStepOutButtonItem.enabled = true;
 
         this.element.classList.add(WebInspector.DebuggerSidebarPanel.DebuggerPausedStyleClassName);
     }
@@ -669,13 +670,6 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (this._activeCallFrameTreeElement)
             this._activeCallFrameTreeElement.isActiveCallFrame = true;
-
-        // FIXME: What is this, and is it still relevant?
-        // It is useful to turn off the step out button when there is no call frame to go through
-        // since there might be call frames in the backend that were removed when processing the call
-        // frame payload.
-        let indexOfActiveCallFrame = callFrames.indexOf(WebInspector.debuggerManager.activeCallFrame);
-        this._debuggerStepOutButtonItem.enabled = indexOfActiveCallFrame < callFrames.length - 1;
     }
 
     _breakpointsBeneathTreeElement(treeElement)

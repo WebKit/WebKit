@@ -28,7 +28,7 @@ function test()
     suite.addTestCase({
         name: "EmptyBefore",
         description: "Without exceptions, $exception should be undefined",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                 InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
                 resolve();
@@ -39,7 +39,7 @@ function test()
     suite.addTestCase({
         name: "CheckExceptionInsideNestedCatchBlocks",
         description: "Check $exception is always the current exception object when stepping through catch blocks.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(nestedCatchBlocks, 0)");
 
             let phase = 0;
@@ -75,9 +75,9 @@ function test()
                 if (phase === 4) {
                     dumpCommandLineAPIValue("OUTER 2");
                     checkIfExceptionValueMatchesVariable("e1");
+                    InspectorTest.singleFireEventListener("AfterTestFunction", resolve);
                     WebInspector.debuggerManager.resume().then(() => {
                         WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
-                        resolve();
                     }, reject);
                     return;
                 }
@@ -88,7 +88,7 @@ function test()
     suite.addTestCase({
         name: "EmptyAfter",
         description: "Without exceptions, $exception should be undefined",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                 InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
                 resolve();

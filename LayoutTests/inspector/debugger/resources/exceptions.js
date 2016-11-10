@@ -68,4 +68,6 @@ function nestedCatchBlocks()
         }
         console.log(e1);
     }
+
+    TestPage.dispatchEventToFrontend("AfterTestFunction");
 }

@@ -4,8 +4,8 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="./resources/exceptions.js"></script>
 <script>
-// We expect uncaught exceptions, so avoid logs for them.
-window.onerror = function(){};
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
 
 function test()
 {
@@ -16,7 +16,7 @@ function test()
     function addNoExceptionTest(name) {
         suite.addTestCase({
             name, description: "Without exceptions, $exception should be undefined",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                     InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
                     resolve();
@@ -28,7 +28,7 @@ function test()
     function addUncaughtExceptionTest(name, testFunction) {
         suite.addTestCase({
             name, description: "Trigger an uncaught exception and check $exception.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.evaluateInPage(`setTimeout(${testFunction})`);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
                     WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
@@ -43,7 +43,7 @@ function test()
     function addCaughtExceptionTest(name, expression) {
         suite.addTestCase({
             name, description: "Trigger a caught exception and check $exception.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
 
                 let didStep = false;
@@ -67,10 +67,10 @@ function test()
                         });
                         WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                             InspectorTest.log("$exception => " + result.description);
+                            InspectorTest.singleFireEventListener("AfterTestFunction", resolve);
                             WebInspector.debuggerManager.resume().then(() => {
                                 WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
-                                resolve();
-                            }, reject);
+                            }).catch(reject);
                         });
                         return;
                     }
@@ -91,9 +91,9 @@ function test()
     addUncaughtExceptionTest("UncaughtObject", "throwObject");
     addUncaughtExceptionTest("UncaughtNode", "throwNode");
 
-    addCaughtExceptionTest("CatchTypeException", "setTimeout(function() { catcher(triggerUncaughtTypeException); })");
-    addCaughtExceptionTest("CatchThrownString", "setTimeout(function() { catcher(throwString); })");
-    addCaughtExceptionTest("CatchThrownObject", "setTimeout(function() { catcher(throwObject); })");
+    addCaughtExceptionTest("CatchTypeException", `setTimeout(function() { catcher(triggerUncaughtTypeException); TestPage.dispatchEventToFrontend("AfterTestFunction"); })`);
+    addCaughtExceptionTest("CatchThrownString", `setTimeout(function() { catcher(throwString); TestPage.dispatchEventToFrontend("AfterTestFunction"); })`);
+    addCaughtExceptionTest("CatchThrownObject", `setTimeout(function() { catcher(throwObject); TestPage.dispatchEventToFrontend("AfterTestFunction"); })`);
 
     addNoExceptionTest("AfterExceptions");
 

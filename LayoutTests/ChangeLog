@@ -1,3 +1,40 @@
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=161951
+        <rdar://problem/28295767>
+
+        Reviewed by Brian Burg.
+
+        Rewrite tests to be more deterministic. For tests that
+        relied on a Resumed event to happen after a short amount
+        of time, instead have the test dispatch an event when it is
+        appropriate to continue. Take this opportunity to rewrite
+        some tests using new style and best practices.
+
+        * inspector/debugger/break-in-constructor-before-super.html:
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-exception.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-uncaught-exception.html:
+        * inspector/debugger/breakpoint-syntax-error-top-level.html:
+        * inspector/debugger/command-line-api-exception-expected.txt:
+        * inspector/debugger/command-line-api-exception-nested-catch.html:
+        * inspector/debugger/command-line-api-exception.html:
+        * inspector/debugger/csp-exceptions.html:
+        * inspector/debugger/didSampleProbe-multiple-probes.html:
+        * inspector/debugger/evaluateOnCallFrame-CommandLineAPI.html:
+        * inspector/debugger/evaluateOnCallFrame-errors.html:
+        * inspector/debugger/pause-reason-expected.txt:
+        * inspector/debugger/pause-reason.html:
+        * inspector/debugger/paused-scopes-expected.txt:
+        * inspector/debugger/paused-scopes.html:
+        * inspector/debugger/resources/exceptions.js:
+        * inspector/debugger/scriptParsed.html:
+        * inspector/debugger/sourceURL-repeated-identical-executions.html:
+        * inspector/debugger/sourceURLs.html:
+        * inspector/debugger/stepping/stepping-pause-in-inner-step-to-parent.html:
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NETWORK_SESSION] Add support for downloading file backed blobs

@@ -15,7 +15,7 @@ function test()
     function addTestCase({name, description, expression}) {
         suite.addTestCase({
             name, description,
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
                 WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
                     let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
@@ -59,7 +59,7 @@ function test()
     suite.addTestCase({
         name: "BreakOnAnyException.Promise.ExceptionInPromiseThenAndRethrownInCatch",
         description: "Break on an exception thrown in Promise then handler, and then again when rethrown in catch handler.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(testThrowingInPromiseWithRethrowInCatch)");
 
             function logPauseLocation() {

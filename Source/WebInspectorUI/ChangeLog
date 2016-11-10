@@ -1,5 +1,29 @@
 2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=161951
+        <rdar://problem/28295767>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidResume):
+        Now, Debugger.resumed events really mean the debugger resumed,
+        so act immediately instead of guessing. We must still guess
+        in legacy backends.
+
+        * UserInterface/Test/Test.js:
+        When the inspector frontend encounters an issue, log it.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+        Always enable the step out button. I don't think it makes sense to disable
+        it sometimes, and if there are issues with this we should solve the issues
+        instead of hiding them.
+
+2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Associate Worker Resources with the Worker and not the Page
         https://bugs.webkit.org/show_bug.cgi?id=164342
         <rdar://problem/29075775>

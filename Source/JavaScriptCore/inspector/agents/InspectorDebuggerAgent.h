@@ -141,6 +141,10 @@ private:
     void clearBreakDetails();
     void clearExceptionValue();
 
+    enum class ShouldDispatchResumed { No, WhenIdle, WhenContinued };
+    void willStepAndMayBecomeIdle();
+    void didBecomeIdleAfterStepping();
+
     RefPtr<InspectorObject> buildBreakpointPauseReason(JSC::BreakpointID);
     RefPtr<InspectorObject> buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript&);
 
@@ -165,11 +169,13 @@ private:
     JSC::BreakpointID m_continueToLocationBreakpointID;
     DebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
+    ShouldDispatchResumed m_conditionToDispatchResumed { ShouldDispatchResumed::No };
     bool m_enabled { false };
     bool m_javaScriptPauseScheduled { false };
     bool m_hasExceptionValue { false };
     bool m_didPauseStopwatch { false };
     bool m_pauseOnAssertionFailures { false };
+    bool m_registeredIdleCallback { false };
 };
 
 } // namespace Inspector

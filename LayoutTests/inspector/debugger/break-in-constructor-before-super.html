@@ -34,7 +34,7 @@ function test()
     suite.addTestCase({
         name: "TriggerPauseInConstructorBeforeSuper",
         description: "Trigger a pause in a constructor before calling super should not crash.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.evaluateInPage("triggerPause()");
 
             InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {

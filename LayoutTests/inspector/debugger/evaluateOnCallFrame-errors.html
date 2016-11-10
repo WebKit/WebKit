@@ -17,7 +17,7 @@ function test()
     suite.addTestCase({
         name: "EvaluateOnCallFrameNotPaused",
         description: "Triggering evaluate on call frame when not paused should issue an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.evaluateInPage("triggerPause()");
 
             let callFrameIdentifier;
@@ -41,7 +41,7 @@ function test()
     suite.addTestCase({
         name: "EvaluateOnCallFrameBadCallFrameIdentifier",
         description: "Triggering evaluate on call frame with a bad call frame identifier should issue an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.evaluateInPage("triggerPause()");
 
             InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {
