@@ -1,3 +1,17 @@
+2016-11-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copied text would contain text inside CDATA sections and comments
+        https://bugs.webkit.org/show_bug.cgi?id=164578
+
+        Reviewed by Darin Adler.
+
+        Added a regression test for creating an attributed string from different kinds of Text nodes.
+        Comment and CDataSection should not be included in the attributed string.
+
+        * editing/mac/attributed-string/comment-cdata-section-expected.txt: Added.
+        * editing/mac/attributed-string/comment-cdata-section.html: Added.
+        * platform/mac-yosemite/editing/mac/attributed-string/comment-cdata-section-expected.txt: Added.
+
 2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)

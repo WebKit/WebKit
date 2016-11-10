@@ -2327,7 +2327,7 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                 _exitElement(element, depth, startIndex);
             }
         }
-    } else if (is<CharacterData>(node))
+    } else if (node.nodeType() == Node::TEXT_NODE)
         _processText(downcast<CharacterData>(node));
 
     if (isEnd)
