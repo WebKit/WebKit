@@ -280,6 +280,11 @@ static void webkitWebContextConstructed(GObject* object)
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     priv->processPool->setIgnoreTLSErrors(false);
 
+#if ENABLE(MEMORY_SAMPLER)
+    if (getenv("WEBKIT_SAMPLE_MEMORY"))
+        priv->processPool->startMemorySampler(0);
+#endif
+
     attachInjectedBundleClientToContext(webContext);
     attachDownloadClientToContext(webContext);
     attachRequestManagerClientToContext(webContext);

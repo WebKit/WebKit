@@ -1,3 +1,17 @@
+2016-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Allow to use WebMemorySampler feature.
+        https://bugs.webkit.org/show_bug.cgi?id=164517
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the WebMemorySampler with the environment variable WEBKIT_SAMPLE_MEMORY.
+
+        When enabled, it will dump the stats to /tmp each second.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
 2016-11-10  Philippe Normand  <pnormand@igalia.com>
 
         [WK2][GTK][GStreamer] Build fails when -plugins-base and -core headers are not installed in the same directory
