@@ -1,3 +1,18 @@
+2016-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Memory process values shown by the WebMemorySampler in linux are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=164591
+
+        Reviewed by Michael Catanzaro.
+
+        It's parsing /proc/self/statm, and returning the values as if they were bytes, but they are number of pages, so
+        to get the bytes we need to take the page size into account. In r208534 I added a method to get /proc/self/statm
+        values in bytes to Platform layer, so we can simply use that instead.
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::WebMemorySampler::sampleWebKit): Use currentProcessMemoryStatus() and update the descriptions to
+        clarify that values are in bytes.
+
 2016-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         MemoryPressureHandler shouldn't know how to release WebCore memory
