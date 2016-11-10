@@ -1,3 +1,16 @@
+2016-11-09  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Clean up some exception ordering.
+        https://bugs.webkit.org/show_bug.cgi?id=164566
+
+        Reviewed by Alex Christensen.
+
+        * IndexedDB-private-browsing/idbcursor_advance_index7-expected.txt:
+        * IndexedDB-private-browsing/idbcursor_continue_index7-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index7-expected.txt:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index7-expected.txt:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order-expected.txt:
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should not consider path of URLs with no host to start at the first slash after the colon

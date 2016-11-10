@@ -2,7 +2,6 @@
 PASS InvalidStateError(Incorrect mode) vs. TransactionInactiveError 
 PASS InvalidStateError(Deleted ObjectStore) vs. TransactionInactiveError 
 PASS TransactionInactiveError vs. ConstraintError 
-FAIL ConstraintError vs. SyntaxError assert_throws: Index name check should precede syntax check of the key path function "function () {
-            store.createIndex("index", "inv..." threw object "SyntaxError (DOM IDBDatabase Exception 12): Failed to exe..." that is not a DOMException ConstraintError: property "code" is equal to 12, expected 0
+PASS ConstraintError vs. SyntaxError 
 PASS SyntaxError vs. InvalidAccessError 
 

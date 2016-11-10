@@ -226,11 +226,11 @@ ExceptionOr<void> IDBCursor::advance(unsigned count)
     if (!count)
         return Exception { TypeError, ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0.") };
 
-    if (sourcesDeleted())
-        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
-
     if (!transaction().isActive())
         return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The transaction is inactive or finished.") };
+
+    if (sourcesDeleted())
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
 
     if (!m_gotValue)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The cursor is being iterated or has iterated past its end.") };
@@ -308,11 +308,11 @@ ExceptionOr<void> IDBCursor::continueFunction(const IDBKeyData& key)
     if (!m_request)
         return Exception { IDBDatabaseException::InvalidStateError };
 
-    if (sourcesDeleted())
-        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
-
     if (!transaction().isActive())
         return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The transaction is inactive or finished.") };
+
+    if (sourcesDeleted())
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
 
     if (!m_gotValue)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.") };

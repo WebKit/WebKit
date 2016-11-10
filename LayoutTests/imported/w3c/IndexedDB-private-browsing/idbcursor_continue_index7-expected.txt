@@ -1,5 +1,3 @@
 
-FAIL IDBCursor.continue() - index - throw TransactionInactiveError assert_throws: Calling continue() should throws an exception TransactionInactiveError when the transaction is not active. function "function () {
-                cursor.continue();
-        ..." threw object "InvalidStateError (DOM IDBDatabase Exception 11): Failed ..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
+PASS IDBCursor.continue() - index - throw TransactionInactiveError 
 

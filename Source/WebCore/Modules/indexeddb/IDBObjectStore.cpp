@@ -397,23 +397,23 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String&
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
     ASSERT(currentThread() == m_transaction.database().originThreadID());
 
-    if (m_deleted)
-        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The object store has been deleted.") };
-
     if (!m_transaction.isVersionChange())
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The database is not running a version change transaction.") };
 
+    if (m_deleted)
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The object store has been deleted.") };
+
     if (!m_transaction.isActive())
-        return Exception { IDBDatabaseException::TransactionInactiveError };
+        return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The transaction is inactive.")};
+
+    if (m_info.hasIndex(name))
+        return Exception { IDBDatabaseException::ConstraintError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': An index with the specified name already exists.") };
 
     if (!isIDBKeyPathValid(keyPath))
         return Exception { IDBDatabaseException::SyntaxError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.") };
 
     if (name.isNull())
         return Exception { TypeError };
-
-    if (m_info.hasIndex(name))
-        return Exception { IDBDatabaseException::ConstraintError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': An index with the specified name already exists.") };
 
     if (parameters.multiEntry && WTF::holds_alternative<Vector<String>>(keyPath))
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true.") };
