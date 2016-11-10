@@ -304,7 +304,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         ASSERT(WebCore::fileExists(networkDataTask->pendingDownloadLocation()));
         download->didCreateDestination(networkDataTask->pendingDownloadLocation());
         downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
-        networkDataTask->didBecomeDownload();
 
         _session->addDownloadID([downloadTask taskIdentifier], downloadID);
     }

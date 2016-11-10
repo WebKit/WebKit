@@ -57,9 +57,6 @@ public:
     virtual void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(double finishTime) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
-#if USE(NETWORK_SESSION)
-    virtual void didBecomeDownload() = 0;
-#endif
 };
 
 } // namespace WebKit

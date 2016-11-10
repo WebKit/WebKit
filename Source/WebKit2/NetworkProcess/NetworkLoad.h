@@ -66,7 +66,7 @@ public:
     void continueDidReceiveResponse();
 
 #if USE(NETWORK_SESSION)
-    void convertTaskToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void setPendingDownloadID(DownloadID);
     void setSuggestedFilename(const String&);
     void setPendingDownload(PendingDownload&);
@@ -113,7 +113,7 @@ private:
     void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) final;
     void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) final;
     bool usesAsyncCallbacks() final { return true; }
-    bool loadingSynchronousXHR() final { return m_client.isSynchronous(); }
+    bool loadingSynchronousXHR() final { return m_client.get().isSynchronous(); }
 #else
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
@@ -121,7 +121,6 @@ private:
     void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didCompleteWithError(const WebCore::ResourceError&) final;
-    void didBecomeDownload() final;
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final;
     void wasBlocked() final;
     void cannotShowURL() final;
@@ -132,7 +131,7 @@ private:
     void completeAuthenticationChallenge(ChallengeCompletionHandler&&);
 #endif
 
-    NetworkLoadClient& m_client;
+    std::reference_wrapper<NetworkLoadClient> m_client;
     const NetworkLoadParameters m_parameters;
 #if USE(NETWORK_SESSION)
     RefPtr<NetworkDataTask> m_task;

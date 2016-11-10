@@ -63,7 +63,6 @@ public:
     virtual void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) = 0;
     virtual void didReceiveData(Ref<WebCore::SharedBuffer>&&) = 0;
     virtual void didCompleteWithError(const WebCore::ResourceError&) = 0;
-    virtual void didBecomeDownload() = 0;
     virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) = 0;
     virtual void wasBlocked() = 0;
     virtual void cannotShowURL() = 0;

@@ -53,7 +53,6 @@ public:
     void didCompleteWithError(const WebCore::ResourceError&);
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
     void didReceiveData(Ref<WebCore::SharedBuffer>&&);
-    void didBecomeDownload();
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);

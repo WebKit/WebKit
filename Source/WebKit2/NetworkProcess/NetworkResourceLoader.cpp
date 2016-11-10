@@ -274,21 +274,11 @@ void NetworkResourceLoader::cleanup()
     m_connection->didCleanupResourceLoader(*this);
 }
 
-void NetworkResourceLoader::didConvertToDownload()
+void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT(!m_didConvertToDownload);
     ASSERT(m_networkLoad);
-    m_didConvertToDownload = true;
+    NetworkProcess::singleton().downloadManager().convertNetworkLoadToDownload(downloadID, WTFMove(m_networkLoad), request, response);
 }
-    
-#if USE(NETWORK_SESSION)
-void NetworkResourceLoader::didBecomeDownload()
-{
-    ASSERT(m_didConvertToDownload);
-    ASSERT(m_networkLoad);
-    m_networkLoad = nullptr;
-}
-#endif
 
 void NetworkResourceLoader::abort()
 {
@@ -297,7 +287,7 @@ void NetworkResourceLoader::abort()
     RELEASE_LOG_IF_ALLOWED("abort: Canceling resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")",
         m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 
-    if (m_networkLoad && !m_didConvertToDownload) {
+    if (m_networkLoad) {
 #if ENABLE(NETWORK_CACHE)
         if (canUseCache(m_networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.

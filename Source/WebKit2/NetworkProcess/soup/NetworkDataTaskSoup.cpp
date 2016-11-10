@@ -862,9 +862,7 @@ void NetworkDataTaskSoup::download()
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 
-    ASSERT(m_client);
-    m_client->didBecomeDownload();
-
+    ASSERT(!m_client);
     read();
 }
 

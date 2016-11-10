@@ -26,6 +26,7 @@
 #ifndef NetworkResourceLoader_h
 #define NetworkResourceLoader_h
 
+#include "DownloadID.h"
 #include "MessageSender.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoadClient.h"
@@ -95,11 +96,8 @@ public:
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(double finishTime) override;
     void didFailLoading(const WebCore::ResourceError&) override;
-#if USE(NETWORK_SESSION)
-    void didBecomeDownload() override;
-#endif
-    
-    void didConvertToDownload();
+
+    void convertToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequest::Requester::Main; }
     bool isAlwaysOnLoggingAllowed() const;
@@ -152,7 +150,6 @@ private:
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
 
-    bool m_didConvertToDownload { false };
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
     bool m_hasReceivedData { false };

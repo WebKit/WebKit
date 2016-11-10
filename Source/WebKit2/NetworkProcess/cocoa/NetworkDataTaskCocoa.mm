@@ -171,12 +171,6 @@ void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
         m_client->didReceiveData(WTFMove(data));
 }
 
-void NetworkDataTaskCocoa::didBecomeDownload()
-{
-    if (m_client)
-        m_client->didBecomeDownload();
-}
-
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {

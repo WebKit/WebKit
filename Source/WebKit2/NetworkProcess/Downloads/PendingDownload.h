@@ -46,6 +46,7 @@ class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingDownload(NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
+    PendingDownload(std::unique_ptr<NetworkLoad>&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -65,8 +66,7 @@ private:
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override { };
     void didFinishLoading(double finishTime) override { };
     void didFailLoading(const WebCore::ResourceError&) override;
-    void didBecomeDownload() override;
-    
+
     // MessageSender.
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;

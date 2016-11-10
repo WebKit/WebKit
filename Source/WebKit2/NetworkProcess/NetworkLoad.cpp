@@ -185,7 +185,7 @@ NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiv
     if (m_parameters.needsCertificateInfo)
         response.includeCertificateInfo();
 
-    return m_client.didReceiveResponse(WTFMove(response));
+    return m_client.get().didReceiveResponse(WTFMove(response));
 }
 
 void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
@@ -196,21 +196,20 @@ void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, Res
 
     auto oldRequest = WTFMove(m_currentRequest);
     m_currentRequest = request;
-    m_client.willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
+    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
 }
 
 #if USE(NETWORK_SESSION)
 
-void NetworkLoad::convertTaskToDownload(DownloadID downloadID, const ResourceRequest& updatedRequest, const ResourceResponse& response)
+void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const ResourceRequest& updatedRequest, const ResourceResponse& response)
 {
     if (!m_task)
         return;
 
+    m_client = pendingDownload;
     m_currentRequest = updatedRequest;
-    NetworkProcess::singleton().downloadManager().downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(m_currentRequest, String()), downloadID.downloadID());
-    m_task->setPendingDownloadID(downloadID);
-    
-    ASSERT(m_responseCompletionHandler);
+    m_task->setPendingDownload(pendingDownload);
+
     if (m_responseCompletionHandler)
         NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), std::exchange(m_responseCompletionHandler, nullptr), response);
 }
@@ -263,7 +262,7 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
     m_challenge = challenge;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     m_challengeCompletionHandler = WTFMove(completionHandler);
-    m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
+    m_client.get().canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
 #else
     completeAuthenticationChallenge(WTFMove(completionHandler));
 #endif
@@ -338,7 +337,7 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 
     // FIXME: This should be the encoded data length, not the decoded data length.
     auto size = buffer->size();
-    m_client.didReceiveBuffer(WTFMove(buffer), size);
+    m_client.get().didReceiveBuffer(WTFMove(buffer), size);
 }
 
 void NetworkLoad::didCompleteWithError(const ResourceError& error)
@@ -346,9 +345,9 @@ void NetworkLoad::didCompleteWithError(const ResourceError& error)
     ASSERT(!m_throttle);
 
     if (error.isNull())
-        m_client.didFinishLoading(WTF::monotonicallyIncreasingTime());
+        m_client.get().didFinishLoading(WTF::monotonicallyIncreasingTime());
     else
-        m_client.didFailLoading(error);
+        m_client.get().didFailLoading(error);
 }
 
 void NetworkLoad::throttleDelayCompleted()
@@ -360,24 +359,19 @@ void NetworkLoad::throttleDelayCompleted()
     notifyDidReceiveResponse(WTFMove(throttle->response), WTFMove(throttle->responseCompletionHandler));
 }
 
-void NetworkLoad::didBecomeDownload()
-{
-    m_client.didBecomeDownload();
-}
-
 void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
 {
-    m_client.didSendData(totalBytesSent, totalBytesExpectedToSend);
+    m_client.get().didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
 void NetworkLoad::wasBlocked()
 {
-    m_client.didFailLoading(blockedError(m_currentRequest));
+    m_client.get().didFailLoading(blockedError(m_currentRequest));
 }
 
 void NetworkLoad::cannotShowURL()
 {
-    m_client.didFailLoading(cannotShowURLError(m_currentRequest));
+    m_client.get().didFailLoading(cannotShowURLError(m_currentRequest));
 }
 
 #else
@@ -399,13 +393,13 @@ void NetworkLoad::didReceiveData(ResourceHandle*, const char* /* data */, unsign
 void NetworkLoad::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    m_client.didReceiveBuffer(WTFMove(buffer), reportedEncodedDataLength);
+    m_client.get().didReceiveBuffer(WTFMove(buffer), reportedEncodedDataLength);
 }
 
 void NetworkLoad::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    m_client.didFinishLoading(finishTime);
+    m_client.get().didFinishLoading(finishTime);
 }
 
 void NetworkLoad::didFail(ResourceHandle* handle, const ResourceError& error)
@@ -413,7 +407,7 @@ void NetworkLoad::didFail(ResourceHandle* handle, const ResourceError& error)
     ASSERT_UNUSED(handle, !handle || handle == m_handle);
     ASSERT(!error.isNull());
 
-    m_client.didFailLoading(error);
+    m_client.get().didFailLoading(error);
 }
 
 void NetworkLoad::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse)
@@ -436,7 +430,7 @@ void NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* han
     }
 
     m_waitingForContinueCanAuthenticateAgainstProtectionSpace = true;
-    m_client.canAuthenticateAgainstProtectionSpaceAsync(protectionSpace);
+    m_client.get().canAuthenticateAgainstProtectionSpaceAsync(protectionSpace);
 }
 
 void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
@@ -465,7 +459,7 @@ void NetworkLoad::didSendData(ResourceHandle* handle, unsigned long long bytesSe
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_client.didSendData(bytesSent, totalBytesToBeSent);
+    m_client.get().didSendData(bytesSent, totalBytesToBeSent);
 }
 
 void NetworkLoad::wasBlocked(ResourceHandle* handle)

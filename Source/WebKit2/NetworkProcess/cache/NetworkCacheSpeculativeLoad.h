@@ -63,9 +63,6 @@ private:
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(double finishTime) override;
     void didFailLoading(const WebCore::ResourceError&) override;
-#if USE(NETWORK_SESSION)
-    void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
-#endif
 
     void abort();
     void didComplete();

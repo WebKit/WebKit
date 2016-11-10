@@ -515,6 +515,8 @@ public:
     {
         test->m_download = download;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
+        g_signal_connect(download, "decide-destination", G_CALLBACK(downloadDecideDestinationCallback), test);
+        g_signal_connect(download, "finished", G_CALLBACK(downloadFinishedCallback), test);
         test->quitMainLoop();
     }
 
@@ -539,6 +541,8 @@ public:
     {
         GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), suggestedFilename, nullptr));
         GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
+        if (test->m_shouldDelayDecideDestination)
+            g_usleep(0.2 * G_USEC_PER_SEC);
         webkit_download_set_destination(download, destinationURI.get());
         return TRUE;
     }
@@ -550,12 +554,11 @@ public:
 
     void waitUntilDownloadFinished()
     {
-        g_signal_connect(m_download.get(), "decide-destination", G_CALLBACK(downloadDecideDestinationCallback), this);
-        g_signal_connect(m_download.get(), "finished", G_CALLBACK(downloadFinishedCallback), this);
         g_main_loop_run(m_mainLoop);
     }
 
     GRefPtr<WebKitDownload> m_download;
+    bool m_shouldDelayDecideDestination { false };
 };
 
 static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
@@ -604,7 +607,28 @@ public:
 
 static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstpointer)
 {
-    // Test that a download started by the the policy checker contains the web view.
+    CString requestURI = kServer->getURIForPath("/test.pdf").data();
+    // Delay the DecideDestination to ensure that the load is aborted before the network task has became a download.
+    // See https://bugs.webkit.org/show_bug.cgi?id=164220.
+    test->m_shouldDelayDecideDestination = true;
+    test->loadURI(requestURI.data());
+    test->waitUntilDownloadStarted();
+
+    WebKitURIRequest* request = webkit_download_get_request(test->m_download.get());
+    g_assert(request);
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, requestURI);
+
+    g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+    test->waitUntilDownloadFinished();
+
+    GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(test->m_download.get())));
+    GRefPtr<GFileInfo> downloadFileInfo = adoptGRef(g_file_query_info(downloadFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), nullptr, nullptr));
+    g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
+    g_file_delete(downloadFile.get(), nullptr, nullptr);
+}
+
+static void testPolicyResponseDownloadCancel(PolicyResponseDownloadTest* test, gconstpointer)
+{
     CString requestURI = kServer->getURIForPath("/test.pdf").data();
     test->loadURI(requestURI.data());
     test->waitUntilDownloadStarted();
@@ -657,6 +681,7 @@ void beforeAll()
     DownloadErrorTest::add("Downloads", "remote-file-error", testDownloadRemoteFileError);
     WebViewDownloadTest::add("WebKitWebView", "download-uri", testWebViewDownloadURI);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
+    PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
 }
 

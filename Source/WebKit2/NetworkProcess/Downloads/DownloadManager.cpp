@@ -67,7 +67,8 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
 #if USE(NETWORK_SESSION)
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
 {
-    ASSERT(!m_pendingDownloads.contains(downloadID));
+    ASSERT(m_pendingDownloads.contains(downloadID));
+    m_pendingDownloads.remove(downloadID);
     ASSERT(!m_downloads.contains(downloadID));
     m_downloadsAfterDestinationDecided.remove(downloadID);
     m_downloads.add(downloadID, WTFMove(download));
@@ -97,28 +98,37 @@ void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& netw
     auto addResult = m_downloadsWaitingForDestination.set(downloadID, std::make_pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>(&networkDataTask, WTFMove(completionHandler)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
-#else
-void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+#endif // USE(NETWORK_SESSION)
+
+void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::unique_ptr<NetworkLoad>&& networkLoad, const ResourceRequest& request, const ResourceResponse& response)
 {
+#if USE(NETWORK_SESSION)
+    ASSERT(!m_pendingDownloads.contains(downloadID));
+    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(networkLoad), downloadID, request, response));
+#else
     auto download = std::make_unique<Download>(*this, downloadID, request);
 
+    auto* handle = networkLoad->handle();
+    ASSERT(handle);
     download->startWithHandle(handle, response);
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));
+
+    // Unblock the URL connection operation queue.
+    handle->continueDidReceiveResponse();
+#endif
 }
-#endif // USE(NETWORK_SESSION)
 
 void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
 #if USE(NETWORK_SESSION)
     if (m_downloadsWaitingForDestination.contains(downloadID)) {
-        auto pendingDownload = m_pendingDownloads.take(downloadID);
         auto pair = m_downloadsWaitingForDestination.take(downloadID);
         auto networkDataTask = WTFMove(pair.first);
         auto completionHandler = WTFMove(pair.second);
         ASSERT(networkDataTask);
         ASSERT(completionHandler);
-        ASSERT(!pendingDownload || pendingDownload.get() == networkDataTask->pendingDownload());
+        ASSERT(m_pendingDownloads.contains(downloadID));
 
         networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle, allowOverwrite);
         completionHandler(PolicyDownload);

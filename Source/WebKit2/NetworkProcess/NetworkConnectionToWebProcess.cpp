@@ -206,17 +206,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID 
         return;
     }
 
-#if USE(NETWORK_SESSION)
-    loader->networkLoad()->convertTaskToDownload(downloadID, request, response);
-    loader->didConvertToDownload();
-#else
-    networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->networkLoad()->handle(), request, response);
-
-    // Unblock the URL connection operation queue.
-    loader->networkLoad()->handle()->continueDidReceiveResponse();
-
-    loader->didConvertToDownload();
-#endif
+    loader->convertToDownload(downloadID, request, response);
 }
 
 void NetworkConnectionToWebProcess::cookiesForDOM(SessionID sessionID, const URL& firstParty, const URL& url, String& result)
