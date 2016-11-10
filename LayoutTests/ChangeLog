@@ -1,5 +1,14 @@
 2016-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164598
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-11-10  Ryan Haddad  <ryanhaddad@apple.com>
+
         Temporarily marking storage/domstorage/sessionstorage/blocked-file-access.html as failing.
         https://bugs.webkit.org/show_bug.cgi?id=164592
 
