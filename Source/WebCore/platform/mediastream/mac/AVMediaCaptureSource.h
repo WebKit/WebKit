@@ -53,10 +53,10 @@ public:
     virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) = 0;
 
     virtual void captureSessionIsRunningDidChange(bool);
-    
+
     AVCaptureSession *session() const { return m_session.get(); }
 
-    const RealtimeMediaSourceSettings& settings() override;
+    const RealtimeMediaSourceSettings& settings() const override;
 
     void startProducingData() override;
     void stopProducingData() override;
@@ -78,7 +78,7 @@ protected:
     MediaConstraints* constraints() { return m_constraints.get(); }
 
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
@@ -86,6 +86,9 @@ protected:
 private:
     void setupSession();
     void reset() override;
+
+    void initializeSettings();
+    void initializeCapabilities();
 
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

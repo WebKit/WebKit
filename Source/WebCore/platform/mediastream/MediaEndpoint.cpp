@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-class EmptyRealtimeMediaSource : public RealtimeMediaSource {
+class EmptyRealtimeMediaSource final : public RealtimeMediaSource {
 public:
     static Ref<EmptyRealtimeMediaSource> create() { return adoptRef(*new EmptyRealtimeMediaSource()); }
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override { return nullptr; }
-    const RealtimeMediaSourceSettings& settings() override { return m_sourceSettings; }
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return nullptr; }
+    const RealtimeMediaSourceSettings& settings() const final { return m_sourceSettings; }
 
 private:
     EmptyRealtimeMediaSource()

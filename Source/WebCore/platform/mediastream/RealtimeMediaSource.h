@@ -88,8 +88,8 @@ public:
     virtual unsigned fitnessScore() const { return m_fitnessScore; }
     virtual void setFitnessScore(const unsigned fitnessScore) { m_fitnessScore = fitnessScore; }
 
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() = 0;
-    virtual const RealtimeMediaSourceSettings& settings() = 0;
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
+    virtual const RealtimeMediaSourceSettings& settings() const = 0;
 
     using SuccessHandler = std::function<void()>;
     using FailureHandler = std::function<void(const String& badConstraint, const String& errorString)>;

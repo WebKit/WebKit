@@ -90,19 +90,21 @@ MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMedia
         setPersistentID(mockVideoSourcePersistentID());
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities()
+void MockRealtimeMediaSource::initializeCapabilities()
 {
-    if (m_capabilities)
-        return m_capabilities;
-
     m_capabilities = RealtimeMediaSourceCapabilities::create(supportedConstraints());
     m_capabilities->setDeviceId(id());
     initializeCapabilities(*m_capabilities.get());
+}
 
+RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities() const
+{
+    if (!m_capabilities)
+        const_cast<MockRealtimeMediaSource&>(*this).initializeCapabilities();
     return m_capabilities;
 }
 
-const RealtimeMediaSourceSettings& MockRealtimeMediaSource::settings()
+void MockRealtimeMediaSource::initializeSettings()
 {
     if (m_currentSettings.deviceId().isEmpty()) {
         m_currentSettings.setSupportedConstraits(supportedConstraints());
@@ -110,6 +112,11 @@ const RealtimeMediaSourceSettings& MockRealtimeMediaSource::settings()
     }
 
     updateSettings(m_currentSettings);
+}
+
+const RealtimeMediaSourceSettings& MockRealtimeMediaSource::settings() const
+{
+    const_cast<MockRealtimeMediaSource&>(*this).initializeSettings();
     return m_currentSettings;
 }
 

@@ -56,7 +56,7 @@ public:
         virtual void trackDidEnd() = 0;
     };
 
-    static Ref<MediaStreamTrack> create(ScriptExecutionContext&, MediaStreamTrackPrivate&);
+    static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     virtual ~MediaStreamTrack();
 
     const AtomicString& kind() const;
@@ -75,7 +75,7 @@ public:
 
     bool ended() const;
 
-    RefPtr<MediaStreamTrack> clone();
+    Ref<MediaStreamTrack> clone();
     void stopProducingData();
 
     RefPtr<MediaTrackConstraints> getConstraints() const;
@@ -85,7 +85,7 @@ public:
     void applyConstraints(Ref<MediaConstraints>&&, DOMPromise<void>&&);
     void applyConstraints(const MediaConstraints&);
 
-    RealtimeMediaSource& source() const { return m_private->source(); }
+    RealtimeMediaSource& source() { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
 
     AudioSourceProvider* audioSourceProvider();
@@ -101,7 +101,7 @@ public:
     using RefCounted<MediaStreamTrack>::deref;
 
 private:
-    MediaStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&);
+    MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     explicit MediaStreamTrack(MediaStreamTrack&);
 
     void configureTrackRendering();

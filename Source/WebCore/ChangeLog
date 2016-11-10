@@ -1,3 +1,54 @@
+2016-11-10  Youenn Fablet  <youennf@gmail.com>
+
+        MediaStreamTrack should use more Ref<> and less RefPtr<>
+        https://bugs.webkit.org/show_bug.cgi?id=164560
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        Make MediaStreamTrack take a Ref<>& instead of a reference.
+        Using Ref<>&& instead of RefPtr<>&& in MediaStreamTrackPrivate.
+        Updating constness of some methods accordingly.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createReceiver):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::clone):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::capabilities):
+        (WebCore::MediaStreamAudioSource::settings):
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::create):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::create):
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate):
+        (WebCore::MediaStreamTrackPrivate::clone):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::setMuted):
+        (WebCore::MediaStreamTrackPrivate::source):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::initializeSettings):
+        (WebCore::AVMediaCaptureSource::settings):
+        (WebCore::AVMediaCaptureSource::initializeCapabilities):
+        (WebCore::AVMediaCaptureSource::capabilities):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+        (WebCore::RealtimeMediaSourceOwr::capabilities):
+        (WebCore::RealtimeMediaSourceOwr::settings):
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::initializeCapabilities):
+        (WebCore::MockRealtimeMediaSource::capabilities):
+        (WebCore::MockRealtimeMediaSource::initializeSettings):
+        (WebCore::MockRealtimeMediaSource::settings):
+        * platform/mock/MockRealtimeMediaSource.h:
+
 2016-11-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Win32] Crash in layout tests.

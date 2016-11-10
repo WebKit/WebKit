@@ -163,13 +163,18 @@ void AVMediaCaptureSource::stopProducingData()
     [m_session.get() stopRunning];
 }
 
-const RealtimeMediaSourceSettings& AVMediaCaptureSource::settings()
+void AVMediaCaptureSource::initializeSettings()
 {
     if (m_currentSettings.deviceId().isEmpty())
         m_currentSettings.setSupportedConstraits(supportedConstraints());
 
     m_currentSettings.setDeviceId(id());
     updateSettings(m_currentSettings);
+}
+
+const RealtimeMediaSourceSettings& AVMediaCaptureSource::settings() const
+{
+    const_cast<AVMediaCaptureSource&>(*this).initializeSettings();
     return m_currentSettings;
 }
 
@@ -184,14 +189,18 @@ RealtimeMediaSourceSupportedConstraints& AVMediaCaptureSource::supportedConstrai
     return m_supportedConstraints;
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> AVMediaCaptureSource::capabilities()
+void AVMediaCaptureSource::initializeCapabilities()
 {
-    if (!m_capabilities) {
-        m_capabilities = RealtimeMediaSourceCapabilities::create(AVCaptureDeviceManager::singleton().supportedConstraints());
-        m_capabilities->setDeviceId(id());
+    m_capabilities = RealtimeMediaSourceCapabilities::create(AVCaptureDeviceManager::singleton().supportedConstraints());
+    m_capabilities->setDeviceId(id());
 
-        initializeCapabilities(*m_capabilities.get());
-    }
+    initializeCapabilities(*m_capabilities.get());
+}
+
+RefPtr<RealtimeMediaSourceCapabilities> AVMediaCaptureSource::capabilities() const
+{
+    if (!m_capabilities)
+        const_cast<AVMediaCaptureSource&>(*this).initializeCapabilities();
     return m_capabilities;
 }
 

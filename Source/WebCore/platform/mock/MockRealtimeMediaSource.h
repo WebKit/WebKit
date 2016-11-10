@@ -72,14 +72,15 @@ protected:
     void startProducingData() override;
     void stopProducingData() override;
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
-    const RealtimeMediaSourceSettings& settings() override;
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
+    const RealtimeMediaSourceSettings& settings() const override;
 
     MediaConstraints& constraints() { return *m_constraints.get(); }
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
 private:
-
+    void initializeCapabilities();
+    void initializeSettings();
     bool isProducingData() const override { return m_isProducingData; }
 
     RealtimeMediaSourceSettings m_currentSettings;

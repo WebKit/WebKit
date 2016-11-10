@@ -48,14 +48,14 @@
 
 namespace WebCore {
 
-Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
+Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
 {
-    return adoptRef(*new MediaStreamTrack(context, privateTrack));
+    return adoptRef(*new MediaStreamTrack(context, WTFMove(privateTrack)));
 }
 
-MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
+MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
-    , m_private(privateTrack)
+    , m_private(WTFMove(privateTrack))
     , m_weakPtrFactory(this)
 {
     suspendIfNeeded();
@@ -123,9 +123,9 @@ bool MediaStreamTrack::ended() const
     return m_ended || m_private->ended();
 }
 
-RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
+Ref<MediaStreamTrack> MediaStreamTrack::clone()
 {
-    return MediaStreamTrack::create(*scriptExecutionContext(), *m_private->clone());
+    return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
 }
 
 void MediaStreamTrack::stopProducingData()

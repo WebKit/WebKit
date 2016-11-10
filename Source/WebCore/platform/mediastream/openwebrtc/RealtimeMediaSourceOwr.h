@@ -72,8 +72,8 @@ RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const S
         setMuted(false);
     }
 
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() { return m_capabilities; }
-    virtual const RealtimeMediaSourceSettings& settings() { return m_currentSettings; }
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const { return m_capabilities; }
+    virtual const RealtimeMediaSourceSettings& settings() const { return m_currentSettings; }
 
     OwrMediaSource* mediaSource() const { return m_mediaSource; }
 
