@@ -129,9 +129,8 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             length = lengthOpt.value();
         else {
             if ((buffer->byteLength() - offset) % ViewClass::elementSize)
-                return throwRangeError(exec, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size");
+                return throwRangeError(exec, scope, ASCIILiteral("ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
             length = (buffer->byteLength() - offset) / ViewClass::elementSize;
-
         }
 
         return ViewClass::create(exec, structure, buffer, offset, length);
@@ -198,20 +197,12 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
         
         return result;
     }
-    
-    int length;
-    if (firstValue.isInt32())
-        length = firstValue.asInt32();
-    else if (!firstValue.isNumber())
-        return throwTypeError(exec, scope, ASCIILiteral("Invalid array length argument"));
-    else {
-        length = static_cast<int>(firstValue.asNumber());
-        if (length != firstValue.asNumber())
-            return throwTypeError(exec, scope, ASCIILiteral("Invalid array length argument (fractional lengths not allowed)"));
-    }
 
-    if (length < 0)
-        return throwRangeError(exec, scope, "Requested length is negative");
+    if (!firstValue.isNumber())
+        return throwTypeError(exec, scope, ASCIILiteral("Invalid array length argument"));
+
+    unsigned length = firstValue.toIndex(exec, "length");
+    RETURN_IF_EXCEPTION(scope, nullptr);
     return ViewClass::create(exec, structure, length);
 }
 
@@ -242,14 +233,13 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     unsigned offset = 0;
     Optional<unsigned> length = Nullopt;
     if (jsDynamicCast<JSArrayBuffer*>(firstValue) && argCount > 1) {
-        offset = exec->uncheckedArgument(1).toUInt32(exec);
+        offset = exec->uncheckedArgument(1).toIndex(exec, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (argCount > 2) {
-            length = exec->uncheckedArgument(2).toUInt32(exec);
+            length = exec->uncheckedArgument(2).toIndex(exec, ViewClass::TypedArrayStorageType == TypeDataView ? "byteLength" : "length");
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
-
     }
 
     return JSValue::encode(constructGenericTypedArrayViewWithArguments<ViewClass>(exec, structure, JSValue::encode(firstValue), offset, length));

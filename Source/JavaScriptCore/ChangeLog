@@ -1,3 +1,28 @@
+2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)
+        https://bugs.webkit.org/show_bug.cgi?id=164450
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toIndex):
+        Introduce a method for toIndex, which is used by DataView and TypedArrays
+        to convert an argument to a number with the possibility of throwing
+        RangeErrors for negative values. We also throw RangeErrors for large
+        values, because wherever this is used we expect an unsigned.
+
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        Use toIndex instead of toUint32 where required.
+
 2016-11-10  Mark Lam  <mark.lam@apple.com>
 
         A few bits of minor code clean up.

@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "Error.h"
 #include "ExceptionHelpers.h"
 #include "Identifier.h"
 #include "InternalFunction.h"
 #include "JSCJSValue.h"
 #include "JSCellInlines.h"
-#include "JSObject.h"
 #include "JSFunction.h"
+#include "JSObject.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
 #include <wtf/text/StringImpl.h>
@@ -49,6 +50,27 @@ inline uint32_t JSValue::toUInt32(ExecState* exec) const
 {
     // See comment on JSC::toUInt32, in JSCJSValue.h.
     return toInt32(exec);
+}
+
+inline uint32_t JSValue::toIndex(ExecState* exec, const char* errorName) const
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double d = toNumber(exec);
+
+    if (d <= -1) {
+        throwException(exec, scope, createRangeError(exec, makeString(errorName, " cannot be negative")));
+        return 0;
+    }
+    if (d > std::numeric_limits<unsigned>::max()) {
+        throwException(exec, scope, createRangeError(exec, makeString(errorName, " too large")));
+        return 0;
+    }
+
+    if (isInt32())
+        return asInt32();
+    return JSC::toInt32(d);
 }
 
 inline bool JSValue::isUInt32() const

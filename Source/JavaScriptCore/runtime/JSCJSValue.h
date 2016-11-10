@@ -265,6 +265,7 @@ public:
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(ExecState*) const;
     int32_t toInt32(ExecState*) const;
     uint32_t toUInt32(ExecState*) const;
+    uint32_t toIndex(ExecState*, const char* errorName) const;
     double toLength(ExecState*) const;
 
     // Floating point conversions (this is a convenience function for WebCore;

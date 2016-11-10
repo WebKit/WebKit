@@ -1,3 +1,14 @@
+2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)
+        https://bugs.webkit.org/show_bug.cgi?id=164450
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/data-view-crash-expected.txt:
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        Better error message.
+
 2016-11-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] apply constraints passed to getUserMedia()

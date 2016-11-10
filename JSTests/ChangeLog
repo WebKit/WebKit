@@ -1,3 +1,16 @@
+2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)
+        https://bugs.webkit.org/show_bug.cgi?id=164450
+
+        Reviewed by Darin Adler.
+
+        * stress/dataview-typedarray-toindex.js: Added.
+        Tests for all cases where ToIndex should be used.
+
+        * test262.yaml:
+        New passing tests.
+
 2016-11-10  Mark Lam  <mark.lam@apple.com>
 
         Graph::methodOfGettingAValueProfileFor() should be returning the profile for the operand node.

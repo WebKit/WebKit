@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     
     unsigned length;
     if (exec->argumentCount()) {
-        length = exec->uncheckedArgument(0).toUInt32(exec);
+        length = exec->uncheckedArgument(0).toIndex(exec, "length");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else {
         // Although the documentation doesn't say so, it is in fact correct to say
