@@ -570,6 +570,23 @@ void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
     prefsPrivate->setAllowFileAccessFromFileURLs(enabled);
 }
 
+void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    // FIXME: <https://webkit.org/b/164575> Call IWebPreferencesPrivate method when available.
+}
+
 void TestRunner::setPopupBlockingEnabled(bool enabled)
 {
     COMPtr<IWebView> webView;

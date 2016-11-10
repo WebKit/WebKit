@@ -1,3 +1,10 @@
+2016-11-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r208509.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setNeedsStorageAccessFromFileURLsQuirk): Add missing TestRunner implementation."
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r208438.
