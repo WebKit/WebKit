@@ -103,6 +103,10 @@ NO_INLINE void AsyncTask<Object, Function>::runSlowCase()
 template<typename Object, typename Function>
 void AsyncTask<Object, Function>::threadEntryPoint(AsyncTask* asyncTask)
 {
+#if BOS(DARWIN)
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
+#endif
+
     asyncTask->threadRunLoop();
 }
 

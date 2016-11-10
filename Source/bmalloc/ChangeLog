@@ -1,3 +1,14 @@
+2016-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc threads should have a non-default QoS
+        https://bugs.webkit.org/show_bug.cgi?id=164612
+
+        Reviewed by Filip Pizlo.
+
+        * bmalloc/AsyncTask.h:
+        (bmalloc::Function>::threadEntryPoint): Request user-interactive quality
+        of service because user-interactive tasks use malloc.
+
 2016-10-20  Mark Lam  <mark.lam@apple.com>
 
         bmalloc api should crash on failure to allocate when !isBmallocEnabled.
