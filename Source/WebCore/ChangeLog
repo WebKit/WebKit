@@ -1,3 +1,23 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify logic of SecurityOrigin::databaseIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=164565
+
+        Reviewed by Brady Eidson.
+
+        No change in behavior.
+
+        SecurityOrigins with the file scheme need a special database identifier to be backwards-compatible with existing storage.
+        Instead of determining whether this is a file SecurityOrigin at parsing time and only using that information when
+        making the database identifier, just determine whether we need this quirk when making the database identifier.
+        I'm planning to move this logic to SecurityOriginData in another patch.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * page/SecurityOrigin.h:
+
 2016-11-09  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, build fix after r208460

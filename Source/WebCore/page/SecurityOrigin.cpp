@@ -110,7 +110,6 @@ SecurityOrigin::SecurityOrigin(const URL& url)
     , m_domainWasSetInDOM(false)
     , m_storageBlockingPolicy(AllowAllStorage)
     , m_enforceFilePathSeparation(false)
-    , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
@@ -135,7 +134,6 @@ SecurityOrigin::SecurityOrigin()
     , m_canLoadLocalResources(false)
     , m_storageBlockingPolicy(AllowAllStorage)
     , m_enforceFilePathSeparation(false)
-    , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
 }
 
@@ -151,7 +149,6 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
     , m_storageBlockingPolicy(other->m_storageBlockingPolicy)
     , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
-    , m_needsDatabaseIdentifierQuirkForFiles(other->m_needsDatabaseIdentifierQuirkForFiles)
 {
 }
 
@@ -160,19 +157,8 @@ Ref<SecurityOrigin> SecurityOrigin::create(const URL& url)
     if (RefPtr<SecurityOrigin> cachedOrigin = getCachedOrigin(url))
         return cachedOrigin.releaseNonNull();
 
-    if (shouldTreatAsUniqueOrigin(url)) {
-        Ref<SecurityOrigin> origin(adoptRef(*new SecurityOrigin));
-
-        if (url.protocolIs("file")) {
-            // Unfortunately, we can't represent all unique origins exactly
-            // the same way because we need to produce a quirky database
-            // identifier for file URLs due to persistent storage in some
-            // embedders of WebKit.
-            origin->m_needsDatabaseIdentifierQuirkForFiles = true;
-        }
-
-        return origin;
-    }
+    if (shouldTreatAsUniqueOrigin(url))
+        return adoptRef(*new SecurityOrigin);
 
     if (shouldUseInnerURL(url))
         return adoptRef(*new SecurityOrigin(extractInnerURL(url)));
@@ -564,7 +550,7 @@ String SecurityOrigin::databaseIdentifier() const
     // string because of a bug in how we handled the scheme for file URLs.
     // Now that we've fixed that bug, we still need to produce this string
     // to avoid breaking existing persistent state.
-    if (m_needsDatabaseIdentifierQuirkForFiles)
+    if (equalIgnoringASCIICase(m_protocol, "file"))
         return ASCIILiteral("file__0");
 
     StringBuilder stringBuilder;

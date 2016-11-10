@@ -232,7 +232,6 @@ private:
     bool m_canLoadLocalResources;
     StorageBlockingPolicy m_storageBlockingPolicy;
     bool m_enforceFilePathSeparation;
-    bool m_needsDatabaseIdentifierQuirkForFiles;
 };
 
 // Returns true if the Origin header values serialized from these two origins would be the same.
