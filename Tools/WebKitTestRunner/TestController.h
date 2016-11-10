@@ -142,8 +142,6 @@ public:
     void setNavigationGesturesEnabled(bool value);
     void setIgnoresViewportScaleLimits(bool);
 
-    void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
-
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -326,7 +324,6 @@ private:
 
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };
-    bool m_shouldDownloadUndisplayableMIMETypes { false };
 
     bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges { false };
     bool m_handlesAuthenticationChallenges { false };

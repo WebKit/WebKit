@@ -447,13 +447,9 @@ fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
 http/tests/download/area-download.html [ Skip ]
 http/tests/security/anchor-download-allow-data.html [ Skip ]
 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
-
-# testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
-fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 
 # TODO Expose title direction in WebKit API (Chromium Only)
 webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]

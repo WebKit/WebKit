@@ -1,3 +1,16 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r208438.
+
+        crashes
+
+        Reverted changeset:
+
+        "[WK2][NETWORK_SESSION] Add support for downloading file
+        backed blobs"
+        https://bugs.webkit.org/show_bug.cgi?id=164458
+        http://trac.webkit.org/changeset/208438
+
 2016-11-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Change the decoding for some animated images to be asynchronous

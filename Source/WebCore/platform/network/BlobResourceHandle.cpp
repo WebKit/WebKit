@@ -150,7 +150,6 @@ BlobResourceHandle::~BlobResourceHandle()
 void BlobResourceHandle::cancel()
 {
     m_asyncStream = nullptr;
-    m_fileOpened = false;
 
     m_aborted = true;
 

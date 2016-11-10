@@ -2061,10 +2061,7 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
         return;
     }
 
-    if (m_shouldDownloadUndisplayableMIMETypes)
-        WKFramePolicyListenerDownload(listener);
-    else
-        WKFramePolicyListenerIgnore(listener);
+    WKFramePolicyListenerIgnore(listener);
 }
 
 void TestController::didNavigateWithNavigationData(WKContextRef, WKPageRef, WKNavigationDataRef navigationData, WKFrameRef frame, const void* clientInfo)

@@ -98,13 +98,10 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         }
     }
 
-#if !USE(NETWORK_SESSION)
     if (originalRequest().url().protocolIsBlob()) {
         ASSERT(!m_parameters.resourceSandboxExtension);
         m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, originalRequest().url()));
     }
-#endif
-
 
     if (synchronousReply)
         m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
@@ -222,9 +219,6 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
     parameters.request = request;
 
 #if USE(NETWORK_SESSION)
-    if (request.url().protocolIsBlob())
-        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(m_connection, originalRequest().url());
-
     auto* networkSession = SessionTracker::networkSession(parameters.sessionID);
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", parameters.sessionID.sessionID());
