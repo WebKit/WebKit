@@ -153,8 +153,8 @@ typedef const char* optionString;
     v(bool, dumpBytecodeAtDFGTime, false, Normal, "dumps bytecode of JS function being DFG compiled") \
     v(bool, dumpGraphAfterParsing, false, Normal, nullptr) \
     v(bool, dumpGraphAtEachPhase, false, Normal, nullptr) \
-    v(bool, dumpDFGGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase DFG of complitaion (note this excludes DFG graphs during FTL compilation)") \
-    v(bool, dumpDFGFTLGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase DFG of complitaion when compiling FTL code") \
+    v(bool, dumpDFGGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase of DFG compilation (note this excludes DFG graphs during FTL compilation)") \
+    v(bool, dumpDFGFTLGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase of DFG compilation when compiling FTL code") \
     v(bool, dumpB3GraphAtEachPhase, false, Normal, "dumps the B3 graph at each phase of compilation") \
     v(bool, dumpAirGraphAtEachPhase, false, Normal, "dumps the Air graph at each phase of compilation") \
     v(bool, verboseDFGByteCodeParsing, false, Normal, nullptr) \

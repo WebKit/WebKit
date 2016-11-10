@@ -1,5 +1,24 @@
 2016-11-10  Mark Lam  <mark.lam@apple.com>
 
+        A few bits of minor code clean up.
+        https://bugs.webkit.org/show_bug.cgi?id=164523
+
+        Reviewed by Yusuke Suzuki.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::dump):
+        - Insert a space to make the dump more legible.
+
+        * runtime/Options.h:
+        - Fixed some typos.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        - Use the VM& that is already available.
+
+2016-11-10  Mark Lam  <mark.lam@apple.com>
+
         Graph::methodOfGettingAValueProfileFor() should be returning the profile for the operand node.
         https://bugs.webkit.org/show_bug.cgi?id=164600
         <rdar://problem/28828676>

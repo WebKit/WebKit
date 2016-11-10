@@ -852,7 +852,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     scope.release();
-    return replaceUsingRegExpSearch(exec->vm(), exec, string, searchValue, exec->argument(1));
+    return replaceUsingRegExpSearch(vm, exec, string, searchValue, exec->argument(1));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState* exec)
@@ -863,7 +863,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState* 
     JSString* string = exec->thisValue().toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return replaceUsingStringSearch(exec->vm(), exec, string, exec->argument(0), exec->argument(1));
+    return replaceUsingStringSearch(vm, exec, string, exec->argument(0), exec->argument(1));
 }
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceGeneric(
