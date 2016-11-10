@@ -262,11 +262,17 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
     for (auto& transaction : m_activeTransactions.values())
         transaction->connectionClosedFromServer(error);
 
-    Ref<Event> event = Event::create(m_eventNames.errorEvent, true, false);
-    event->setTarget(this);
+    auto errorEvent = Event::create(m_eventNames.errorEvent, true, false);
+    errorEvent->setTarget(this);
 
     if (auto* context = scriptExecutionContext())
-        context->eventQueue().enqueueEvent(WTFMove(event));
+        context->eventQueue().enqueueEvent(WTFMove(errorEvent));
+
+    auto closeEvent = Event::create(m_eventNames.closeEvent, true, false);
+    closeEvent->setTarget(this);
+
+    if (auto* context = scriptExecutionContext())
+        context->eventQueue().enqueueEvent(WTFMove(closeEvent));
 }
 
 void IDBDatabase::maybeCloseInServer()

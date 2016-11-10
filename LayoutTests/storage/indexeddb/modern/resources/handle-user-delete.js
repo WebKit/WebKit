@@ -4,6 +4,7 @@ indexedDBTest(prepareDatabase);
 
 var requestErrorCount = 0;
 var databaseError = false;
+var databaseOnclose = false;
 var transactionAbort = false;
 
 function done()
@@ -17,6 +18,11 @@ function done()
         log("[PASS] Database received correct error.");
     else
         log("[FAIL] Database did not receive correct error.");
+
+    if (databaseOnclose)
+        log("[PASS] Database received onclose event.");
+    else
+        log("[FAIL] Database did not receive onclose event.");
 
     if (transactionAbort)
         log("[PASS] Transaction aborted.");
@@ -33,7 +39,7 @@ function log(message)
 
 function maybeFinish()
 {
-    if (requestErrorCount == 2 && databaseError && transactionAbort)
+    if (requestErrorCount == 2 && databaseError && databaseOnclose && transactionAbort)
         done();
 }
 
@@ -50,6 +56,11 @@ function prepareDatabase(event)
         databaseError = true;
         maybeFinish();
     }
+
+	database.onclose = function(event) {
+		databaseOnclose = true;
+        maybeFinish();
+	}
 
     var hasClearedDatabases = false;
     var spinGet = function() { 

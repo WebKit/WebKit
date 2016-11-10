@@ -803,9 +803,6 @@ webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [
 ########################################
 ### START OF IndexedDB failures
 
-# Our IDL parser test harness is not what this test expects
-imported/w3c/web-platform-tests/IndexedDB/interfaces.html [ Skip ]
-
 # Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/database-quota-private.html [ Skip ]

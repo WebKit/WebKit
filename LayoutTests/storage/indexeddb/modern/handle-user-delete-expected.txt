@@ -12,6 +12,7 @@ Started two spinning requests
 Requested clearAllDatabases
 [PASS] Both requests hit a failure condition (Received onerror or failed to start a new request because the transaction was aborted)
 [PASS] Database received correct error.
+[PASS] Database received onclose event.
 [PASS] Transaction aborted.
 PASS successfullyParsed is true
 
