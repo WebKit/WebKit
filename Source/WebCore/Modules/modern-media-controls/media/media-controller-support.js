@@ -41,6 +41,18 @@ class MediaControllerSupport
         this.syncControl();
     }
 
+    // Public
+
+    destroy()
+    {
+        const media = this.mediaController.media;
+        for (let eventType of this.mediaEvents)
+            media.removeEventListener(eventType, this);
+
+        if (this.control)
+            this.control.uiDelegate = null;
+    }
+
     // Protected
 
     get control()

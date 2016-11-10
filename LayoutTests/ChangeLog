@@ -1,3 +1,17 @@
+2016-11-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: update controls based on fullscreen playback on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=164554
+        <rdar://problem/29183439>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new test to check that we use fullscreen controls on macOS once we've entered fullscreen.
+
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-11-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix fr tracks sizing under min|max-size constraints

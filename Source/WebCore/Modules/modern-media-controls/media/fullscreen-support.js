@@ -35,6 +35,17 @@ class FullscreenSupport extends MediaControllerSupport
             videoTracks.addEventListener(eventType, this);
     }
 
+    // Public
+
+    destroy()
+    {
+        super.destroy();
+
+        const videoTracks = this.mediaController.media.videoTracks;
+        for (let eventType of ["change", "addtrack", "removetrack"])
+            videoTracks.removeEventListener(eventType, this);
+    }
+
     // Protected
 
     get control()

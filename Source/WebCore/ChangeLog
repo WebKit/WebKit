@@ -1,3 +1,29 @@
+2016-11-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: update controls based on fullscreen playback on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=164554
+        <rdar://problem/29183439>
+
+        Reviewed by Dean Jackson.
+
+        When toggling fullscreen on macOS, toggle between MacOSInlineMediaControls and MacOSFullscreenMediaControls.
+        To facilitate this, support objects are created and destroyed when changing the controls in order for the
+        right control objects to be hooked up to the media controller. A new destroy() method on MediaControllerSupport
+        subclasses can be overridden to remove event listeners added by support objects in their constructor.
+
+        Test: media/modern-media-controls/media-controller/media-controller-fullscreen-change.html
+
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.destroy):
+        * Modules/modern-media-controls/media/media-controller-support.js:
+        (MediaControllerSupport.prototype.destroy):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.get layoutTraits):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._updateControlsIfNeeded):
+        (MediaController.prototype._controlsClass):
+
 2016-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Memory values shown by memory pressure handler logger are not useful

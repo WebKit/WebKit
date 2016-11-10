@@ -32,28 +32,19 @@ class MediaController
         this.media = media;
         this.host = host;
 
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
+        this._updateControlsIfNeeded();
 
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new AirplaySupport(this);
-        new ElapsedTimeSupport(this);
-        new FullscreenSupport(this);
-        new MuteSupport(this);
-        new PiPSupport(this);
-        new PlacardSupport(this);
-        new PlaybackSupport(this);
-        new RemainingTimeSupport(this);
-        new ScrubbingSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-        new StatusSupport(this);
-        new VolumeSupport(this);
-
-        this._updateControlsSize();
         media.addEventListener("resize", this);
+
+        media.addEventListener("webkitfullscreenchange", this);
+    }
+
+    get layoutTraits()
+    {
+        let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
+        if (this.media.webkitDisplayingFullscreen)
+            traits = traits | LayoutTraits.Fullscreen;
+        return traits;
     }
 
     // Protected
@@ -72,14 +63,52 @@ class MediaController
     {
         if (event.type === "resize" && event.currentTarget === this.media)
             this._updateControlsSize();
+        else if (event.type === "webkitfullscreenchange" && event.currentTarget === this.media)
+            this._updateControlsIfNeeded();
     }
 
     // Private
+
+    _updateControlsIfNeeded()
+    {
+        const previousControls = this.controls;
+        const ControlsClass = this._controlsClass();
+        if (previousControls && previousControls.constructor === ControlsClass)
+            return;
+
+        // Before we reset the .controls property, we need to destroy the previous
+        // supporting objects so we don't leak.
+        if (this._supportingObjects) {
+            for (let supportingObject of this._supportingObjects)
+                supportingObject.destroy();
+        }
+
+        this.controls = new ControlsClass;
+
+        if (previousControls)
+            this.shadowRoot.replaceChild(this.controls.element, previousControls.element);
+        else
+            this.shadowRoot.appendChild(this.controls.element);        
+
+        this._updateControlsSize();
+
+        this._supportingObjects = [AirplaySupport, ElapsedTimeSupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, RemainingTimeSupport, ScrubbingSupport, SkipBackSupport, StartSupport, StatusSupport, VolumeSupport].map(SupportClass => {
+            return new SupportClass(this);
+        }, this);
+    }
 
     _updateControlsSize()
     {
         this.controls.width = this.media.offsetWidth;
         this.controls.height = this.media.offsetHeight;
+    }
+
+    _controlsClass()
+    {
+        const layoutTraits = this.layoutTraits;
+        if (layoutTraits & LayoutTraits.Fullscreen)
+            return MacOSFullscreenMediaControls;
+        return MacOSInlineMediaControls;
     }
 
 }
