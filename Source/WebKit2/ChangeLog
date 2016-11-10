@@ -1,3 +1,41 @@
+2016-11-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Brady Eidson.
+
+        Provide SPI to access the new quirk for localStorage. The quirk defaults to 'on'. When active, this
+        quirk says that localStorage access should be granted, without needing to grant universal file access.
+
+        If the quirk is turned off, then localStorage is blocked unless the WebKit client explicitly
+        grants universal file access.
+        
+        Tested by existing TestWebKitAPI tests and WebKit2.LocalStorageQuirkTest
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetNeedsLocalStorageQuirk): Added.
+        (WKPreferencesGetNeedsLocalStorageQuirk): Added.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Honor the new localStorage quirk.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Honor the new localStorage quirk flag.
+        (-[WKWebViewConfiguration copyWithZone:]): Ditto.
+        (-[WKWebViewConfiguration _needsLocalStorageQuirk]): Added.
+        (-[WKWebViewConfiguration _setNeedsLocalStorageQuirk:]): Added.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetNeedsLocalStorageQuirk): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setNeedsLocalStorageQuirk): Added.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Honor the new localStorage quirk flag.
+
 2016-11-09  Simon Fraser  <simon.fraser@apple.com>
 
         Implement visual-viewport based position:fixed handling for Mac async scrolling

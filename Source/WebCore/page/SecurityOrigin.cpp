@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,11 +105,6 @@ SecurityOrigin::SecurityOrigin(const URL& url)
     : m_protocol(url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase())
     , m_host(url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase())
     , m_port(url.port())
-    , m_isUnique(false)
-    , m_universalAccess(false)
-    , m_domainWasSetInDOM(false)
-    , m_storageBlockingPolicy(AllowAllStorage)
-    , m_enforceFilePathSeparation(false)
 {
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
@@ -129,11 +124,6 @@ SecurityOrigin::SecurityOrigin()
     , m_host(emptyString())
     , m_domain(emptyString())
     , m_isUnique(true)
-    , m_universalAccess(false)
-    , m_domainWasSetInDOM(false)
-    , m_canLoadLocalResources(false)
-    , m_storageBlockingPolicy(AllowAllStorage)
-    , m_enforceFilePathSeparation(false)
 {
 }
 
@@ -149,6 +139,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
     , m_storageBlockingPolicy(other->m_storageBlockingPolicy)
     , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
+    , m_needsStorageAccessFromFileURLsQuirk(other->m_needsStorageAccessFromFileURLsQuirk)
 {
 }
 
@@ -337,6 +328,9 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAll
     if (isUnique())
         return false;
 
+    if (isLocal() && !needsStorageAccessFromFileURLsQuirk() && !m_universalAccess)
+        return false;
+    
     if (m_storageBlockingPolicy == BlockAllStorage)
         return false;
 
@@ -391,6 +385,11 @@ void SecurityOrigin::grantLoadLocalResources()
 void SecurityOrigin::grantUniversalAccess()
 {
     m_universalAccess = true;
+}
+
+void SecurityOrigin::grantStorageAccessFromFileURLsQuirk()
+{
+    m_needsStorageAccessFromFileURLsQuirk = true;
 }
 
 #if ENABLE(CACHE_PARTITIONING)

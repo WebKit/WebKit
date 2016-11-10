@@ -1,3 +1,35 @@
+2016-11-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Brady Eidson.
+
+        Add a new quirk for localStorage that defaults to 'on'. When active, this quirk says that
+        localStorage access should be granted, without needing to grant universal file access.
+
+        If the quirk is turned off, then localStorage is blocked unless the WebKit client explicitly
+        grants universal file access.
+
+        Tests: storage/domstorage/localstorage/blocked-file-access-permitted-by-quirk.html
+               storage/domstorage/localstorage/blocked-file-access.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Set localStorage quirk mode based on settings.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin): Use more C++11 initializers.
+        (WebCore::SecurityOrigin::canAccessStorage): If the origin is a local file, and we are NOT in
+        localStorage quirks mode, and we have not been granted universal file access, prevent access
+        to DOM localStorage.
+        (WebCore::SecurityOrigin::setNeedsLocalStorageQuirk): Added.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::needsLocalStorageQuirk): Added.
+        * page/Settings.in:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Make sure Workers know what the
+        localStorage quirks mode is set to.
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should not consider path of URLs with no host to start at the first slash after the colon

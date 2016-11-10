@@ -1,3 +1,18 @@
+2016-11-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Brady Eidson.
+
+        * storage/domstorage/localstorage/blocked-file-access-expected.txt: Added.
+        * storage/domstorage/localstorage/blocked-file-access-permitted-by-quirk-expected.txt: Added.
+        * storage/domstorage/localstorage/blocked-file-access-permitted-by-quirk.html: Added.
+        * storage/domstorage/localstorage/blocked-file-access.html: Added.
+        * storage/domstorage/localstorage/resources/allowed-example.html: Added.
+        * storage/domstorage/localstorage/resources/blocked-example.html: Added.
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should not consider path of URLs with no host to start at the first slash after the colon

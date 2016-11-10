@@ -50,6 +50,7 @@ preventKeyboardDOMEventDispatch initial=false
 localStorageEnabled initial=false
 allowUniversalAccessFromFileURLs initial=true
 allowFileAccessFromFileURLs initial=true
+needsStorageAccessFromFileURLsQuirk initial=true
 javaScriptCanOpenWindowsAutomatically initial=false
 javaScriptCanAccessClipboard initial=false
 shouldPrintBackgrounds initial=false

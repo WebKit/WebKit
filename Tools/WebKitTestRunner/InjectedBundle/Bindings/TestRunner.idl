@@ -60,6 +60,7 @@ interface TestRunner {
     void setXSSAuditorEnabled(boolean value);
     void setAllowUniversalAccessFromFileURLs(boolean value);
     void setAllowFileAccessFromFileURLs(boolean value);
+    void setNeedsStorageAccessFromFileURLsQuirk(boolean value);
     void setPluginsEnabled(boolean value);
     void setJavaScriptCanAccessClipboard(boolean value);
     void setPrivateBrowsingEnabled(boolean value);

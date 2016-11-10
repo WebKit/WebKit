@@ -141,6 +141,9 @@ public:
 
     void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
 
+    void grantStorageAccessFromFileURLsQuirk();
+    bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
+
 #if ENABLE(CACHE_PARTITIONING)
     WEBCORE_EXPORT String domainForCachePartition() const;
 #endif
@@ -226,12 +229,13 @@ private:
     String m_domain;
     String m_filePath;
     Optional<uint16_t> m_port;
-    bool m_isUnique;
-    bool m_universalAccess;
-    bool m_domainWasSetInDOM;
-    bool m_canLoadLocalResources;
-    StorageBlockingPolicy m_storageBlockingPolicy;
-    bool m_enforceFilePathSeparation;
+    bool m_isUnique { false };
+    bool m_universalAccess { false };
+    bool m_domainWasSetInDOM { false };
+    bool m_canLoadLocalResources { false };
+    StorageBlockingPolicy m_storageBlockingPolicy { AllowAllStorage };
+    bool m_enforceFilePathSeparation { false };
+    bool m_needsStorageAccessFromFileURLsQuirk { false };
 };
 
 // Returns true if the Origin header values serialized from these two origins would be the same.

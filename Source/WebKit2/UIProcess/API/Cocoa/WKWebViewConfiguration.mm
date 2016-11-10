@@ -128,6 +128,7 @@ private:
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
 #endif
+    BOOL _needsStorageAccessFromFileURLsQuirk;
 }
 
 - (instancetype)init
@@ -187,6 +188,7 @@ private:
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
     _treatsSHA1SignedCertificatesAsInsecure = YES;
+    _needsStorageAccessFromFileURLsQuirk = YES;
 
     return self;
 }
@@ -313,6 +315,7 @@ private:
 #if ENABLE(APPLE_PAY)
     configuration->_applePayEnabled = self->_applePayEnabled;
 #endif
+    configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
 
     return configuration;
 }
@@ -725,6 +728,16 @@ static NSString *defaultApplicationNameForUserAgent()
 #if ENABLE(APPLE_PAY)
     _applePayEnabled = applePayEnabled;
 #endif
+}
+
+- (BOOL)_needsStorageAccessFromFileURLsQuirk
+{
+    return _needsStorageAccessFromFileURLsQuirk;
+}
+
+- (void)_setNeedsStorageAccessFromFileURLsQuirk:(BOOL)needsLocalStorageQuirk
+{
+    _needsStorageAccessFromFileURLsQuirk = needsLocalStorageQuirk;
 }
 
 @end

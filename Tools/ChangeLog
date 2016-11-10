@@ -1,3 +1,33 @@
+2016-11-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked
+        https://bugs.webkit.org/show_bug.cgi?id=155185
+        <rdar://problem/11101440>
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setNeedsLocalStorageQuirkCallback): Added.
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues): Update for new quirk setting.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setNeedsLocalStorageQuirk):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/CloseFromWithinCreatePage.cpp:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageNullEntries.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageQuirkEnabled.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageQuirkTest.mm: Added.
+        (-[LocalStorageQuirkMessageHandler userContentController:didReceiveScriptMessage:]):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Update for new quirk setting.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setNeedsLocalStorageQuirk): Added.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should not consider path of URLs with no host to start at the first slash after the colon

@@ -627,6 +627,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -1443,6 +1444,16 @@ public:
 - (void)setAllowFileAccessFromFileURLs:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitAllowFileAccessFromFileURLsPreferenceKey];
+}
+
+- (BOOL)needsStorageAccessFromFileURLsQuirk
+{
+    return [self _boolValueForKey: WebKitNeedsStorageAccessFromFileURLsQuirkKey];
+}
+
+-(void)setNeedsStorageAccessFromFileURLsQuirk:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitNeedsStorageAccessFromFileURLsQuirkKey];
 }
 
 - (NSTimeInterval)_backForwardCacheExpirationInterval

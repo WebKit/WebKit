@@ -57,6 +57,7 @@ TEST(WKWebView, LocalStorageNullEntries)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
+    [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
     // Copy the inconsistent database files to the LocalStorage directory

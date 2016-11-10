@@ -503,6 +503,11 @@ void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
     [[[mainFrame webView] preferences] setAllowFileAccessFromFileURLs:enabled];
 }
 
+void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
+{
+    [[[mainFrame webView] preferences] setNeedsStorageAccessFromFileURLsQuirk:needsQuirk];
+}
+
 void TestRunner::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];

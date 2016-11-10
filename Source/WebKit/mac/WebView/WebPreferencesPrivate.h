@@ -139,6 +139,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)allowFileAccessFromFileURLs;
 - (void)setAllowFileAccessFromFileURLs:(BOOL)flag;
 
+- (BOOL)needsStorageAccessFromFileURLsQuirk;
+- (void)setNeedsStorageAccessFromFileURLsQuirk:(BOOL)flag;
+
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
 
