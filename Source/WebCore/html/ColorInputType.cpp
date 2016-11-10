@@ -250,7 +250,7 @@ Vector<Color> ColorInputType::suggestions() const
         suggestions.reserveInitialCapacity(length);
         for (unsigned i = 0; i != length; ++i) {
             auto value = downcast<HTMLOptionElement>(*options->item(i)).value();
-            if (isValidColorString(value))
+            if (isValidSimpleColorString(value))
                 suggestions.uncheckedAppend(Color(value));
         }
     }
