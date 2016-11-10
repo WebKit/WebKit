@@ -57,11 +57,17 @@ void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, S
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     if (request.url().protocolIsBlob() && connection)
-        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, parameters.request.url());
+        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, request.url());
 
     m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession, suggestedName));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request, suggestedName);
+    if (request.url().protocolIsBlob() && connection) {
+        auto blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, request.url());
+        for (auto& fileReference : blobFileReferences)
+            fileReference->prepareForFileAccess();
+        download->setBlobFileReferences(WTFMove(blobFileReferences));
+    }
     download->start();
 
     ASSERT(!m_downloads.contains(downloadID));
@@ -105,13 +111,14 @@ void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& netw
 }
 #endif // USE(NETWORK_SESSION)
 
-void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::unique_ptr<NetworkLoad>&& networkLoad, const ResourceRequest& request, const ResourceResponse& response)
+void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::unique_ptr<NetworkLoad>&& networkLoad, Vector<RefPtr<WebCore::BlobDataFileReference>>&& blobFileReferences, const ResourceRequest& request, const ResourceResponse& response)
 {
 #if USE(NETWORK_SESSION)
     ASSERT(!m_pendingDownloads.contains(downloadID));
     m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(networkLoad), downloadID, request, response));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request);
+    download->setBlobFileReferences(WTFMove(blobFileReferences));
 
     auto* handle = networkLoad->handle();
     ASSERT(handle);

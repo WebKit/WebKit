@@ -283,7 +283,7 @@ void NetworkResourceLoader::cleanup()
 void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(m_networkLoad);
-    NetworkProcess::singleton().downloadManager().convertNetworkLoadToDownload(downloadID, WTFMove(m_networkLoad), request, response);
+    NetworkProcess::singleton().downloadManager().convertNetworkLoadToDownload(downloadID, WTFMove(m_networkLoad), WTFMove(m_fileReferences), request, response);
 }
 
 void NetworkResourceLoader::abort()

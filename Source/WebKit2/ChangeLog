@@ -1,5 +1,26 @@
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][!NETWORK_SESSION] Add support for downloading file backed blobs
+        https://bugs.webkit.org/show_bug.cgi?id=164522
+
+        Reviewed by Alex Christensen.
+
+        Add support for downloading file backed blobs for the non-NETWORK_SESSION
+        code path of WebKit2, which is still use on pre-Sierra macOS.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::setBlobFileReferences):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertNetworkLoadToDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::convertToDownload):
+
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
         [WK2][NETWORK_SESSION] Add support for downloading file backed blobs
         https://bugs.webkit.org/show_bug.cgi?id=164458
         <rdar://problem/28905514>

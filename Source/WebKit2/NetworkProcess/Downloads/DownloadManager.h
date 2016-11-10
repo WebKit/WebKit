@@ -36,6 +36,7 @@
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
+class BlobDataFileReference;
 class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
@@ -83,7 +84,7 @@ public:
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void willDecidePendingDownloadDestination(NetworkDataTask&, ResponseCompletionHandler&&);
 #endif
-    void convertNetworkLoadToDownload(DownloadID, std::unique_ptr<NetworkLoad>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertNetworkLoadToDownload(DownloadID, std::unique_ptr<NetworkLoad>&&, Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle&, bool allowOverwrite);
 
     void resumeDownload(WebCore::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);

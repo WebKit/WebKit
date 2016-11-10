@@ -1,3 +1,14 @@
+2016-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][!NETWORK_SESSION] Add support for downloading file backed blobs
+        https://bugs.webkit.org/show_bug.cgi?id=164522
+
+        Reviewed by Alex Christensen.
+
+        Unskip corresponding tests now that they pass on Yosemite and El Capitan.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness

@@ -58,6 +58,7 @@ class DataReference;
 
 namespace WebCore {
 class AuthenticationChallenge;
+class BlobDataFileReference;
 class Credential;
 class ResourceError;
 class ResourceHandle;
@@ -86,6 +87,8 @@ public:
     ~Download();
 
 #if !USE(NETWORK_SESSION)
+    void setBlobFileReferences(Vector<RefPtr<WebCore::BlobDataFileReference>>&& fileReferences) { m_blobFileReferences = WTFMove(fileReferences); }
+
     void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
 #endif
@@ -132,6 +135,7 @@ private:
     DownloadManager& m_downloadManager;
     DownloadID m_downloadID;
 
+    Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
 
 #if USE(NETWORK_SESSION)

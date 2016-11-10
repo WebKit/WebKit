@@ -85,6 +85,9 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, cons
 Download::~Download()
 {
 #if !USE(NETWORK_SESSION)
+    for (auto& fileReference : m_blobFileReferences)
+        fileReference->revokeFileAccess();
+
     if (m_resourceHandle) {
         m_resourceHandle->clearClient();
         m_resourceHandle->cancel();
