@@ -618,12 +618,18 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     }
 
     Locker<Lock> locker(m_referencedIndexLock);
+
+    Vector<uint64_t> identifiersToRemove;
     for (auto& iterator : m_deletedIndexes) {
         if (m_info.hasIndex(iterator.key)) {
             auto name = iterator.value->info().name();
             m_referencedIndexes.set(name, WTFMove(iterator.value));
+            identifiersToRemove.append(iterator.key);
         }
     }
+
+    for (auto identifier : identifiersToRemove)
+        m_deletedIndexes.remove(identifier);
 
     for (auto& index : m_referencedIndexes.values())
         index->rollbackInfoForVersionChangeAbort();

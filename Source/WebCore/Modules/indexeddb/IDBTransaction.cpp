@@ -226,12 +226,17 @@ void IDBTransaction::internalAbort()
         Locker<Lock> locker(m_referencedObjectStoreLock);
 
         auto& info = m_database->info();
+        Vector<uint64_t> identifiersToRemove;
         for (auto& iterator : m_deletedObjectStores) {
             if (info.infoForExistingObjectStore(iterator.key)) {
                 auto name = iterator.value->info().name();
                 m_referencedObjectStores.set(name, WTFMove(iterator.value));
+                identifiersToRemove.append(iterator.key);
             }
         }
+
+        for (auto identifier : identifiersToRemove)
+            m_deletedObjectStores.remove(identifier);
 
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackForVersionChangeAbort();
