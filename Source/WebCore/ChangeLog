@@ -1,3 +1,15 @@
+2016-11-10  Alejandro G. Castro  <alex@igalia.com>
+
+        [WebRTC] [OpenWebRTC] RTX default parameters broken after r207952
+        https://bugs.webkit.org/show_bug.cgi?id=164541
+
+        Reviewed by Philippe Normand.
+
+        Fixed typo in refactoring.
+
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::getDefaultVideoPayloads):
+
 2016-11-08  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC] white-list turns urls from the RTCConfiguration

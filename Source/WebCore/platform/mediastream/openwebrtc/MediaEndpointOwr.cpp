@@ -161,8 +161,8 @@ MediaPayloadVector MediaEndpointOwr::getDefaultVideoPayloads()
     payload3.type = 120;
     payload3.encodingName = "RTX";
     payload3.clockRate = 90000;
-    payload1.addParameter("apt", 100);
-    payload1.addParameter("rtxTime", 200);
+    payload3.addParameter("apt", 100);
+    payload3.addParameter("rtxTime", 200);
     payloads.append(WTFMove(payload3));
 
     return payloads;
