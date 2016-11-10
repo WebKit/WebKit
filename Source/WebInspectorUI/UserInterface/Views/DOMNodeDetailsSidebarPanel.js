@@ -496,13 +496,38 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 var required = booleanValueToLocalizedStringIfPropertyDefined("required");
 
                 var role = accessibilityProperties.role;
+                let hasPopup = accessibilityProperties.isPopupButton;
+                let roleType = null;
+                let buttonType = null;
+                let buttonTypePopupString = WebInspector.UIString("popup");
+                let buttonTypeToggleString = WebInspector.UIString("toggle")
+                let buttonTypePopupToggleString = WebInspector.UIString("popup, toggle")
+
                 if (role === "" || role === "unknown")
                     role = WebInspector.UIString("No exact ARIA role match.");
                 else if (role) {
+                    if (role === "button") {
+                        if (pressed)
+                            buttonType = buttonTypeToggleString;
+
+                        // In cases where an element is a toggle button, but it also has
+                        // aria-haspopup, we concatenate the button types. If it is just
+                        // a popup button, we only include "popup".
+                        if (hasPopup)
+                            buttonType = buttonType ? buttonTypePopupToggleString : buttonTypePopupString;
+                    }
+
                     if (!domNode.getAttribute("role"))
-                        role = WebInspector.UIString("%s (default)").format(role);
-                    else if (domNode.getAttribute("role") !== role)
-                        role = WebInspector.UIString("%s (computed)").format(role);
+                        roleType = WebInspector.UIString("default");
+                    else if (buttonType || domNode.getAttribute("role") !== role)
+                        roleType = WebInspector.UIString("computed");
+
+                    if (buttonType && roleType)
+                        role = WebInspector.UIString("%s (%s, %s)").format(role, buttonType, roleType);
+                    else if (roleType || buttonType) {
+                        let extraInfo = roleType || buttonType;
+                        role = WebInspector.UIString("%s (%s)").format(role, extraInfo);
+                    }
                 }
 
                 var selected = booleanValueToLocalizedStringIfTrue("selected");

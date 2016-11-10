@@ -98,6 +98,7 @@
                 { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
                 { "name": "headingLevel", "type": "number", "optional": true, "description": "Heading level of a heading element." },
                 { "name": "hierarchyLevel", "type": "number", "optional": true, "description": "The hierarchical level of an element." },
+                { "name": "isPopUpButton", "type": "boolean", "optional": true, "description": "Whether an element is a popup button." },
                 { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
                 { "name": "expanded", "type": "boolean", "optional": true, "description": "Expanded state." },
                 { "name": "flowedNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-flowto." },

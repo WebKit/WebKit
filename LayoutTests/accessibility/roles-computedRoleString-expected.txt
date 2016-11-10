@@ -54,7 +54,7 @@ PASS: samp -> .
 PASS: section:not([aria-label]:not([aria-labelledby]) -> group. 
 PASS: section[aria-label] -> region. 
 PASS: section[aria-labelledby] -> region. 
-PASS: select:not([multiple]) -> . 
+PASS: select:not([multiple]) -> button. 
 PASS: select[multiple] -> listbox. 
 PASS: option -> option. 
 PASS: optgroup -> option. 

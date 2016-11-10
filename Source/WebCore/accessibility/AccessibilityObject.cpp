@@ -2197,7 +2197,9 @@ String AccessibilityObject::computedRoleString() const
     AccessibilityRole role = roleValue();
     if (role == HorizontalRuleRole)
         role = SplitterRole;
-    
+    if (role == PopUpButtonRole || role == ToggleButtonRole)
+        role = ButtonRole;
+
     return reverseAriaRoleMap().get(role);
 }
 

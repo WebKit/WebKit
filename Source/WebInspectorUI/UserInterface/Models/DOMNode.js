@@ -532,6 +532,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
                     ignored: accessibilityProperties.ignored,
                     ignoredByDefault: accessibilityProperties.ignoredByDefault,
                     invalid: accessibilityProperties.invalid,
+                    isPopupButton: accessibilityProperties.isPopUpButton,
                     headingLevel: accessibilityProperties.headingLevel,
                     hierarchyLevel: accessibilityProperties.hierarchyLevel,
                     hidden: accessibilityProperties.hidden,

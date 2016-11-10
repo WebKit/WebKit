@@ -1,3 +1,21 @@
+2016-11-10  Aaron Chu  <aaron_chu@apple.com>
+
+        Web Inspector: AXI: clarify button roles (e.g. toggle or popup button)
+        https://bugs.webkit.org/show_bug.cgi?id=130726
+        <rdar://problem/16420420>
+
+        Reviewed by Brian Burg.
+
+        Test: accessibility/ax-differentiate-button-types.html
+
+        Added special case logic to make sure PopUpButtonRole and ToggleButtonRole to user ButtonRole as role.
+        Added an "isPopUpButton" property to be exposed to the Inspector's use.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::computedRoleString):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-11-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Add no-op Web-facing APIs

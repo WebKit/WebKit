@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 52
+    childNodeIds.length: 54
 
 
-Total elements to be tested: 81.
+Total elements to be tested: 83.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -296,6 +296,16 @@ Total elements to be tested: 81.
     ownedNodeIds.length: 1
     required: false
 
+<select>
+    <option>FOO</option>
+</select>
+    exists: true
+    label: 
+    role: button
+    focused: false
+    required: false
+    isPopUpButton: true
+
 <option>not selected</option>
     exists: false
     label: 
@@ -527,6 +537,15 @@ Total elements to be tested: 81.
     focused: false
     required: false
 
+<div role="button" tabindex="0" aria-haspopup="true">Popup Button.</div>
+    exists: true
+    label: Popup Button.
+    role: button
+    focused: false
+    parentNodeId: exists
+    required: false
+    isPopUpButton: true
+
 <input type="button">
     exists: true
     label: 
@@ -542,7 +561,7 @@ Total elements to be tested: 81.
 <div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
     exists: true
     label: Not Pressed.
-    role: 
+    role: button
     focused: false
     parentNodeId: exists
     pressed: false
@@ -551,7 +570,7 @@ Total elements to be tested: 81.
 <div role="button" tabindex="0" aria-pressed="true">Pressed.</div>
     exists: true
     label: Pressed.
-    role: 
+    role: button
     focused: false
     parentNodeId: exists
     pressed: true

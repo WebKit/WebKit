@@ -1613,6 +1613,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
     bool supportsPressed = false;
     bool supportsRequired = false;
     bool supportsFocused = false;
+    bool isPopupButton = false;
     int headingLevel = 0;
     unsigned hierarchicalLevel = 0;
     unsigned level = 0;
@@ -1794,6 +1795,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             hierarchicalLevel = axObject->hierarchicalLevel();
             
             level = hierarchicalLevel ? hierarchicalLevel : headingLevel;
+            isPopupButton = axObject->isPopUpButton() || axObject->ariaHasPopup();
         }
     }
     
@@ -1864,6 +1866,8 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             value->setHeadingLevel(level);
         else if (level)
             value->setHierarchyLevel(level);
+        if (isPopupButton)
+            value->setIsPopUpButton(isPopupButton);
     }
 
     return WTFMove(value);

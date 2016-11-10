@@ -45,6 +45,7 @@
 <div class="ex" role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
 <button class="ex"></button>
 <input class="ex" type="button">
+<div role="button" class="ex" tabindex="0" aria-haspopup="true">Popup Button.</div>
 
 <!-- FIXME: Inputs missing parentNodeId http://webkit.org/b/130181 -->
 <input class="ex">
@@ -88,6 +89,10 @@
 <select multiple id="flowedTo2">
     <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
     <option class="ex">not selected</option>
+</select>
+
+<select class="ex">
+    <option>FOO</option>
 </select>
 
 <input class="ex" role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
