@@ -1,3 +1,20 @@
+2016-11-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2][GTK][GStreamer] Build fails when -plugins-base and -core headers are not installed in the same directory
+        https://bugs.webkit.org/show_bug.cgi?id=148894
+
+        Reviewed by Carlos Garcia Campos.
+
+        The pbutils (gst-plugins-base-utils) headers are needed in
+        WebKit2/GTK for the permission request API related with the
+        GStreamer codec installer. It builds fine in most cases without
+        explicitely requiring the pbutils include directory path because
+        usually all the GStreamer headers are installed in the same path,
+        excepted for some distributions, like NixOS.
+
+        * PlatformGTK.cmake: The GStreamer pbutils include directory was
+        missing in the header search path.
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][!NETWORK_SESSION] Add support for downloading file backed blobs
