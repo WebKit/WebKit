@@ -1,3 +1,28 @@
+2016-11-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix fr tracks sizing under min|max-size constraints
+        https://bugs.webkit.org/show_bug.cgi?id=150674
+
+        Reviewed by Darin Adler.
+
+        The min|max-sizes must be used to compute the flex fraction for indefinite free
+        spaces. According to the spec "If using this flex fraction would cause the grid to be
+        smaller than the grid container’s min-width/height (or larger than the grid container’s
+        max-width/height), then redo this step, treating the free space as definite and the
+        available grid space as equal to the grid container’s content box size when it’s sized to
+        its min-width/height (max-width/height)."
+
+        This only affects indefinite heights because during layout both definite sizes and any kind
+        of widths are properly constrained by min|max-width restrictions.
+
+        Tests: fast/css-grid-layout/flex-sizing-columns-min-max-width.html
+               fast/css-grid-layout/flex-sizing-rows-min-max-height.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeFlexSizedTracksGrowth):
+        * rendering/RenderGrid.h:
+
 2016-11-10  Alejandro G. Castro  <alex@igalia.com>
 
         [WebRTC] [OpenWebRTC] RTX default parameters broken after r207952

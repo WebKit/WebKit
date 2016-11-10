@@ -799,19 +799,57 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
             }
         }
     }
+    LayoutUnit totalGrowth;
+    Vector<LayoutUnit> increments;
+    increments.grow(flexibleSizedTracksIndex.size());
+    computeFlexSizedTracksGrowth(direction, sizingData.sizingOperation, tracks, flexibleSizedTracksIndex, flexFraction, increments, totalGrowth);
 
-    for (auto trackIndex : flexibleSizedTracksIndex) {
-        const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex, sizingData.sizingOperation);
-        GridTrack& track = tracks[trackIndex];
-        LayoutUnit oldBaseSize = track.baseSize();
-        LayoutUnit baseSize = std::max<LayoutUnit>(oldBaseSize, flexFraction * trackSize.maxTrackBreadth().flex());
-        if (LayoutUnit increment = baseSize - oldBaseSize) {
-            track.setBaseSize(baseSize);
-            freeSpace -= increment;
-            growthLimitsWithoutMaximization += increment;
+    // We only need to redo the flex fraction computation for indefinite heights (definite sizes are
+    // already constrained by min/max sizes). Regarding widths, they are always definite at layout
+    // time so we shouldn't ever have to do this.
+    if (!hasDefiniteFreeSpace && direction == ForRows) {
+        auto minSize = computeContentLogicalHeight(MinSize, style().logicalMinHeight(), LayoutUnit(-1));
+        auto maxSize = computeContentLogicalHeight(MaxSize, style().logicalMaxHeight(), LayoutUnit(-1));
+
+        // Redo the flex fraction computation using min|max-height as definite available space in
+        // case the total height is smaller than min-height or larger than max-height.
+        LayoutUnit rowsSize = totalGrowth + computeTrackBasedLogicalHeight(sizingData);
+        bool checkMinSize = minSize && rowsSize < minSize.value();
+        bool checkMaxSize = maxSize && rowsSize > maxSize.value();
+        if (checkMinSize || checkMaxSize) {
+            LayoutUnit constrainedFreeSpace = checkMaxSize ? maxSize.value() : LayoutUnit(-1);
+            constrainedFreeSpace = std::max(constrainedFreeSpace, minSize.value()) - guttersSize(ForRows, 0, gridRowCount());
+            flexFraction = findFlexFactorUnitSize(tracks, GridSpan::translatedDefiniteGridSpan(0, tracks.size()), ForRows, sizingData.sizingOperation, constrainedFreeSpace);
+
+            totalGrowth = LayoutUnit(0);
+            computeFlexSizedTracksGrowth(ForRows, sizingData.sizingOperation, tracks, flexibleSizedTracksIndex, flexFraction, increments, totalGrowth);
         }
     }
+
+    for (size_t i = 0; i < flexibleSizedTracksIndex.size(); ++i) {
+        if (LayoutUnit increment = increments[i]) {
+            auto& track = tracks[flexibleSizedTracksIndex[i]];
+            track.setBaseSize(track.baseSize() + increment);
+        }
+    }
+    freeSpace -= totalGrowth;
+    growthLimitsWithoutMaximization += totalGrowth;
     sizingData.setFreeSpace(direction, freeSpace);
+}
+
+void RenderGrid::computeFlexSizedTracksGrowth(GridTrackSizingDirection direction, SizingOperation sizingOperation, Vector<GridTrack>& tracks, const Vector<unsigned>& flexibleSizedTracksIndex, double flexFraction, Vector<LayoutUnit>& increments, LayoutUnit& totalGrowth) const
+{
+    size_t numFlexTracks = flexibleSizedTracksIndex.size();
+    ASSERT(increments.size() == numFlexTracks);
+    for (size_t i = 0; i < numFlexTracks; ++i) {
+        unsigned trackIndex = flexibleSizedTracksIndex[i];
+        auto trackSize = gridTrackSize(direction, trackIndex, sizingOperation);
+        ASSERT(trackSize.maxTrackBreadth().isFlex());
+        LayoutUnit oldBaseSize = tracks[trackIndex].baseSize();
+        LayoutUnit newBaseSize = std::max(oldBaseSize, LayoutUnit(flexFraction * trackSize.maxTrackBreadth().flex()));
+        increments[i] = newBaseSize - oldBaseSize;
+        totalGrowth += increments[i];
+    }
 }
 
 LayoutUnit RenderGrid::computeUsedBreadthOfMinLength(const GridTrackSize& trackSize, LayoutUnit maxSize) const
