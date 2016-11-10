@@ -5366,6 +5366,7 @@ sub GetNativeVectorInnerType
     my $innerTypeName = $innerType->name;
 
     return $nativeType{$innerTypeName} if exists $nativeType{$innerTypeName};
+    return GetDictionaryClassName($innerType) if $codeGenerator->IsDictionaryType($innerType);
     return "RefPtr<$innerTypeName>";
 }
 

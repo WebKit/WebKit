@@ -102,6 +102,7 @@ namespace WebCore {
     macro(drop) \
     macro(durationchange) \
     macro(emptied) \
+    macro(encrypted) \
     macro(end) \
     macro(endEvent) \
     macro(ended) \
@@ -130,6 +131,7 @@ namespace WebCore {
     macro(invalid) \
     macro(keydown) \
     macro(keypress) \
+    macro(keystatuseschange) \
     macro(keyup) \
     macro(languagechange) \
     macro(levelchange) \
@@ -238,6 +240,7 @@ namespace WebCore {
     macro(visibilitychange) \
     macro(volumechange) \
     macro(waiting) \
+    macro(waitingforkey) \
     macro(webglcontextcreationerror) \
     macro(webglcontextlost) \
     macro(webglcontextrestored) \

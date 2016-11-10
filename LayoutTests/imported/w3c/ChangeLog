@@ -1,3 +1,16 @@
+2016-11-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Add no-op Web-facing APIs
+        https://bugs.webkit.org/show_bug.cgi?id=164028
+
+        Reviewed by Jer Noble.
+
+        Add the text baseline for the web-platform-tests/encrypted-media/idlharness.html
+        test. It's the only meaningful test we can run at the moment, and all but one of
+        the subtests pass.
+
+        * web-platform-tests/encrypted-media/idlharness-expected.txt: Added.
+
 2016-11-08  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC] white-list turns urls from the RTCConfiguration

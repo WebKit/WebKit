@@ -1,3 +1,117 @@
+2016-11-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Add no-op Web-facing APIs
+        https://bugs.webkit.org/show_bug.cgi?id=164028
+
+        Reviewed by Jer Noble.
+
+        Add no-op implementation of the Web-facing APIs as defined in
+        the EME specification. This will be the basis for implementing
+        the various algorithms the same specification defines, and for
+        implementing the relevant platform abstractions.
+
+        Dictionaries and enumerations defined by the specification are
+        defined in separate headers, and not in the implementation files
+        for the class where they are used. This will ease their use
+        across different implementation files.
+
+        BufferSource now exposes the Variant object it holds. This is
+        needed to support the iterable property on the MediaKeyStatusMap
+        class.
+
+        CodeGeneratorJS is fixed to support JS-to-native conversion of
+        sequences of dictionaries.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/encryptedmedia/MediaKeyMessageEvent.cpp: Added.
+        (WebCore::MediaKeyMessageEvent::MediaKeyMessageEvent):
+        (WebCore::MediaKeyMessageEvent::eventInterface):
+        * Modules/encryptedmedia/MediaKeyMessageEvent.h: Added.
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl: Added.
+        * Modules/encryptedmedia/MediaKeyMessageEventInit.h: Added.
+        (WebCore::MediaKeyMessageEventInit::MediaKeyMessageEventInit):
+        * Modules/encryptedmedia/MediaKeyMessageType.h: Added.
+        * Modules/encryptedmedia/MediaKeySession.cpp: Added.
+        (WebCore::MediaKeySession::create):
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::sessionId):
+        (WebCore::MediaKeySession::expiration):
+        (WebCore::MediaKeySession::keyStatuses):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::hasPendingActivity):
+        (WebCore::MediaKeySession::activeDOMObjectName):
+        (WebCore::MediaKeySession::canSuspendForDocumentSuspension):
+        (WebCore::MediaKeySession::stop):
+        * Modules/encryptedmedia/MediaKeySession.h: Added.
+        * Modules/encryptedmedia/MediaKeySession.idl: Added.
+        * Modules/encryptedmedia/MediaKeySessionType.h: Added.
+        * Modules/encryptedmedia/MediaKeyStatus.h: Added.
+        * Modules/encryptedmedia/MediaKeyStatusMap.cpp: Added.
+        (WebCore::MediaKeyStatusMap::size):
+        (WebCore::MediaKeyStatusMap::has):
+        (WebCore::MediaKeyStatusMap::get):
+        (WebCore::MediaKeyStatusMap::Iterator::Iterator):
+        (WebCore::MediaKeyStatusMap::Iterator::next):
+        * Modules/encryptedmedia/MediaKeyStatusMap.h: Added.
+        (WebCore::MediaKeyStatusMap::create):
+        (WebCore::MediaKeyStatusMap::createIterator):
+        * Modules/encryptedmedia/MediaKeyStatusMap.idl: Added.
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp: Added.
+        (WebCore::MediaKeySystemAccess::keySystem):
+        (WebCore::MediaKeySystemAccess::getConfiguration):
+        (WebCore::MediaKeySystemAccess::createMediaKeys):
+        * Modules/encryptedmedia/MediaKeySystemAccess.h: Added.
+        (WebCore::MediaKeySystemAccess::create):
+        * Modules/encryptedmedia/MediaKeySystemAccess.idl: Added.
+        * Modules/encryptedmedia/MediaKeySystemConfiguration.h: Added.
+        * Modules/encryptedmedia/MediaKeySystemConfiguration.idl: Added.
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.h: Added.
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.idl: Added.
+        * Modules/encryptedmedia/MediaKeys.cpp: Added.
+        (WebCore::MediaKeys::createSession):
+        (WebCore::MediaKeys::setServerCertificate):
+        * Modules/encryptedmedia/MediaKeys.h: Added.
+        (WebCore::MediaKeys::create):
+        * Modules/encryptedmedia/MediaKeys.idl: Added.
+        * Modules/encryptedmedia/MediaKeysRequirement.h: Added.
+        * Modules/encryptedmedia/NavigatorEME.cpp: Added.
+        (WebCore::NavigatorEME::requestMediaKeySystemAccess):
+        * Modules/encryptedmedia/NavigatorEME.h: Added.
+        * Modules/encryptedmedia/NavigatorEME.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/BufferSource.h:
+        (WebCore::BufferSource::BufferSource):
+        (WebCore::BufferSource::variant):
+        * bindings/js/JSMediaKeySessionCustom.cpp: Added.
+        (WebCore::JSMediaKeySession::closed):
+        * bindings/js/JSMediaKeySystemAccessCustom.cpp: Added.
+        (WebCore::JSMediaKeySystemAccess::getConfiguration):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetNativeVectorInnerType):
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaKeys):
+        (WebCore::HTMLMediaElement::setMediaKeys):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/MediaEncryptedEvent.cpp: Added.
+        (WebCore::MediaEncryptedEvent::MediaEncryptedEvent):
+        (WebCore::MediaEncryptedEvent::eventInterface):
+        (WebCore::MediaEncryptedEvent::initDataType):
+        (WebCore::MediaEncryptedEvent::initData):
+        * html/MediaEncryptedEvent.h: Added.
+        * html/MediaEncryptedEvent.idl: Added.
+        * html/MediaEncryptedEventInit.h: Added.
+        (WebCore::MediaEncryptedEventInit::MediaEncryptedEventInit):
+
 2016-11-10  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: update controls based on fullscreen playback on macOS

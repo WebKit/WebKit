@@ -1161,6 +1161,8 @@ set(WebCore_SOURCES
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
     bindings/js/JSMediaDevicesCustom.cpp
+    bindings/js/JSMediaKeySessionCustom.cpp
+    bindings/js/JSMediaKeySystemAccessCustom.cpp
     bindings/js/JSMediaStreamTrackCustom.cpp
     bindings/js/JSMediaTrackSupportedConstraintsCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
@@ -3039,6 +3041,33 @@ if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
         Modules/encryptedmedia/legacy/WebKitMediaKeys.idl
 
         html/WebKitMediaKeyError.idl
+    )
+endif ()
+
+if (ENABLE_ENCRYPTED_MEDIA)
+    list(APPEND WebCore_SOURCES
+        Modules/encryptedmedia/MediaKeyMessageEvent.cpp
+        Modules/encryptedmedia/MediaKeySession.cpp
+        Modules/encryptedmedia/MediaKeyStatusMap.cpp
+        Modules/encryptedmedia/MediaKeySystemAccess.cpp
+        Modules/encryptedmedia/MediaKeys.cpp
+        Modules/encryptedmedia/NavigatorEME.cpp
+
+        html/MediaEncryptedEvent.cpp
+    )
+    list(APPEND WebCore_IDL_FILES
+    )
+    list(APPEND WebCore_IDL_FILES
+        Modules/encryptedmedia/MediaKeyMessageEvent.idl
+        Modules/encryptedmedia/MediaKeySession.idl
+        Modules/encryptedmedia/MediaKeyStatusMap.idl
+        Modules/encryptedmedia/MediaKeySystemAccess.idl
+        Modules/encryptedmedia/MediaKeySystemConfiguration.idl
+        Modules/encryptedmedia/MediaKeySystemMediaCapability.idl
+        Modules/encryptedmedia/MediaKeys.idl
+        Modules/encryptedmedia/NavigatorEME.idl
+
+        html/MediaEncryptedEvent.idl
     )
 endif ()
 

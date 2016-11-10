@@ -326,6 +326,15 @@
 #include "JSMediaElementAudioSourceNode.cpp"
 #endif
 #include "JSMediaError.cpp"
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "JSMediaKeyMessageEvent.cpp"
+#include "JSMediaKeySession.cpp"
+#include "JSMediaKeyStatusMap.cpp"
+#include "JSMediaKeySystemAccess.cpp"
+#include "JSMediaKeySystemConfiguration.cpp"
+#include "JSMediaKeySystemMediaCapability.cpp"
+#include "JSMediaKeys.cpp"
+#endif
 #include "JSMediaList.cpp"
 #include "JSMediaQueryList.cpp"
 #include "JSMediaQueryListListener.cpp"

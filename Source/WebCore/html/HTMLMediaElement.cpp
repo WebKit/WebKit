@@ -2437,6 +2437,20 @@ void HTMLMediaElement::keyAdded()
 
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+
+MediaKeys* HTMLMediaElement::mediaKeys() const
+{
+    return nullptr;
+}
+
+void HTMLMediaElement::setMediaKeys(MediaKeys*, Ref<DeferredPromise>&&)
+{
+    notImplemented();
+}
+
+#endif // ENABLE(ENCRYPTED_MEDIA)
+
 void HTMLMediaElement::progressEventTimerFired()
 {
     ASSERT(m_player);

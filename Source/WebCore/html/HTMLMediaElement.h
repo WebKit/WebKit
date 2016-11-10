@@ -69,6 +69,9 @@ class MediaControls;
 class MediaControlsHost;
 class MediaElementAudioSourceNode;
 class MediaError;
+#if ENABLE(ENCRYPTED_MEDIA)
+class MediaKeys;
+#endif
 class MediaPlayer;
 class MediaSession;
 class MediaSource;
@@ -252,6 +255,12 @@ public:
     void webkitSetMediaKeys(WebKitMediaKeys*);
 
     void keyAdded();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    MediaKeys* mediaKeys() const;
+
+    void setMediaKeys(MediaKeys*, Ref<DeferredPromise>&&);
 #endif
 
 // controls

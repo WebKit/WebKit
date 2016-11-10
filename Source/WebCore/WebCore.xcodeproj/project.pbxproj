@@ -1256,6 +1256,33 @@
 		2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */; };
 		2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */; };
 		2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */; };
+		2D9BF7051DBFBB24007A7D99 /* MediaEncryptedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7011DBFBB24007A7D99 /* MediaEncryptedEvent.cpp */; };
+		2D9BF7061DBFBB24007A7D99 /* MediaEncryptedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7021DBFBB24007A7D99 /* MediaEncryptedEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D9BF7081DBFBB24007A7D99 /* MediaEncryptedEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7041DBFBB24007A7D99 /* MediaEncryptedEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D9BF7101DBFD8CE007A7D99 /* JSMediaEncryptedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF70F1DBFD8CE007A7D99 /* JSMediaEncryptedEvent.cpp */; };
+		2D9BF7121DBFD914007A7D99 /* JSMediaEncryptedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7111DBFD914007A7D99 /* JSMediaEncryptedEvent.h */; };
+		2D9BF7211DBFDABA007A7D99 /* JSMediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7131DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.cpp */; };
+		2D9BF7221DBFDACB007A7D99 /* JSMediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7151DBFDAB1007A7D99 /* JSMediaKeys.cpp */; };
+		2D9BF7231DBFDACD007A7D99 /* JSMediaKeySession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7171DBFDAB1007A7D99 /* JSMediaKeySession.cpp */; };
+		2D9BF7241DBFDAD0007A7D99 /* JSMediaKeyStatusMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7191DBFDAB1007A7D99 /* JSMediaKeyStatusMap.cpp */; };
+		2D9BF7251DBFDAD3007A7D99 /* JSMediaKeySystemAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF71B1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.cpp */; };
+		2D9BF7261DBFDAD5007A7D99 /* JSMediaKeySystemConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF71D1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.cpp */; };
+		2D9BF7271DBFDAD8007A7D99 /* JSMediaKeySystemMediaCapability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF71F1DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.cpp */; };
+		2D9BF7281DBFDB0D007A7D99 /* JSMediaKeyMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7141DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.h */; };
+		2D9BF7291DBFDB10007A7D99 /* JSMediaKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7161DBFDAB1007A7D99 /* JSMediaKeys.h */; };
+		2D9BF72A1DBFDB13007A7D99 /* JSMediaKeySession.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7181DBFDAB1007A7D99 /* JSMediaKeySession.h */; };
+		2D9BF72B1DBFDB15007A7D99 /* JSMediaKeyStatusMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF71A1DBFDAB1007A7D99 /* JSMediaKeyStatusMap.h */; };
+		2D9BF72C1DBFDB17007A7D99 /* JSMediaKeySystemAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF71C1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.h */; };
+		2D9BF72D1DBFDB19007A7D99 /* JSMediaKeySystemConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF71E1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.h */; };
+		2D9BF72E1DBFDB1C007A7D99 /* JSMediaKeySystemMediaCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BF7201DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.h */; };
+		2D9BF7421DBFDC27007A7D99 /* NavigatorEME.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7401DBFDC0F007A7D99 /* NavigatorEME.cpp */; };
+		2D9BF7431DBFDC3E007A7D99 /* MediaKeySystemAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF73C1DBFDC0F007A7D99 /* MediaKeySystemAccess.cpp */; };
+		2D9BF7441DBFDC41007A7D99 /* MediaKeyStatusMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF73A1DBFDC0F007A7D99 /* MediaKeyStatusMap.cpp */; };
+		2D9BF7451DBFDC44007A7D99 /* MediaKeySession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7351DBFDC0F007A7D99 /* MediaKeySession.cpp */; };
+		2D9BF7461DBFDC47007A7D99 /* MediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */; };
+		2D9BF7471DBFDC49007A7D99 /* MediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */; };
+		2D9BF74A1DBFDDFF007A7D99 /* JSMediaKeySessionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */; };
+		2D9BF74B1DBFDE02007A7D99 /* JSMediaKeySystemAccessCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
 		2DB9C4AA1B3231F40070F27F /* NSEventSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB9C4A91B3231F40070F27F /* NSEventSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DC4CF791D2DD98900ECCC94 /* DataDetectorsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4CF781D2DD98900ECCC94 /* DataDetectorsUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8312,6 +8339,55 @@
 		2D90660C0665D937006B6F1A /* DataTransferMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataTransferMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesOverlayController.h; sourceTree = "<group>"; };
 		2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesOverlayController.mm; sourceTree = "<group>"; };
+		2D9BF6F51DBFB71F007A7D99 /* MediaKeyMessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeyMessageEvent.idl; sourceTree = "<group>"; };
+		2D9BF6F61DBFB71F007A7D99 /* MediaKeys.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeys.idl; sourceTree = "<group>"; };
+		2D9BF6F71DBFB71F007A7D99 /* MediaKeySession.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySession.idl; sourceTree = "<group>"; };
+		2D9BF6F81DBFB71F007A7D99 /* MediaKeyStatusMap.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeyStatusMap.idl; sourceTree = "<group>"; };
+		2D9BF6F91DBFB71F007A7D99 /* MediaKeySystemAccess.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySystemAccess.idl; sourceTree = "<group>"; };
+		2D9BF6FA1DBFB71F007A7D99 /* MediaKeySystemConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySystemConfiguration.idl; sourceTree = "<group>"; };
+		2D9BF6FB1DBFB71F007A7D99 /* MediaKeySystemMediaCapability.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySystemMediaCapability.idl; sourceTree = "<group>"; };
+		2D9BF6FC1DBFB71F007A7D99 /* NavigatorEME.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorEME.idl; sourceTree = "<group>"; };
+		2D9BF7011DBFBB24007A7D99 /* MediaEncryptedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEncryptedEvent.cpp; sourceTree = "<group>"; };
+		2D9BF7021DBFBB24007A7D99 /* MediaEncryptedEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEncryptedEvent.h; sourceTree = "<group>"; };
+		2D9BF7031DBFBB24007A7D99 /* MediaEncryptedEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaEncryptedEvent.idl; sourceTree = "<group>"; };
+		2D9BF7041DBFBB24007A7D99 /* MediaEncryptedEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEncryptedEventInit.h; sourceTree = "<group>"; };
+		2D9BF70F1DBFD8CE007A7D99 /* JSMediaEncryptedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaEncryptedEvent.cpp; sourceTree = "<group>"; };
+		2D9BF7111DBFD914007A7D99 /* JSMediaEncryptedEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaEncryptedEvent.h; sourceTree = "<group>"; };
+		2D9BF7131DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyMessageEvent.cpp; sourceTree = "<group>"; };
+		2D9BF7141DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyMessageEvent.h; sourceTree = "<group>"; };
+		2D9BF7151DBFDAB1007A7D99 /* JSMediaKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeys.cpp; sourceTree = "<group>"; };
+		2D9BF7161DBFDAB1007A7D99 /* JSMediaKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeys.h; sourceTree = "<group>"; };
+		2D9BF7171DBFDAB1007A7D99 /* JSMediaKeySession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySession.cpp; sourceTree = "<group>"; };
+		2D9BF7181DBFDAB1007A7D99 /* JSMediaKeySession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySession.h; sourceTree = "<group>"; };
+		2D9BF7191DBFDAB1007A7D99 /* JSMediaKeyStatusMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyStatusMap.cpp; sourceTree = "<group>"; };
+		2D9BF71A1DBFDAB1007A7D99 /* JSMediaKeyStatusMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyStatusMap.h; sourceTree = "<group>"; };
+		2D9BF71B1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySystemAccess.cpp; sourceTree = "<group>"; };
+		2D9BF71C1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySystemAccess.h; sourceTree = "<group>"; };
+		2D9BF71D1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySystemConfiguration.cpp; sourceTree = "<group>"; };
+		2D9BF71E1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySystemConfiguration.h; sourceTree = "<group>"; };
+		2D9BF71F1DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySystemMediaCapability.cpp; sourceTree = "<group>"; };
+		2D9BF7201DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySystemMediaCapability.h; sourceTree = "<group>"; };
+		2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeyMessageEvent.cpp; sourceTree = "<group>"; };
+		2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyMessageEvent.h; sourceTree = "<group>"; };
+		2D9BF7311DBFDC0F007A7D99 /* MediaKeyMessageEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyMessageEventInit.h; sourceTree = "<group>"; };
+		2D9BF7321DBFDC0F007A7D99 /* MediaKeyMessageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyMessageType.h; sourceTree = "<group>"; };
+		2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeys.cpp; sourceTree = "<group>"; };
+		2D9BF7341DBFDC0F007A7D99 /* MediaKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeys.h; sourceTree = "<group>"; };
+		2D9BF7351DBFDC0F007A7D99 /* MediaKeySession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySession.cpp; sourceTree = "<group>"; };
+		2D9BF7361DBFDC0F007A7D99 /* MediaKeySession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySession.h; sourceTree = "<group>"; };
+		2D9BF7371DBFDC0F007A7D99 /* MediaKeySessionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySessionType.h; sourceTree = "<group>"; };
+		2D9BF7381DBFDC0F007A7D99 /* MediaKeysRequirement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysRequirement.h; sourceTree = "<group>"; };
+		2D9BF7391DBFDC0F007A7D99 /* MediaKeyStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyStatus.h; sourceTree = "<group>"; };
+		2D9BF73A1DBFDC0F007A7D99 /* MediaKeyStatusMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeyStatusMap.cpp; sourceTree = "<group>"; };
+		2D9BF73B1DBFDC0F007A7D99 /* MediaKeyStatusMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyStatusMap.h; sourceTree = "<group>"; };
+		2D9BF73C1DBFDC0F007A7D99 /* MediaKeySystemAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemAccess.cpp; sourceTree = "<group>"; };
+		2D9BF73D1DBFDC0F007A7D99 /* MediaKeySystemAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySystemAccess.h; sourceTree = "<group>"; };
+		2D9BF73E1DBFDC0F007A7D99 /* MediaKeySystemConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySystemConfiguration.h; sourceTree = "<group>"; };
+		2D9BF73F1DBFDC0F007A7D99 /* MediaKeySystemMediaCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySystemMediaCapability.h; sourceTree = "<group>"; };
+		2D9BF7401DBFDC0F007A7D99 /* NavigatorEME.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorEME.cpp; sourceTree = "<group>"; };
+		2D9BF7411DBFDC0F007A7D99 /* NavigatorEME.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorEME.h; sourceTree = "<group>"; };
+		2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySessionCustom.cpp; sourceTree = "<group>"; };
+		2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySystemAccessCustom.cpp; sourceTree = "<group>"; };
 		2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */ = {isa = PBXFileReference; lastKnownFileType = file; path = linearSRGB.icc; sourceTree = "<group>"; };
 		2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPageOverlayClient.cpp; sourceTree = "<group>"; };
 		2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPageOverlayClient.h; sourceTree = "<group>"; };
@@ -18751,6 +18827,10 @@
 				97205AB41239291000B17380 /* MediaDocument.h */,
 				07FE99DA18807A7D00256648 /* MediaElementSession.cpp */,
 				07FE99DB18807A7D00256648 /* MediaElementSession.h */,
+				2D9BF7011DBFBB24007A7D99 /* MediaEncryptedEvent.cpp */,
+				2D9BF7021DBFBB24007A7D99 /* MediaEncryptedEvent.h */,
+				2D9BF7031DBFBB24007A7D99 /* MediaEncryptedEvent.idl */,
+				2D9BF7041DBFBB24007A7D99 /* MediaEncryptedEventInit.h */,
 				E446139B0CD6331000FADA75 /* MediaError.h */,
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */,
@@ -19704,6 +19784,8 @@
 				A77979250D6B9E64003851B9 /* JSImageData.h */,
 				CD27F6E2145767580078207D /* JSMediaController.cpp */,
 				CD27F6E3145767580078207D /* JSMediaController.h */,
+				2D9BF70F1DBFD8CE007A7D99 /* JSMediaEncryptedEvent.cpp */,
+				2D9BF7111DBFD914007A7D99 /* JSMediaEncryptedEvent.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
 				C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */,
@@ -21735,6 +21817,8 @@
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
 				B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */,
+				2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */,
+				2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */,
 				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
 				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
@@ -22522,6 +22606,33 @@
 				CDCA98E918B2C8D000C12FF9 /* CDMPrivateMediaPlayer.h */,
 				CDE8B5EE1A69778B00B4B66A /* CDMSessionClearKey.cpp */,
 				CDE8B5EF1A69778B00B4B66A /* CDMSessionClearKey.h */,
+				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
+				2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */,
+				2D9BF6F51DBFB71F007A7D99 /* MediaKeyMessageEvent.idl */,
+				2D9BF7311DBFDC0F007A7D99 /* MediaKeyMessageEventInit.h */,
+				2D9BF7321DBFDC0F007A7D99 /* MediaKeyMessageType.h */,
+				2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */,
+				2D9BF7341DBFDC0F007A7D99 /* MediaKeys.h */,
+				2D9BF6F61DBFB71F007A7D99 /* MediaKeys.idl */,
+				2D9BF7351DBFDC0F007A7D99 /* MediaKeySession.cpp */,
+				2D9BF7361DBFDC0F007A7D99 /* MediaKeySession.h */,
+				2D9BF6F71DBFB71F007A7D99 /* MediaKeySession.idl */,
+				2D9BF7371DBFDC0F007A7D99 /* MediaKeySessionType.h */,
+				2D9BF7381DBFDC0F007A7D99 /* MediaKeysRequirement.h */,
+				2D9BF7391DBFDC0F007A7D99 /* MediaKeyStatus.h */,
+				2D9BF73A1DBFDC0F007A7D99 /* MediaKeyStatusMap.cpp */,
+				2D9BF73B1DBFDC0F007A7D99 /* MediaKeyStatusMap.h */,
+				2D9BF6F81DBFB71F007A7D99 /* MediaKeyStatusMap.idl */,
+				2D9BF73C1DBFDC0F007A7D99 /* MediaKeySystemAccess.cpp */,
+				2D9BF73D1DBFDC0F007A7D99 /* MediaKeySystemAccess.h */,
+				2D9BF6F91DBFB71F007A7D99 /* MediaKeySystemAccess.idl */,
+				2D9BF73E1DBFDC0F007A7D99 /* MediaKeySystemConfiguration.h */,
+				2D9BF6FA1DBFB71F007A7D99 /* MediaKeySystemConfiguration.idl */,
+				2D9BF73F1DBFDC0F007A7D99 /* MediaKeySystemMediaCapability.h */,
+				2D9BF6FB1DBFB71F007A7D99 /* MediaKeySystemMediaCapability.idl */,
+				2D9BF7401DBFDC0F007A7D99 /* NavigatorEME.cpp */,
+				2D9BF7411DBFDC0F007A7D99 /* NavigatorEME.h */,
+				2D9BF6FC1DBFB71F007A7D99 /* NavigatorEME.idl */,
 			);
 			path = encryptedmedia;
 			sourceTree = "<group>";
@@ -22529,6 +22640,20 @@
 		CDA98DCD1601515C00FEA3B1 /* EncryptedMedia */ = {
 			isa = PBXGroup;
 			children = (
+				2D9BF7131DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.cpp */,
+				2D9BF7141DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.h */,
+				2D9BF7151DBFDAB1007A7D99 /* JSMediaKeys.cpp */,
+				2D9BF7161DBFDAB1007A7D99 /* JSMediaKeys.h */,
+				2D9BF7171DBFDAB1007A7D99 /* JSMediaKeySession.cpp */,
+				2D9BF7181DBFDAB1007A7D99 /* JSMediaKeySession.h */,
+				2D9BF7191DBFDAB1007A7D99 /* JSMediaKeyStatusMap.cpp */,
+				2D9BF71A1DBFDAB1007A7D99 /* JSMediaKeyStatusMap.h */,
+				2D9BF71B1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.cpp */,
+				2D9BF71C1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.h */,
+				2D9BF71D1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.cpp */,
+				2D9BF71E1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.h */,
+				2D9BF71F1DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.cpp */,
+				2D9BF7201DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.h */,
 				CDA98D9B160128A500FEA3B1 /* JSWebKitMediaKeyError.cpp */,
 				CDA98D9C160128A500FEA3B1 /* JSWebKitMediaKeyError.h */,
 				CDA98DDB16026A1800FEA3B1 /* JSWebKitMediaKeyMessageEvent.cpp */,
@@ -25962,7 +26087,15 @@
 				15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */,
 				072A70431D7396B300DF0AFC /* JSMediaDevicesCustom.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
+				2D9BF7121DBFD914007A7D99 /* JSMediaEncryptedEvent.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
+				2D9BF7281DBFDB0D007A7D99 /* JSMediaKeyMessageEvent.h in Headers */,
+				2D9BF7291DBFDB10007A7D99 /* JSMediaKeys.h in Headers */,
+				2D9BF72A1DBFDB13007A7D99 /* JSMediaKeySession.h in Headers */,
+				2D9BF72B1DBFDB15007A7D99 /* JSMediaKeyStatusMap.h in Headers */,
+				2D9BF72C1DBFDB17007A7D99 /* JSMediaKeySystemAccess.h in Headers */,
+				2D9BF72D1DBFDB19007A7D99 /* JSMediaKeySystemConfiguration.h in Headers */,
+				2D9BF72E1DBFDB1C007A7D99 /* JSMediaKeySystemMediaCapability.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				93D437A31D57B7E200AB85EA /* JSMediaListCustom.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
@@ -26432,6 +26565,8 @@
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
 				FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */,
 				07FE99DD18807A7D00256648 /* MediaElementSession.h in Headers */,
+				2D9BF7061DBFBB24007A7D99 /* MediaEncryptedEvent.h in Headers */,
+				2D9BF7081DBFBB24007A7D99 /* MediaEncryptedEventInit.h in Headers */,
 				5EBB89351C77782900C65D41 /* MediaEndpoint.h in Headers */,
 				5EBB89371C77782900C65D41 /* MediaEndpointConfiguration.h in Headers */,
 				5E16A2E41BFA650B0029A21E /* MediaEndpointPeerConnection.h in Headers */,
@@ -29723,7 +29858,17 @@
 				15739BBA1B42012A00D258C1 /* JSMediaDevices.cpp in Sources */,
 				1B88DD131D5B9E5000E3B7A4 /* JSMediaDevicesCustom.cpp in Sources */,
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
+				2D9BF7101DBFD8CE007A7D99 /* JSMediaEncryptedEvent.cpp in Sources */,
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
+				2D9BF7211DBFDABA007A7D99 /* JSMediaKeyMessageEvent.cpp in Sources */,
+				2D9BF7221DBFDACB007A7D99 /* JSMediaKeys.cpp in Sources */,
+				2D9BF7231DBFDACD007A7D99 /* JSMediaKeySession.cpp in Sources */,
+				2D9BF74A1DBFDDFF007A7D99 /* JSMediaKeySessionCustom.cpp in Sources */,
+				2D9BF7241DBFDAD0007A7D99 /* JSMediaKeyStatusMap.cpp in Sources */,
+				2D9BF7251DBFDAD3007A7D99 /* JSMediaKeySystemAccess.cpp in Sources */,
+				2D9BF74B1DBFDE02007A7D99 /* JSMediaKeySystemAccessCustom.cpp in Sources */,
+				2D9BF7261DBFDAD5007A7D99 /* JSMediaKeySystemConfiguration.cpp in Sources */,
+				2D9BF7271DBFDAD8007A7D99 /* JSMediaKeySystemMediaCapability.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
 				7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */,
@@ -30233,12 +30378,18 @@
 				97205AB71239291000B17380 /* MediaDocument.cpp in Sources */,
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,
 				07FE99DC18807A7D00256648 /* MediaElementSession.cpp in Sources */,
+				2D9BF7051DBFBB24007A7D99 /* MediaEncryptedEvent.cpp in Sources */,
 				5EBB89341C77782900C65D41 /* MediaEndpoint.cpp in Sources */,
 				5EBB89361C77782900C65D41 /* MediaEndpointConfiguration.cpp in Sources */,
 				5E16A2E51BFA650F0029A21E /* MediaEndpointPeerConnection.cpp in Sources */,
 				5E4EAB051D07166E0006A184 /* MediaEndpointSessionDescription.cpp in Sources */,
 				4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */,
 				07A6D1EB1491137700051D0C /* MediaFragmentURIParser.cpp in Sources */,
+				2D9BF7471DBFDC49007A7D99 /* MediaKeyMessageEvent.cpp in Sources */,
+				2D9BF7461DBFDC47007A7D99 /* MediaKeys.cpp in Sources */,
+				2D9BF7451DBFDC44007A7D99 /* MediaKeySession.cpp in Sources */,
+				2D9BF7441DBFDC41007A7D99 /* MediaKeyStatusMap.cpp in Sources */,
+				2D9BF7431DBFDC3E007A7D99 /* MediaKeySystemAccess.cpp in Sources */,
 				A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */,
 				071E496E1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm in Sources */,
 				077B64161B95F703003E9AD5 /* MediaPlaybackTargetMock.cpp in Sources */,
@@ -30345,6 +30496,7 @@
 				979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */,
 				A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */,
 				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
+				2D9BF7421DBFDC27007A7D99 /* NavigatorEME.cpp in Sources */,
 				51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */,
 				9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */,
 				5EA725D51ACABD5700EAD17B /* NavigatorMediaDevices.cpp in Sources */,
