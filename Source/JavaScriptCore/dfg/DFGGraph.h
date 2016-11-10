@@ -417,7 +417,7 @@ public:
         return hasExitSite(node->origin.semantic, exitKind);
     }
     
-    MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node*);
+    MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node* currentNode, Node* operandNode);
     
     BlockIndex numBlocks() const { return m_blocks.size(); }
     BasicBlock* block(BlockIndex blockIndex) const { return m_blocks[blockIndex].get(); }

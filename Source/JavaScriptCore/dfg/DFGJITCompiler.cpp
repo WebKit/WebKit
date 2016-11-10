@@ -588,7 +588,7 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
 
 void JITCompiler::appendExceptionHandlingOSRExit(ExitKind kind, unsigned eventStreamIndex, CodeOrigin opCatchOrigin, HandlerInfo* exceptionHandler, CallSiteIndex callSite, MacroAssembler::JumpList jumpsToFail)
 {
-    OSRExit exit(kind, JSValueRegs(), graph().methodOfGettingAValueProfileFor(nullptr), m_speculative.get(), eventStreamIndex);
+    OSRExit exit(kind, JSValueRegs(), MethodOfGettingAValueProfile(), m_speculative.get(), eventStreamIndex);
     exit.m_codeOrigin = opCatchOrigin;
     exit.m_exceptionHandlerCallSiteIndex = callSite;
     OSRExitCompilationInfo& exitInfo = appendExitInfo(jumpsToFail);

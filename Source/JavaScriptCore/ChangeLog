@@ -1,3 +1,68 @@
+2016-11-10  Mark Lam  <mark.lam@apple.com>
+
+        Graph::methodOfGettingAValueProfileFor() should be returning the profile for the operand node.
+        https://bugs.webkit.org/show_bug.cgi?id=164600
+        <rdar://problem/28828676>
+
+        Reviewed by Filip Pizlo.
+
+        Currently, Graph::methodOfGettingAValueProfileFor() assumes that the operand DFG
+        node that it is provided with always has a different origin than the node that is
+        using that operand.  For example, in a DFG graph that looks like this:
+
+            a: ...
+            b: ArithAdd(@a, ...)
+
+        ... when emitting speculation checks on @a for the ArithAdd node at @b,
+        Graph::methodOfGettingAValueProfileFor() is passed @a, and expects @a's to
+        originate from a different bytecode than @b.  The intent here is to get the
+        profile for @a so that the OSR exit ramp for @b can update @a's profile with the
+        observed result type from @a so that future type prediction on incoming args for
+        the ArithAdd node can take this into consideration.
+
+        However, op_negate can be compiled into the following series of nodes:
+
+            a: ...
+            b: BooleanToNumber(@a)
+            c: DoubleRep(@b)
+            d: ArithNegate(@c)
+
+        All 3 nodes @b, @c, and @d maps to the same op_negate bytecode i.e. they have the
+        same origin.  When the speculativeJIT emits a speculationCheck for DoubleRep, it
+        calls Graph::methodOfGettingAValueProfileFor() to get the ArithProfile for the
+        BooleanToNumber node.  But because all 3 nodes have the same origin,
+        Graph::methodOfGettingAValueProfileFor() erroneously returns the ArithProfile for
+        the op_negate.  Subsequently, the OSR exit ramp will modify the ArithProfile of
+        the op_negate and corrupt its profile.  Instead, what the OSR exit ramp should be
+        doing is update the ArithProfile of op_negate's operand i.e. BooleanToNumber's
+        operand @a in this case.
+
+        The fix is to always pass the current node we're generating code for (in addition
+        to the operand node) to Graph::methodOfGettingAValueProfileFor().  This way, we
+        know the profile is valid if and only if the current node and its operand node
+        does not have the same origin.
+
+        In this patch, we also fixed the following:
+        1. Teach Graph::methodOfGettingAValueProfileFor() to get the profile for
+           BooleanToNumber's operand if the operand node it is given is BooleanToNumber.
+        2. Change JITCompiler::appendExceptionHandlingOSRExit() to explicitly pass an
+           empty MethodOfGettingAValueProfile().  It was implicitly doing this before.
+        3. Change SpeculativeJIT::emitInvalidationPoint() to pass an empty
+           MethodOfGettingAValueProfile().  It has no child node.  Hence, it doesn't
+           make sense to call Graph::methodOfGettingAValueProfileFor() for a child node
+           that does not exist.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::appendOSRExitDescriptor):
+
 2016-11-10  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: clarify button roles (e.g. toggle or popup button)

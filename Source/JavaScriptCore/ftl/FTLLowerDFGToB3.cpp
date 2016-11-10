@@ -12412,7 +12412,7 @@ private:
     OSRExitDescriptor* appendOSRExitDescriptor(FormattedValue lowValue, Node* highValue)
     {
         return &m_ftlState.jitCode->osrExitDescriptors.alloc(
-            lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
+            lowValue.format(), m_graph.methodOfGettingAValueProfileFor(m_node, highValue),
             availabilityMap().m_locals.numberOfArguments(),
             availabilityMap().m_locals.numberOfLocals());
     }

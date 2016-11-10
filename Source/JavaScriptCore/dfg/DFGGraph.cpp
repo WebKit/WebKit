@@ -1613,45 +1613,47 @@ ControlEquivalenceAnalysis& Graph::ensureControlEquivalenceAnalysis()
     return *m_controlEquivalenceAnalysis;
 }
 
-MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
+MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* currentNode, Node* operandNode)
 {
-    while (node) {
-        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
-        
-        if (node->accessesStack(*this)) {
-            ValueProfile* result = [&] () -> ValueProfile* {
-                if (!node->local().isArgument())
-                    return nullptr;
-                int argument = node->local().toArgument();
-                Node* argumentNode = m_arguments[argument];
-                if (!argumentNode)
-                    return nullptr;
-                if (node->variableAccessData() != argumentNode->variableAccessData())
-                    return nullptr;
-                return profiledBlock->valueProfileForArgument(argument);
-            }();
-            if (result)
-                return result;
-            
-            if (node->op() == GetLocal) {
-                return MethodOfGettingAValueProfile::fromLazyOperand(
-                    profiledBlock,
-                    LazyOperandValueProfileKey(
-                        node->origin.semantic.bytecodeIndex, node->local()));
+    for (Node* node = operandNode; node;) {
+        // currentNode is null when we're doing speculation checks for checkArgumentTypes().
+        if (!currentNode || node->origin != currentNode->origin) {
+            CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+
+            if (node->accessesStack(*this)) {
+                ValueProfile* result = [&] () -> ValueProfile* {
+                    if (!node->local().isArgument())
+                        return nullptr;
+                    int argument = node->local().toArgument();
+                    Node* argumentNode = m_arguments[argument];
+                    if (!argumentNode)
+                        return nullptr;
+                    if (node->variableAccessData() != argumentNode->variableAccessData())
+                        return nullptr;
+                    return profiledBlock->valueProfileForArgument(argument);
+                }();
+                if (result)
+                    return result;
+
+                if (node->op() == GetLocal) {
+                    return MethodOfGettingAValueProfile::fromLazyOperand(
+                        profiledBlock,
+                        LazyOperandValueProfileKey(
+                            node->origin.semantic.bytecodeIndex, node->local()));
+                }
             }
-        }
-        
-        if (node->hasHeapPrediction())
-            return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        
-        {
+
+            if (node->hasHeapPrediction())
+                return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+
             if (profiledBlock->hasBaselineJITProfiling()) {
                 if (ArithProfile* result = profiledBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex))
                     return result;
             }
         }
-        
+
         switch (node->op()) {
+        case BooleanToNumber:
         case Identity:
         case ValueRep:
         case DoubleRep:

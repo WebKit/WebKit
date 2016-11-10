@@ -251,7 +251,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         m_jit.appendExitInfo(jumpsToFail);
     } else
         m_jit.appendExitInfo(jumpToFail);
-    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail)
@@ -266,7 +266,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         m_jit.appendExitInfo(myJumpsToFail);
     } else
         m_jit.appendExitInfo(jumpsToFail);
-    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
 }
 
 OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node)
@@ -275,7 +275,7 @@ OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSo
         return OSRExitJumpPlaceholder();
     unsigned index = m_jit.jitCode()->osrExit.size();
     m_jit.appendExitInfo();
-    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
     return OSRExitJumpPlaceholder(index);
 }
 
@@ -300,7 +300,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         return;
     unsigned recoveryIndex = m_jit.jitCode()->appendSpeculationRecovery(recovery);
     m_jit.appendExitInfo(jumpToFail);
-    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size(), recoveryIndex));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size(), recoveryIndex));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -314,8 +314,7 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
         return;
     OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
     m_jit.jitCode()->appendOSRExit(OSRExit(
-        UncountableInvalidation, JSValueSource(),
-        m_jit.graph().methodOfGettingAValueProfileFor(node),
+        UncountableInvalidation, JSValueSource(), MethodOfGettingAValueProfile(),
         this, m_stream->size()));
     info.m_replacementSource = m_jit.watchpointLabel();
     ASSERT(info.m_replacementSource.isSet());

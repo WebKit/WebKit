@@ -1,3 +1,13 @@
+2016-11-10  Mark Lam  <mark.lam@apple.com>
+
+        Graph::methodOfGettingAValueProfileFor() should be returning the profile for the operand node.
+        https://bugs.webkit.org/show_bug.cgi?id=164600
+        <rdar://problem/28828676>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/osr-exit-on-op-negate-should-no-fail-assertions.js: Added.
+
 2016-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Avoid cloned arguments allocation in ArrayPrototype methods
