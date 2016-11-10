@@ -1469,3 +1469,5 @@ webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
 webkit.org/b/164388 inspector/sampling-profiler/call-frame-with-dom-functions.html [ Pass Timeout ]
 webkit.org/b/164388 inspector/sampling-profiler/expression-location-info.html [ Pass Timeout ]
+
+webkit.org/b/164570 fast/loader/reload-zero-byte-plugin.html [ Pass Failure ]
