@@ -103,6 +103,7 @@ public:
     unsigned memoryCacheSize() const;
 
     unsigned imageFrameIndex(HTMLImageElement&);
+    void setImageFrameDecodingDuration(HTMLImageElement&, float duration);
 
     void clearPageCache();
     unsigned pageCacheSize() const;

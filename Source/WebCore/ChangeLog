@@ -1,3 +1,60 @@
+2016-11-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the decoding for some animated images to be asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=161566
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/images/slower-animation-than-decoding-image.html
+               fast/images/slower-decoding-than-animation-image.html
+               fast/images/stopped-animation-deleted-image.html
+               
+        Request the next frame before firing the animation timer. The asynchronous
+        image decoding work queue notifies the BitmapImage when the frame finishes
+        decoding. If the timer fires before the frame is decoded, no repaint will
+        be requested. Only when the image frame is ready, the animation will be
+        advanced and the image will be repainted.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load): Cache the image settings in CachedImage.
+        (WebCore::CachedImage::createImage): No need to pass allowSubsampling to BitmapImage. It can be retrieved through Image::imageObserver().
+        (WebCore::CachedImage::changedInRect): Change the parameter to notifyObservers() to be a pointer.
+        * loader/cache/CachedImage.h: Cache the settings: allowSubsampling, allowAsyncImageDecoding and showDebugBackground through m_loader.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::dataChanged): Fix a logging message.
+        (WebCore::BitmapImage::draw): Store the current SubsamplingLevel to be used when requesting decoding the image of the next frame.
+        Draw a debug rectangle if the next frame is missed because it is being decoded and the setting showDebugBackground is on.
+        (WebCore::BitmapImage::startAnimation): Deleted. Moved to the header file.
+        (WebCore::BitmapImage::internalStartAnimation): Added. Request asynchronous image decoding for the next frame if required. Return the
+        result of starting the animation.
+        (WebCore::BitmapImage::advanceAnimation): Call internalAdvanceAnimation() if the frame image is not being decoded. If it is being decoded
+        and the setting showDebugBackground is on, force repaint so the debug rectangle is drawn.
+        (WebCore::BitmapImage::internalAdvanceAnimation): This is the old body of advanceAnimation().
+        (WebCore::BitmapImage::stopAnimation): Stop the asynchronous image decoding if it is started.
+        (WebCore::BitmapImage::newFrameNativeImageAvailableAtIndex): This function is called from the async image decoding work queue when finishing decoding a native image frame.
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::startAnimation): Added. It is now calls internalStartAnimation().
+        * platform/graphics/Color.h: Define a constant for the yellow color.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::clearMetadata): Delete unreferenced member.
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Return true if the frame is requested for async decoding.
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/ImageObserver.h:  Add virtual functions for allowSubsampling, allowAsyncImageDecoding and showDebugBackground.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::maximumSubsamplingLevel): Move checking allowSubsampling() to the caller BitmapImage::draw().
+        * platform/graphics/ImageSource.h: Remove the setting allowSubsampling(); it can be retrieved from imageObserver().
+        (WebCore::ImageSource::setAllowSubsampling): Deleted.
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::shutdown): Stop the animation of an image when shutting down the resource.
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::shutdown): Ditto.
+        svg/graphics/SVGImageClients.h: Change the parameter to ImageObserver::changedInRect() to be a pointer.
+        (WebCore::SVGImageChromeClient::invalidateContentsAndRootView):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setImageFrameDecodingDuration): Sets a fixed frame decoding duration for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl: Adds an internal option for ImageFrameDecodingDuration.
+
 2016-11-04  Brent Fulgham  <bfulgham@apple.com>
 
         Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked

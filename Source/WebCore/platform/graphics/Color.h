@@ -264,6 +264,7 @@ public:
     static const RGBA32 lightGray = 0xFFC0C0C0;
     WEBCORE_EXPORT static const RGBA32 transparent = 0x00000000;
     static const RGBA32 cyan = 0xFF00FFFF;
+    static const RGBA32 yellow = 0xFFFFFF00;
 
 #if PLATFORM(IOS)
     static const RGBA32 compositionFill = 0x3CAFC0E3;

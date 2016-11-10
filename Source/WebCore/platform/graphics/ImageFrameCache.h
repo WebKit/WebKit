@@ -68,7 +68,7 @@ public:
     
     // Asynchronous image decoding
     void startAsyncDecodingQueue();
-    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel);
+    bool requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel);
     void stopAsyncDecodingQueue();
     bool hasDecodingQueue() { return m_decodingQueue; }
 
@@ -162,7 +162,6 @@ private:
     // Image metadata which is calculated from the first ImageFrame.
     Optional<IntSize> m_size;
     Optional<IntSize> m_sizeRespectingOrientation;
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
     Optional<Color> m_singlePixelSolidColor;
 };
     

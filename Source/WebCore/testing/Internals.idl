@@ -221,6 +221,7 @@ enum UserInterfaceLayoutDirection {
     [MayThrowException] boolean isPageBoxVisible(long pageNumber);
 
     unsigned long imageFrameIndex(HTMLImageElement element);
+    void setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
 
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;

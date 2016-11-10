@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        description("Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.");
+        jsTestIsAsync = true;
+
+        internals.clearMemoryCache();
+
+        var image = new Image;
+        image.onload = imageLoaded;
+        image.src = "resources/animated-red-green-blue.gif";
+
+        function imageLoaded()
+        {
+            if (!window.internals)
+                return;
+            internals.setImageFrameDecodingDuration(image, 0.050);
+            drawImage();
+            drawLoop();
+        }
+
+        function drawImage()
+        {
+            if (drawImage.count == undefined)
+                drawImage.count = 0;
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            return ++drawImage.count;
+        }
+                
+        function drawLoop()
+        {
+            // 1st time the image is drawn, time = 0, current_frame = 0
+            // 2nd time the image is drawn, time = 40, current_frame = 0
+            // 3rd time the image is drawn, time = 80, current_frame = 1
+            setTimeout(function() {
+                if (drawImage() == 3) {
+                    shouldBe("internals.imageFrameIndex(image)", "1");
+                    finishJSTest();
+                } else
+                    drawLoop();
+            }, 40);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

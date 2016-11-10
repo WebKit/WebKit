@@ -186,7 +186,7 @@ SubsamplingLevel ImageSource::maximumSubsamplingLevel()
     if (m_maximumSubsamplingLevel)
         return m_maximumSubsamplingLevel.value();
 
-    if (!m_allowSubsampling || !isDecoderAvailable() || !m_decoder->frameAllowSubsamplingAtIndex(0))
+    if (!isDecoderAvailable() || !m_decoder->frameAllowSubsamplingAtIndex(0))
         return SubsamplingLevel::Default;
 
     // FIXME: this value was chosen to be appropriate for iOS since the image

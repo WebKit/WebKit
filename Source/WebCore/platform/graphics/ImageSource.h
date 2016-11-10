@@ -66,7 +66,7 @@ public:
     bool isAllDataReceived();
 
     bool isAsyncDecodingRequired();
-    void requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel); }
+    bool requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel); }
     void stopAsyncDecodingQueue() { m_frameCache->stopAsyncDecodingQueue(); }
 
     // Image metadata which is calculated by the decoder or can deduced by the case of the memory NativeImage.
@@ -98,7 +98,6 @@ public:
 
     SubsamplingLevel maximumSubsamplingLevel();
     SubsamplingLevel subsamplingLevelForScale(float);
-    void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
 
 private:
@@ -112,13 +111,6 @@ private:
     std::unique_ptr<ImageDecoder> m_decoder;
 
     Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
-
-    // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
-#if PLATFORM(IOS)
-    bool m_allowSubsampling { true };
-#else
-    bool m_allowSubsampling { false };
-#endif
 
 #if PLATFORM(IOS)
     // FIXME: We should expose a setting to enable/disable progressive loading so that we can remove the PLATFORM(IOS)-guard.

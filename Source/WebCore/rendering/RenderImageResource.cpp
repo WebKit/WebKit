@@ -56,8 +56,10 @@ void RenderImageResource::shutdown()
 {
     ASSERT(m_renderer);
 
-    if (m_cachedImage)
+    if (m_cachedImage) {
+        image()->stopAnimation();
         m_cachedImage->removeClient(*m_renderer);
+    }
 }
 
 void RenderImageResource::setCachedImage(CachedImage* newImage)

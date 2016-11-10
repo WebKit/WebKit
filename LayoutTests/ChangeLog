@@ -1,3 +1,27 @@
+2016-11-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the decoding for some animated images to be asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=161566
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/slower-animation-than-decoding-image-expected.txt: Added.
+        * fast/images/slower-animation-than-decoding-image.html: Added.
+        * fast/images/slower-decoding-than-animation-image-expected.txt: Added.
+        * fast/images/slower-decoding-than-animation-image.html: Added.
+        In these tests, CanvasRenderingContext2D.drawImage() is used to better
+        control advancing the animation of an animated image. A setTimeout() is
+        used instead of the frame duration to schedule when the drawing happens.
+        The first test ensures that faster decoding does not overrule the frame
+        duration; the setTimeout interval in this case. The second test ensures
+        the animation is not advanced unless decoding the next frame has finished.
+
+        * fast/images/stopped-animation-deleted-image-expected.txt: Added.
+        * fast/images/stopped-animation-deleted-image.html: Added.
+        This test ensures that if an animated image is removed from the document,
+        its draw() method won't be called even if the animation timer fires or the
+        decoding new frame availability notification is received.
+
 2016-11-04  Brent Fulgham  <bfulgham@apple.com>
 
         Local HTML should be blocked from localStorage access unless "Disable Local File Restrictions" is checked

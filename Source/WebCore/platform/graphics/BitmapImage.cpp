@@ -83,7 +83,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
 NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
 {
     if (!frameHasValidNativeImageAtIndex(index, subsamplingLevel)) {
-        LOG(Images, "BitmapImage %p frameImageAtIndex - subsamplingLevel was %d, resampling", this, static_cast<int>(frameSubsamplingLevelAtIndex(index)));
+        LOG(Images, "BitmapImage %p %s - subsamplingLevel was %d, resampling", this, __FUNCTION__, static_cast<int>(frameSubsamplingLevelAtIndex(index)));
         invalidatePlatformData();
     }
 
@@ -141,19 +141,24 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
-    startAnimation();
+    StartAnimationResult result = internalStartAnimation();
 
-    Color color = singlePixelSolidColor();
+    Color color;
+    if (result == StartAnimationResult::DecodingActive && showDebugBackground())
+        color = Color::yellow;
+    else
+        color = singlePixelSolidColor();
+
     if (color.isValid()) {
         fillWithSolidColor(context, destRect, color, op);
         return;
     }
 
     float scale = subsamplingScale(context, destRect, srcRect);
-    SubsamplingLevel subsamplingLevel = m_source.subsamplingLevelForScale(scale);
-    LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, static_cast<int>(subsamplingLevel), scale);
+    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(scale) : SubsamplingLevel::Default;
+    LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, static_cast<int>(m_currentSubsamplingLevel), scale);
 
-    auto image = frameImageAtIndex(m_currentFrame, subsamplingLevel, &context);
+    auto image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, &context);
     if (!image) // If it's too early we won't have an image yet.
         return;
 
@@ -223,10 +228,18 @@ void BitmapImage::startTimer(double delay)
     m_frameTimer->startOneShot(delay);
 }
 
-void BitmapImage::startAnimation()
+BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
 {
-    if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
-        return;
+    if (!canAnimate())
+        return StartAnimationResult::CannotStart;
+
+    if (m_frameTimer)
+        return StartAnimationResult::TimerActive;
+    
+    // Don't start a new animation until we draw the frame that is currently being decoded.
+    size_t nextFrame = (m_currentFrame + 1) % frameCount();
+    if (frameIsBeingDecodedAtIndex(nextFrame))
+        return StartAnimationResult::DecodingActive;
 
     if (m_currentFrame >= frameCount() - 1) {
         // Don't advance past the last frame if we haven't decoded the whole image
@@ -234,7 +247,7 @@ void BitmapImage::startAnimation()
         // in a GIF can potentially come after all the rest of the image data, so
         // wait on it.
         if (!m_source.isAllDataReceived() && repetitionCount() == RepetitionCountOnce)
-            return;
+            return StartAnimationResult::IncompleteData;
 
         ++m_repetitionsComplete;
 
@@ -242,16 +255,15 @@ void BitmapImage::startAnimation()
         if (repetitionCount() != RepetitionCountInfinite && m_repetitionsComplete > repetitionCount()) {
             m_animationFinished = true;
             destroyDecodedDataIfNecessary(false);
-            return;
+            return StartAnimationResult::CannotStart;
         }
 
         destroyDecodedDataIfNecessary(true);
     }
 
     // Don't advance the animation to an incomplete frame.
-    size_t nextFrame = (m_currentFrame + 1) % frameCount();
     if (!m_source.isAllDataReceived() && !frameIsCompleteAtIndex(nextFrame))
-        return;
+        return StartAnimationResult::IncompleteData;
 
     double time = monotonicallyIncreasingTime();
 
@@ -262,15 +274,53 @@ void BitmapImage::startAnimation()
     // Setting 'm_desiredFrameStartTime' to 'time' means we are late; otherwise we are early.
     m_desiredFrameStartTime = std::max(time, m_desiredFrameStartTime + frameDurationAtIndex(m_currentFrame));
 
+    // Request async decoding for nextFrame only if this is required. If nextFrame is not in the frameCache,
+    // it will be decoded on a separate work queue. When decoding nextFrame finishes, we will be notified
+    // through the callback newFrameNativeImageAvailableAtIndex(). Otherwise, advanceAnimation() will be called
+    // when the timer fires and m_currentFrame will be advanced to nextFrame since it is not being decoded.
+    if ((allowAsyncImageDecoding() && m_source.isAsyncDecodingRequired()) || isAsyncDecodingForcedForTesting()) {
+        if (!m_source.requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel))
+            LOG(Images, "BitmapImage %p %s - cachedFrameCount %ld nextFrame %ld", this, __FUNCTION__, ++m_cachedFrameCount, nextFrame);
+        m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0.0f);
+    }
+
     ASSERT(!m_frameTimer);
     startTimer(m_desiredFrameStartTime - time);
+    return StartAnimationResult::Started;
 }
 
 void BitmapImage::advanceAnimation()
 {
     clearTimer();
 
+    // Pretend as if decoding nextFrame has taken m_frameDecodingDurationForTesting from
+    // the time this decoding was requested.
+    if (isAsyncDecodingForcedForTesting()) {
+        double time = monotonicallyIncreasingTime();
+        // Start a timer with the remaining time from now till the m_desiredFrameDecodeTime.
+        if (m_desiredFrameDecodeTimeForTesting > std::max(time, m_desiredFrameStartTime)) {
+            startTimer(m_desiredFrameDecodeTimeForTesting - time);
+            return;
+        }
+    }
+    
+    // Don't advance to nextFrame unless its decoding has finished or was not required.
+    size_t nextFrame = (m_currentFrame + 1) % frameCount();
+    if (!frameIsBeingDecodedAtIndex(nextFrame))
+        internalAdvanceAnimation();
+    else {
+        // Force repaint if showDebugBackground() is on.
+        if (showDebugBackground())
+            imageObserver()->changedInRect(this);
+        LOG(Images, "BitmapImage %p %s - lateFrameCount %ld nextFrame %ld", this, __FUNCTION__, ++m_lateFrameCount, nextFrame);
+    }
+}
+
+void BitmapImage::internalAdvanceAnimation()
+{
     m_currentFrame = (m_currentFrame + 1) % frameCount();
+    ASSERT(!frameIsBeingDecodedAtIndex(m_currentFrame));
+
     destroyDecodedDataIfNecessary(false);
 
     if (imageObserver())
@@ -282,6 +332,7 @@ void BitmapImage::stopAnimation()
     // This timer is used to animate all occurrences of this image. Don't invalidate
     // the timer unless all renderers have stopped drawing.
     clearTimer();
+    m_source.stopAsyncDecodingQueue();
 }
 
 void BitmapImage::resetAnimation()
@@ -294,6 +345,18 @@ void BitmapImage::resetAnimation()
 
     // For extremely large animations, when the animation is reset, we just throw everything away.
     destroyDecodedDataIfNecessary(true);
+}
+
+void BitmapImage::newFrameNativeImageAvailableAtIndex(size_t index)
+{
+    UNUSED_PARAM(index);
+    ASSERT(index == (m_currentFrame + 1) % frameCount());
+
+    // Don't advance to nextFrame unless the timer was fired before its decoding finishes.
+    if (canAnimate() && !m_frameTimer)
+        internalAdvanceAnimation();
+    else
+        LOG(Images, "BitmapImage %p %s - earlyFrameCount %ld nextFrame %ld", this, __FUNCTION__, ++m_earlyFrameCount, index);
 }
 
 void BitmapImage::dump(TextStream& ts) const

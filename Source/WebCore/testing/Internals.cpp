@@ -649,6 +649,19 @@ unsigned Internals::imageFrameIndex(HTMLImageElement& element)
     return is<BitmapImage>(image) ? downcast<BitmapImage>(*image).currentFrame() : 0;
 }
 
+void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float duration)
+{
+    auto* cachedImage = element.cachedImage();
+    if (!cachedImage)
+        return;
+    
+    auto* image = cachedImage->image();
+    if (!is<BitmapImage>(image))
+        return;
+    
+    downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(duration);
+}
+
 void Internals::clearPageCache()
 {
     PageCache::singleton().pruneToSizeNow(0, PruningReason::None);

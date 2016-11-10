@@ -118,11 +118,14 @@ private:
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver
+    bool allowSubsampling() const override { return m_allowSubsampling; }
+    bool allowAsyncImageDecoding() const override { return m_allowAsyncImageDecoding; }
+    bool showDebugBackground() const override { return m_showDebugBackground; }
     void decodedSizeChanged(const Image*, long long delta) override;
     void didDraw(const Image*) override;
 
     void animationAdvanced(const Image*) override;
-    void changedInRect(const Image*, const IntRect&) override;
+    void changedInRect(const Image*, const IntRect* changeRect = nullptr) override;
 
     void addIncrementalDataBuffer(SharedBuffer&);
 
@@ -136,6 +139,15 @@ private:
     std::unique_ptr<SVGImageCache> m_svgImageCache;
     bool m_isManuallyCached { false };
     bool m_shouldPaintBrokenImage { true };
+
+    // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
+#if PLATFORM(IOS)
+    bool m_allowSubsampling { true };
+#else
+    bool m_allowSubsampling { false };
+#endif
+    bool m_allowAsyncImageDecoding { true };
+    bool m_showDebugBackground { false };
 };
 
 } // namespace WebCore

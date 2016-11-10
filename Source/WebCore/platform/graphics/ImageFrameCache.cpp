@@ -284,10 +284,10 @@ void ImageFrameCache::startAsyncDecodingQueue()
     });
 }
 
-void ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
     if (!isDecoderAvailable())
-        return;
+        return false;
 
     if (!hasDecodingQueue())
         startAsyncDecodingQueue();
@@ -299,10 +299,11 @@ void ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
         subsamplingLevel = frame.subsamplingLevel();
     
     if (frame.hasValidNativeImage(subsamplingLevel))
-        return;
+        return false;
     
     frame.setDecoding(ImageFrame::Decoding::BeingDecoded);
     m_frameRequestQueue.enqueue({ index, subsamplingLevel });
+    return true;
 }
 
 void ImageFrameCache::stopAsyncDecodingQueue()
@@ -336,7 +337,6 @@ void ImageFrameCache::clearMetadata()
 {
     m_frameCount = Nullopt;
     m_singlePixelSolidColor = Nullopt;
-    m_maximumSubsamplingLevel = Nullopt;
 }
 
 template<typename T, T (ImageDecoder::*functor)() const>

@@ -57,7 +57,10 @@ void RenderImageResourceStyleImage::shutdown()
 {
     ASSERT(m_renderer);
     m_styleImage->removeClient(m_renderer);
-    m_cachedImage = nullptr;
+    if (m_cachedImage) {
+        image()->stopAnimation();
+        m_cachedImage = nullptr;
+    }
 }
 
 RefPtr<Image> RenderImageResourceStyleImage::image(int width, int height) const
