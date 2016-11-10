@@ -63,7 +63,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 
 @interface WebHTMLView (WebKitSecretsTextInputControllerIsAwareOf)
 - (WebFrame *)_frame;
-- (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range;
+- (NSAttributedString *)_attributedStringFromDOMRange:(DOMRange *)range;
 @end
 
 @implementation WebHTMLView (DumpRenderTreeInputMethodHandler)
@@ -378,7 +378,7 @@ NSString *NSTextInsertionUndoableAttributeName;
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return string;
 
-    [string setAttributedString:[(WebHTMLView *)documentView _attributeStringFromDOMRange:range]];
+    [string setAttributedString:[(WebHTMLView *)documentView _attributedStringFromDOMRange:range]];
     return string;
 }
 

@@ -752,7 +752,6 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 @end
 
 @interface NSAttributedString (WebNSAttributedStringDetails)
-- (id)_initWithDOMRange:(DOMRange *)range;
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
 
@@ -7378,13 +7377,15 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 }
 
 #if !PLATFORM(IOS)
-- (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
+- (NSAttributedString *)_attributedStringFromDOMRange:(DOMRange *)range
 {
     NSAttributedString *attributedString;
 #if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
-#endif    
-    attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
+#endif
+    if (!range)
+        return nullptr;
+    attributedString = attributedStringFromRange(*core(range));
 #if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
@@ -7395,24 +7396,17 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 - (NSAttributedString *)attributedString
 {
     DOMDocument *document = [[self _frame] DOMDocument];
-    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
+    NSAttributedString *attributedString = [self _attributedStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
         attributedString = editingAttributedStringFromRange(Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->countChildNodes()));
     }
     return attributedString;
 }
-#endif
 
-- (NSString *)selectedString
-{
-    return [[self _frame] _selectedString];
-}
-
-#if !PLATFORM(IOS)
 - (NSAttributedString *)selectedAttributedString
 {
-    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
+    NSAttributedString *attributedString = [self _attributedStringFromDOMRange:[self _selectedRange]];
     if (!attributedString) {
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
@@ -7426,6 +7420,11 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     return attributedString;
 }
 #endif
+
+- (NSString *)selectedString
+{
+    return [[self _frame] _selectedString];
+}
 
 - (BOOL)supportsTextEncoding
 {

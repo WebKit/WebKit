@@ -1,3 +1,38 @@
+2016-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebHTMLView's _attributeStringFromDOMRange should use HTMLConverter instead of NSAttributedString's _initWithDOMRange
+        https://bugs.webkit.org/show_bug.cgi?id=164501
+        <rdar://problem/29152282>
+
+        Reviewed by Sam Weinig.
+
+        Prior to this patch, attributed-string tests were inadvertently testing NSAttributedString's _initWithDOMRange
+        instead of HTMLConverter as intended because _attributeStringFromDOMRange was using _initWithDOMRange.
+
+        This patch aliens [WebHTMLView attributedString] to what we use on copy & paste by using HTMLConverter instead.
+        The rebaselined done below highlights the existing behavior difference between AppKit's converter and HTMLConverter.
+
+        I've manually confirmed that these test results didn't change across the large refactoring as seen in:
+        https://trac.webkit.org/log/trunk/Source/WebCore/platform/mac/HTMLConverter.mm?rev=166145
+
+        * editing/mac/attributed-string/anchor-element-expected.txt:
+        * editing/mac/attributed-string/basic-expected.txt:
+        * editing/mac/attributed-string/font-size-expected.txt:
+        * editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * editing/mac/attributed-string/font-weight-expected.txt:
+        * editing/mac/attributed-string/letter-spacing-expected.txt:
+        * editing/mac/attributed-string/text-decorations-expected.txt:
+        * editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac-elcapitan/editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/anchor-element-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/basic-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/font-size-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/font-weight-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/letter-spacing-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/text-decorations-expected.txt:
+        * platform/mac-yosemite/editing/mac/attributed-string/vertical-align-expected.txt:
+
 2016-11-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2][!NETWORK_SESSION] Add support for downloading file backed blobs
