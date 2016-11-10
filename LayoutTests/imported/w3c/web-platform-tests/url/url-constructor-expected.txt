@@ -54,9 +54,9 @@ PASS Parsing: <http:\\foo.com\> against <http://example.org/foo/bar>
 PASS Parsing: <http:\\a\b:c\d@foo.com\> against <http://example.org/foo/bar> 
 PASS Parsing: <foo:/> against <http://example.org/foo/bar> 
 PASS Parsing: <foo:/bar.com/> against <http://example.org/foo/bar> 
-FAIL Parsing: <foo://///////> against <http://example.org/foo/bar> assert_equals: pathname expected "///////" but got "/////////"
-FAIL Parsing: <foo://///////bar.com/> against <http://example.org/foo/bar> assert_equals: pathname expected "///////bar.com/" but got "/////////bar.com/"
-FAIL Parsing: <foo:////://///> against <http://example.org/foo/bar> assert_equals: pathname expected "//://///" but got "////://///"
+PASS Parsing: <foo://///////> against <http://example.org/foo/bar> 
+PASS Parsing: <foo://///////bar.com/> against <http://example.org/foo/bar> 
+PASS Parsing: <foo:////://///> against <http://example.org/foo/bar> 
 PASS Parsing: <c:/foo> against <http://example.org/foo/bar> 
 PASS Parsing: <//foo/bar> against <http://example.org/foo/bar> 
 PASS Parsing: <http://foo/path;a??e#f#g> against <http://example.org/foo/bar> 
@@ -293,27 +293,27 @@ PASS Parsing: <i> against <sc:sd>
 PASS Parsing: <i> against <sc:sd/sd> 
 PASS Parsing: <i> against <sc:/pa/pa> 
 PASS Parsing: <i> against <sc://ho/pa> 
-FAIL Parsing: <i> against <sc:///pa/pa> assert_equals: pathname expected "/pa/i" but got "///pa/i"
+PASS Parsing: <i> against <sc:///pa/pa> 
 PASS Parsing: <../i> against <sc:sd> 
 PASS Parsing: <../i> against <sc:sd/sd> 
 PASS Parsing: <../i> against <sc:/pa/pa> 
 PASS Parsing: <../i> against <sc://ho/pa> 
-FAIL Parsing: <../i> against <sc:///pa/pa> assert_equals: pathname expected "/i" but got "///i"
+PASS Parsing: <../i> against <sc:///pa/pa> 
 PASS Parsing: </i> against <sc:sd> 
 PASS Parsing: </i> against <sc:sd/sd> 
 PASS Parsing: </i> against <sc:/pa/pa> 
 PASS Parsing: </i> against <sc://ho/pa> 
-FAIL Parsing: </i> against <sc:///pa/pa> assert_equals: href expected "sc:///i" but got "sc:/i"
+PASS Parsing: </i> against <sc:///pa/pa> 
 PASS Parsing: <?i> against <sc:sd> 
 PASS Parsing: <?i> against <sc:sd/sd> 
 PASS Parsing: <?i> against <sc:/pa/pa> 
 PASS Parsing: <?i> against <sc://ho/pa> 
-FAIL Parsing: <?i> against <sc:///pa/pa> assert_equals: pathname expected "/pa/pa" but got "///pa/pa"
+PASS Parsing: <?i> against <sc:///pa/pa> 
 PASS Parsing: <#i> against <sc:sd> 
 PASS Parsing: <#i> against <sc:sd/sd> 
 PASS Parsing: <#i> against <sc:/pa/pa> 
 PASS Parsing: <#i> against <sc://ho/pa> 
-FAIL Parsing: <#i> against <sc:///pa/pa> assert_equals: pathname expected "/pa/pa" but got "///pa/pa"
+PASS Parsing: <#i> against <sc:///pa/pa> 
 PASS Parsing: <about:/../> against <about:blank> 
 PASS Parsing: <data:/../> against <about:blank> 
 PASS Parsing: <javascript:/../> against <about:blank> 

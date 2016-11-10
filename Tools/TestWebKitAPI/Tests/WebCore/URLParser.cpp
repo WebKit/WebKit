@@ -511,20 +511,38 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host:123?query", {"http", "", "", "host", 123, "/", "query", "", "http://host:123/?query"});
     checkURL("http://host:123#", {"http", "", "", "host", 123, "/", "", "", "http://host:123/#"});
     checkURL("http://host:123#fragment", {"http", "", "", "host", 123, "/", "", "fragment", "http://host:123/#fragment"});
-    checkURL("foo:////", {"foo", "", "", "", 0, "////", "", "", "foo:////"});
-    checkURL("foo:///?", {"foo", "", "", "", 0, "///", "", "", "foo:///?"});
-    checkURL("foo:///#", {"foo", "", "", "", 0, "///", "", "", "foo:///#"});
-    checkURL("foo:///", {"foo", "", "", "", 0, "///", "", "", "foo:///"});
-    checkURL("foo://?", {"foo", "", "", "", 0, "//", "", "", "foo://?"});
-    checkURL("foo://#", {"foo", "", "", "", 0, "//", "", "", "foo://#"});
-    checkURL("foo://", {"foo", "", "", "", 0, "//", "", "", "foo://"});
+    checkURLDifferences("foo:////",
+        {"foo", "", "", "", 0, "//", "", "", "foo:////"},
+        {"foo", "", "", "", 0, "////", "", "", "foo:////"});
+    checkURLDifferences("foo:///?",
+        {"foo", "", "", "", 0, "/", "", "", "foo:///?"},
+        {"foo", "", "", "", 0, "///", "", "", "foo:///?"});
+    checkURLDifferences("foo:///#",
+        {"foo", "", "", "", 0, "/", "", "", "foo:///#"},
+        {"foo", "", "", "", 0, "///", "", "", "foo:///#"});
+    checkURLDifferences("foo:///",
+        {"foo", "", "", "", 0, "/", "", "", "foo:///"},
+        {"foo", "", "", "", 0, "///", "", "", "foo:///"});
+    checkURLDifferences("foo://?",
+        {"foo", "", "", "", 0, "", "", "", "foo://?"},
+        {"foo", "", "", "", 0, "//", "", "", "foo://?"});
+    checkURLDifferences("foo://#",
+        {"foo", "", "", "", 0, "", "", "", "foo://#"},
+        {"foo", "", "", "", 0, "//", "", "", "foo://#"});
+    checkURLDifferences("foo://",
+        {"foo", "", "", "", 0, "", "", "", "foo://"},
+        {"foo", "", "", "", 0, "//", "", "", "foo://"});
     checkURL("foo:/?", {"foo", "", "", "", 0, "/", "", "", "foo:/?"});
     checkURL("foo:/#", {"foo", "", "", "", 0, "/", "", "", "foo:/#"});
     checkURL("foo:/", {"foo", "", "", "", 0, "/", "", "", "foo:/"});
     checkURL("foo:?", {"foo", "", "", "", 0, "", "", "", "foo:?"});
     checkURL("foo:#", {"foo", "", "", "", 0, "", "", "", "foo:#"});
-    checkURL("A://", {"a", "", "", "", 0, "//", "", "", "a://"});
-    checkURL("aA://", {"aa", "", "", "", 0, "//", "", "", "aa://"});
+    checkURLDifferences("A://",
+        {"a", "", "", "", 0, "", "", "", "a://"},
+        {"a", "", "", "", 0, "//", "", "", "a://"});
+    checkURLDifferences("aA://",
+        {"aa", "", "", "", 0, "", "", "", "aa://"},
+        {"aa", "", "", "", 0, "//", "", "", "aa://"});
     checkURL(utf16String(u"foo://host/#ПП\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "foo://host/#%D0%9F%D0%9F%07 a</"});
     checkURL(utf16String(u"foo://host/#\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%07 a</", "foo://host/#%07 a</"});
     checkURL(utf16String(u"http://host?ß😍#ß😍"), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"}, testTabsValueForSurrogatePairs);
@@ -612,7 +630,9 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("  ", "http://host/#fragment", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkRelativeURL("  ", "http://host/path?query#fra#gment", {"http", "", "", "host", 0, "/path", "query", "", "http://host/path?query"});
     checkRelativeURL(" \a ", "http://host/#fragment", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
-    checkRelativeURL("foo://", "http://example.org/foo/bar", {"foo", "", "", "", 0, "//", "", "", "foo://"});
+    checkRelativeURLDifferences("foo://", "http://example.org/foo/bar",
+        {"foo", "", "", "", 0, "", "", "", "foo://"},
+        {"foo", "", "", "", 0, "//", "", "", "foo://"});
     checkRelativeURL(utf16String(u"#β"), "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
@@ -883,10 +903,10 @@ TEST_F(URLParserTest, ParserDifferences)
         {"", "", "", "", 0, "", "", "", "http://:"},
         {"http", "", "", "", 0, "/", "", "", "http://:/"});
     checkURLDifferences("http:##foo",
-        {"http", "", "", "", 0, "//", "", "#foo", "http://##foo"},
+        {"http", "", "", "", 0, "", "", "#foo", "http://##foo"},
         {"http", "", "", "", 0, "/", "", "#foo", "http:/##foo"});
     checkURLDifferences("http:??bar",
-        {"http", "", "", "", 0, "//", "?bar", "", "http://??bar"},
+        {"http", "", "", "", 0, "", "?bar", "", "http://??bar"},
         {"http", "", "", "", 0, "/", "?bar", "", "http:/??bar"});
     checkRelativeURLDifferences("//C|/foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},

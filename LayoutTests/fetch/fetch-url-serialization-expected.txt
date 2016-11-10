@@ -294,7 +294,7 @@ PASS Testing Request url '/i' with base 'sc:sd'
 PASS Testing Request url '/i' with base 'sc:sd/sd' 
 PASS Testing Request url '/i' with base 'sc:/pa/pa' 
 PASS Testing Request url '/i' with base 'sc://ho/pa' 
-FAIL Testing Request url '/i' with base 'sc:///pa/pa' assert_equals: expected "sc:///i" but got "sc:/i"
+PASS Testing Request url '/i' with base 'sc:///pa/pa' 
 PASS Testing Request url '?i' with base 'sc:sd' 
 PASS Testing Request url '?i' with base 'sc:sd/sd' 
 PASS Testing Request url '?i' with base 'sc:/pa/pa' 

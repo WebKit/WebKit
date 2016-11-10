@@ -1,5 +1,22 @@
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should not consider path of URLs with no host to start at the first slash after the colon
+        https://bugs.webkit.org/show_bug.cgi?id=164555
+
+        Reviewed by Tim Horton.
+
+        When we see a url that is only scheme:// we treated the // as the path.  Firefox did this with unrecognized schemes,
+        but based on https://github.com/whatwg/url/issues/148 they seem willing to change.  We had added similar behavior to
+        URL::parse, and I added this to URLParser in r206783 which this effectively reverts.
+
+        Covered by API and layout tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        Don't move m_userStart to m_pathStart back by two when we see an empty host.
+
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
         Simplify logic of SecurityOrigin::databaseIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=164565
 

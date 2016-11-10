@@ -1427,17 +1427,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 if (isSlash || *c == '?' || *c == '#') {
                     auto iterator = CodePointIterator<CharacterType>(authorityOrHostBegin, c);
                     if (iterator.atEnd()) {
-                        size_t position = currentPosition(c);
-                        ASSERT(m_url.m_userStart == position);
-                        RELEASE_ASSERT(position >= 2);
-                        position -= 2;
-                        ASSERT(parsedDataView(position, 2) == "//");
-                        m_url.m_userStart = position;
-                        m_url.m_userEnd = position;
-                        m_url.m_passwordEnd = position;
-                        m_url.m_hostEnd = position;
-                        m_url.m_portEnd = position;
-                        m_url.m_pathAfterLastSlash = position + 2;
+                        m_url.m_userEnd = currentPosition(c);
+                        m_url.m_passwordEnd = m_url.m_userEnd;
+                        m_url.m_hostEnd = m_url.m_userEnd;
+                        m_url.m_portEnd = m_url.m_userEnd;
+                        m_url.m_pathAfterLastSlash = m_url.m_userEnd;
                     } else {
                         m_url.m_userEnd = currentPosition(authorityOrHostBegin);
                         m_url.m_passwordEnd = m_url.m_userEnd;
@@ -1835,14 +1829,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_userEnd = currentPosition(authorityOrHostBegin);
         m_url.m_passwordEnd = m_url.m_userEnd;
         if (authorityOrHostBegin.atEnd()) {
-            RELEASE_ASSERT(m_url.m_userStart >= 2);
-            ASSERT(parsedDataView(m_url.m_userStart - 2, 2) == "//");
-            m_url.m_userStart -= 2;
             m_url.m_userEnd = m_url.m_userStart;
             m_url.m_passwordEnd = m_url.m_userStart;
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portEnd = m_url.m_userStart;
-            m_url.m_pathEnd = m_url.m_userStart + 2;
+            m_url.m_pathEnd = m_url.m_userStart;
         } else if (!parseHostAndPort(authorityOrHostBegin)) {
             failure();
             return;

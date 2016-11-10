@@ -1,3 +1,13 @@
+2016-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should not consider path of URLs with no host to start at the first slash after the colon
+        https://bugs.webkit.org/show_bug.cgi?id=164555
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-11-09  Jonathan Bedard  <jbedard@apple.com>
 
         test-webkitpy failing test_create_patch_is_full_patch unit test
