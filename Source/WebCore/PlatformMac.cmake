@@ -260,6 +260,7 @@ list(APPEND WebCore_SOURCES
     page/CaptionUserPreferencesMediaAF.cpp
     page/PageDebuggable.cpp
 
+    page/cocoa/MemoryReleaseCocoa.mm
     page/cocoa/UserAgent.mm
     page/cocoa/ResourceUsageOverlayCocoa.mm
     page/cocoa/ResourceUsageThreadCocoa.mm

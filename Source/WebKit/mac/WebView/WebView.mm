@@ -161,7 +161,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MemoryCache.h>
-#import <WebCore/MemoryPressureHandler.h>
+#import <WebCore/MemoryRelease.h>
 #import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NSTouchBarSPI.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
@@ -1430,8 +1430,18 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setFontFallbackPrefersPictographs(true);
 #endif
 
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
-        MemoryPressureHandler::singleton().install();
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"]) {
+        WebCore::registerMemoryReleaseNotifyCallbacks();
+
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+            memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous synchronous) {
+                WebCore::releaseMemory(critical, synchronous);
+            });
+            memoryPressureHandler.install();
+        });
+    }
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.

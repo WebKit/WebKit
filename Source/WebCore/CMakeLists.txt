@@ -2040,6 +2040,7 @@ set(WebCore_SOURCES
     page/IntersectionObserverEntry.cpp
     page/Location.cpp
     page/MainFrame.cpp
+    page/MemoryRelease.cpp
     page/MouseEventWithHitTestResults.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp

@@ -298,7 +298,7 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
     uninstall();
 
     double startTime = monotonicallyIncreasingTime();
-    m_lowMemoryHandler(critical, synchronous);
+    releaseMemory(critical, synchronous);
     unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }

@@ -120,7 +120,7 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 {
     uninstall();
 
-    m_lowMemoryHandler(critical, synchronous);
+    releaseMemory(critical, synchronous);
 }
 
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()

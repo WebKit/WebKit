@@ -1,3 +1,47 @@
+2016-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        MemoryPressureHandler shouldn't know how to release WebCore memory
+        https://bugs.webkit.org/show_bug.cgi?id=160497
+
+        Reviewed by Michael Catanzaro.
+
+        All processes should set their own low memory handler, instead of leaving the web process using the default one
+        that needs to access APIs that are not in platform layer. This patch fixes all the layering violations in the
+        MemoryPressureHandler. Since the default implementation, that releases the WebCore memory, is shared by the
+        WebProcess in WebKit2 and WebKit1 ports, it has been moved to its own file to the WebCore layer.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * PlatformMac.cmake: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Use WebCore::jettisonExpensiveObjectsOnTopLevelNavigation().
+        * page/MemoryRelease.cpp: Added.
+        (WebCore::releaseNoncriticalMemory):
+        (WebCore::releaseCriticalMemory):
+        (WebCore::releaseMemory):
+        (WebCore::platformReleaseMemory):
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+        (WebCore::registerMemoryReleaseNotifyCallbacks):
+        * page/MemoryRelease.h: Added.
+        * page/cocoa/MemoryReleaseCocoa.mm: Added.
+        (WebCore::platformReleaseMemory):
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+        (WebCore::registerMemoryReleaseNotifyCallbacks):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        (WebCore::MemoryPressureHandler::beginSimulatedMemoryPressure):
+        (WebCore::MemoryPressureHandler::releaseMemory): Use the current handler if it has been set.
+        (WebCore::MemoryPressureHandler::platformReleaseMemory): Deleted.
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::setLowMemoryHandler):
+        (WebCore::MemoryPressureHandler::m_releaseMemoryBlock):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure): Call releaseMemory() instead of using the handler directly.
+        (WebCore::MemoryPressureHandler::platformReleaseMemory): Deleted.
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        * platform/win/MemoryPressureHandlerWin.cpp:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure): Call releaseMemory() instead of using the handler directly.
+
 2016-11-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix fr tracks sizing under min|max-size constraints

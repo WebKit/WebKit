@@ -26,15 +26,12 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#import "GCController.h"
-#import "IOSurfacePool.h"
-#import "LayerPool.h"
 #import "Logging.h"
-#import "ResourceUsageThread.h"
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
+#import <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
 #import "SystemMemory.h"
@@ -44,41 +41,11 @@
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
-extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
 namespace WebCore {
 
-void MemoryPressureHandler::platformInitialize()
-{
-    int dummy;
-    notify_register_dispatch("com.apple.WebKit.fullGC", &dummy, dispatch_get_main_queue(), ^(int) {
-        GCController::singleton().garbageCollectNow();
-    });
-    notify_register_dispatch("com.apple.WebKit.deleteAllCode", &dummy, dispatch_get_main_queue(), ^(int) {
-        GCController::singleton().deleteAllCode();
-        GCController::singleton().garbageCollectNow();
-    });
-}
-
 void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
-    {
-        ReliefLogger log("Purging SQLite caches");
-        _sqlite3_purgeEligiblePagerCacheMemory();
-    }
-
-    {
-        ReliefLogger log("Drain LayerPools");
-        for (auto& pool : LayerPool::allLayerPools())
-            pool->drain();
-    }
-#if USE(IOSURFACE)
-    {
-        ReliefLogger log("Drain IOSurfacePool");
-        IOSurfacePool::sharedPool().discardAllSurfaces();
-    }
-#endif
-
     if (critical == Critical::Yes && (!isUnderMemoryPressure() || m_isSimulatingMemoryPressure)) {
         // libcache listens to OS memory notifications, but for process suspension
         // or memory pressure simulation, we need to prod it manually:
@@ -211,7 +178,7 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
     double startTime = monotonicallyIncreasingTime();
 #endif
 
-    m_lowMemoryHandler(critical, synchronous);
+    releaseMemory(critical, synchronous);
 
 #if !PLATFORM(IOS)
     unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
