@@ -31,6 +31,7 @@
 #include "WebKitConsoleMessagePrivate.h"
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
+#include "WebKitDOMElementPrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
@@ -60,6 +61,7 @@ enum {
     SEND_REQUEST,
     CONTEXT_MENU,
     CONSOLE_MESSAGE_SENT,
+    FORM_CONTROLS_ASSOCIATED,
 
     LAST_SIGNAL
 };
@@ -340,6 +342,28 @@ private:
     WebKitWebPage* m_webPage;
 };
 
+class FormClient final : public API::InjectedBundle::FormClient {
+public:
+    explicit FormClient(WebKitWebPage* webPage)
+        : m_webPage(webPage)
+    {
+    }
+
+    void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements) override
+    {
+        GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
+        for (size_t i = 0; i < elements.size(); ++i)
+            g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].get()));
+
+        g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED], 0, formElements.get());
+    }
+
+    bool shouldNotifyOnFormChanges(WebPage*) override { return true; }
+
+private:
+    WebKitWebPage* m_webPage;
+};
+
 static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebPage* webPage = WEBKIT_WEB_PAGE(object);
@@ -473,6 +497,33 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         g_cclosure_marshal_VOID__BOXED,
         G_TYPE_NONE, 1,
         WEBKIT_TYPE_CONSOLE_MESSAGE | G_SIGNAL_TYPE_STATIC_SCOPE);
+
+    /**
+     * WebKitWebPage::form-controls-associated:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     * @elements: (element-type WebKit.DOMElement) (transfer none): a #GPtrArray of
+     *     #WebKitDOMElement with the list of forms in the page
+     *
+     * Emitted after form elements (or form associated elements) are associated to a particular web
+     * page. Useful to implement form autofilling with web pages where form fields are dynamically
+     * added (as many JS frameworks do). This might be emitted multiple times for the same web page.
+     *
+     * Note that this signal could be also emitted when form controls are moved between forms. In
+     * those cases the @elements array carries the list of those elements which have moved.
+     *
+     * In any case the members of the @elements array will be alive during signal emission so
+     * clients should take a reference to keep them alive.
+     *
+     * Since: 2.16
+     */
+    signals[FORM_CONTROLS_ASSOCIATED] = g_signal_new(
+        "form-controls-associated",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, 0, nullptr,
+        g_cclosure_marshal_VOID__BOXED,
+        G_TYPE_NONE, 1,
+        G_TYPE_PTR_ARRAY);
 }
 
 WebPage* webkitWebPageGetPage(WebKitWebPage *webPage)
@@ -545,6 +596,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 
     webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
     webPage->setInjectedBundleUIClient(std::make_unique<PageUIClient>(page));
+    webPage->setInjectedBundleFormClient(std::make_unique<FormClient>(page));
 
     return page;
 }

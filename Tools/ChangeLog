@@ -1,3 +1,23 @@
+2016-10-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] New API to notify about dynamically added forms
+        https://bugs.webkit.org/show_bug.cgi?id=164050
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a new test case to verify that dinamically added forms correctly trigger the
+        "form-controls-associated" signal from WebPage.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (didAssociateFormControlsCallback):
+        (testWebExtensionFormControlsAssociated):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (DelayedSignal::DelayedSignal):
+        (emitFormControlsAssociated):
+        (formControlsAssociatedCallback):
+        (pageCreatedCallback):
+
 2016-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebHTMLView's _attributeStringFromDOMRange should use HTMLConverter instead of NSAttributedString's _initWithDOMRange

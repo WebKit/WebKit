@@ -1,3 +1,21 @@
+2016-10-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] New API to notify about dynamically added forms
+        https://bugs.webkit.org/show_bug.cgi?id=164050
+
+        Reviewed by Carlos Garcia Campos.
+
+        This new API exports the WebCore event didAssociateFormControls through the web extension
+        mechanism. This will help clients (mainly web browsers) to implement robust auto filling
+        mechanisms. It deals nicely with dynamically created forms (and form controls) as many JS
+        frameworks do nowadays.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp: Added a FormClient implementation of
+        API::InjectedBundle::FormClient.
+        (webkitWebPageFormControlsAssociated): Emit the new signal.
+        (webkit_web_page_class_init): Added the new signal "forms-controls-associated".
+        (webkitWebPageCreate): Set the WebPage as a FormClient.
+
 2016-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Allow to use WebMemorySampler feature.

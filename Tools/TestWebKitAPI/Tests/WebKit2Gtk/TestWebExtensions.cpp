@@ -27,6 +27,10 @@ static const char* webExtensionsUserData = "Web Extensions user data";
 static WebKitTestBus* bus;
 static GUniquePtr<char> scriptDialogResult;
 
+#define INPUT_ID "input-id"
+#define FORM_ID "form-id"
+#define FORM2_ID "form2-id"
+
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
@@ -212,6 +216,65 @@ static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconst
     g_signal_handler_disconnect(test->m_webView, permissionRequestSignalID);
 }
 
+static void didAssociateFormControlsCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, WebViewTest* test)
+{
+    const char* formIds;
+    g_variant_get(result, "(&s)", &formIds);
+    g_assert(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, INPUT_ID));
+
+    test->quitMainLoop();
+}
+
+static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpointer)
+{
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
+    guint id = g_dbus_connection_signal_subscribe(connection,
+        nullptr,
+        "org.webkit.gtk.WebExtensionTest",
+        "FormControlsAssociated",
+        "/org/webkit/gtk/WebExtensionTest",
+        nullptr,
+        G_DBUS_SIGNAL_FLAGS_NONE,
+        reinterpret_cast<GDBusSignalCallback>(didAssociateFormControlsCallback),
+        test,
+        nullptr);
+    g_assert(id);
+
+    test->loadHtml("<!DOCTYPE html><head><title>WebKitGTK+ Web Extensions Test</title></head><div id=\"placeholder\"/>", 0);
+    test->waitUntilLoadFinished();
+
+    static const char* addFormScript =
+        "var input = document.createElement(\"input\");"
+        "input.id = \"" INPUT_ID "\";"
+        "input.type = \"password\";"
+        "var form = document.createElement(\"form\");"
+        "form.id = \"" FORM_ID "\";"
+        "form.appendChild(input);"
+        "var form2 = document.createElement(\"form\");"
+        "form2.id = \"" FORM2_ID "\";"
+        "var placeholder = document.getElementById(\"placeholder\");"
+        "placeholder.appendChild(form);"
+        "placeholder.appendChild(form2);";
+
+    webkit_web_view_run_javascript(test->m_webView, addFormScript, nullptr, nullptr, nullptr);
+    g_main_loop_run(test->m_mainLoop);
+
+    static const char* moveFormElementScript =
+        "var form = document.getElementById(\"" FORM_ID "\");"
+        "var form2 = document.getElementById(\"" FORM2_ID "\");"
+        "var input = document.getElementById(\"" INPUT_ID "\");"
+        "form.removeChild(input);"
+        "form2.appendChild(input);";
+
+    webkit_web_view_run_javascript(test->m_webView, moveFormElementScript, nullptr, nullptr, nullptr);
+    g_main_loop_run(test->m_mainLoop);
+
+    g_dbus_connection_signal_unsubscribe(connection, id);
+}
+
 void beforeAll()
 {
     bus = new WebKitTestBus();
@@ -224,6 +287,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebExtension", "window-object-cleared", testWebExtensionWindowObjectCleared);
     WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
     WebViewTest::add("WebKitWebView", "install-missing-plugins-permission-request", testInstallMissingPluginsPermissionRequest);
+    WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
 }
 
 void afterAll()
