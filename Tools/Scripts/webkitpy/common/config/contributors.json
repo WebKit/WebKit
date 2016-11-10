@@ -3990,6 +3990,16 @@
       ],
       "status" : "committer"
    },
+   "Miguel Gomez" : {
+      "emails" : [
+         "magomez@igalia.com"
+      ],
+      "expertise" : "The WebKitGTK+ port, Accelerated Compositing, HW acceleration",
+      "nicks" : [
+         "magomez"
+      ],
+      "status" : "committer"
+   },
    "Mihai Balan" : {
       "emails" : [
          "mibalan@adobe.com"
