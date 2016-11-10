@@ -1,3 +1,15 @@
+2016-11-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] fix error message caused by eina log
+        https://bugs.webkit.org/show_bug.cgi?id=164546
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix error message caused by eina log when MiniBrowser is working with help option.
+
+        * MiniBrowser/efl/main.c:
+        (quit):
+
 2016-11-09  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r208509.

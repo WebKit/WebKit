@@ -1022,10 +1022,10 @@ quit(Eina_Bool success, const char *msg)
    if (msg)
      success ? INFO("%s", msg) : ERROR("%s", msg);
 
-   eina_log_domain_unregister(_log_domain_id);
    ewk_object_unref(configuration());
    ewk_shutdown();
    elm_shutdown();
+   eina_log_domain_unregister(_log_domain_id);
 
    if (!success)
      return EXIT_FAILURE;
