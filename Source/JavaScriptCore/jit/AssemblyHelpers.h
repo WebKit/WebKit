@@ -1290,6 +1290,19 @@ public:
     {
         return argumentsStart(codeOrigin.inlineCallFrame);
     }
+
+    static VirtualRegister argumentCount(InlineCallFrame* inlineCallFrame)
+    {
+        ASSERT(!inlineCallFrame || inlineCallFrame->isVarargs());
+        if (!inlineCallFrame)
+            return VirtualRegister(CallFrameSlot::argumentCount);
+        return inlineCallFrame->argumentCountRegister;
+    }
+
+    static VirtualRegister argumentCount(const CodeOrigin& codeOrigin)
+    {
+        return argumentCount(codeOrigin.inlineCallFrame);
+    }
     
     void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch);
 

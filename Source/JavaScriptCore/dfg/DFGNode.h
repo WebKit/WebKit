@@ -1456,6 +1456,7 @@ public:
         case MultiGetByOffset:
         case GetClosureVar:
         case GetFromArguments:
+        case GetArgument:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -2422,6 +2423,17 @@ public:
     unsigned numberOfArgumentsToSkip()
     {
         ASSERT(op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds);
+        return m_opInfo.as<unsigned>();
+    }
+
+    bool hasArgumentIndex()
+    {
+        return op() == GetArgument;
+    }
+
+    unsigned argumentIndex()
+    {
+        ASSERT(hasArgumentIndex());
         return m_opInfo.as<unsigned>();
     }
 

@@ -236,6 +236,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, node->scopeOffset());
     if (node->hasDirectArgumentsOffset())
         out.print(comma, node->capturedArgumentsOffset());
+    if (node->hasArgumentIndex())
+        out.print(comma, node->argumentIndex());
     if (node->hasRegisterPointer())
         out.print(comma, "global", "(", RawPointer(node->variablePointer()), ")");
     if (node->hasIdentifier())

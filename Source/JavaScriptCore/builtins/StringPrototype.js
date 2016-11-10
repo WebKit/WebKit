@@ -131,7 +131,7 @@ function padStart(maxLength/*, fillString*/)
         return string;
 
     var filler;
-    var fillString = arguments[1];
+    var fillString = @argument(1);
     if (fillString === @undefined)
         filler = " ";
     else {
@@ -168,7 +168,7 @@ function padEnd(maxLength/*, fillString*/)
         return string;
 
     var filler;
-    var fillString = arguments[1];
+    var fillString = @argument(1);
     if (fillString === @undefined)
         filler = " ";
     else {
@@ -252,12 +252,14 @@ function localeCompare(that/*, locales, options */)
     var thatString = @toString(that);
 
     // Avoid creating a collator for defaults.
-    if (arguments[1] === @undefined && arguments[2] === @undefined)
+    var locales = @argument(1);
+    var options = @argument(2);
+    if (locales === @undefined && options === @undefined)
         return @Collator.prototype.compare(thisString, thatString);
 
     // 6. Let collator be Construct(%Collator%, «locales, options»).
     // 7. ReturnIfAbrupt(collator).
-    var collator = new @Collator(arguments[1], arguments[2]);
+    var collator = new @Collator(locales, options);
 
     // 8. Return CompareStrings(collator, S, That).
     return collator.compare(thisString, thatString);

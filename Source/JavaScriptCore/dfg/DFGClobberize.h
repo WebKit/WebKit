@@ -1130,6 +1130,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(DirectArgumentsLoc, heap, node->child1()), LazyNode(node->child2().node()));
         return;
     }
+
+    case GetArgument: {
+        read(Stack);
+        // FIXME: It would be trivial to have a def here.
+        // https://bugs.webkit.org/show_bug.cgi?id=143077
+        return;
+    }
         
     case GetGlobalVar:
     case GetGlobalLexicalVariable:

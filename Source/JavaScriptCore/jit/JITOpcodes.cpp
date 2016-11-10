@@ -1478,6 +1478,29 @@ void JIT::emit_op_get_rest_length(Instruction* currentInstruction)
 #endif
 }
 
+void JIT::emit_op_get_argument(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int index = currentInstruction[2].u.operand;
+#if USE(JSVALUE64)
+    JSValueRegs resultRegs(regT0);
+#else
+    JSValueRegs resultRegs(regT1, regT0);
+#endif
+
+    load32(payloadFor(CallFrameSlot::argumentCount), regT2);
+    Jump argumentOutOfBounds = branch32(LessThanOrEqual, regT2, TrustedImm32(index));
+    loadValue(addressFor(CallFrameSlot::thisArgument + index), resultRegs);
+    Jump done = jump();
+
+    argumentOutOfBounds.link(this);
+    moveValue(jsUndefined(), resultRegs);
+
+    done.link(this);
+    emitValueProfilingSite();
+    emitPutVirtualRegister(dst, resultRegs);
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

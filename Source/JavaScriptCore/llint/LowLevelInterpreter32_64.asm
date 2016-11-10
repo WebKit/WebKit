@@ -672,6 +672,26 @@ _llint_op_enter:
     dispatch(1)
 
 
+_llint_op_get_argument:
+    traceExecution()
+    loadisFromInstruction(1, t1)
+    loadisFromInstruction(2, t2)
+    loadi PayloadOffset + ArgumentCount[cfr], t0
+    bilteq t0, t2, .opGetArgumentOutOfBounds
+    loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
+    loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t3
+    storei t0, TagOffset[cfr, t1, 8]
+    storei t3, PayloadOffset[cfr, t1, 8]
+    valueProfile(t0, t3, 12, t1)
+    dispatch(4)
+
+.opGetArgumentOutOfBounds:
+    storei UndefinedTag, TagOffset[cfr, t1, 8]
+    storei 0, PayloadOffset[cfr, t1, 8]
+    valueProfile(UndefinedTag, 0, 12, t1)
+    dispatch(4)
+
+
 _llint_op_argument_count:
     traceExecution()
     loadisFromInstruction(1, t2)

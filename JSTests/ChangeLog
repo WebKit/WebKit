@@ -1,3 +1,30 @@
+2016-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Avoid cloned arguments allocation in ArrayPrototype methods
+        https://bugs.webkit.org/show_bug.cgi?id=164502
+
+        Reviewed by Saam Barati.
+
+        * stress/argument-intrinsic-basic.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/argument-intrinsic-inlining-with-result-escape.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        (escape):
+        * stress/argument-intrinsic-nested-inlining.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        (builtinCaller1):
+        (builtinCaller2):
+        (escape):
+        * stress/argument-intrinsic-not-convert-to-get-argument.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/argument-intrinsic-with-stack-write.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+
 2016-11-09  Saam Barati  <sbarati@apple.com>
 
         Math.min()/Math.max() with no arguments is lowered incorrectly in the BytecodeParser

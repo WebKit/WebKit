@@ -167,11 +167,7 @@ void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg leng
     if (inlineCallFrame && !inlineCallFrame->isVarargs())
         m_jit.move(TrustedImm32(inlineCallFrame->arguments.size() - !includeThis), lengthGPR);
     else {
-        VirtualRegister argumentCountRegister;
-        if (!inlineCallFrame)
-            argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
-        else
-            argumentCountRegister = inlineCallFrame->argumentCountRegister;
+        VirtualRegister argumentCountRegister = m_jit.argumentCount(inlineCallFrame);
         m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), lengthGPR);
         if (!includeThis)
             m_jit.sub32(TrustedImm32(1), lengthGPR);
@@ -6631,11 +6627,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
         length.adopt(realLength);
         lengthGPR = length.gpr();
 
-        VirtualRegister argumentCountRegister;
-        if (!node->origin.semantic.inlineCallFrame)
-            argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
-        else
-            argumentCountRegister = node->origin.semantic.inlineCallFrame->argumentCountRegister;
+        VirtualRegister argumentCountRegister = m_jit.argumentCount(node->origin.semantic);
         m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), lengthGPR);
         m_jit.sub32(TrustedImm32(1), lengthGPR);
     }
@@ -6773,6 +6765,24 @@ void SpeculativeJIT::compilePutToArguments(Node* node)
     
     m_jit.storeValue(valueRegs, JITCompiler::Address(argumentsGPR, DirectArguments::offsetOfSlot(node->capturedArgumentsOffset().offset())));
     noResult(node);
+}
+
+void SpeculativeJIT::compileGetArgument(Node* node)
+{
+    GPRTemporary argumentCount(this);
+    JSValueRegsTemporary result(this);
+    GPRReg argumentCountGPR = argumentCount.gpr();
+    JSValueRegs resultRegs = result.regs();
+    m_jit.load32(CCallHelpers::payloadFor(m_jit.argumentCount(node->origin.semantic)), argumentCountGPR);
+    auto argumentOutOfBounds = m_jit.branch32(CCallHelpers::LessThanOrEqual, argumentCountGPR, CCallHelpers::TrustedImm32(node->argumentIndex()));
+    m_jit.loadValue(CCallHelpers::addressFor(CCallHelpers::argumentsStart(node->origin.semantic) + node->argumentIndex() - 1), resultRegs);
+    auto done = m_jit.jump();
+
+    argumentOutOfBounds.link(&m_jit);
+    m_jit.moveValue(jsUndefined(), resultRegs);
+
+    done.link(&m_jit);
+    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileCreateScopedArguments(Node* node)

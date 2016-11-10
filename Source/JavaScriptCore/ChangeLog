@@ -1,3 +1,161 @@
+2016-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Avoid cloned arguments allocation in ArrayPrototype methods
+        https://bugs.webkit.org/show_bug.cgi?id=164502
+
+        Reviewed by Saam Barati.
+
+        In many builtin functions, we use `arguments` to just get optional parameters.
+        While FTL argument elimination can drop `arguments` allocations, it leaves
+        the allocations in LLInt, Baseline, and DFG. And we found that DFG compiled
+        Array#map is heavily used in ES6SampleBench/Basic. And it always creates
+        a meaningless ClonedArguments.
+
+        Using ES6 default parameter here is not a solution. It increases the number
+        of parameters of the CodeBlock (not `function.length`). And the optional
+        parameters in Array.prototype.xxx methods are not typically passed. For
+        example, we typically do not pass `thisArg` to `Array.prototype.map` function.
+        In this case, the arity check frequently fails. It requires the additional C
+        call to fixup arguments and it becomes pure overhead.
+
+        To solve this problem, this patch introduces a new bytecode intrinsic @argument().
+        This offers the way to retrieve the argument value without increasing the
+        arity of the function. And if the argument is not passed (out of bounds), it
+        just returns `undefined`. The semantics of this intrinsic is the same to the C++
+        ExecState::argument(). This operation does not require `arguments` object. And we
+        can drop the `argument` references even in lower 3 tiers.
+
+        We implement op_get_argument for this intrinsic. And later this will be converted
+        to DFG GetArgument node. All the tiers handles this feature.
+
+        This patch improves ES6SampleBench/Basic 13.8% in steady state. And in summary,
+        it improves 4.5%.
+
+        In the future, we can improve the implementation of the default parameters.
+        Currently, the default parameter always increases the arity of the function. So
+        if you do not pass the argument, the arity check fails. But since it is the default
+        parameter, it is likely that we don't pass the argument. Using op_get_argument to
+        implement the default parameter can decrease the case in which the arity check
+        frequently fails. And it can change the builtin implementation to use the ES6
+        default parameters instead of using the special @argument() intrinsic in the future.
+        And at that case, the user code also receives the benefit.
+
+        ES6SampleBench/Basic.
+            Baseline:
+                Running... Basic ( 1  to go)
+                firstIteration:     39.38 ms +- 4.48 ms
+                averageWorstCase:   20.79 ms +- 0.96 ms
+                steadyState:        1959.22 ms +- 65.55 ms
+
+            Patched:
+                Running... Basic ( 1  to go)
+                firstIteration:     37.85 ms +- 4.09 ms
+                averageWorstCase:   18.60 ms +- 0.76 ms
+                steadyState:        1721.89 ms +- 57.58 ms
+
+        All summary.
+            Baseline:
+                summary:            164.34 ms +- 5.01 ms
+            Patched:
+                summary:            157.26 ms +- 5.96 ms
+
+        * builtins/ArrayConstructor.js:
+        * builtins/ArrayPrototype.js:
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (copyWithin):
+        * builtins/DatePrototype.js:
+        (toLocaleString):
+        (toLocaleDateString):
+        (toLocaleTimeString):
+        * builtins/MapPrototype.js:
+        (forEach):
+        * builtins/NumberPrototype.js:
+        (toLocaleString):
+        * builtins/SetPrototype.js:
+        (forEach):
+        * builtins/StringPrototype.js:
+        (padStart):
+        (padEnd):
+        (localeCompare):
+        * builtins/TypedArrayConstructor.js:
+        * builtins/TypedArrayPrototype.js:
+        (every):
+        (fill):
+        (find):
+        (findIndex):
+        (forEach):
+        (some):
+        (reduce):
+        (reduceRight):
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetArgument):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_argument):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArgumentIndex):
+        (JSC::DFG::Node::argumentIndex):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetArgument):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgument):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_argument):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_argument):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness

@@ -2839,6 +2839,15 @@ RegisterID* BytecodeGenerator::emitAssert(RegisterID* condition, int line)
     return condition;
 }
 
+RegisterID* BytecodeGenerator::emitGetArgument(RegisterID* dst, int32_t index)
+{
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_argument);
+    instructions().append(dst->index());
+    instructions().append(index + 1); // Including |this|.
+    instructions().append(profile);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     size_t begin = instructions().size();

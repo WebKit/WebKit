@@ -33,7 +33,7 @@ function forEach(callback /*, thisArg */)
     if (typeof callback !== 'function')
         @throwTypeError("Map.prototype.forEach callback must be a function");
 
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     var iterator = @MapIterator(this);
 
     // To avoid object allocations for iterator result objects, we pass the placeholder to the special "next" function in order to fill the results.

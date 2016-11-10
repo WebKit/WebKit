@@ -773,6 +773,14 @@ void CodeBlock::dumpBytecode(
             printLocationOpAndRegisterOperand(out, exec, location, it, "argument_count", r0);
             break;
         }
+        case op_get_argument: {
+            int r0 = (++it)->u.operand;
+            int index = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "argument", r0);
+            out.printf(", %d", index);
+            dumpValueProfiling(out, it, hasPrintedProfiling);
+            break;
+        }
         case op_create_rest: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -2071,7 +2079,8 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_try_get_by_id:
         case op_get_by_val_with_this:
         case op_get_from_arguments:
-        case op_to_number: {
+        case op_to_number:
+        case op_get_argument: {
             linkValueProfile(i, opLength);
             break;
         }

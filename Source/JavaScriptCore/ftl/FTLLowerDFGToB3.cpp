@@ -826,6 +826,9 @@ private:
         case PutToArguments:
             compilePutToArguments();
             break;
+        case GetArgument:
+            compileGetArgument();
+            break;
         case CompareEq:
             compileCompareEq();
             break;
@@ -3445,11 +3448,7 @@ private:
         if (inlineCallFrame && !inlineCallFrame->isVarargs())
             limit = m_out.constInt32(inlineCallFrame->arguments.size() - 1);
         else {
-            VirtualRegister argumentCountRegister;
-            if (!inlineCallFrame)
-                argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
-            else
-                argumentCountRegister = inlineCallFrame->argumentCountRegister;
+            VirtualRegister argumentCountRegister = AssemblyHelpers::argumentCount(inlineCallFrame);
             limit = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
         }
         
@@ -5158,6 +5157,29 @@ private:
             lowJSValue(m_node->child2()),
             lowCell(m_node->child1()),
             m_heaps.DirectArguments_storage[m_node->capturedArgumentsOffset().offset()]);
+    }
+
+    void compileGetArgument()
+    {
+        LValue argumentCount = m_out.load32(payloadFor(AssemblyHelpers::argumentCount(m_node->origin.semantic)));
+
+        LBasicBlock inBounds = m_out.newBlock();
+        LBasicBlock outOfBounds = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(m_out.lessThanOrEqual(argumentCount, m_out.constInt32(m_node->argumentIndex())), unsure(outOfBounds), unsure(inBounds));
+
+        LBasicBlock lastNext = m_out.appendTo(inBounds, outOfBounds);
+        VirtualRegister arg = AssemblyHelpers::argumentsStart(m_node->origin.semantic) + m_node->argumentIndex() - 1;
+        ValueFromBlock inBoundsResult = m_out.anchor(m_out.load64(addressFor(arg)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(outOfBounds, continuation);
+        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(ValueUndefined));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, inBoundsResult, outOfBoundsResult));
     }
     
     void compileCompareEq()

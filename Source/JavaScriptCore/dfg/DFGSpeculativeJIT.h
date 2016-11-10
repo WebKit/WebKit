@@ -2668,6 +2668,7 @@ public:
     void compileCreateDirectArguments(Node*);
     void compileGetFromArguments(Node*);
     void compilePutToArguments(Node*);
+    void compileGetArgument(Node*);
     void compileCreateScopedArguments(Node*);
     void compileCreateClonedArguments(Node*);
     void compileCreateRest(Node*);

@@ -75,8 +75,8 @@ function toLocaleString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsAnyAll(arguments[1]);
-    var locales = arguments[0];
+    var options = toDateTimeOptionsAnyAll(@argument(1));
+    var locales = @argument(0);
 
     var dateFormat = new @DateTimeFormat(locales, options);
     return dateFormat.format(value);
@@ -125,8 +125,8 @@ function toLocaleDateString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsDateDate(arguments[1]);
-    var locales = arguments[0];
+    var options = toDateTimeOptionsDateDate(@argument(1));
+    var locales = @argument(0);
 
     var dateFormat = new @DateTimeFormat(locales, options);
     return dateFormat.format(value);
@@ -174,8 +174,8 @@ function toLocaleTimeString(/* locales, options */)
     if (@isNaN(value))
         return "Invalid Date";
 
-    var options = toDateTimeOptionsTimeTime(arguments[1]);
-    var locales = arguments[0];
+    var options = toDateTimeOptionsTimeTime(@argument(1));
+    var locales = @argument(0);
 
     var dateFormat = new @DateTimeFormat(locales, options);
     return dateFormat.format(value);

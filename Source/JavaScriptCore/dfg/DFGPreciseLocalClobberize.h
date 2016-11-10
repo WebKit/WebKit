@@ -116,7 +116,7 @@ private:
         case TailCallForwardVarargsInlinedCaller: {
 
             InlineCallFrame* inlineCallFrame;
-            if (m_node->argumentsChild())
+            if (m_node->hasArgumentsChild() && m_node->argumentsChild())
                 inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame;
             else
                 inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
@@ -143,6 +143,24 @@ private:
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
             break;
         }
+
+        case GetArgument: {
+            InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
+            unsigned indexIncludingThis = m_node->argumentIndex();
+            if (!inlineCallFrame) {
+                if (indexIncludingThis < static_cast<unsigned>(m_graph.m_codeBlock->numParameters()))
+                    m_read(virtualRegisterForArgument(indexIncludingThis));
+                m_read(VirtualRegister(CallFrameSlot::argumentCount));
+                break;
+            }
+
+            ASSERT_WITH_MESSAGE(inlineCallFrame->isVarargs(), "GetArgument is only used for InlineCallFrame if the call frame is varargs.");
+            if (indexIncludingThis < inlineCallFrame->arguments.size())
+                m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(indexIncludingThis).offset()));
+            m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+            break;
+        }
+
             
         default: {
             // All of the outermost arguments, except this, are definitely read.

@@ -2120,6 +2120,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutToArguments:
         break;
 
+    case GetArgument:
+        forNode(node).makeHeapTop();
+        break;
+
     case TryGetById:
         // FIXME: This should constant fold at least as well as the normal GetById case.
         // https://bugs.webkit.org/show_bug.cgi?id=156422

@@ -78,12 +78,13 @@ function reduce(callback /*, initialValue */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.reduce callback must be a function");
 
-    if (length === 0 && arguments.length < 2)
+    var argumentCount = @argumentCount();
+    if (length === 0 && argumentCount < 2)
         @throwTypeError("reduce of empty array with no initial value");
 
     var accumulator, k = 0;
-    if (arguments.length > 1)
-        accumulator = arguments[1];
+    if (argumentCount > 1)
+        accumulator = @argument(1);
     else {
         while (k < length && !(k in array))
             k += 1;
@@ -113,12 +114,13 @@ function reduceRight(callback /*, initialValue */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.reduceRight callback must be a function");
 
-    if (length === 0 && arguments.length < 2)
+    var argumentCount = @argumentCount();
+    if (length === 0 && argumentCount < 2)
         @throwTypeError("reduceRight of empty array with no initial value");
 
     var accumulator, k = length - 1;
-    if (arguments.length > 1)
-        accumulator = arguments[1];
+    if (argumentCount > 1)
+        accumulator = @argument(1);
     else {
         while (k >= 0 && !(k in array))
             k -= 1;
@@ -148,7 +150,7 @@ function every(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.every callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     
     for (var i = 0; i < length; i++) {
         if (!(i in array))
@@ -173,7 +175,7 @@ function forEach(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.forEach callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     
     for (var i = 0; i < length; i++) {
         if (i in array)
@@ -194,7 +196,7 @@ function filter(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.filter callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
 
     // Do 9.4.2.3 ArraySpeciesCreate
     var result;
@@ -243,7 +245,7 @@ function map(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.map callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
 
     // Do 9.4.2.3 ArraySpeciesCreate
     var result;
@@ -289,7 +291,7 @@ function some(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.some callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     for (var i = 0; i < length; i++) {
         if (!(i in array))
             continue;
@@ -309,9 +311,7 @@ function fill(value /* [, start [, end]] */)
     var array = @Object(this);
     var length = @toLength(array.length);
 
-    var relativeStart = 0;
-    if (arguments.length > 1 && arguments[1] !== @undefined)
-        relativeStart = arguments[1] | 0;
+    var relativeStart = @toInteger(@argument(1));
     var k = 0;
     if (relativeStart < 0) {
         k = length + relativeStart;
@@ -323,8 +323,9 @@ function fill(value /* [, start [, end]] */)
             k = length;
     }
     var relativeEnd = length;
-    if (arguments.length > 2 && arguments[2] !== @undefined)
-        relativeEnd = arguments[2] | 0;
+    var end = @argument(2);
+    if (end !== @undefined)
+        relativeEnd = @toInteger(end);
     var final = 0;
     if (relativeEnd < 0) {
         final = length + relativeEnd;
@@ -353,7 +354,7 @@ function find(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.find callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     for (var i = 0; i < length; i++) {
         var kValue = array[i];
         if (callback.@call(thisArg, kValue, i, array))
@@ -375,7 +376,7 @@ function findIndex(callback /*, thisArg */)
     if (typeof callback !== "function")
         @throwTypeError("Array.prototype.findIndex callback must be a function");
     
-    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
+    var thisArg = @argument(1);
     for (var i = 0; i < length; i++) {
         if (callback.@call(thisArg, array[i], i, array))
             return i;
@@ -397,8 +398,9 @@ function includes(searchElement /*, fromIndex*/)
         return false;
 
     var fromIndex = 0;
-    if (arguments.length > 1 && arguments[1] !== @undefined)
-        fromIndex = @toInteger(arguments[1]);
+    var from = @argument(1);
+    if (from !== @undefined)
+        fromIndex = @toInteger(from);
 
     var index;
     if (fromIndex >= 0)
@@ -752,14 +754,11 @@ function copyWithin(target, start /*, end */)
     var from = (relativeStart < 0) ? maxWithPositives(length + relativeStart, 0) : minWithMaybeNegativeZeroAndPositive(relativeStart, length);
 
     var relativeEnd;
-    if (arguments.length >= 3) {
-        var end = arguments[2];
-        if (end === @undefined)
-            relativeEnd = length;
-        else
-            relativeEnd = @toInteger(end);
-    } else
+    var end = @argument(2);
+    if (end === @undefined)
         relativeEnd = length;
+    else
+        relativeEnd = @toInteger(end);
 
     var finalValue = (relativeEnd < 0) ? maxWithPositives(length + relativeEnd, 0) : minWithMaybeNegativeZeroAndPositive(relativeEnd, length);
 

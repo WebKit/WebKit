@@ -5303,6 +5303,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 get(VirtualRegister(currentInstruction[3].u.operand)));
             NEXT_OPCODE(op_put_to_arguments);
         }
+
+        case op_get_argument: {
+            InlineCallFrame* inlineCallFrame = this->inlineCallFrame();
+            Node* argument;
+            int32_t argumentIndexIncludingThis = currentInstruction[2].u.operand;
+            if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+                int32_t argumentCountIncludingThis = inlineCallFrame->arguments.size();
+                if (argumentIndexIncludingThis < argumentCountIncludingThis)
+                    argument = get(virtualRegisterForArgument(argumentIndexIncludingThis));
+                else
+                    argument = addToGraph(JSConstant, OpInfo(m_constantUndefined));
+            } else
+                argument = addToGraph(GetArgument, OpInfo(argumentIndexIncludingThis), OpInfo(getPrediction()));
+            set(VirtualRegister(currentInstruction[1].u.operand), argument);
+            NEXT_OPCODE(op_get_argument);
+        }
             
         case op_new_func:
         case op_new_generator_func: {

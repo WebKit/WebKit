@@ -214,6 +214,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_create_cloned_arguments:
     case op_get_from_arguments:
     case op_put_to_arguments:
+    case op_get_argument:
     case op_jneq_ptr:
     case op_typeof:
     case op_to_number:

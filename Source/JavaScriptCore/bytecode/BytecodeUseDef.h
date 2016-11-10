@@ -54,6 +54,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_create_cloned_arguments:
     case op_get_rest_length:
     case op_watchdog:
+    case op_get_argument:
         return;
     case op_assert:
     case op_get_scope:
@@ -462,6 +463,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_del_by_val:
     case op_unsigned:
     case op_get_from_arguments: 
+    case op_get_argument:
     case op_create_rest:
     case op_get_rest_length: {
         ASSERT(opcodeLengths[opcodeID] > 1);

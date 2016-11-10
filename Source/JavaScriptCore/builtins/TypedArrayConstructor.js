@@ -48,7 +48,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 {
     "use strict";
 
-    let mapFn = arguments[1];
+    let mapFn = @argument(1);
 
     let thisArg;
 
@@ -56,8 +56,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         if (typeof mapFn !== "function")
             @throwTypeError("TypedArray.from requires that the second argument, when provided, be a function");
 
-        if (arguments.length > 2)
-            thisArg = arguments[2];
+        thisArg = @argument(2);
     }
 
     if (items == null)

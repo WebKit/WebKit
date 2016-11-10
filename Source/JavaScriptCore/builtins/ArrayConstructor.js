@@ -41,7 +41,7 @@ function from(items /*, mapFn, thisArg */)
 
     var thisObj = this;
 
-    var mapFn = arguments.length > 1 ? arguments[1] : @undefined;
+    var mapFn = @argument(1);
 
     var thisArg;
 
@@ -49,8 +49,7 @@ function from(items /*, mapFn, thisArg */)
         if (typeof mapFn !== "function")
             @throwTypeError("Array.from requires that the second argument, when provided, be a function");
 
-        if (arguments.length > 2)
-            thisArg = arguments[2];
+        thisArg = @argument(2);
     }
 
     if (items == null)

@@ -1746,6 +1746,7 @@ private:
         case GetCallee:
         case GetArgumentCountIncludingThis:
         case GetRestLength:
+        case GetArgument:
         case Flush:
         case PhantomLocal:
         case GetLocalUnlinked:
