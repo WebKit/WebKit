@@ -1,3 +1,10 @@
+2016-11-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed buildfix after r208450.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load8SignedExtendTo32): Added.
+
 2016-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Avoid cloned arguments allocation in ArrayPrototype methods
