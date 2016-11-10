@@ -103,5 +103,6 @@ export const Binary = (preamble, sections) => {
         }
         sectionBin.apply();
     }
+    wasmBin.trim();
     return wasmBin;
 };

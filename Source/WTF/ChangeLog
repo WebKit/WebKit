@@ -1,3 +1,16 @@
+2016-11-10  JF Bastien  <jfbastien@apple.com>
+
+        ASSERTION FAILED: length > offset encountered with wasm.yaml/wasm/js-api/test_Module.js.default-wasm
+        https://bugs.webkit.org/show_bug.cgi?id=164597
+
+        Reviewed by Keith Miller.
+
+        Decoding at end of file should fail, not assert.
+
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::decodeUInt):
+        (WTF::LEBDecoder::decodeInt32):
+
 2016-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused CFURLCACHE code

@@ -37,7 +37,8 @@ namespace WTF { namespace LEBDecoder {
 template<size_t maxByteLength, typename T>
 inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
 {
-    ASSERT(length > offset);
+    if (length <= offset)
+        return false;
     result = 0;
     unsigned shift = 0;
     size_t last = std::min(maxByteLength, length - offset - 1);
@@ -69,7 +70,8 @@ inline bool WARN_UNUSED_RETURN decodeUInt64(const uint8_t* bytes, size_t length,
 
 inline bool WARN_UNUSED_RETURN decodeInt32(const uint8_t* bytes, size_t length, size_t& offset, int32_t& result)
 {
-    ASSERT(length > offset);
+    if (length <= offset)
+        return false;
     result = 0;
     unsigned shift = 0;
     size_t last = std::min(max32BitLEBByteLength, length - offset - 1);

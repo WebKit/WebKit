@@ -1,3 +1,19 @@
+2016-11-10  JF Bastien  <jfbastien@apple.com>
+
+        ASSERTION FAILED: length > offset encountered with wasm.yaml/wasm/js-api/test_Module.js.default-wasm
+        https://bugs.webkit.org/show_bug.cgi?id=164597
+
+        Reviewed by Keith Miller.
+
+        Trim the array buffer before returning it: it's optimistically
+        over-allocated to avoid growing all the time, but when parsed it
+        can't have extra content.
+
+        * wasm/Builder_WebAssemblyBinary.js:
+        (export.const.Binary):
+        * wasm/LowLevelBinary.js:
+        (export.default.LowLevelBinary.prototype.get return):
+
 2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)

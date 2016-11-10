@@ -1,3 +1,14 @@
+2016-11-10  JF Bastien  <jfbastien@apple.com>
+
+        ASSERTION FAILED: length > offset encountered with wasm.yaml/wasm/js-api/test_Module.js.default-wasm
+        https://bugs.webkit.org/show_bug.cgi?id=164597
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::parseVarUInt32): move closer to other parsers
+        (JSC::Wasm::Parser::parseVarUInt64): move closer to other parsers
+
 2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: DataView / TypedArray methods should throw RangeErrors for negative numbers (ToIndex)

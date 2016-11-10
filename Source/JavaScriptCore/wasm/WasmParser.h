@@ -46,15 +46,15 @@ protected:
     bool WARN_UNUSED_RETURN consumeString(const char*);
     bool WARN_UNUSED_RETURN consumeUTF8String(String&, size_t);
 
-    bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t& result);
-    bool WARN_UNUSED_RETURN parseInt7(int8_t& result);
-    bool WARN_UNUSED_RETURN parseUInt7(uint8_t& result);
-    bool WARN_UNUSED_RETURN parseUInt32(uint32_t& result);
-    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return WTF::LEBDecoder::decodeUInt32(m_source, m_sourceLength, m_offset, result); }
-    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t& result) { return WTF::LEBDecoder::decodeUInt64(m_source, m_sourceLength, m_offset, result); }
+    bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
+    bool WARN_UNUSED_RETURN parseInt7(int8_t&);
+    bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
+    bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
+    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
+    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
 
-    bool WARN_UNUSED_RETURN parseValueType(Type& result);
-    bool WARN_UNUSED_RETURN parseExternalKind(External::Kind& result);
+    bool WARN_UNUSED_RETURN parseValueType(Type&);
+    bool WARN_UNUSED_RETURN parseExternalKind(External::Kind&);
 
     const uint8_t* source() const { return m_source; }
     size_t length() const { return m_sourceLength; }
@@ -110,6 +110,16 @@ ALWAYS_INLINE bool Parser::consumeUTF8String(String& result, size_t stringLength
     if (result.isEmpty())
         return false;
     return true;
+}
+
+ALWAYS_INLINE bool Parser::parseVarUInt32(uint32_t& result)
+{
+    return WTF::LEBDecoder::decodeUInt32(m_source, m_sourceLength, m_offset, result);
+}
+
+ALWAYS_INLINE bool Parser::parseVarUInt64(uint64_t& result)
+{
+    return WTF::LEBDecoder::decodeUInt64(m_source, m_sourceLength, m_offset, result);
 }
 
 ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
