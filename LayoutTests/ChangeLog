@@ -1,3 +1,14 @@
+2016-11-10  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r208522): LayoutTest fast/loader/reload-zero-byte-plugin.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=164570
+
+        Reviewed by Simon Fraser.
+
+        Unskip test which should no longer be flaky.
+
+        * platform/mac/TestExpectations:
+
 2016-11-10  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0 Support the IDBDatabase.onclose event.

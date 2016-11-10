@@ -771,6 +771,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
 
+    m_shouldDownloadUndisplayableMIMETypes = false;
+
     m_workQueueManager.clearWorkQueue();
 
     m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = false;
