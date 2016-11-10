@@ -542,26 +542,6 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
     return origin;
 }
 
-String SecurityOrigin::databaseIdentifier() const 
-{
-    // Historically, we've used the following (somewhat non-sensical) string
-    // for the databaseIdentifier of local files. We used to compute this
-    // string because of a bug in how we handled the scheme for file URLs.
-    // Now that we've fixed that bug, we still need to produce this string
-    // to avoid breaking existing persistent state.
-    if (equalIgnoringASCIICase(m_protocol, "file"))
-        return ASCIILiteral("file__0");
-
-    StringBuilder stringBuilder;
-    stringBuilder.append(m_protocol);
-    stringBuilder.append(separatorCharacter);
-    stringBuilder.append(encodeForFileName(m_host));
-    stringBuilder.append(separatorCharacter);
-    stringBuilder.appendNumber(m_port.valueOr(0));
-
-    return stringBuilder.toString();
-}
-
 bool SecurityOrigin::equal(const SecurityOrigin* other) const 
 {
     if (other == this)

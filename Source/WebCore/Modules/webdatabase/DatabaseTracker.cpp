@@ -41,6 +41,7 @@
 #include "OriginLock.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
@@ -250,7 +251,7 @@ bool DatabaseTracker::hasEntryForOriginNoLock(SecurityOrigin* origin)
         return false;
     }
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
     return statement.step() == SQLITE_ROW;
 }
@@ -276,7 +277,7 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     statement.bindText(2, databaseIdentifier);
 
     return statement.step() == SQLITE_ROW;
@@ -330,7 +331,7 @@ void DatabaseTracker::closeAllDatabases(CurrentQueryBehavior currentQueryBehavio
 
 String DatabaseTracker::originPath(SecurityOrigin* origin) const
 {
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), origin->databaseIdentifier());
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 }
 
 static String generateDatabaseFileName()
@@ -347,7 +348,7 @@ String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const 
 {
     ASSERT(!m_databaseGuard.tryLock());
 
-    String originIdentifier = origin->databaseIdentifier();
+    String originIdentifier = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
     String originPath = this->originPath(origin);
 
     // Make sure the path for this SecurityOrigin exists
@@ -433,14 +434,14 @@ bool DatabaseTracker::databaseNamesForOriginNoLock(SecurityOrigin* origin, Vecto
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
     int result;
     while ((result = statement.step()) == SQLITE_ROW)
         resultVector.append(statement.getColumnText(0));
 
     if (result != SQLITE_DONE) {
-        LOG_ERROR("Failed to retrieve all database names for origin %s", origin->databaseIdentifier().ascii().data());
+        LOG_ERROR("Failed to retrieve all database names for origin %s", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         return false;
     }
 
@@ -463,7 +464,7 @@ bool DatabaseTracker::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
 
 DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
-    String originIdentifier = origin->databaseIdentifier();
+    String originIdentifier = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
     String displayName;
     int64_t expectedUsage;
 
@@ -500,7 +501,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, Sec
 
 void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    String originIdentifier = origin->databaseIdentifier();
+    String originIdentifier = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
     int64_t guid = 0;
 
     LockHolder lockDatabase(m_databaseGuard);
@@ -651,7 +652,7 @@ void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& nam
 RefPtr<OriginLock> DatabaseTracker::originLockFor(SecurityOrigin* origin)
 {
     LockHolder lockDatabase(m_databaseGuard);
-    String databaseIdentifier = origin->databaseIdentifier();
+    String databaseIdentifier = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
 
     // The originLockMap is accessed from multiple DatabaseThreads since
     // different script contexts can be writing to different databases from
@@ -690,7 +691,7 @@ void DatabaseTracker::deleteOriginLockFor(SecurityOrigin* origin)
     // This may or may not be possible depending on whether other threads are
     // also using the OriginLock at the same time. After that, we will delete the lock file.
 
-    m_originLockMap.remove(origin->databaseIdentifier());
+    m_originLockMap.remove(SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     OriginLock::deleteLockFile(originPath(origin));
 }
 
@@ -720,7 +721,7 @@ unsigned long long DatabaseTracker::quotaForOriginNoLock(SecurityOrigin* origin)
         LOG_ERROR("Failed to prepare statement.");
         return quota;
     }
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
     if (statement.step() == SQLITE_ROW)
         quota = statement.getColumnInt64(0);
@@ -753,13 +754,13 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
     if (!originEntryExists) {
         SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
         if (statement.prepare() != SQLITE_OK) {
-            LOG_ERROR("Unable to establish origin %s in the tracker", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to establish origin %s in the tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         } else {
-            statement.bindText(1, origin->databaseIdentifier());
+            statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
             statement.bindInt64(2, quota);
 
             if (statement.step() != SQLITE_DONE)
-                LOG_ERROR("Unable to establish origin %s in the tracker", origin->databaseIdentifier().ascii().data());
+                LOG_ERROR("Unable to establish origin %s in the tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
 #if PLATFORM(IOS)
             else
                 insertedNewOrigin = true;
@@ -770,13 +771,13 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
         bool error = statement.prepare() != SQLITE_OK;
         if (!error) {
             statement.bindInt64(1, quota);
-            statement.bindText(2, origin->databaseIdentifier());
+            statement.bindText(2, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
             error = !statement.executeCommand();
         }
 
         if (error)
-            LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
     }
 
     if (m_client) {
@@ -803,12 +804,12 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     statement.bindText(2, name);
     statement.bindText(3, path);
 
     if (!statement.executeCommand()) {
-        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin->databaseIdentifier().ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data(), m_database.lastErrorMsg());
         return false;
     }
 
@@ -879,11 +880,11 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin, DeletionMode deletion
             return false;
 
         if (!databaseNamesForOriginNoLock(origin, databaseNames)) {
-            LOG_ERROR("Unable to retrieve list of database names for origin %s", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to retrieve list of database names for origin %s", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             return false;
         }
         if (!canDeleteOrigin(origin)) {
-            LOG_ERROR("Tried to delete an origin (%s) while either creating database in it or already deleting it", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Tried to delete an origin (%s) while either creating database in it or already deleting it", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             ASSERT_NOT_REACHED();
             return false;
         }
@@ -894,7 +895,7 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin, DeletionMode deletion
     for (auto& name : databaseNames) {
         if (!deleteDatabaseFile(origin, name, deletionMode)) {
             // Even if the file can't be deleted, we want to try and delete the rest, don't return early here.
-            LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         }
     }
 
@@ -905,27 +906,27 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin, DeletionMode deletion
 
         SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");
         if (statement.prepare() != SQLITE_OK) {
-            LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             return false;
         }
 
-        statement.bindText(1, origin->databaseIdentifier());
+        statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
         if (!statement.executeCommand()) {
-            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             return false;
         }
 
         SQLiteStatement originStatement(m_database, "DELETE FROM Origins WHERE origin=?");
         if (originStatement.prepare() != SQLITE_OK) {
-            LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to prepare deletion of origin %s from tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             return false;
         }
 
-        originStatement.bindText(1, origin->databaseIdentifier());
+        originStatement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
         if (!originStatement.executeCommand()) {
-            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
             return false;
         }
 
@@ -1094,7 +1095,7 @@ bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
 
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
     if (!deleteDatabaseFile(origin, name, DeletionMode::Default)) {
-        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
+        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         LockHolder lockDatabase(m_databaseGuard);
         doneDeletingDatabase(origin, name);
         return false;
@@ -1104,16 +1105,16 @@ bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
 
     SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=? AND name=?");
     if (statement.prepare() != SQLITE_OK) {
-        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         doneDeletingDatabase(origin, name);
         return false;
     }
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     statement.bindText(2, name);
 
     if (!statement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier().ascii().data());
         doneDeletingDatabase(origin, name);
         return false;
     }
@@ -1228,7 +1229,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
                     String databaseFileName;
                     SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
                     if (statement.prepare() == SQLITE_OK) {
-                        statement.bindText(1, origin->databaseIdentifier());
+                        statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
                         statement.bindText(2, databaseName);
                         if (statement.step() == SQLITE_ROW)
                             databaseFileName = statement.getColumnText(0);

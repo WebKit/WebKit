@@ -28,6 +28,7 @@
 
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebKit;
 
@@ -54,7 +55,7 @@ WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef hos
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().databaseIdentifier());
+    return toCopiedAPI(WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(securityOrigin)->securityOrigin()).databaseIdentifier());
 }
 
 WKStringRef WKSecurityOriginCopyToString(WKSecurityOriginRef securityOrigin)

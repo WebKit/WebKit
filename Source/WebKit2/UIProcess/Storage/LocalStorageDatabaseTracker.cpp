@@ -30,6 +30,7 @@
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/TextEncoding.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
@@ -63,17 +64,17 @@ LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 
 String LocalStorageDatabaseTracker::databasePath(SecurityOrigin* securityOrigin) const
 {
-    return databasePath(securityOrigin->databaseIdentifier() + ".localstorage");
+    return databasePath(SecurityOriginData::fromSecurityOrigin(*securityOrigin).databaseIdentifier() + ".localstorage");
 }
 
 void LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin(SecurityOrigin* securityOrigin)
 {
-    addDatabaseWithOriginIdentifier(securityOrigin->databaseIdentifier(), databasePath(securityOrigin));
+    addDatabaseWithOriginIdentifier(SecurityOriginData::fromSecurityOrigin(*securityOrigin).databaseIdentifier(), databasePath(securityOrigin));
 }
 
 void LocalStorageDatabaseTracker::deleteDatabaseWithOrigin(SecurityOrigin* securityOrigin)
 {
-    removeDatabaseWithOriginIdentifier(securityOrigin->databaseIdentifier());
+    removeDatabaseWithOriginIdentifier(SecurityOriginData::fromSecurityOrigin(*securityOrigin).databaseIdentifier());
 }
 
 void LocalStorageDatabaseTracker::deleteAllDatabases()

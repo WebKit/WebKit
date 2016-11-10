@@ -1,3 +1,54 @@
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Move SecurityOrigin::databaseIdentifier() to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164573
+
+        Reviewed by Brady Eidson.
+
+        No change in behavior.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory):
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::originPath):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::databaseNamesForOriginNoLock):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::originLockFor):
+        (WebCore::DatabaseTracker::deleteOriginLockFor):
+        (WebCore::DatabaseTracker::quotaForOriginNoLock):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        * Modules/webdatabase/SQLTransactionCoordinator.cpp:
+        (WebCore::getDatabaseIdentifier):
+        * dom/Document.cpp:
+        (WebCore::Document::origin):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::databaseIdentifier): Deleted.
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::databaseIdentifier):
+        * page/SecurityOriginData.h:
+
 2016-11-10  Zalan Bujtas  <zalan@apple.com>
 
         RenderElement::invalidateFlowThreadContainingBlockIncludingDescendants should be on RenderBlock.

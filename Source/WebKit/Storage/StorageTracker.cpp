@@ -33,6 +33,7 @@
 #include <WebCore/SQLiteDatabaseTracker.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -495,7 +496,7 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
     // StorageTracker db deletion.
     WebStorageNamespaceProvider::clearLocalStorageForOrigin(origin);
 
-    String originId = origin->databaseIdentifier();
+    String originId = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
     
     {
         LockHolder locker(m_originSetMutex);
@@ -647,7 +648,7 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
 
     LockHolder locker(m_databaseMutex);
 
-    String path = databasePathForOrigin(origin->databaseIdentifier());
+    String path = databasePathForOrigin(SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     if (path.isEmpty())
         return 0;
 

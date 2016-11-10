@@ -30,6 +30,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
@@ -72,8 +73,8 @@ void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& 
     ASSERT(webFrame);
 
     SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    String topLevelDocumentOriginString = topLevelDocumentOrigin ? topLevelDocumentOrigin->databaseIdentifier() : emptyString();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), request.userMediaDocumentOrigin()->databaseIdentifier(), topLevelDocumentOriginString, request.audioConstraints().data(), request.videoConstraints().data()));
+    String topLevelDocumentOriginString = topLevelDocumentOrigin ? SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin).databaseIdentifier() : emptyString();
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString, request.audioConstraints().data(), request.videoConstraints().data()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -122,8 +123,8 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(MediaDevicesEnumer
     ASSERT(webFrame);
 
     SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    String topLevelDocumentOriginString = topLevelDocumentOrigin ? topLevelDocumentOrigin->databaseIdentifier() : emptyString();
-    m_page.send(Messages::WebPageProxy::EnumerateMediaDevicesForFrame(requestID, webFrame->frameID(), request.userMediaDocumentOrigin()->databaseIdentifier(), topLevelDocumentOriginString));
+    String topLevelDocumentOriginString = topLevelDocumentOrigin ? SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin).databaseIdentifier() : emptyString();
+    m_page.send(Messages::WebPageProxy::EnumerateMediaDevicesForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString));
 }
 
 void UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest& request)

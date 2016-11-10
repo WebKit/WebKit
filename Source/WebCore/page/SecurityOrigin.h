@@ -191,10 +191,6 @@ public:
     // could make the string return "null".
     WEBCORE_EXPORT String toRawString() const;
 
-    // Serialize the security origin to a string that could be used as part of
-    // file names. This format should be used in storage APIs only.
-    WEBCORE_EXPORT String databaseIdentifier() const;
-
     // This method checks for equality between SecurityOrigins, not whether
     // one origin can access another. It is used for hash table keys.
     // For access checks, use canAccess().

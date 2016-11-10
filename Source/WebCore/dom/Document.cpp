@@ -4282,7 +4282,7 @@ String Document::referrer() const
 
 String Document::origin() const
 {
-    return securityOrigin()->databaseIdentifier();
+    return SecurityOriginData::fromSecurityOrigin(*securityOrigin()).databaseIdentifier();
 }
 
 String Document::domain() const

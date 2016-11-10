@@ -82,6 +82,7 @@
 #include "ResourceLoadInfo.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "SecurityOriginData.h"
 #include "SecurityPolicy.h"
 #include "SessionID.h"
 #include "Settings.h"
@@ -2414,7 +2415,7 @@ String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
     if (!origin)
         return emptyString();
 
-    return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
+    return pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 }
 
 void HTMLMediaElement::webkitSetMediaKeys(WebKitMediaKeys* mediaKeys)

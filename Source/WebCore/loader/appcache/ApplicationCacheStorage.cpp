@@ -35,6 +35,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "URL.h"
 #include "UUID.h"
 #include <wtf/NeverDestroyed.h>
@@ -438,7 +439,7 @@ bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin* orig
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     int result = statement.step();
 
     // Return the quota, or if it was null the default.
@@ -466,7 +467,7 @@ bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOrigin* orig
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     int result = statement.step();
 
     if (result == SQLITE_ROW) {
@@ -509,7 +510,7 @@ bool ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache(cons
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     if (excludingCacheIdentifier != 0)
         statement.bindInt64(2, excludingCacheIdentifier);
     int result = statement.step();
@@ -545,7 +546,7 @@ bool ApplicationCacheStorage::storeUpdatedQuotaForOrigin(const SecurityOrigin* o
         return false;
 
     updateStatement.bindInt64(1, quota);
-    updateStatement.bindText(2, origin->databaseIdentifier());
+    updateStatement.bindText(2, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 
     return executeStatement(updateStatement);
 }
@@ -694,7 +695,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
 
     statement.bindInt64(1, urlHostHash(group->manifestURL()));
     statement.bindText(2, group->manifestURL());
-    statement.bindText(3, group->origin()->databaseIdentifier());
+    statement.bindText(3, SecurityOriginData::fromSecurityOrigin(*group->origin()).databaseIdentifier());
 
     if (!executeStatement(statement))
         return false;
@@ -965,7 +966,7 @@ bool ApplicationCacheStorage::ensureOriginRecord(const SecurityOrigin* origin)
     if (insertOriginStatement.prepare() != SQLITE_OK)
         return false;
 
-    insertOriginStatement.bindText(1, origin->databaseIdentifier());
+    insertOriginStatement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
     insertOriginStatement.bindInt64(2, m_defaultOriginQuota);
     if (!executeStatement(insertOriginStatement))
         return false;

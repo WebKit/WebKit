@@ -1,5 +1,33 @@
 2016-11-10  Alex Christensen  <achristensen@webkit.org>
 
+        Move SecurityOrigin::databaseIdentifier() to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164573
+
+        Reviewed by Brady Eidson.
+
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCopyDatabaseIdentifier):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath):
+        (WebKit::LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin):
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabaseWithOrigin):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeMediaKeys):
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyOriginsWithApplicationCache):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::mediaKeyStorageDirectoryForOrigin):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::enumerateMediaDevices):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused CFURLCACHE code
         https://bugs.webkit.org/show_bug.cgi?id=164551
 

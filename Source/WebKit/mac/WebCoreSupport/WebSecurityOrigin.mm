@@ -34,6 +34,7 @@
 #import <WebCore/URL.h>
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
@@ -73,7 +74,7 @@ using namespace WebCore;
 
 - (NSString *)databaseIdentifier
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->databaseIdentifier();
+    return SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)).databaseIdentifier();
 }
 
 #if PLATFORM(IOS)

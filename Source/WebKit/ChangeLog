@@ -1,3 +1,16 @@
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Move SecurityOrigin::databaseIdentifier() to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164573
+
+        Reviewed by Brady Eidson.
+
+        * Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::create):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::deleteOrigin):
+        (WebKit::StorageTracker::diskUsageForOrigin):
+
 2016-11-09  Alex Christensen  <achristensen@webkit.org>
 
         Clean up Storage code

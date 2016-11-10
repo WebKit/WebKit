@@ -651,7 +651,7 @@ void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOr
 {
     if (!m_databaseDirectoryPath.isEmpty()) {
         for (const auto& origin : origins) {
-            String originPath = pathByAppendingComponent(m_databaseDirectoryPath, origin.securityOrigin()->databaseIdentifier());
+            String originPath = pathByAppendingComponent(m_databaseDirectoryPath, origin.databaseIdentifier());
             removeAllDatabasesForOriginPath(originPath, std::chrono::system_clock::time_point::min());
         }
     }

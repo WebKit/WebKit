@@ -63,13 +63,13 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& root
 
 String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory)
 {
-    String mainFrameDirectory = pathByAppendingComponent(rootDirectory, topLevelOrigin.securityOrigin()->databaseIdentifier());
+    String mainFrameDirectory = pathByAppendingComponent(rootDirectory, topLevelOrigin.databaseIdentifier());
 
     // If the opening origin and main frame origins are the same, there is no partitioning.
     if (openingOrigin == topLevelOrigin)
         return mainFrameDirectory;
 
-    return pathByAppendingComponent(mainFrameDirectory, openingOrigin.securityOrigin()->databaseIdentifier());
+    return pathByAppendingComponent(mainFrameDirectory, openingOrigin.databaseIdentifier());
 }
 
 #if !LOG_DISABLED

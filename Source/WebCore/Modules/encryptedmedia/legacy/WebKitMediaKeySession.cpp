@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FileSystem.h"
+#include "SecurityOriginData.h"
 #include "Settings.h"
 #include "WebKitMediaKeyError.h"
 #include "WebKitMediaKeyMessageEvent.h"
@@ -234,7 +235,7 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
     if (!origin)
         return emptyString();
 
-    return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
+    return pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
 }
 
 bool WebKitMediaKeySession::hasPendingActivity() const

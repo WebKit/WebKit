@@ -35,6 +35,7 @@
 #include "Database.h"
 #include "SQLTransaction.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
 
@@ -42,7 +43,7 @@ namespace WebCore {
 
 static String getDatabaseIdentifier(SQLTransaction& transaction)
 {
-    return transaction.database().securityOrigin()->databaseIdentifier();
+    return SecurityOriginData::fromSecurityOrigin(*transaction.database().securityOrigin()).databaseIdentifier();
 }
 
 SQLTransactionCoordinator::SQLTransactionCoordinator()

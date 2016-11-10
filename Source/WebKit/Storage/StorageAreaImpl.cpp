@@ -30,6 +30,7 @@
 #include "StorageTracker.h"
 #include <WebCore/Frame.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/MainThread.h>
@@ -69,7 +70,7 @@ Ref<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, RefPtr<Sec
     // FIXME: If there's no backing storage for LocalStorage, the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
     if (area->m_storageSyncManager) {
-        area->m_storageAreaSync = StorageAreaSync::create(area->m_storageSyncManager.get(), area.copyRef(), area->m_securityOrigin->databaseIdentifier());
+        area->m_storageAreaSync = StorageAreaSync::create(area->m_storageSyncManager.get(), area.copyRef(), SecurityOriginData::fromSecurityOrigin(*area->m_securityOrigin).databaseIdentifier());
         ASSERT(area->m_storageAreaSync);
     }
     return area;
