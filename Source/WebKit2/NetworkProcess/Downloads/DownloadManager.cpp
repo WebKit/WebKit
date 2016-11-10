@@ -27,6 +27,7 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "PendingDownload.h"
@@ -44,16 +45,20 @@ DownloadManager::DownloadManager(Client& client)
 {
 }
 
-void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
+void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
 #if USE(NETWORK_SESSION)
     auto* networkSession = SessionTracker::networkSession(sessionID);
     if (!networkSession)
         return;
+
     NetworkLoadParameters parameters;
     parameters.sessionID = sessionID;
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
+    if (request.url().protocolIsBlob() && connection)
+        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, parameters.request.url());
+
     m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession, suggestedName));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request, suggestedName);

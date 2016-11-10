@@ -48,6 +48,7 @@ class SharedBuffer;
 namespace WebKit {
 
 class Download;
+class NetworkLoadParameters;
 class NetworkSession;
 class PendingDownload;
 enum class AuthenticationChallengeDisposition;
@@ -72,7 +73,7 @@ public:
 
 class NetworkDataTask : public RefCounted<NetworkDataTask> {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    static Ref<NetworkDataTask> create(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
     virtual ~NetworkDataTask();
 

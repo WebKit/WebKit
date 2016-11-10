@@ -39,7 +39,7 @@ public:
         , m_shouldFollowRedirects(parameters.shouldFollowRedirects)
     {
         if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
-            m_task = NetworkDataTask::create(*networkSession, *this, parameters.request, parameters.allowStoredCredentials, parameters.contentSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
+            m_task = NetworkDataTask::create(*networkSession, *this, parameters);
             m_task->resume();
         } else
             ASSERT_NOT_REACHED();

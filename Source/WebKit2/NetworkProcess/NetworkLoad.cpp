@@ -67,7 +67,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& para
     , m_parameters(WTFMove(parameters))
     , m_currentRequest(m_parameters.request)
 {
-    m_task = NetworkDataTask::create(networkSession, *this, m_parameters.request, m_parameters.allowStoredCredentials, m_parameters.contentSniffingPolicy, m_parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
+    m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
     if (!m_parameters.defersLoading)
         m_task->resume();
 }

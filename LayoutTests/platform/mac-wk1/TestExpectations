@@ -197,11 +197,15 @@ webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Fail
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
 webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
+
+# testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 
 webkit.org/b/156629 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Pass Failure ]
 

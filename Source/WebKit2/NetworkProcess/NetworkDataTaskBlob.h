@@ -39,6 +39,7 @@
 
 namespace WebCore {
 class AsyncFileStream;
+class BlobDataFileReference;
 class BlobData;
 class BlobDataItem;
 }
@@ -47,15 +48,15 @@ namespace WebKit {
 
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::FileStreamClient {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::ContentSniffingPolicy shouldContentSniff)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     {
-        return adoptRef(*new NetworkDataTaskBlob(session, client, request, shouldContentSniff));
+        return adoptRef(*new NetworkDataTaskBlob(session, client, request, shouldContentSniff, fileReferences));
     }
 
     ~NetworkDataTaskBlob();
 
 private:
-    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::ContentSniffingPolicy);
+    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::ContentSniffingPolicy, const Vector<RefPtr<WebCore::BlobDataFileReference>>&);
 
     void suspend() override;
     void cancel() override;
@@ -113,6 +114,8 @@ private:
     unsigned m_readItemCount { 0 };
     bool m_fileOpened { false };
     WebCore::PlatformFileHandle m_downloadFile { WebCore::invalidPlatformFileHandle };
+
+    Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
 };
 

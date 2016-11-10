@@ -51,6 +51,7 @@ namespace WebKit {
 
 class AuthenticationManager;
 class Download;
+class NetworkConnectionToWebProcess;
 class NetworkLoad;
 class PendingDownload;
 
@@ -73,7 +74,7 @@ public:
 
     explicit DownloadManager(Client&);
 
-    void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
+    void startDownload(NetworkConnectionToWebProcess*, WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
 #if USE(NETWORK_SESSION)
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
