@@ -14,9 +14,9 @@ PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net" }] })
 FAIL new RTCPeerConnection({ iceServers: [{ urls: [] }] }) Error creating RTCPeerConnection
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net"] }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net", "stun:stun2.example.net"] }] }) 
-FAIL new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "user", credential: "cred" }] }) Error creating RTCPeerConnection
+PASS new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "user", credential: "cred" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "turn:turn.example.net", username: "user", credential: "cred" }] }) 
-FAIL new RTCPeerConnection({ iceServers: [{ urls: ["turns:turn.example.org", "turn:turn.example.net"], username: "user", credential: "cred" }] }) Error creating RTCPeerConnection
+PASS new RTCPeerConnection({ iceServers: [{ urls: ["turns:turn.example.org", "turn:turn.example.net"], username: "user", credential: "cred" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "password" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "token" }] }) 
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "turn:turn.example.net" }] }) assert_throws: function "function () {
@@ -30,13 +30,13 @@ FAIL new RTCPeerConnection({ iceServers: [{ urls: "turn:turn.example.net", crede
       }" did not throw
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org" }] }) assert_throws: function "function () {
         eval(expr);
-      }" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+      }" did not throw
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "user" }] }) assert_throws: function "function () {
         eval(expr);
-      }" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+      }" did not throw
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", credential: "cred" }] }) assert_throws: function "function () {
         eval(expr);
-      }" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+      }" did not throw
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "relative-url" }] }) assert_throws: function "function () {
         eval(expr);
       }" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12

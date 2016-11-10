@@ -45,7 +45,7 @@ namespace WebCore {
 static bool validateIceServerURL(const String& iceURL)
 {
     URL url(URL(), iceURL);
-    if (url.isEmpty() || !url.isValid() || !(url.protocolIs("turn") || url.protocolIs("stun")))
+    if (url.isEmpty() || !url.isValid() || !(url.protocolIs("turn") || url.protocolIs("turns") || url.protocolIs("stun")))
         return false;
 
     return true;

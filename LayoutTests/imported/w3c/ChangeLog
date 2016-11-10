@@ -1,3 +1,12 @@
+2016-11-08  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC] white-list turns urls from the RTCConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=164506
+
+        Reviewed by Alejandro G. Castro.
+
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt: Rebaseline test, since turns servers are now parsed.
+
 2016-11-09  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Clean up some exception ordering.

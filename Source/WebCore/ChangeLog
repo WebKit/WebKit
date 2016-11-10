@@ -1,3 +1,14 @@
+2016-11-08  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC] white-list turns urls from the RTCConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=164506
+
+        Reviewed by Alejandro G. Castro.
+
+        * Modules/mediastream/RTCConfiguration.cpp:
+        (WebCore::validateIceServerURL): Add the turns URL scheme to the
+        list of supported relay and signaling server protocols.
+
 2016-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DebuggerManager.Event.Resumed introduces test flakiness
