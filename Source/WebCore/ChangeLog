@@ -1,3 +1,30 @@
+2016-11-11  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: media tracks control support
+        https://bugs.webkit.org/show_bug.cgi?id=164618
+        <rdar://problem/27989483>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the TracksSupport class to only enable the media tracks button
+        in the media controls when text tracks and/or multiple audio tracks are available.
+
+        Tests: media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html
+               media/modern-media-controls/tracks-support/tracks-support-no-tracks.html
+               media/modern-media-controls/tracks-support/tracks-support-text-tracks.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+        * Modules/modern-media-controls/media/tracks-support.js: Added.
+        (TracksSupport):
+        (TracksSupport.prototype.destroy):
+        (TracksSupport.prototype.get control):
+        (TracksSupport.prototype.get mediaEvents):
+        (TracksSupport.prototype.buttonWasClicked):
+        (TracksSupport.prototype.syncControl):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] DOMJIT accessor attribute in IDL should say like DOMJIT=Getter
