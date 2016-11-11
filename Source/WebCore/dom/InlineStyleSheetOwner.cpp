@@ -213,12 +213,15 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     contents->checkLoaded();
 
     if (cacheKey && contents->isCacheable()) {
+        m_sheet->contents().addedToMemoryCache();
         inlineStyleSheetCache().add(*cacheKey, &m_sheet->contents());
 
         // Prevent pathological growth.
         const size_t maximumInlineStyleSheetCacheSize = 50;
-        if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize)
+        if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize) {
+            inlineStyleSheetCache().begin()->value->removedFromMemoryCache();
             inlineStyleSheetCache().remove(inlineStyleSheetCache().begin());
+        }
     }
 }
 

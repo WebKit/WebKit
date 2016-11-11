@@ -1,3 +1,13 @@
+2016-11-11  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Toggling class in `.class ::slotted(*)` does not trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=160864
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-host-and-slotted-context-invalidation-expected.html: Added.
+        * fast/shadow-dom/css-scoping-host-and-slotted-context-invalidation.html: Added.
+
 2016-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] defer resolution of getUserMedia promise made in a background tab
@@ -1200,6 +1210,7 @@
 
         * fast/shadow-dom/css-scoping-slot-with-id-expected.html: Added.
         * fast/shadow-dom/css-scoping-slot-with-id.html: Added.
+
 
 2016-11-04  Brady Eidson  <beidson@apple.com>
 

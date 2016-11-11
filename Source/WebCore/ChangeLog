@@ -1,3 +1,35 @@
+2016-11-11  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Toggling class in `.class ::slotted(*)` does not trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=160864
+
+        Reviewed by Ryosuke Niwa.
+
+        Also fix similar issue with ::host
+
+        Test: fast/shadow-dom/css-scoping-host-and-slotted-context-invalidation.html
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded):
+
+            If we have ::slotted rules and encounter a <slot>, invalidate the slotted host children.
+
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+
+            Invalidate the shadow host if we have ::host rules.
+
+        * css/StyleInvalidationAnalysis.h:
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+
+            Fix a bug where it was possible to mutate stylesheets in the inline stylesheet cache.
+            The included test covers this.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+
+            Handle the full invalidation case.
+
 2016-11-11  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: "close pending flag" and firing blocked events all need fixing.

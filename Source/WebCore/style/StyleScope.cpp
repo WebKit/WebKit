@@ -407,10 +407,19 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
             m_usesStyleBasedEditability = true;
     }
 
+    // FIXME: Move this code somewhere else.
     if (requiresFullStyleRecalc) {
         if (m_shadowRoot) {
             for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot))
                 shadowChild.invalidateStyleForSubtree();
+            if (m_shadowRoot->host()) {
+                if (!resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
+                    m_shadowRoot->host()->invalidateStyle();
+                if (!resolver().ruleSets().authorStyle().slottedPseudoElementRules().isEmpty()) {
+                    for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot->host()))
+                        shadowChild.invalidateStyle();
+                }
+            }
         } else
             m_document.scheduleForcedStyleRecalc();
     }

@@ -58,6 +58,7 @@ private:
     const RuleSet& m_ruleSet;
     bool m_dirtiesAllStyle { false };
     bool m_hasShadowPseudoElementRulesInAuthorSheet { false };
+    bool m_didInvalidateHostChildren { false };
 };
 
 }
