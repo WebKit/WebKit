@@ -97,7 +97,3 @@ typedef float CGFloat;
 #endif
 
 #include <wtf/DisallowCType.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebKitAdditionsDefines.h>
-#endif

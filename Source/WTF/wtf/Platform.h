@@ -1207,4 +1207,13 @@
 #pragma strict_gs_check(on)
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#define HAVE_TOUCH_BAR 1
+#define HAVE_ADVANCED_SPELL_CHECKING 1
+
+#if defined(__LP64__)
+#define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 1
+#endif
+#endif /* PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */
+
 #endif /* WTF_Platform_h */
