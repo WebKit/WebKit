@@ -39,7 +39,7 @@ namespace WebKit {
 static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
 {
     CGBitmapInfo info = 0;
-    if ((flags & ShareableBitmap::SupportsExtendedColor) && screenSupportsExtendedColor()) {
+    if (flags & ShareableBitmap::SupportsExtendedColor) {
         info |= kCGBitmapFloatComponents | kCGBitmapByteOrder16Host;
         
         if (flags & ShareableBitmap::SupportsAlpha)
@@ -58,18 +58,19 @@ static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
     
     return info;
 }
+    
+static CGColorSpaceRef colorSpace(ShareableBitmap::Flags flags)
+{
+    if (flags & ShareableBitmap::SupportsExtendedColor)
+        return extendedSRGBColorSpaceRef();
+    return sRGBColorSpaceRef();
+}
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     ref(); // Balanced by deref in releaseBitmapContextData.
     
-    CGColorSpaceRef colorSpace;
-    if (m_flags & ShareableBitmap::SupportsExtendedColor)
-        colorSpace = extendedSRGBColorSpaceRef();
-    else
-        colorSpace = sRGBColorSpaceRef();
-    
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), m_bytesPerPixel * 8 / 4, m_size.width() * m_bytesPerPixel, colorSpace, bitmapInfo(m_flags), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), m_bytesPerPixel * 8 / 4, m_size.width() * m_bytesPerPixel, colorSpace(m_flags), bitmapInfo(m_flags), releaseBitmapContextData, this));
     
     ASSERT(bitmapContext.get());
 
@@ -107,8 +108,7 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
 RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvider) const
 {
     ASSERT_ARG(dataProvider, dataProvider);
-    // FIXME: Make this use extended color, etc.
-    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, sRGBColorSpaceRef(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), m_bytesPerPixel * 8 / 4, m_bytesPerPixel * 8, m_size.width() * m_bytesPerPixel, colorSpace(m_flags), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

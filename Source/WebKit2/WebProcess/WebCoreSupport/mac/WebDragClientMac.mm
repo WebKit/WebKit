@@ -39,6 +39,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderImage.h>
@@ -52,9 +53,12 @@ using namespace WebKit;
 
 namespace WebKit {
 
-static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size)
+static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
 {
-    auto bitmap = ShareableBitmap::createShareable(size, ShareableBitmap::SupportsAlpha);
+    ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
+    if (screenSupportsExtendedColor(frame.mainFrame().view()))
+        flags |= ShareableBitmap::SupportsExtendedColor;
+    auto bitmap = ShareableBitmap::createShareable(size, flags);
     if (!bitmap)
         return nullptr;
 
@@ -73,7 +77,7 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
 void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, const IntPoint&, DataTransfer&, Frame& frame, bool linkDrag)
 {
     IntSize bitmapSize([image size]);
-    RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get(), bitmapSize);
+    RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get(), bitmapSize, frame);
     ShareableBitmap::Handle handle;
     if (!bitmap || !bitmap->createHandle(handle))
         return;

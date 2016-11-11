@@ -1,3 +1,17 @@
+2016-11-11  Megan Gardner  <megan_gardner@apple.com>
+
+        [Cocoa] Support wide gamut for Drag Image UI
+        https://bugs.webkit.org/show_bug.cgi?id=164490
+
+        Reviewed by Tim Horton.
+
+        Fixed an error in the support define for wide gamut on Mac.
+
+        The testing infrastructure to test this does not exist, and will be landing in another patch.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::extendedSRGBColorSpaceRef):
+
 2016-11-11  Beth Dakin  <bdakin@apple.com>
 
         Get touch bar code building for open source builds
