@@ -1,3 +1,15 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add support for -webkit-mask-source-type
+        https://bugs.webkit.org/show_bug.cgi?id=164657
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitMaskSourceType):
+        (WebCore::consumeBackgroundComponent):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-11  Antti Koivisto  <antti@apple.com>
 
         Updating class name doesn't update the slotted content's style
