@@ -154,9 +154,6 @@
 (if (defined? 'vnode-type)
     (deny file-write-create (vnode-type SYMLINK)))
 
-;; FIXME: Should be removed once <rdar://problem/16329087> is fixed.
-(deny file-write-xattr (xattr "com.apple.quarantine") (with no-log))
-
 ;; Reserve a namespace for additional protected extended attributes.
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
 

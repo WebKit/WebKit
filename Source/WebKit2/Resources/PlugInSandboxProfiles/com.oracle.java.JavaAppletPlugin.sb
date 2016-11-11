@@ -33,13 +33,6 @@
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name-regex #"^PlaceHolderServerName-"))
 
-(if (equal? os-version "10.7")
-    (begin
-        (allow mach-lookup
-            (global-name-regex #"^com\.apple\.java\.jrs\.carenderserver"))
-        (allow file-read* file-write*
-            (home-library-subpath "/Caches/net.java.openjdk.cmd"))))
-
 (allow file-read*
     (literal "/dev/fd")
     (literal "/usr/bin")

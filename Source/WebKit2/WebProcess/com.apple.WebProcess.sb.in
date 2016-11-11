@@ -146,14 +146,7 @@
     (ipc-posix-name-regex #"^WebKit Test-"))
 
 ;; ColorSync
-;; FIXME: Remove names with underscores when possible (see <rdar://problem/13072721>).
 (allow ipc-posix-shm*
-    (ipc-posix-name "_CS_GSHMEMLOCK")
-    (ipc-posix-name "_CS_DSHMEMLOCK")
-    (ipc-posix-name "_CSGRAYPROFILE")
-    (ipc-posix-name "_CSRGBPROFILE")
-    (ipc-posix-name "_CSGENGPROFILE")
-    (ipc-posix-name "_CSGENRPROFILE")
     (ipc-posix-name "com.apple.ColorSync.Gen.lock")
     (ipc-posix-name "com.apple.ColorSync.Disp.lock")
     (ipc-posix-name "com.apple.ColorSync.Gray2.2")
@@ -280,9 +273,6 @@
 
 (if (defined? 'vnode-type)
         (deny file-write-create (vnode-type SYMLINK)))
-
-;; FIXME: Should be removed once <rdar://problem/16329087> is fixed.
-(deny file-write-xattr (xattr "com.apple.quarantine") (with no-log))
 
 ;; Reserve a namespace for additional protected extended attributes.
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))

@@ -1,3 +1,22 @@
+2016-11-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Get rid of old sandbox rules for OS's we no longer support
+        https://bugs.webkit.org/show_bug.cgi?id=164638
+
+        Reviewed by Simon Fraser.
+
+        Clean up the various sandbox profiles to get rid of rules that applied to operating system
+        versions we no longer support, or were added in support of bugs that have long since been
+        fixed.
+
+        This should introduce no change in behavior.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-11-11  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: "close pending flag" and firing blocked events all need fixing.
