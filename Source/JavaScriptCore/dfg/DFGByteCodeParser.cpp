@@ -4128,7 +4128,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool isDirect = opcodeID == op_put_by_val_direct;
             bool compiledAsPutById = false;
             {
-                unsigned identifierNumber;
+                unsigned identifierNumber = std::numeric_limits<unsigned>::max();
                 PutByIdStatus putByIdStatus;
                 {
                     ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
