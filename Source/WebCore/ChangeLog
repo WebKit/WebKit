@@ -1,3 +1,32 @@
+2016-11-11  Keith Rollin  <krollin@apple.com>
+
+        Reduce number of platformMemoryUsage calls
+        https://bugs.webkit.org/show_bug.cgi?id=164375
+
+        Reviewed by Andreas Kling.
+
+        platformMemoryUsage was being called all the time while logging the
+        results of various memory-purging operations. This logging is
+        subordinate to the needs of performance and so can be removed.
+        Behavior is now as follows:
+
+        - If memory-pressure relief logging is enabled, logging includes
+        memory usage information. On Cocoa, this logging is disabled by
+        default but can be enabled by setting LogMemoryJetsamDetails in
+        `defaults`.
+        - Otherwise, if release-logging is enabled (as it is on Cocoa),
+        abbreviated memory pressure relief logging is performed: the logging
+        lines are printed but without any memory usage information.
+        - Otherwise, no logging is performed.
+
+        No new tests -- no tests for logging.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::~ReliefLogger):
+
 2016-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] defer resolution of getUserMedia promise made in a background tab

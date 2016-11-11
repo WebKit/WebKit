@@ -91,22 +91,13 @@ public:
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
-#if !RELEASE_LOG_DISABLED
-            , m_initialMemory(platformMemoryUsage())
-#else
             , m_initialMemory(s_loggingEnabled ? platformMemoryUsage() : 0)
-#endif
         {
         }
 
         ~ReliefLogger()
         {
-#if !RELEASE_LOG_DISABLED
             logMemoryUsageChange();
-#else
-            if (s_loggingEnabled)
-                logMemoryUsageChange();
-#endif
         }
 
         const char* logString() const { return m_logString; }
