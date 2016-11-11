@@ -502,35 +502,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(IsFunctionLoc, MiscFields, node->child1()), LazyNode(node));
         return;
         
-    case PureGetById: {
-        // We model what is allowed inside a getOwnPropertySlot(VMInquiry) here.
-        // Some getOwnPropertySlot implementations will lazily inject properties, which
-        // may change the object's structure.
-
-        read(JSCell_structureID);
-        read(JSCell_typeInfoFlags);
-        read(JSCell_typeInfoType);
-        read(JSCell_indexingType);
-        read(JSObject_butterfly);
-        read(MiscFields);
-
-        AbstractHeap propertyNameHeap(NamedProperties, node->identifierNumber());
-        read(propertyNameHeap);
-
-        write(JSCell_structureID);
-        write(JSCell_typeInfoFlags);
-
-        write(Watchpoint_fire);
-        write(MiscFields);
-
-        // This can happen if lazily adding fields to an object happens in getOwnPropertySlot
-        // and we need to allocate out of line storage.
-        write(JSObject_butterfly);
-
-        def(HeapLocation(NamedPropertyLoc, propertyNameHeap, node->child1()), LazyNode(node));
-        return;
-    }
-
     case GetById:
     case GetByIdFlush:
     case GetByIdWithThis:

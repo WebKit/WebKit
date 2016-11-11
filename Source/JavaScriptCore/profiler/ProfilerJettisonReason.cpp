@@ -56,9 +56,6 @@ void printInternal(PrintStream& out, JettisonReason reason)
     case JettisonDueToOSRExit:
         out.print("OSRExit");
         return;
-    case JettisonDueToPureGetByIdEffects:
-        out.print("PureGetByIdEffects");
-        return;
     case JettisonDueToProfiledWatchpoint:
         out.print("ProfiledWatchpoint");
         return;

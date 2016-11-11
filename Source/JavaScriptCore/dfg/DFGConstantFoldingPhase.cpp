@@ -449,7 +449,6 @@ private:
                 break;
             }
         
-            case PureGetById:
             case GetById:
             case GetByIdFlush: {
                 Edge childEdge = node->child1();
@@ -460,9 +459,6 @@ private:
 
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
-
-                if (!Options::useAccessInlining())
-                    break;
 
                 if (baseValue.m_structure.isTop() || baseValue.m_structure.isClobbered()
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
@@ -518,9 +514,6 @@ private:
 
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
-
-                if (!Options::useAccessInlining())
-                    break;
 
                 if (baseValue.m_structure.isTop() || baseValue.m_structure.isClobbered())
                     break;

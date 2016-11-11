@@ -3345,19 +3345,10 @@ void ByteCodeParser::handleGetById(
     }
     
     NodeType getById;
-    switch (type) {
-    case AccessType::Get:
+    if (type == AccessType::Get)
         getById = getByIdStatus.makesCalls() ? GetByIdFlush : GetById;
-        break;
-    case AccessType::TryGet:
+    else
         getById = TryGetById;
-        break;
-    case AccessType::PureGet:
-        getById = PureGetById;
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
 
     // Special path for custom accessors since custom's offset does not have any meanings.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.
@@ -4266,8 +4257,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
-            bool compileAsGetById = false;
-            bool compileAsPureGetById = false;
+            bool compiledAsGetById = false;
             GetByIdStatus getByIdStatus;
             unsigned identifierNumber = 0;
             {
@@ -4276,8 +4266,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                 // At that time, there is no information.
                 if (byValInfo && byValInfo->stubInfo && !byValInfo->tookSlowPath && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent) && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
-                    compileAsGetById = true;
-                    compileAsPureGetById = !byValInfo->stubInfo->didSideEffects;
+                    compiledAsGetById = true;
                     identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
                     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
@@ -4295,10 +4284,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
 
-            if (compileAsGetById) {
-                AccessType type = compileAsPureGetById ? AccessType::PureGet : AccessType::Get;
-                handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, type, OPCODE_LENGTH(op_get_by_val));
-            } else {
+            if (compiledAsGetById)
+                handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, OPCODE_LENGTH(op_get_by_val));
+            else {
                 ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
                 Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
@@ -4434,18 +4422,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
                 m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
                 currentCodeOrigin(), uid);
-            AccessType type;
-            if (opcodeID == op_try_get_by_id) 
-                type = AccessType::TryGet;
-            else {
-                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                unsigned bytecodeIndex = currentCodeOrigin().bytecodeIndex;
-                StructureStubInfo* info = m_inlineStackTop->m_stubInfos.get(CodeOrigin(bytecodeIndex));
-                if (info && info->everConsidered && !info->didSideEffects)
-                    type = AccessType::PureGet;
-                else
-                    type = AccessType::Get;
-            }
+            AccessType type = op_try_get_by_id == opcodeID ? AccessType::GetPure : AccessType::Get;
 
             unsigned opcodeLength = opcodeID == op_try_get_by_id ? OPCODE_LENGTH(op_try_get_by_id) : OPCODE_LENGTH(op_get_by_id);
 

@@ -210,8 +210,6 @@ void SpeculativeJIT::cachedGetById(
     J_JITOperation_ESsiJI getByIdFunction;
     if (type == AccessType::Get)
         getByIdFunction = operationGetByIdOptimize;
-    else if (type == AccessType::PureGet)
-        getByIdFunction = operationPureGetByIdOptimize;
     else
         getByIdFunction = operationTryGetByIdOptimize;
 
@@ -4278,11 +4276,6 @@ void SpeculativeJIT::compile(Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        break;
-    }
-
-    case PureGetById: {
-        compilePureGetById(node);
         break;
     }
 
