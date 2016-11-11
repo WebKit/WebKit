@@ -1,3 +1,19 @@
+2016-11-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208614. rdar://problem/29225966
+
+    2016-11-11  Saam Barati  <sbarati@apple.com>
+
+            We recursively grab a lock in the DFGBytecodeParser causing us to deadlock
+            https://bugs.webkit.org/show_bug.cgi?id=164650
+
+            Reviewed by Geoffrey Garen.
+
+            * stress/dont-dead-lock-put-by-val-as-put-by-id.js: Added.
+            (ident):
+            (let.o.set foo):
+            (foo):
+
 2016-10-27  Mark Lam  <mark.lam@apple.com>
 
         Merge r207518. rdar://problem/28216050, rdar://problem/28216232
