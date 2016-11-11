@@ -325,9 +325,9 @@ std::unique_ptr<RenderBoxRegionInfo> RenderRegion::takeRenderBoxRegionInfo(const
     return m_renderBoxRegionInfo.take(box);
 }
 
-void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
+void RenderRegion::removeRenderBoxRegionInfo(const RenderBox& box)
 {
-    m_renderBoxRegionInfo.remove(box);
+    m_renderBoxRegionInfo.remove(&box);
 }
 
 void RenderRegion::deleteAllRenderBoxRegionInfo()

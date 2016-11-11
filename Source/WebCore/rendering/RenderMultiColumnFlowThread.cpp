@@ -545,7 +545,7 @@ RenderRegion* RenderMultiColumnFlowThread::regionAtBlockOffset(const RenderBox* 
     return columnSet;
 }
 
-void RenderMultiColumnFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* startRegion, RenderRegion* endRegion)
+void RenderMultiColumnFlowThread::setRegionRangeForBox(const RenderBox& box, RenderRegion* startRegion, RenderRegion* endRegion)
 {
     // Some column sets may have zero height, which means that two or more sets may start at the
     // exact same flow thread position, which means that some parts of the code may believe that a

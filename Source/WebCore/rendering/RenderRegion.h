@@ -68,7 +68,7 @@ public:
     RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
     std::unique_ptr<RenderBoxRegionInfo> takeRenderBoxRegionInfo(const RenderBox*);
-    void removeRenderBoxRegionInfo(const RenderBox*);
+    void removeRenderBoxRegionInfo(const RenderBox&);
 
     void deleteAllRenderBoxRegionInfo();
 

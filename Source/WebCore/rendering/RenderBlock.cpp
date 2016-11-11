@@ -3394,11 +3394,11 @@ void RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants()
     setCachedFlowThreadContainingBlockNeedsUpdate();
 
     if (flowThread)
-        flowThread->removeFlowChildInfo(this);
+        flowThread->removeFlowChildInfo(*this);
 
     for (auto& child : childrenOfType<RenderElement>(*this)) {
         if (flowThread)
-            flowThread->removeFlowChildInfo(&child);
+            flowThread->removeFlowChildInfo(child);
         if (is<RenderBlock>(child))
             downcast<RenderBlock>(child).invalidateFlowThreadContainingBlockIncludingDescendants();
     }
@@ -3621,9 +3621,8 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
     return flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
 }
 
-static bool canComputeRegionRangeForBox(const RenderBlock* parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
+static bool canComputeRegionRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
 {
-    ASSERT(parentBlock);
     ASSERT(!childBox.isRenderNamedFlowThread());
 
     if (!flowThreadContainingBlock)
@@ -3653,7 +3652,7 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
 void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    ASSERT(canComputeRegionRangeForBox(this, box, flowThread));
+    ASSERT(canComputeRegionRangeForBox(*this, box, flowThread));
 
     RenderRegion* startRegion;
     RenderRegion* endRegion;
@@ -3665,13 +3664,13 @@ void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
         endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + logicalHeightForChild(box), true);
     }
 
-    flowThread->setRegionRangeForBox(&box, startRegion, endRegion);
+    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
 }
 
 void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!canComputeRegionRangeForBox(this, box, flowThread))
+    if (!canComputeRegionRangeForBox(*this, box, flowThread))
         return;
 
     if (childBoxIsUnsplittableForFragmentation(box)) {
@@ -3686,13 +3685,13 @@ void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
     RenderRegion* startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
     RenderRegion* endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + estimatedValues.m_extent, true);
 
-    flowThread->setRegionRangeForBox(&box, startRegion, endRegion);
+    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
 }
 
 bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!canComputeRegionRangeForBox(this, box, flowThread))
+    if (!canComputeRegionRangeForBox(*this, box, flowThread))
         return false;
 
     RenderRegion* startRegion = nullptr;

@@ -79,7 +79,7 @@ public:
     RenderLayerModelObject& layerOwner() const { return downcast<RenderLayerModelObject>(*parent()); }
 
     bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
-    void clearObjectStyleInRegion(const RenderElement*);
+    void clearObjectStyleInRegion(const RenderElement&);
 
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();

@@ -203,7 +203,7 @@ bool RenderBox::hasRegionRangeInFlowThread() const
     if (!flowThread || !flowThread->hasValidRegionInfo())
         return false;
 
-    return flowThread->hasCachedRegionRangeForBox(this);
+    return flowThread->hasCachedRegionRangeForBox(*this);
 }
 
 LayoutRect RenderBox::clientBoxRectInRegion(RenderRegion* region) const

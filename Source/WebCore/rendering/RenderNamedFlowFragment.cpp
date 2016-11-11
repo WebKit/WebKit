@@ -401,14 +401,13 @@ void RenderNamedFlowFragment::setRendererStyleInRegion(RenderElement& renderer, 
     m_rendererRegionStyle.set(&renderer, WTFMove(styleInfo));
 }
 
-void RenderNamedFlowFragment::clearObjectStyleInRegion(const RenderElement* object)
+void RenderNamedFlowFragment::clearObjectStyleInRegion(const RenderElement& object)
 {
-    ASSERT(object);
-    m_rendererRegionStyle.remove(object);
+    m_rendererRegionStyle.remove(&object);
 
     // Clear the style for the children of this object.
-    for (auto& child : childrenOfType<RenderElement>(*object))
-        clearObjectStyleInRegion(&child);
+    for (auto& child : childrenOfType<RenderElement>(object))
+        clearObjectStyleInRegion(child);
 }
 
 void RenderNamedFlowFragment::setRegionObjectsRegionStyle()

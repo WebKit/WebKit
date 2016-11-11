@@ -121,7 +121,7 @@ private:
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
     RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false) const override;
-    void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*) override;
+    void setRegionRangeForBox(const RenderBox&, RenderRegion*, RenderRegion*) override;
     bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     bool isPageLogicalHeightKnown() const override;
 

@@ -1,3 +1,49 @@
+2016-11-11  Zalan Bujtas  <zalan@apple.com>
+
+        RenderFlowThread::removeLineRegionInfo shouldn't call HashMap::contains before HashMap::remove
+        https://bugs.webkit.org/show_bug.cgi?id=164639
+
+        Reviewed by Simon Fraser.
+
+        Also instead of asserting that the incoming renderer is not nullptr, we could just pass a reference in. 
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants):
+        (WebCore::canComputeRegionRangeForBox):
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild):
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild):
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasRegionRangeInFlowThread):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeFromRenderFlowThreadIncludingDescendants):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::removeLineRegionInfo):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        (WebCore::RenderFlowThread::hasCachedRegionRangeForBox):
+        (WebCore::RenderFlowThread::computedRegionRangeForBox):
+        (WebCore::RenderFlowThread::checkLinesConsistency):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::setRegionRangeForBox):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::clearObjectStyleInRegion):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderNamedFlowThread::removeFlowChildInfo):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        * rendering/RenderRegion.h:
+
 2016-11-11  Megan Gardner  <megan_gardner@apple.com>
 
         [Cocoa] Support wide gamut for Drag Image UI

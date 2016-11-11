@@ -60,13 +60,13 @@ class RenderFlowThread: public RenderBlockFlow {
 public:
     virtual ~RenderFlowThread() { }
 
-    virtual void removeFlowChildInfo(RenderElement*);
+    virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG
     bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_regionRangeMap.contains(downcast<RenderBox>(child)); }
 #endif
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    bool checkLinesConsistency(const RenderBlockFlow*) const;
+    bool checkLinesConsistency(const RenderBlockFlow&) const;
 #endif
     
     void deleteLines() override;
@@ -133,10 +133,10 @@ public:
     bool previousRegionCountChanged() const { return m_previousRegionCount != m_regionList.size(); };
     void updatePreviousRegionCount() { m_previousRegionCount = m_regionList.size(); };
 
-    virtual void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
+    virtual void setRegionRangeForBox(const RenderBox&, RenderRegion*, RenderRegion*);
     bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
     bool computedRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
-    bool hasCachedRegionRangeForBox(const RenderBox*) const;
+    bool hasCachedRegionRangeForBox(const RenderBox&) const;
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
@@ -200,7 +200,7 @@ public:
     void pushFlowThreadLayoutState(const RenderObject&);
     void popFlowThreadLayoutState();
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
-    void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox*, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
+    void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox&, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
 
     void addRegionsVisualEffectOverflow(const RenderBox*);
     void addRegionsVisualOverflowFromTheme(const RenderBlock*);
@@ -274,8 +274,8 @@ protected:
 
     bool getRegionRangeForBoxFromCachedInfo(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
-    void removeRenderBoxRegionInfo(RenderBox*);
-    void removeLineRegionInfo(const RenderBlockFlow*);
+    void removeRenderBoxRegionInfo(RenderBox&);
+    void removeLineRegionInfo(const RenderBlockFlow&);
 
     RenderRegionList m_regionList;
     unsigned short m_previousRegionCount;
