@@ -105,6 +105,13 @@ JSTestCustomConstructorWithNoInterfaceObject::JSTestCustomConstructorWithNoInter
 {
 }
 
+void JSTestCustomConstructorWithNoInterfaceObject::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestCustomConstructorWithNoInterfaceObject::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestCustomConstructorWithNoInterfaceObjectPrototype::create(vm, globalObject, JSTestCustomConstructorWithNoInterfaceObjectPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

@@ -68,6 +68,7 @@ ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot|ImplScriptExecutionContext
 GetterMayThrowException
 GetterMayThrowLegacyException
+Global=*
 Immutable
 ImplementedAs=*
 ImplementationLacksVTable
@@ -101,6 +102,7 @@ Nondeterministic
 NotEnumerable
 OverrideBuiltins
 PassContext
+PrimaryGlobal
 PrivateIdentifier
 PublicIdentifier
 PutForwards=*

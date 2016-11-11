@@ -56,13 +56,7 @@ public:
 protected:
     JSTestGlobalObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGlobalObject>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestGlobalObjectOwner : public JSC::WeakHandleOwner {

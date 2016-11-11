@@ -55,12 +55,7 @@ public:
 protected:
     JSInterfaceName(JSC::Structure*, JSDOMGlobalObject&, Ref<InterfaceName>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSInterfaceNameOwner : public JSC::WeakHandleOwner {

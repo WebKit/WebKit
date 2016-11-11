@@ -52,12 +52,7 @@ public:
 protected:
     JSTestIterable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestIterable>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestIterableOwner : public JSC::WeakHandleOwner {

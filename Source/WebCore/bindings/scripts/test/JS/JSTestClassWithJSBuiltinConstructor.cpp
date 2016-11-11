@@ -105,6 +105,13 @@ JSTestClassWithJSBuiltinConstructor::JSTestClassWithJSBuiltinConstructor(Structu
 {
 }
 
+void JSTestClassWithJSBuiltinConstructor::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestClassWithJSBuiltinConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestClassWithJSBuiltinConstructorPrototype::create(vm, globalObject, JSTestClassWithJSBuiltinConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

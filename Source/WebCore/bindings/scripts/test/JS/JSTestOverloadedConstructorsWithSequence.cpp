@@ -151,6 +151,13 @@ JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequen
 {
 }
 
+void JSTestOverloadedConstructorsWithSequence::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestOverloadedConstructorsWithSequence::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestOverloadedConstructorsWithSequencePrototype::create(vm, globalObject, JSTestOverloadedConstructorsWithSequencePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

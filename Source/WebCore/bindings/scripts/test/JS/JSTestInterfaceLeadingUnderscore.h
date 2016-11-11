@@ -52,12 +52,7 @@ public:
 protected:
     JSTestInterfaceLeadingUnderscore(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterfaceLeadingUnderscore>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestInterfaceLeadingUnderscoreOwner : public JSC::WeakHandleOwner {

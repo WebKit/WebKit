@@ -119,6 +119,13 @@ JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& gl
 {
 }
 
+void JSTestCEReactions::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestCEReactions::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestCEReactionsPrototype::create(vm, globalObject, JSTestCEReactionsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

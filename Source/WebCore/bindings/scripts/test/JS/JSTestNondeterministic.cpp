@@ -126,6 +126,13 @@ JSTestNondeterministic::JSTestNondeterministic(Structure* structure, JSDOMGlobal
 {
 }
 
+void JSTestNondeterministic::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestNondeterministic::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestNondeterministicPrototype::create(vm, globalObject, JSTestNondeterministicPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

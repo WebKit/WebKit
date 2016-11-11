@@ -55,12 +55,7 @@ public:
 protected:
     JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestExceptionOwner : public JSC::WeakHandleOwner {

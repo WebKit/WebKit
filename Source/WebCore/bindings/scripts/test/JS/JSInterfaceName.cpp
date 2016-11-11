@@ -99,6 +99,13 @@ JSInterfaceName::JSInterfaceName(Structure* structure, JSDOMGlobalObject& global
 {
 }
 
+void JSInterfaceName::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSInterfaceName::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSInterfaceNamePrototype::create(vm, globalObject, JSInterfaceNamePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

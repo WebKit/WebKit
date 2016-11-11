@@ -648,6 +648,13 @@ sub HasComplexGetOwnProperty
         || InstanceOverridesGetOwnPropertySlot($interface);
 }
 
+sub IsGlobalOrPrimaryGlobalInterface
+{
+    my $interface = shift;
+
+    return $interface->extendedAttributes->{Global} || $interface->extendedAttributes->{PrimaryGlobal};
+}
+
 sub InterfaceRequiresAttributesOnInstance
 {
     my $interface = shift;
@@ -660,8 +667,7 @@ sub InterfaceRequiresAttributesOnInstance
     # FIXME: We should be able to drop this once <rdar://problem/24466097> is fixed.
     return 1 if $interface->isException;
 
-    # FIXME: Add support for [PrimaryGlobal] / [Global].
-    return 1 if IsDOMGlobalObject($interface) && $interface->type->name ne "WorkerGlobalScope";
+    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
 
     return 0;
 }
@@ -670,9 +676,6 @@ sub AttributeShouldBeOnInstance
 {
     my $interface = shift;
     my $attribute = shift;
-
-    # FIXME: The bindings generator does not support putting runtime-enabled attributes on the instance yet (except for global objects).
-    return 0 if $attribute->extendedAttributes->{EnabledAtRuntime} && !IsDOMGlobalObject($interface);
 
     return 1 if InterfaceRequiresAttributesOnInstance($interface);
     return 1 if $codeGenerator->IsConstructorType($attribute->type);
@@ -696,8 +699,7 @@ sub OperationShouldBeOnInstance
     my $interface = shift;
     my $function = shift;
 
-    # FIXME: Add support for [PrimaryGlobal] / [Global].
-    return 1 if IsDOMGlobalObject($interface) && $interface->type->name ne "WorkerGlobalScope";
+    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
 
     # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
     return 0 if $function->extendedAttributes->{EnabledAtRuntime};
@@ -1674,19 +1676,14 @@ sub GenerateHeader
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&);\n\n");
      } else {
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&, Ref<$implType>&&);\n\n");
-        push(@headerContent, "    void finishCreation(JSC::VM& vm)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        Base::finishCreation(vm);\n");
-        push(@headerContent, "        ASSERT(inherits(info()));\n");
-        push(@headerContent, "    }\n\n");
     }
 
-    if (IsDOMGlobalObject($interface)) {
-        if ($interfaceName eq "DOMWindow") {
-            push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowShell*);\n");
-        } else {
-            push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSProxy*);\n");
-        }
+    if ($interfaceName eq "DOMWindow") {
+        push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowShell*);\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
+        push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSProxy*);\n");
+    } else {
+        push(@headerContent, "    void finishCreation(JSC::VM&);\n");
     }
 
     push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\n") if $interface->extendedAttributes->{CustomIndexedSetter};
@@ -1885,7 +1882,7 @@ sub GeneratePropertiesHashTable
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
 
         # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
-        if (IsDOMGlobalObject($interface) && $attribute->extendedAttributes->{EnabledAtRuntime}) {
+        if ($isInstance && $attribute->extendedAttributes->{EnabledAtRuntime}) {
             $propertyCount -= 1;
             next;
         }
@@ -1915,7 +1912,6 @@ sub GeneratePropertiesHashTable
         $conditionals->{$name} = $conditional if $conditional;
 
         if ($attribute->extendedAttributes->{EnabledAtRuntime}) {
-            die "We currently do not support [EnabledAtRuntime] attributes on the instance (except for global objects)." if $isInstance;
             push(@$runtimeEnabledAttributes, $attribute);
         }
     }
@@ -1931,7 +1927,7 @@ sub GeneratePropertiesHashTable
         next if $function->name eq "[Symbol.Iterator]";
 
         # Global objects add RuntimeEnabled operations after creation so do not add them to the static table.
-        if (IsDOMGlobalObject($interface) && $function->extendedAttributes->{EnabledAtRuntime}) {
+        if ($isInstance && $function->extendedAttributes->{EnabledAtRuntime}) {
             $propertyCount -= 1;
             next;
         }
@@ -1959,7 +1955,6 @@ sub GeneratePropertiesHashTable
         $conditionals->{$name} = $conditional if $conditional;
 
         if ($function->extendedAttributes->{EnabledAtRuntime}) {
-            die "We currently do not support [EnabledAtRuntime] operations on the instance (except for global objects)." if $isInstance;
             push(@$runtimeEnabledFunctions, $function);
         }
     }
@@ -2913,7 +2908,7 @@ sub GenerateImplementation
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
-    if (PrototypeHasStaticPropertyTable($interface) && !IsDOMGlobalObject($interface)) {
+    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
         push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
@@ -3002,75 +2997,82 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (IsDOMGlobalObject($interface)) {
-        if ($interfaceName eq "DOMWindow") {
-            push(@implContent, "void ${className}::finishCreation(VM& vm, JSDOMWindowShell* shell)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    Base::finishCreation(vm, shell);\n\n");
-        } else {
-            push(@implContent, "void ${className}::finishCreation(VM& vm, JSProxy* proxy)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    Base::finishCreation(vm, proxy);\n\n");
-        }
-        # Support for RuntimeEnabled attributes on global objects.
-        foreach my $attribute (@{$interface->attributes}) {
-            next unless $attribute->extendedAttributes->{EnabledAtRuntime};
-
-            AddToImplIncludes("RuntimeEnabledFeatures.h");
-            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $enable_function = GetRuntimeEnableFunctionName($attribute);
-            my $attributeName = $attribute->name;
-            push(@implContent, "    if (${enable_function}()) {\n");
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
-            push(@implContent, "        auto* customGetterSetter = CustomGetterSetter::create(vm, $getter, $setter);\n");
-            my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
-            push(@implContent, "        putDirectCustomAccessor(vm, vm.propertyNames->$attributeName, customGetterSetter, attributesForStructure($jscAttributes));\n");
-            push(@implContent, "    }\n");
-            push(@implContent, "#endif\n") if $conditionalString;
-        }
-
-        # Support PrivateIdentifier attributes on global objects
-        foreach my $attribute (@{$interface->attributes}) {
-            next unless $attribute->extendedAttributes->{PrivateIdentifier};
-
-            AddToImplIncludes("WebCoreJSClientData.h");
-            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-            my $attributeName = $attribute->name;
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(DontDelete | ReadOnly));\n");
-            push(@implContent, "#endif\n") if $conditionalString;
-        }
-
-        # Support for RuntimeEnabled operations on global objects.
-        foreach my $function (@{$interface->functions}) {
-            next unless $function->extendedAttributes->{EnabledAtRuntime};
-            next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
-
-            AddToImplIncludes("RuntimeEnabledFeatures.h");
-            my $conditionalString = $codeGenerator->GenerateConditionalString($function);
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $enable_function = GetRuntimeEnableFunctionName($function);
-            my $functionName = $function->name;
-            my $implementationFunction = GetFunctionName($interface, $className, $function);
-            my $functionLength = GetFunctionLength($function);
-            my $jsAttributes = ComputeFunctionSpecial($interface, $function);
-            push(@implContent, "    if (${enable_function}())\n");
-
-            my $propertyName = "vm.propertyNames->$functionName";
-            $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $functionName . "PrivateName()" if $function->extendedAttributes->{PrivateIdentifier};
-            if (IsJSBuiltin($interface, $function)) {
-                push(@implContent, "        putDirectBuiltinFunction(vm, this, $propertyName, $implementationFunction(vm), attributesForStructure($jsAttributes));\n");
-            } else {
-                push(@implContent, "        putDirectNativeFunction(vm, this, $propertyName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
-            }
-            push(@implContent, "#endif\n") if $conditionalString;
-        }
-        push(@implContent, "}\n\n");
+    if ($interfaceName eq "DOMWindow") {
+        push(@implContent, "void ${className}::finishCreation(VM& vm, JSDOMWindowShell* shell)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    Base::finishCreation(vm, shell);\n\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
+        push(@implContent, "void ${className}::finishCreation(VM& vm, JSProxy* proxy)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    Base::finishCreation(vm, proxy);\n\n");
+    } else {
+        push(@implContent, "void ${className}::finishCreation(VM& vm)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    Base::finishCreation(vm);\n");
+        push(@implContent, "    ASSERT(inherits(info()));\n\n");
     }
+
+    # Support for RuntimeEnabled attributes on instances.
+    foreach my $attribute (@{$interface->attributes}) {
+        next unless $attribute->extendedAttributes->{EnabledAtRuntime};
+        next unless AttributeShouldBeOnInstance($interface, $attribute);
+
+        AddToImplIncludes("RuntimeEnabledFeatures.h");
+        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+        my $enable_function = GetRuntimeEnableFunctionName($attribute);
+        my $attributeName = $attribute->name;
+        push(@implContent, "    if (${enable_function}()) {\n");
+        my $getter = GetAttributeGetterName($interface, $className, $attribute);
+        my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
+        push(@implContent, "        auto* customGetterSetter = CustomGetterSetter::create(vm, $getter, $setter);\n");
+        my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+        push(@implContent, "        putDirectCustomAccessor(vm, vm.propertyNames->$attributeName, customGetterSetter, attributesForStructure($jscAttributes));\n");
+        push(@implContent, "    }\n");
+        push(@implContent, "#endif\n") if $conditionalString;
+    }
+
+    # Support PrivateIdentifier attributes on instances.
+    foreach my $attribute (@{$interface->attributes}) {
+        next unless $attribute->extendedAttributes->{PrivateIdentifier};
+        next unless AttributeShouldBeOnInstance($interface, $attribute);
+
+        AddToImplIncludes("WebCoreJSClientData.h");
+        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
+        my $attributeName = $attribute->name;
+        my $getter = GetAttributeGetterName($interface, $className, $attribute);
+
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+        push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(DontDelete | ReadOnly));\n");
+        push(@implContent, "#endif\n") if $conditionalString;
+    }
+
+    # Support for RuntimeEnabled operations on instances.
+    foreach my $function (@{$interface->functions}) {
+        next unless $function->extendedAttributes->{EnabledAtRuntime};
+        next unless OperationShouldBeOnInstance($interface, $function);
+        next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+
+        AddToImplIncludes("RuntimeEnabledFeatures.h");
+        my $conditionalString = $codeGenerator->GenerateConditionalString($function);
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+        my $enable_function = GetRuntimeEnableFunctionName($function);
+        my $functionName = $function->name;
+        my $implementationFunction = GetFunctionName($interface, $className, $function);
+        my $functionLength = GetFunctionLength($function);
+        my $jsAttributes = ComputeFunctionSpecial($interface, $function);
+        push(@implContent, "    if (${enable_function}())\n");
+
+        my $propertyName = "vm.propertyNames->$functionName";
+        $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $functionName . "PrivateName()" if $function->extendedAttributes->{PrivateIdentifier};
+        if (IsJSBuiltin($interface, $function)) {
+            push(@implContent, "        putDirectBuiltinFunction(vm, this, $propertyName, $implementationFunction(vm), attributesForStructure($jsAttributes));\n");
+        } else {
+            push(@implContent, "        putDirectNativeFunction(vm, this, $propertyName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
+        }
+        push(@implContent, "#endif\n") if $conditionalString;
+    }
+    push(@implContent, "}\n\n");
 
     unless (ShouldUseGlobalObjectPrototype($interface)) {
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
@@ -5994,7 +5996,7 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    }\n");
 
     if (PrototypeHasStaticPropertyTable($interface)) {
-        if (IsDOMGlobalObject($interface)) {
+        if (IsGlobalOrPrimaryGlobalInterface($interface)) {
             $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
         } else {
             push(@$outputArray, "\n");

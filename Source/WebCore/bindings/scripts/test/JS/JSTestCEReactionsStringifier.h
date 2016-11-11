@@ -52,12 +52,7 @@ public:
 protected:
     JSTestCEReactionsStringifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCEReactionsStringifier>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestCEReactionsStringifierOwner : public JSC::WeakHandleOwner {

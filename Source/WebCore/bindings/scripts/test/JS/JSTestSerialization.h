@@ -52,12 +52,7 @@ public:
 protected:
     JSTestSerialization(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerialization>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestSerializationOwner : public JSC::WeakHandleOwner {

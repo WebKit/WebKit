@@ -99,6 +99,13 @@ JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOM
 {
 }
 
+void JSTestGenerateIsReachable::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestGenerateIsReachable::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestGenerateIsReachablePrototype::create(vm, globalObject, JSTestGenerateIsReachablePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

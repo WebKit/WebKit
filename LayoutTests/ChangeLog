@@ -1,3 +1,21 @@
+2016-11-11  Chris Dumez  <cdumez@apple.com>
+
+        WorkerGlobalScope's indexedDB property should be on the prototype, not the instance
+        https://bugs.webkit.org/show_bug.cgi?id=164644
+
+        Reviewed by Brady Eidson.
+
+        Extend layout test coverage to check that:
+        - WorkerGlobalScope.indexedDB is on the prototype.
+        - WorkerGlobalScope.IDBDatabase constructor is on the instance
+
+        Both are enabled at runtime properties.
+
+        * fast/workers/WorkerGlobalScope-properties-prototype-expected.txt:
+        * fast/workers/WorkerGlobalScope-properties-prototype.html:
+        * fast/workers/self-hasOwnProperty-expected.txt:
+        * fast/workers/self-hasOwnProperty.html:
+
 2016-11-11  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: Toggling class in `.class ::slotted(*)` does not trigger style recalc

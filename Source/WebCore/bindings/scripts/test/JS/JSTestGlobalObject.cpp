@@ -141,9 +141,10 @@ JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& 
 {
 }
 
-void JSTestGlobalObject::finishCreation(VM& vm, JSProxy* proxy)
+void JSTestGlobalObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(vm, proxy);
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
 
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {

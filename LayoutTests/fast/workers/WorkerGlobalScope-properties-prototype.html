@@ -9,11 +9,14 @@ description("Tests that WorkerGlobalScope's properties are on the prototype.");
 
 var worker = createWorker();
 worker.postMessage("eval self.__proto__.__proto__ === WorkerGlobalScope.prototype");
+worker.postMessage("eval self.__proto__.__proto__.__proto__ === EventTarget.prototype");
+worker.postMessage("eval self.__proto__.__proto__.__proto__.__proto__ === {}.__proto__");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('navigator') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('self') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('location') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('close') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('importScripts') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('indexedDB') === true");
 worker.postMessage("eval self.hasOwnProperty('navigator') === false");
 worker.postMessage("eval self.hasOwnProperty('location') === false");
 worker.postMessage("eval self.hasOwnProperty('close') === false");

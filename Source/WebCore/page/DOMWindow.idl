@@ -40,6 +40,7 @@
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     JSLegacyParent=JSDOMWindowBase,
+    PrimaryGlobal,
 ] interface DOMWindow : EventTarget {
     [Replaceable] readonly attribute Screen screen;
     readonly attribute History history;

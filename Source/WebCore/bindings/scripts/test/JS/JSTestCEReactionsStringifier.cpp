@@ -111,6 +111,13 @@ JSTestCEReactionsStringifier::JSTestCEReactionsStringifier(Structure* structure,
 {
 }
 
+void JSTestCEReactionsStringifier::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestCEReactionsStringifier::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestCEReactionsStringifierPrototype::create(vm, globalObject, JSTestCEReactionsStringifierPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

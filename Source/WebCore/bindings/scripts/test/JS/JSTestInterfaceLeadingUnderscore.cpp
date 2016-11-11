@@ -102,6 +102,13 @@ JSTestInterfaceLeadingUnderscore::JSTestInterfaceLeadingUnderscore(Structure* st
 {
 }
 
+void JSTestInterfaceLeadingUnderscore::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestInterfaceLeadingUnderscore::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestInterfaceLeadingUnderscorePrototype::create(vm, globalObject, JSTestInterfaceLeadingUnderscorePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

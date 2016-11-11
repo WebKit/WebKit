@@ -1,3 +1,131 @@
+2016-11-11  Chris Dumez  <cdumez@apple.com>
+
+        WorkerGlobalScope's indexedDB property should be on the prototype, not the instance
+        https://bugs.webkit.org/show_bug.cgi?id=164644
+
+        Reviewed by Brady Eidson.
+
+        WorkerGlobalScope's indexedDB property should be on the prototype, not the instance
+        as per:
+        - https://heycam.github.io/webidl/#es-attributes
+
+        This is because WorkerGlobalScope is not marked as [Global] or [PrimaryGlobal] in
+        the IDL:
+        - https://html.spec.whatwg.org/multipage/workers.html#the-workerglobalscope-common-interface
+
+        DedicatedWorkerGlobalScope is the one that is marked as [Global] and that should
+        have its attributes on the instance:
+        - https://html.spec.whatwg.org/multipage/workers.html#dedicated-workers-and-the-dedicatedworkerglobalscope-interface
+
+        We were getting this mostly right, except for runtime-enabled attributes / operations
+        which would end up on the instance instead of the prototype. This patch adds support
+        for [PrimaryGlobal] / [Global] IDL extended attributes which determine the location
+        of properties. It also improves support for runtime-enabled properties so that they
+        can now be on either the instance or the prototype, exactly as if they were not
+        runtimed-enabled.
+
+        This gives us 100% pass rate on:
+        - http://w3c-test.org/IndexedDB/interfaces.worker.html
+
+        No new tests, updated existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsGlobalOrPrimaryGlobalInterface):
+        (InterfaceRequiresAttributesOnInstance):
+        (AttributeShouldBeOnInstance):
+        (OperationShouldBeOnInstance):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceName::finishCreation):
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactions::finishCreation):
+        * bindings/scripts/test/JS/JSTestCEReactions.h:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifier::finishCreation):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::finishCreation):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJIT::finishCreation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::finishCreation):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::finishCreation):
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachable::finishCreation):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::finishCreation):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscore::finishCreation):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterable::finishCreation):
+        * bindings/scripts/test/JS/JSTestIterable.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::finishCreation):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::finishCreation):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::JSTestNondeterministic::finishCreation):
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::finishCreation):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructors::finishCreation):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequence::finishCreation):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltins::finishCreation):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::finishCreation):
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::finishCreation):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefs::finishCreation):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/TestGlobalObject.idl:
+        * page/DOMWindow.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+
 2016-11-11  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: Toggling class in `.class ::slotted(*)` does not trigger style recalc

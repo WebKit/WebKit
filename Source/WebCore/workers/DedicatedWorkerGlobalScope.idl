@@ -31,6 +31,7 @@
 [
     CustomProxyToJSObject,
     Exposed=DedicatedWorker,
+    Global=(Worker,DedicatedWorker),
     JSGenerateToNativeObject,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     [Custom, MayThrowException] void postMessage(any message, optional Array messagePorts);

@@ -11,6 +11,7 @@ var worker = createWorker();
 worker.postMessage("eval self.hasOwnProperty('DedicatedWorkerGlobalScope')");
 worker.postMessage("eval self.hasOwnProperty('WorkerGlobalScope')");
 worker.postMessage("eval self.hasOwnProperty('postMessage')");
+worker.postMessage("eval self.hasOwnProperty('IDBDatabase')");
 worker.postMessage("eval DONE");
 
 worker.onmessage = function(evt) {

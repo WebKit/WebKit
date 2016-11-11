@@ -109,6 +109,13 @@ JSTestOverrideBuiltins::JSTestOverrideBuiltins(Structure* structure, JSDOMGlobal
 {
 }
 
+void JSTestOverrideBuiltins::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestOverrideBuiltins::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestOverrideBuiltinsPrototype::create(vm, globalObject, JSTestOverrideBuiltinsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

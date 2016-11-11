@@ -52,12 +52,7 @@ public:
 protected:
     JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject&, Ref<TestMediaQueryListListener>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestMediaQueryListListenerOwner : public JSC::WeakHandleOwner {

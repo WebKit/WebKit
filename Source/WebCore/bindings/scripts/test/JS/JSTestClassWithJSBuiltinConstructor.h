@@ -54,12 +54,7 @@ public:
 protected:
     JSTestClassWithJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestClassWithJSBuiltinConstructor>&&);
 
-    void finishCreation(JSC::VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
+    void finishCreation(JSC::VM&);
 };
 
 class JSTestClassWithJSBuiltinConstructorOwner : public JSC::WeakHandleOwner {

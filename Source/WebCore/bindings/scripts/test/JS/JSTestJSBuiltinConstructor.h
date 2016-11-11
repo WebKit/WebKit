@@ -59,6 +59,7 @@ public:
 protected:
     JSTestJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject&);
 
+    void finishCreation(JSC::VM&);
 };
 
 

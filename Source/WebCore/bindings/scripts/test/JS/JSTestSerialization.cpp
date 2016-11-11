@@ -122,6 +122,13 @@ JSTestSerialization::JSTestSerialization(Structure* structure, JSDOMGlobalObject
 {
 }
 
+void JSTestSerialization::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestSerialization::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestSerializationPrototype::create(vm, globalObject, JSTestSerializationPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

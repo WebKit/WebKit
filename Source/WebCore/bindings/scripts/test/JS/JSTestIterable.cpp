@@ -113,6 +113,13 @@ JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalOb
 {
 }
 
+void JSTestIterable::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+}
+
 JSObject* JSTestIterable::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestIterablePrototype::create(vm, globalObject, JSTestIterablePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
