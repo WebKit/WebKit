@@ -93,7 +93,8 @@ void BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 
 String BaseCheckableInputType::fallbackValue() const
 {
-    return ASCIILiteral("on");
+    static NeverDestroyed<const AtomicString> on("on", AtomicString::ConstructFromLiteral);
+    return on.get();
 }
 
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()

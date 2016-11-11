@@ -1,3 +1,33 @@
+2016-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Speed up HTMLInputElement validation
+        https://bugs.webkit.org/show_bug.cgi?id=164603
+
+        Reviewed by Ryosuke Niwa.
+
+        Speed up HTMLInputElement validation by doing 1 virtual function call
+        instead of 9 and calling HTMLInputElement::value() only once per
+        validation instead of 9 times. Calling value() is expensive because
+        of sanitization.
+
+        No new tests, no Web-exposed behavior change.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::fallbackValue):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::isValid):
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isValidFormControlElement):
+        (WebCore::HTMLFormControlElement::updateValidity):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isValid):
+        (WebCore::HTMLInputElement::value):
+        * html/HTMLInputElement.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::limitLength):
+        * html/ValidityState.idl:
+
 2016-11-10  John Wilander  <wilander@apple.com>
 
         Add link information to data transfer pasteboard for drag and drop links

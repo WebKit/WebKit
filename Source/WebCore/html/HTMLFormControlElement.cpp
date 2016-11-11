@@ -526,7 +526,7 @@ inline bool HTMLFormControlElement::isValidFormControlElement() const
 {
     // If the following assertion fails, updateValidity() is not called
     // correctly when something which changes validity is updated.
-    ASSERT(m_isValid == valid());
+    ASSERT(m_isValid == isValid());
     return m_isValid;
 }
 
@@ -551,7 +551,7 @@ void HTMLFormControlElement::updateValidity()
     bool willValidate = this->willValidate();
     bool wasValid = m_isValid;
 
-    m_isValid = valid();
+    m_isValid = isValid();
 
     if (willValidate && m_isValid != wasValid) {
         // Update style for pseudo classes such as :valid :invalid.

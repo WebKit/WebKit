@@ -71,6 +71,7 @@ public:
     bool tooLong() const final;
     bool typeMismatch() const final;
     bool valueMissing() const final;
+    bool isValid() const final;
     WEBCORE_EXPORT String validationMessage() const final;
 
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.

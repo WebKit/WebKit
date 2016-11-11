@@ -394,7 +394,7 @@ static String limitLength(const String& string, int maxLength)
             break;
         }
     }
-    return string.left(newLength);
+    return newLength < string.length() ? string.left(newLength) : string;
 }
 
 static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
