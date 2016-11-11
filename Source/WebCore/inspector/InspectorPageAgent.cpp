@@ -272,7 +272,7 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
     if (url.isNull())
         return nullptr;
 
-    CachedResource* cachedResource = frame->document()->cachedResourceLoader().cachedResource(url);
+    CachedResource* cachedResource = frame->document()->cachedResourceLoader().cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
     if (!cachedResource) {
         ResourceRequest request(url);
 #if ENABLE(CACHE_PARTITIONING)

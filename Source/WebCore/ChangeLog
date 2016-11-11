@@ -1,3 +1,14 @@
+2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        After r207459 ASSERT in CachedResourceLoader under InspectorPageAgent::cachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=164621
+
+        Reviewed by Youenn Fablet.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResource):
+        CachedResourceLoader expects a sanitized URL.
+
 2016-11-10  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0 Support the IDBDatabase.onclose event.
