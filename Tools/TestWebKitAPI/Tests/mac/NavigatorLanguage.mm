@@ -70,24 +70,24 @@ static NSString *languageForSystemLanguage(WebView* webView, NSString *systemLan
 
 // These tests document current behavior. Some of the current results may not be right.
 NSArray *tests = @[
-    @[@"ru", @"ru-ru"], // This does not match other browsers or CFNetwork's Accept-Language, which all use "ru".
-    @[@"en", @"en-us"],
-    @[@"en-GB", @"en-gb"],
-    @[@"en-US", @"en-us"],
-    @[@"ja", @"ja-jp"],
-    @[@"hi", @"hi-in"],
-    @[@"zh-TW", @"zh-tw"], // This should not map to the generic zh-hant, see rdar://problem/21395180.
-    @[@"zh-HK", @"zh-tw"],
-    @[@"es", @"es-es"],
-    @[@"es-MX", @"es-xl"],
-    @[@"es-ES", @"es-es"],
-    @[@"es-419", @"es-xl"],
-    @[@"zh-Hans", @"zh-cn"],
-    @[@"zh-Hant", @"zh-tw"],
-    @[@"pt-BR", @"pt-br"],
-    @[@"pt-PT", @"pt-pt"],
-    @[@"fr", @"fr-fr"],
-    @[@"fr-CA", @"fr-ca"],
+    @[@"ru", @"ru-RU"], // This does not match other browsers or CFNetwork's Accept-Language, which all use "ru".
+    @[@"en", @"en-US"],
+    @[@"en-GB", @"en-GB"],
+    @[@"en-US", @"en-US"],
+    @[@"ja", @"ja-JP"],
+    @[@"hi", @"hi-IN"],
+    @[@"zh-TW", @"zh-TW"], // This should not map to the generic zh-hant, see rdar://problem/21395180.
+    @[@"zh-HK", @"zh-TW"],
+    @[@"es", @"es-ES"],
+    @[@"es-MX", @"es-XL"],
+    @[@"es-ES", @"es-ES"],
+    @[@"es-419", @"es-XL"],
+    @[@"zh-Hans", @"zh-CN"],
+    @[@"zh-Hant", @"zh-TW"],
+    @[@"pt-BR", @"pt-BR"],
+    @[@"pt-PT", @"pt-PT"],
+    @[@"fr", @"fr-FR"],
+    @[@"fr-CA", @"fr-CA"],
 ];
 
 TEST(WebKit1, NavigatorLanguage)
