@@ -1,5 +1,18 @@
 2016-11-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Call RuntimeAgent.disableControlFlowProfiler when Code Coverage Profiler is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=163407
+        <rdar://problem/28764230>
+
+        Reviewed by Timothy Hatcher.
+
+        Turning Type Profiler off by clicking [T] icon now disables its backend by calling RuntimeAgent.disableTypeProfiler().
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+
+2016-11-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Settings tab: make the header smaller to fit more content
         https://bugs.webkit.org/show_bug.cgi?id=164613
         <rdar://problem/29206007>

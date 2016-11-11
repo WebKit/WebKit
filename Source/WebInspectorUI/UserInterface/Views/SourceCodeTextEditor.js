@@ -1876,12 +1876,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (!this._typeTokenScrollHandler)
                 this._enableScrollEventsForTypeTokenAnnotator();
         } else {
-            // Because we disable type profiling when exiting the inspector, there is no need to call
-            // RuntimeAgent.disableTypeProfiler() here.  If we were to call it here, JavaScriptCore would
-            // compile out all the necessary type profiling information, so if a user were to quickly press then
-            // unpress the type profiling button, we wouldn't be able to re-show type information which would
-            // provide a confusing user experience.
-
+            RuntimeAgent.disableTypeProfiler();
             this._typeTokenAnnotator.clear();
 
             if (this._typeTokenScrollHandler)
