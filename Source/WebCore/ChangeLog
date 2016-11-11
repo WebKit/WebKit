@@ -1,5 +1,16 @@
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Add support for paths as basic shapes.
+        https://bugs.webkit.org/show_bug.cgi?id=164661
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShapePath):
+        (WebCore::consumeBasicShape):
+
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Support margin-box in shape parsing.
         https://bugs.webkit.org/show_bug.cgi?id=164658
 

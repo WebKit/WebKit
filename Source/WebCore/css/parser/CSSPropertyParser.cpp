@@ -67,6 +67,7 @@
 #include "Rect.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
@@ -2192,6 +2193,28 @@ static RefPtr<CSSBasicShapePolygon> consumeBasicShapePolygon(CSSParserTokenRange
     return shape;
 }
 
+static RefPtr<CSSBasicShapePath> consumeBasicShapePath(CSSParserTokenRange& args)
+{
+    WindRule windRule = RULE_NONZERO;
+    if (identMatches<CSSValueEvenodd, CSSValueNonzero>(args.peek().id())) {
+        windRule = args.consumeIncludingWhitespace().id() == CSSValueEvenodd ? RULE_EVENODD : RULE_NONZERO;
+        if (!consumeCommaIncludingWhitespace(args))
+            return nullptr;
+    }
+
+    if (args.peek().type() != StringToken)
+        return nullptr;
+    
+    auto byteStream = std::make_unique<SVGPathByteStream>();
+    if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value().toString(), *byteStream, UnalteredParsing))
+        return nullptr;
+    
+    auto shape = CSSBasicShapePath::create(WTFMove(byteStream));
+    shape->setWindRule(windRule);
+    
+    return WTFMove(shape);
+}
+
 static void complete4Sides(RefPtr<CSSPrimitiveValue> side[4])
 {
     if (side[3])
@@ -2296,6 +2319,8 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         shape = consumeBasicShapePolygon(args, context);
     else if (id == CSSValueInset)
         shape = consumeBasicShapeInset(args, context);
+    else if (id == CSSValuePath)
+        shape = consumeBasicShapePath(args);
     if (!shape)
         return nullptr;
     range = rangeCopy;
