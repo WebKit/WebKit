@@ -77,11 +77,11 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     auto select = KeygenSelectElement::create(document);
     for (auto& key : keys) {
         auto option = HTMLOptionElement::create(document);
-        select->appendChild(option, IGNORE_EXCEPTION);
-        option->appendChild(Text::create(document, key), IGNORE_EXCEPTION);
+        select->appendChild(option);
+        option->appendChild(Text::create(document, key));
     }
 
-    ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);
+    ensureUserAgentShadowRoot().appendChild(select);
 }
 
 Ref<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)

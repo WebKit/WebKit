@@ -378,6 +378,7 @@ bool MediaControls::containsRelatedTarget(Event& event)
 }
 
 #if ENABLE(VIDEO_TRACK)
+
 void MediaControls::createTextTrackDisplay()
 {
     if (m_textDisplayContainer)
@@ -390,7 +391,7 @@ void MediaControls::createTextTrackDisplay()
         m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
-    insertBefore(textDisplayContainer, m_panel, IGNORE_EXCEPTION);
+    insertBefore(textDisplayContainer, m_panel);
 }
 
 void MediaControls::showTextTrackDisplay()
@@ -421,6 +422,7 @@ void MediaControls::textTrackPreferencesChanged()
     if (m_textDisplayContainer)
         m_textDisplayContainer->updateSizes(true);
 }
+
 #endif
 
 void MediaControls::setSliderVolume()

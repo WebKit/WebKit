@@ -123,13 +123,7 @@ JSValue JSNode::insertBefore(ExecState& state)
     if (UNLIKELY(!newChild))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "node", "Node", "insertBefore", "Node"));
 
-    ExceptionCode ec = 0;
-    if (UNLIKELY(!wrapped().insertBefore(*newChild, JSNode::toWrapped(state.uncheckedArgument(1)), ec))) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    ASSERT(!ec);
+    propagateException(state, scope, wrapped().insertBefore(*newChild, JSNode::toWrapped(state.uncheckedArgument(1))));
     return newChildValue;
 }
 
@@ -150,13 +144,7 @@ JSValue JSNode::replaceChild(ExecState& state)
         return JSValue::decode(throwArgumentTypeError(state, scope, 1, "child", "Node", "replaceChild", "Node"));
     }
 
-    ExceptionCode ec = 0;
-    if (UNLIKELY(!wrapped().replaceChild(*newChild, *oldChild, ec))) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    ASSERT(!ec);
+    propagateException(state, scope, wrapped().replaceChild(*newChild, *oldChild));
     return oldChildValue;
 }
 
@@ -170,13 +158,7 @@ JSValue JSNode::removeChild(ExecState& state)
     if (UNLIKELY(!child))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "child", "Node", "removeChild", "Node"));
 
-    ExceptionCode ec = 0;
-    if (UNLIKELY(!wrapped().removeChild(*child, ec))) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    ASSERT(!ec);
+    propagateException(state, scope, wrapped().removeChild(*child));
     return childValue;
 }
 
@@ -190,13 +172,7 @@ JSValue JSNode::appendChild(ExecState& state)
     if (UNLIKELY(!newChild))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "node", "Node", "appendChild", "Node"));
 
-    ExceptionCode ec = 0;
-    if (UNLIKELY(!wrapped().appendChild(*newChild, ec))) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    ASSERT(!ec);
+    propagateException(state, scope, wrapped().appendChild(*newChild));
     return newChildValue;
 }
 

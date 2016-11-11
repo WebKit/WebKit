@@ -671,7 +671,7 @@ void InspectorPageAgent::setDocumentContent(ErrorString& errorString, const Stri
         errorString = ASCIILiteral("No Document instance to set HTML for");
         return;
     }
-    DOMPatchSupport::patchDocument(document, html);
+    DOMPatchSupport::patchDocument(*document, html);
 }
 
 void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)

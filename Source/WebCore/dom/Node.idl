@@ -25,8 +25,7 @@
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
-] interface Node : EventTarget
- {
+] interface Node : EventTarget {
     // NodeType
     const unsigned short ELEMENT_NODE = 1;
     const unsigned short ATTRIBUTE_NODE = 2;
@@ -43,8 +42,7 @@
 
     readonly attribute DOMString nodeName;
 
-    // FIXME: the spec says this can also raise on retrieval.
-    [CEReactions, SetterMayThrowLegacyException] attribute DOMString? nodeValue;
+    [CEReactions, SetterMayThrowException] attribute DOMString? nodeValue;
 
     [DOMJIT=Getter, CustomGetter] readonly attribute unsigned short nodeType;
     [DOMJIT=Getter] readonly attribute Node? parentNode;
@@ -55,21 +53,20 @@
     [DOMJIT=Getter] readonly attribute Node? nextSibling;
     [DOMJIT=Getter] readonly attribute Document? ownerDocument;
 
-    [CEReactions, Custom, MayThrowLegacyException] Node insertBefore(Node newChild, Node? refChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node replaceChild(Node newChild, Node oldChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node removeChild(Node oldChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node appendChild(Node newChild);
+    [CEReactions, Custom, MayThrowException] Node insertBefore(Node newChild, Node? refChild);
+    [CEReactions, Custom, MayThrowException] Node replaceChild(Node newChild, Node oldChild);
+    [CEReactions, Custom, MayThrowException] Node removeChild(Node oldChild);
+    [CEReactions, Custom, MayThrowException] Node appendChild(Node newChild);
 
     boolean hasChildNodes();
 
-    [CEReactions, ImplementedAs=cloneNodeForBindings, MayThrowLegacyException, NewObject] Node cloneNode(optional boolean deep = false);
+    [CEReactions, ImplementedAs=cloneNodeForBindings, MayThrowException, NewObject] Node cloneNode(optional boolean deep = false);
 
     void normalize();
 
     readonly attribute USVString baseURI;
 
-    // FIXME: the spec says this can also raise on retrieval.
-    [CEReactions, SetterMayThrowLegacyException] attribute DOMString? textContent;
+    [CEReactions, SetterMayThrowException] attribute DOMString? textContent;
 
     boolean isSameNode(Node? other);
     boolean isEqualNode(Node? other);
@@ -97,5 +94,5 @@
 };
 
 dictionary GetRootNodeOptions {
-  boolean composed = false;
+    boolean composed = false;
 };

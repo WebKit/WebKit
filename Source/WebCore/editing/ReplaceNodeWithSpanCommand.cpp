@@ -53,10 +53,10 @@ static void swapInNodePreservingAttributesAndChildren(HTMLElement& newNode, HTML
     NodeVector children;
     getChildNodes(nodeToReplace, children);
     for (auto& child : children)
-        newNode.appendChild(child, ASSERT_NO_EXCEPTION);
+        newNode.appendChild(child);
 
-    parentNode->insertBefore(newNode, &nodeToReplace, ASSERT_NO_EXCEPTION);
-    parentNode->removeChild(nodeToReplace, ASSERT_NO_EXCEPTION);
+    parentNode->insertBefore(newNode, &nodeToReplace);
+    parentNode->removeChild(nodeToReplace);
 }
 
 void ReplaceNodeWithSpanCommand::doApply()

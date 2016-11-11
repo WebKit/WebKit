@@ -127,7 +127,7 @@ public:
     bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
-    virtual void setNodeValue(const String&, ExceptionCode&);
+    virtual ExceptionOr<void> setNodeValue(const String&);
     virtual NodeType nodeType() const = 0;
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
@@ -151,13 +151,10 @@ public:
     
     void getSubresourceURLs(ListHashSet<URL>&) const;
 
-    // These should all actually return a node, but this is only important for language bindings,
-    // which will already know and hold a ref on the right node to return. Returning bool allows
-    // these methods to be more efficient since they don't need to return a ref
-    WEBCORE_EXPORT bool insertBefore(Node& newChild, Node* refChild, ExceptionCode&);
-    WEBCORE_EXPORT bool replaceChild(Node& newChild, Node& oldChild, ExceptionCode&);
-    WEBCORE_EXPORT bool removeChild(Node& child, ExceptionCode&);
-    WEBCORE_EXPORT bool appendChild(Node& newChild, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> insertBefore(Node& newChild, Node* refChild);
+    WEBCORE_EXPORT ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
+    WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
+    WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
 
     bool hasChildNodes() const { return firstChild(); }
 
@@ -168,12 +165,12 @@ public:
     };
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) = 0;
     Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
-    WEBCORE_EXPORT RefPtr<Node> cloneNodeForBindings(bool deep, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<Node>> cloneNodeForBindings(bool deep);
 
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;
     virtual const AtomicString& prefix() const;
-    virtual void setPrefix(const AtomicString&, ExceptionCode&);
+    virtual ExceptionOr<void> setPrefix(const AtomicString&);
     WEBCORE_EXPORT void normalize();
 
     bool isSameNode(Node* other) const { return this == other; }
@@ -183,7 +180,7 @@ public:
     WEBCORE_EXPORT const AtomicString& lookupNamespaceURI(const AtomicString& prefix) const;
 
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
-    WEBCORE_EXPORT void setTextContent(const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setTextContent(const String&);
     
     Node* lastDescendant() const;
     Node* firstDescendant() const;
@@ -387,7 +384,7 @@ public:
     unsigned countChildNodes() const;
     Node* traverseToChildAt(unsigned) const;
 
-    void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
+    ExceptionOr<void> checkSetPrefix(const AtomicString& prefix);
 
     WEBCORE_EXPORT bool isDescendantOf(const Node*) const;
     bool isDescendantOrShadowDescendantOf(const Node*) const;

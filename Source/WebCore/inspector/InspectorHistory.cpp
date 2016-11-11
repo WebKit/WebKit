@@ -31,63 +31,29 @@
 #include "config.h"
 #include "InspectorHistory.h"
 
-#include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 
 namespace WebCore {
 
-namespace {
-
 class UndoableStateMark : public InspectorHistory::Action {
 public:
-    UndoableStateMark() : InspectorHistory::Action("[UndoableState]") { }
+    UndoableStateMark()
+        : Action("[UndoableState]")
+    {
+    }
 
-    bool perform(ExceptionCode&) override { return true; }
-
-    bool undo(ExceptionCode&) override { return true; }
-
-    bool redo(ExceptionCode&) override { return true; }
-
-    bool isUndoableStateMark() override { return true; }
+private:
+    ExceptionOr<void> perform() final { return { }; }
+    ExceptionOr<void> undo() final { return { }; }
+    ExceptionOr<void> redo() final { return { }; }
+    bool isUndoableStateMark() final { return true; }
 };
 
-}
-
-InspectorHistory::Action::Action(const String& name) : m_name(name)
+ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)
 {
-}
-
-InspectorHistory::Action::~Action()
-{
-}
-
-String InspectorHistory::Action::toString()
-{
-    return m_name;
-}
-
-bool InspectorHistory::Action::isUndoableStateMark()
-{
-    return false;
-}
-
-String InspectorHistory::Action::mergeId()
-{
-    return emptyString();
-}
-
-void InspectorHistory::Action::merge(std::unique_ptr<Action>)
-{
-}
-
-InspectorHistory::InspectorHistory() : m_afterLastActionIndex(0) { }
-
-InspectorHistory::~InspectorHistory() { }
-
-bool InspectorHistory::perform(std::unique_ptr<Action> action, ExceptionCode& ec)
-{
-    if (!action->perform(ec))
-        return false;
+    auto performResult = action->perform();
+    if (performResult.hasException())
+        return performResult.releaseException();
 
     if (!action->mergeId().isEmpty() && m_afterLastActionIndex > 0 && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
         m_history[m_afterLastActionIndex - 1]->merge(WTFMove(action));
@@ -96,49 +62,51 @@ bool InspectorHistory::perform(std::unique_ptr<Action> action, ExceptionCode& ec
         m_history.append(WTFMove(action));
         ++m_afterLastActionIndex;
     }
-    return true;
+    return { };
 }
 
 void InspectorHistory::markUndoableState()
 {
-    perform(std::make_unique<UndoableStateMark>(), IGNORE_EXCEPTION);
+    perform(std::make_unique<UndoableStateMark>());
 }
 
-bool InspectorHistory::undo(ExceptionCode& ec)
+ExceptionOr<void> InspectorHistory::undo()
 {
     while (m_afterLastActionIndex > 0 && m_history[m_afterLastActionIndex - 1]->isUndoableStateMark())
         --m_afterLastActionIndex;
 
     while (m_afterLastActionIndex > 0) {
         Action* action = m_history[m_afterLastActionIndex - 1].get();
-        if (!action->undo(ec)) {
+        auto undoResult = action->undo();
+        if (undoResult.hasException()) {
             reset();
-            return false;
+            return undoResult.releaseException();
         }
         --m_afterLastActionIndex;
         if (action->isUndoableStateMark())
             break;
     }
 
-    return true;
+    return { };
 }
 
-bool InspectorHistory::redo(ExceptionCode& ec)
+ExceptionOr<void> InspectorHistory::redo()
 {
     while (m_afterLastActionIndex < m_history.size() && m_history[m_afterLastActionIndex]->isUndoableStateMark())
         ++m_afterLastActionIndex;
 
     while (m_afterLastActionIndex < m_history.size()) {
         Action* action = m_history[m_afterLastActionIndex].get();
-        if (!action->redo(ec)) {
+        auto redoResult = action->redo();
+        if (redoResult.hasException()) {
             reset();
-            return false;
+            return redoResult.releaseException();
         }
         ++m_afterLastActionIndex;
         if (action->isUndoableStateMark())
             break;
     }
-    return true;
+    return { };
 }
 
 void InspectorHistory::reset()

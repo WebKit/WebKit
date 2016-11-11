@@ -91,9 +91,8 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
     if (!style.isEmpty())
         body->setAttribute(HTMLNames::styleAttr, style);
 
-    ExceptionCode ec;
-    rootElement->appendChild(body, ec);
-    document->appendChild(rootElement, ec);
+    rootElement->appendChild(body);
+    document->appendChild(rootElement);
 }
 
 const ViewportArguments& Frame::viewportArguments() const

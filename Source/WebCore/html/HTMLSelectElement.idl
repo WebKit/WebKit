@@ -43,9 +43,8 @@
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
 
     [MayThrowException] void remove(); // ChildNode overload
-    // FIXME: This overload is not in the specification and was dropped in Blink.
-    [CEReactions] void remove(HTMLOptionElement option);
-    [CEReactions, ImplementedAs=removeByIndex] void remove(long index);
+    [CEReactions] void remove(HTMLOptionElement option); // FIXME: This overload is not in the specification and was dropped in Blink
+    [CEReactions] void remove(long index);
 
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;

@@ -68,11 +68,10 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 
     dispatchModifiedEvent(oldData);
 
-    if (parentNode()) {
-        ExceptionCode ec = 0;
-        parentNode()->insertBefore(newText, nextSibling(), ec);
-        if (ec)
-            return Exception { ec };
+    if (auto* parent = parentNode()) {
+        auto insertResult = parent->insertBefore(newText, nextSibling());
+        if (insertResult.hasException())
+            return insertResult.releaseException();
     }
 
     document().textNodeSplit(this);
@@ -131,7 +130,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText)
     for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
         Ref<Node> nodeToRemove(n.releaseNonNull());
         n = nodeToRemove->nextSibling();
-        parent->removeChild(WTFMove(nodeToRemove), IGNORE_EXCEPTION);
+        parent->removeChild(nodeToRemove);
     }
 
     if (this != endText) {
@@ -139,13 +138,13 @@ RefPtr<Text> Text::replaceWholeText(const String& newText)
         for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
             Ref<Node> nodeToRemove(n.releaseNonNull());
             n = nodeToRemove->nextSibling();
-            parent->removeChild(WTFMove(nodeToRemove), IGNORE_EXCEPTION);
+            parent->removeChild(nodeToRemove);
         }
     }
 
     if (newText.isEmpty()) {
         if (parent && parentNode() == parent)
-            parent->removeChild(*this, IGNORE_EXCEPTION);
+            parent->removeChild(*this);
         return nullptr;
     }
 

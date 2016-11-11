@@ -50,10 +50,10 @@ public:
     WEBCORE_EXPORT unsigned countChildNodes() const;
     WEBCORE_EXPORT Node* traverseToChildAt(unsigned) const;
 
-    bool insertBefore(Node& newChild, Node* refChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    bool replaceChild(Node& newChild, Node& oldChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT bool removeChild(Node& child, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT bool appendChild(Node& newChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    ExceptionOr<void> insertBefore(Node& newChild, Node* refChild);
+    ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
+    WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
+    WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
@@ -102,7 +102,7 @@ public:
     ExceptionOr<void> append(Vector<NodeOrString>&&);
     ExceptionOr<void> prepend(Vector<NodeOrString>&&);
 
-    bool ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode&);
+    ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
 
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
@@ -117,7 +117,7 @@ protected:
 
 private:
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
-    bool appendChildWithoutPreInsertionValidityCheck(Node&, ExceptionCode&);
+    ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);
     void insertBeforeCommon(Node& nextChild, Node& oldChild);
     void appendChildCommon(Node&);
 

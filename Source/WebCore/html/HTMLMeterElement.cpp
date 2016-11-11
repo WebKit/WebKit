@@ -231,7 +231,7 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     static NeverDestroyed<String> shadowStyle(meterElementShadowUserAgentStyleSheet, String::ConstructFromLiteral);
 
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
-    style->setTextContent(shadowStyle, IGNORE_EXCEPTION);
+    style->setTextContent(shadowStyle);
     root->appendChild(style);
 
     // Pseudos are set to allow author styling.
@@ -243,11 +243,11 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     auto bar = HTMLDivElement::create(document());
     bar->setIdAttribute("bar");
     bar->setPseudo("-webkit-meter-bar");
-    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
+    inner->appendChild(bar);
 
     m_value = HTMLDivElement::create(document());
     m_value->setIdAttribute("value");
-    bar->appendChild(*m_value, ASSERT_NO_EXCEPTION);
+    bar->appendChild(*m_value);
 
     didElementStateChange();
 }

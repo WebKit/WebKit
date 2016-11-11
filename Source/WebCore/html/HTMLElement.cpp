@@ -449,17 +449,16 @@ ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& tex
                 break;
         }
 
-        ExceptionCode ec = 0;
-        fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
-        if (ec)
-            return Exception { ec };
+        auto appendResult = fragment->appendChild(Text::create(document(), text.substring(start, i - start)));
+        if (appendResult.hasException())
+            return appendResult.releaseException();
 
         if (i == length)
             break;
 
-        fragment->appendChild(HTMLBRElement::create(document()), ec);
-        if (ec)
-            return Exception { ec };
+        appendResult = fragment->appendChild(HTMLBRElement::create(document()));
+        if (appendResult.hasException())
+            return appendResult.releaseException();
 
         // Make sure \r\n doesn't result in two line breaks.
         if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
@@ -577,10 +576,9 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
     if (!parentNode())
         return Exception { HIERARCHY_REQUEST_ERR };
 
-    ExceptionCode ec = 0;
-    parent->replaceChild(*newChild, *this, ec);
-    if (ec)
-        return Exception { ec };
+    auto replaceResult = parent->replaceChild(*newChild, *this);
+    if (replaceResult.hasException())
+        return replaceResult.releaseException();
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (is<Text>(node.get())) {

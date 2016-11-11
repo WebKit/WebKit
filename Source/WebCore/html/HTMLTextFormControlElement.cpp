@@ -560,7 +560,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
         innerText->setInnerText(value);
 
         if (value.endsWith('\n') || value.endsWith('\r'))
-            innerText->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
+            innerText->appendChild(HTMLBRElement::create(document()));
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
         if (textIsChanged && renderer()) {

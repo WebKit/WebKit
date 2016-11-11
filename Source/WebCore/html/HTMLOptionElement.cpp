@@ -73,10 +73,9 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForJSConstructor(Do
 
     auto text = Text::create(document, data.isNull() ? emptyString() : data);
 
-    ExceptionCode ec = 0;
-    element->appendChild(text, ec);
-    if (ec)
-        return Exception { ec };
+    auto appendResult = element->appendChild(text);
+    if (appendResult.hasException())
+        return appendResult.releaseException();
 
     if (!value.isNull())
         element->setValue(value);
@@ -127,7 +126,7 @@ void HTMLOptionElement::setText(const String &text)
         downcast<Text>(*child).setData(text);
     else {
         removeChildren();
-        appendChild(Text::create(document(), text), ASSERT_NO_EXCEPTION);
+        appendChild(Text::create(document(), text));
     }
     
     if (selectIsMenuList && select->selectedIndex() != oldSelectedIndex)

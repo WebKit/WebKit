@@ -166,9 +166,7 @@ static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fra
 static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 {
     auto fragment = DocumentFragment::create(*frame.document());
-    ExceptionCode ec = 0;
-    fragment->appendChild(content, ec);
-    if (ec)
+    if (fragment->appendChild(content).hasException())
         return false;
     return executeInsertFragment(frame, WTFMove(fragment));
 }

@@ -88,7 +88,7 @@ PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
     for (NSString *choice in choices) {
         auto choiceOption = document.createElement(optionTag, false);
         choiceOption->setAttributeWithoutSynchronization(valueAttr, choice);
-        choiceOption->setTextContent(choice, ASSERT_NO_EXCEPTION);
+        choiceOption->setTextContent(choice);
 
         if (choice == selectedChoice)
             choiceOption->setAttributeWithoutSynchronization(selectedAttr, AtomicString("selected", AtomicString::ConstructFromLiteral));

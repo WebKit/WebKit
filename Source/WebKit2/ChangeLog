@@ -1,3 +1,30 @@
+2016-11-11  Darin Adler  <darin@apple.com>
+
+        Move Node from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164515
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_remove): Updated exception handling.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp:
+        (webkit_dom_node_insert_before): Ditto.
+        (webkit_dom_node_replace_child): Ditto.
+        (webkit_dom_node_remove_child): Ditto.
+        (webkit_dom_node_append_child): Ditto.
+        (webkit_dom_node_clone_node_with_error): Ditto.
+        (webkit_dom_node_set_node_value): Ditto.
+        (webkit_dom_node_set_text_content): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode insertNode:before:]): Ditto.
+        (-[WKDOMNode appendChild:]): Ditto.
+        (-[WKDOMNode removeChild:]): Ditto.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin): Removed unneeded ASSERT_NO_EXCEPTION.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement): Ditto.
+
 2016-11-11  Megan Gardner  <megan_gardner@apple.com>
 
         [Cocoa] Support wide gamut for Drag Image UI

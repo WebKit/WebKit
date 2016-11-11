@@ -110,11 +110,11 @@ void SearchInputType::createShadowSubtree()
     auto resultsButton = SearchFieldResultsButtonElement::create(element().document());
     m_resultsButton = resultsButton.ptr();
     updateResultButtonPseudoType(resultsButton.get(), element().maxResults());
-    container->insertBefore(resultsButton, textWrapper, IGNORE_EXCEPTION);
+    container->insertBefore(resultsButton, textWrapper);
 
     auto cancelButton = SearchFieldCancelButtonElement::create(element().document());
     m_cancelButton = cancelButton.ptr();
-    container->insertBefore(cancelButton, textWrapper->nextSibling(), IGNORE_EXCEPTION);
+    container->insertBefore(cancelButton, textWrapper->nextSibling());
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const

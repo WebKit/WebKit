@@ -710,7 +710,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
     Document& document = paragraph.document();
 
     if (string.isEmpty()) {
-        paragraph.appendChild(createBlockPlaceholderElement(document), ASSERT_NO_EXCEPTION);
+        paragraph.appendChild(createBlockPlaceholderElement(document));
         return;
     }
 
@@ -727,11 +727,11 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
         // append the non-tab textual part
         if (!s.isEmpty()) {
             if (!tabText.isEmpty()) {
-                paragraph.appendChild(createTabSpanElement(document, tabText), ASSERT_NO_EXCEPTION);
+                paragraph.appendChild(createTabSpanElement(document, tabText));
                 tabText = emptyString();
             }
             Ref<Node> textNode = document.createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
-            paragraph.appendChild(textNode, ASSERT_NO_EXCEPTION);
+            paragraph.appendChild(textNode);
         }
 
         // there is a tab after every entry, except the last entry
@@ -739,7 +739,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
         if (i + 1 != numEntries)
             tabText.append('\t');
         else if (!tabText.isEmpty())
-            paragraph.appendChild(createTabSpanElement(document, tabText), ASSERT_NO_EXCEPTION);
+            paragraph.appendChild(createTabSpanElement(document, tabText));
 
         first = false;
     }
@@ -792,11 +792,11 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     string.replace('\r', '\n');
 
     if (contextPreservesNewline(context)) {
-        fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
+        fragment->appendChild(document.createTextNode(string));
         if (string.endsWith('\n')) {
             auto element = HTMLBRElement::create(document);
             element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
-            fragment->appendChild(element, ASSERT_NO_EXCEPTION);
+            fragment->appendChild(element);
         }
         return fragment;
     }
@@ -838,7 +838,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
                 element = createDefaultParagraphElement(document);
             fillContainerFromString(*element, s);
         }
-        fragment->appendChild(*element, ASSERT_NO_EXCEPTION);
+        fragment->appendChild(*element);
     }
     return fragment;
 }
@@ -942,10 +942,10 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
     RefPtr<Node> nextChild;
     for (RefPtr<Node> child = element.firstChild(); child; child = nextChild) {
         nextChild = child->nextSibling();
-        element.removeChild(*child, ASSERT_NO_EXCEPTION);
-        fragment.insertBefore(*child, &element, ASSERT_NO_EXCEPTION);
+        element.removeChild(*child);
+        fragment.insertBefore(*child, &element);
     }
-    fragment.removeChild(element, ASSERT_NO_EXCEPTION);
+    fragment.removeChild(element);
 }
 
 ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, const String& markup, ParserContentPolicy parserContentPolicy)
@@ -1018,19 +1018,11 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
             return { };
         }
 
-        ExceptionCode ec = 0;
-        containerNode->replaceChild(fragment, *containerChild, ec);
-        if (ec)
-            return Exception { ec };
-        return { };
+        return containerNode->replaceChild(fragment, *containerChild);
     }
 
     containerNode->removeChildren();
-    ExceptionCode ec = 0;
-    containerNode->appendChild(fragment, ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return containerNode->appendChild(fragment);
 }
 
 ExceptionOr<void> replaceChildrenWithText(ContainerNode& container, const String& text)
@@ -1045,20 +1037,11 @@ ExceptionOr<void> replaceChildrenWithText(ContainerNode& container, const String
 
     auto textNode = Text::create(containerNode->document(), text);
 
-    if (hasOneChild(containerNode)) {
-        ExceptionCode ec = 0;
-        containerNode->replaceChild(textNode, *containerNode->firstChild(), ec);
-        if (ec)
-            return Exception { ec };
-        return { };
-    }
+    if (hasOneChild(containerNode))
+        return containerNode->replaceChild(textNode, *containerNode->firstChild());
 
     containerNode->removeChildren();
-    ExceptionCode ec = 0;
-    containerNode->appendChild(textNode, ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return containerNode->appendChild(textNode);
 }
 
 }

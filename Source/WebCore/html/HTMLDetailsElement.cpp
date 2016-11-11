@@ -113,7 +113,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     m_summarySlot = summarySlot.ptr();
 
     auto defaultSummary = HTMLSummaryElement::create(summaryTag, document());
-    defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
+    defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()));
     m_defaultSummary = defaultSummary.ptr();
 
     summarySlot->appendChild(defaultSummary);

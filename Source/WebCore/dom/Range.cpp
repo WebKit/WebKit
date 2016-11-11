@@ -644,10 +644,9 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
     // (or just delete the stuff in between)
 
     if ((action == Extract || action == Clone) && leftContents) {
-        ExceptionCode ec = 0;
-        fragment->appendChild(*leftContents, ec);
-        if (ec)
-            return Exception { ec };
+        auto result = fragment->appendChild(*leftContents);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     if (processStart) {
@@ -660,10 +659,9 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
     }
 
     if ((action == Extract || action == Clone) && rightContents) {
-        ExceptionCode ec = 0;
-        fragment->appendChild(*rightContents, ec);
-        if (ec)
-            return Exception { ec };
+        auto result = fragment->appendChild(*rightContents);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     return WTFMove(fragment);
@@ -705,10 +703,9 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
                 return deleteResult.releaseException();
             if (fragment) {
                 result = fragment;
-                ExceptionCode ec = 0;
-                result->appendChild(characters, ec);
-                if (ec)
-                    return Exception { ec };
+                auto appendResult = result->appendChild(characters);
+                if (appendResult.hasException())
+                    return appendResult.releaseException();
             } else
                 result = WTFMove(characters);
         }
@@ -727,10 +724,9 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
             processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
-                ExceptionCode ec = 0;
-                result->appendChild(processingInstruction, ec);
-                if (ec)
-                    return Exception { ec };
+                auto appendResult = result->appendChild(processingInstruction);
+                if (appendResult.hasException())
+                    return appendResult.releaseException();
             } else
                 result = WTFMove(processingInstruction);
         }
@@ -777,24 +773,21 @@ static ExceptionOr<void> processNodes(Range::ActionType action, Vector<Ref<Node>
     for (auto& node : nodes) {
         switch (action) {
         case Range::Delete: {
-            ExceptionCode ec = 0;
-            oldContainer->removeChild(node, ec);
-            if (ec)
-                return Exception { ec };
+            auto result = oldContainer->removeChild(node);
+            if (result.hasException())
+                return result.releaseException();
             break;
         }
         case Range::Extract: {
-            ExceptionCode ec = 0;
-            newContainer->appendChild(node, ec); // will remove n from its parent
-            if (ec)
-                return Exception { ec };
+            auto result = newContainer->appendChild(node); // will remove node from its parent
+            if (result.hasException())
+                return result.releaseException();
             break;
         }
         case Range::Clone: {
-            ExceptionCode ec = 0;
-            newContainer->appendChild(node->cloneNode(true), ec);
-            if (ec)
-                return Exception { ec };
+            auto result = newContainer->appendChild(node->cloneNode(true));
+            if (result.hasException())
+                return result.releaseException();
             break;
         }
         }
@@ -818,10 +811,9 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
         if (action == Range::Extract || action == Range::Clone) {
             auto clonedAncestor = ancestor->cloneNode(false); // Might have been removed already during mutation event.
             if (clonedContainer) {
-                ExceptionCode ec = 0;
-                clonedAncestor->appendChild(*clonedContainer, ec);
-                if (ec)
-                    return Exception { ec };
+                auto result = clonedAncestor->appendChild(*clonedContainer);
+                if (result.hasException())
+                    return result.releaseException();
             }
             clonedContainer = WTFMove(clonedAncestor);
         }
@@ -839,36 +831,31 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
         for (auto& child : nodes) {
             switch (action) {
             case Range::Delete: {
-                ExceptionCode ec = 0;
-                ancestor->removeChild(child, ec);
-                if (ec)
-                    return Exception { ec };
+                auto result = ancestor->removeChild(child);
+                if (result.hasException())
+                    return result.releaseException();
                 break;
             }
             case Range::Extract: // will remove child from ancestor
                 if (direction == ProcessContentsForward) {
-                    ExceptionCode ec = 0;
-                    clonedContainer->appendChild(child, ec);
-                    if (ec)
-                        return Exception { ec };
+                    auto result = clonedContainer->appendChild(child);
+                    if (result.hasException())
+                        return result.releaseException();
                 } else {
-                    ExceptionCode ec = 0;
-                    clonedContainer->insertBefore(child, clonedContainer->firstChild(), ec);
-                    if (ec)
-                        return Exception { ec };
+                    auto result = clonedContainer->insertBefore(child, clonedContainer->firstChild());
+                    if (result.hasException())
+                        return result.releaseException();
                 }
                 break;
             case Range::Clone:
                 if (direction == ProcessContentsForward) {
-                    ExceptionCode ec = 0;
-                    clonedContainer->appendChild(child->cloneNode(true), ec);
-                    if (ec)
-                        return Exception { ec };
+                    auto result = clonedContainer->appendChild(child->cloneNode(true));
+                    if (result.hasException())
+                        return result.releaseException();
                 } else {
-                    ExceptionCode ec = 0;
-                    clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->firstChild(), ec);
-                    if (ec)
-                        return Exception { ec };
+                    auto result = clonedContainer->insertBefore(child->cloneNode(true), clonedContainer->firstChild());
+                    if (result.hasException())
+                        return result.releaseException();
                 }
                 break;
             }
@@ -914,9 +901,9 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
 
     Ref<ContainerNode> parent = downcast<ContainerNode>(*parentNode);
 
-    ExceptionCode ec = 0;
-    if (!parent->ensurePreInsertionValidity(node, referenceNode.get(), ec))
-        return Exception { ec };
+    auto result = parent->ensurePreInsertionValidity(node, referenceNode.get());
+    if (result.hasException())
+        return result.releaseException();
 
     EventQueueScope scope;
     if (startIsText) {
@@ -939,9 +926,9 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
     else
         ++newOffset;
 
-    parent->insertBefore(node, referenceNode.get(), ec);
-    if (ec)
-        return Exception { ec };
+    auto insertResult = parent->insertBefore(node, referenceNode.get());
+    if (insertResult.hasException())
+        return insertResult.releaseException();
 
     if (collapsed())
         return setEnd(WTFMove(parent), newOffset);
@@ -1123,10 +1110,9 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
 
     // Step 4: If newParent has children, replace all with null within newParent.
     while (auto* child = newParent.firstChild()) {
-        ExceptionCode ec = 0;
-        downcast<ContainerNode>(newParent).removeChild(*child, ec);
-        if (ec)
-            return Exception { ec };
+        auto result = downcast<ContainerNode>(newParent).removeChild(*child);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     // Step 5: Insert newParent into context object.
@@ -1135,10 +1121,9 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
         return insertResult.releaseException();
 
     // Step 6: Append fragment to newParent.
-    ExceptionCode ec = 0;
-    newParent.appendChild(fragment.releaseReturnValue(), ec);
-    if (ec)
-        return Exception { ec };
+    auto appendResult = newParent.appendChild(fragment.releaseReturnValue());
+    if (appendResult.hasException())
+        return appendResult.releaseException();
 
     // Step 7: Select newParent within context object.
     return selectNode(newParent);

@@ -30,9 +30,7 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
-
-#include <wtf/text/WTFString.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
@@ -46,37 +44,37 @@ typedef String ErrorString;
 class DOMEditor {
     WTF_MAKE_NONCOPYABLE(DOMEditor); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DOMEditor(InspectorHistory*);
+    explicit DOMEditor(InspectorHistory&);
     ~DOMEditor();
 
-    bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ExceptionCode&);
-    bool removeChild(Node& parentNode, Node&, ExceptionCode&);
-    bool setAttribute(Element*, const String& name, const String& value, ExceptionCode&);
-    bool removeAttribute(Element*, const String& name, ExceptionCode&);
-    bool setOuterHTML(Node&, const String& html, Node** newNode, ExceptionCode&);
-    bool replaceWholeText(Text*, const String& text, ExceptionCode&);
-    bool replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode, ExceptionCode&);
-    bool setNodeValue(Node* parentNode, const String& value, ExceptionCode&);
+    ExceptionOr<void> insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode);
+    ExceptionOr<void> removeChild(Node& parentNode, Node&);
+    ExceptionOr<void> setAttribute(Element&, const String& name, const String& value);
+    ExceptionOr<void> removeAttribute(Element&, const String& name);
+    ExceptionOr<void> setOuterHTML(Node&, const String& html, Node*& newNode);
+    ExceptionOr<void> replaceWholeText(Text&, const String& text);
+    ExceptionOr<void> replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode);
+    ExceptionOr<void> setNodeValue(Node& parentNode, const String& value);
 
     bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
     bool removeChild(Node& parentNode, Node&, ErrorString&);
-    bool setAttribute(Element*, const String& name, const String& value, ErrorString&);
-    bool removeAttribute(Element*, const String& name, ErrorString&);
-    bool setOuterHTML(Node&, const String& html, Node** newNode, ErrorString&);
-    bool replaceWholeText(Text*, const String& text, ErrorString&);
+    bool setAttribute(Element&, const String& name, const String& value, ErrorString&);
+    bool removeAttribute(Element&, const String& name, ErrorString&);
+    bool setOuterHTML(Node&, const String& html, Node*& newNode, ErrorString&);
+    bool replaceWholeText(Text&, const String& text, ErrorString&);
 
 private:
     class DOMAction;
-    class RemoveChildAction;
     class InsertBeforeAction;
     class RemoveAttributeAction;
-    class SetAttributeAction;
-    class SetOuterHTMLAction;
-    class ReplaceWholeTextAction;
+    class RemoveChildAction;
     class ReplaceChildNodeAction;
+    class ReplaceWholeTextAction;
+    class SetAttributeAction;
     class SetNodeValueAction;
+    class SetOuterHTMLAction;
 
-    InspectorHistory* m_history;
+    InspectorHistory& m_history;
 };
 
 } // namespace WebCore

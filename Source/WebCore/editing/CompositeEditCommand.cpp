@@ -1161,7 +1161,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
 Ref<HTMLElement> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
 {
     auto paragraphElement = createDefaultParagraphElement(document());
-    paragraphElement->appendChild(HTMLBRElement::create(document()), IGNORE_EXCEPTION);
+    paragraphElement->appendChild(HTMLBRElement::create(document()));
     insertNodeAt(paragraphElement.ptr(), position);
     return paragraphElement;
 }

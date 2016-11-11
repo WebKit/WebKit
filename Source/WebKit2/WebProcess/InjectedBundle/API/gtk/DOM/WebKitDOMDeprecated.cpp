@@ -236,10 +236,9 @@ void webkit_dom_node_set_prefix(WebKitDOMNode* self, const gchar* value, GError*
     WebCore::JSMainThreadNullState state;
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setPrefix(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setPrefix(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

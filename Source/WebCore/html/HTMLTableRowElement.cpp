@@ -118,19 +118,13 @@ ExceptionOr<Ref<HTMLTableCellElement>> HTMLTableRowElement::insertCell(int index
     if (index > numCells)
         return Exception { INDEX_SIZE_ERR };
     auto cell = HTMLTableCellElement::create(tdTag, document());
-    ExceptionCode ec = 0;
+    ExceptionOr<void> result;
     if (index < 0 || index >= numCells)
-        appendChild(cell, ec);
-    else {
-        Node* n;
-        if (index < 1)
-            n = firstChild();
-        else
-            n = children->item(index);
-        insertBefore(cell, n, ec);
-    }
-    if (ec)
-        return Exception { ec };
+        result = appendChild(cell);
+    else
+        result = insertBefore(cell, index < 1 ? firstChild() : children->item(index));
+    if (result.hasException())
+        return result.releaseException();
     return WTFMove(cell);
 }
 
@@ -145,11 +139,7 @@ ExceptionOr<void> HTMLTableRowElement::deleteCell(int index)
     }
     if (index < 0 || index >= numCells)
         return Exception { INDEX_SIZE_ERR };
-    ExceptionCode ec = 0;
-    removeChild(*children->item(index), ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return removeChild(*children->item(index));
 }
 
 Ref<HTMLCollection> HTMLTableRowElement::cells()

@@ -370,14 +370,13 @@ WebKitDOMNode* webkit_dom_node_insert_before(WebKitDOMNode* self, WebKitDOMNode*
     WebCore::Node* item = WebKit::core(self);
     WebCore::Node* convertedNewChild = WebKit::core(newChild);
     WebCore::Node* convertedRefChild = WebKit::core(refChild);
-    WebCore::ExceptionCode ec = 0;
-    bool ok = item->insertBefore(*convertedNewChild, convertedRefChild, ec);
-    if (ok)
-        return WebKit::kit(convertedNewChild);
-
-    WebCore::ExceptionCodeDescription ecdesc(ec);
-    g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    return 0;
+    auto result = item->insertBefore(*convertedNewChild, convertedRefChild);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
+    }
+    return newChild;
 }
 
 WebKitDOMNode* webkit_dom_node_replace_child(WebKitDOMNode* self, WebKitDOMNode* newChild, WebKitDOMNode* oldChild, GError** error)
@@ -390,14 +389,13 @@ WebKitDOMNode* webkit_dom_node_replace_child(WebKitDOMNode* self, WebKitDOMNode*
     WebCore::Node* item = WebKit::core(self);
     WebCore::Node* convertedNewChild = WebKit::core(newChild);
     WebCore::Node* convertedOldChild = WebKit::core(oldChild);
-    WebCore::ExceptionCode ec = 0;
-    bool ok = item->replaceChild(*convertedNewChild, *convertedOldChild, ec);
-    if (ok)
-        return WebKit::kit(convertedOldChild);
-
-    WebCore::ExceptionCodeDescription ecdesc(ec);
-    g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    return 0;
+    auto result = item->replaceChild(*convertedNewChild, *convertedOldChild);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
+    }
+    return oldChild;
 }
 
 WebKitDOMNode* webkit_dom_node_remove_child(WebKitDOMNode* self, WebKitDOMNode* oldChild, GError** error)
@@ -408,14 +406,13 @@ WebKitDOMNode* webkit_dom_node_remove_child(WebKitDOMNode* self, WebKitDOMNode* 
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Node* item = WebKit::core(self);
     WebCore::Node* convertedOldChild = WebKit::core(oldChild);
-    WebCore::ExceptionCode ec = 0;
-    bool ok = item->removeChild(*convertedOldChild, ec);
-    if (ok)
-        return WebKit::kit(convertedOldChild);
-
-    WebCore::ExceptionCodeDescription ecdesc(ec);
-    g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    return 0;
+    auto result = item->removeChild(*convertedOldChild);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
+    }
+    return oldChild;
 }
 
 WebKitDOMNode* webkit_dom_node_append_child(WebKitDOMNode* self, WebKitDOMNode* newChild, GError** error)
@@ -426,14 +423,13 @@ WebKitDOMNode* webkit_dom_node_append_child(WebKitDOMNode* self, WebKitDOMNode* 
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Node* item = WebKit::core(self);
     WebCore::Node* convertedNewChild = WebKit::core(newChild);
-    WebCore::ExceptionCode ec = 0;
-    bool ok = item->appendChild(*convertedNewChild, ec);
-    if (ok)
-        return WebKit::kit(convertedNewChild);
-
-    WebCore::ExceptionCodeDescription ecdesc(ec);
-    g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    return 0;
+    auto result = item->appendChild(*convertedNewChild);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
+    }
+    return newChild;
 }
 
 gboolean webkit_dom_node_has_child_nodes(WebKitDOMNode* self)
@@ -451,13 +447,13 @@ WebKitDOMNode* webkit_dom_node_clone_node_with_error(WebKitDOMNode* self, gboole
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Node* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->cloneNodeForBindings(deep, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->cloneNodeForBindings(deep);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 void webkit_dom_node_normalize(WebKitDOMNode* self)
@@ -581,10 +577,9 @@ void webkit_dom_node_set_node_value(WebKitDOMNode* self, const gchar* value, GEr
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setNodeValue(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setNodeValue(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -687,10 +682,9 @@ void webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, G
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::ExceptionCode ec = 0;
-    item->setTextContent(convertedValue, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->setTextContent(convertedValue);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

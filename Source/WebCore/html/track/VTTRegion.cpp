@@ -291,7 +291,7 @@ void VTTRegion::appendTextTrackCueBox(Ref<VTTCueBox>&& displayBox)
     if (m_cueContainer->contains(displayBox.ptr()))
         return;
 
-    m_cueContainer->appendChild(displayBox, ASSERT_NO_EXCEPTION);
+    m_cueContainer->appendChild(displayBox);
     displayLastTextTrackCueBox();
 }
 

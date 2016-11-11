@@ -62,7 +62,7 @@ protected:
 
 private:
     String nodeValue() const final;
-    void setNodeValue(const String&, ExceptionCode&) final;
+    ExceptionOr<void> setNodeValue(const String&) final;
     bool isCharacterDataNode() const final { return true; }
     int maxCharacterOffset() const final;
     bool offsetInCharacters() const final;

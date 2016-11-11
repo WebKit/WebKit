@@ -383,7 +383,7 @@ void webkit_dom_html_select_element_remove(WebKitDOMHTMLSelectElement* self, glo
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
     WebCore::HTMLSelectElement* item = WebKit::core(self);
-    item->removeByIndex(index);
+    item->remove(index);
 }
 
 gboolean webkit_dom_html_select_element_get_autofocus(WebKitDOMHTMLSelectElement* self)

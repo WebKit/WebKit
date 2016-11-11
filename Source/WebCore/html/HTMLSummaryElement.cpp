@@ -57,7 +57,7 @@ RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(RenderStyle&&
 
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION);
+    root->appendChild(DetailsMarkerControl::create(document()));
     root->appendChild(HTMLSlotElement::create(slotTag, document()));
 }
 

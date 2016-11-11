@@ -935,7 +935,7 @@ static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
     spanElement->setAttributeWithoutSynchronization(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
 
-    spanElement->appendChild(tabTextNode, ASSERT_NO_EXCEPTION);
+    spanElement->appendChild(tabTextNode);
 
     return spanElement;
 }

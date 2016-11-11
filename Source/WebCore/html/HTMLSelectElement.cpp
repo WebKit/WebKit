@@ -233,14 +233,10 @@ ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element,
     );
 
 
-    ExceptionCode ec = 0;
-    insertBefore(toInsert, beforeElement, ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return insertBefore(toInsert, beforeElement);
 }
 
-void HTMLSelectElement::removeByIndex(int optionIndex)
+void HTMLSelectElement::remove(int optionIndex)
 {
     int listIndex = optionToListIndex(optionIndex);
     if (listIndex < 0)
@@ -444,7 +440,7 @@ ExceptionOr<void> HTMLSelectElement::setOption(unsigned index, HTMLOptionElement
         // Replace an existing entry?
     } else if (diff < 0) {
         before = item(index + 1);
-        removeByIndex(index);
+        remove(index);
     }
     // Finally add the new element.
     auto result = add(&option, HTMLElementOrInt { before.get() });

@@ -97,9 +97,7 @@ DOMNode *kit(Node* value)
 - (void)setNodeValue:(NSString *)newNodeValue
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setNodeValue(newNodeValue, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setNodeValue(newNodeValue));
 }
 
 - (unsigned short)nodeType
@@ -165,9 +163,7 @@ DOMNode *kit(Node* value)
 - (void)setPrefix:(NSString *)newPrefix
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setPrefix(newPrefix, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setPrefix(newPrefix));
 }
 
 - (NSString *)localName
@@ -197,9 +193,7 @@ DOMNode *kit(Node* value)
 - (void)setTextContent:(NSString *)newTextContent
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    unwrap(*self).setTextContent(newTextContent, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(unwrap(*self).setTextContent(newTextContent));
 }
 
 - (BOOL)isConnected
@@ -225,11 +219,8 @@ DOMNode *kit(Node* value)
     JSMainThreadNullState state;
     if (!newChild)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    if (unwrap(*self).insertBefore(*core(newChild), core(refChild), ec))
-        return newChild;
-    raiseOnDOMError(ec);
-    return nil;
+    raiseOnDOMError(unwrap(*self).insertBefore(*core(newChild), core(refChild)));
+    return newChild;
 }
 
 - (DOMNode *)replaceChild:(DOMNode *)newChild oldChild:(DOMNode *)oldChild
@@ -239,11 +230,8 @@ DOMNode *kit(Node* value)
         raiseTypeErrorException();
     if (!oldChild)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    if (unwrap(*self).replaceChild(*core(newChild), *core(oldChild), ec))
-        return oldChild;
-    raiseOnDOMError(ec);
-    return nil;
+    raiseOnDOMError(unwrap(*self).replaceChild(*core(newChild), *core(oldChild)));
+    return oldChild;
 }
 
 - (DOMNode *)removeChild:(DOMNode *)oldChild
@@ -251,11 +239,8 @@ DOMNode *kit(Node* value)
     JSMainThreadNullState state;
     if (!oldChild)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    if (unwrap(*self).removeChild(*core(oldChild), ec))
-        return oldChild;
-    raiseOnDOMError(ec);
-    return nil;
+    raiseOnDOMError(unwrap(*self).removeChild(*core(oldChild)));
+    return oldChild;
 }
 
 - (DOMNode *)appendChild:(DOMNode *)newChild
@@ -263,11 +248,8 @@ DOMNode *kit(Node* value)
     JSMainThreadNullState state;
     if (!newChild)
         raiseTypeErrorException();
-    ExceptionCode ec = 0;
-    if (unwrap(*self).appendChild(*core(newChild), ec))
-        return newChild;
-    raiseOnDOMError(ec);
-    return nil;
+    raiseOnDOMError(unwrap(*self).appendChild(*core(newChild)));
+    return newChild;
 }
 
 - (BOOL)hasChildNodes
@@ -279,10 +261,7 @@ DOMNode *kit(Node* value)
 - (DOMNode *)cloneNode:(BOOL)deep
 {
     JSMainThreadNullState state;
-    ExceptionCode ec = 0;
-    DOMNode *result = kit(unwrap(*self).cloneNodeForBindings(deep, ec).get());
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(unwrap(*self).cloneNodeForBindings(deep)).ptr());
 }
 
 - (void)normalize

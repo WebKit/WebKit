@@ -1584,14 +1584,14 @@ String Element::nodeNamePreservingCase() const
     return m_tagName.toString();
 }
 
-void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
+ExceptionOr<void> Element::setPrefix(const AtomicString& prefix)
 {
-    ec = 0;
-    checkSetPrefix(prefix, ec);
-    if (ec)
-        return;
+    auto result = checkSetPrefix(prefix);
+    if (result.hasException())
+        return result.releaseException();
 
     m_tagName.setPrefix(prefix.isEmpty() ? nullAtom : prefix);
+    return { };
 }
 
 const AtomicString& Element::imageSourceURL() const
@@ -2124,7 +2124,7 @@ const Vector<RefPtr<Attr>>& Element::attrNodeList()
 
 ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 {
-    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.localName(), shouldIgnoreAttributeCase(*this));
     if (oldAttrNode.get() == &attrNode)
         return WTFMove(oldAttrNode);
 
@@ -2136,7 +2136,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
     synchronizeAllAttributes();
     auto& elementData = ensureUniqueElementData();
 
-    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.localName(), shouldIgnoreAttributeCase(*this));
     if (existingAttributeIndex == ElementData::attributeNotFound)
         setAttributeInternal(elementData.findAttributeIndexByName(attrNode.qualifiedName()), attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
     else {
@@ -2154,7 +2154,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         }
     }
     if (attrNode.ownerElement() != this) {
-        attrNode.attachToElement(this);
+        attrNode.attachToElement(*this);
         treeScope().adoptIfNeeded(&attrNode);
         ensureAttrNodeListForElement(*this).append(&attrNode);
     }
@@ -2185,7 +2185,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
 
     setAttributeInternal(index, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
 
-    attrNode.attachToElement(this);
+    attrNode.attachToElement(*this);
     treeScope().adoptIfNeeded(&attrNode);
     ensureAttrNodeListForElement(*this).append(&attrNode);
 
@@ -2535,10 +2535,9 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     if (fragment.hasException())
         return fragment.releaseException();
 
-    ExceptionCode ec = 0;
-    parent->replaceChild(fragment.releaseReturnValue().get(), *this, ec);
-    if (ec)
-        return Exception { ec };
+    auto replaceResult = parent->replaceChild(fragment.releaseReturnValue().get(), *this);
+    if (replaceResult.hasException())
+        return replaceResult.releaseException();
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (is<Text>(node.get())) {
@@ -3397,7 +3396,7 @@ Ref<Attr> Element::ensureAttr(const QualifiedName& name)
     auto& attrNodeList = ensureAttrNodeListForElement(*this);
     RefPtr<Attr> attrNode = findAttrNodeInList(attrNodeList, name);
     if (!attrNode) {
-        attrNode = Attr::create(this, name);
+        attrNode = Attr::create(*this, name);
         treeScope().adoptIfNeeded(attrNode.get());
         attrNodeList.append(attrNode);
     }
@@ -3647,38 +3646,34 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
-        ExceptionCode ec = 0;
-        bool success = parent->insertBefore(newChild, this, ec);
-        if (ec)
-            return Exception { ec };
-        return success ? newChild.ptr() : nullptr;
+        auto result = parent->insertBefore(newChild, this);
+        if (result.hasException())
+            return result.releaseException();
+        return newChild.ptr();
     }
 
     if (equalLettersIgnoringASCIICase(where, "afterbegin")) {
-        ExceptionCode ec = 0;
-        bool success = insertBefore(newChild, firstChild(), ec);
-        if (ec)
-            return Exception { ec };
-        return success ? newChild.ptr() : nullptr;
+        auto result = insertBefore(newChild, firstChild());
+        if (result.hasException())
+            return result.releaseException();
+        return newChild.ptr();
     }
 
     if (equalLettersIgnoringASCIICase(where, "beforeend")) {
-        ExceptionCode ec = 0;
-        bool success = appendChild(newChild, ec);
-        if (ec)
-            return Exception { ec };
-        return success ? newChild.ptr() : nullptr;
+        auto result = appendChild(newChild);
+        if (result.hasException())
+            return result.releaseException();
+        return newChild.ptr();
     }
 
     if (equalLettersIgnoringASCIICase(where, "afterend")) {
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
-        ExceptionCode ec = 0;
-        bool success = parent->insertBefore(newChild, nextSibling(), ec);
-        if (ec)
-            return Exception { ec };
-        return success ? newChild.ptr() : nullptr;
+        auto result = parent->insertBefore(newChild, nextSibling());
+        if (result.hasException())
+            return result.releaseException();
+        return newChild.ptr();
     }
 
     return Exception { SYNTAX_ERR };

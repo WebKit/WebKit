@@ -202,7 +202,7 @@
 - (void)remove:(int)index
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->removeByIndex(index);
+    IMPL->remove(index);
 }
 
 @end

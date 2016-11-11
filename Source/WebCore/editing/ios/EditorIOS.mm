@@ -375,10 +375,8 @@ private:
 void Editor::WebContentReader::addFragment(RefPtr<DocumentFragment>&& newFragment)
 {
     if (fragment) {
-        if (newFragment && newFragment->firstChild()) {
-            ExceptionCode ec;
-            fragment->appendChild(*newFragment->firstChild(), ec);
-        }
+        if (newFragment && newFragment->firstChild())
+            fragment->appendChild(*newFragment->firstChild());
     } else
         fragment = WTFMove(newFragment);
 }
@@ -635,7 +633,6 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         return;
     }
 
-    ExceptionCode ec;
     RefPtr<Range> context = document().createRange();
     context->selectNodeContents(element);
 
@@ -643,7 +640,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
     for (auto& interpretations : dictationPhrases)
         dictationPhrasesBuilder.append(interpretations[0]);
 
-    element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()), ec);
+    element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()));
 
     // We need a layout in order to add markers below.
     document().updateLayout();
@@ -712,7 +709,6 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
         // FIXME: The element we're inserting into is often the body element. It seems strange to be removing it
         // (even if it is only temporary). ReplaceSelectionCommand doesn't bother doing this when it inserts
         // content, why should we here?
-        ExceptionCode ec;
         RefPtr<Node> parent = element.parentNode();
         RefPtr<Node> siblingAfter = element.nextSibling();
         if (parent)
@@ -720,14 +716,14 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
 
         auto context = document().createRange();
         context->selectNodeContents(element);
-        element.appendChild(createFragmentFromText(context, text), ec);
+        element.appendChild(createFragmentFromText(context, text));
 
         // restore element to document
         if (parent) {
             if (siblingAfter)
-                parent->insertBefore(element, siblingAfter.get(), ec);
+                parent->insertBefore(element, siblingAfter.get());
             else
-                parent->appendChild(element, ec);
+                parent->appendChild(element);
         }
     }
 

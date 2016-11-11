@@ -1181,7 +1181,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
             // track cue region identifier, run the following substeps:
             if (displayBox->hasChildNodes() && !contains(displayBox.ptr())) {
                 // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-                appendChild(displayBox, ASSERT_NO_EXCEPTION);
+                appendChild(displayBox);
                 cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
             }
         } else {

@@ -38,9 +38,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-Attr::Attr(Element* element, const QualifiedName& name)
-    : ContainerNode(element->document())
-    , m_element(element)
+Attr::Attr(Element& element, const QualifiedName& name)
+    : ContainerNode(element.document())
+    , m_element(&element)
     , m_name(name)
 {
 }
@@ -52,7 +52,7 @@ Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& st
 {
 }
 
-Ref<Attr> Attr::create(Element* element, const QualifiedName& name)
+Ref<Attr> Attr::create(Element& element, const QualifiedName& name)
 {
     Ref<Attr> attr = adoptRef(*new Attr(element, name));
     attr->createTextChild();
@@ -74,34 +74,31 @@ void Attr::createTextChild()
 {
     ASSERT(refCount());
     if (!value().isEmpty()) {
-        RefPtr<Text> textNode = document().createTextNode(value().string());
+        auto textNode = document().createTextNode(value().string());
 
         // This does everything appendChild() would do in this situation (assuming m_ignoreChildrenChanged was set),
         // but much more efficiently.
         textNode->setParentNode(this);
-        setFirstChild(textNode.get());
-        setLastChild(textNode.get());
+        setFirstChild(textNode.ptr());
+        setLastChild(textNode.ptr());
     }
 }
 
-void Attr::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
+ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
 {
-    ec = 0;
-    checkSetPrefix(prefix, ec);
-    if (ec)
-        return;
+    auto result = checkSetPrefix(prefix);
+    if (result.hasException())
+        return result.releaseException();
 
-    if ((prefix == xmlnsAtom && namespaceURI() != XMLNSNames::xmlnsNamespaceURI)
-        || static_cast<Attr*>(this)->qualifiedName() == xmlnsAtom) {
-        ec = NAMESPACE_ERR;
-        return;
-    }
+    if ((prefix == xmlnsAtom && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom)
+        return Exception { NAMESPACE_ERR };
 
     const AtomicString& newPrefix = prefix.isEmpty() ? nullAtom : prefix;
-
     if (m_element)
         elementAttribute().setPrefix(newPrefix);
     m_name.setPrefix(newPrefix);
+
+    return { };
 }
 
 void Attr::setValue(const AtomicString& value)
@@ -125,16 +122,15 @@ void Attr::setValueForBindings(const AtomicString& value)
     AtomicString oldValue = this->value();
     if (m_element)
         m_element->willModifyAttribute(qualifiedName(), oldValue, value);
-
     setValue(value);
-
     if (m_element)
         m_element->didModifyAttribute(qualifiedName(), oldValue, value);
 }
 
-void Attr::setNodeValue(const String& v, ExceptionCode&)
+ExceptionOr<void> Attr::setNodeValue(const String& value)
 {
-    setValueForBindings(v);
+    setValueForBindings(value);
+    return { };
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
@@ -212,10 +208,10 @@ void Attr::detachFromElementWithValue(const AtomicString& value)
     m_element = nullptr;
 }
 
-void Attr::attachToElement(Element* element)
+void Attr::attachToElement(Element& element)
 {
     ASSERT(!m_element);
-    m_element = element;
+    m_element = &element;
     m_standaloneValue = nullAtom;
 }
 

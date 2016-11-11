@@ -50,11 +50,6 @@ using namespace HTMLNames;
 
 HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_borderAttr(false)
-    , m_borderColorAttr(false)
-    , m_frameAttr(false)
-    , m_rulesAttr(UnsetRules)
-    , m_padding(1)
 {
     ASSERT(hasTagName(tableTag));
 }
@@ -71,23 +66,15 @@ Ref<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Doc
 
 HTMLTableCaptionElement* HTMLTableElement::caption() const
 {
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (is<HTMLTableCaptionElement>(*child))
-            return downcast<HTMLTableCaptionElement>(child);
-    }
-    return nullptr;
+    return childrenOfType<HTMLTableCaptionElement>(const_cast<HTMLTableElement&>(*this)).first();
 }
 
 ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&& newCaption)
 {
     deleteCaption();
-    if (newCaption) {
-        ExceptionCode ec = 0;
-        insertBefore(*newCaption, firstChild(), ec);
-        if (ec)
-            return Exception { ec };
-    }
-    return { };
+    if (!newCaption)
+        return { };
+    return insertBefore(*newCaption, firstChild());
 }
 
 HTMLTableSectionElement* HTMLTableElement::tHead() const
@@ -105,7 +92,6 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
         return Exception { HIERARCHY_REQUEST_ERR };
 
     deleteTHead();
-
     if (!newHead)
         return { };
 
@@ -115,11 +101,7 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
             break;
     }
 
-    ExceptionCode ec = 0;
-    insertBefore(*newHead, child, ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return insertBefore(*newHead, child);
 }
 
 HTMLTableSectionElement* HTMLTableElement::tFoot() const
@@ -135,17 +117,10 @@ ExceptionOr<void> HTMLTableElement::setTFoot(RefPtr<HTMLTableSectionElement>&& n
 {
     if (UNLIKELY(newFoot && !newFoot->hasTagName(tfootTag)))
         return Exception { HIERARCHY_REQUEST_ERR };
-
     deleteTFoot();
-
     if (!newFoot)
         return { };
-
-    ExceptionCode ec = 0;
-    appendChild(*newFoot, ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    return appendChild(*newFoot);
 }
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
@@ -175,14 +150,14 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
 void HTMLTableElement::deleteTFoot()
 {
     if (auto* foot = tFoot())
-        removeChild(*foot, IGNORE_EXCEPTION);
+        removeChild(*foot);
 }
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTBody()
 {
     auto body = HTMLTableSectionElement::create(tbodyTag, document());
     Node* referenceElement = lastBody() ? lastBody()->nextSibling() : nullptr;
-    insertBefore(body, referenceElement, ASSERT_NO_EXCEPTION);
+    insertBefore(body, referenceElement);
     return body;
 }
 
@@ -198,7 +173,7 @@ Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
 void HTMLTableElement::deleteCaption()
 {
     if (auto* caption = this->caption())
-        removeChild(*caption, IGNORE_EXCEPTION);
+        removeChild(*caption);
 }
 
 HTMLTableSectionElement* HTMLTableElement::lastBody() const
@@ -241,21 +216,19 @@ ExceptionOr<Ref<HTMLElement>> HTMLTableElement::insertRow(int index)
         if (!parent) {
             auto newBody = HTMLTableSectionElement::create(tbodyTag, document());
             auto newRow = HTMLTableRowElement::create(document());
-            ExceptionCode ec = 0;
-            newBody->appendChild(newRow, ec);
+            newBody->appendChild(newRow);
             // FIXME: Why ignore the exception if the first appendChild failed?
-            appendChild(newBody, ec);
-            if (ec)
-                return Exception { ec };
+            auto result = appendChild(newBody);
+            if (result.hasException())
+                return result.releaseException();
             return Ref<HTMLElement> { WTFMove(newRow) };
         }
     }
 
     auto newRow = HTMLTableRowElement::create(document());
-    ExceptionCode ec = 0;
-    parent->insertBefore(newRow, row.get(), ec);
-    if (ec)
-        return Exception { ec };
+    auto result = parent->insertBefore(newRow, row.get());
+    if (result.hasException())
+        return result.releaseException();
     return Ref<HTMLElement> { WTFMove(newRow) };
 }
 

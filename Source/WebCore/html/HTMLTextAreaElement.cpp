@@ -105,7 +105,7 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagNam
 
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(TextControlInnerTextElement::create(document()), ASSERT_NO_EXCEPTION);
+    root->appendChild(TextControlInnerTextElement::create(document()));
     updateInnerTextElementEditability();
 }
 
@@ -416,14 +416,14 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
         textNodes.append(*textNode);
 
     for (auto& textNode : textNodes)
-        removeChild(textNode.get(), IGNORE_EXCEPTION);
+        removeChild(textNode.get());
 
     // Normalize line endings.
     String value = defaultValue;
     value.replace("\r\n", "\n");
     value.replace('\r', '\n');
 
-    insertBefore(document().createTextNode(value), firstChild(), IGNORE_EXCEPTION);
+    insertBefore(document().createTextNode(value), firstChild());
 
     if (!m_isDirty)
         setNonDirtyValue(value);
@@ -546,7 +546,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     String placeholderText = strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
-            userAgentShadowRoot()->removeChild(*m_placeholder, ASSERT_NO_EXCEPTION);
+            userAgentShadowRoot()->removeChild(*m_placeholder);
             m_placeholder = nullptr;
         }
         return;

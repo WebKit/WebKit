@@ -40,7 +40,7 @@ void selectElementIndexSetter(JSC::ExecState& state, HTMLSelectElement& element,
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (value.isUndefinedOrNull()) {
-        element.removeByIndex(index);
+        element.remove(index);
         return;
     }
 

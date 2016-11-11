@@ -218,7 +218,7 @@ public:
     const AtomicString& prefix() const final { return m_tagName.prefix(); }
     const AtomicString& namespaceURI() const final { return m_tagName.namespaceURI(); }
 
-    void setPrefix(const AtomicString&, ExceptionCode&) final;
+    ExceptionOr<void> setPrefix(const AtomicString&) final;
 
     String nodeName() const override;
 

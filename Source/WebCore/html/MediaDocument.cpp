@@ -81,7 +81,7 @@ private:
 void MediaDocumentParser::createDocumentStructure()
 {
     auto rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement, IGNORE_EXCEPTION);
+    document()->appendChild(rootElement);
     document()->setCSSTarget(rootElement.ptr());
     downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
 
@@ -90,16 +90,16 @@ void MediaDocumentParser::createDocumentStructure()
 
 #if PLATFORM(IOS)
     auto headElement = document()->createElement(headTag, false);
-    rootElement->appendChild(headElement, IGNORE_EXCEPTION);
+    rootElement->appendChild(headElement);
 
     auto metaElement = document()->createElement(metaTag, false);
     metaElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("viewport", AtomicString::ConstructFromLiteral));
     metaElement->setAttributeWithoutSynchronization(contentAttr, AtomicString("width=device-width,initial-scale=1,user-scalable=no", AtomicString::ConstructFromLiteral));
-    headElement->appendChild(metaElement, IGNORE_EXCEPTION);
+    headElement->appendChild(metaElement);
 #endif
 
     auto body = document()->createElement(bodyTag, false);
-    rootElement->appendChild(body, IGNORE_EXCEPTION);
+    rootElement->appendChild(body);
 
     auto mediaElement = document()->createElement(videoTag, false);
 
@@ -123,8 +123,8 @@ void MediaDocumentParser::createDocumentStructure()
     if (DocumentLoader* loader = document()->loader())
         source.setType(loader->responseMIMEType());
 
-    m_mediaElement->appendChild(sourceElement, IGNORE_EXCEPTION);
-    body->appendChild(mediaElement, IGNORE_EXCEPTION);
+    m_mediaElement->appendChild(sourceElement);
+    body->appendChild(mediaElement);
 
     Frame* frame = document()->frame();
     if (!frame)
@@ -255,7 +255,7 @@ void MediaDocument::replaceMediaElementTimerFired()
         if (documentLoader)
             embedElement.setAttributeWithoutSynchronization(typeAttr, documentLoader->writer().mimeType());
 
-        videoElement->parentNode()->replaceChild(embedElement, *videoElement, IGNORE_EXCEPTION);
+        videoElement->parentNode()->replaceChild(embedElement, *videoElement);
     }
 }
 

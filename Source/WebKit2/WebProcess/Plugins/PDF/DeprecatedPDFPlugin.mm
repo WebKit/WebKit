@@ -526,7 +526,7 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
         m_annotationContainer->setAttributeWithoutSynchronization(idAttr, AtomicString("annotationContainer", AtomicString::ConstructFromLiteral));
 
         auto annotationStyleElement = document->createElement(styleTag, false);
-        annotationStyleElement->setTextContent(annotationStyle, ASSERT_NO_EXCEPTION);
+        annotationStyleElement->setTextContent(annotationStyle);
 
         m_annotationContainer->appendChild(annotationStyleElement);
         document->bodyOrFrameset()->appendChild(*m_annotationContainer);

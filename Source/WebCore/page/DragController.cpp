@@ -148,9 +148,9 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData,
                     if (title.isEmpty())
                         title = url;
                 }
-                anchor->appendChild(document.createTextNode(title), IGNORE_EXCEPTION);
+                anchor->appendChild(document.createTextNode(title));
                 auto fragment = document.createDocumentFragment();
-                fragment->appendChild(anchor, IGNORE_EXCEPTION);
+                fragment->appendChild(anchor);
                 return WTFMove(fragment);
             }
         }

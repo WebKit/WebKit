@@ -43,7 +43,7 @@ ExceptionOr<void> HTMLOptionsCollection::add(const OptionOrOptGroupElement& elem
 
 void HTMLOptionsCollection::remove(int index)
 {
-    selectElement().removeByIndex(index);
+    selectElement().remove(index);
 }
 
 void HTMLOptionsCollection::remove(HTMLOptionElement& option)

@@ -328,21 +328,19 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStylePropert
     return result;
 }
 
-bool InspectorStyle::getText(String* result) const
+ExceptionOr<String> InspectorStyle::text() const
 {
     // Precondition: m_parentStyleSheet->ensureParsedDataReady() has been called successfully.
-    RefPtr<CSSRuleSourceData> sourceData = extractSourceData();
+    auto sourceData = extractSourceData();
     if (!sourceData)
-        return false;
+        return Exception { NOT_FOUND_ERR };
 
-    String styleSheetText;
-    bool success = m_parentStyleSheet->getText(&styleSheetText);
-    if (!success)
-        return false;
+    auto result = m_parentStyleSheet->text();
+    if (result.hasException())
+        return result.releaseException();
 
-    SourceRange& bodyRange = sourceData->ruleBodyRange;
-    *result = styleSheetText.substring(bodyRange.start, bodyRange.end - bodyRange.start);
-    return true;
+    auto& bodyRange = sourceData->ruleBodyRange;
+    return result.releaseReturnValue().substring(bodyRange.start, bodyRange.end - bodyRange.start);
 }
 
 static String lowercasePropertyName(const String& name)
@@ -357,12 +355,12 @@ void InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
 {
     HashSet<String> sourcePropertyNames;
 
-    RefPtr<CSSRuleSourceData> sourceData = extractSourceData();
-    Vector<CSSPropertySourceData>* sourcePropertyData = sourceData ? &(sourceData->styleSourceData->propertyData) : nullptr;
+    auto sourceData = extractSourceData();
+    auto* sourcePropertyData = sourceData ? &sourceData->styleSourceData->propertyData : nullptr;
     if (sourcePropertyData) {
-        String styleDeclaration;
-        bool isStyleTextKnown = getText(&styleDeclaration);
-        ASSERT_UNUSED(isStyleTextKnown, isStyleTextKnown);
+        auto styleDeclarationOrException = text();
+        ASSERT(!styleDeclarationOrException.hasException());
+        String styleDeclaration = styleDeclarationOrException.hasException() ? emptyString() : styleDeclarationOrException.releaseReturnValue();
         for (auto& sourceData : *sourcePropertyData) {
             InspectorStyleProperty p(sourceData, true, false);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
@@ -390,7 +388,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
     String previousPriority;
     String previousStatus;
     std::unique_ptr<Vector<size_t>> lineEndings(m_parentStyleSheet ? m_parentStyleSheet->lineEndings() : nullptr);
-    RefPtr<CSSRuleSourceData> sourceData = extractSourceData();
+    auto sourceData = extractSourceData();
     unsigned ruleBodyRangeStart = sourceData ? sourceData->ruleBodyRange.start : 0;
 
     for (Vector<InspectorStyleProperty>::iterator it = properties.begin(), itEnd = properties.end(); it != itEnd; ++it) {
@@ -504,9 +502,9 @@ RefPtr<CSSRuleSourceData> InspectorStyle::extractSourceData() const
     return m_parentStyleSheet->ruleSourceDataFor(m_style.get());
 }
 
-bool InspectorStyle::setText(const String& text, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyle::setText(const String& text)
 {
-    return m_parentStyleSheet->setStyleText(m_style.get(), text, ec);
+    return m_parentStyleSheet->setStyleText(m_style.get(), text);
 }
 
 String InspectorStyle::shorthandValue(const String& shorthandProperty) const
@@ -614,26 +612,22 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
     m_pageStyleSheet->clearHadRulesMutation();
 }
 
-bool InspectorStyleSheet::setText(const String& text, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheet::setText(const String& text)
 {
-    if (!checkPageStyleSheet(ec))
-        return false;
-    if (!m_parsedStyleSheet)
-        return false;
+    if (!m_pageStyleSheet)
+        return Exception { NOT_SUPPORTED_ERR };
 
     m_parsedStyleSheet->setText(text);
     m_flatRules.clear();
 
-    return true;
+    return { };
 }
 
-String InspectorStyleSheet::ruleSelector(const InspectorCSSId& id, ExceptionCode& ec)
+ExceptionOr<String> InspectorStyleSheet::ruleSelector(const InspectorCSSId& id)
 {
     CSSStyleRule* rule = ruleForId(id);
-    if (!rule) {
-        ec = NOT_FOUND_ERR;
-        return emptyString();
-    }
+    if (!rule)
+        return Exception { NOT_FOUND_ERR };
     return rule->selectorText();
 }
 
@@ -644,71 +638,58 @@ static bool isValidSelectorListString(const String& selector, Document* document
     return selectorList.isValid();
 }
 
-bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector)
 {
-    if (!checkPageStyleSheet(ec))
-        return false;
+    if (!m_pageStyleSheet)
+        return Exception { NOT_SUPPORTED_ERR };
 
     // If the selector is invalid, do not proceed any further.
-    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument())) {
-        ec = SYNTAX_ERR;
-        return false;
-    }
+    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument()))
+        return Exception { SYNTAX_ERR };
 
     CSSStyleRule* rule = ruleForId(id);
-    if (!rule) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    if (!rule)
+        return Exception { NOT_FOUND_ERR };
 
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
-    if (!styleSheet || !ensureParsedDataReady()) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    if (!styleSheet || !ensureParsedDataReady())
+        return Exception { NOT_FOUND_ERR };
 
     // If the stylesheet is already mutated at this point, that must mean that our data has been modified
     // elsewhere. This should never happen as ensureParsedDataReady would return false in that case.
     ASSERT(!styleSheetMutated());
 
     rule->setSelectorText(selector);
-    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(&rule->style());
-    if (!sourceData) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    auto sourceData = ruleSourceDataFor(&rule->style());
+    if (!sourceData)
+        return Exception { NOT_FOUND_ERR };
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.replace(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), selector);
     m_parsedStyleSheet->setText(sheetText);
     m_pageStyleSheet->clearHadRulesMutation();
     fireStyleSheetChanged();
-    return true;
+    return { };
 }
 
-CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
+ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
 {
-    if (!checkPageStyleSheet(ec))
-        return nullptr;
-    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument())) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
+    if (!m_pageStyleSheet)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    String text;
-    bool success = getText(&text);
-    if (!success) {
-        ec = NOT_FOUND_ERR;
-        return nullptr;
-    }
+    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument()))
+        return Exception { SYNTAX_ERR };
+
+    auto text = this->text();
+    if (text.hasException())
+        return text.releaseException();
+
     StringBuilder styleSheetText;
-    styleSheetText.append(text);
+    styleSheetText.append(text.releaseReturnValue());
 
     auto addRuleResult = m_pageStyleSheet->addRule(selector, emptyString(), Nullopt);
-    if (addRuleResult.hasException()) {
-        ec = addRuleResult.releaseException().code();
-        return nullptr;
-    }
+    if (addRuleResult.hasException())
+        return addRuleResult.releaseException();
     ASSERT(m_pageStyleSheet->length());
     unsigned lastRuleIndex = m_pageStyleSheet->length() - 1;
     CSSRule* rule = m_pageStyleSheet->item(lastRuleIndex);
@@ -719,8 +700,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
         m_pageStyleSheet->deleteRule(lastRuleIndex);
-        ec = SYNTAX_ERR;
-        return nullptr;
+        return Exception { SYNTAX_ERR };
     }
 
     if (!styleSheetText.isEmpty())
@@ -729,47 +709,40 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     styleSheetText.append(selector);
     styleSheetText.appendLiteral(" {}");
     // Using setText() as this operation changes the stylesheet rule set.
-    setText(styleSheetText.toString(), ASSERT_NO_EXCEPTION);
+    setText(styleSheetText.toString());
 
     fireStyleSheetChanged();
 
     return styleRule;
 }
 
-bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheet::deleteRule(const InspectorCSSId& id)
 {
-    if (!checkPageStyleSheet(ec))
-        return false;
-    RefPtr<CSSStyleRule> rule = ruleForId(id);
-    if (!rule) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
-    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
-    if (!styleSheet || !ensureParsedDataReady()) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    if (!m_pageStyleSheet)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(&rule->style());
-    if (!sourceData) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    RefPtr<CSSStyleRule> rule = ruleForId(id);
+    if (!rule)
+        return Exception { NOT_FOUND_ERR };
+    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
+    if (!styleSheet || !ensureParsedDataReady())
+        return Exception { NOT_FOUND_ERR };
+
+    auto sourceData = ruleSourceDataFor(&rule->style());
+    if (!sourceData)
+        return Exception { NOT_FOUND_ERR };
 
     auto deleteRuleResult = styleSheet->deleteRule(id.ordinal());
-    // |rule| MAY NOT be addressed after this line!
+    if (deleteRuleResult.hasException())
+        return deleteRuleResult.releaseException();
 
-    if (deleteRuleResult.hasException()) {
-        ec = deleteRuleResult.releaseException().code();
-        return false;
-    }
+    // |rule| MAY NOT be addressed after this!
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
-    setText(sheetText, ASSERT_NO_EXCEPTION);
+    setText(sheetText);
     fireStyleSheetChanged();
-    return true;
+    return { };
 }
 
 CSSStyleRule* InspectorStyleSheet::ruleForId(const InspectorCSSId& id) const
@@ -795,10 +768,9 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildOb
         .setRules(buildArrayForRuleList(cssRuleList.get()))
         .release();
 
-    String styleSheetText;
-    bool success = getText(&styleSheetText);
-    if (success)
-        result->setText(styleSheetText);
+    auto styleSheetText = text();
+    if (!styleSheetText.hasException())
+        result->setText(styleSheetText.releaseReturnValue());
 
     return WTFMove(result);
 }
@@ -981,40 +953,40 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForSt
 
     // Style text cannot be retrieved without stylesheet, so set cssText here.
     if (sourceData) {
-        String sheetText;
-        bool success = getText(&sheetText);
-        if (success) {
-            const SourceRange& bodyRange = sourceData->ruleBodyRange;
-            result->setCssText(sheetText.substring(bodyRange.start, bodyRange.end - bodyRange.start));
+        auto sheetText = text();
+        if (!sheetText.hasException()) {
+            auto& bodyRange = sourceData->ruleBodyRange;
+            result->setCssText(sheetText.releaseReturnValue().substring(bodyRange.start, bodyRange.end - bodyRange.start));
         }
     }
 
     return result;
 }
 
-bool InspectorStyleSheet::setStyleText(const InspectorCSSId& id, const String& text, String* oldText, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheet::setStyleText(const InspectorCSSId& id, const String& text, String* oldText)
 {
-    RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
-    if (!inspectorStyle) {
-        ec = NOT_FOUND_ERR;
-        return false;
+    auto inspectorStyle = inspectorStyleForId(id);
+    if (!inspectorStyle)
+        return Exception { NOT_FOUND_ERR };
+
+    if (oldText) {
+        auto result = inspectorStyle->text();
+        if (result.hasException())
+            return result.releaseException();
+        *oldText = result.releaseReturnValue();
     }
 
-    if (oldText && !inspectorStyle->getText(oldText))
-        return false;
-
-    bool success = inspectorStyle->setText(text, ec);
-    if (success)
+    auto result = inspectorStyle->setText(text);
+    if (!result.hasException())
         fireStyleSheetChanged();
-    return success;
+    return result;
 }
 
-bool InspectorStyleSheet::getText(String* result) const
+ExceptionOr<String> InspectorStyleSheet::text() const
 {
     if (!ensureText())
-        return false;
-    *result = m_parsedStyleSheet->text();
-    return true;
+        return Exception { NOT_FOUND_ERR };
+    return String { m_parsedStyleSheet->text() };
 }
 
 CSSStyleDeclaration* InspectorStyleSheet::styleForId(const InspectorCSSId& id) const
@@ -1079,15 +1051,6 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) c
     return UINT_MAX;
 }
 
-bool InspectorStyleSheet::checkPageStyleSheet(ExceptionCode& ec) const
-{
-    if (!m_pageStyleSheet) {
-        ec = NOT_SUPPORTED_ERR;
-        return false;
-    }
-    return true;
-}
-
 bool InspectorStyleSheet::styleSheetMutated() const
 {
     return m_pageStyleSheet && m_pageStyleSheet->hadRulesMutation();
@@ -1137,30 +1100,28 @@ void InspectorStyleSheet::ensureFlatRules() const
         collectFlatRules(asCSSRuleList(pageStyleSheet()), &m_flatRules);
 }
 
-bool InspectorStyleSheet::setStyleText(CSSStyleDeclaration* style, const String& text, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheet::setStyleText(CSSStyleDeclaration* style, const String& text)
 {
     if (!m_pageStyleSheet)
-        return false;
+        return Exception { NOT_FOUND_ERR };
     if (!ensureParsedDataReady())
-        return false;
+        return Exception { NOT_FOUND_ERR };
 
     String patchedStyleSheetText;
     bool success = styleSheetTextWithChangedStyle(style, text, &patchedStyleSheetText);
     if (!success)
-        return false;
+        return Exception { NOT_FOUND_ERR };
 
     InspectorCSSId id = ruleOrStyleId(style);
     if (id.isEmpty())
-        return false;
+        return Exception { NOT_FOUND_ERR };
 
     auto setCssTextResult = style->setCssText(text);
-    if (setCssTextResult.hasException()) {
-        ec = setCssTextResult.releaseException().code();
-        return false;
-    }
+    if (setCssTextResult.hasException())
+        return setCssTextResult.releaseException();
 
     m_parsedStyleSheet->setText(patchedStyleSheetText);
-    return true;
+    return { };
 }
 
 bool InspectorStyleSheet::styleSheetTextWithChangedStyle(CSSStyleDeclaration* style, const String& newStyleText, String* result)
@@ -1285,17 +1246,16 @@ void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
     m_ruleSourceData = nullptr;
 }
 
-bool InspectorStyleSheetForInlineStyle::getText(String* result) const
+ExceptionOr<String> InspectorStyleSheetForInlineStyle::text() const
 {
     if (!m_isStyleTextValid) {
         m_styleText = elementStyleText();
         m_isStyleTextValid = true;
     }
-    *result = m_styleText;
-    return true;
+    return String { m_styleText };
 }
 
-bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style, const String& text, ExceptionCode& ec)
+ExceptionOr<void> InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style, const String& text)
 {
     ASSERT_UNUSED(style, style == inlineStyle());
 
@@ -1308,8 +1268,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     m_isStyleTextValid = true;
     m_ruleSourceData = nullptr;
 
-    ec = 0;
-    return true;
+    return { };
 }
 
 std::unique_ptr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const

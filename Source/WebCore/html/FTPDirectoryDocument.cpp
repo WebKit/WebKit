@@ -105,26 +105,26 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryEntryRow", AtomicString::ConstructFromLiteral));
 
     auto typeElement = document()->createElement(tdTag, false);
-    typeElement->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
+    typeElement->appendChild(Text::create(*document(), String(&noBreakSpace, 1)));
     if (isDirectory)
         typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryIcon ftpDirectoryTypeDirectory", AtomicString::ConstructFromLiteral));
     else
         typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryIcon ftpDirectoryTypeFile", AtomicString::ConstructFromLiteral));
-    rowElement->appendChild(typeElement, IGNORE_EXCEPTION);
+    rowElement->appendChild(typeElement);
 
     auto nameElement = createTDForFilename(filename);
     nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileName", AtomicString::ConstructFromLiteral));
-    rowElement->appendChild(nameElement, IGNORE_EXCEPTION);
+    rowElement->appendChild(nameElement);
 
     auto dateElement = document()->createElement(tdTag, false);
-    dateElement->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
+    dateElement->appendChild(Text::create(*document(), date));
     dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileDate", AtomicString::ConstructFromLiteral));
-    rowElement->appendChild(dateElement, IGNORE_EXCEPTION);
+    rowElement->appendChild(dateElement);
 
     auto sizeElement = document()->createElement(tdTag, false);
-    sizeElement->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
+    sizeElement->appendChild(Text::create(*document(), size));
     sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileSize", AtomicString::ConstructFromLiteral));
-    rowElement->appendChild(sizeElement, IGNORE_EXCEPTION);
+    rowElement->appendChild(sizeElement);
 }
 
 Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
@@ -137,10 +137,10 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
 
     auto anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, fullURL);
-    anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
+    anchorElement->appendChild(Text::create(*document(), filename));
 
     Ref<Element> tdElement = document()->createElement(tdTag, false);
-    tdElement->appendChild(anchorElement, IGNORE_EXCEPTION);
+    tdElement->appendChild(anchorElement);
 
     return tdElement;
 }
@@ -312,9 +312,9 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // If that fails for some reason, cram it on the end of the document as a last
     // ditch effort
     if (auto* body = document()->bodyOrFrameset())
-        body->appendChild(*m_tableElement, IGNORE_EXCEPTION);
+        body->appendChild(*m_tableElement);
     else
-        document()->appendChild(*m_tableElement, IGNORE_EXCEPTION);
+        document()->appendChild(*m_tableElement);
 
     return true;
 }
@@ -327,14 +327,14 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     Ref<Element> bodyElement = document()->createElement(bodyTag, false);
 
-    document()->appendChild(bodyElement, IGNORE_EXCEPTION);
+    document()->appendChild(bodyElement);
 
     auto tableElement = document()->createElement(tableTag, false);
     m_tableElement = downcast<HTMLTableElement>(tableElement.ptr());
     m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomicString("ftpDirectoryTable", AtomicString::ConstructFromLiteral));
     m_tableElement->setAttribute(HTMLNames::styleAttr, AtomicString("width:100%", AtomicString::ConstructFromLiteral));
 
-    bodyElement->appendChild(tableElement, IGNORE_EXCEPTION);
+    bodyElement->appendChild(tableElement);
 
     document()->processViewport("width=device-width", ViewportArguments::ViewportMeta);
 }

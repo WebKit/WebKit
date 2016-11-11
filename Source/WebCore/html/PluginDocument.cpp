@@ -67,7 +67,7 @@ private:
 void PluginDocumentParser::createDocumentStructure()
 {
     auto rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement, IGNORE_EXCEPTION);
+    document()->appendChild(rootElement);
     downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
 
     if (document()->frame())
@@ -87,7 +87,7 @@ void PluginDocumentParser::createDocumentStructure()
     body->setAttribute(styleAttr, AtomicString("background-color: rgb(38,38,38)", AtomicString::ConstructFromLiteral));
 #endif
 
-    rootElement->appendChild(body, IGNORE_EXCEPTION);
+    rootElement->appendChild(body);
         
     auto embedElement = document()->createElement(embedTag, false);
         
@@ -105,7 +105,7 @@ void PluginDocumentParser::createDocumentStructure()
 
     downcast<PluginDocument>(*document()).setPluginElement(m_embedElement);
 
-    body->appendChild(embedElement, IGNORE_EXCEPTION);
+    body->appendChild(embedElement);
 }
 
 void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)

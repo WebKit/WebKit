@@ -255,10 +255,10 @@ void RangeInputType::createShadowSubtree()
     Document& document = element().document();
     auto track = HTMLDivElement::create(document);
     track->setPseudo(AtomicString("-webkit-slider-runnable-track", AtomicString::ConstructFromLiteral));
-    track->appendChild(SliderThumbElement::create(document), IGNORE_EXCEPTION);
+    track->appendChild(SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
-    container->appendChild(track, IGNORE_EXCEPTION);
-    element().userAgentShadowRoot()->appendChild(container, IGNORE_EXCEPTION);
+    container->appendChild(track);
+    element().userAgentShadowRoot()->appendChild(container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const

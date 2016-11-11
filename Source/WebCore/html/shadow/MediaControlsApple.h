@@ -100,20 +100,20 @@ private:
     void hideClosedCaptionTrackList();
     void setFullscreenSliderVolume();
 
-    MediaControlRewindButtonElement* m_rewindButton;
-    MediaControlReturnToRealtimeButtonElement* m_returnToRealTimeButton;
-    MediaControlStatusDisplayElement* m_statusDisplay;
-    MediaControlTimeRemainingDisplayElement* m_timeRemainingDisplay;
-    MediaControlTimelineContainerElement* m_timelineContainer;
-    MediaControlSeekBackButtonElement* m_seekBackButton;
-    MediaControlSeekForwardButtonElement* m_seekForwardButton;
-    MediaControlClosedCaptionsTrackListElement* m_closedCaptionsTrackList;
-    MediaControlClosedCaptionsContainerElement* m_closedCaptionsContainer;
-    MediaControlVolumeSliderMuteButtonElement* m_volumeSliderMuteButton;
-    MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
-    MediaControlFullscreenVolumeMinButtonElement* m_fullScreenMinVolumeButton;
-    MediaControlFullscreenVolumeSliderElement* m_fullScreenVolumeSlider;
-    MediaControlFullscreenVolumeMaxButtonElement* m_fullScreenMaxVolumeButton;
+    MediaControlRewindButtonElement* m_rewindButton { nullptr };
+    MediaControlReturnToRealtimeButtonElement* m_returnToRealTimeButton { nullptr };
+    MediaControlStatusDisplayElement* m_statusDisplay { nullptr };
+    MediaControlTimeRemainingDisplayElement* m_timeRemainingDisplay { nullptr };
+    MediaControlTimelineContainerElement* m_timelineContainer { nullptr };
+    MediaControlSeekBackButtonElement* m_seekBackButton { nullptr };
+    MediaControlSeekForwardButtonElement* m_seekForwardButton { nullptr };
+    MediaControlClosedCaptionsTrackListElement* m_closedCaptionsTrackList { nullptr };
+    MediaControlClosedCaptionsContainerElement* m_closedCaptionsContainer { nullptr };
+    MediaControlVolumeSliderMuteButtonElement* m_volumeSliderMuteButton { nullptr };
+    MediaControlVolumeSliderContainerElement* m_volumeSliderContainer { nullptr };
+    MediaControlFullscreenVolumeMinButtonElement* m_fullScreenMinVolumeButton { nullptr };
+    MediaControlFullscreenVolumeSliderElement* m_fullScreenVolumeSlider { nullptr };
+    MediaControlFullscreenVolumeMaxButtonElement* m_fullScreenMaxVolumeButton { nullptr };
     RefPtr<MediaControlsAppleEventListener> m_eventListener;
 };
 

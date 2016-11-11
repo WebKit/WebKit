@@ -231,7 +231,7 @@ InspectorDOMAgent::~InspectorDOMAgent()
 void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
     m_history = std::make_unique<InspectorHistory>();
-    m_domEditor = std::make_unique<DOMEditor>(m_history.get());
+    m_domEditor = std::make_unique<DOMEditor>(*m_history);
 
     m_instrumentingAgents.setInspectorDOMAgent(this);
     m_document = m_pageAgent->mainFrame().document();
@@ -654,7 +654,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString& errorString, int elementI
     if (!element)
         return;
 
-    m_domEditor->setAttribute(element, name, value, errorString);
+    m_domEditor->setAttribute(*element, name, value, errorString);
 }
 
 void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elementId, const String& text, const String* const name)
@@ -678,7 +678,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elemen
 
     Element* childElement = downcast<Element>(child);
     if (!childElement->hasAttributes() && name) {
-        m_domEditor->removeAttribute(element, *name, errorString);
+        m_domEditor->removeAttribute(*element, *name, errorString);
         return;
     }
 
@@ -686,12 +686,12 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elemen
     for (const Attribute& attribute : childElement->attributesIterator()) {
         // Add attribute pair
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute.name().toString() == *name);
-        if (!m_domEditor->setAttribute(element, attribute.name().toString(), attribute.value(), errorString))
+        if (!m_domEditor->setAttribute(*element, attribute.name().toString(), attribute.value(), errorString))
             return;
     }
 
     if (!foundOriginalAttribute && name && !name->stripWhiteSpace().isEmpty())
-        m_domEditor->removeAttribute(element, *name, errorString);
+        m_domEditor->removeAttribute(*element, *name, errorString);
 }
 
 void InspectorDOMAgent::removeAttribute(ErrorString& errorString, int elementId, const String& name)
@@ -700,7 +700,7 @@ void InspectorDOMAgent::removeAttribute(ErrorString& errorString, int elementId,
     if (!element)
         return;
 
-    m_domEditor->removeAttribute(element, name, errorString);
+    m_domEditor->removeAttribute(*element, name, errorString);
 }
 
 void InspectorDOMAgent::removeNode(ErrorString& errorString, int nodeId)
@@ -765,8 +765,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString& errorString, int nodeId, WTF::
 void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const String& outerHTML)
 {
     if (!nodeId) {
-        DOMPatchSupport domPatchSupport(m_domEditor.get(), m_document.get());
-        domPatchSupport.patchDocument(outerHTML);
+        DOMPatchSupport { *m_domEditor, *m_document }.patchDocument(outerHTML);
         return;
     }
 
@@ -780,8 +779,8 @@ void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const
         return;
     }
 
-    Node* newNode = 0;
-    if (!m_domEditor->setOuterHTML(*node, outerHTML, &newNode, errorString))
+    Node* newNode = nullptr;
+    if (!m_domEditor->setOuterHTML(*node, outerHTML, newNode, errorString))
         return;
 
     if (!newNode) {
@@ -802,12 +801,12 @@ void InspectorDOMAgent::setNodeValue(ErrorString& errorString, int nodeId, const
     if (!node)
         return;
 
-    if (node->nodeType() != Node::TEXT_NODE) {
+    if (!is<Text>(*node)) {
         errorString = ASCIILiteral("Can only set value of text nodes");
         return;
     }
 
-    m_domEditor->replaceWholeText(downcast<Text>(node), value, errorString);
+    m_domEditor->replaceWholeText(downcast<Text>(*node), value, errorString);
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray)
@@ -1198,16 +1197,16 @@ void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetE
 
 void InspectorDOMAgent::undo(ErrorString& errorString)
 {
-    ExceptionCode ec = 0;
-    m_history->undo(ec);
-    errorString = toErrorString(ec);
+    auto result = m_history->undo();
+    if (result.hasException())
+        errorString = toErrorString(result.releaseException());
 }
 
 void InspectorDOMAgent::redo(ErrorString& errorString)
 {
-    ExceptionCode ec = 0;
-    m_history->redo(ec);
-    errorString = toErrorString(ec);
+    auto result = m_history->redo();
+    if (result.hasException())
+        errorString = toErrorString(result.releaseException());
 }
 
 void InspectorDOMAgent::markUndoableState(ErrorString&)

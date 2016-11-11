@@ -1,3 +1,23 @@
+2016-11-11  Darin Adler  <darin@apple.com>
+
+        Move Node from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164515
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMHTMLSelectElement.mm:
+        (-[DOMHTMLSelectElement remove:]): Call remove instead of removeByIndex
+        now that it was renamed.
+        * DOM/DOMNode.mm:
+        (-[DOMNode setNodeValue:]): Updated exception handling.
+        (-[DOMNode setPrefix:]): Ditto.
+        (-[DOMNode setTextContent:]): Ditto.
+        (-[DOMNode insertBefore:refChild:]): Ditto.
+        (-[DOMNode replaceChild:oldChild:]): Ditto.
+        (-[DOMNode removeChild:]): Ditto.
+        (-[DOMNode appendChild:]): Ditto.
+        (-[DOMNode cloneNode:]): Ditto.
+
 2016-11-11  Beth Dakin  <bdakin@apple.com>
 
         Get touch bar code building for open source builds

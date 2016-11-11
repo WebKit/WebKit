@@ -30,10 +30,9 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -43,34 +42,34 @@ class Document;
 class Node;
 
 class DOMPatchSupport final {
-    WTF_MAKE_NONCOPYABLE(DOMPatchSupport);
 public:
-    static void patchDocument(Document*, const String& markup);
+    static void patchDocument(Document&, const String& markup);
 
-    DOMPatchSupport(DOMEditor*, Document*);
-    ~DOMPatchSupport();
+    DOMPatchSupport(DOMEditor&, Document&);
 
     void patchDocument(const String& markup);
-    Node* patchNode(Node&, const String& markup, ExceptionCode&);
+    ExceptionOr<Node*> patchNode(Node&, const String& markup);
 
 private:
     struct Digest;
-    typedef Vector<std::pair<Digest*, size_t>> ResultMap;
-    typedef HashMap<String, Digest*> UnusedNodesMap;
 
-    bool innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
+    using ResultMap = Vector<std::pair<Digest*, size_t>>;
+    using UnusedNodesMap = HashMap<String, Digest*>;
+
+    ExceptionOr<void> innerPatchNode(Digest& oldNode, Digest& newNode);
     std::pair<ResultMap, ResultMap> diff(const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);
-    bool innerPatchChildren(ContainerNode*, const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren, ExceptionCode&);
-    std::unique_ptr<Digest> createDigest(Node*, UnusedNodesMap*);
-    bool insertBeforeAndMarkAsUsed(ContainerNode&, Digest&, Node* anchor, ExceptionCode&);
-    bool removeChildAndMoveToNew(Digest*, ExceptionCode&);
-    void markNodeAsUsed(Digest*);
+    ExceptionOr<void> innerPatchChildren(ContainerNode&, const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);
+    std::unique_ptr<Digest> createDigest(Node&, UnusedNodesMap*);
+    ExceptionOr<void> insertBeforeAndMarkAsUsed(ContainerNode&, Digest&, Node* anchor);
+    ExceptionOr<void> removeChildAndMoveToNew(Digest&);
+    void markNodeAsUsed(Digest&);
+
 #ifdef DEBUG_DOM_PATCH_SUPPORT
     void dumpMap(const ResultMap&, const String& name);
 #endif
 
-    DOMEditor* m_domEditor;
-    Document* m_document;
+    DOMEditor& m_domEditor;
+    Document& m_document;
 
     UnusedNodesMap m_unusedNodesMap;
 };

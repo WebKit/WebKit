@@ -57,7 +57,7 @@ public:
 
     using Node::remove;
     ExceptionOr<void> remove(HTMLOptionElement&);
-    WEBCORE_EXPORT void removeByIndex(int); // Should be remove(int) but that conflicts with Node::remove(ExceptionCode&).
+    WEBCORE_EXPORT void remove(int);
 
     WEBCORE_EXPORT String value() const;
     WEBCORE_EXPORT void setValue(const String&);

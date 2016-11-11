@@ -73,14 +73,10 @@ const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRem
     String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
-    styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()), ASSERT_NO_EXCEPTION);
+    styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()));
 
-    ContainerNode* parentNode = position.deprecatedNode()->parentNode();
-
-    if (!parentNode->ensurePreInsertionValidity(styleElement.copyRef(), nullptr, IGNORE_EXCEPTION))
+    if (position.deprecatedNode()->parentNode()->appendChild(styleElement).hasException())
         return nullptr; 
-
-    parentNode->appendChild(styleElement, ASSERT_NO_EXCEPTION);
 
     nodeToRemove = styleElement.ptr();
 
