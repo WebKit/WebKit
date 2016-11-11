@@ -1,3 +1,13 @@
+2016-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion after r208534.
+        https://bugs.webkit.org/show_bug.cgi?id=160497
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/MemoryPressureHandler.mm: Added.
+        (TestWebKitAPI::TEST):
+        Add a regression test.
+
 2016-11-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r208522): LayoutTest fast/loader/reload-zero-byte-plugin.html is a flaky failure
