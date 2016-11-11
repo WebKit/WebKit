@@ -1074,6 +1074,18 @@ void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
     callOperation(operationNewArrayBufferWithProfile, dst, currentInstruction[4].u.arrayAllocationProfile, values, size);
 }
 
+void JIT::emit_op_new_array_with_spread(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_new_array_with_spread);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_spread(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_spread);
+    slowPathCall.call();
+}
+
 #if USE(JSVALUE64)
 void JIT::emit_op_has_structure_property(Instruction* currentInstruction)
 {

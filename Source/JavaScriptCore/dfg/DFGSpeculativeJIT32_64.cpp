@@ -3941,6 +3941,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewArrayWithSpread: {
+        compileNewArrayWithSpread(node);
+        break;
+    }
+
+    case Spread: {
+        compileSpread(node);
+        break;
+    }
+
     case NewArrayWithSize: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {

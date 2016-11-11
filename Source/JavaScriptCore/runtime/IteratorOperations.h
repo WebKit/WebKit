@@ -45,24 +45,24 @@ Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 JS_EXPORT_PRIVATE JSValue iteratorForIterable(ExecState*, JSValue iterable);
 
 template <typename CallBackType>
-void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& callback)
+void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& callback)
 {
-    auto& vm = state->vm();
+    auto& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue iterator = iteratorForIterable(state, iterable);
+    JSValue iterator = iteratorForIterable(exec, iterable);
     RETURN_IF_EXCEPTION(scope, void());
     while (true) {
-        JSValue next = iteratorStep(state, iterator);
+        JSValue next = iteratorStep(exec, iterator);
         if (next.isFalse() || UNLIKELY(scope.exception()))
             return;
 
-        JSValue nextValue = iteratorValue(state, next);
+        JSValue nextValue = iteratorValue(exec, next);
         RETURN_IF_EXCEPTION(scope, void());
 
-        callback(vm, state, nextValue);
+        callback(vm, exec, nextValue);
         if (UNLIKELY(scope.exception())) {
-            iteratorClose(state, iterator);
+            iteratorClose(exec, iterator);
             return;
         }
     }

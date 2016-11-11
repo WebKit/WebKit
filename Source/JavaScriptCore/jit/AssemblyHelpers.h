@@ -1567,11 +1567,17 @@ public:
     }
     
     template<typename ClassType, typename StructureType>
-    void emitAllocateVariableSizedJSObject(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
+    void emitAllocateVariableSizedCell(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
         MarkedSpace::Subspace& subspace = vm()->heap.template subspaceForObjectOfType<ClassType>();
         emitAllocateVariableSized(resultGPR, subspace, allocationSize, scratchGPR1, scratchGPR2, slowPath);
         emitStoreStructureWithTypeInfo(structure, resultGPR, scratchGPR2);
+    }
+
+    template<typename ClassType, typename StructureType>
+    void emitAllocateVariableSizedJSObject(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
+    {
+        emitAllocateVariableSizedCell<ClassType>(resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
         storePtr(TrustedImmPtr(0), Address(resultGPR, JSObject::butterflyOffset()));
     }
 

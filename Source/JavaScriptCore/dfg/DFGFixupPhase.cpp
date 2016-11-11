@@ -1050,6 +1050,45 @@ private:
             fixEdge<KnownStringUse>(node->child1());
             break;
         }
+
+        case NewArrayWithSpread: {
+            watchHavingABadTime(node);
+            
+            BitVector* bitVector = node->bitVector();
+            for (unsigned i = node->numChildren(); i--;) {
+                if (bitVector->get(i))
+                    fixEdge<KnownCellUse>(m_graph.m_varArgChildren[node->firstChild() + i]);
+                else
+                    fixEdge<UntypedUse>(m_graph.m_varArgChildren[node->firstChild() + i]);
+            }
+
+            break;
+        }
+
+        case Spread: {
+            // Note: We care about performing the protocol on our child's global object, not necessarily ours.
+            
+            watchHavingABadTime(node->child1().node());
+
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(node->child1()->origin.semantic);
+            // When we go down the fast path, we don't consult the prototype chain, so we must prove
+            // that it doesn't contain any indexed properties, and that any holes will result in
+            // jsUndefined().
+            InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
+            InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
+            if (node->child1()->shouldSpeculateArray() 
+                && arrayPrototypeTransition.isStillValid() 
+                && objectPrototypeTransition.isStillValid() 
+                && globalObject->arrayPrototypeChainIsSane()
+                && m_graph.isWatchingArrayIteratorProtocolWatchpoint(node->child1().node())
+                && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node())) {
+                m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                m_graph.watchpoints().addLazily(arrayPrototypeTransition);
+                fixEdge<ArrayUse>(node->child1());
+            } else
+                fixEdge<CellUse>(node->child1());
+            break;
+        }
             
         case NewArray: {
             watchHavingABadTime(node);
@@ -1825,8 +1864,10 @@ private:
         // optimizing, the code just gets thrown out. Doing this at FixupPhase is just early enough, since
         // prior to this point nobody should have been doing optimizations based on the indexing type of
         // the allocation.
-        if (!globalObject->isHavingABadTime())
+        if (!globalObject->isHavingABadTime()) {
             m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+            m_graph.freeze(globalObject);
+        }
     }
     
     template<UseKind useKind>

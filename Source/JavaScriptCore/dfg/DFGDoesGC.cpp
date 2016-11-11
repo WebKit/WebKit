@@ -280,6 +280,8 @@ bool doesGC(Graph& graph, Node* node)
     case ArrayifyToStructure:
     case NewObject:
     case NewArray:
+    case NewArrayWithSpread:
+    case Spread:
     case NewArrayWithSize:
     case NewArrayBuffer:
     case NewRegexp:

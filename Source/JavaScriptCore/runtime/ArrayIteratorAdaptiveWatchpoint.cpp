@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,58 +24,22 @@
  */
 
 #include "config.h"
-#include "TrackedReferences.h"
+#include "ArrayIteratorAdaptiveWatchpoint.h"
 
-#include "JSCInlines.h"
-#include <wtf/CommaPrinter.h>
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
-TrackedReferences::TrackedReferences()
+ArrayIteratorAdaptiveWatchpoint::ArrayIteratorAdaptiveWatchpoint(const ObjectPropertyCondition& condition, JSGlobalObject* globalObject)
+    : Base(condition)
+    , m_globalObject(globalObject)
 {
+    RELEASE_ASSERT(m_globalObject->arrayIteratorProtocolWatchpoint().stateOnJSThread() == IsWatched);
 }
 
-TrackedReferences::~TrackedReferences()
+void ArrayIteratorAdaptiveWatchpoint::handleFire(const FireDetail&)
 {
-}
-
-void TrackedReferences::add(JSCell* cell)
-{
-    if (cell)
-        m_references.add(cell);
-}
-
-void TrackedReferences::add(JSValue value)
-{
-    if (value.isCell())
-        add(value.asCell());
-}
-
-void TrackedReferences::check(JSCell* cell) const
-{
-    if (!cell)
-        return;
-    
-    if (m_references.contains(cell))
-        return;
-    
-    dataLog("Found untracked reference: ", JSValue(cell), "\n");
-    dataLog("All tracked references: ", *this, "\n");
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void TrackedReferences::check(JSValue value) const
-{
-    if (value.isCell())
-        check(value.asCell());
-}
-
-void TrackedReferences::dump(PrintStream& out) const
-{
-    CommaPrinter comma;
-    for (JSCell* cell : m_references)
-        out.print(comma, RawPointer(cell));
+    m_globalObject->arrayIteratorProtocolWatchpoint().fireAll(m_globalObject->vm(), StringFireDetail("Array iterator protocol changed."));
 }
 
 } // namespace JSC
-

@@ -838,6 +838,30 @@ void CodeBlock::dumpBytecode(
             ++it; // Skip array allocation profile.
             break;
         }
+        case op_new_array_with_spread: {
+            int dst = (++it)->u.operand;
+            int argv = (++it)->u.operand;
+            int argc = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "new_array_with_spread");
+            out.printf("%s, %s, %d, ", registerName(dst).data(), registerName(argv).data(), argc);
+            unsigned bitVectorIndex = (++it)->u.unsignedValue;
+            const BitVector& bitVector = m_unlinkedCode->bitVector(bitVectorIndex);
+            out.print("BitVector:", bitVectorIndex, ":");
+            for (unsigned i = 0; i < static_cast<unsigned>(argc); i++) {
+                if (bitVector.get(i))
+                    out.print("1");
+                else
+                    out.print("0");
+            }
+            break;
+        }
+        case op_spread: {
+            int dst = (++it)->u.operand;
+            int arg = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "spread");
+            out.printf("%s, %s", registerName(dst).data(), registerName(arg).data());
+            break;
+        }
         case op_new_array_with_size: {
             int dst = (++it)->u.operand;
             int length = (++it)->u.operand;

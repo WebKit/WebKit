@@ -63,6 +63,7 @@
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
+#include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSInternalPromiseDeferred.h"
@@ -233,6 +234,7 @@ VM::VM(VMType vmType, HeapType heapType)
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
     symbolStructure.set(*this, Symbol::createStructure(*this, 0, jsNull()));
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, 0, jsNull()));
+    fixedArrayStructure.set(*this, JSFixedArray::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
     sparseArrayValueMapStructure.set(*this, SparseArrayValueMap::createStructure(*this, 0, jsNull()));
     templateRegistryKeyStructure.set(*this, JSTemplateRegistryKey::createStructure(*this, 0, jsNull()));

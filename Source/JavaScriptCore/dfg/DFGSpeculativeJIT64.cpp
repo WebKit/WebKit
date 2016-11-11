@@ -3923,6 +3923,16 @@ void SpeculativeJIT::compile(Node* node)
         cellResult(result.gpr(), node, UseChildrenCalledExplicitly);
         break;
     }
+
+    case NewArrayWithSpread: {
+        compileNewArrayWithSpread(node);
+        break;
+    }
+
+    case Spread: {
+        compileSpread(node);
+        break;
+    }
         
     case NewArrayWithSize: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);

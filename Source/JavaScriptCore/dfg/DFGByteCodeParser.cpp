@@ -785,7 +785,7 @@ private:
         return addToGraph(result);
     }
     
-    Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
+    Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2 = OpInfo())
     {
         Node* result = m_graph.addNode(
             Node::VarArg, op, currentNodeOrigin(), info1, info2,
@@ -3838,6 +3838,27 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(get(VirtualRegister(operandIdx)));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(Node::VarArg, NewArray, OpInfo(profile->selectIndexingType()), OpInfo(0)));
             NEXT_OPCODE(op_new_array);
+        }
+
+        case op_new_array_with_spread: {
+            int startOperand = currentInstruction[2].u.operand;
+            int numOperands = currentInstruction[3].u.operand;
+            const BitVector& bitVector = m_inlineStackTop->m_profiledBlock->unlinkedCodeBlock()->bitVector(currentInstruction[4].u.unsignedValue);
+            for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
+                addVarArgChild(get(VirtualRegister(operandIdx)));
+
+            BitVector* copy = m_graph.m_bitVectors.add(bitVector);
+            ASSERT(*copy == bitVector);
+
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(Node::VarArg, NewArrayWithSpread, OpInfo(copy)));
+            NEXT_OPCODE(op_new_array_with_spread);
+        }
+
+        case op_spread: {
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(Spread, get(VirtualRegister(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_spread);
         }
             
         case op_new_array_with_size: {

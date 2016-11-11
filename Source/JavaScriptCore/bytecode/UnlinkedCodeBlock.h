@@ -40,6 +40,7 @@
 #include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
+#include <wtf/BitVector.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
@@ -171,6 +172,14 @@ public:
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
     const Vector<Identifier>& identifiers() const { return m_identifiers; }
 
+    const Vector<BitVector>& bitVectors() const { return m_bitVectors; }
+    BitVector& bitVector(size_t i) { return m_bitVectors[i]; }
+    unsigned addBitVector(BitVector&& bitVector)
+    {
+        m_bitVectors.append(WTFMove(bitVector));
+        return m_bitVectors.size() - 1;
+    }
+
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {
         unsigned result = m_constantRegisters.size();
@@ -220,6 +229,7 @@ public:
     {
         m_jumpTargets.shrinkToFit();
         m_identifiers.shrinkToFit();
+        m_bitVectors.shrinkToFit();
         m_constantRegisters.shrinkToFit();
         m_constantsSourceCodeRepresentation.shrinkToFit();
         m_functionDecls.shrinkToFit();
@@ -441,6 +451,7 @@ private:
 
     // Constant Pools
     Vector<Identifier> m_identifiers;
+    Vector<BitVector> m_bitVectors;
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     typedef Vector<WriteBarrier<UnlinkedFunctionExecutable>> FunctionExpressionVector;
