@@ -29,15 +29,15 @@
 }
 
 .content-view.settings > .header {
-    margin: 70px auto 40px;
+    margin: 6vh auto 4vh;
     text-align: center;
-    font-size: 48px;
+    font-size: 32px;
 }
 
 .content-view.settings > .setting-container {
     display: flex;
     align-items: center;
-    padding: 0.5em;
+    margin: 1em 0;
     font-size: 14px;
 }
 

@@ -1,3 +1,18 @@
+2016-11-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Settings tab: make the header smaller to fit more content
+        https://bugs.webkit.org/show_bug.cgi?id=164613
+        <rdar://problem/29206007>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings > .header):
+        Use hv units for margin. 1vh = 1% of viewport height. When Web Inspector window is taller, the margin is larger.
+
+        (.content-view.settings > .setting-container):
+        Convert padding to margin to make spacing between the header and the first section better.
+
 2016-11-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Call RuntimeAgent.disableControlFlowProfiler when Code Coverage Profiler is turned off
