@@ -67,6 +67,7 @@ private:
     RealtimeMediaSourceOwrMap m_sourceMap;
     ValidConstraintsHandler m_validConstraintsHandler;
     InvalidConstraintsHandler m_invalidConstraintsHandler;
+    NewMediaStreamHandler m_completionHandler;
 };
 
 } // namespace WebCore

@@ -1,3 +1,33 @@
+2016-11-11  Alejandro G. Castro  <alex@igalia.com>
+
+        [WebRTC][OpenWebRTC] Implement device permissions handling solution for owr backend in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=164010
+
+        Reviewed by Philippe Normand.
+
+        Move the capture of the sources for the OWR backend to the
+        WebProcess. In the UI we continue checking if the user allows
+        access to the audio and video capture. When device handling is
+        added in the future we will need some persistent ID and API to
+        pass from the UI process to the Web process.
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+        Add the proper audio and video sources to allow the UI message to
+        be properly rendered. We are adding the specific devices, even
+        though the dialog just asks for general audio and video. There was
+        already a FIXME about improving this.
+        (WebCore::RealtimeMediaSourceCenterOwr::createMediaStream): We are
+        capturing the devices here when the allowed message arrived from
+        the UI process. We store the completion handler to use it later
+        when the aync owr API finishes capture devices process.
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable): We
+        now call the completion handler in this callback called when the
+        owr library finishes the capture of the devices. Now this happens
+        in the WebProcess for OWR port.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+        Add an attribute to store the completion handler.
+
 2016-11-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] ASSERTION FAILED: !m_gridIsDirty in WebCore::RenderGrid::gridRowCount

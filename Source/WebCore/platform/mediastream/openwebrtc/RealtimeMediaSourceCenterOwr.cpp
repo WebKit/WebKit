@@ -81,46 +81,35 @@ void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHa
     m_validConstraintsHandler = WTFMove(validHandler);
     m_invalidConstraintsHandler = WTFMove(invalidHandler);
 
+    Vector<String> audioSources;
+    Vector<String> videoSources;
+
     // FIXME: Actually do constraints validation. The MediaConstraints
     // need to comply with the available audio/video device(s)
     // capabilities. See bug #123345.
-    int types = OWR_MEDIA_TYPE_UNKNOWN;
     if (audioConstraints.isValid())
-        types |= OWR_MEDIA_TYPE_AUDIO;
-    if (videoConstraints.isValid())
-        types |= OWR_MEDIA_TYPE_VIDEO;
+        audioSources.append(String("audio"));
 
-    owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
+    if (videoConstraints.isValid())
+        videoSources.append(String("video"));
+
+    m_validConstraintsHandler(WTFMove(audioSources), WTFMove(videoSources));
+    m_validConstraintsHandler = nullptr;
+    m_invalidConstraintsHandler = nullptr;
 }
 
 void RealtimeMediaSourceCenterOwr::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints*, const MediaConstraints*)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    int types = OWR_MEDIA_TYPE_UNKNOWN;
 
-    // FIXME: Actually apply constraints to newly created sources.
+    if (!audioDeviceID.isEmpty())
+        types |= OWR_MEDIA_TYPE_AUDIO;
+    if (!videoDeviceID.isEmpty())
+        types |= OWR_MEDIA_TYPE_VIDEO;
 
-    if (!audioDeviceID.isEmpty()) {
-        RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(audioDeviceID);
-        if (sourceIterator != m_sourceMap.end()) {
-            RefPtr<RealtimeMediaSource> source = sourceIterator->value;
-            if (source->type() == RealtimeMediaSource::Audio)
-                audioSources.append(source.release());
-        }
-    }
-    if (!videoDeviceID.isEmpty()) {
-        RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(videoDeviceID);
-        if (sourceIterator != m_sourceMap.end()) {
-            RefPtr<RealtimeMediaSource> source = sourceIterator->value;
-            if (source->type() == RealtimeMediaSource::Video)
-                videoSources.append(source.release());
-        }
-    }
+    m_completionHandler = completionHandler;
 
-    if (videoSources.isEmpty() && audioSources.isEmpty())
-        completionHandler(nullptr);
-    else
-        completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
+    owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
 }
 
 Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
@@ -131,8 +120,8 @@ Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
 
 void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 {
-    Vector<String> audioSources;
-    Vector<String> videoSources;
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
     for (auto item = sources; item; item = item->next) {
         OwrMediaSource* source = OWR_MEDIA_SOURCE(item->data);
@@ -143,32 +132,40 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
         String sourceName(name.get());
         String id(createCanonicalUUIDString());
 
-        RealtimeMediaSource::Type sourceType;
+        if (g_getenv("OWR_USE_TEST_SOURCES")) {
+            OwrSourceType sourceType = OWR_SOURCE_TYPE_UNKNOWN;
+            g_object_get(source, "type", &sourceType, NULL);
+            if (sourceType != OWR_SOURCE_TYPE_TEST)
+                continue;
+        }
+
+        RealtimeMediaSource::Type mediaSourceType;
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            sourceType = RealtimeMediaSource::Audio;
+            mediaSourceType = RealtimeMediaSource::Audio;
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            sourceType = RealtimeMediaSource::Video;
+            mediaSourceType = RealtimeMediaSource::Video;
         else {
-            sourceType = RealtimeMediaSource::None;
+            mediaSourceType = RealtimeMediaSource::None;
             ASSERT_NOT_REACHED();
         }
 
-        RefPtr<RealtimeMediaSourceOwr> mediaSource = adoptRef(new RealtimeMediaSourceOwr(source, id, sourceType, sourceName));
+        RefPtr<RealtimeMediaSourceOwr> mediaSource = adoptRef(new RealtimeMediaSourceOwr(source, id, mediaSourceType, sourceName));
 
         RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(id);
         if (sourceIterator == m_sourceMap.end())
             m_sourceMap.add(id, mediaSource);
 
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            audioSources.append(id);
+            audioSources.append(mediaSource);
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            videoSources.append(id);
+            videoSources.append(mediaSource);
     }
 
-    // TODO: Make sure contraints are actually validated by checking source types.
-    m_validConstraintsHandler(WTFMove(audioSources), WTFMove(videoSources));
-    m_validConstraintsHandler = nullptr;
-    m_invalidConstraintsHandler = nullptr;
+    if (videoSources.isEmpty() && audioSources.isEmpty())
+        m_completionHandler(nullptr);
+    else
+        m_completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
+
 }
 
 PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)
