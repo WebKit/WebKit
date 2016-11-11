@@ -119,22 +119,6 @@ public:
                     break;
                 }
 
-                case NewArrayWithSpread: {
-                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-                        // We've compiled assuming we're not having a bad time, so to be consistent
-                        // with AI we must say we produce an original array allocation structure.
-                        registerStructure(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
-                    } else
-                        registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
-                    break;
-                }
-
-                case Spread: {
-                    registerStructure(m_graph.m_vm.fixedArrayStructure.get());
-                    break;
-                }
-
                 case CreateRest: {
                     if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);

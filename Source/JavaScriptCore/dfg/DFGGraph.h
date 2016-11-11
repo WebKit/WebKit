@@ -665,26 +665,6 @@ public:
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         return watchpoints().isWatched(globalObject->havingABadTimeWatchpoint());
     }
-
-    bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
-    {
-        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
-        InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpoint();
-        if (watchpoints().isWatched(set))
-            return true;
-
-        if (set.isStillValid()) {
-            // Since the global object owns this watchpoint, we make ourselves have a weak pointer to it.
-            // If the global object got deallocated, it wouldn't fire the watchpoint. It's unlikely the
-            // global object would get deallocated without this code ever getting thrown away, however,
-            // it's more sound logically to depend on the global object lifetime weakly.
-            freeze(globalObject);
-            watchpoints().addLazily(set);
-            return true;
-        }
-
-        return false;
-    }
     
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     
@@ -923,7 +903,6 @@ public:
     Bag<StackAccessData> m_stackAccessData;
     Bag<LazyJSValue> m_lazyJSValues;
     Bag<CallDOMGetterData> m_callDOMGetterData;
-    Bag<BitVector> m_bitVectors;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;

@@ -198,8 +198,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_new_array:
     case op_new_array_with_size:
     case op_new_array_buffer:
-    case op_new_array_with_spread:
-    case op_spread:
     case op_strcat:
     case op_to_primitive:
     case op_throw:

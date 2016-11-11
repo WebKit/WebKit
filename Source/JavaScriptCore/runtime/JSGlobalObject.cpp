@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 
 #include "ArrayConstructor.h"
-#include "ArrayIteratorAdaptiveWatchpoint.h"
 #include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
 #include "AtomicsObject.h"
@@ -78,7 +77,6 @@
 #include "JSDataViewPrototype.h"
 #include "JSDollarVM.h"
 #include "JSDollarVMPrototype.h"
-#include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
@@ -134,7 +132,6 @@
 #include "NumberPrototype.h"
 #include "ObjCCallbackFunction.h"
 #include "ObjectConstructor.h"
-#include "ObjectPropertyConditionSet.h"
 #include "ObjectPrototype.h"
 #include "ParserError.h"
 #include "ProxyConstructor.h"
@@ -316,7 +313,6 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
-    , m_arrayIteratorProtocolWatchpoint(IsWatched)
     , m_templateRegistry(vm)
     , m_evalEnabled(true)
     , m_runtimeFlags()
@@ -415,12 +411,6 @@ void JSGlobalObject::init(VM& vm)
         [] (const Initializer<JSFunction>& init) {
             init.set(JSFunction::createBuiltinFunction(init.vm, promiseOperationsInitializePromiseCodeGenerator(init.vm), init.owner));
         });
-
-    m_iteratorProtocolFunction.initLater(
-        [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::createBuiltinFunction(init.vm, iteratorHelpersPerformIterationCodeGenerator(init.vm), init.owner));
-        });
-
     m_newPromiseCapabilityFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_throwTypeErrorGetterSetter.initLater(
@@ -764,6 +754,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSObject* arrayIteratorPrototype = ArrayIteratorPrototype::create(vm, this, ArrayIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
     createArrayIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, arrayIteratorPrototype);
 
+
     GlobalPropertyInfo staticGlobals[] = {
 #define INIT_PRIVATE_GLOBAL(name, code) GlobalPropertyInfo(vm.propertyNames->builtinNames().name ## PrivateName(), name ## PrivateFunction, DontEnum | DontDelete | ReadOnly),
         JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(INIT_PRIVATE_GLOBAL)
@@ -894,44 +885,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 #undef CREATE_WEBASSEMBLY_CONSTRUCTOR
     }
 #endif // ENABLE(WEBASSEMBLY)
-
-    {
-        ExecState* exec = globalExec();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        auto setupAdaptiveWatchpoint = [&] (JSObject* base, const Identifier& ident) -> ObjectPropertyCondition {
-            // Performing these gets should not throw.
-            PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
-            bool result = base->getOwnPropertySlot(base, exec, ident, slot);
-            ASSERT_UNUSED(result, result);
-            ASSERT_UNUSED(scope, !scope.exception());
-            RELEASE_ASSERT(slot.isCacheableValue());
-            JSValue functionValue = slot.getValue(exec, ident);
-            ASSERT_UNUSED(scope, !scope.exception());
-            ASSERT(jsDynamicCast<JSFunction*>(functionValue));
-
-            ObjectPropertyCondition condition = generateConditionForSelfEquivalence(m_vm, nullptr, base, ident.impl());
-            RELEASE_ASSERT(condition.requiredValue() == functionValue);
-
-            bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
-            RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
-
-            return condition;
-        };
-
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
-            m_arrayIteratorPrototypeNext = std::make_unique<ArrayIteratorAdaptiveWatchpoint>(condition, this);
-            m_arrayIteratorPrototypeNext->install();
-        }
-
-        {
-            ArrayPrototype* arrayPrototype = this->arrayPrototype();
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayPrototype, m_vm.propertyNames->iteratorSymbol);
-            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ArrayIteratorAdaptiveWatchpoint>(condition, this);
-            m_arrayPrototypeSymbolIteratorWatchpoint->install();
-        }
-    }
 
     resetPrototype(vm, getPrototypeDirect());
 }
@@ -1120,6 +1073,26 @@ void JSGlobalObject::haveABadTime(VM& vm)
     }
 }
 
+bool JSGlobalObject::objectPrototypeIsSane()
+{
+    return !hasIndexedProperties(m_objectPrototype->indexingType())
+        && m_objectPrototype->getPrototypeDirect().isNull();
+}
+
+bool JSGlobalObject::arrayPrototypeChainIsSane()
+{
+    return !hasIndexedProperties(m_arrayPrototype->indexingType())
+        && m_arrayPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && objectPrototypeIsSane();
+}
+
+bool JSGlobalObject::stringPrototypeChainIsSane()
+{
+    return !hasIndexedProperties(m_stringPrototype->indexingType())
+        && m_stringPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && objectPrototypeIsSane();
+}
+
 // Set prototype, and also insert the object prototype at the end of the chain.
 void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
 {
@@ -1169,7 +1142,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_arrayProtoToStringFunction.visit(visitor);
     thisObject->m_arrayProtoValuesFunction.visit(visitor);
     thisObject->m_initializePromiseFunction.visit(visitor);
-    thisObject->m_iteratorProtocolFunction.visit(visitor);
     visitor.append(&thisObject->m_newPromiseCapabilityFunction);
     visitor.append(&thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);

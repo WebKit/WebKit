@@ -1,5 +1,18 @@
 2016-11-11  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r208584.
+
+        Seems to have regressed Speedometer by 1% on Mac
+
+        Reverted changeset:
+
+        "We should have a more concise way of determining when we're
+        varargs calling a function using rest parameters"
+        https://bugs.webkit.org/show_bug.cgi?id=164258
+        http://trac.webkit.org/changeset/208584
+
+2016-11-11  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r208117 and r208160.
 
         Regressed Speedometer by >1.5%

@@ -59,7 +59,7 @@ void TrackedReferences::check(JSCell* cell) const
     if (m_references.contains(cell))
         return;
     
-    dataLog("Found untracked reference: ", JSValue(cell), "\n");
+    dataLog("Found untracked reference: ", RawPointer(cell), "\n");
     dataLog("All tracked references: ", *this, "\n");
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -1869,27 +1869,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph,
             m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         break;
-
-    case NewArrayWithSpread:
-        if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-            // We've compiled assuming we're not having a bad time, so to be consistent
-            // with StructureRegisterationPhase we must say we produce an original array
-            // allocation structure.
-            forNode(node).set(
-                m_graph,
-                m_graph.globalObjectFor(node->origin.semantic)->originalArrayStructureForIndexingType(ArrayWithContiguous));
-        } else {
-            forNode(node).set(
-                m_graph,
-                m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
-        }
-
-        break;
-
-    case Spread:
-        forNode(node).set(
-            m_graph, m_graph.m_vm.fixedArrayStructure.get());
-        break;
         
     case NewArrayBuffer:
         forNode(node).set(

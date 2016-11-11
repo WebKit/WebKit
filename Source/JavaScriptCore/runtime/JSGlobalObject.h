@@ -54,9 +54,9 @@ class JSGlobalObjectInspectorController;
 }
 
 namespace JSC {
+
 class ArrayConstructor;
 class ArrayPrototype;
-class ArrayIteratorAdaptiveWatchpoint;
 class AsyncFunctionPrototype;
 class BooleanPrototype;
 class ConsoleClient;
@@ -259,7 +259,6 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_initializePromiseFunction;
-    LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
@@ -396,15 +395,6 @@ public:
 
     WeakRandom m_weakRandom;
 
-    InlineWatchpointSet& arrayIteratorProtocolWatchpoint() { return m_arrayIteratorProtocolWatchpoint; }
-    // If this hasn't been invalidated, it means the array iterator protocol
-    // is not observable to user code yet.
-    InlineWatchpointSet m_arrayIteratorProtocolWatchpoint;
-    std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayPrototypeSymbolIteratorWatchpoint;
-    std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayIteratorPrototypeNext;
-
-    bool isArrayIteratorProtocolFastAndNonObservable();
-
     TemplateRegistry m_templateRegistry;
 
     bool m_evalEnabled;
@@ -523,7 +513,6 @@ public:
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* initializePromiseFunction() const { return m_initializePromiseFunction.get(this); }
-    JSFunction* iteratorProtocolFunction() const { return m_iteratorProtocolFunction.get(this); }
     JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSObject* regExpProtoExecFunction() const { return m_regExpProtoExec.get(); }

@@ -859,7 +859,6 @@ private:
             break;
         }
             
-        case NewArrayWithSpread:
         case NewArray:
         case NewArrayWithSize:
         case CreateRest:
@@ -867,10 +866,6 @@ private:
             setPrediction(SpecArray);
             break;
         }
-
-        case Spread:
-            setPrediction(SpecCellOther);
-            break;
             
         case NewTypedArray: {
             setPrediction(speculationFromTypedArrayType(m_currentNode->typedArrayType()));
