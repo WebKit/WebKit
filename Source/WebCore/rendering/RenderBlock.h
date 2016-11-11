@@ -360,6 +360,7 @@ protected:
 
     virtual bool hasLineIfEmpty() const;
     
+    virtual bool canPerformSimplifiedLayout() const;
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
 

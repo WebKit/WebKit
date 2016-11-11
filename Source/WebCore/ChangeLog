@@ -1,3 +1,36 @@
+2016-11-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] ASSERTION FAILED: !m_gridIsDirty in WebCore::RenderGrid::gridRowCount
+        https://bugs.webkit.org/show_bug.cgi?id=163450
+
+        Reviewed by Darin Adler.
+
+        The issue is that in the test case a simplifiedLayout() is performed.
+        So in RenderGrid::layoutBlock() we early return and the grid is not populated,
+        so the m_gridIsDirty flag is not cleared when we try to check the size of the grid
+        in RenderGrid::layoutPositionedObject().
+
+        We should avoid to do a simplified layout if we have to layout
+        some positioned grid items and the grid is dirty.
+
+        The problem was not only the ASSERT, but the current behavior was wrong too.
+        As we didn't do a proper layout of the grid container, the positioned item
+        won't be placed on the expected position. Added tests verifying this.
+
+        Tests: fast/css-grid-layout/grid-positioned-item-dynamic-change.html
+               fast/css-grid-layout/grid-simplified-layout-positioned.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::canPerformSimplifiedLayout): Check if we can perform or not
+        a simplified layout.
+        (WebCore::RenderBlock::simplifiedLayout): Extract initial check
+        into canPerformSimplifiedLayout().
+        * rendering/RenderBlock.h: Add new header for canPerformSimplifiedLayout().
+        * rendering/RenderGrid.cpp: Implement our own version of canPerformSimplifiedLayout()
+        to verify that the grid is not dirty if we have to layout some positioned items.
+        (WebCore::RenderGrid::canPerformSimplifiedLayout):
+        * rendering/RenderGrid.h: Add canPerformSimplifiedLayout() header.
+
 2016-11-11  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: media tracks control support

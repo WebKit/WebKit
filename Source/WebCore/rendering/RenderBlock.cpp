@@ -1336,9 +1336,14 @@ void RenderBlock::simplifiedNormalFlowLayout()
     }
 }
 
+bool RenderBlock::canPerformSimplifiedLayout() const
+{
+    return (posChildNeedsLayout() || needsSimplifiedNormalFlowLayout()) && !normalChildNeedsLayout() && !selfNeedsLayout();
+}
+
 bool RenderBlock::simplifiedLayout()
 {
-    if ((!posChildNeedsLayout() && !needsSimplifiedNormalFlowLayout()) || normalChildNeedsLayout() || selfNeedsLayout())
+    if (!canPerformSimplifiedLayout())
         return false;
 
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());

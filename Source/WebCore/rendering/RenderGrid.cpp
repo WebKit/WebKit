@@ -446,6 +446,16 @@ void RenderGrid::repeatTracksSizingIfNeeded(GridSizingData& sizingData, LayoutUn
     }
 }
 
+bool RenderGrid::canPerformSimplifiedLayout() const
+{
+    // We cannot perform a simplified layout if the grid is dirty and we have
+    // some positioned items to be laid out.
+    if (m_gridIsDirty && posChildNeedsLayout())
+        return false;
+
+    return RenderBlock::canPerformSimplifiedLayout();
+}
+
 void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
