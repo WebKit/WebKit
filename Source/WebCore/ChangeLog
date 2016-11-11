@@ -1,3 +1,16 @@
+2016-11-10  John Wilander  <wilander@apple.com>
+
+        Remove unused parameter name to fix build error on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=163468
+
+        No review.
+
+        No new tests.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Removed parameter name 'pasteboardURL' in unimplemented function.
+
 2016-11-10  Chris Dumez  <cdumez@apple.com>
 
         Speed up HTMLInputElement validation

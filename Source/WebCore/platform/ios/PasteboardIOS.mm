@@ -127,7 +127,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeURL, pasteboardURL.url.string());
 }
 
-void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboardURL)
+void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
 {
     // A trustworthy URL pasteboard type needs to be decided on
     // before we allow calls to this function. A page data transfer
