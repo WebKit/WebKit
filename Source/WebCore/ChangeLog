@@ -1,3 +1,15 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix time unit parsing
+        https://bugs.webkit.org/show_bug.cgi?id=164649
+
+        Reviewed by Dean Jackson.
+        
+        Make sure that a unitless value gets changed to milliseconds properly.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+
 2016-11-11  Keith Rollin  <krollin@apple.com>
 
         Reduce number of platformMemoryUsage calls
