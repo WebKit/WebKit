@@ -1,3 +1,15 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix SVG markers and colors
+        https://bugs.webkit.org/show_bug.cgi?id=164640
+
+        Reviewed by Dean Jackson.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSVGColor):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseShorthand):
+
 2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Composition state should be cleared when changing focus to a non-editable element

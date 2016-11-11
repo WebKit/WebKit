@@ -4975,9 +4975,10 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         RefPtr<CSSValue> marker = parseSingleValue(CSSPropertyMarkerStart);
         if (!marker || !m_range.atEnd())
             return false;
-        addProperty(CSSPropertyMarkerStart, CSSPropertyMarker, marker.releaseNonNull(), important);
-        addProperty(CSSPropertyMarkerMid, CSSPropertyMarker, marker.releaseNonNull(), important);
-        addProperty(CSSPropertyMarkerEnd, CSSPropertyMarker, marker.releaseNonNull(), important);
+        auto markerRef = marker.releaseNonNull();
+        addProperty(CSSPropertyMarkerStart, CSSPropertyMarker, markerRef.copyRef(), important);
+        addProperty(CSSPropertyMarkerMid, CSSPropertyMarker, markerRef.copyRef(), important);
+        addProperty(CSSPropertyMarkerEnd, CSSPropertyMarker, markerRef.copyRef(), important);
         return true;
     }
     case CSSPropertyFlex:
