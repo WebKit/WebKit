@@ -60,6 +60,27 @@ void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& 
     Document* document = request.document();
     Frame* frame = document ? document->frame() : nullptr;
 
+    if (!frame || !document->page()) {
+        request.deny(UserMediaRequest::OtherFailure, emptyString());
+        return;
+    }
+
+    if (document->page()->canStartMedia()) {
+        sendUserMediaRequest(request);
+        return;
+    }
+
+    auto& pendingRequests = m_blockedRequests.add(document, Vector<RefPtr<UserMediaRequest>>()).iterator->value;
+    if (pendingRequests.isEmpty())
+        document->addMediaCanStartListener(this);
+    pendingRequests.append(&request);
+}
+
+void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& request)
+{
+    Document* document = request.document();
+    Frame* frame = document ? document->frame() : nullptr;
+
     if (!frame) {
         request.deny(UserMediaRequest::OtherFailure, emptyString());
         return;
@@ -83,6 +104,38 @@ void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest&
     if (!requestID)
         return;
     m_idToUserMediaRequestMap.remove(requestID);
+    removeMediaRequestFromMaps(request);
+}
+
+void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
+{
+    auto pendingRequests = m_blockedRequests.take(&document);
+    while (!pendingRequests.isEmpty()) {
+        if (!document.page()->canStartMedia()) {
+            m_blockedRequests.add(&document, pendingRequests);
+            document.addMediaCanStartListener(this);
+            break;
+        }
+
+        sendUserMediaRequest(*pendingRequests.takeLast());
+    }
+}
+
+void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequest& request)
+{
+    auto pendingRequests = m_blockedRequests.take(request.document());
+    for (auto& pendingRequest : pendingRequests) {
+        if (&request != pendingRequest.get())
+            continue;
+
+        if (pendingRequests.isEmpty())
+            request.document()->removeMediaCanStartListener(this);
+        else
+            m_blockedRequests.add(request.document(), pendingRequests);
+        break;
+    }
+
+    m_userMediaRequestToIDMap.remove(&request);
 }
 
 void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, const String& audioDeviceUID, const String& videoDeviceUID)
@@ -90,7 +143,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t reque
     auto request = m_idToUserMediaRequestMap.take(requestID);
     if (!request)
         return;
-    m_userMediaRequestToIDMap.remove(request);
+    removeMediaRequestFromMaps(*request);
 
     request->allow(audioDeviceUID, videoDeviceUID);
 }
@@ -100,7 +153,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t reques
     auto request = m_idToUserMediaRequestMap.take(requestID);
     if (!request)
         return;
-    m_userMediaRequestToIDMap.remove(request);
+    removeMediaRequestFromMaps(*request);
 
     request->deny(reason, invalidConstraint);
 }
@@ -150,7 +203,7 @@ void UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension(co
     ASSERT(m_userMediaDeviceSandboxExtensions.size() <= 2);
 
     for (size_t i = 0; i < sandboxExtensionHandles.size(); i++) {
-        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(sandboxExtensionHandles[i])) {
+        if (auto extension = SandboxExtension::create(sandboxExtensionHandles[i])) {
             extension->consume();
             m_userMediaDeviceSandboxExtensions.append(extension.release());
         }

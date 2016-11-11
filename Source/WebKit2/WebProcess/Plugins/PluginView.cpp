@@ -1371,7 +1371,7 @@ void PluginView::setFocus(bool hasFocus)
     m_plugin->setFocus(hasFocus);
 }
 
-void PluginView::mediaCanStart()
+void PluginView::mediaCanStart(WebCore::Document&)
 {
     ASSERT(m_isWaitingUntilMediaCanStart);
     m_isWaitingUntilMediaCanStart = false;

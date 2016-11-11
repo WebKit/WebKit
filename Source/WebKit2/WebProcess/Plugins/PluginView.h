@@ -184,7 +184,7 @@ private:
     void clipRectChanged() override;
 
     // WebCore::MediaCanStartListener
-    void mediaCanStart() override;
+    void mediaCanStart(WebCore::Document&) override;
 
     // WebCore::MediaProducer
     MediaProducer::MediaStateFlags mediaState() const override { return m_pluginIsPlayingAudio ? MediaProducer::IsPlayingAudio : MediaProducer::IsNotPlaying; }

@@ -5664,8 +5664,9 @@ unsigned HTMLMediaElement::webkitVideoDecodedByteCount() const
 }
 #endif
 
-void HTMLMediaElement::mediaCanStart()
+void HTMLMediaElement::mediaCanStart(Document& document)
 {
+    ASSERT_UNUSED(document, &document == &this->document());
     LOG(Media, "HTMLMediaElement::mediaCanStart(%p) - m_isWaitingUntilMediaCanStart = %s, m_pausedInternal = %s",
         this, boolString(m_isWaitingUntilMediaCanStart), boolString(m_pausedInternal) );
 

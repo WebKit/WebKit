@@ -33,6 +33,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
+#include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrack.h"
@@ -47,7 +48,15 @@ namespace WebCore {
 
 class Document;
 
-class MediaStream final : public URLRegistrable, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer, public MediaStreamPrivate::Observer, private MediaProducer, public RefCounted<MediaStream> {
+class MediaStream final
+    : public URLRegistrable
+    , public EventTargetWithInlineData
+    , public ContextDestructionObserver
+    , public MediaStreamTrack::Observer
+    , public MediaStreamPrivate::Observer
+    , private MediaProducer
+    , private MediaCanStartListener
+    , public RefCounted<MediaStream> {
 public:
     class Observer {
     public:
@@ -77,6 +86,9 @@ public:
     bool muted() const { return m_isMuted; }
 
     MediaStreamPrivate* privateStream() const { return m_private.get(); }
+
+    void startProducingData();
+    void stopProducingData();
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
@@ -118,6 +130,9 @@ private:
     void pageMutedStateDidChange() final;
     MediaProducer::MediaStateFlags mediaState() const final;
 
+    // MediaCanStartListener
+    void mediaCanStart(Document&) final;
+
     bool internalAddTrack(Ref<MediaStreamTrack>&&, StreamModifier);
     bool internalRemoveTrack(const String&, StreamModifier);
 
@@ -142,6 +157,7 @@ private:
     bool m_isActive { false };
     bool m_isMuted { true };
     bool m_externallyMuted { false };
+    bool m_isWaitingUntilMediaCanStart { false };
 };
 
 } // namespace WebCore

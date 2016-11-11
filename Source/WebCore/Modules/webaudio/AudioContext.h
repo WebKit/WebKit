@@ -284,7 +284,7 @@ private:
 
     void scheduleNodeDeletion();
 
-    void mediaCanStart() override;
+    void mediaCanStart(Document&) override;
 
     // MediaProducer
     MediaProducer::MediaStateFlags mediaState() const override;

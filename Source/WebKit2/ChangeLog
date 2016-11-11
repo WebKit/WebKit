@@ -1,3 +1,24 @@
+2016-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] defer resolution of getUserMedia promise made in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=164643
+        <rdar://problem/29048317>
+
+        Reviewed by Brady Eidson.
+
+        Do not ask for user for access to capture devices when the document does not
+        allow media to play, wait until playback is allowed.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::mediaCanStart):
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::mediaCanStart):
+        * WebProcess/Plugins/PluginView.h:
+
 2016-11-11  Darin Adler  <darin@apple.com>
 
         Move Node from ExceptionCode to ExceptionOr

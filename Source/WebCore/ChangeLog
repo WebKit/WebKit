@@ -1,3 +1,38 @@
+2016-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] defer resolution of getUserMedia promise made in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=164643
+        <rdar://problem/29048317>
+
+        Reviewed by Brady Eidson.
+
+        Test: fast/mediastream/get-user-media-background-tab.html
+
+        Do not start producing data when the document does not allow media
+        to start playing. Instead, register with the document for a callback 
+        when playback is allowed and start then.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::mediaCanStart):
+        (WebCore::MediaStream::startProducingData):
+        (WebCore::MediaStream::stopProducingData):
+        (WebCore::MediaStream::pageMutedStateDidChange):
+        * Modules/mediastream/MediaStream.h:
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::mediaCanStart): Deal with API change.
+        * Modules/webaudio/AudioContext.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaCanStart): Ditto.
+        * html/HTMLMediaElement.h:
+        * page/MediaCanStartListener.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::takeAnyMediaCanStartListener): Return the listener and document.
+        (WebCore::Page::setCanStartMedia): Pass the document to the listener.
+        * page/Page.h:
+
 2016-11-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderFlowThread's containing block cache should be invalidated before calling styleDidChange.

@@ -727,7 +727,7 @@ private:
 
     void setPlaybackRateInternal(double);
 
-    void mediaCanStart() override;
+    void mediaCanStart(Document&) final;
 
     void invalidateCachedTime() const;
     void refreshCachedTime() const;

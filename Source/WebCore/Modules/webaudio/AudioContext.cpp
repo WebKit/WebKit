@@ -957,8 +957,9 @@ void AudioContext::startRendering()
     setState(State::Running);
 }
 
-void AudioContext::mediaCanStart()
+void AudioContext::mediaCanStart(Document& document)
 {
+    ASSERT_UNUSED(document, &document == this->document());
     removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
     mayResumePlayback(true);
 }

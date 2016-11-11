@@ -555,15 +555,15 @@ bool Page::showAllPlugins() const
     return false;
 }
 
-inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()
+inline Optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
         if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
-            return listener;
+            return { { *listener, *frame->document() } };
     }
-    return 0;
+    return Nullopt;
 }
 
 void Page::setCanStartMedia(bool canStartMedia)
@@ -574,10 +574,10 @@ void Page::setCanStartMedia(bool canStartMedia)
     m_canStartMedia = canStartMedia;
 
     while (m_canStartMedia) {
-        MediaCanStartListener* listener = takeAnyMediaCanStartListener();
+        auto listener = takeAnyMediaCanStartListener();
         if (!listener)
             break;
-        listener->mediaCanStart();
+        listener->first.mediaCanStart(listener->second);
     }
 }
 

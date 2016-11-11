@@ -23,6 +23,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "SandboxExtension.h"
+#include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MediaDevicesEnumerationRequest.h>
 #include <WebCore/UserMediaClient.h>
@@ -35,7 +36,8 @@ namespace WebKit {
 
 class WebPage;
 
-class UserMediaPermissionRequestManager {
+class UserMediaPermissionRequestManager
+    : private WebCore::MediaCanStartListener {
 public:
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager();
@@ -52,6 +54,13 @@ public:
     void grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray&);
 
 private:
+    void sendUserMediaRequest(WebCore::UserMediaRequest&);
+
+    // WebCore::MediaCanStartListener
+    void mediaCanStart(WebCore::Document&) override;
+
+    void removeMediaRequestFromMaps(WebCore::UserMediaRequest&);
+
     WebPage& m_page;
 
     HashMap<uint64_t, RefPtr<WebCore::UserMediaRequest>> m_idToUserMediaRequestMap;
@@ -61,6 +70,8 @@ private:
     HashMap<RefPtr<WebCore::MediaDevicesEnumerationRequest>, uint64_t> m_mediaDevicesEnumerationRequestToIDMap;
 
     Vector<RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
+
+    HashMap<RefPtr<WebCore::Document>, Vector<RefPtr<WebCore::UserMediaRequest>>> m_blockedRequests;
 };
 
 } // namespace WebKit
