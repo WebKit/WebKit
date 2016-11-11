@@ -9,3 +9,4 @@ DOM:
             - Node_ownerDocument
         Document:
             - Document_documentElement
+            - Document_body

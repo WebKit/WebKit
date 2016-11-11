@@ -101,7 +101,7 @@
 
     [GetterMayThrowException, SetterMayThrowException] attribute USVString cookie;
 
-    [CEReactions, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
+    [CEReactions, DOMJIT, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images;

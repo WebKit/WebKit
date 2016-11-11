@@ -1,3 +1,44 @@
+2016-11-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Document#body should have DOMJIT patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=164627
+
+        Reviewed by Darin Adler.
+
+        This patch implements document.body accessor. To implement it, we need,
+
+        1. DOM traversing ability from ASM.
+        2. Checking HTMLElement.
+        3. Checking HTMLElement's localName.
+
+        The above features are already implemented in CSSJIT.
+        We extract some of utilities from CSSJIT to share them with DOMJIT.
+
+        Test: js/dom/domjit-accessor-document-body.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToParentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToNextAdjacentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToPreviousAdjacentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        (WebCore::SelectorCompiler::jumpIfElementIsNotEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+        (WebCore::SelectorCompiler::testIsElementFlagOnNode): Deleted.
+        (WebCore::SelectorCompiler::testIsHTMLFlagOnNode): Deleted.
+        * dom/Document.idl:
+        * dom/Element.h:
+        * dom/QualifiedName.h:
+        * domjit/DOMJITAbstractHeapRepository.yaml:
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::branchTestIsElementFlagOnNode):
+        (WebCore::DOMJIT::branchTestIsHTMLFlagOnNode):
+        * domjit/JSDocumentDOMJIT.cpp:
+        (WebCore::DocumentBodyDOMJIT::checkDOM):
+        (WebCore::loadLocalName):
+        (WebCore::DocumentBodyDOMJIT::callDOMGetter):
+
 2016-11-10  John Wilander  <wilander@apple.com>
 
         Remove unused parameter name to fix build error on iOS
