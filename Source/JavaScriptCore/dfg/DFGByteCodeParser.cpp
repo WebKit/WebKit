@@ -4295,34 +4295,40 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool isDirect = opcodeID == op_put_by_val_direct;
             bool compiledAsPutById = false;
             {
-                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
-                // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
-                // At that time, there is no information.
-                if (byValInfo 
-                    && byValInfo->stubInfo
-                    && !byValInfo->tookSlowPath
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
-                    compiledAsPutById = true;
-                    unsigned identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
-                    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+                unsigned identifierNumber;
+                PutByIdStatus putByIdStatus;
+                {
+                    ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                    ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
+                    // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
+                    // At that time, there is no information.
+                    if (byValInfo 
+                        && byValInfo->stubInfo
+                        && !byValInfo->tookSlowPath
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                        compiledAsPutById = true;
+                        identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
+                        UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
-                    if (Symbol* symbol = byValInfo->cachedSymbol.get()) {
-                        FrozenValue* frozen = m_graph.freezeStrong(symbol);
-                        addToGraph(CheckCell, OpInfo(frozen), property);
-                    } else {
-                        ASSERT(!uid->isSymbol());
-                        addToGraph(CheckStringIdent, OpInfo(uid), property);
+                        if (Symbol* symbol = byValInfo->cachedSymbol.get()) {
+                            FrozenValue* frozen = m_graph.freezeStrong(symbol);
+                            addToGraph(CheckCell, OpInfo(frozen), property);
+                        } else {
+                            ASSERT(!uid->isSymbol());
+                            addToGraph(CheckStringIdent, OpInfo(uid), property);
+                        }
+
+                        putByIdStatus = PutByIdStatus::computeForStubInfo(
+                            locker, m_inlineStackTop->m_profiledBlock,
+                            byValInfo->stubInfo, currentCodeOrigin(), uid);
+
                     }
-
-                    PutByIdStatus putByIdStatus = PutByIdStatus::computeForStubInfo(
-                        locker, m_inlineStackTop->m_profiledBlock,
-                        byValInfo->stubInfo, currentCodeOrigin(), uid);
-
-                    handlePutById(base, identifierNumber, value, putByIdStatus, isDirect);
                 }
+
+                if (compiledAsPutById)
+                    handlePutById(base, identifierNumber, value, putByIdStatus, isDirect);
             }
 
             if (!compiledAsPutById) {
