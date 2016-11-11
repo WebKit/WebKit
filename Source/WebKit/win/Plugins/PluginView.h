@@ -248,7 +248,7 @@ namespace WebCore {
 
         void invalidateWindowlessPluginRect(const IntRect&);
 
-        void mediaCanStart() override;
+        void mediaCanStart(Document&) override;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         void paintWindowedPluginIntoContext(GraphicsContext&, const IntRect&);

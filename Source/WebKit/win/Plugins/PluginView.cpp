@@ -270,7 +270,7 @@ bool PluginView::start()
     return true;
 }
 
-void PluginView::mediaCanStart()
+void PluginView::mediaCanStart(Document&)
 {
     ASSERT(!m_isStarted);
     if (!start())
