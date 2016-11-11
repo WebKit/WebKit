@@ -69,7 +69,7 @@ inline ClassChangeInvalidation::~ClassChangeInvalidation()
         return;
     invalidateDescendantStyle();
 }
-    
+
 }
 }
 

@@ -35,13 +35,27 @@
 namespace WebCore {
 namespace Style {
 
-static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, const AtomicString& changedId)
+static bool mayBeAffectedByHostRules(const Element& element, const AtomicString& changedId)
 {
-    auto& shadowRuleSets = shadowRoot.styleScope().resolver().ruleSets();
+    auto* shadowRoot = element.shadowRoot();
+    if (!shadowRoot)
+        return false;
+    auto& shadowRuleSets = shadowRoot->styleScope().resolver().ruleSets();
     if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
-
     return shadowRuleSets.features().idsInRules.contains(changedId.impl());
+}
+
+static bool mayBeAffectedBySlottedRules(const Element& element, const AtomicString& changedId)
+{
+    for (auto* shadowRoot : assignedShadowRootsIfSlotted(element)) {
+        auto& ruleSets = shadowRoot->styleScope().resolver().ruleSets();
+        if (ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
+            continue;
+        if (ruleSets.features().idsInRules.contains(changedId.impl()))
+            return true;
+    }
+    return false;
 }
 
 void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
@@ -51,11 +65,9 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
-    bool mayAffectStyle = ruleSets.features().idsInRules.contains(changedId.impl());
-
-    auto* shadowRoot = m_element.shadowRoot();
-    if (!mayAffectStyle && shadowRoot && mayBeAffectedByHostStyle(*shadowRoot, changedId))
-        mayAffectStyle = true;
+    bool mayAffectStyle = ruleSets.features().idsInRules.contains(changedId.impl())
+        || mayBeAffectedByHostRules(m_element, changedId)
+        || mayBeAffectedBySlottedRules(m_element, changedId);
 
     if (!mayAffectStyle)
         return;

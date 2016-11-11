@@ -288,7 +288,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
-    if (element.shadowRoot() && !element.shadowRoot()->styleScope().resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
+    if (candidateElement.shadowRoot() && !candidateElement.shadowRoot()->styleScope().resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
 #if ENABLE(FULLSCREEN_API)

@@ -1,3 +1,14 @@
+2016-11-11  Antti Koivisto  <antti@apple.com>
+
+        Updating class name doesn't update the slotted content's style
+        https://bugs.webkit.org/show_bug.cgi?id=164577
+        <rdar://problem/29205873>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-slotted-invalidation-expected.html: Added.
+        * fast/shadow-dom/css-scoping-slotted-invalidation.html: Added.
+
 2016-11-11  Chris Dumez  <cdumez@apple.com>
 
         WorkerGlobalScope's indexedDB property should be on the prototype, not the instance

@@ -36,14 +36,34 @@
 namespace WebCore {
 namespace Style {
 
-static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, bool isHTML, const QualifiedName& attributeName)
+static bool mayBeAffectedByAttributeChange(DocumentRuleSets& ruleSets, bool isHTML, const QualifiedName& attributeName)
 {
-    auto& shadowRuleSets = shadowRoot.styleScope().resolver().ruleSets();
+    auto& nameSet = isHTML ? ruleSets.features().attributeCanonicalLocalNamesInRules : ruleSets.features().attributeLocalNamesInRules;
+    return nameSet.contains(attributeName.localName().impl());
+}
+
+static bool mayBeAffectedByHostRules(const Element& element, const QualifiedName& attributeName)
+{
+    auto* shadowRoot = element.shadowRoot();
+    if (!shadowRoot)
+        return false;
+    auto& shadowRuleSets = shadowRoot->styleScope().resolver().ruleSets();
     if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
-    auto& nameSet = isHTML ? shadowRuleSets.features().attributeCanonicalLocalNamesInRules : shadowRuleSets.features().attributeLocalNamesInRules;
-    return nameSet.contains(attributeName.localName().impl());
+    return mayBeAffectedByAttributeChange(shadowRuleSets, element.isHTMLElement(), attributeName);
+}
+
+static bool mayBeAffectedBySlottedRules(const Element& element, const QualifiedName& attributeName)
+{
+    for (auto* shadowRoot : assignedShadowRootsIfSlotted(element)) {
+        auto& ruleSets = shadowRoot->styleScope().resolver().ruleSets();
+        if (ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
+            continue;
+        if (mayBeAffectedByAttributeChange(ruleSets, element.isHTMLElement(), attributeName))
+            return true;
+    }
+    return false;
 }
 
 void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
@@ -54,12 +74,9 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     auto& ruleSets = m_element.styleResolver().ruleSets();
     bool isHTML = m_element.isHTMLElement();
 
-    auto& nameSet = isHTML ? ruleSets.features().attributeCanonicalLocalNamesInRules : ruleSets.features().attributeLocalNamesInRules;
-    bool mayAffectStyle = nameSet.contains(attributeName.localName().impl());
-
-    auto* shadowRoot = m_element.shadowRoot();
-    if (!mayAffectStyle && shadowRoot && mayBeAffectedByHostStyle(*shadowRoot, isHTML, attributeName))
-        mayAffectStyle = true;
+    bool mayAffectStyle = mayBeAffectedByAttributeChange(ruleSets, isHTML, attributeName)
+        || mayBeAffectedByHostRules(m_element, attributeName)
+        || mayBeAffectedBySlottedRules(m_element, attributeName);
 
     if (!mayAffectStyle)
         return;

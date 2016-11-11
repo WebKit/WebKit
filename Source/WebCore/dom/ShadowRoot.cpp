@@ -31,6 +31,7 @@
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
 #include "ExceptionCode.h"
+#include "HTMLSlotElement.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SlotAssignment.h"
@@ -183,5 +184,14 @@ const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slo
     return m_slotAssignment->assignedNodesForSlot(slot, *this);
 }
 
+Vector<ShadowRoot*> assignedShadowRootsIfSlotted(const Node& node)
+{
+    Vector<ShadowRoot*> result;
+    for (auto* slot = node.assignedSlot(); slot; slot = slot->assignedSlot()) {
+        ASSERT(slot->containingShadowRoot());
+        result.append(slot->containingShadowRoot());
+    }
+    return result;
+}
 
 }

@@ -133,6 +133,8 @@ inline bool hasShadowRootParent(const Node& node)
     return node.parentNode() && node.parentNode()->isShadowRoot();
 }
 
+Vector<ShadowRoot*> assignedShadowRootsIfSlotted(const Node&);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShadowRoot)

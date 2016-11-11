@@ -1,3 +1,44 @@
+2016-11-11  Antti Koivisto  <antti@apple.com>
+
+        Updating class name doesn't update the slotted content's style
+        https://bugs.webkit.org/show_bug.cgi?id=164577
+        <rdar://problem/29205873>
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/shadow-dom/css-scoping-slotted-invalidation.html
+
+        Teach style invalidation code for attribute/class/id mutations about slotted rules.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::assignedShadowRootsIfSlotted):
+
+            Helper to find all assigned shadow roots (there may be more than one if slots are assigned to slots).
+
+        * dom/ShadowRoot.h:
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByAttributeChange):
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::mayBeAffectedBySlottedRules):
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+        (WebCore::Style::mayBeAffectedByHostStyle): Deleted.
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::mayBeAffectedBySlottedRules):
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+        (WebCore::Style::mayBeAffectedByHostStyle): Deleted.
+        * style/ClassChangeInvalidation.h:
+        * style/IdChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::mayBeAffectedBySlottedRules):
+        (WebCore::Style::IdChangeInvalidation::invalidateStyle):
+        (WebCore::Style::mayBeAffectedByHostStyle): Deleted.
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+
+            Fix a bug in style sharing where we were checking wrong element for host rules.
+            Tested by the included test too (the last empty div).
+
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the spring animation timing function
