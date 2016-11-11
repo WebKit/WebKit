@@ -1,5 +1,12 @@
 2016-11-11  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed try to fix windows build after https://bugs.webkit.org/show_bug.cgi?id=164650
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2016-11-11  Saam Barati  <sbarati@apple.com>
+
         We recursively grab a lock in the DFGBytecodeParser causing us to deadlock
         https://bugs.webkit.org/show_bug.cgi?id=164650
 
