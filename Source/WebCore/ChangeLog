@@ -1,3 +1,13 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-svg-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=164637
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-11  Alejandro G. Castro  <alex@igalia.com>
 
         [WebRTC][OpenWebRTC] Implement device permissions handling solution for owr backend in the UI process
