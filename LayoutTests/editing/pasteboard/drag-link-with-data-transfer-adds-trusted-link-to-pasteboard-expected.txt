@@ -1,0 +1,14 @@
+PASS 'javascript:alert('Set by data transfer');' was set in the data transfer for firstAnchorSource and not overwritten.
+PASS 'http://webkit.org/setByDataTransfer' was set in the data transfer for secondAnchorSource and not overwritten.
+PASS 'javascript:alert('Set by data transfer');' was set in the data transfer for firstSvgSource and not overwritten.
+PASS 'http://webkit.org/setByDataTransfer' was set in the data transfer for secondSvgSource and not overwritten.
+
+This only has an ondragenter handler and is here to make sure dragging over it doesn't change the pasteboard.
+This only has an ondragover handler and is here to make sure dragging over it doesn't change the pasteboard.
+firstAnchorSource
+secondAnchorSource
+https://webkit.org
+
+https://webkit.org
+
+

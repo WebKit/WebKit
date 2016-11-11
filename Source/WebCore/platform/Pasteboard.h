@@ -166,6 +166,7 @@ public:
     virtual void read(PasteboardWebContentReader&);
 
     virtual void write(const PasteboardURL&);
+    virtual void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
     virtual void write(const PasteboardImage&);
     virtual void write(const PasteboardWebContent&);
 

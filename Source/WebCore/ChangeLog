@@ -1,3 +1,39 @@
+2016-11-10  John Wilander  <wilander@apple.com>
+
+        Add link information to data transfer pasteboard for drag and drop links
+        https://bugs.webkit.org/show_bug.cgi?id=163468
+        <rdar://problem/20634630>
+
+        Reviewed by Brent Fulgham.
+
+        Test: editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html
+        This test ensures data transfers still work for types 'text' and 'url', i.e. that we don't
+        regress in-page use of the drag pasteboard.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+            Now adds trustworthy link information to the drag pasteboard.
+        * platform/Pasteboard.h:
+            New function declaration Pasteboard::writeTrustworthyWebURLsPboardType.
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Empty, i.e. not implemented.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Empty, i.e. not implemented.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Calls ASSERT_NOT_REACHED() to make sure we don't use this function before we have
+            decided on a trustrworthy URL pasteboard type on iOS. Currently not used since we
+            don't support drag & drop on iOS.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Writes the given URL to the WebURLsWithTitlesPboardType. This pasteboard type
+            serves as a trusted drop source.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+            Empty, i.e. not implemented.
+
 2016-11-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r207182): [iOS] Crash because of passing freed CFDictionaryRef to CG when decoding a sub-sampled large image

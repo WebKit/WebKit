@@ -96,6 +96,11 @@ void Pasteboard::write(const PasteboardURL&)
     notImplemented();
 }
 
+void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
+{
+    notImplemented();
+}
+
 void Pasteboard::writeString(const String&, const String&)
 {
     notImplemented();

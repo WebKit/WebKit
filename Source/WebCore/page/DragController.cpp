@@ -875,6 +875,13 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
             src.editor().copyURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), dataTransfer.pasteboard());
+        } else {
+            // Make sure the pasteboard also contains trustworthy link data
+            // but don't overwrite more general pasteboard types.
+            PasteboardURL pasteboardURL;
+            pasteboardURL.url = linkURL;
+            pasteboardURL.title = hitTestResult.textContent();
+            dataTransfer.pasteboard().writeTrustworthyWebURLsPboardType(pasteboardURL);
         }
 
         const VisibleSelection& sourceSelection = src.selection().selection();

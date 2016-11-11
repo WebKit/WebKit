@@ -1,3 +1,17 @@
+2016-11-10  John Wilander  <wilander@apple.com>
+
+        Add link information to data transfer pasteboard for drag and drop links
+        https://bugs.webkit.org/show_bug.cgi?id=163468
+        <rdar://problem/20634630>
+
+        Reviewed by Brent Fulgham.
+
+        * editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard-expected.txt: Added.
+        * editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html: Added.
+            This test ensures data transfer is not deleted or overwritten for the types 'text' and 'url'.
+        * platform/ios-simulator/TestExpectations:
+            Drag & drop is not supported on iOS.
+
 2016-11-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r208522): LayoutTest fast/loader/reload-zero-byte-plugin.html is a flaky failure

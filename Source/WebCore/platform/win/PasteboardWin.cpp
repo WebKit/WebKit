@@ -721,6 +721,11 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     writeURLToDataObject(pasteboardURL.url, pasteboardURL.title);
 }
 
+void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
+{
+    notImplemented();
+}
+
 void Pasteboard::writeImage(Element& element, const URL&, const String&)
 {
     if (!is<RenderImage>(element.renderer()))

@@ -22,6 +22,7 @@
 
 #include "DragData.h"
 #include "Image.h"
+#include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 #include "SelectionData.h"
@@ -177,6 +178,11 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     m_selectionData->setURL(pasteboardURL.url, pasteboardURL.title);
 
     writeToClipboard();
+}
+
+void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
+{
+    notImplemented();
 }
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)

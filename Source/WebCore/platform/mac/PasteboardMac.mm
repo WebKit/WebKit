@@ -234,6 +234,13 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     m_changeCount = writeURLForTypes(writableTypesForURL(), m_pasteboardName, pasteboardURL);
 }
 
+void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboardURL)
+{
+    NSURL *cocoaURL = pasteboardURL.url;
+    Vector<String> paths = { [cocoaURL absoluteString], pasteboardURL.title.stripWhiteSpace() };
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, m_pasteboardName);
+}
+
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->createNSData().get()] autorelease];
