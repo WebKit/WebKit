@@ -194,48 +194,43 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
     return nullptr;
 }
 
-static CryptoKeyUsage cryptoKeyUsageFromString(const String& usageString)
+static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(const CryptoKeyUsage usage)
 {
-    CryptoKeyUsage result = 0;
-    if (usageString == "encrypt")
-        result = CryptoKeyUsageEncrypt;
-    else if (usageString == "decrypt")
-        result = CryptoKeyUsageDecrypt;
-    else if (usageString == "sign")
-        result = CryptoKeyUsageSign;
-    else if (usageString == "verify")
-        result = CryptoKeyUsageVerify;
-    else if (usageString == "deriveKey")
-        result = CryptoKeyUsageDeriveKey;
-    else if (usageString == "deriveBits")
-        result = CryptoKeyUsageDeriveBits;
-    else if (usageString == "wrapKey")
-        result = CryptoKeyUsageWrapKey;
-    else if (usageString == "unwrapKey")
-        result = CryptoKeyUsageUnwrapKey;
+    switch (usage) {
+    case CryptoKeyUsage::Encrypt:
+        return CryptoKeyUsageEncrypt;
+    case CryptoKeyUsage::Decrypt:
+        return CryptoKeyUsageDecrypt;
+    case CryptoKeyUsage::Sign:
+        return CryptoKeyUsageSign;
+    case CryptoKeyUsage::Verify:
+        return CryptoKeyUsageVerify;
+    case CryptoKeyUsage::DeriveKey:
+        return CryptoKeyUsageDeriveKey;
+    case CryptoKeyUsage::DeriveBits:
+        return CryptoKeyUsageDeriveBits;
+    case CryptoKeyUsage::WrapKey:
+        return CryptoKeyUsageWrapKey;
+    case CryptoKeyUsage::UnwrapKey:
+        return CryptoKeyUsageUnwrapKey;
+    }
 
-    return result;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-static CryptoKeyUsage cryptoKeyUsagesFromJSValue(ExecState& state, JSValue iterable)
+static CryptoKeyUsageBitmap cryptoKeyUsageBitmapFromJSValue(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CryptoKeyUsage result = 0;
-    forEachInIterable(&state, iterable, [&result](VM& vm, ExecState* state, JSValue nextItem) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        String usageString = nextItem.toWTFString(state);
-        RETURN_IF_EXCEPTION(scope, void());
-        CryptoKeyUsage usage = cryptoKeyUsageFromString(usageString);
-        if (!usage)
-            throwTypeError(state, scope, ASCIILiteral("Invalid KeyUsages"));
-
-        // Maybe we shouldn't silently bypass duplicated usages?
-        result |= usage;
-    });
+    CryptoKeyUsageBitmap result = 0;
+    auto usages = convert<IDLSequence<IDLEnumeration<CryptoKeyUsage>>>(state, value);
     RETURN_IF_EXCEPTION(scope, 0);
+    // Maybe we shouldn't silently bypass duplicated usages?
+    for (auto usage : usages)
+        result |= toCryptoKeyUsageBitmap(usage);
+
     return result;
 }
 
@@ -298,15 +293,11 @@ static KeyData toKeyData(ExecState& state, SubtleCrypto::KeyFormat format, JSVal
     case SubtleCrypto::KeyFormat::Jwk: {
         result = convertDictionary<JsonWebKey>(state, value);
         RETURN_IF_EXCEPTION(scope, result);
-        CryptoKeyUsage usages = 0;
+        CryptoKeyUsageBitmap usages = 0;
         if (WTF::get<JsonWebKey>(result).key_ops) {
-            for (auto usageString : WTF::get<JsonWebKey>(result).key_ops.value()) {
-                CryptoKeyUsage usage = cryptoKeyUsageFromString(usageString);
-                if (!usage)
-                    throwTypeError(&state, scope, ASCIILiteral("Invalid key_ops"));
-                // Maybe we shouldn't silently bypass duplicated usages?
-                usages |= cryptoKeyUsageFromString(usageString);
-            }
+            // Maybe we shouldn't silently bypass duplicated usages?
+            for (auto usage : WTF::get<JsonWebKey>(result).key_ops.value())
+                usages |= toCryptoKeyUsageBitmap(usage);
         }
         WTF::get<JsonWebKey>(result).usages = usages;
         return result;
@@ -332,7 +323,7 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     auto extractable = state.uncheckedArgument(1).toBoolean(&state);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto keyUsages = cryptoKeyUsagesFromJSValue(state, state.uncheckedArgument(2));
+    auto keyUsages = cryptoKeyUsageBitmapFromJSValue(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto algorithm = createAlgorithm(state, params->identifier);
@@ -387,7 +378,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
     auto extractable = state.uncheckedArgument(3).toBoolean(&state);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto keyUsages = cryptoKeyUsagesFromJSValue(state, state.uncheckedArgument(4));
+    auto keyUsages = cryptoKeyUsageBitmapFromJSValue(state, state.uncheckedArgument(4));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto algorithm = createAlgorithm(state, params->identifier);

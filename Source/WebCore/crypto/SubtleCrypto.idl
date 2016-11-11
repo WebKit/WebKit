@@ -32,6 +32,6 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
     NoInterfaceObject,
 ] interface SubtleCrypto {
     // FIXME: Should this return a Promise<(CryptoKey or CryptoKeyPair)>?
-    [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<KeyUsage> keyUsages);
-    [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<KeyUsage> keyUsages);
+    [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<CryptoKeyUsage> keyUsages);
 };

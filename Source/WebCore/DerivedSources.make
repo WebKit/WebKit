@@ -252,6 +252,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
+    $(WebCore)/crypto/CryptoKeyUsage.idl \
     $(WebCore)/crypto/JsonWebKey.idl \
     $(WebCore)/crypto/parameters/AesKeyGenParams.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \

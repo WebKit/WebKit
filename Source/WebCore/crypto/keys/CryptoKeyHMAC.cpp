@@ -37,14 +37,14 @@
 
 namespace WebCore {
 
-CryptoKeyHMAC::CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
+CryptoKeyHMAC::CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(CryptoAlgorithmIdentifier::HMAC, CryptoKeyType::Secret, extractable, usage)
     , m_hash(hash)
     , m_key(key)
 {
 }
 
-CryptoKeyHMAC::CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
+CryptoKeyHMAC::CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(CryptoAlgorithmIdentifier::HMAC, CryptoKeyType::Secret, extractable, usage)
     , m_hash(hash)
     , m_key(WTFMove(key))
@@ -55,7 +55,7 @@ CryptoKeyHMAC::~CryptoKeyHMAC()
 {
 }
 
-RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usages)
+RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!lengthBits) {
         switch (hash) {
@@ -80,7 +80,7 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBits, CryptoAlgorithm
     return adoptRef(new CryptoKeyHMAC(randomData(lengthBits / 8), hash, extractable, usages));
 }
 
-RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importRaw(size_t lengthBits, CryptoAlgorithmIdentifier hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage usages)
+RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importRaw(size_t lengthBits, CryptoAlgorithmIdentifier hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     size_t length = keyData.size() * 8;
     if (!length)
@@ -93,7 +93,7 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importRaw(size_t lengthBits, CryptoAlgorith
     return adoptRef(new CryptoKeyHMAC(WTFMove(keyData), hash, extractable, usages));
 }
 
-RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorithmIdentifier hash, JsonWebKey&& keyData, bool extractable, CryptoKeyUsage usages, CheckAlgCallback&& callback)
+RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorithmIdentifier hash, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, CheckAlgCallback&& callback)
 {
     if (keyData.kty != "oct")
         return nullptr;

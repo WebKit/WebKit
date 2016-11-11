@@ -40,12 +40,12 @@ CryptoAlgorithm::~CryptoAlgorithm()
 {
 }
 
-void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsage, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
-void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsage, KeyCallback&&, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
@@ -75,12 +75,12 @@ void CryptoAlgorithm::digest(const CryptoAlgorithmParametersDeprecated&, const C
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&&, ExceptionCode& ec, ScriptExecutionContext*)
+void CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, VoidCallback&&, ExceptionCode& ec, ScriptExecutionContext*)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsage, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
+void CryptoAlgorithm::deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
@@ -90,7 +90,7 @@ void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParametersDeprecated&, con
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool, CryptoKeyUsage, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
+void CryptoAlgorithm::importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }

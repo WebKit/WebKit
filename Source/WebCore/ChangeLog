@@ -1,3 +1,65 @@
+2016-11-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename CryptoKeyUsage to CryptoKeyUsageBitmap and CryptoKey::Usage to CryptoKeyUsage
+        https://bugs.webkit.org/show_bug.cgi?id=164624
+        <rdar://problem/29210140>
+
+        Reviewed by Brent Fulgham.
+
+        This patch allows IDLType CryptoKeyUsage to be shared among different IDLs, i.e. CryptoKey.idl,
+        SubtleCrypto.idl and JsonWebKey.idl such that it can simplify the customized binding codes.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::toCryptoKeyUsageBitmap):
+        (WebCore::cryptoKeyUsageBitmapFromJSValue):
+        (WebCore::toKeyData):
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionImportKeyPromise):
+        (WebCore::cryptoKeyUsageFromString): Deleted.
+        (WebCore::cryptoKeyUsagesFromJSValue): Deleted.
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        * crypto/CryptoAlgorithm.cpp:
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoKey.cpp:
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKey.idl:
+        * crypto/CryptoKeySerialization.h:
+        * crypto/CryptoKeyUsage.h:
+        * crypto/CryptoKeyUsage.idl: Added.
+        * crypto/gnutls/CryptoKeyRSAGnuTLS.cpp:
+        * crypto/JsonWebKey.h:
+        * crypto/JsonWebKey.idl:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/keys/CryptoKeySerializationRaw.cpp:
+        * crypto/keys/CryptoKeySerializationRaw.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix basic shape parsing

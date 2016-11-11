@@ -57,16 +57,16 @@ private:
 
 class CryptoKeyHMAC final : public CryptoKey {
 public:
-    static Ref<CryptoKeyHMAC> create(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
+    static Ref<CryptoKeyHMAC> create(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usage)
     {
         return adoptRef(*new CryptoKeyHMAC(key, hash, extractable, usage));
     }
     virtual ~CryptoKeyHMAC();
 
-    static RefPtr<CryptoKeyHMAC> generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
-    static RefPtr<CryptoKeyHMAC> importRaw(size_t lengthBits, CryptoAlgorithmIdentifier hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyHMAC> generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyHMAC> importRaw(size_t lengthBits, CryptoAlgorithmIdentifier hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     using CheckAlgCallback = WTF::Function<bool(CryptoAlgorithmIdentifier, const Optional<String>&)>;
-    static RefPtr<CryptoKeyHMAC> importJwk(size_t lengthBits, CryptoAlgorithmIdentifier hash, JsonWebKey&&, bool extractable, CryptoKeyUsage, CheckAlgCallback&&);
+    static RefPtr<CryptoKeyHMAC> importJwk(size_t lengthBits, CryptoAlgorithmIdentifier hash, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap, CheckAlgCallback&&);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::HMAC; }
 
@@ -75,8 +75,8 @@ public:
     CryptoAlgorithmIdentifier hashAlgorithmIdentifier() const { return m_hash; }
 
 private:
-    CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
-    CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+    CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap);
+    CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap);
 
     std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
     std::unique_ptr<CryptoKeyData> exportData() const final;

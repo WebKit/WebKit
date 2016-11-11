@@ -67,8 +67,8 @@ public:
     using VoidCallback = WTF::Function<void()>;
     using ExceptionCallback = WTF::Function<void(ExceptionCode)>;
 
-    virtual void generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext*);
-    virtual void importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsage, KeyCallback&&, ExceptionCallback&&);
+    virtual void generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext*);
+    virtual void importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&);
 
     // The following will be deprecated.
     virtual void encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
@@ -76,10 +76,10 @@ public:
     virtual void sign(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
     virtual void verify(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
     virtual void digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
-    virtual void generateKey(const CryptoAlgorithmParametersDeprecated&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*);
-    virtual void deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    virtual void generateKey(const CryptoAlgorithmParametersDeprecated&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*);
+    virtual void deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
     virtual void deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& baseKey, unsigned long length, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
-    virtual void importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    virtual void importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
 
     // These are only different from encrypt/decrypt because some algorithms may not expose encrypt/decrypt.
     virtual void encryptForWrapKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);

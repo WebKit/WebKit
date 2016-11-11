@@ -49,7 +49,7 @@ Optional<CryptoAlgorithmPair> CryptoKeySerializationRaw::reconcileAlgorithm(Cryp
     return CryptoAlgorithmPair { algorithm, parameters };
 }
 
-void CryptoKeySerializationRaw::reconcileUsages(CryptoKeyUsage&) const
+void CryptoKeySerializationRaw::reconcileUsages(CryptoKeyUsageBitmap&) const
 {
 }
 

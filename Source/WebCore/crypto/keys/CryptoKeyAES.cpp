@@ -41,14 +41,14 @@ static inline bool lengthIsValid(size_t length)
     return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);
 }
 
-CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
+CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
     , m_key(key)
 {
     ASSERT(isValidAESAlgorithm(algorithm));
 }
 
-CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsage usage)
+CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
     , m_key(WTFMove(key))
 {
@@ -69,21 +69,21 @@ bool CryptoKeyAES::isValidAESAlgorithm(CryptoAlgorithmIdentifier algorithm)
         || algorithm == CryptoAlgorithmIdentifier::AES_KW;
 }
 
-RefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsage usages)
+RefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!lengthIsValid(lengthBits))
         return nullptr;
     return adoptRef(new CryptoKeyAES(algorithm, randomData(lengthBits / 8), extractable, usages));
 }
 
-RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsage usages)
+RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!lengthIsValid(keyData.size() * 8))
         return nullptr;
     return adoptRef(new CryptoKeyAES(algorithm, WTFMove(keyData), extractable, usages));
 }
 
-RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsage usages, CheckAlgCallback&& callback)
+RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, CheckAlgCallback&& callback)
 {
     if (keyData.kty != "oct")
         return nullptr;

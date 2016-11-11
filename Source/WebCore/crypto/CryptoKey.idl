@@ -29,17 +29,6 @@ enum KeyType {
     "secret"
 };
 
-enum KeyUsage {
-    "encrypt",
-    "decrypt",
-    "sign",
-    "verify",
-    "deriveKey",
-    "deriveBits",
-    "wrapKey",
-    "unwrapKey"
-};
-
 [
     Conditional=SUBTLE_CRYPTO,
     Exposed=(Window,Worker),
@@ -49,5 +38,5 @@ enum KeyUsage {
     readonly attribute KeyType type;
     readonly attribute boolean extractable;
     [CachedAttribute, CustomGetter] readonly attribute object algorithm;
-    [CachedAttribute] readonly attribute sequence<KeyUsage> usages;
+    [CachedAttribute] readonly attribute sequence<CryptoKeyUsage> usages;
 };

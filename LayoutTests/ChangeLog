@@ -1,3 +1,14 @@
+2016-11-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename CryptoKeyUsage to CryptoKeyUsageBitmap and CryptoKey::Usage to CryptoKeyUsage
+        https://bugs.webkit.org/show_bug.cgi?id=164624
+        <rdar://problem/29210140>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/import-key-malformed-parameters-expected.txt:
+
 2016-11-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add ios-simulator baseline for compositing/tiling/visiblerect-accumulated-offset.html.

@@ -39,7 +39,7 @@ namespace WebCore {
 
 const char* const CryptoAlgorithmHMAC::s_name = "HMAC";
 
-static inline bool usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsage usages)
+static inline bool usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
 }
@@ -73,7 +73,7 @@ bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDep
     return true;
 }
 
-void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
 {
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
@@ -96,7 +96,7 @@ void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParam
     callback(result.get(), nullptr);
 }
 
-void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
@@ -167,7 +167,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParametersDeprecated& para
     platformVerify(hmacParameters, downcast<CryptoKeyHMAC>(key), expectedSignature, data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*)
+void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*)
 {
     const CryptoAlgorithmHmacKeyParamsDeprecated& hmacParameters = downcast<CryptoAlgorithmHmacKeyParamsDeprecated>(parameters);
 
@@ -180,7 +180,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParametersDeprecated&
     callback(result.get(), nullptr);
 }
 
-void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&&, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsageBitmap usage, KeyCallback&& callback, VoidCallback&&, ExceptionCode& ec)
 {
     if (!is<CryptoKeyDataOctetSequence>(keyData)) {
         ec = NOT_SUPPORTED_ERR;

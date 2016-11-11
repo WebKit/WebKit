@@ -53,7 +53,7 @@ public:
 private:
     Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParametersDeprecated*) const override;
 
-    void reconcileUsages(CryptoKeyUsage&) const override;
+    void reconcileUsages(CryptoKeyUsageBitmap&) const override;
     void reconcileExtractable(bool&) const override;
 
     std::unique_ptr<CryptoKeyData> keyData() const override;

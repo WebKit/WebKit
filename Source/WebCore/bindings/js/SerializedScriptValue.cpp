@@ -229,7 +229,7 @@ enum class CryptoAlgorithmIdentifierTag {
 };
 const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
 
-static unsigned countUsages(CryptoKeyUsage usages)
+static unsigned countUsages(CryptoKeyUsageBitmap usages)
 {
     // Fast bit count algorithm for sparse bit maps.
     unsigned count = 0;
@@ -1158,7 +1158,7 @@ private:
 
         write(key->extractable());
 
-        CryptoKeyUsage usages = key->usagesBitmap();
+        CryptoKeyUsageBitmap usages = key->usagesBitmap();
         write(countUsages(usages));
         if (usages & CryptoKeyUsageEncrypt)
             write(CryptoKeyUsageTag::Encrypt);
@@ -2000,7 +2000,7 @@ private:
         return true;
     }
 
-    bool readHMACKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    bool readHMACKey(bool extractable, CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
     {
         Vector<uint8_t> keyData;
         if (!read(keyData))
@@ -2012,7 +2012,7 @@ private:
         return true;
     }
 
-    bool readAESKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    bool readAESKey(bool extractable, CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
     {
         CryptoAlgorithmIdentifier algorithm;
         if (!read(algorithm))
@@ -2026,7 +2026,7 @@ private:
         return true;
     }
 
-    bool readRSAKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    bool readRSAKey(bool extractable, CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
     {
         CryptoAlgorithmIdentifier algorithm;
         if (!read(algorithm))
@@ -2118,7 +2118,7 @@ private:
         if (!read(usagesCount))
             return false;
 
-        CryptoKeyUsage usages = 0;
+        CryptoKeyUsageBitmap usages = 0;
         for (uint32_t i = 0; i < usagesCount; ++i) {
             CryptoKeyUsageTag usage;
             if (!read(usage))

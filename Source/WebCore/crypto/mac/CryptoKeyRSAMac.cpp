@@ -96,7 +96,7 @@ static CCCryptorStatus getPrivateKeyComponents(CCRSACryptorRef rsaKey, Vector<ui
     return status;
 }
 
-CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
+CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(identifier, type, extractable, usage)
     , m_platformKey(platformKey)
     , m_restrictedToSpecificHash(hasHash)
@@ -104,7 +104,7 @@ CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithm
 {
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsage usage)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsageBitmap usage)
 {
     if (keyData.type() == CryptoKeyDataRSAComponents::Type::Private && !keyData.hasAdditionalPrivateKeyParameters()) {
         // <rdar://problem/15452324> tracks adding support.
@@ -230,7 +230,7 @@ static bool bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& resu
     return true;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback, ScriptExecutionContext* context)
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap usage, KeyPairCallback callback, VoidCallback failureCallback, ScriptExecutionContext* context)
 {
     uint32_t e;
     if (!bigIntegerToUInt32(publicExponent, e)) {

@@ -101,7 +101,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
     return true;
 }
 
-static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKeyUsage& result)
+static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKeyUsageBitmap& result)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -423,7 +423,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
-    CryptoKeyUsage keyUsages = 0;
+    CryptoKeyUsageBitmap keyUsages = 0;
     if (state.argumentCount() >= 3) {
         auto success = cryptoKeyUsagesFromJSValue(state, state.argument(2), keyUsages);
         ASSERT(scope.exception() || success);
@@ -455,7 +455,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     return promise;
 }
 
-static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParametersDeprecated> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
+static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParametersDeprecated> parameters, bool extractable, CryptoKeyUsageBitmap keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -553,7 +553,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
-    CryptoKeyUsage keyUsages = 0;
+    CryptoKeyUsageBitmap keyUsages = 0;
     if (state.argumentCount() >= 5) {
         auto success = cryptoKeyUsagesFromJSValue(state, state.argument(4), keyUsages);
         ASSERT(scope.exception() || success);
@@ -772,7 +772,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
-    CryptoKeyUsage keyUsages = 0;
+    CryptoKeyUsageBitmap keyUsages = 0;
     if (state.argumentCount() >= 7) {
         auto success = cryptoKeyUsagesFromJSValue(state, state.argument(6), keyUsages);
         ASSERT(scope.exception() || success);

@@ -23,41 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "CryptoKeyUsage.h"
-#include "RsaOtherPrimesInfo.h"
-#include <wtf/Vector.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
-
-namespace WebCore {
-
-struct JsonWebKey {
-    String kty;
-    Optional<String> use;
-    // FIXME: Consider merging key_ops and usages.
-    Optional<Vector<CryptoKeyUsage>> key_ops;
-    CryptoKeyUsageBitmap usages;
-    Optional<String> alg;
-
-    Optional<bool> ext;
-
-    Optional<String> crv;
-    Optional<String> x;
-    Optional<String> y;
-    Optional<String> d;
-    Optional<String> n;
-    Optional<String> e;
-    Optional<String> p;
-    Optional<String> q;
-    Optional<String> dp;
-    Optional<String> dq;
-    Optional<String> qi;
-    Optional<Vector<RsaOtherPrimesInfo>> oth;
-    Optional<String> k;
+[
+    Conditional=SUBTLE_CRYPTO,
+] enum CryptoKeyUsage {
+    "encrypt",
+    "decrypt",
+    "sign",
+    "verify",
+    "deriveKey",
+    "deriveBits",
+    "wrapKey",
+    "unwrapKey"
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)

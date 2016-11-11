@@ -269,7 +269,7 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
     return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
 }
 
-static bool tryJWKKeyOpsValue(ExecState* exec, CryptoKeyUsage& usages, const String& operation, const String& tryOperation, CryptoKeyUsage tryUsage)
+static bool tryJWKKeyOpsValue(ExecState* exec, CryptoKeyUsageBitmap& usages, const String& operation, const String& tryOperation, CryptoKeyUsageBitmap tryUsage)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -284,12 +284,12 @@ static bool tryJWKKeyOpsValue(ExecState* exec, CryptoKeyUsage& usages, const Str
     return true;
 }
 
-void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsages) const
+void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsageBitmap& suggestedUsages) const
 {
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CryptoKeyUsage jwkUsages = 0;
+    CryptoKeyUsageBitmap jwkUsages = 0;
 
     JSArray* keyOps;
     if (getJSArrayFromJSON(m_exec, m_json.get(), "key_ops", keyOps)) {
@@ -686,7 +686,7 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
     addToJSON(exec, json, "alg", jwkAlgorithm);
 }
 
-static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
+static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsageBitmap usages)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

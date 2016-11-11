@@ -87,11 +87,11 @@ private:
 
 class CryptoKeyRSA final : public CryptoKey {
 public:
-    static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
+    static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
     {
         return adoptRef(*new CryptoKeyRSA(identifier, hash, hasHash, type, platformKey, extractable, usage));
     }
-    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents&, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents&, bool extractable, CryptoKeyUsageBitmap);
     virtual ~CryptoKeyRSA();
 
     bool isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
@@ -100,13 +100,13 @@ public:
 
     using KeyPairCallback = WTF::Function<void(CryptoKeyPair&)>;
     using VoidCallback = WTF::Function<void()>;
-    static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback, ScriptExecutionContext*);
-    static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsage);
+    static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap, KeyPairCallback, VoidCallback failureCallback, ScriptExecutionContext*);
+    static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
 
 private:
-    CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsage);
+    CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsageBitmap);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::RSA; }
 
