@@ -1,3 +1,33 @@
+2016-11-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r207182): [iOS] Crash because of passing freed CFDictionaryRef to CG when decoding a sub-sampled large image
+        https://bugs.webkit.org/show_bug.cgi?id=164617
+
+        Reviewed by Tim Horton.
+
+        This covered by the test fast/images/image-subsampling.html but it should
+        run with --guard-malloc --repeat-each=10 to show the bug or to verify the
+        fix.
+
+        imageSourceOptions() returns a non static RetainPtr<CFDictionaryRef> if
+        the subsamplingLevel is not zero. Because we are assigning the raw pointer
+        to a local variable in ImageDecoder::createFrameImageAtIndex(), CFRelease()
+        is called for the CFDictionaryRef immediately after this assignment. This
+        causes its memory to be freed in this case even before calling CG.
+
+        This bug does not happen if the subsamplingLevel is zero because we cache
+        the returned value in a static NeverDestroyed<RetainPtr<CFDictionaryRef> in
+        imageSourceOptions(). This cache prevents the CFDictionaryRef from being
+        freed in ImageDecoder::createFrameImageAtIndex() no matter where CFRelease()
+        is called.
+
+        The fix is hold the returned value in a RetainPtr<CFDictionaryRef>. This
+        will ensure the CFDictionaryRef raw pointer is valid till the end of
+        ImageDecoder::createFrameImageAtIndex().
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Ensure the pointer is retained.
+
 2016-11-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add transparency layer support
