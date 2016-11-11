@@ -44,6 +44,9 @@ public:
 
     enum Direct2DLayerType { AxisAlignedClip, LayerClip };
 
+    void beginTransparencyLayer(float opacity);
+    void endTransparencyLayer();
+
     void clip(const FloatRect&);
     void clip(const Path&);
     void clip(ID2D1Geometry*);
@@ -68,8 +71,9 @@ public:
     void setPatternOffset(float);
     void setStrokeThickness(float);
     void setDashes(const DashArray&);
+    void setAlpha(float);
 
-    ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
+    ID2D1RenderTarget* renderTarget();
     ID2D1Layer* clipLayer() const { return m_renderStates.last().m_activeLayer.get(); }
     ID2D1StrokeStyle* strokeStyle();
 
@@ -85,6 +89,8 @@ public:
     COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
     COMPtr<ID2D1BitmapBrush> m_patternStrokeBrush;
     COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
+
+    float currentGlobalAlpha() const;
 
 private:
     void recomputeStrokeStyle();
@@ -103,15 +109,27 @@ private:
 
     Vector<RenderState> m_renderStates;
 
+    struct TransparencyLayerState {
+        COMPtr<ID2D1BitmapRenderTarget> renderTarget;
+        Color shadowColor;
+        FloatSize shadowOffset;
+        float opacity { 1.0 };
+        float shadowBlur { 0 };
+        bool hasShadow { false };
+    };
+    Vector<TransparencyLayerState> m_transparencyLayerStack;
+
     D2D1_CAP_STYLE m_lineCap { D2D1_CAP_STYLE_FLAT };
     D2D1_LINE_JOIN m_lineJoin { D2D1_LINE_JOIN_MITER };
     StrokeStyle m_strokeStyle { SolidStroke };
     DashArray m_dashes;
+
     float m_miterLimit { 1.0f };
     float m_dashOffset { 0 };
     float m_patternWidth { 1.0f };
     float m_patternOffset { 0 };
     float m_strokeThickness { 0 };
+    float m_alpha { 1.0 };
 };
 
 class D2DContextStateSaver {

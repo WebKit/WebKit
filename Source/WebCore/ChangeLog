@@ -1,3 +1,36 @@
+2016-11-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add transparency layer support
+        https://bugs.webkit.org/show_bug.cgi?id=164614
+
+        Reviewed by Dean Jackson.
+
+        Provide a stackable implementation of transparency layers so that
+        multiple layers with opacity draw propery.
+
+        Tested by fast/layers/opacity-stacking.html and others.
+
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::platformContext): Remove unneeded assertion.
+        (WebCore::GraphicsContextPlatformPrivate::renderTarget): Return current context taking
+        into account the presence of transparency layers.
+        (WebCore::GraphicsContextPlatformPrivate::setAlpha): Added.
+        (WebCore::GraphicsContextPlatformPrivate::currentGlobalAlpha): Get current global
+        alpha for current layer.
+        (WebCore::GraphicsContext::colorWithGlobalAlpha): Compute proper color taking into
+        account the current layer.
+        (WebCore::drawWithShadowHelper): Helper function to share code.
+        (WebCore::GraphicsContext::drawWithShadow): Use new helper function.
+        (WebCore::GraphicsContextPlatformPrivate::beginTransparencyLayer): Added.
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer): Call new implementation.
+        (WebCore::GraphicsContextPlatformPrivate::endTransparencyLayer): Added.
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer): Call new implementation.
+        (WebCore::GraphicsContext::clearRect): Clear to transparent color.
+        (WebCore::GraphicsContext::setPlatformAlpha): Pass new alpha on to any active
+        transparency layer.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        (WebCore::GraphicsContextPlatformPrivate::renderTarget): Deleted.
+
 2016-11-10  Dean Jackson  <dino@apple.com>
 
         Add CSS Color Level 4 to features.
