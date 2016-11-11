@@ -423,20 +423,13 @@ static bool borderOrPaddingLogicalWidthChanged(const RenderStyle* oldStyle, cons
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    auto& newStyle = style();
-
     bool hadTransform = hasTransform();
-    bool flowThreadContainingBlockInvalidated = false;
-    if (oldStyle && oldStyle->position() != newStyle.position()) {
-        invalidateFlowThreadContainingBlockIncludingDescendants();
-        flowThreadContainingBlockInvalidated = true;
-    }
-
     RenderBox::styleDidChange(diff, oldStyle);
 
-    if (hadTransform != hasTransform() && !flowThreadContainingBlockInvalidated)
-        invalidateFlowThreadContainingBlockIncludingDescendants();
+    if (hadTransform != hasTransform())
+        resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
 
+    auto& newStyle = style();
     if (!isAnonymousBlock()) {
         // Ensure that all of our continuation blocks pick up the new style.
         for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation()) {
@@ -3382,7 +3375,7 @@ RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
     return rareData->m_flowThreadContainingBlock.value();
 }
 
-void RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants()
+void RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants()
 {
     if (flowThreadState() == NotInsideFlowThread)
         return;
@@ -3400,7 +3393,7 @@ void RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants()
         if (flowThread)
             flowThread->removeFlowChildInfo(child);
         if (is<RenderBlock>(child))
-            downcast<RenderBlock>(child).invalidateFlowThreadContainingBlockIncludingDescendants();
+            downcast<RenderBlock>(child).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
     }
 }
 

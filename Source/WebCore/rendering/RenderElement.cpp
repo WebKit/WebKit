@@ -408,6 +408,12 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     auto oldStyle = WTFMove(m_style);
     m_style = WTFMove(style);
     bool detachedFromParent = !parent();
+
+    // Make sure we invalidate the containing block cache for flows when the contianing block context changes
+    // so that styleDidChange can safely use RenderBlock::locateFlowThreadContainingBlock()
+    if (is<RenderBlock>(*this) && oldStyle.position() != m_style.position())
+        downcast<RenderBlock>(*this).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+
     styleDidChange(diff, &oldStyle);
 
     // Text renderers use their parent style. Notify them about the change.

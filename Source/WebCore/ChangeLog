@@ -1,3 +1,28 @@
+2016-11-11  Zalan Bujtas  <zalan@apple.com>
+
+        RenderFlowThread's containing block cache should be invalidated before calling styleDidChange.
+        https://bugs.webkit.org/show_bug.cgi?id=164646
+
+        Reviewed by Simon Fraser.
+
+        We have to invalidate the containing block cache for RenderFlowThreads soon after the containing block context
+        changes. Invalidating it in RenderBlock::styleDidChange is too late since we might run some code in some
+        of the subclasses that use this stale containing block cache.  
+
+        No known behaviour change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange): This change could trigger double invalidation.
+        However running this code twice shouldn't impact performance greatly.
+        (WebCore::RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants):
+        (WebCore::RenderBlock::invalidateFlowThreadContainingBlockIncludingDescendants): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setStyle): We don't need to call the invalidation from initializeStyle(), since
+        we don't yet have cache at that point.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+
 2016-11-11  Darin Adler  <darin@apple.com>
 
         Move Node from ExceptionCode to ExceptionOr
