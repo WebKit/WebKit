@@ -3,7 +3,7 @@
     {
         "name": "Battery Status API",
         "status": {
-        	"status": "Removed"
+            "status": "Removed"
         },
         "url": "https://w3c.github.io/battery/",
         "webkit-url": "https://webkit.org/b/62698",
@@ -27,6 +27,17 @@
             "email": "web-evangelist@apple.com",
             "twitter": "@jonathandavis"
         }
+    },
+    {
+        "name": "CSS Color Level 4",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "url": "https://drafts.csswg.org/css-color/",
+        "keywords": ["css color", "color"],
+        "category": "css",
+        "description": "Allows content to specify colors outside of the sRGB Color Space."
     },
     {
         "name": "CSS Fonts Level 4",

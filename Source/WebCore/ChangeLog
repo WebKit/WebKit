@@ -1,3 +1,9 @@
+2016-11-10  Dean Jackson  <dino@apple.com>
+
+        Add CSS Color Level 4 to features.
+
+        * features.json:
+
 2016-11-10  Zalan Bujtas  <zalan@apple.com>
 
         Move update image calls to RenderElement::styleDidChange.
