@@ -1,3 +1,11 @@
+2016-11-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ios-simulator baseline for compositing/tiling/visiblerect-accumulated-offset.html.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/tiling/visiblerect-accumulated-offset-expected.txt: Added.
+
 2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Composition state should be cleared when changing focus to a non-editable element
