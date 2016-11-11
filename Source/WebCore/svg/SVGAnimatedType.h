@@ -27,7 +27,7 @@
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGPointList.h"
-#include "SVGPreserveAspectRatio.h"
+#include "SVGPreserveAspectRatioValue.h"
 #include "SVGPropertyInfo.h"
 #include "SVGTransformList.h"
 
@@ -54,7 +54,7 @@ public:
     static std::unique_ptr<SVGAnimatedType> createNumberOptionalNumber(std::unique_ptr<std::pair<float, float>>);
     static std::unique_ptr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
     static std::unique_ptr<SVGAnimatedType> createPointList(std::unique_ptr<SVGPointList>);
-    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatio>);
+    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatioValue>);
     static std::unique_ptr<SVGAnimatedType> createRect(std::unique_ptr<FloatRect>);
     static std::unique_ptr<SVGAnimatedType> createString(std::unique_ptr<String>);
     static std::unique_ptr<SVGAnimatedType> createTransformList(std::unique_ptr<SVGTransformList>);
@@ -141,7 +141,7 @@ public:
         return *m_data.pointList;
     }
 
-    const SVGPreserveAspectRatio& preserveAspectRatio() const
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const
     {
         ASSERT(m_type == AnimatedPreserveAspectRatio);
         return *m_data.preserveAspectRatio;
@@ -244,7 +244,7 @@ public:
         return *m_data.pointList;
     }
 
-    SVGPreserveAspectRatio& preserveAspectRatio()
+    SVGPreserveAspectRatioValue& preserveAspectRatio()
     {
         ASSERT(m_type == AnimatedPreserveAspectRatio);
         return *m_data.preserveAspectRatio;
@@ -292,7 +292,7 @@ private:
         SVGNumberList* numberList;
         std::pair<float, float>* numberOptionalNumber;
         SVGPathByteStream* path;
-        SVGPreserveAspectRatio* preserveAspectRatio;
+        SVGPreserveAspectRatioValue* preserveAspectRatio;
         SVGPointList* pointList;
         FloatRect* rect;
         String* string;

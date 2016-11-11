@@ -101,7 +101,6 @@
 #include "SVGDocument.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #include "SchemeRegistry.h"

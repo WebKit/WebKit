@@ -127,7 +127,6 @@ my %svgTypeNeedingTearOff = (
     "SVGPathSegList" => "SVGPathSegListPropertyTearOff",
     "SVGPoint" => "SVGPropertyTearOff<SVGPoint>",
     "SVGPointList" => "SVGListPropertyTearOff<SVGPointList>",
-    "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",
     "SVGRect" => "SVGPropertyTearOff<FloatRect>",
     "SVGStringList" => "SVGStaticListPropertyTearOff<SVGStringList>",
     "SVGTransform" => "SVGPropertyTearOff<SVGTransform>",
@@ -1127,14 +1126,16 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
 
     return () if $interface->extendedAttributes->{"DoNotCheckConstants"} || !@{$interface->constants};
 
+    my $baseScope = $interface->extendedAttributes->{"ConstantsScope"} || $interface->type->name;
+
     my @checks = ();
     foreach my $constant (@{$interface->constants}) {
-        my $className = $constant->extendedAttributes->{"ImplementedBy"} || $interface->type->name;
+        my $scope = $constant->extendedAttributes->{"ImplementedBy"} || $baseScope;
         my $name = $constant->extendedAttributes->{"Reflect"} || $constant->name;
         my $value = $constant->value;
         my $conditional = $constant->extendedAttributes->{"Conditional"};
         push(@checks, "#if " . $generator->GenerateConditionalStringFromAttributeValue($conditional) . "\n") if $conditional;
-        push(@checks, "static_assert(${className}::$name == $value, \"$name in $className does not match value from IDL\");\n");
+        push(@checks, "static_assert(${scope}::${name} == ${value}, \"${name} in ${scope} does not match value from IDL\");\n");
         push(@checks, "#endif\n") if $conditional;
     }
     push(@checks, "\n");

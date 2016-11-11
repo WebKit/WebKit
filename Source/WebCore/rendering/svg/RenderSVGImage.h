@@ -27,7 +27,6 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 

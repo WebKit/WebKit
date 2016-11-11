@@ -1,83 +1,111 @@
 /*
- * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #pragma once
 
-#include "ExceptionOr.h"
-#include "SVGPropertyTraits.h"
+#include "ExceptionCode.h"
+#include "SVGPreserveAspectRatioValue.h"
+#include "SVGPropertyTearOff.h"
 
 namespace WebCore {
 
-class AffineTransform;
-class FloatRect;
-
-class SVGPreserveAspectRatio {
-    WTF_MAKE_FAST_ALLOCATED;
+class SVGPreserveAspectRatio : public SVGPropertyTearOff<SVGPreserveAspectRatioValue> {
 public:
-    enum SVGPreserveAspectRatioType {
-        SVG_PRESERVEASPECTRATIO_UNKNOWN = 0,
-        SVG_PRESERVEASPECTRATIO_NONE = 1,
-        SVG_PRESERVEASPECTRATIO_XMINYMIN = 2,
-        SVG_PRESERVEASPECTRATIO_XMIDYMIN = 3,
-        SVG_PRESERVEASPECTRATIO_XMAXYMIN = 4,
-        SVG_PRESERVEASPECTRATIO_XMINYMID = 5,
-        SVG_PRESERVEASPECTRATIO_XMIDYMID = 6,
-        SVG_PRESERVEASPECTRATIO_XMAXYMID = 7,
-        SVG_PRESERVEASPECTRATIO_XMINYMAX = 8,
-        SVG_PRESERVEASPECTRATIO_XMIDYMAX = 9,
-        SVG_PRESERVEASPECTRATIO_XMAXYMAX = 10
-    };
+    static Ref<SVGPreserveAspectRatio> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+    {
+        ASSERT(animatedProperty);
+        return adoptRef(*new SVGPreserveAspectRatio(animatedProperty, role, value));
+    }
 
-    enum SVGMeetOrSliceType {
-        SVG_MEETORSLICE_UNKNOWN = 0,
-        SVG_MEETORSLICE_MEET = 1,
-        SVG_MEETORSLICE_SLICE = 2
-    };
+    static Ref<SVGPreserveAspectRatio> create(const SVGPreserveAspectRatioValue& initialValue = { })
+    {
+        return adoptRef(*new SVGPreserveAspectRatio(initialValue));
+    }
 
-    SVGPreserveAspectRatio();
+    static Ref<SVGPreserveAspectRatio> create(const SVGPreserveAspectRatioValue* initialValue)
+    {
+        return adoptRef(*new SVGPreserveAspectRatio(initialValue));
+    }
 
-    ExceptionOr<void> setAlign(unsigned short);
-    unsigned short align() const { return m_align; }
+    template<typename T> static ExceptionOr<Ref<SVGPreserveAspectRatio>> create(ExceptionOr<T>&& initialValue)
+    {
+        if (initialValue.hasException())
+            return initialValue.releaseException();
+        return create(initialValue.releaseReturnValue());
+    }
 
-    ExceptionOr<void> setMeetOrSlice(unsigned short);
-    unsigned short meetOrSlice() const { return m_meetOrSlice; }
+    unsigned short align()
+    {
+        return propertyReference().align();
+    }
 
-    void transformRect(FloatRect& destRect, FloatRect& srcRect);
+    ExceptionOr<void> setAlign(float value)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
-    AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
+        auto result = propertyReference().setAlign(value);
+        if (result.hasException())
+            return result;
 
-    void parse(const String&);
-    bool parse(const UChar*& currParam, const UChar* end, bool validate);
+        commitChange();
+        return result;
+    }
 
-    String valueAsString() const;
+    unsigned short meetOrSlice()
+    {
+        return propertyReference().meetOrSlice();
+    }
+
+    ExceptionOr<void> setMeetOrSlice(float value)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().setMeetOrSlice(value);
+        if (result.hasException())
+            return result;
+
+        commitChange();
+        return result;
+    }
 
 private:
-    SVGPreserveAspectRatioType m_align;
-    SVGMeetOrSliceType m_meetOrSlice;
+    SVGPreserveAspectRatio(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+        : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(animatedProperty, role, value)
+    {
+    }
 
-    bool parseInternal(const UChar*& currParam, const UChar* end, bool validate);
-};
+    explicit SVGPreserveAspectRatio(const SVGPreserveAspectRatioValue& initialValue)
+        : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(initialValue)
+    {
+    }
 
-template<> struct SVGPropertyTraits<SVGPreserveAspectRatio> {
-    static SVGPreserveAspectRatio initialValue() { return SVGPreserveAspectRatio(); }
-    static String toString(const SVGPreserveAspectRatio& type) { return type.valueAsString(); }
+    explicit SVGPreserveAspectRatio(const SVGPreserveAspectRatioValue* initialValue)
+        : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(initialValue)
+    {
+    }
 };
 
 } // namespace WebCore

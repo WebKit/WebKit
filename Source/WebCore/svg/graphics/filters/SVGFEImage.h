@@ -24,7 +24,7 @@
 #define SVGFEImage_h
 
 #include "FilterEffect.h"
-#include "SVGPreserveAspectRatio.h"
+#include "SVGPreserveAspectRatioValue.h"
 
 namespace WebCore {
 
@@ -34,8 +34,8 @@ class RenderElement;
 
 class FEImage final : public FilterEffect {
 public:
-    static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
-    static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
+    static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
+    static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
 
     void platformApplySoftware() final;
     void dump() final;
@@ -48,8 +48,8 @@ public:
     
 private:
     virtual ~FEImage() { }
-    FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
-    FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
+    FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
+    FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
     RenderElement* referencedRenderer() const;
 
     RefPtr<Image> m_image;
@@ -57,7 +57,7 @@ private:
     // m_document will never be a dangling reference. See https://bugs.webkit.org/show_bug.cgi?id=99243
     Document* m_document;
     String m_href;
-    SVGPreserveAspectRatio m_preserveAspectRatio;
+    SVGPreserveAspectRatioValue m_preserveAspectRatio;
 };
 
 } // namespace WebCore

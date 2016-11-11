@@ -31,7 +31,7 @@ SVGAnimatedPreserveAspectRatioAnimator::SVGAnimatedPreserveAspectRatioAnimator(S
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createPreserveAspectRatio(std::make_unique<SVGPreserveAspectRatio>());
+    auto animatedType = SVGAnimatedType::createPreserveAspectRatio(std::make_unique<SVGPreserveAspectRatioValue>());
     animatedType->preserveAspectRatio().parse(string);
     return animatedType;
 }
@@ -71,11 +71,11 @@ void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percen
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const SVGPreserveAspectRatio& fromPreserveAspectRatio = m_animationElement->animationMode() == ToAnimation ? animated->preserveAspectRatio() : from->preserveAspectRatio();
-    const SVGPreserveAspectRatio& toPreserveAspectRatio = to->preserveAspectRatio();
-    SVGPreserveAspectRatio& animatedPreserveAspectRatio = animated->preserveAspectRatio();
+    const auto& fromPreserveAspectRatio = m_animationElement->animationMode() == ToAnimation ? animated->preserveAspectRatio() : from->preserveAspectRatio();
+    const auto& toPreserveAspectRatio = to->preserveAspectRatio();
+    auto& animatedPreserveAspectRatio = animated->preserveAspectRatio();
 
-    m_animationElement->animateDiscreteType<SVGPreserveAspectRatio>(percentage, fromPreserveAspectRatio, toPreserveAspectRatio, animatedPreserveAspectRatio);
+    m_animationElement->animateDiscreteType<SVGPreserveAspectRatioValue>(percentage, fromPreserveAspectRatio, toPreserveAspectRatio, animatedPreserveAspectRatio);
 }
 
 float SVGAnimatedPreserveAspectRatioAnimator::calculateDistance(const String&, const String&)

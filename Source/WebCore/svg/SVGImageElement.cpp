@@ -97,7 +97,7 @@ bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::preserveAspectRatioAttr) {
-        SVGPreserveAspectRatio preserveAspectRatio;
+        SVGPreserveAspectRatioValue preserveAspectRatio;
         preserveAspectRatio.parse(value);
         setPreserveAspectRatioBaseValue(preserveAspectRatio);
         return;

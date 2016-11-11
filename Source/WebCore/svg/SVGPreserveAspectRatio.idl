@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPreserveAspectRatio {
+[
+    ConstantsScope=SVGPreserveAspectRatioValue
+] interface SVGPreserveAspectRatio {
     // Alignment Types
     const unsigned short SVG_PRESERVEASPECTRATIO_UNKNOWN = 0;
     const unsigned short SVG_PRESERVEASPECTRATIO_NONE = 1;

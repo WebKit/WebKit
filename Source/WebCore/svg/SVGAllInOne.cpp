@@ -144,7 +144,7 @@
 #include "SVGPolyElement.cpp"
 #include "SVGPolygonElement.cpp"
 #include "SVGPolylineElement.cpp"
-#include "SVGPreserveAspectRatio.cpp"
+#include "SVGPreserveAspectRatioValue.cpp"
 #include "SVGRadialGradientElement.cpp"
 #include "SVGRectElement.cpp"
 #include "SVGSVGElement.cpp"

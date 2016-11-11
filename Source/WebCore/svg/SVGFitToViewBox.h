@@ -34,7 +34,7 @@ class Document;
 
 class SVGFitToViewBox {
 public:
-    static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio&, float viewWidth, float viewHeight);
+    static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);
 
     static bool isKnownAttribute(const QualifiedName&);
     static void addSupportedAttributes(HashSet<QualifiedName>&);
@@ -51,7 +51,7 @@ public:
         }
 
         if (name == SVGNames::preserveAspectRatioAttr) {
-            SVGPreserveAspectRatio preserveAspectRatio;
+            SVGPreserveAspectRatioValue preserveAspectRatio;
             preserveAspectRatio.parse(value);
             target->setPreserveAspectRatioBaseValue(preserveAspectRatio);
             return true;

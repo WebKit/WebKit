@@ -64,8 +64,8 @@ public:
 
     // Custom animated 'preserveAspectRatio' property.
     RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated();
-    SVGPreserveAspectRatio& preserveAspectRatio() { return m_preserveAspectRatio; }
-    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
+    SVGPreserveAspectRatioValue& preserveAspectRatio() { return m_preserveAspectRatio; }
+    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
 
 private:
     explicit SVGViewSpec(SVGElement&);
@@ -86,7 +86,7 @@ private:
     SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };
     SVGTransformList m_transform;
     FloatRect m_viewBox;
-    SVGPreserveAspectRatio m_preserveAspectRatio;
+    SVGPreserveAspectRatioValue m_preserveAspectRatio;
     String m_viewTargetString;
 };
 

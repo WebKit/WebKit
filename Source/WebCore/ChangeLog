@@ -1,3 +1,77 @@
+2016-11-10  Sam Weinig  <sam@webkit.org>
+
+        [SVG] Start moving special casing of SVG out of the bindings - SVGPreserveAspectRatio
+        https://bugs.webkit.org/show_bug.cgi?id=164622
+
+        Reviewed by Darin Adler.
+
+        Part 2 of moving special casing of SVG out of the bindings.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateCompileTimeCheckForEnumsIfNeeded):
+        * bindings/scripts/IDLAttributes.txt:
+        Allow specifying a different scope for the constants to be declared in.
+        This allows us to have only one copy of the constants in the implementation
+        of SVGAngle/SVGAngleValue and SVGPreserveAspectRatio/SVGPreserveAspectRatioValue.
+
+        * loader/FrameLoader.cpp:
+        * rendering/svg/RenderSVGImage.h:
+        Remove unnecessary #include.
+
+        * svg/SVGAngle.h:
+        Remove redundant enum declaration.
+
+        * svg/SVGAngle.idl:
+        Specify a ConstantsScope of SVGAngleValue.
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::updateImageViewport):
+        * svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::preserveAspectRatio):
+        (WebCore::PatternAttributes::setPreserveAspectRatio):
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::constructFromString):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::createPreserveAspectRatio):
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::preserveAspectRatio):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseAttribute):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::parseAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::preserveAspectRatioString):
+        (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper):
+        (WebCore::SVGViewSpec::reset):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGViewSpec.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::computeIntrinsicDimensions):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::createWithImage):
+        (WebCore::FEImage::createWithIRIReference):
+        * svg/graphics/filters/SVGFEImage.h:
+        Replace SVGPreserveAspectRatio usage with SVGPreserveAspectRatioValue.
+
+        * svg/SVGPreserveAspectRatio.cpp: Removed.
+        * svg/SVGPreserveAspectRatio.h: Replaced.
+        * svg/SVGPreserveAspectRatio.idl:
+        * svg/SVGPreserveAspectRatioValue.cpp: Copied from Source/WebCore/svg/SVGPreserveAspectRatio.cpp.
+        * svg/SVGPreserveAspectRatioValue.h: Copied from Source/WebCore/svg/SVGPreserveAspectRatio.h.
+        Rename SVGPreserveAspectRatio to SVGPreserveAspectRatioValue and add a new SVGPreserveAspectRatio
+        that acts as the binding object. 
+
 2016-11-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Document#body should have DOMJIT patchpoint

@@ -2878,6 +2878,7 @@
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
 		7C8F22441DD3C2F600E92DA3 /* SVGAngleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */; };
+		7C8F22471DD3D1CA00E92DA3 /* SVGPreserveAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F22451DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.cpp */; };
 		7C93F3491AA6BA5E00A98BAB /* CompiledContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */; };
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34D1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */; };
@@ -4663,7 +4664,6 @@
 		B2227A910D00BF220071B782 /* SVGPolygonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278FB0D00BF210071B782 /* SVGPolygonElement.h */; };
 		B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278FD0D00BF210071B782 /* SVGPolylineElement.cpp */; };
 		B2227A940D00BF220071B782 /* SVGPolylineElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278FE0D00BF210071B782 /* SVGPolylineElement.h */; };
-		B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279000D00BF210071B782 /* SVGPreserveAspectRatio.cpp */; };
 		B2227A970D00BF220071B782 /* SVGPreserveAspectRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279030D00BF210071B782 /* SVGRadialGradientElement.cpp */; };
 		B2227A9A0D00BF220071B782 /* SVGRadialGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279040D00BF210071B782 /* SVGRadialGradientElement.h */; };
@@ -10315,6 +10315,8 @@
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
 		7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAngleValue.cpp; sourceTree = "<group>"; };
 		7C8F22431DD3B3B900E92DA3 /* SVGAngleValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAngleValue.h; sourceTree = "<group>"; };
+		7C8F22451DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPreserveAspectRatioValue.cpp; sourceTree = "<group>"; };
+		7C8F22461DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPreserveAspectRatioValue.h; sourceTree = "<group>"; };
 		7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompiledContentExtension.cpp; sourceTree = "<group>"; };
 		7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledContentExtension.h; sourceTree = "<group>"; };
 		7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionCompiler.cpp; sourceTree = "<group>"; };
@@ -12424,7 +12426,6 @@
 		B22278FD0D00BF210071B782 /* SVGPolylineElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPolylineElement.cpp; sourceTree = "<group>"; };
 		B22278FE0D00BF210071B782 /* SVGPolylineElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPolylineElement.h; sourceTree = "<group>"; };
 		B22278FF0D00BF210071B782 /* SVGPolylineElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPolylineElement.idl; sourceTree = "<group>"; };
-		B22279000D00BF210071B782 /* SVGPreserveAspectRatio.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPreserveAspectRatio.cpp; sourceTree = "<group>"; };
 		B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPreserveAspectRatio.h; sourceTree = "<group>"; };
 		B22279020D00BF210071B782 /* SVGPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPreserveAspectRatio.idl; sourceTree = "<group>"; };
 		B22279030D00BF210071B782 /* SVGRadialGradientElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRadialGradientElement.cpp; sourceTree = "<group>"; };
@@ -21184,9 +21185,10 @@
 				B22278FD0D00BF210071B782 /* SVGPolylineElement.cpp */,
 				B22278FE0D00BF210071B782 /* SVGPolylineElement.h */,
 				B22278FF0D00BF210071B782 /* SVGPolylineElement.idl */,
-				B22279000D00BF210071B782 /* SVGPreserveAspectRatio.cpp */,
 				B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */,
 				B22279020D00BF210071B782 /* SVGPreserveAspectRatio.idl */,
+				7C8F22451DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.cpp */,
+				7C8F22461DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.h */,
 				B22279030D00BF210071B782 /* SVGRadialGradientElement.cpp */,
 				B22279040D00BF210071B782 /* SVGRadialGradientElement.h */,
 				B22279050D00BF210071B782 /* SVGRadialGradientElement.idl */,
@@ -28699,6 +28701,7 @@
 				1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */,
 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				7C8F22471DD3D1CA00E92DA3 /* SVGPreserveAspectRatioValue.cpp in Sources */,
 				E43AF8E61AC5B7E800CA717E /* CacheValidation.cpp in Sources */,
 				49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */,
 				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
@@ -31269,7 +31272,6 @@
 				B2227A8E0D00BF220071B782 /* SVGPolyElement.cpp in Sources */,
 				B2227A900D00BF220071B782 /* SVGPolygonElement.cpp in Sources */,
 				B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */,
-				B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */,
 				B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */,
 				B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */,
 				B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */,

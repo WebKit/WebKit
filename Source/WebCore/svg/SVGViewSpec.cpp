@@ -117,7 +117,7 @@ String SVGViewSpec::viewBoxString() const
 
 String SVGViewSpec::preserveAspectRatioString() const
 {
-    return SVGPropertyTraits<SVGPreserveAspectRatio>::toString(m_preserveAspectRatio);
+    return SVGPropertyTraits<SVGPreserveAspectRatioValue>::toString(m_preserveAspectRatio);
 }
 
 SVGElement* SVGViewSpec::viewTarget() const
@@ -163,7 +163,7 @@ Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper(S
 {
     ASSERT(ownerType);
     ASSERT(ownerType->m_contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatio>(ownerType->m_contextElement, preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatioValue>(ownerType->m_contextElement, preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
 }
 
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateTransformWrapper(SVGViewSpec* ownerType)
@@ -178,7 +178,7 @@ void SVGViewSpec::reset()
     m_zoomAndPan = SVGZoomAndPanMagnify;
     m_transform.clear();
     m_viewBox = FloatRect();
-    m_preserveAspectRatio = SVGPreserveAspectRatio();
+    m_preserveAspectRatio = SVGPreserveAspectRatioValue();
     m_viewTargetString = emptyString();
 }
 
@@ -247,7 +247,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
             if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
-            SVGPreserveAspectRatio preserveAspectRatio;
+            SVGPreserveAspectRatioValue preserveAspectRatio;
             if (!preserveAspectRatio.parse(currViewSpec, end, false))
                 return false;
             setPreserveAspectRatioBaseValue(preserveAspectRatio);

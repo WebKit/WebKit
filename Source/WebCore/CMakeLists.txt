@@ -2802,7 +2802,7 @@ set(WebCore_SOURCES
     svg/SVGPolyElement.cpp
     svg/SVGPolygonElement.cpp
     svg/SVGPolylineElement.cpp
-    svg/SVGPreserveAspectRatio.cpp
+    svg/SVGPreserveAspectRatioValue.cpp
     svg/SVGRadialGradientElement.cpp
     svg/SVGRectElement.cpp
     svg/SVGSVGElement.cpp

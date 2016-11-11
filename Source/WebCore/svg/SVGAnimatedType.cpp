@@ -194,7 +194,7 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPointList(std::unique_pt
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatio> preserveAspectRatio)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatioValue> preserveAspectRatio)
 {
     ASSERT(preserveAspectRatio);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedPreserveAspectRatio);

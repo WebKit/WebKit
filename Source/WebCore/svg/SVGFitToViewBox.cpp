@@ -27,7 +27,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGPreserveAspectRatio.h"
+#include "SVGPreserveAspectRatioValue.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -77,7 +77,7 @@ bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* 
     return true;
 }
 
-AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio& preserveAspectRatio, float viewWidth, float viewHeight)
+AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue& preserveAspectRatio, float viewWidth, float viewHeight)
 {
     if (!viewBoxRect.width() || !viewBoxRect.height() || !viewWidth || !viewHeight)
         return AffineTransform();

@@ -32,16 +32,6 @@ namespace WebCore {
 
 class SVGAngle : public SVGPropertyTearOff<SVGAngleValue> {
 public:
-    // FIXME: This is duplicated in SVGAngleValue. We should find someway to have
-    // only one copy, but for now, this one is needed to satisfy the bindings.
-    enum SVGAngleType {
-        SVG_ANGLETYPE_UNKNOWN = 0,
-        SVG_ANGLETYPE_UNSPECIFIED = 1,
-        SVG_ANGLETYPE_DEG = 2,
-        SVG_ANGLETYPE_RAD = 3,
-        SVG_ANGLETYPE_GRAD = 4
-    };
-
     static Ref<SVGAngle> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGAngleValue& value)
     {
         ASSERT(animatedProperty);

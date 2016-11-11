@@ -29,6 +29,7 @@ CheckSecurity
 CheckSecurityForNode
 Clamp
 Conditional=*
+ConstantsScope=*
 Constructor
 ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorMayThrowException
