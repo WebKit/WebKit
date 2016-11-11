@@ -895,7 +895,7 @@ TEST(WTF_HashMap, Ref_Value)
         HashMap<int, Ref<RefLogger>> map;
 
         RefLogger a("a");
-        map.ensure(1, [&]() { 
+        map.ensure(1, [&]() mutable {
             Ref<RefLogger> ref(a);
             return ref; 
         });

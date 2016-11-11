@@ -1,3 +1,13 @@
+2016-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Allow mutable lambdas in HashMap::ensure
+        https://bugs.webkit.org/show_bug.cgi?id=164642
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Composition state should be cleared when changing focus to a non-editable element

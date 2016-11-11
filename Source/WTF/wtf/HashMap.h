@@ -122,13 +122,13 @@ public:
     template<typename V> AddResult fastAdd(const KeyType&, V&&);
     template<typename V> AddResult fastAdd(KeyType&&, V&&);
 
-    template<typename Functor> AddResult ensure(const KeyType&, const Functor&);
-    template<typename Functor> AddResult ensure(KeyType&&, const Functor&);
+    template<typename Functor> AddResult ensure(const KeyType&, Functor&&);
+    template<typename Functor> AddResult ensure(KeyType&&, Functor&&);
 
     bool remove(const KeyType&);
     bool remove(iterator);
     template<typename Functor>
-    void removeIf(const Functor& functor);
+    void removeIf(Functor&&);
     void clear();
 
     MappedTakeType take(const KeyType&); // efficient combination of get with remove
@@ -171,7 +171,7 @@ private:
     AddResult inlineAdd(K&&, V&&);
 
     template<typename K, typename F>
-    AddResult inlineEnsure(K&&, const F&);
+    AddResult inlineEnsure(K&&, F&&);
 
     HashTableType m_impl;
 };
@@ -191,7 +191,7 @@ template<typename ValueTraits, typename HashFunctions>
 struct HashMapEnsureTranslator {
     template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
     template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
-    template<typename T, typename U, typename Functor> static void translate(T& location, U&& key, const Functor& functor)
+    template<typename T, typename U, typename Functor> static void translate(T& location, U&& key, Functor&& functor)
     {
         ValueTraits::KeyTraits::assignToEmpty(location.key, std::forward<U>(key));
         ValueTraits::ValueTraits::assignToEmpty(location.value, functor());
@@ -319,9 +319,9 @@ ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTrait
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 template<typename K, typename F>
-ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineEnsure(K&& key, const F& functor) -> AddResult
+ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineEnsure(K&& key, F&& functor) -> AddResult
 {
-    return m_impl.template add<HashMapEnsureTranslator<KeyValuePairTraits, HashFunctions>>(std::forward<K>(key), functor);
+    return m_impl.template add<HashMapEnsureTranslator<KeyValuePairTraits, HashFunctions>>(std::forward<K>(key), std::forward<F>(functor));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -375,16 +375,16 @@ ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTrait
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 template<typename Functor>
-auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::ensure(const KeyType& key, const Functor& functor) -> AddResult
+auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::ensure(const KeyType& key, Functor&& functor) -> AddResult
 {
-    return inlineEnsure(key, functor);
+    return inlineEnsure(key, std::forward<Functor>(functor));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 template<typename Functor>
-auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::ensure(KeyType&& key, const Functor& functor) -> AddResult
+auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::ensure(KeyType&& key, Functor&& functor) -> AddResult
 {
-    return inlineEnsure(WTFMove(key), functor);
+    return inlineEnsure(std::forward<KeyType>(key), std::forward<Functor>(functor));
 }
     
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
@@ -417,9 +417,9 @@ inline bool HashMap<T, U, V, W, X>::remove(iterator it)
 
 template<typename T, typename U, typename V, typename W, typename X>
 template<typename Functor>
-inline void HashMap<T, U, V, W, X>::removeIf(const Functor& functor)
+inline void HashMap<T, U, V, W, X>::removeIf(Functor&& functor)
 {
-    m_impl.removeIf(functor);
+    m_impl.removeIf(std::forward<Functor>(functor));
 }
 
 template<typename T, typename U, typename V, typename W, typename X>

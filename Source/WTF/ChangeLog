@@ -1,3 +1,14 @@
+2016-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Allow mutable lambdas in HashMap::ensure
+        https://bugs.webkit.org/show_bug.cgi?id=164642
+
+        Reviewed by Sam Weinig.
+
+        * wtf/HashMap.h:
+        (WTF::HashMapEnsureTranslator::translate):
+        (WTF::X>::removeIf):
+
 2016-11-11  Beth Dakin  <bdakin@apple.com>
 
         Get touch bar code building for open source builds
