@@ -399,6 +399,14 @@ void IDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& request
     m_delegate->openDBRequestCancelled(requestData);
 }
 
+void IDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionPendingClose");
+    ASSERT(isMainThread());
+
+    m_delegate->databaseConnectionPendingClose(databaseConnectionIdentifier);
+}
+
 void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");

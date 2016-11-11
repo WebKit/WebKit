@@ -77,6 +77,7 @@ public:
     void openCursor(const IDBRequestData&, const IDBCursorInfo&) final;
     void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&) final;
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) final;
+    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) final;
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) final;

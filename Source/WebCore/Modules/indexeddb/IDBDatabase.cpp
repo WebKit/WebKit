@@ -237,7 +237,11 @@ void IDBDatabase::close()
 
     ASSERT(currentThread() == originThreadID());
 
-    m_closePending = true;
+    if (!m_closePending) {
+        m_closePending = true;
+        m_connectionProxy->databaseConnectionPendingClose(*this);
+    }
+
     maybeCloseInServer();
 }
 
@@ -287,7 +291,7 @@ void IDBDatabase::maybeCloseInServer()
     // 3.3.9 Database closing steps
     // Wait for all transactions created using this connection to complete.
     // Once they are complete, this connection is closed.
-    if (!m_activeTransactions.isEmpty())
+    if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty())
         return;
 
     m_closedInServer = true;

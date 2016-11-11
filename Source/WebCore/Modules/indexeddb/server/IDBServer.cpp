@@ -385,6 +385,17 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConne
     connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
+void IDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::databaseConnectionPendingClose - %" PRIu64, databaseConnectionIdentifier);
+
+    auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    if (!databaseConnection)
+        return;
+
+    databaseConnection->connectionPendingCloseFromClient();
+}
+
 void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier);

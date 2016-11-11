@@ -111,6 +111,7 @@ public:
     void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
 
     void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
+    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier);

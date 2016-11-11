@@ -55,9 +55,10 @@ bool ServerOpenDBRequest::isDeleteRequest() const
     return m_requestData.isDeleteRequest();
 }
 
-void ServerOpenDBRequest::notifyRequestBlocked(uint64_t currentVersion)
+void ServerOpenDBRequest::maybeNotifyRequestBlocked(uint64_t currentVersion)
 {
-    ASSERT(!m_notifiedBlocked);
+    if (m_notifiedBlocked)
+        return;
 
     uint64_t requestedVersion = isOpenRequest() ?  m_requestData.requestedVersion() : 0;
     m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, requestedVersion);

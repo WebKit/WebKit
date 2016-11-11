@@ -185,6 +185,11 @@ void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionI
     send(Messages::WebIDBConnectionToClient::EstablishTransaction(databaseConnectionIdentifier, info));
 }
 
+void WebIDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    send(Messages::WebIDBConnectionToClient::DatabaseConnectionPendingClose(databaseConnectionIdentifier));
+}
+
 void WebIDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     send(Messages::WebIDBConnectionToClient::DatabaseConnectionClosed(databaseConnectionIdentifier));

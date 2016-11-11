@@ -331,6 +331,11 @@ void WebIDBConnectionToClient::establishTransaction(uint64_t databaseConnectionI
     DatabaseProcess::singleton().idbServer().establishTransaction(databaseConnectionIdentifier, info);
 }
 
+void WebIDBConnectionToClient::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    DatabaseProcess::singleton().idbServer().databaseConnectionPendingClose(databaseConnectionIdentifier);
+}
+
 void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     DatabaseProcess::singleton().idbServer().databaseConnectionClosed(databaseConnectionIdentifier);

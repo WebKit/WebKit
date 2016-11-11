@@ -1,3 +1,51 @@
+2016-11-11  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: "close pending flag" and firing blocked events all need fixing.
+        https://bugs.webkit.org/show_bug.cgi?id=164641
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by at least 3 existing tests).
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::maybeCloseInServer):
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::databaseConnectionPendingClose):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::databaseConnectionPendingClose):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::databaseConnectionPendingClose):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/ServerOpenDBRequest.cpp:
+        (WebCore::IDBServer::ServerOpenDBRequest::maybeNotifyRequestBlocked):
+        (WebCore::IDBServer::ServerOpenDBRequest::notifyRequestBlocked): Deleted.
+        * Modules/indexeddb/server/ServerOpenDBRequest.h:
+        (WebCore::IDBServer::ServerOpenDBRequest::hasNotifiedBlocked): Deleted.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::allConnectionsAreClosedOrClosing):
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionPendingCloseFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionIsClosing):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::databaseConnectionPendingClose):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix time unit parsing

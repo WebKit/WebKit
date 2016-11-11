@@ -366,6 +366,16 @@ bool UniqueIDBDatabase::hasAnyOpenConnections() const
     return !m_openDatabaseConnections.isEmpty();
 }
 
+bool UniqueIDBDatabase::allConnectionsAreClosedOrClosing() const
+{
+    for (auto& connection : m_openDatabaseConnections) {
+        if (!connection->connectionIsClosing())
+            return false;
+    }
+
+    return true;
+}
+
 static uint64_t generateUniqueCallbackIdentifier()
 {
     ASSERT(isMainThread());
@@ -504,7 +514,10 @@ void UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange()
         connectionIdentifiers.add(connection->identifier());
     }
 
-    m_currentOpenDBRequest->notifiedConnectionsOfVersionChange(WTFMove(connectionIdentifiers));
+    if (!connectionIdentifiers.isEmpty())
+        m_currentOpenDBRequest->notifiedConnectionsOfVersionChange(WTFMove(connectionIdentifiers));
+    else
+        m_currentOpenDBRequest->maybeNotifyRequestBlocked(m_databaseInfo->version());
 }
 
 void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)
@@ -518,17 +531,14 @@ void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChange
     if (m_currentOpenDBRequest->hasConnectionsPendingVersionChangeEvent())
         return;
 
-    if (!hasAnyOpenConnections()) {
+    if (!hasAnyOpenConnections() || allConnectionsAreClosedOrClosing()) {
         invokeOperationAndTransactionTimer();
         return;
     }
 
-    if (m_currentOpenDBRequest->hasNotifiedBlocked())
-        return;
-
     // Since all open connections have fired their version change events but not all of them have closed,
     // this request is officially blocked.
-    m_currentOpenDBRequest->notifyRequestBlocked(m_databaseInfo->version());
+    m_currentOpenDBRequest->maybeNotifyRequestBlocked(m_databaseInfo->version());
 }
 
 void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier)

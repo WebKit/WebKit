@@ -129,6 +129,7 @@ public:
 
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
 
+    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 
     // To be used when an IDBOpenDBRequest gets a new database connection, optionally with a

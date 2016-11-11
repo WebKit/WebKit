@@ -81,6 +81,7 @@ public:
     WEBCORE_EXPORT void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&);
 
     WEBCORE_EXPORT void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
+    WEBCORE_EXPORT void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
     WEBCORE_EXPORT void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);

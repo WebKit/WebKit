@@ -50,8 +50,7 @@ public:
     bool isOpenRequest() const;
     bool isDeleteRequest() const;
 
-    bool hasNotifiedBlocked() const { return m_notifiedBlocked; }
-    void notifyRequestBlocked(uint64_t currentVersion);
+    void maybeNotifyRequestBlocked(uint64_t currentVersion);
     void notifyDidDeleteDatabase(const IDBDatabaseInfo&);
 
     uint64_t versionChangeID() const;

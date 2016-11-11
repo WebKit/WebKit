@@ -385,6 +385,13 @@ void InProcessIDBServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
     });
 }
 
+void InProcessIDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), databaseConnectionIdentifier] {
+        m_server->databaseConnectionPendingClose(databaseConnectionIdentifier);
+    });
+}
+
 void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), databaseConnectionIdentifier] {

@@ -55,6 +55,7 @@ public:
     UniqueIDBDatabase& database() { return m_database; }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
+    void connectionPendingCloseFromClient();
     void connectionClosedFromClient();
 
     bool closePending() const { return m_closePending; }
@@ -79,6 +80,8 @@ public:
     void confirmDidCloseFromServer();
 
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
+
+    bool connectionIsClosing() const;
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);

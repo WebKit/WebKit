@@ -130,6 +130,7 @@ private:
     void performCurrentDeleteOperation();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
     bool hasAnyOpenConnections() const;
+    bool allConnectionsAreClosedOrClosing() const;
 
     void startVersionChangeTransaction();
     void maybeNotifyConnectionsOfVersionChange();

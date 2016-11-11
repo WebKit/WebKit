@@ -97,6 +97,7 @@ public:
     void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, IDBTransaction&);
+    void databaseConnectionPendingClose(IDBDatabase&);
     void databaseConnectionClosed(IDBDatabase&);
 
     void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);

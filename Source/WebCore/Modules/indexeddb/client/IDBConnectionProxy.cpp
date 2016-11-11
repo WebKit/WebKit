@@ -384,6 +384,11 @@ void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(uint64_t data
     callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, databaseConnectionIdentifier, transaction.info().identifier());
 }
 
+void IDBConnectionProxy::databaseConnectionPendingClose(IDBDatabase& database)
+{
+    callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionPendingClose, database.databaseConnectionIdentifier());
+}
+
 void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionClosed, database.databaseConnectionIdentifier());

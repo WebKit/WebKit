@@ -2,7 +2,7 @@
 PASS IndexedDB object store rename in new transaction 
 PASS IndexedDB object store rename in the transaction where it is created 
 PASS IndexedDB object store rename covers index 
-FAIL IndexedDB object store rename covers key generator assert_equals: Renaming an object store should not change the state of its key generator expected 345680 but got 345679
+PASS IndexedDB object store rename covers key generator 
 PASS IndexedDB object store rename to the same name succeeds 
 PASS IndexedDB object store rename to the name of a deleted store succeeds 
 PASS IndexedDB object store swapping via renames succeeds 
