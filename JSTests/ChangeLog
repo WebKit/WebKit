@@ -1,3 +1,19 @@
+2016-11-10  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken have-a-bad-time-with-arguments.js test.
+        https://bugs.webkit.org/show_bug.cgi?id=164626
+
+        Reviewed by Filip Pizlo.
+
+        But also saved a copy of the broken one as broken-have-a-bad-time-with-arguments-for-gc-testing.js
+        because coincidentally, it stresses the GC in ways that help reveal bugs.
+
+        * stress/broken-have-a-bad-time-with-arguments-for-gc-testing.js: Added.
+        (testFunction):
+        (warmupFunction):
+        (let.argsDeclIndex.in.argumentsDecls.let.indexToReturnIndex.in.indicesToReturn.let.insertElementActionIndex.in.insertElementActions.let.tierWarmupCountIndex.in.tierWarmupCounts.let.testArgsIndex.in.testArgsList.catch):
+        * stress/have-a-bad-time-with-arguments.js:
+
 2016-11-10  JF Bastien  <jfbastien@apple.com>
 
         ASSERTION FAILED: length > offset encountered with wasm.yaml/wasm/js-api/test_Module.js.default-wasm

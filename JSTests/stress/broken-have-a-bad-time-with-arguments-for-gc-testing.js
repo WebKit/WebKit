@@ -114,7 +114,7 @@ for (let argsDeclIndex in argumentsDecls) {
                                  testFunction(argsDecl, insertElementAction, indexToReturn) +
                                  warmupFunction(tierWarmupCount, testArgs) +
                                  'warmup()' + '\n' +
-                                 'shouldEqual(10000, test(' + testArgs + '), ' + expectedResult['beforeBadTime'] + ');' + '\n' +
+                                 'shouldEqual(10000, test(' + testArgs + '), ' + expectedResult['beforeBadTime'] + ');' + '\n';
                                  haveABadTime +
                                  'shouldEqual(20000, test(' + testArgs + '), ' + expectedResult['afterBadTime'] + ');' + '\n';
 
