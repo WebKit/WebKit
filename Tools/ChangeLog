@@ -1,3 +1,21 @@
+2016-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][JHbuild] bump libnice version in openwebrtc.modules
+        https://bugs.webkit.org/show_bug.cgi?id=164586
+
+        Reviewed by Michael Catanzaro.
+
+        Update to a recent libnice git snapshot and remove patches already
+        upstream or not applying anymore. The patches not upstream yet
+        will be reported in Phabricator.
+
+        * gtk/openwebrtc.modules:
+        * gtk/patches/libnice-0001-agent-Remove-unnecessary-NULL-check.patch: Removed.
+        * gtk/patches/libnice-0002-Do-not-update-a-remote-candidate-s-type.patch: Removed.
+        * gtk/patches/libnice-0002-TURN-handle-437-Allocation-Mismatch-responses.patch: Removed.
+        * gtk/patches/libnice-0003-Do-not-compare-scope-for-IPv6-address-when-scope-is-.patch: Removed.
+        * gtk/patches/libnice-0004-Removing-no-op-assignment.patch: Removed.
+
 2016-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion after r208534.

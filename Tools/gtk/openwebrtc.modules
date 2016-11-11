@@ -7,8 +7,6 @@
       href="https://github.com/"/>
   <repository type="git" name="gstreamer"
       href="git://anongit.freedesktop.org/git/gstreamer/"/>
-  <repository type="tarball" name="nice.freedesktop.org"
-      href="http://nice.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
 
@@ -29,14 +27,10 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="nice.freedesktop.org" module="releases/libnice-${version}.tar.gz" version="0.1.13" checkoutdir="libnice-${version}">
-      <patch file="libnice-0001-agent-Remove-unnecessary-NULL-check.patch" strip="1"/>
-      <patch file="libnice-0002-Do-not-update-a-remote-candidate-s-type.patch" strip="1"/>
-      <patch file="libnice-0003-Do-not-compare-scope-for-IPv6-address-when-scope-is-.patch" strip="1"/>
-      <patch file="libnice-0004-Removing-no-op-assignment.patch" strip="1"/>
+    <branch module="libnice/libnice/archive/${version}.tar.gz" version="2803a0b4b70af9684e05ef5ed3f0c2fbca4b6c93"
+            checkoutdir="libnice-${version}" repo="github-tarball">
       <patch file="libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch" strip="1"/>
       <patch file="libnice-0001-TURN-allow-REALM-to-be-empty.patch" strip="1"/>
-      <patch file="libnice-0002-TURN-handle-437-Allocation-Mismatch-responses.patch" strip="1"/>
     </branch>
   </autotools>
 
