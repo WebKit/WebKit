@@ -1792,6 +1792,7 @@ sub GenerateHeader
         push(@headerContent,"// DOMJIT emitters for attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             next unless $attribute->extendedAttributes->{"DOMJIT"};
+            assert("Only DOMJIT=Getter is supported for attributes") unless $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{DOMJIT}, "Getter");
 
             my $interfaceName = $interface->type->name;
             my $className = $interfaceName . $codeGenerator->WK_ucfirst($attribute->name);
@@ -3403,6 +3404,8 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
 
             if ($attribute->extendedAttributes->{"DOMJIT"}) {
+                assert("Only DOMJIT=Getter is supported for attributes") unless $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{DOMJIT}, "Getter");
+
                 $implIncludes{"<wtf/NeverDestroyed.h>"} = 1;
                 $implIncludes{"DOMJITIDLTypeFilter.h"} = 1;
                 my $interfaceName = $interface->type->name;

@@ -1,3 +1,22 @@
+2016-11-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] DOMJIT accessor attribute in IDL should say like DOMJIT=Getter
+        https://bugs.webkit.org/show_bug.cgi?id=164632
+
+        Reviewed by Sam Weinig.
+
+        Currently, DOMJIT patchpoint is only allowed for getter in attributes.
+        To make it explicit, we use IDL attribute DOMJIT=Getter instead of
+        DOMJIT.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestDOMJIT.idl:
+        * dom/Document.idl:
+        * dom/Node.idl:
+
 2016-11-10  Sam Weinig  <sam@webkit.org>
 
         [SVG] Start moving special casing of SVG out of the bindings - SVGPreserveAspectRatio

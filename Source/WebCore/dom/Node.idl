@@ -46,14 +46,14 @@
     // FIXME: the spec says this can also raise on retrieval.
     [CEReactions, SetterMayThrowLegacyException] attribute DOMString? nodeValue;
 
-    [DOMJIT, CustomGetter] readonly attribute unsigned short nodeType;
-    [DOMJIT] readonly attribute Node? parentNode;
+    [DOMJIT=Getter, CustomGetter] readonly attribute unsigned short nodeType;
+    [DOMJIT=Getter] readonly attribute Node? parentNode;
     readonly attribute NodeList childNodes;
-    [DOMJIT] readonly attribute Node? firstChild;
-    [DOMJIT] readonly attribute Node? lastChild;
-    [DOMJIT] readonly attribute Node? previousSibling;
-    [DOMJIT] readonly attribute Node? nextSibling;
-    [DOMJIT] readonly attribute Document? ownerDocument;
+    [DOMJIT=Getter] readonly attribute Node? firstChild;
+    [DOMJIT=Getter] readonly attribute Node? lastChild;
+    [DOMJIT=Getter] readonly attribute Node? previousSibling;
+    [DOMJIT=Getter] readonly attribute Node? nextSibling;
+    [DOMJIT=Getter] readonly attribute Document? ownerDocument;
 
     [CEReactions, Custom, MayThrowLegacyException] Node insertBefore(Node newChild, Node? refChild);
     [CEReactions, Custom, MayThrowLegacyException] Node replaceChild(Node newChild, Node oldChild);
