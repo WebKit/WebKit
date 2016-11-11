@@ -376,16 +376,7 @@ void RenderElement::initializeStyle()
     Style::loadPendingResources(m_style, document(), element());
 
     styleWillChange(StyleDifferenceNewStyle, style());
-
     m_hasInitializedStyle = true;
-
-    updateFillImages(nullptr, m_style.backgroundLayers());
-    updateFillImages(nullptr, m_style.maskLayers());
-
-    updateImage(nullptr, m_style.borderImage().image());
-    updateImage(nullptr, m_style.maskBoxImage().image());
-    updateShapeImage(nullptr, m_style.shapeOutside());
-
     styleDidChange(StyleDifferenceNewStyle, nullptr);
 
     // We shouldn't have any text children that would need styleDidChange at this point.
@@ -414,19 +405,9 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     Style::loadPendingResources(style, document(), element());
 
     styleWillChange(diff, style);
-
     auto oldStyle = WTFMove(m_style);
     m_style = WTFMove(style);
-
-    updateFillImages(oldStyle.backgroundLayers(), m_style.backgroundLayers());
-    updateFillImages(oldStyle.maskLayers(), m_style.maskLayers());
-
-    updateImage(oldStyle.borderImage().image(), m_style.borderImage().image());
-    updateImage(oldStyle.maskBoxImage().image(), m_style.maskBoxImage().image());
-    updateShapeImage(oldStyle.shapeOutside(), m_style.shapeOutside());
-
-    bool doesNotNeedLayout = !parent();
-
+    bool detachedFromParent = !parent();
     styleDidChange(diff, &oldStyle);
 
     // Text renderers use their parent style. Notify them about the change.
@@ -435,9 +416,9 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
-    // we will safely bail out with the doesNotNeedLayout flag. We might want to broaden this condition
+    // we will safely bail out with the detachedFromParent flag. We might want to broaden this condition
     // in the future as we move renderer changes out of layout and into style changes.
-    if (doesNotNeedLayout)
+    if (detachedFromParent)
         return;
 
     // Now that the layer (if any) has been updated, we need to adjust the diff again,
@@ -990,6 +971,12 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
+    updateFillImages(oldStyle ? oldStyle->maskLayers() : nullptr, m_style.maskLayers());
+    updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style.borderImage().image());
+    updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style.maskBoxImage().image());
+    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style.shapeOutside());
+
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
 

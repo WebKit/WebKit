@@ -1,3 +1,19 @@
+2016-11-10  Zalan Bujtas  <zalan@apple.com>
+
+        Move update image calls to RenderElement::styleDidChange.
+        https://bugs.webkit.org/show_bug.cgi?id=164623
+
+        Reviewed by Simon Fraser.
+
+        There should be no dependency on the image update between ::styleWillChange and ::styleDidChange.
+
+        Covered by existing tests.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::initializeStyle):
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::styleDidChange):
+
 2016-11-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         After r207459 ASSERT in CachedResourceLoader under InspectorPageAgent::cachedResource
