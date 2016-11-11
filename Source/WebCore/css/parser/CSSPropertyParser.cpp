@@ -1183,7 +1183,41 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().functionId() == CSSValueSpring);
+    CSSParserTokenRange rangeCopy = range;
+    CSSParserTokenRange args = consumeFunction(rangeCopy);
+
+    // Mass must be greater than 0.
+    double mass;
+    if (!consumeNumberRaw(args, mass) || mass <= 0)
+        return nullptr;
+    
+    // Stiffness must be greater than 0.
+    double stiffness;
+    if (!consumeNumberRaw(args, stiffness) || stiffness <= 0)
+        return nullptr;
+    
+    // Damping coefficient must be greater than or equal to 0.
+    double damping;
+    if (!consumeNumberRaw(args, damping) || damping < 0)
+        return nullptr;
+    
+    // Initial velocity may have any value.
+    double initialVelocity;
+    if (!consumeNumberRaw(args, initialVelocity))
+        return nullptr;
+
+    if (!args.atEnd())
+        return nullptr;
+
+    range = rangeCopy;
+
+    return CSSSpringTimingFunctionValue::create(mass, stiffness, damping, initialVelocity);
+}
+
+static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID id = range.peek().id();
     if (id == CSSValueEase || id == CSSValueLinear || id == CSSValueEaseIn
@@ -1195,6 +1229,8 @@ static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& rang
         return consumeCubicBezier(range);
     if (function == CSSValueSteps)
         return consumeSteps(range);
+    if (context.springTimingFunctionEnabled && function == CSSValueSpring)
+        return consumeSpringFunction(range);
     return nullptr;
 }
 
@@ -1221,7 +1257,7 @@ static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserT
         return consumeTransitionProperty(range);
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
-        return consumeAnimationTimingFunction(range);
+        return consumeAnimationTimingFunction(range, context);
     default:
         ASSERT_NOT_REACHED();
         return nullptr;

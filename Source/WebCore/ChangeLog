@@ -1,3 +1,16 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support the spring animation timing function
+        https://bugs.webkit.org/show_bug.cgi?id=164654
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSpringFunction):
+        (WebCore::consumeAnimationTimingFunction):
+        (WebCore::consumeAnimationValue):
+
 2016-11-11  Chris Dumez  <cdumez@apple.com>
 
         WorkerGlobalScope's indexedDB property should be on the prototype, not the instance
