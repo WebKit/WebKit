@@ -426,6 +426,9 @@ platform/mac/fast/text/combining-character-sequence-fallback.html [ Pass Failure
 
 # --- Editing ---
 
+# The codepath for canceling marked text differs on Mac
+editing/input/focus-change-with-marked-text.html [ Failure ]
+
 # Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
 

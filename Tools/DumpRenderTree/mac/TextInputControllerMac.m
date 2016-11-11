@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #import "TextInputController.h"
 
 #if PLATFORM(MAC)
-// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
 
 #import "DumpRenderTreeMac.h"
 #import <AppKit/NSInputManager.h>
@@ -119,16 +118,16 @@ NSString *NSTextInsertionUndoableAttributeName;
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     if (aSelector == @selector(string)
-            || aSelector == @selector(getLength)
-            || aSelector == @selector(ranges)
-            || aSelector == @selector(attributeNamesAtIndex:)
-            || aSelector == @selector(valueOfAttribute:atIndex:)
-            || aSelector == @selector(addAttribute:value:)
-            || aSelector == @selector(addAttribute:value:from:length:)
-            || aSelector == @selector(addColorAttribute:red:green:blue:alpha:)
-            || aSelector == @selector(addColorAttribute:red:green:blue:alpha:from:length:)
-            || aSelector == @selector(addFontAttribute:fontName:size:)
-            || aSelector == @selector(addFontAttribute:fontName:size:from:length:))
+        || aSelector == @selector(getLength)
+        || aSelector == @selector(ranges)
+        || aSelector == @selector(attributeNamesAtIndex:)
+        || aSelector == @selector(valueOfAttribute:atIndex:)
+        || aSelector == @selector(addAttribute:value:)
+        || aSelector == @selector(addAttribute:value:from:length:)
+        || aSelector == @selector(addColorAttribute:red:green:blue:alpha:)
+        || aSelector == @selector(addColorAttribute:red:green:blue:alpha:from:length:)
+        || aSelector == @selector(addFontAttribute:fontName:size:)
+        || aSelector == @selector(addFontAttribute:fontName:size:from:length:))
         return NO;
     return YES;
 }
@@ -223,23 +222,23 @@ NSString *NSTextInsertionUndoableAttributeName;
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     if (aSelector == @selector(insertText:)
-            || aSelector == @selector(doCommand:)
-            || aSelector == @selector(setMarkedText:selectedFrom:length:)
-            || aSelector == @selector(unmarkText)
-            || aSelector == @selector(hasMarkedText)
-            || aSelector == @selector(conversationIdentifier)
-            || aSelector == @selector(substringFrom:length:)
-            || aSelector == @selector(attributedSubstringFrom:length:)
-            || aSelector == @selector(legacyAttributedString:)
-            || aSelector == @selector(markedRange)
-            || aSelector == @selector(selectedRange)
-            || aSelector == @selector(firstRectForCharactersFrom:length:)
-            || aSelector == @selector(characterIndexForPointX:Y:)
-            || aSelector == @selector(validAttributesForMarkedText)
-            || aSelector == @selector(attributedStringWithString:)
-            || aSelector == @selector(setInputMethodHandler:)
-            || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:)
-            || aSelector == @selector(stringWithUndoGroupingInsertion:))
+        || aSelector == @selector(doCommand:)
+        || aSelector == @selector(setMarkedText:selectedFrom:length:)
+        || aSelector == @selector(unmarkText)
+        || aSelector == @selector(hasMarkedText)
+        || aSelector == @selector(conversationIdentifier)
+        || aSelector == @selector(substringFrom:length:)
+        || aSelector == @selector(attributedSubstringFrom:length:)
+        || aSelector == @selector(legacyAttributedString:)
+        || aSelector == @selector(markedRange)
+        || aSelector == @selector(selectedRange)
+        || aSelector == @selector(firstRectForCharactersFrom:length:)
+        || aSelector == @selector(characterIndexForPointX:Y:)
+        || aSelector == @selector(validAttributesForMarkedText)
+        || aSelector == @selector(attributedStringWithString:)
+        || aSelector == @selector(setInputMethodHandler:)
+        || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:)
+        || aSelector == @selector(stringWithUndoGroupingInsertion:))
         return NO;
     return YES;
 }
@@ -248,27 +247,27 @@ NSString *NSTextInsertionUndoableAttributeName;
 {
     if (aSelector == @selector(insertText:))
         return @"insertText";
-    else if (aSelector == @selector(doCommand:))
+    if (aSelector == @selector(doCommand:))
         return @"doCommand";
-    else if (aSelector == @selector(setMarkedText:selectedFrom:length:))
+    if (aSelector == @selector(setMarkedText:selectedFrom:length:))
         return @"setMarkedText";
-    else if (aSelector == @selector(substringFrom:length:))
+    if (aSelector == @selector(substringFrom:length:))
         return @"substringFromRange";
-    else if (aSelector == @selector(attributedSubstringFrom:length:))
+    if (aSelector == @selector(attributedSubstringFrom:length:))
         return @"attributedSubstringFromRange";
-    else if (aSelector == @selector(legacyAttributedString:))
+    if (aSelector == @selector(legacyAttributedString:))
         return @"legacyAttributedString";
-    else if (aSelector == @selector(firstRectForCharactersFrom:length:))
+    if (aSelector == @selector(firstRectForCharactersFrom:length:))
         return @"firstRectForCharacterRange";
-    else if (aSelector == @selector(characterIndexForPointX:Y:))
+    if (aSelector == @selector(characterIndexForPointX:Y:))
         return @"characterIndexForPoint";
-    else if (aSelector == @selector(attributedStringWithString:))
+    if (aSelector == @selector(attributedStringWithString:))
         return @"makeAttributedString"; // just a factory method, doesn't call into NSTextInput
-    else if (aSelector == @selector(setInputMethodHandler:))
+    if (aSelector == @selector(setInputMethodHandler:))
         return @"setInputMethodHandler";
-    else if (aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
+    if (aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
         return @"makeDictatedString";
-    else if (aSelector == @selector(stringWithUndoGroupingInsertion:))
+    if (aSelector == @selector(stringWithUndoGroupingInsertion:))
         return @"makeUndoGroupingInsertionString";
 
     return nil;
@@ -316,7 +315,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 - (void)setMarkedText:(NSString *)aString selectedFrom:(int)from length:(int)length
 {
     NSObject <NSTextInput> *textInput = [self textInput];
- 
+
     if (textInput)
         [textInput setMarkedText:aString selectedRange:NSMakeRange(from, length)];
 }
@@ -405,7 +404,6 @@ NSString *NSTextInsertionUndoableAttributeName;
 
     return nil;
 }
-  
 
 - (NSArray *)firstRectForCharactersFrom:(int)from length:(int)length
 {
@@ -418,11 +416,11 @@ NSString *NSTextInsertionUndoableAttributeName;
             rect = [webView convertRect:rect fromView:nil];
         }
         return [NSArray arrayWithObjects:
-                    [NSNumber numberWithFloat:rect.origin.x],
-                    [NSNumber numberWithFloat:rect.origin.y],
-                    [NSNumber numberWithFloat:rect.size.width],
-                    [NSNumber numberWithFloat:rect.size.height],
-                    nil];
+            [NSNumber numberWithFloat:rect.origin.x],
+            [NSNumber numberWithFloat:rect.origin.y],
+            [NSNumber numberWithFloat:rect.size.width],
+            [NSNumber numberWithFloat:rect.size.height],
+            nil];
     }
 
     return nil;

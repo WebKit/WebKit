@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,20 +28,14 @@
 
 #import <Foundation/Foundation.h>
 
-#if PLATFORM(MAC)
-// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
-
 @class WebView;
 @class WebHTMLView;
 @class WebScriptObject;
 
-@interface TextInputController : NSObject
-{
+@interface TextInputController : NSObject {
     WebView *webView;
     WebHTMLView *inputMethodView;
     WebScriptObject *inputMethodHandler;    
 }
 - (id)initWithWebView:(WebView *)view;
 @end
-
-#endif

@@ -125,7 +125,7 @@
 		BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */; };
 		BCA18B320C9B01B400114369 /* ObjCController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B300C9B01B400114369 /* ObjCController.m */; };
 		BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B370C9B021900114369 /* AppleScriptController.m */; };
-		BCA18B490C9B02C400114369 /* TextInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B480C9B02C400114369 /* TextInputController.m */; };
+		BCA18B490C9B02C400114369 /* TextInputControllerMac.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B480C9B02C400114369 /* TextInputControllerMac.m */; };
 		BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B580C9B08C200114369 /* EditingDelegate.mm */; };
 		BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B5A0C9B08C200114369 /* FrameLoadDelegate.mm */; };
 		BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B5C0C9B08C200114369 /* PolicyDelegate.mm */; };
@@ -150,6 +150,7 @@
 		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
 		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
+		F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -374,8 +375,7 @@
 		BCA18B300C9B01B400114369 /* ObjCController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCController.m; path = mac/ObjCController.m; sourceTree = "<group>"; };
 		BCA18B360C9B021900114369 /* AppleScriptController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppleScriptController.h; path = mac/AppleScriptController.h; sourceTree = "<group>"; };
 		BCA18B370C9B021900114369 /* AppleScriptController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = AppleScriptController.m; path = mac/AppleScriptController.m; sourceTree = "<group>"; };
-		BCA18B3A0C9B024900114369 /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TextInputController.h; path = mac/TextInputController.h; sourceTree = "<group>"; };
-		BCA18B480C9B02C400114369 /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = TextInputController.m; path = mac/TextInputController.m; sourceTree = "<group>"; };
+		BCA18B480C9B02C400114369 /* TextInputControllerMac.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = TextInputControllerMac.m; path = mac/TextInputControllerMac.m; sourceTree = "<group>"; };
 		BCA18B570C9B08C200114369 /* EditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = EditingDelegate.h; path = mac/EditingDelegate.h; sourceTree = "<group>"; };
 		BCA18B580C9B08C200114369 /* EditingDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditingDelegate.mm; path = mac/EditingDelegate.mm; sourceTree = "<group>"; };
 		BCA18B590C9B08C200114369 /* FrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameLoadDelegate.h; path = mac/FrameLoadDelegate.h; sourceTree = "<group>"; };
@@ -421,6 +421,8 @@
 		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
+		F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputControllerIOS.m; path = ios/TextInputControllerIOS.m; sourceTree = "<group>"; };
+		F4D423601DD5046900678290 /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -586,6 +588,8 @@
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				F4D4235E1DD4F9A400678290 /* ios */,
+				F4D4235D1DD4F99900678290 /* mac */,
 				A134E53718905F4C00901D06 /* AccessibilityCommonMac.h */,
 				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
@@ -617,11 +621,10 @@
 				BCA18B6E0C9B08DB00114369 /* NavigationController.m */,
 				BCA18B2F0C9B01B400114369 /* ObjCController.h */,
 				BCA18B300C9B01B400114369 /* ObjCController.m */,
+				F4D423601DD5046900678290 /* TextInputController.h */,
 				BC0131D80C9772010087317D /* TestRunner.cpp */,
 				BC0131D90C9772010087317D /* TestRunner.h */,
 				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
-				BCA18B3A0C9B024900114369 /* TextInputController.h */,
-				BCA18B480C9B02C400114369 /* TextInputController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -819,6 +822,22 @@
 				BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */,
 			);
 			name = PixelDump;
+			sourceTree = "<group>";
+		};
+		F4D4235D1DD4F99900678290 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				BCA18B480C9B02C400114369 /* TextInputControllerMac.m */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
+		F4D4235E1DD4F9A400678290 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */,
+			);
+			name = ios;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1114,13 +1133,14 @@
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
 				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
+				F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */,
 				A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
 				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
-				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
+				BCA18B490C9B02C400114369 /* TextInputControllerMac.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */,
 				0F18E6ED1D6B9C070027E547 /* UIScriptController.cpp in Sources */,

@@ -1,3 +1,82 @@
+2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Composition state should be cleared when changing focus to a non-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=164595
+        <rdar://problem/26412551>
+
+        Reviewed by Enrica Casucci.
+
+        Adds support for window.textInputController in DumpRenderTree on iOS. So far, only the methods needed for the
+        new layout test (editing/focus-change-with-marked-text.html) are supported. These are insertText, setMarkedText,
+        and markedRange.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TextInputController.h: Renamed from Tools/DumpRenderTree/mac/TextInputController.h.
+
+        Remove the PLATFORM(MAC) guard for defining the TextInputController. Also, move the TextInputController header
+        out of the /mac platform directory.
+
+        * DumpRenderTree/ios/TextInputControllerIOS.m: Added.
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        (-[TextInputController initWithWebView:]):
+        (-[TextInputController markedRange]):
+        (-[TextInputController insertText:]):
+        (-[TextInputController setMarkedText:selectedFrom:length:]):
+
+        Introduces TextInputControllerIOS.m, which contains an iOS implementation of TextInputController. Only a subset
+        of the methods available on the Mac version will be available on iOS for now (see above).
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+
+        Remove the PLATFORM(MAC) guard for initializing the TextInputController and binding it to the window object.
+
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        * DumpRenderTree/mac/TextInputControllerMac.m: Renamed from Tools/DumpRenderTree/mac/TextInputController.m.
+        (-[WebHTMLView interpretKeyEvents:]):
+        (-[WebNSRange initWithNSRange:]):
+        (-[WebNSRange location]):
+        (-[WebNSRange length]):
+        (+[WebNSRange isSelectorExcludedFromWebScript:]):
+        (+[NSMutableAttributedString isSelectorExcludedFromWebScript:]):
+        (+[NSMutableAttributedString webScriptNameForSelector:]):
+        (-[NSMutableAttributedString getLength]):
+        (-[NSMutableAttributedString ranges]):
+        (-[NSMutableAttributedString attributeNamesAtIndex:]):
+        (-[NSMutableAttributedString valueOfAttribute:atIndex:]):
+        (-[NSMutableAttributedString addAttribute:value:]):
+        (-[NSMutableAttributedString addAttribute:value:from:length:]):
+        (-[NSMutableAttributedString addColorAttribute:red:green:blue:alpha:]):
+        (-[NSMutableAttributedString addColorAttribute:red:green:blue:alpha:from:length:]):
+        (-[NSMutableAttributedString addFontAttribute:fontName:size:]):
+        (-[NSMutableAttributedString addFontAttribute:fontName:size:from:length:]):
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        (-[TextInputController initWithWebView:]):
+        (-[TextInputController dealloc]):
+        (-[TextInputController textInput]):
+        (-[TextInputController insertText:]):
+        (-[TextInputController doCommand:]):
+        (-[TextInputController setMarkedText:selectedFrom:length:]):
+        (-[TextInputController unmarkText]):
+        (-[TextInputController hasMarkedText]):
+        (-[TextInputController conversationIdentifier]):
+        (-[TextInputController substringFrom:length:]):
+        (-[TextInputController attributedSubstringFrom:length:]):
+        (-[TextInputController legacyAttributedString:]):
+        (-[TextInputController markedRange]):
+        (-[TextInputController selectedRange]):
+        (-[TextInputController firstRectForCharactersFrom:length:]):
+        (-[TextInputController characterIndexForPointX:Y:]):
+        (-[TextInputController validAttributesForMarkedText]):
+        (-[TextInputController attributedStringWithString:]):
+        (-[TextInputController stringWithUndoGroupingInsertion:]):
+        (-[TextInputController dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:]):
+        (-[TextInputController setInputMethodHandler:]):
+        (-[TextInputController interpretKeyEvents:withSender:]):
+
+        Fixes miscellaneous style issues.
+
 2016-11-11  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][JHbuild] bump libnice version in openwebrtc.modules

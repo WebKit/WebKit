@@ -302,9 +302,7 @@
 
     // Make Old-Style controllers
 
-#if !PLATFORM(IOS)
     WebView *webView = [frame webView];
-#endif
     WebScriptObject *obj = [frame windowObject];
 #if !PLATFORM(IOS)
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:webView];
@@ -330,12 +328,9 @@
     [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
     [pluginFunction release];
 
-#if !PLATFORM(IOS)
-// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
     TextInputController *tic = [[TextInputController alloc] initWithWebView:webView];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
-#endif
 }
 
 - (void)didClearWindowObjectForFrame:(WebFrame *)frame inIsolatedWorld:(WebScriptWorld *)world

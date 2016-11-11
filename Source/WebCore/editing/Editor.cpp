@@ -1676,6 +1676,9 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     else
         selectComposition();
 
+    m_compositionNode = nullptr;
+    m_customCompositionUnderlines.clear();
+
     if (m_frame.selection().isNone()) {
         setIgnoreCompositionSelectionChange(false);
         return;
@@ -1686,9 +1689,6 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     // We pass TypingCommand::TextCompositionPending here to indicate that we are deleting the pending composition.
     if (mode != CancelComposition)
         TypingCommand::deleteSelection(document(), 0, TypingCommand::TextCompositionPending);
-
-    m_compositionNode = nullptr;
-    m_customCompositionUnderlines.clear();
 
     insertTextForConfirmedComposition(text);
 
