@@ -1,3 +1,13 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix basic shape parsing
+        https://bugs.webkit.org/show_bug.cgi?id=164645
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShape):
+
 2016-11-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderFlowThread::removeLineRegionInfo shouldn't call HashMap::contains before HashMap::remove

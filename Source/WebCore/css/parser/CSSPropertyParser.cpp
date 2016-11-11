@@ -2264,6 +2264,9 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         return nullptr;
     range = rangeCopy;
     
+    if (!args.atEnd())
+        return nullptr;
+
     return CSSValuePool::singleton().createValue(shape.releaseNonNull());
 }
 
