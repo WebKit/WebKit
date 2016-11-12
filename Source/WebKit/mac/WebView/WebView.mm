@@ -9296,12 +9296,12 @@ bool LayerFlushController::flushLayers()
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextColorPicker, NSTouchBarItemIdentifierTextStyle, NSTouchBarItemIdentifierTextAlignment, NSTouchBarItemIdentifierTextList, NSTouchBarItemIdentifierFlexibleSpace ];
 }
 
-- (NSArray<NSString *> *)_plainTextTouchBarCustomizationDefaultItemIdentifiers
+- (NSArray<NSString *> *)_plainTextTouchBarDefaultItemIdentifiers
 {
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierCandidateList ];
 }
 
-- (NSArray<NSString *> *)_richTextTouchBarCustomizationDefaultItemIdentifiers
+- (NSArray<NSString *> *)_richTextTouchBarDefaultItemIdentifiers
 {
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
 }
@@ -9332,11 +9332,11 @@ bool LayerFlushController::flushLayers()
 {
     BOOL isRichTextTouchBar = textTouchBar == _private->_richTextTouchBar;
     [textTouchBar setDelegate:self];
-    [textTouchBar setDefaultItems:[NSMutableSet setWithObject:isRichTextTouchBar ? _private->_richTextCandidateListTouchBarItem.get() : _private->_plainTextCandidateListTouchBarItem.get()]];
+    [textTouchBar setTemplateItems:[NSMutableSet setWithObject:isRichTextTouchBar ? _private->_richTextCandidateListTouchBarItem.get() : _private->_plainTextCandidateListTouchBarItem.get()]];
     [textTouchBar setCustomizationAllowedItemIdentifiers:[self _textTouchBarCustomizationAllowedIdentifiers]];
 
-    NSArray<NSString *> *defaultIdentifiers = isRichTextTouchBar ? [self _richTextTouchBarCustomizationDefaultItemIdentifiers] : [self _plainTextTouchBarCustomizationDefaultItemIdentifiers];
-    [textTouchBar setCustomizationDefaultItemIdentifiers:defaultIdentifiers];
+    NSArray<NSString *> *defaultIdentifiers = isRichTextTouchBar ? [self _richTextTouchBarDefaultItemIdentifiers] : [self _plainTextTouchBarDefaultItemIdentifiers];
+    [textTouchBar setDefaultItemIdentifiers:defaultIdentifiers];
 
     if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[textTouchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
         textFormatItem.groupTouchBar.customizationIdentifier = @"WebTextFormatTouchBar";
@@ -9460,7 +9460,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
     }
 
     NSTouchBar *textTouchBar = self.textTouchBar;
-    NSArray<NSString *> *itemIdentifiers = textTouchBar.itemIdentifiers;
+    NSArray<NSString *> *itemIdentifiers = textTouchBar.defaultItemIdentifiers;
     BOOL isShowingCombinedTextFormatItem = [itemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
     [textTouchBar setPrincipalItemIdentifier:isShowingCombinedTextFormatItem ? NSTouchBarItemIdentifierTextFormat : nil];
 

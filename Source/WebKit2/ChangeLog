@@ -1,3 +1,24 @@
+2016-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Move to modern TouchBar methods
+        https://bugs.webkit.org/show_bug.cgi?id=164655
+        -and corresponding-
+        rdar://problem/29226911
+
+        Reviewed by Wenson Hsieh.
+
+        customizationDefaultItemIdentifiers -> defaultItemIdentifiers
+        itemIdentifiers -> defaultItemIdentifiers
+        defaultItems -> templateItems
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::plainTextTouchBarDefaultItemIdentifiers):
+        (WebKit::richTextTouchBarDefaultItemIdentifiers):
+        (WebKit::WebViewImpl::setUpTextTouchBar):
+        (WebKit::WebViewImpl::updateTextTouchBar):
+        (WebKit::plainTextTouchBarCustomizationDefaultItemIdentifiers): Deleted.
+        (WebKit::richTextTouchBarCustomizationDefaultItemIdentifiers): Deleted.
+
 2016-11-11  Brent Fulgham  <bfulgham@apple.com>
 
         Get rid of old sandbox rules for OS's we no longer support

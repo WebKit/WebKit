@@ -909,12 +909,12 @@ static NSArray<NSString *> *textTouchBarCustomizationAllowedIdentifiers()
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextColorPicker, NSTouchBarItemIdentifierTextStyle, NSTouchBarItemIdentifierTextAlignment, NSTouchBarItemIdentifierTextList, NSTouchBarItemIdentifierFlexibleSpace ];
 }
 
-static NSArray<NSString *> *plainTextTouchBarCustomizationDefaultItemIdentifiers()
+static NSArray<NSString *> *plainTextTouchBarDefaultItemIdentifiers()
 {
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierCandidateList ];
 }
 
-static NSArray<NSString *> *richTextTouchBarCustomizationDefaultItemIdentifiers()
+static NSArray<NSString *> *richTextTouchBarDefaultItemIdentifiers()
 {
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
 }
@@ -934,9 +934,9 @@ void WebViewImpl::setUpTextTouchBar(NSTouchBar *touchBar)
 {
     bool isRichTextTouchBar = touchBar == m_richTextTouchBar.get();
     [touchBar setDelegate:m_textTouchBarItemController.get()];
-    [touchBar setDefaultItems:[NSMutableSet setWithObject:isRichTextTouchBar ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get()]];
+    [touchBar setTemplateItems:[NSMutableSet setWithObject:isRichTextTouchBar ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get()]];
     [touchBar setCustomizationAllowedItemIdentifiers:textTouchBarCustomizationAllowedIdentifiers()];
-    [touchBar setCustomizationDefaultItemIdentifiers:isRichTextTouchBar ? richTextTouchBarCustomizationDefaultItemIdentifiers() : plainTextTouchBarCustomizationDefaultItemIdentifiers()];
+    [touchBar setDefaultItemIdentifiers:isRichTextTouchBar ? richTextTouchBarDefaultItemIdentifiers() : plainTextTouchBarDefaultItemIdentifiers()];
 
     if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[touchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
         textFormatItem.groupTouchBar.customizationIdentifier = @"WKTextFormatTouchBar";
@@ -1034,7 +1034,7 @@ void WebViewImpl::updateTextTouchBar()
     }
 
     NSTouchBar *textTouchBar = this->textTouchBar();
-    BOOL isShowingCombinedTextFormatItem = [textTouchBar.itemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
+    BOOL isShowingCombinedTextFormatItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierTextFormat];
     [textTouchBar setPrincipalItemIdentifier:isShowingCombinedTextFormatItem ? NSTouchBarItemIdentifierTextFormat : nil];
 
     // Set current typing attributes for rich text. This will ensure that the buttons reflect the state of
@@ -1049,7 +1049,7 @@ void WebViewImpl::updateTextTouchBar()
             [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
             [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
         }
-        BOOL isShowingCandidateListItem = [textTouchBar.itemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
+        BOOL isShowingCandidateListItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
         [m_textTouchBarItemController setUsesNarrowTextStyleItem:isShowingCombinedTextFormatItem && isShowingCandidateListItem];
     }
 }
