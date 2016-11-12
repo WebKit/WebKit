@@ -1,3 +1,26 @@
+2016-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Speed up setting attributes of input elements of type 'text'
+        https://bugs.webkit.org/show_bug.cgi?id=164674
+
+        Reviewed by Ryosuke Niwa.
+
+        Speed up setting attributes of input elements of type 'text' by calling
+        updateInnerTextValue() only when needed. It was previously called
+        whenever an attribute was set, no matter it could impact its text value
+        or not.
+
+        No new tests, no Web-exposed behavior change.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/InputType.cpp:
+        (WebCore::InputType::attributeChanged):
+        * html/InputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::attributeChanged):
+        * html/TextFieldInputType.h:
+
 2016-11-12  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the 32-bit build.

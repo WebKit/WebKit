@@ -906,7 +906,7 @@ void InputType::updatePlaceholderText()
 {
 }
 
-void InputType::attributeChanged()
+void InputType::attributeChanged(const QualifiedName&)
 {
 }
 

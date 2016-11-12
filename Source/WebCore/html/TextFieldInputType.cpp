@@ -346,11 +346,10 @@ void TextFieldInputType::destroyShadowSubtree()
     m_container = nullptr;
 }
 
-void TextFieldInputType::attributeChanged()
+void TextFieldInputType::attributeChanged(const QualifiedName& attributeName)
 {
-    // FIXME: Updating the inner text on any attribute update should
-    // be unnecessary. We should figure out what attributes affect.
-    updateInnerTextValue();
+    if (attributeName == valueAttr || attributeName == placeholderAttr)
+        updateInnerTextValue();
 }
 
 void TextFieldInputType::disabledAttributeChanged()

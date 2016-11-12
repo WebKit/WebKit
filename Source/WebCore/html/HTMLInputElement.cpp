@@ -780,7 +780,8 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #endif
     else
         HTMLTextFormControlElement::parseAttribute(name, value);
-    m_inputType->attributeChanged();
+
+    m_inputType->attributeChanged(name);
 }
 
 void HTMLInputElement::parserDidSetAttributes()
