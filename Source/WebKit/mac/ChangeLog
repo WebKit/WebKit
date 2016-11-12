@@ -1,3 +1,37 @@
+2016-11-12  Darin Adler  <darin@apple.com>
+
+        Remove a few assorted uses of ExceptionCode
+        https://bugs.webkit.org/show_bug.cgi?id=164683
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOMDOMImplementation.mm:
+        (-[DOMImplementation createDocumentType:publicId:systemId:]):
+        Use raiseOnDOMError instead of much longer hand written equivalent.
+        (-[DOMImplementation createDocument:qualifiedName:doctype:]): Ditto.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument createEntityReference:]): Use raiseNotSupportedErrorException
+        so we are not using a specific exception code.
+
+        * DOM/DOMHTMLOptionsCollection.mm:
+        (-[DOMHTMLOptionsCollection add:index:]): Use raiseOnDOMError instead of
+        much longer hand written equivalent.
+        * DOM/DOMHTMLSelectElement.mm:
+        (-[DOMHTMLSelectElement add:before:]): Ditto. Also removed unneeded return
+        statement after calling a "no return" function.
+
+        * DOM/ExceptionHandlers.h: Removed overloads of raiseDOMException and
+        raiseOnDOMError functions that take ExceptionCode; keep the ones that take
+        Exception and ExceptionOr. Renamed the other overload of raiseDOMException
+        to raiseDOMErrorException; it is only used as the non-inline implementation
+        part of the inline raiseOnDOMError function.
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException): Renamed. Made the ExceptionCode overload be local
+        to this source file instead of in the header.
+        (raiseTypeErrorException): Updated for name change.
+        (raiseNotSupportedErrorException): Added.
+
 2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hovering over a slotted Text node clears hover state

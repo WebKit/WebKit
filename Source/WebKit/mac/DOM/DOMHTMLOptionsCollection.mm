@@ -90,9 +90,7 @@
     WebCore::JSMainThreadNullState state;
     if (!option)
         raiseTypeErrorException();
-    auto exception = IMPL->add(core(option), Optional<WebCore::HTMLOptionsCollection::HTMLElementOrInt>(static_cast<int>(index)));
-    if (exception.hasException())
-        raiseOnDOMError(exception.releaseException().code());
+    raiseOnDOMError(IMPL->add(core(option), Optional<WebCore::HTMLOptionsCollection::HTMLElementOrInt> { static_cast<int>(index) }));
 }
 
 - (void)remove:(unsigned)index

@@ -196,7 +196,6 @@ static JSValue getObjectParameter(JSWebGLRenderingContextBase* obj, ExecState& s
     if (state.argumentCount() != 2)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
     
-    ExceptionCode ec = 0;
     WebGLRenderingContextBase& context = obj->wrapped();
     unsigned target = state.uncheckedArgument(0).toInt32(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -220,10 +219,6 @@ static JSValue getObjectParameter(JSWebGLRenderingContextBase* obj, ExecState& s
     default:
         notImplemented();
         break;
-    }
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsUndefined();
     }
     return toJS(&state, obj->globalObject(), info);
 }
@@ -304,18 +299,12 @@ JSValue JSWebGLRenderingContextBase::getAttachedShaders(ExecState& state)
 
     if (state.argumentCount() < 1)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-    ExceptionCode ec = 0;
-    WebGLRenderingContextBase& context = wrapped();
-    WebGLProgram* program = JSWebGLProgram::toWrapped(state.uncheckedArgument(0));
+    auto& context = wrapped();
+    auto* program = JSWebGLProgram::toWrapped(state.uncheckedArgument(0));
     if (!program && !state.uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(&state, scope);
     Vector<RefPtr<WebGLShader>> shaders;
-    bool succeed = context.getAttachedShaders(program, shaders);
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsNull();
-    }
-    if (!succeed)
+    if (!context.getAttachedShaders(program, shaders))
         return jsNull();
     JSC::MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < shaders.size(); ++ii)
@@ -516,7 +505,6 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
     RefPtr<Float32Array> webGLArray = toUnsharedFloat32Array(state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, JSValue());
     
-    ExceptionCode ec = 0;
     if (webGLArray) {
         switch (f) {
         case f_uniform1v:
@@ -545,7 +533,6 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
             break;
         }
         
-        setDOMException(&state, ec);
         return jsUndefined();
     }
     
@@ -580,7 +567,6 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
         break;
     }
     
-    setDOMException(&state, ec);
     return jsUndefined();
 }
 
@@ -598,7 +584,6 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState& state, W
     
     RefPtr<Int32Array> webGLArray = toUnsharedInt32Array(state.uncheckedArgument(1));
     
-    ExceptionCode ec = 0;
     if (webGLArray) {
         switch (f) {
         case f_uniform1v:
@@ -617,7 +602,6 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState& state, W
             break;
         }
         
-        setDOMException(&state, ec);
         return jsUndefined();
     }
     
@@ -643,7 +627,6 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState& state, W
         break;
     }
     
-    setDOMException(&state, ec);
     return jsUndefined();
 }
 
@@ -677,8 +660,6 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
             break;
         }
 
-        ExceptionCode ec = 0;
-        setDOMException(&state, ec);
         return jsUndefined();
     }
     
@@ -698,8 +679,6 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         break;
     }
 
-    ExceptionCode ec = 0;
-    setDOMException(&state, ec);
     return jsUndefined();
 }
 

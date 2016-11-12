@@ -27,29 +27,22 @@
 
 #include <WebCore/ExceptionOr.h>
 
-NO_RETURN void raiseDOMException(WebCore::ExceptionCode);
-NO_RETURN void raiseDOMException(WebCore::Exception&&);
 NO_RETURN void raiseTypeErrorException();
+NO_RETURN void raiseNotSupportedErrorException();
 
-void raiseOnDOMError(WebCore::ExceptionCode);
-void raiseOnDOMError(WebCore::ExceptionOr<void>&&);
+NO_RETURN void raiseDOMErrorException(WebCore::Exception&&);
 template<typename T> T raiseOnDOMError(WebCore::ExceptionOr<T>&&);
-
-inline void raiseOnDOMError(WebCore::ExceptionCode code)
-{
-    if (code)
-        raiseDOMException(code);
-}
+void raiseOnDOMError(WebCore::ExceptionOr<void>&&);
 
 inline void raiseOnDOMError(WebCore::ExceptionOr<void>&& possibleException)
 {
     if (possibleException.hasException())
-        raiseDOMException(possibleException.releaseException());
+        raiseDOMErrorException(possibleException.releaseException());
 }
 
 template<typename T> inline T raiseOnDOMError(WebCore::ExceptionOr<T>&& exceptionOrReturnValue)
 {
     if (exceptionOrReturnValue.hasException())
-        raiseDOMException(exceptionOrReturnValue.releaseException());
+        raiseDOMErrorException(exceptionOrReturnValue.releaseException());
     return exceptionOrReturnValue.releaseReturnValue();
 }

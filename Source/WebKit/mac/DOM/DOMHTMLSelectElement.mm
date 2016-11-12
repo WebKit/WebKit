@@ -190,13 +190,9 @@
         variantElement = &downcast<WebCore::HTMLOptionElement>(coreElement);
     else if (is<WebCore::HTMLOptGroupElement>(coreElement))
         variantElement = &downcast<WebCore::HTMLOptGroupElement>(coreElement);
-    else {
+    else
         raiseTypeErrorException();
-        return;
-    }
-    auto exception = IMPL->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(core(before)));
-    if (exception.hasException())
-        raiseOnDOMError(exception.releaseException().code());
+    raiseOnDOMError(IMPL->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(core(before))));
 }
 
 - (void)remove:(int)index

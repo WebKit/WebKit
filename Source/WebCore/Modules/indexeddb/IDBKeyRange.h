@@ -42,8 +42,6 @@ namespace WebCore {
 class IDBKey;
 class ScriptExecutionContext;
 
-typedef int ExceptionCode;
-
 class IDBKeyRange : public ScriptWrappable, public RefCounted<IDBKeyRange> {
 public:
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen);

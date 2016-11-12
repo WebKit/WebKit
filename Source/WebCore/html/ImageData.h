@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class ImageData : public RefCounted<ImageData> {
 public:
     static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);

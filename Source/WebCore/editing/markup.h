@@ -43,8 +43,6 @@ class Node;
 class QualifiedName;
 class Range;
 
-typedef int ExceptionCode;
-
 enum EChildrenOnly { IncludeNode, ChildrenOnly };
 enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
 enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerialization };

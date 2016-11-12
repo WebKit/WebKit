@@ -37,7 +37,7 @@ NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
 NSString * const DOMXPathException = @"DOMXPathException";
 
-void raiseDOMException(WebCore::ExceptionCode ec)
+static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
 {
     ASSERT(ec);
 
@@ -74,10 +74,15 @@ void raiseDOMException(WebCore::ExceptionCode ec)
 
 void raiseTypeErrorException()
 {
-    raiseDOMException(WebCore::TypeError);
+    raiseDOMErrorException(WebCore::TypeError);
 }
 
-void raiseDOMException(WebCore::Exception&& exception)
+void raiseNotSupportedErrorException()
 {
-    raiseDOMException(exception.code());
+    raiseDOMErrorException(WebCore::NOT_SUPPORTED_ERR);
+}
+
+void raiseDOMErrorException(WebCore::Exception&& exception)
+{
+    raiseDOMErrorException(exception.code());
 }

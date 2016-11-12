@@ -1,3 +1,57 @@
+2016-11-12  Darin Adler  <darin@apple.com>
+
+        Remove a few assorted uses of ExceptionCode
+        https://bugs.webkit.org/show_bug.cgi?id=164683
+
+        Reviewed by Chris Dumez.
+
+        * Modules/applepay/PaymentContact.h: Removed include of ExceptionCode.h.
+        Also tidied up the constructor and destructor.
+
+        * Modules/indexeddb/IDBFactory.h: Removed typedef of ExceptionCode.
+        * Modules/indexeddb/IDBKeyRange.h: Ditto.
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::getObjectParameter): Removed local ExceptionCode variable that
+        was always 0.
+        (WebCore::JSWebGLRenderingContextBase::getAttachedShaders): Ditto.
+        (WebCore::dataFunctionf): Ditto.
+        (WebCore::dataFunctioni): Ditto.
+        (WebCore::dataFunctionMatrix): Ditto.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes): Ditto.
+
+        * dom/Document.h: Removed typedef of ExceptionCode.
+        * dom/TreeWalker.h: Ditto.
+        * editing/markup.h: Ditto.
+        * html/ImageData.h: Ditto.
+        * html/InputType.h: Ditto.
+        * html/canvas/CanvasRenderingContext2D.h: Ditto.
+        * html/canvas/WebGLDebugShaders.h: Ditto.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setTimeout): Fixed typo where this was using
+        ExceptionCode instead of Exception. The code would return an integer
+        instead of an exception in this case. I could not produce a test that
+        exercises this code path; I suspect it is an unreachable error condition.
+        (WebCore::DOMWindow::setInterval): Ditto.
+
+        * replay/MemoizedDOMResult.h: Changed typedef of ExceptionCode into
+        a using statement. Not sure what the longer term fix is.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendStartElementNSCallback): Renamed to use
+        WebKit-style "numXXX" rather than "nb_xxx".
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::~PendingStartElementNSCallback):
+        Ditto.
+        (WebCore::handleNamespaceAttributes): Ditto. Replaced ExceptionCode out
+        argument with a boolean return value.
+        (WebCore::handleElementAttributes): Ditto.
+        (WebCore::XMLDocumentParser::startElementNs): Ditto. Updated for changes
+        to the handle functions above.
+        (WebCore::startElementNsHandler): More of the same.
+        (WebCore::attributesStartElementNsHandler): Ditto.
+
 2016-11-11  Darin Adler  <darin@apple.com>
 
         Remove LegacyException support from bindings script

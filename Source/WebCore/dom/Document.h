@@ -197,8 +197,6 @@ class ScriptedAnimationController;
 
 class FontFaceSet;
 
-typedef int ExceptionCode;
-
 #if PLATFORM(IOS)
 class DeviceMotionClient;
 class DeviceMotionController;
@@ -886,8 +884,7 @@ public:
     static bool isValidName(const String&);
 
     // The following breaks a qualified name into a prefix and a local name.
-    // It also does a validity check, and returns false if the qualified name
-    // is invalid. It also sets ExceptionCode when name is invalid.
+    // It also does a validity check, and returns an error if the qualified name is invalid.
     static ExceptionOr<std::pair<AtomicString, AtomicString>> parseQualifiedName(const String& qualifiedName);
     static ExceptionOr<QualifiedName> parseQualifiedName(const AtomicString& namespaceURI, const String& qualifiedName);
 

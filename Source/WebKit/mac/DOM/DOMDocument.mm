@@ -487,7 +487,7 @@
 - (DOMEntityReference *)createEntityReference:(NSString *)name
 {
     UNUSED_PARAM(name);
-    raiseDOMException(WebCore::NOT_SUPPORTED_ERR);
+    raiseNotSupportedErrorException();
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname

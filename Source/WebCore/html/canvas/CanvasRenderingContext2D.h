@@ -55,8 +55,6 @@ class HTMLVideoElement;
 class ImageData;
 class TextMetrics;
 
-typedef int ExceptionCode;
-
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
 public:
     CanvasRenderingContext2D(HTMLCanvasElement&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);

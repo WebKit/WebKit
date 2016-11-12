@@ -49,8 +49,6 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-typedef int ExceptionCode;
-
 class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
 public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);

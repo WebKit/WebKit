@@ -717,10 +717,9 @@ void ContainerNode::childrenChanged(const ChildChange& change)
 
 void ContainerNode::cloneChildNodes(ContainerNode& clone)
 {
-    ExceptionCode ec = 0;
     Document& targetDocument = clone.document();
-    for (Node* child = firstChild(); child && !ec; child = child->nextSibling()) {
-        Ref<Node> clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        auto clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
         if (!clone.appendChild(clonedChild).hasException() && is<ContainerNode>(*child))
             downcast<ContainerNode>(*child).cloneChildNodes(downcast<ContainerNode>(clonedChild.get()));
     }

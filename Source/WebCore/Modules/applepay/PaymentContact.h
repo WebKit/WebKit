@@ -27,7 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <WebCore/ExceptionCode.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
@@ -43,16 +42,9 @@ namespace WebCore {
 
 class PaymentContact {
 public:
-    PaymentContact()
-    {
-    }
-
+    PaymentContact() = default;
     explicit PaymentContact(PKContact *pkContact)
         : m_pkContact(pkContact)
-    {
-    }
-
-    ~PaymentContact()
     {
     }
 

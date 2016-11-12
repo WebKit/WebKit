@@ -37,7 +37,7 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
-typedef int ExceptionCode;
+using ExceptionCode = int;
 
 // Add new memoized ctypes here. The first argument is the enum value,
 // which cannot conflict with built-in primitive types. The second is

@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
-
     class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
     public:
         static Ref<TreeWalker> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
