@@ -5281,7 +5281,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
             mainRenderView.hitTest(request, hitTestResult);
 
-            Element* element = hitTestResult.innerElement();
+            Element* element = hitTestResult.targetElement();
             if (!element)
                 continue;
 

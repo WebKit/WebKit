@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+my-host {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background: purple;
+}
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<my-host>Mouse down over this text</my-host>
+
+<script>
+const host = document.querySelector('my-host');
+host.attachShadow({mode: 'closed'}).innerHTML = `
+<a><span><slot></slot></span></a>
+<style>
+a {
+    display: block;
+    width: 80px;
+    height: 80px;
+    padding: 10px;
+    background: red;
+}
+a:active {
+    background: green;
+    color: green;
+}
+span {
+    background: green;
+}
+</style>`;
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(host.offsetLeft + 15, host.offsetTop + 15);
+    eventSender.mouseDown();
+}
+
+</script>
+</body>
+</html>

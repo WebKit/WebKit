@@ -59,7 +59,6 @@ public:
     WEBCORE_EXPORT HitTestResult& operator=(const HitTestResult&);
 
     Node* innerNode() const { return m_innerNode.get(); }
-    WEBCORE_EXPORT Element* innerElement() const;
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
     WEBCORE_EXPORT Element* innerNonSharedElement() const;
     Element* URLElement() const { return m_innerURLElement.get(); }
@@ -151,6 +150,7 @@ public:
     Vector<String> dictationAlternatives() const;
 
     Node* targetNode() const;
+    WEBCORE_EXPORT Element* targetElement() const;
 
 private:
     NodeSet& mutableRectBasedTestResult(); // See above.

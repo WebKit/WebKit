@@ -1001,7 +1001,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
 
     bool immediateActionHitTestPreventsDefault = false;
-    Element* element = hitTestResult.innerElement();
+    Element* element = hitTestResult.targetElement();
 
     mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
     if (element)

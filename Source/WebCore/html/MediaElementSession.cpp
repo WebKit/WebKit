@@ -676,7 +676,7 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
     // Elements which are obscured by other elements cannot be main content.
     mainRenderView.hitTest(request, result);
     result.setToNonUserAgentShadowAncestor();
-    Element* hitElement = result.innerElement();
+    Element* hitElement = result.targetElement();
     if (hitElement != &element)
         return false;
 

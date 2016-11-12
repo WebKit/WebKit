@@ -764,14 +764,13 @@ Node* HitTestResult::targetNode() const
     return node;
 }
 
-Element* HitTestResult::innerElement() const
+Element* HitTestResult::targetElement() const
 {
-    Node* node = m_innerNode.get();
-    if (!node)
-        return nullptr;
-    if (is<Element>(*node))
-        return downcast<Element>(node);
-    return node->parentElement();
+    for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
+        if (is<Element>(*node))
+            return downcast<Element>(node);
+    }
+    return nullptr;
 }
 
 Element* HitTestResult::innerNonSharedElement() const

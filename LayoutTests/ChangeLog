@@ -1,3 +1,21 @@
+2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hovering over a slotted Text node clears hover state
+        https://bugs.webkit.org/show_bug.cgi?id=164002
+        <rdar://problem/29040471>
+
+        Reviewed by Simon Fraser.
+
+        Added two reference tests for activating and hovering over a Text node.
+        The text node should activate :hover and :activate rules in the shadow tree respectively.
+
+        * fast/shadow-dom/activate-over-slotted-content-expected.html: Added.
+        * fast/shadow-dom/activate-over-slotted-content.html: Added.
+        * fast/shadow-dom/hover-over-slotted-content-expected.html: Added.
+        * fast/shadow-dom/hover-over-slotted-content.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip the newly added tests since iOS doesn't
+        support :hover or :activate via mouse down.
+
 2016-11-11  Brent Fulgham  <bfulgham@apple.com>
 
         Neutered ArrayBuffers are not properly serialized

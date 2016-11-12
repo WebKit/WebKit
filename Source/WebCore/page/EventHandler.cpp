@@ -892,7 +892,8 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     HitTestResult result(view->windowToContents(event.position()));
     renderView->hitTest(request, result);
     DragState state;
-    return result.innerElement() && page->dragController().draggableElement(&m_frame, result.innerElement(), result.roundedPointInInnerNodeFrame(), state);
+    Element* targetElement = result.targetElement();
+    return targetElement && page->dragController().draggableElement(&m_frame, targetElement, result.roundedPointInInnerNodeFrame(), state);
 }
 
 void EventHandler::updateSelectionForMouseDrag()
@@ -1159,7 +1160,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
     renderView->hitTest(request, result);
     if (!request.readOnly())
-        m_frame.document()->updateHoverActiveState(request, result.innerElement());
+        m_frame.document()->updateHoverActiveState(request, result.targetElement());
 
     if (request.disallowsUserAgentShadowContent())
         result.setToNonUserAgentShadowAncestor();
@@ -2689,7 +2690,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     HitTestResult result(view->windowToContents(event.position()));
     renderView->hitTest(request, result);
 
-    RefPtr<Element> element = result.innerElement();
+    RefPtr<Element> element = result.targetElement();
     RefPtr<ContainerNode> scrollableContainer;
     WeakPtr<ScrollableArea> scrollableArea;
     bool isOverWidget = result.isOverWidget();
@@ -2875,7 +2876,7 @@ bool EventHandler::sendContextMenuEventForKey()
     // Use the focused node as the target for hover and active.
     HitTestResult result(position);
     result.setInnerNode(targetNode);
-    doc->updateHoverActiveState(HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent, result.innerElement());
+    doc->updateHoverActiveState(HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent, result.targetElement());
 
     // The contextmenu event is a mouse event even when invoked using the keyboard.
     // This is required for web compatibility.
@@ -2997,7 +2998,7 @@ void EventHandler::hoverTimerFired()
             HitTestRequest request(HitTestRequest::Move | HitTestRequest::DisallowUserAgentShadowContent);
             HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
             renderView->hitTest(request, result);
-            m_frame.document()->updateHoverActiveState(request, result.innerElement());
+            m_frame.document()->updateHoverActiveState(request, result.targetElement());
         }
     }
 }
@@ -3442,7 +3443,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         HitTestResult result(m_mouseDownPos);
         m_frame.contentRenderer()->hitTest(request, result);
         if (m_frame.page())
-            dragState().source = m_frame.page()->dragController().draggableElement(&m_frame, result.innerElement(), m_mouseDownPos, dragState());
+            dragState().source = m_frame.page()->dragController().draggableElement(&m_frame, result.targetElement(), m_mouseDownPos, dragState());
         
         if (!dragState().source)
             m_mouseDownMayStartDrag = false; // no element is draggable
@@ -3915,14 +3916,13 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             } else
                 continue;
 
-            // FIXME: This code should use Element* instead of Node*.
-            Node* node = result.innerElement();
-            ASSERT(node);
+            Element* element = result.targetElement();
+            ASSERT(element);
 
-            if (node && InspectorInstrumentation::handleTouchEvent(m_frame, *node))
+            if (element && InspectorInstrumentation::handleTouchEvent(m_frame, *element))
                 return true;
 
-            Document& doc = node->document();
+            Document& doc = element->document();
             // Record the originating touch document even if it does not have a touch listener.
             if (freshTouchEvents) {
                 m_originatingTouchPointDocument = &doc;
@@ -3930,8 +3930,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             }
             if (!doc.hasTouchEventHandlers())
                 continue;
-            m_originatingTouchPointTargets.set(touchPointTargetKey, node);
-            touchTarget = node;
+            m_originatingTouchPointTargets.set(touchPointTargetKey, element);
+            touchTarget = element;
         } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
             // No need to perform a hit-test since we only need to unset :hover and :active states.
             if (!shouldGesturesTriggerActive() && allTouchReleased)

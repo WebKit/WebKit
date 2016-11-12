@@ -150,7 +150,7 @@ using namespace WebCore;
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint));
     coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
 
-    if (Element* element = _hitTestResult.innerElement())
+    if (Element* element = _hitTestResult.targetElement())
         _contentPreventsDefault = element->dispatchMouseForceWillBegin();
 }
 
