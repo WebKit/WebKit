@@ -1,3 +1,15 @@
+2016-11-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip editing/input/focus-change-with-marked-text.html everywhere except ios-simulator-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=164666
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hovering over a slotted Text node clears hover state

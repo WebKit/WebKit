@@ -67,6 +67,9 @@ fast/attachment/attachment-wrapping-action.html
 # Only iOS has selection UI drawn by UIKit
 editing/selection/character-granularity-rect.html [ Skip ]
 
+# This test is for ios-simulator-wk1
+editing/input/focus-change-with-marked-text.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
