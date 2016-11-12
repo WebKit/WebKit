@@ -1,3 +1,12 @@
+2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: DataView get methods should allow for missing offset, set methods should allow for missing value
+        https://bugs.webkit.org/show_bug.cgi?id=164451
+
+        Reviewed by Darin Adler.
+
+        * test262.yaml:
+
 2016-11-11  Saam Barati  <sbarati@apple.com>
 
         We should have a more concise way of determining when we're varargs calling a function using rest parameters

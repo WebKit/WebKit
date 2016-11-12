@@ -293,16 +293,16 @@ function runGetTests()
     runNegativeIndexTests(true);
 
     debug("");
-    debug("Test for wrong arguments passed to get methods");
-    view = new DataView((new Uint8Array([1, 2])).buffer);
-    shouldThrow("view.getInt8()");
-    shouldThrow("view.getUint8()");
-    shouldThrow("view.getInt16()");
-    shouldThrow("view.getUint16()");
-    shouldThrow("view.getInt32()");
-    shouldThrow("view.getUint32()");
-    shouldThrow("view.getFloat32()");
-    shouldThrow("view.getFloat64()");
+    debug("Test for missing arguments passed to get methods");
+    view = new DataView((new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8])).buffer);
+    shouldNotThrow("view.getInt8()");
+    shouldNotThrow("view.getUint8()");
+    shouldNotThrow("view.getInt16()");
+    shouldNotThrow("view.getUint16()");
+    shouldNotThrow("view.getInt32()");
+    shouldNotThrow("view.getUint32()");
+    shouldNotThrow("view.getFloat32()");
+    shouldNotThrow("view.getFloat64()");
 }
 
 function runSetTests()
@@ -322,24 +322,24 @@ function runSetTests()
     runNegativeIndexTests(false);
 
     debug("");
-    debug("Test for wrong arguments passed to set methods");
-    view = new DataView((new Uint8Array([1, 2])).buffer);
-    shouldThrow("view.setInt8()");
-    shouldThrow("view.setUint8()");
-    shouldThrow("view.setInt16()");
-    shouldThrow("view.setUint16()");
-    shouldThrow("view.setInt32()");
-    shouldThrow("view.setUint32()");
-    shouldThrow("view.setFloat32()");
-    shouldThrow("view.setFloat64()");
-    shouldThrow("view.setInt8(1)");
-    shouldThrow("view.setUint8(1)");
-    shouldThrow("view.setInt16(1)");
-    shouldThrow("view.setUint16(1)");
-    shouldThrow("view.setInt32(1)");
-    shouldThrow("view.setUint32(1)");
-    shouldThrow("view.setFloat32(1)");
-    shouldThrow("view.setFloat64(1)");
+    debug("Test for missing arguments passed to set methods");
+    view = new DataView((new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8])).buffer);
+    shouldNotThrow("view.setInt8()");
+    shouldNotThrow("view.setUint8()");
+    shouldNotThrow("view.setInt16()");
+    shouldNotThrow("view.setUint16()");
+    shouldNotThrow("view.setInt32()");
+    shouldNotThrow("view.setUint32()");
+    shouldNotThrow("view.setFloat32()");
+    shouldNotThrow("view.setFloat64()");
+    shouldNotThrow("view.setInt8(1)");
+    shouldNotThrow("view.setUint8(1)");
+    shouldNotThrow("view.setInt16(1)");
+    shouldNotThrow("view.setUint16(1)");
+    shouldNotThrow("view.setInt32(1)");
+    shouldNotThrow("view.setUint32(1)");
+    shouldNotThrow("view.setFloat32(1)");
+    shouldNotThrow("view.setFloat64(1)");
 }
 
 function runIndexingTests()

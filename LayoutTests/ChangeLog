@@ -1,3 +1,19 @@
+2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: DataView get methods should allow for missing offset, set methods should allow for missing value
+        https://bugs.webkit.org/show_bug.cgi?id=164451
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        * fast/canvas/webgl/data-view-test.html:
+        Create a DataView large enough so that the get/set operations don't fail
+        due to out of bounds access, and assert that they do not throw, because
+        the undefined offset and value parameters get converted to 0.
+
+        * webgl/1.0.2/conformance/typedarrays/data-view-test-expected.txt:
+        This test is wrong. Leave the test alone but update our copy.
+
 2016-11-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip editing/input/focus-change-with-marked-text.html everywhere except ios-simulator-wk1.
