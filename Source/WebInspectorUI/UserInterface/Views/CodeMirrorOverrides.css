@@ -107,6 +107,7 @@
 .show-whitespace-characters .CodeMirror .cm-whitespace::before {
     position: absolute;
     pointer-events: none;
+    color: hsl(0, 0%, 70%);
 }
 
 .show-whitespace-characters .CodeMirror .cm-whitespace-1::before {
