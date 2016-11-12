@@ -1,3 +1,13 @@
+2016-11-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support all the correct blend modes
+        https://bugs.webkit.org/show_bug.cgi?id=164669
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+
 2016-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Use SecurityOriginData as keys in StorageManager
