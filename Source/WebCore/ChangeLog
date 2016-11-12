@@ -1,3 +1,22 @@
+2016-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Use SecurityOriginData as keys in StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=159834
+        <rdar://problem/27346948>
+
+        Reviewed by Brady Eidson.
+
+        No change in behavior.
+
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::SecurityOriginData):
+        (WebCore::SecurityOriginData::isEmpty):
+        (WebCore::SecurityOriginData::isHashTableDeletedValue):
+        (WebCore::SecurityOriginDataHashTraits::isEmptyValue):
+        (WebCore::SecurityOriginDataHash::hash):
+        (WebCore::SecurityOriginDataHash::equal):
+        Add some hash functions so a SecurityOriginData can be used as a key in a HashMap.
+
 2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hovering over a slotted Text node clears hover state

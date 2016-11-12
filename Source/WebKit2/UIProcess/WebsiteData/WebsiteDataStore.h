@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataStore_h
-#define WebsiteDataStore_h
+#pragma once
 
 #include "WebProcessLifetimeObserver.h"
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
 #include <functional>
@@ -110,9 +110,9 @@ private:
     Vector<PluginModuleInfo> plugins() const;
 #endif
 
-    static Vector<RefPtr<WebCore::SecurityOrigin>> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
+    static Vector<WebCore::SecurityOriginData> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince);
-    static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<RefPtr<WebCore::SecurityOrigin>>&);
+    static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&);
 
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
@@ -126,5 +126,3 @@ private:
 };
 
 }
-
-#endif // WebsiteDataStore_h

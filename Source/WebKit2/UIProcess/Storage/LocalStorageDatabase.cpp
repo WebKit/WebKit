@@ -46,16 +46,16 @@ static const int maximumItemsToUpdate = 100;
 
 namespace WebKit {
 
-Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, Ref<SecurityOrigin>&& securityOrigin)
+Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin)
 {
-    return adoptRef(*new LocalStorageDatabase(WTFMove(queue), WTFMove(tracker), WTFMove(securityOrigin)));
+    return adoptRef(*new LocalStorageDatabase(WTFMove(queue), WTFMove(tracker), securityOrigin));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, Ref<SecurityOrigin>&& securityOrigin)
+LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin)
     : m_queue(WTFMove(queue))
     , m_tracker(WTFMove(tracker))
-    , m_securityOrigin(WTFMove(securityOrigin))
-    , m_databasePath(m_tracker->databasePath(m_securityOrigin.ptr()))
+    , m_securityOrigin(securityOrigin)
+    , m_databasePath(m_tracker->databasePath(m_securityOrigin))
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)
     , m_isClosed(false)
@@ -80,7 +80,7 @@ void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
     }
 
     if (m_database.isOpen())
-        m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin.ptr());
+        m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin);
 }
 
 bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStrategy)
@@ -230,7 +230,7 @@ void LocalStorageDatabase::close()
         m_database.close();
 
     if (isEmpty)
-        m_tracker->deleteDatabaseWithOrigin(m_securityOrigin.ptr());
+        m_tracker->deleteDatabaseWithOrigin(m_securityOrigin);
 }
 
 void LocalStorageDatabase::itemDidChange(const String& key, const String& value)

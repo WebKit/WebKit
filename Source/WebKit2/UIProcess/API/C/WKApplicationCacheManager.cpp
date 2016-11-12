@@ -44,7 +44,7 @@ void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManag
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                securityOrigins.append(API::SecurityOrigin::create(*origin));
+                securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
         }
 
         callback(toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
@@ -56,7 +56,7 @@ void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRe
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
 
     WebsiteDataRecord dataRecord;
-    dataRecord.add(WebsiteDataType::OfflineWebApplicationCache, &toImpl(origin)->securityOrigin());
+    dataRecord.add(WebsiteDataType::OfflineWebApplicationCache, WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(origin)->securityOrigin()));
 
     websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, { dataRecord }, [] { });
 }

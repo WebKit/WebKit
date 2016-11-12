@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +45,7 @@ class LocalStorageDatabaseTracker;
 
 class LocalStorageDatabase : public ThreadSafeRefCounted<LocalStorageDatabase> {
 public:
-    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, Ref<WebCore::SecurityOrigin>&&);
+    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&);
     ~LocalStorageDatabase();
 
     // Will block until the import is complete.
@@ -58,7 +59,7 @@ public:
     void close();
 
 private:
-    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, Ref<WebCore::SecurityOrigin>&&);
+    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&);
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
@@ -79,7 +80,7 @@ private:
 
     Ref<WorkQueue> m_queue;
     Ref<LocalStorageDatabaseTracker> m_tracker;
-    Ref<WebCore::SecurityOrigin> m_securityOrigin;
+    WebCore::SecurityOriginData m_securityOrigin;
 
     String m_databasePath;
     WebCore::SQLiteDatabase m_database;

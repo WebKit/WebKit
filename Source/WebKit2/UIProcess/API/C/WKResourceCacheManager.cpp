@@ -56,7 +56,7 @@ void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManage
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                securityOrigins.append(API::SecurityOrigin::create(*origin));
+                securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
         }
 
         callback(toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
@@ -71,14 +71,14 @@ void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheMa
 
     {
         WebsiteDataRecord dataRecord;
-        dataRecord.add(WebsiteDataType::MemoryCache, &toImpl(origin)->securityOrigin());
+        dataRecord.add(WebsiteDataType::MemoryCache, WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(origin)->securityOrigin()));
 
         dataRecords.append(dataRecord);
     }
 
     if (cachesToClear == WKResourceCachesToClearAll) {
         WebsiteDataRecord dataRecord;
-        dataRecord.add(WebsiteDataType::DiskCache, &toImpl(origin)->securityOrigin());
+        dataRecord.add(WebsiteDataType::DiskCache, WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(origin)->securityOrigin()));
 
         dataRecords.append(dataRecord);
     }

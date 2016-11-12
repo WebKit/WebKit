@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class SecurityOrigin;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -47,16 +48,16 @@ public:
     static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, const String& localStorageDirectory);
     ~LocalStorageDatabaseTracker();
 
-    String databasePath(WebCore::SecurityOrigin*) const;
+    String databasePath(const WebCore::SecurityOriginData&) const;
 
-    void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
-    void deleteDatabaseWithOrigin(WebCore::SecurityOrigin*);
+    void didOpenDatabaseWithOrigin(const WebCore::SecurityOriginData&);
+    void deleteDatabaseWithOrigin(const WebCore::SecurityOriginData&);
     void deleteAllDatabases();
 
     // Returns a vector of the origins whose databases have been deleted.
-    Vector<Ref<WebCore::SecurityOrigin>> deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
+    Vector<WebCore::SecurityOriginData> deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
 
-    Vector<Ref<WebCore::SecurityOrigin>> origins() const;
+    Vector<WebCore::SecurityOriginData> origins() const;
 
     struct OriginDetails {
         String originIdentifier;

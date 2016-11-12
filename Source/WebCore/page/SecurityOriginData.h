@@ -33,6 +33,12 @@ class Frame;
 class SecurityOrigin;
 
 struct SecurityOriginData {
+    SecurityOriginData() = default;
+    SecurityOriginData(WTF::HashTableDeletedValueType)
+        : protocol(WTF::HashTableDeletedValue)
+    {
+    }
+    
     WEBCORE_EXPORT static SecurityOriginData fromSecurityOrigin(const SecurityOrigin&);
     WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
 
@@ -54,6 +60,16 @@ struct SecurityOriginData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);
 
+    bool isEmpty() const
+    {
+        return protocol.isNull() && host.isNull() && port == Nullopt;
+    }
+    
+    bool isHashTableDeletedValue() const
+    {
+        return protocol.isHashTableDeletedValue();
+    }
+    
 #if !LOG_DISABLED
     String debugString() const;
 #endif
@@ -82,4 +98,33 @@ bool SecurityOriginData::decode(Decoder& decoder, SecurityOriginData& securityOr
     return true;
 }
 
+struct SecurityOriginDataHashTraits : WTF::SimpleClassHashTraits<SecurityOriginData> {
+    static const bool hasIsEmptyValueFunction = true;
+    static const bool emptyValueIsZero = false;
+    static bool isEmptyValue(const SecurityOriginData& data) { return data.isEmpty(); }
+};
+
+struct SecurityOriginDataHash {
+    static unsigned hash(const SecurityOriginData& data)
+    {
+        unsigned hashCodes[3] = {
+            data.protocol.impl() ? data.protocol.impl()->hash() : 0,
+            data.host.impl() ? data.host.impl()->hash() : 0,
+            data.port.valueOr(0)
+        };
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+    }
+    static bool equal(const SecurityOriginData& a, const SecurityOriginData& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::SecurityOriginData> : WebCore::SecurityOriginDataHashTraits { };
+template<> struct DefaultHash<WebCore::SecurityOriginData> {
+    typedef WebCore::SecurityOriginDataHash Hash;
+};
+
+} // namespace WTF

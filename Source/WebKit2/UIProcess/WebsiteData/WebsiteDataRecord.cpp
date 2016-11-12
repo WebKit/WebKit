@@ -66,26 +66,26 @@ String WebsiteDataRecord::displayNameForPluginDataHostName(const String& hostNam
 }
 #endif
 
-String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& securityOrigin)
+String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
 {
-    const auto& protocol = securityOrigin.protocol();
+    const auto& protocol = securityOrigin.protocol;
 
     if (protocol == "file")
         return displayNameForLocalFiles();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     if (protocol == "http" || protocol == "https")
-        return WebCore::topPrivatelyControlledDomain(securityOrigin.host());
+        return WebCore::topPrivatelyControlledDomain(securityOrigin.host);
 #endif
 
     return String();
 }
 
-void WebsiteDataRecord::add(WebsiteDataType type, RefPtr<WebCore::SecurityOrigin>&& origin)
+void WebsiteDataRecord::add(WebsiteDataType type, const WebCore::SecurityOriginData& origin)
 {
     types |= type;
 
-    origins.add(WTFMove(origin));
+    origins.add(origin);
 }
 
 void WebsiteDataRecord::addCookieHostName(const String& hostName)
