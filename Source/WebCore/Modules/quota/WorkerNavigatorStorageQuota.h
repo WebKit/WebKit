@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerNavigatorStorageQuota_h
-#define WorkerNavigatorStorageQuota_h
+#pragma once
 
 #if ENABLE(QUOTA)
 
@@ -63,5 +62,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(QUOTA)
-
-#endif // WorkerNavigatorStorageQuota_h

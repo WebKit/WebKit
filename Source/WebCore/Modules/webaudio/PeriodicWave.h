@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeriodicWave_h
-#define PeriodicWave_h
+#pragma once
 
 #include "AudioArray.h"
 #include <memory>
@@ -99,5 +98,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PeriodicWave_h

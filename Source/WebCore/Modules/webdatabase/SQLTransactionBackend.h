@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLTransactionBackend_h
-#define SQLTransactionBackend_h
+
+#pragma once
 
 #include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
@@ -79,5 +79,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLTransactionBackend_h

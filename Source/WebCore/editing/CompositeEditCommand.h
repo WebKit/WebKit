@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CompositeEditCommand_h
-#define CompositeEditCommand_h
+#pragma once
 
 #include "AXObjectCache.h"
 #include "EditCommand.h"
@@ -227,5 +226,3 @@ inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
 }
 
 } // namespace WebCore
-
-#endif // CompositeEditCommand_h

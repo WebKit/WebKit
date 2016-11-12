@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextIteratorBehavior_h
-#define TextIteratorBehavior_h
+#pragma once
 
 namespace WebCore {
 
@@ -62,6 +61,4 @@ enum TextIteratorBehaviorFlag {
 
 typedef unsigned short TextIteratorBehavior;
 
-}
-
-#endif
+} // namespace WebCore

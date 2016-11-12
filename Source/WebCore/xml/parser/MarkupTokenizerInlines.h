@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MarkupTokenizerInlines_h
-#define MarkupTokenizerInlines_h
+#pragma once
 
 #include "SegmentedString.h"
 
@@ -87,6 +86,4 @@ inline bool isTokenizerWhitespace(UChar character)
         goto newState;                                          \
     } while (false)
 
-}
-
-#endif // MarkupTokenizerInlines_h
+} // namespace WebCore

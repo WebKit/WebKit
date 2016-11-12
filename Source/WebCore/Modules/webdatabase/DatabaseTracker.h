@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
+#pragma once
 
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
@@ -203,5 +202,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseTracker_h

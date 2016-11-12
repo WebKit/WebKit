@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OriginLock_h
-#define OriginLock_h
+#pragma once
 
 #include "FileSystem.h"
 #include <wtf/Lock.h>
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // OriginLock_h

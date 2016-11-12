@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventLoopInputDispatcher_h
-#define EventLoopInputDispatcher_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -95,5 +94,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // EventLoopInputDispatcher_h

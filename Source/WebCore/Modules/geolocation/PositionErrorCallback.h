@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PositionErrorCallback_h
-#define PositionErrorCallback_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -39,5 +38,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // PositionErrorCallback_h

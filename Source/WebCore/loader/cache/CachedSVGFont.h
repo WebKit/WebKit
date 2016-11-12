@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachedSVGFont_h
-#define CachedSVGFont_h
+#pragma once
 
 #if ENABLE(SVG_FONTS)
 
@@ -55,10 +54,8 @@ private:
     SVGFontElement* m_externalSVGFontElement;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedSVGFont, CachedResource::SVGFontResource)
 
-#endif
-
-#endif
+#endif // ENABLE(SVG_FONTS)

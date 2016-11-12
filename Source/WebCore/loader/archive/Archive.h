@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Archive_h
-#define Archive_h
+#pragma once
 
 #include "ArchiveResource.h"
 
@@ -67,6 +66,4 @@ private:
     Vector<RefPtr<Archive>> m_subframeArchives;
 };
 
-}
-
-#endif // Archive
+} // namespace WebCore

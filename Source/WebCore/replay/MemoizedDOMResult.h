@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoizedDOMResult_h
-#define MemoizedDOMResult_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -160,5 +159,3 @@ static bool isType(const NondeterministicInputBase& input) { return input.type()
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // MemoizedDOMResult_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef PageURLRecord_h
-#define PageURLRecord_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -84,12 +83,11 @@ public:
     }
 
     inline int retainCount() const { return m_retainCount; }
+
 private:
     String m_pageURL;
     RefPtr<IconRecord> m_iconRecord;
     int m_retainCount;
 };
 
-}
-
-#endif // PageURLRecord_h
+} // namespace WebCore

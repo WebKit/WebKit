@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ManifestParser_h
-#define ManifestParser_h
+#pragma once
 
 #include "ApplicationCache.h"
 
@@ -41,6 +40,4 @@ namespace WebCore {
 
     bool parseManifest(const URL& manifestURL, const char* data, int length, Manifest&);
 
-}
-
-#endif // ManifestParser_h
+} // namespace WebCore

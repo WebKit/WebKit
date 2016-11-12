@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertParagraphSeparatorCommand_h
-#define InsertParagraphSeparatorCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -59,6 +58,4 @@ private:
     bool m_pasteBlockqutoeIntoUnquotedArea;
 };
 
-}
-
-#endif
+} // namespace WebCore

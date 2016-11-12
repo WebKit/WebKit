@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BreakBlockquoteCommand_h
-#define BreakBlockquoteCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -43,5 +42,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

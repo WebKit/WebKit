@@ -24,13 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathPredicate_h
-#define XPathPredicate_h
+#pragma once
 
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
-
     namespace XPath {
         
         class Number final : public Expression {
@@ -114,8 +112,5 @@ namespace WebCore {
         bool evaluatePredicate(const Expression&);
         bool predicateIsContextPositionSensitive(const Expression&);
 
-    }
-
-}
-
-#endif // XPathPredicate_h
+    } // namespace XPath
+} // namespace WebCore

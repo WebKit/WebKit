@@ -26,13 +26,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLErrors_h
-#define XMLErrors_h
-
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/TextPosition.h>
+#pragma once
 
 #include <libxml/parser.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -60,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // XMLErrors_h

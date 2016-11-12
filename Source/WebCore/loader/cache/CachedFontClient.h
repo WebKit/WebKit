@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedFontClient_h
-#define CachedFontClient_h
+#pragma once
 
 #include "CachedResourceClient.h"
 
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CachedFontClient_h

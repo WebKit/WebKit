@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadNotifier_h
-#define ResourceLoadNotifier_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ResourceLoadNotifier_h

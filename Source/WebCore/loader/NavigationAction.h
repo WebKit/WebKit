@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NavigationAction_h
-#define NavigationAction_h
+#pragma once
 
 #include "Event.h"
 #include "FrameLoaderTypes.h"
@@ -80,6 +79,4 @@ private:
     AtomicString m_downloadAttribute;
 };
 
-}
-
-#endif
+} // namespace WebCore

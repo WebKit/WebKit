@@ -47,7 +47,6 @@
 #include <runtime/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 using namespace JSC;
 

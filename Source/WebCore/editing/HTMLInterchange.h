@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLInterchange_h
-#define HTMLInterchange_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -42,6 +41,4 @@ enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchan
 
 String convertHTMLTextToInterchangeFormat(const String&, const Text*);
 
-}
-
-#endif
+} // namespace WebCore

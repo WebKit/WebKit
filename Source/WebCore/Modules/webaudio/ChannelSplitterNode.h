@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChannelSplitterNode_h
-#define ChannelSplitterNode_h
+#pragma once
 
 #include "AudioNode.h"
 
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChannelSplitterNode_h

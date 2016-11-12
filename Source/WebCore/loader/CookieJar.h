@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CookieJar_h
-#define CookieJar_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -48,6 +47,4 @@ WEBCORE_EXPORT bool getRawCookies(const Document&, const URL&, Vector<Cookie>&);
 WEBCORE_EXPORT void deleteCookie(const Document&, const URL&, const String& cookieName);
 WEBCORE_EXPORT void addCookie(const Document&, const URL&, const Cookie&);
 
-}
-
-#endif
+} // namespace WebCore

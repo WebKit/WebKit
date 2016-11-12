@@ -24,13 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef XPathNodeSet_h
-#define XPathNodeSet_h
+#pragma once
 
 #include "Node.h"
 
 namespace WebCore {
-
     namespace XPath {
 
         class NodeSet {
@@ -77,7 +75,5 @@ namespace WebCore {
             mutable Vector<RefPtr<Node>> m_nodes;
         };
 
-    }
-}
-
-#endif // XPathNodeSet_h
+    } // namespace XPath
+} // namespace WebCore

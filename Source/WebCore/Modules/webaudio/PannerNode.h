@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PannerNode_h
-#define PannerNode_h
+#pragma once
 
 #include "AudioBus.h"
 #include "AudioListener.h"
@@ -149,5 +148,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PannerNode_h

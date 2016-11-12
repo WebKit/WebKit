@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationController_h
-#define GeolocationController_h
+#pragma once
 
 #if ENABLE(GEOLOCATION)
 
@@ -40,7 +39,6 @@ namespace WebCore {
 class GeolocationClient;
 class GeolocationError;
 class GeolocationPosition;
-class Page;
 
 class GeolocationController : public Supplement<Page>, private ActivityStateChangeObserver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -85,5 +83,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)
-
-#endif // GeolocationController_h

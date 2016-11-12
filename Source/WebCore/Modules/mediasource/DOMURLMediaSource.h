@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMURLMediaSource_h
-#define DOMURLMediaSource_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -47,6 +46,4 @@ public:
 
 } // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

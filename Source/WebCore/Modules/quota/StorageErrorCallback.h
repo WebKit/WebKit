@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageErrorCallback_h
-#define StorageErrorCallback_h
+#pragma once
 
 #if ENABLE(QUOTA)
 
@@ -60,5 +59,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(QUOTA)
-
-#endif // StorageErrorCallback_h

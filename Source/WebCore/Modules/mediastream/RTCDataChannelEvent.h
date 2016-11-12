@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCDataChannelEvent_h
-#define RTCDataChannelEvent_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -52,5 +51,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCDataChannelEvent_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBResultData_h
-#define IDBResultData_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -39,7 +38,6 @@
 
 namespace WebCore {
 
-class IDBResourceIdentifier;
 class ThreadSafeDataBuffer;
 
 enum class IDBResultType {
@@ -231,4 +229,3 @@ template<class Decoder> bool IDBResultData::decode(Decoder& decoder, IDBResultDa
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBResultData_h

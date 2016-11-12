@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyframeAnimation_h
-#define KeyframeAnimation_h
+#pragma once
 
 #include "AnimationBase.h"
 #include "Document.h"
@@ -106,5 +105,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // KeyframeAnimation_h

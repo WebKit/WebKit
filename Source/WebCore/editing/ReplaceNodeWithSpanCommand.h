@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReplaceNodeWithSpanCommand_h
-#define ReplaceNodeWithSpanCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -62,5 +61,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ReplaceNodeWithSpanCommand

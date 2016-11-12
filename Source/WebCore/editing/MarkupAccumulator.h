@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MarkupAccumulator_h
-#define MarkupAccumulator_h
+#pragma once
 
 #include "Element.h"
 #include "markup.h"
@@ -123,6 +122,4 @@ private:
     unsigned m_prefixLevel;
 };
 
-}
-
-#endif
+} // namespace WebCore

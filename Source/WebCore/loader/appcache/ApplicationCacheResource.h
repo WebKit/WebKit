@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ApplicationCacheResource_h
-#define ApplicationCacheResource_h
+#pragma once
 
 #include "SubstituteResource.h"
 
@@ -75,5 +74,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // ApplicationCacheResource_h

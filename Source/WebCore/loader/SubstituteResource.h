@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SubstituteResource_h
-#define SubstituteResource_h
+#pragma once
 
 #include "ResourceLoader.h"
 #include "ResourceResponse.h"
@@ -56,6 +55,4 @@ private:
     Ref<SharedBuffer> m_data;
 };
 
-}
-
-#endif // SubstituteResource_h
+} // namespace WebCore

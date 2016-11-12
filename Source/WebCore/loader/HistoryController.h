@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HistoryController_h
-#define HistoryController_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include <wtf/Noncopyable.h>
@@ -123,5 +122,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HistoryController_h

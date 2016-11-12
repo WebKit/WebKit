@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ReplaceSelectionCommand_h
-#define ReplaceSelectionCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 #include "NodeTraversal.h"
@@ -135,5 +134,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ReplaceSelectionCommand_h

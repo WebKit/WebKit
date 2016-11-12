@@ -23,8 +23,7 @@
  * DAMAGE.
  */
 
-#ifndef DOMWindowIndexedDatabase_h
-#define DOMWindowIndexedDatabase_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -64,5 +63,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // DOMWindowIndexedDatabase_h

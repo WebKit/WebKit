@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VisibleUnits_h
-#define VisibleUnits_h
+#pragma once
 
 #include "EditingBoundary.h"
 #include "TextFlags.h"
@@ -125,5 +124,3 @@ Node* findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, Edi
 Node* findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 
 } // namespace WebCore
-
-#endif // VisibleUnits_h

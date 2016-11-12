@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicyDirective_h
-#define ContentSecurityPolicyDirective_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicyDirective_h */

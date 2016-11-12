@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IconController_h
-#define IconController_h
+#pragma once
 
 #include "IconDatabaseBase.h"
 
@@ -62,5 +61,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

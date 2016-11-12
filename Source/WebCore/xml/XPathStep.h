@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathStep_h
-#define XPathStep_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -118,7 +117,4 @@ private:
 void optimizeStepPair(Step&, Step&, bool& dropSecondStep);
 
 } // namespace XPath
-
 } // namespace WebCore
-
-#endif // XPathStep_h

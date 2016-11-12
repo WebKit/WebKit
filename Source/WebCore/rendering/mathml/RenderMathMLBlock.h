@@ -34,8 +34,6 @@
 #include "RenderTable.h"
 #include "StyleInheritedData.h"
 
-#define ENABLE_DEBUG_MATH_LAYOUT 0
-
 namespace WebCore {
 
 class RenderMathMLOperator;

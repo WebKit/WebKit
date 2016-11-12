@@ -27,8 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLTreeViewer_h
-#define XMLTreeViewer_h
+#pragma once
 
 #if ENABLE(XSLT)
 
@@ -49,4 +48,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(XSLT)
-#endif // XMLTreeViewer_h

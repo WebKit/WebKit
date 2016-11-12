@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SplitElementCommand_h
-#define SplitElementCommand_h
+#pragma once
 
 #include "EditCommand.h"
 
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SplitElementCommand_h

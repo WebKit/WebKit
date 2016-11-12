@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmSHA384_h
-#define CryptoAlgorithmSHA384_h
+#pragma once
 
 #include "CryptoAlgorithm.h"
 
@@ -48,7 +47,6 @@ private:
     virtual ~CryptoAlgorithmSHA384();
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmSHA384_h

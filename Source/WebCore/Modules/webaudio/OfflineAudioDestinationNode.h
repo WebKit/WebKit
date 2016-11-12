@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OfflineAudioDestinationNode_h
-#define OfflineAudioDestinationNode_h
+#pragma once
 
 #include "AudioBuffer.h"
 #include "AudioDestinationNode.h"
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // OfflineAudioDestinationNode_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexInfo_h
-#define IDBIndexInfo_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -101,4 +100,3 @@ bool IDBIndexInfo::decode(Decoder& decoder, IDBIndexInfo& info)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBIndexInfo_h

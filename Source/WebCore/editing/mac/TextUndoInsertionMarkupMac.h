@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextUndoInsertionMarkupMac_h
-#define TextUndoInsertionMarkupMac_h
+#pragma once
 
 #if USE(INSERTION_UNDO_GROUPING)
 
@@ -44,5 +43,3 @@ WEBCORE_EXPORT void registerInsertionUndoGroupingWithUndoManager(NSUndoManager*)
 #endif
     
 } // namespace WebCore
-
-#endif

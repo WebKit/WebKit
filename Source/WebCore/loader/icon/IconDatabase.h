@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef IconDatabase_h
-#define IconDatabase_h
+#pragma once
 
 #include "IconDatabaseBase.h"
 #include <wtf/text/WTFString.h>
@@ -251,5 +250,3 @@ private:
 #endif // !ENABLE(ICONDATABASE)
 
 } // namespace WebCore
-
-#endif // IconDatabase_h

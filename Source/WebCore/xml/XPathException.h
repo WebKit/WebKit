@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathException_h
-#define XPathException_h
+#pragma once
 
 #include "ExceptionBase.h"
 
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // XPathException_h

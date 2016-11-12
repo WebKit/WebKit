@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicyHash_h
-#define ContentSecurityPolicyHash_h
+#pragma once
 
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
@@ -44,7 +43,7 @@ const size_t maximumContentSecurityPolicyDigestLength = 64; // bytes to hold SHA
 typedef Vector<uint8_t> ContentSecurityPolicyDigest;
 typedef std::pair<ContentSecurityPolicyHashAlgorithm, ContentSecurityPolicyDigest> ContentSecurityPolicyHash;
 
-}
+} // namespace WebCore
 
 namespace WTF {
 
@@ -64,6 +63,4 @@ template<> struct DefaultHash<WebCore::ContentSecurityPolicyDigest> {
     };
 };
 
-}
-
-#endif // ContentSecurityPolicyHash_h
+} // namespace WTF

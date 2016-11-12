@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryIndexCursor_h
-#define MemoryIndexCursor_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -60,4 +59,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // MemoryIndexCursor_h

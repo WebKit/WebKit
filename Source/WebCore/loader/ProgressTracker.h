@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProgressTracker_h
-#define ProgressTracker_h
+#pragma once
 
 #include "Timer.h"
 #include <chrono>
@@ -89,6 +88,4 @@ private:
     bool m_isMainLoad;
 };
     
-}
-
-#endif
+} // namespace WebCore

@@ -23,18 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachePolicy_h
-#define CachePolicy_h
+#pragma once
 
 namespace WebCore {
 
-    enum CachePolicy {
-        CachePolicyVerify,
-        CachePolicyRevalidate,
-        CachePolicyReload,
-        CachePolicyHistoryBuffer
-    };
+enum CachePolicy {
+    CachePolicyVerify,
+    CachePolicyRevalidate,
+    CachePolicyReload,
+    CachePolicyHistoryBuffer
+};
 
-}
-
-#endif
+} // namespace WebCore

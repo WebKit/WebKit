@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageNamespace_h
-#define StorageNamespace_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -32,7 +31,6 @@
 namespace WebCore {
 
 class Page;
-class PageGroup;
 class SecurityOrigin;
 class StorageArea;
 
@@ -44,5 +42,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // StorageNamespace_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryIDBBackingStore_h
-#define MemoryIDBBackingStore_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -99,4 +98,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // MemoryIDBBackingStore_h

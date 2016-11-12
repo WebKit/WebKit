@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Geolocation_h
-#define Geolocation_h
+#pragma once
 
 #if ENABLE(GEOLOCATION)
 
@@ -170,6 +169,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)
-
-#endif // Geolocation_h
-

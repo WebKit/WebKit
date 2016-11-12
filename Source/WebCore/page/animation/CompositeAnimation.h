@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CompositeAnimation_h
-#define CompositeAnimation_h
+#pragma once
 
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
@@ -105,5 +104,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CompositeAnimation_h

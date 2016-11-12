@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadObserver_h
-#define ResourceLoadObserver_h
+#pragma once
 
 #include "ResourceLoadStatisticsStore.h"
 #include <wtf/HashMap.h>
@@ -65,5 +64,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif /* ResourceLoadObserver_h */

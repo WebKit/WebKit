@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Coordinates_h
-#define Coordinates_h
+#pragma once
 
 #include "Event.h"
 #include <wtf/Optional.h>
@@ -80,5 +79,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // Coordinates_h

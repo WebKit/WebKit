@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyData_h
-#define CryptoKeyData_h
+#pragma once
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -61,4 +60,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyData_h

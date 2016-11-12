@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageInfo_h
-#define StorageInfo_h
+#pragma once
 
 #if ENABLE(QUOTA)
 
@@ -74,5 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(QUOTA)
-
-#endif // StorageInfo_h

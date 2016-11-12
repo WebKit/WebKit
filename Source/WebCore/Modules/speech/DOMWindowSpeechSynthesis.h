@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowSpeechSynthesis_h
-#define DOMWindowSpeechSynthesis_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // DOMWindowSpeechSynthesis_h

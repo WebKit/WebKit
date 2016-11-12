@@ -389,8 +389,7 @@ sub generateInternalSettingsHeaderFile($)
     print $file $InCompiler->license();
 
     print $file <<EOF;
-#ifndef InternalSettingsGenerated_h
-#define InternalSettingsGenerated_h
+#pragma once
 
 #include "Supplementable.h"
 #include <wtf/RefCounted.h>
@@ -440,7 +439,6 @@ EOF
 
     print $file "};\n\n";
     print $file "} // namespace WebCore\n";
-    print $file "#endif // InternalSettingsGenerated_h\n";
 
     close $file;
 }

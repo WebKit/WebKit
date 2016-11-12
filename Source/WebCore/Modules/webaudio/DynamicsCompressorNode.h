@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DynamicsCompressorNode_h
-#define DynamicsCompressorNode_h
+#pragma once
 
 #include "AudioNode.h"
 #include "AudioParam.h"
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DynamicsCompressorNode_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachedResourceHandle_h
-#define CachedResourceHandle_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <wtf/Forward.h>
@@ -97,5 +96,3 @@ template <class R, class RR> bool operator!=(const RR* res, const CachedResource
 }
 
 } // namespace WebCore
-
-#endif // CachedResourceHandle

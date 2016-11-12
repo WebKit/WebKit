@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SerializationMethods_h
-#define SerializationMethods_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -120,5 +119,3 @@ template<> struct EncodingTraits<WebCore::SecurityOrigin> {
 } // namespace JSC
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // SerializationMethods_h

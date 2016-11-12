@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef GamepadEvent_h
-#define GamepadEvent_h
+
+#pragma once
 
 #if ENABLE(GAMEPAD)
 
@@ -65,4 +65,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // GamepadEvent_h

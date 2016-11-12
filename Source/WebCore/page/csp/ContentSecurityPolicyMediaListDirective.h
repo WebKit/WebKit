@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicyMediaListDirective_h
-#define ContentSecurityPolicyMediaListDirective_h
+#pragma once
 
 #include "ContentSecurityPolicyDirective.h"
 #include <wtf/HashSet.h>
@@ -48,5 +47,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicyMediaListDirective_h */

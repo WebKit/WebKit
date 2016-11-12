@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HistoryItem_h
-#define HistoryItem_h
+#pragma once
 
 #include "FloatRect.h"
 #include "FrameLoaderTypes.h"
@@ -264,13 +263,11 @@ private:
     RetainPtr<id> m_viewState;
     std::unique_ptr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif
-}; //class HistoryItem
+};
 
-} //namespace WebCore
+} // namespace WebCore
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 extern "C" int showTree(const WebCore::HistoryItem*);
 #endif
-
-#endif // HISTORYITEM_H

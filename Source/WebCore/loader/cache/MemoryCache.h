@@ -22,8 +22,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef Cache_h
-#define Cache_h
+#pragma once
 
 #include "NativeImage.h"
 #include "SecurityOriginHash.h"
@@ -221,6 +220,4 @@ private:
     Timer m_pruneTimer;
 };
 
-}
-
-#endif
+} // namespace WebCore

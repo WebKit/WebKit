@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef IconRecord_h
-#define IconRecord_h
+#pragma once
 
 #include "PageURLRecord.h"
 #include "SharedBuffer.h"
@@ -118,7 +117,4 @@ private:
     // SizeImageMap m_images;
 };
 
-
 } //namespace WebCore
-
-#endif

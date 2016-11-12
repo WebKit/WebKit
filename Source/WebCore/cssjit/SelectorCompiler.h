@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectorCompiler_h
-#define SelectorCompiler_h
+#pragma once
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
@@ -113,5 +112,3 @@ inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorChec
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SELECTOR_JIT)
-
-#endif // SelectorCompiler_h

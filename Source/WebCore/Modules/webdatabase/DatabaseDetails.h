@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseDetails_h
-#define DatabaseDetails_h
+#pragma once
 
 #include <thread>
 #include <wtf/text/WTFString.h>
@@ -83,5 +82,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseDetails_h

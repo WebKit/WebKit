@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FormState_h
-#define FormState_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -62,6 +61,4 @@ namespace WebCore {
         FormSubmissionTrigger m_formSubmissionTrigger;
     };
 
-}
-
-#endif // FormState_h
+} // namespace WebCore

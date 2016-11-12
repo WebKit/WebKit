@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ApplicationCacheStorage_h
-#define ApplicationCacheStorage_h
+#pragma once
 
 #include "SecurityOriginHash.h"
 #include "SQLiteDatabase.h"
@@ -160,5 +159,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ApplicationCacheStorage_h

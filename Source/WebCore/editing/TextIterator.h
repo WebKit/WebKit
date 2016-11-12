@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextIterator_h
-#define TextIterator_h
+#pragma once
 
 // FIXME: Move each iterator class into a separate header file.
 
@@ -303,6 +302,4 @@ private:
     bool m_didLookAhead;
 };
 
-}
-
-#endif
+} // namespace WebCore

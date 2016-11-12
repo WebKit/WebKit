@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamAudioDestinationNode_h
-#define MediaStreamAudioDestinationNode_h
+#pragma once
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
@@ -67,5 +66,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamAudioDestinationNode_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLTransaction_h
-#define SQLTransaction_h
+#pragma once
 
 #include "EventTarget.h"
 #include "SQLCallbackWrapper.h"
@@ -149,5 +148,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLTransaction_h

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioNodeOutput_h
-#define AudioNodeOutput_h
+#pragma once
 
 #include "AudioBus.h"
 #include "AudioNode.h"
@@ -148,5 +147,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AudioNodeOutput_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBKeyRangeData_h
-#define IDBKeyRangeData_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -130,4 +129,3 @@ bool IDBKeyRangeData::decode(Decoder& decoder, IDBKeyRangeData& keyRange)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBKeyRangeData_h

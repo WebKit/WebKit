@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCStatsResponse_h
-#define RTCStatsResponse_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "DOMError.h"
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RTCStatsResponse_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMPrivate_h
-#define CDMPrivate_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -45,8 +44,6 @@ public:
     virtual std::unique_ptr<CDMSession> createSession(CDMSessionClient*) = 0;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // CDMPrivate_h

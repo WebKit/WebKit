@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithm_h
-#define CryptoAlgorithm_h
+#pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKeyUsage.h"
@@ -89,7 +88,6 @@ protected:
     CryptoAlgorithm();
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithm_h

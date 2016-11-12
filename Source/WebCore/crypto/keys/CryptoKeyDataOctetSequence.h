@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
+#pragma once
 
 #include "CryptoKeyData.h"
 #include <wtf/Vector.h>
@@ -49,4 +48,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY_DATA(CryptoKeyDataOctetSequence, CryptoKeyData::Format::OctetSequence)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h

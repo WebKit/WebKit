@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SampleMap_h
-#define SampleMap_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -135,8 +134,6 @@ void SampleMap::addRange(I begin, I end)
         addSample(*iter->second);
 }
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif // SampleMap_h
+#endif // ENABLE(MEDIA_SOURCE)

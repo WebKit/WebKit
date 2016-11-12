@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DictationAlternative_h
-#define DictationAlternative_h
+#pragma once
 
 #include <stdint.h>
 
@@ -39,6 +38,4 @@ struct DictationAlternative {
     uint64_t dictationContext;
 };
 
-}
-
-#endif // DictationAlternative_h
+} // namespace WebCore

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptProcessorNode_h
-#define ScriptProcessorNode_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "AudioBus.h"
@@ -96,5 +95,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptProcessorNode_h

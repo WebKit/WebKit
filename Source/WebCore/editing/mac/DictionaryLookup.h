@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DictionaryLookup_h
-#define DictionaryLookup_h
+#pragma once
 
 #if PLATFORM(MAC)
 
@@ -66,5 +65,3 @@ public:
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)
-
-#endif // DictionaryLookup_h

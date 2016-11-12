@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyHMAC_h
-#define CryptoKeyHMAC_h
+#pragma once
+
+#if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKey.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
@@ -92,4 +91,3 @@ SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyHMAC, CryptoKeyClass::HMAC)
 SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(HmacKeyAlgorithm, KeyAlgorithmClass::HMAC)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyHMAC_h

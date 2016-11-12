@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionMetadata_h
-#define MediaSessionMetadata_h
+#pragma once
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -56,6 +55,4 @@ private:
 
 } // namespace WebCore
 
-#endif /* ENABLE(MEDIA_SESSION) */
-
-#endif /* MediaSessionMetadata_h */
+#endif // ENABLE(MEDIA_SESSION)

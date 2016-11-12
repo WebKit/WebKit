@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef EditorDeleteAction_h
-#define EditorDeleteAction_h
+#pragma once
 
 namespace WebCore {
 
@@ -34,7 +33,4 @@ enum EditorDeleteAction {
     forwardDeleteKeyAction
 };
 
-} // namespace
-
-#endif
-
+} // namespace WebCore

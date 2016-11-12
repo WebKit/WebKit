@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmIdentifier_h
-#define CryptoAlgorithmIdentifier_h
+#pragma once
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -55,7 +54,6 @@ enum class CryptoAlgorithmIdentifier {
     PBKDF2
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmIdentifier_h

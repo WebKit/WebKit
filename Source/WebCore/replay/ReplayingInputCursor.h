@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReplayingInputCursor_h
-#define ReplayingInputCursor_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -74,5 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // ReplayingInputCursor_h

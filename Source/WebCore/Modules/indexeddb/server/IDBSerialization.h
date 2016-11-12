@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBSerialization_h
-#define IDBSerialization_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -44,4 +43,3 @@ bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, IDBKeyData&
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBSerialization_h

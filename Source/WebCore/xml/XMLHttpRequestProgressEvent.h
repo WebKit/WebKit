@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLHttpRequestProgressEvent_h
-#define XMLHttpRequestProgressEvent_h
+#pragma once
 
 #include "ProgressEvent.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // XMLHttpRequestProgressEvent_h

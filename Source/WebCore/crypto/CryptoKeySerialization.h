@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeySerialization_h
-#define CryptoKeySerialization_h
+#pragma once
 
 #include "CryptoKeyUsage.h"
 #include <wtf/Noncopyable.h>
@@ -64,4 +63,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeySerialization_h

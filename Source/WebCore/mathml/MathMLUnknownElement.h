@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLUnknownElement_h
-#define MathMLUnknownElement_h
+#pragma once
 
 #include "MathMLElement.h"
 
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MathMLUnknownElement_h

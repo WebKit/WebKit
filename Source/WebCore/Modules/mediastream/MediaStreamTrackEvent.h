@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamTrackEvent_h
-#define MediaStreamTrackEvent_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -60,5 +59,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamTrackEvent_h

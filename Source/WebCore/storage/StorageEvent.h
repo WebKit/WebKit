@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageEvent_h
-#define StorageEvent_h
+#pragma once
 
 #include "Event.h"
 #include <wtf/text/WTFString.h>
@@ -75,5 +74,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StorageEvent_h

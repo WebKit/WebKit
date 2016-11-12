@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoaderStateMachine_h
-#define FrameLoaderStateMachine_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <wtf/Noncopyable.h>
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FrameLoaderStateMachine_h

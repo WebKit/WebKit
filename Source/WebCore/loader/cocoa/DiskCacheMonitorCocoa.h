@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiskCacheMonitorCocoa_h
-#define DiskCacheMonitorCocoa_h
+#pragma once
 
 #include "ResourceRequest.h"
 #include "SessionID.h"
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // DiskCacheMonitorCocoa_h

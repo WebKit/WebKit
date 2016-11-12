@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef NavigatorVibration_h
-#define NavigatorVibration_h
+#pragma once
 
 #if ENABLE(VIBRATION)
 
@@ -28,7 +27,6 @@
 namespace WebCore {
 
 class Navigator;
-class Uint32Array;
 
 class NavigatorVibration {
 public:
@@ -46,6 +44,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIBRATION)
-
-#endif // NavigatorVibration_h
-

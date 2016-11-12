@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MHTMLParser_h
-#define MHTMLParser_h
+#pragma once
 
 #if ENABLE(MHTML)
+
 #include "SharedBufferChunkReader.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -67,8 +67,6 @@ private:
     Vector<RefPtr<MHTMLArchive>> m_frames;
 };
 
-}
+} // namespace WebCore
 
-#endif
-#endif
-
+#endif // ENABLE(MHTML)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBObjectStoreInfo_h
-#define IDBObjectStoreInfo_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -113,4 +112,3 @@ bool IDBObjectStoreInfo::decode(Decoder& decoder, IDBObjectStoreInfo& info)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBObjectStoreInfo_h

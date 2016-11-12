@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTask_h
-#define DatabaseTask_h
+
+#pragma once
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
@@ -151,5 +151,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseTask_h

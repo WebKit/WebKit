@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedResourceRequest_h
-#define CachedResourceRequest_h
+#pragma once
 
 #include "CachedResource.h"
 #include "DocumentLoader.h"
@@ -103,5 +102,3 @@ private:
 void upgradeInsecureResourceRequestIfNeeded(ResourceRequest&, Document&);
 
 } // namespace WebCore
-
-#endif

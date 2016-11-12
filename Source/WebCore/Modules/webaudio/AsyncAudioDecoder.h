@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AsyncAudioDecoder_h
-#define AsyncAudioDecoder_h
+#pragma once
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -84,5 +83,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AsyncAudioDecoder_h

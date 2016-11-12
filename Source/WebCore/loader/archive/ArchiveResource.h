@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArchiveResource_h
-#define ArchiveResource_h
+#pragma once
 
 #include "SubstituteResource.h"
 
@@ -57,6 +56,4 @@ private:
     bool m_shouldIgnoreWhenUnarchiving;
 };
 
-}
-
-#endif // ArchiveResource_h
+} // namespace WebCore

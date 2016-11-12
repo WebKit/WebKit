@@ -22,8 +22,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedResourceClientWalker_h
-#define CachedResourceClientWalker_h
+#pragma once
 
 #include "CachedResourceClient.h"
 #include <wtf/HashCountedSet.h>
@@ -64,6 +63,4 @@ private:
     size_t m_index;
 };
 
-}
-
-#endif
+} // namespace WebCore

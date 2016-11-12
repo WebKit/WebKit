@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AnimationControllerPrivate_h
-#define AnimationControllerPrivate_h
+#pragma once
 
 #include "AnimationBase.h"
 #include "CSSPropertyNames.h"
@@ -172,5 +171,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AnimationControllerPrivate_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSPropertyAnimation_h
-#define CSSPropertyAnimation_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
@@ -52,5 +51,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CSSPropertyAnimation_h

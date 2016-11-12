@@ -36,8 +36,6 @@
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>
 
-#define LOG_STATISTICS_TO_FILE 0
-
 namespace WebCore {
 
 static const unsigned minimumOriginsLoadedForProcessing = 100;

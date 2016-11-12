@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FetchBodyOwner_h
-#define FetchBodyOwner_h
+#pragma once
 
 #if ENABLE(FETCH_API)
 
@@ -110,5 +109,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
-
-#endif // FetchBodyOwner_h

@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseThread_h
-#define DatabaseThread_h
+
+#pragma once
 
 #include <memory>
 #include <wtf/Deque.h>
@@ -89,5 +89,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseThread_h

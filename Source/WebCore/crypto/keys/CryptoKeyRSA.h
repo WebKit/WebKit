@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyRSA_h
-#define CryptoKeyRSA_h
+#pragma once
 
 #include "CryptoKey.h"
 #include <wtf/Function.h>
@@ -128,4 +127,3 @@ SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaKeyAlgorithm, KeyAlgorithmClass::RSA)
 SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaHashedKeyAlgorithm, KeyAlgorithmClass::HRSA)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyRSA_h

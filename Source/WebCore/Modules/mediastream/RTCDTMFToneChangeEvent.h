@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCDTMFToneChangeEvent_h
-#define RTCDTMFToneChangeEvent_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -59,5 +58,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCDTMFToneChangeEvent_h

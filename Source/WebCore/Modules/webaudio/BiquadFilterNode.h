@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BiquadFilterNode_h
-#define BiquadFilterNode_h
+#pragma once
 
 #include "AudioBasicProcessorNode.h"
 #include "BiquadProcessor.h"
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BiquadFilterNode_h

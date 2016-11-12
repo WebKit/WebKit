@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceBufferList_h
-#define SourceBufferList_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -86,6 +85,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCStatsReport_h
-#define RTCStatsReport_h
+#pragma once
 
 #include "ScriptWrappable.h"
 #include <wtf/HashMap.h>
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RTCStatsReport_h

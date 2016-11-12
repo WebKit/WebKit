@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertListCommand_h
-#define InsertListCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // InsertListCommand_h

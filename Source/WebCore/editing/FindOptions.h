@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindOptions_h
-#define FindOptions_h
+#pragma once
 
 namespace WebCore {
 
@@ -44,5 +43,3 @@ enum FindOptionFlag {
 typedef unsigned char FindOptions;
 
 } // namespace WebCore
-
-#endif // FindOptions_h

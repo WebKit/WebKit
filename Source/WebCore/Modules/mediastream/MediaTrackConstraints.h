@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef MediaTrackConstraints_h
-#define MediaTrackConstraints_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -55,6 +54,4 @@ private:
 
 } // namespace WebCore
 
-#endif // MediaTrackConstraints_h
-
-#endif
+#endif // ENABLE(MEDIA_STREAM)

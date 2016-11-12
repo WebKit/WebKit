@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSummingJunction_h
-#define AudioSummingJunction_h
+#pragma once
 
 #include "AudioBus.h"
 #include <wtf/HashSet.h>
@@ -82,5 +81,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // AudioSummingJunction_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TypingCommand_h
-#define TypingCommand_h
+#pragma once
 
 #include "TextInsertionBaseCommand.h"
 
@@ -166,5 +165,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // TypingCommand_h

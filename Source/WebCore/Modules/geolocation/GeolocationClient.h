@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationClient_h
-#define GeolocationClient_h
+#pragma once
 
 namespace WebCore {
 
@@ -57,5 +56,3 @@ protected:
 WEBCORE_EXPORT void provideGeolocationTo(Page*, GeolocationClient*);
 
 } // namespace WebCore
-
-#endif // GeolocationClient_h

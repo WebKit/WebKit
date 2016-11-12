@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowQuota_h
-#define DOMWindowQuota_h
+#pragma once
 
 #if ENABLE(QUOTA)
 
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(QUOTA)
-
-#endif // DOMWindowQuota_h

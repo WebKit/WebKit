@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DictationCommand_h
-#define DictationCommand_h
+#pragma once
 
 #include "DictationAlternative.h"
 #include "TextInsertionBaseCommand.h"
 
 namespace WebCore {
-
-class DocumentMarker;
 
 class DictationCommand : public TextInsertionBaseCommand {
     friend class DictationCommandLineOperation;
@@ -55,6 +52,5 @@ private:
     String m_textToInsert;
     Vector<DictationAlternative> m_alternatives;
 };
-}
 
-#endif // DictationCommand_h
+} // namespace WebCore

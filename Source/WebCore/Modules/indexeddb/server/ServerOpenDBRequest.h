@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ServerOpenDBRequest_h
-#define ServerOpenDBRequest_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -77,4 +76,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // ServerOpenDBRequest_h

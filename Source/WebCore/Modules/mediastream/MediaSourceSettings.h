@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSourceSettings_h
-#define MediaSourceSettings_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -80,6 +79,4 @@ private:
 
 } // namespace WebCore
 
-#endif // MediaSourceSettings_h
-
-#endif
+#endif // ENABLE(MEDIA_STREAM)

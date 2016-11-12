@@ -25,8 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStream_h
-#define MediaStream_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -163,5 +162,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStream_h

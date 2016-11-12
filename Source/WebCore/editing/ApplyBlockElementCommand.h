@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ApplyBlockElementCommand_h
-#define ApplyBlockElementCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 #include "QualifiedName.h"
@@ -57,6 +56,4 @@ private:
     Position m_endOfLastParagraph;
 };
 
-}
-
-#endif
+} // namespace WebCore

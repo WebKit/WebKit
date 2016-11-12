@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadStatistics_h
-#define ResourceLoadStatistics_h
+#pragma once
 
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/StringHash.h>
@@ -87,5 +86,3 @@ struct ResourceLoadStatistics {
 };
 
 } // namespace WebCore
-
-#endif // ResourceLoadStatistics_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SpellChecker_h
-#define SpellChecker_h
+#pragma once
 
 #include "Element.h"
 #include "Range.h"
@@ -116,5 +115,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SpellChecker_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageMap_h
-#define StorageMap_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -69,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StorageMap_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLHttpRequestEventTarget_h
-#define XMLHttpRequestEventTarget_h
+#pragma once
 
 #include "EventTarget.h"
 
@@ -33,6 +32,4 @@ namespace WebCore {
 class XMLHttpRequestEventTarget : public EventTargetWithInlineData {
 };
 
-}
-
-#endif // XMLHttpRequestEventTarget_h
+} // namespace WebCore

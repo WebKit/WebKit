@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitBlobBuilder_h
-#define WebKitBlobBuilder_h
+#pragma once
 
 #include "BlobPart.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebKitBlobBuilder_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PageCache_h
-#define PageCache_h
+#pragma once
 
 #include "HistoryItem.h"
 #include "Timer.h"
@@ -86,5 +85,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PageCache_h

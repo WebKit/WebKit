@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertTextCommand_h
-#define InsertTextCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -87,5 +86,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // InsertTextCommand_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageNamespaceProvider_h
-#define StorageNamespaceProvider_h
+#pragma once
 
 #include "SecurityOriginHash.h"
 #include <wtf/Forward.h>
@@ -67,6 +66,4 @@ private:
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 };
 
-}
-
-#endif // StorageNamespaceProvider_h
+} // namespace WebCore

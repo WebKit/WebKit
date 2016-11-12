@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataDetection_h
-#define DataDetection_h
+#pragma once
 
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -68,5 +67,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // DataDetection_h

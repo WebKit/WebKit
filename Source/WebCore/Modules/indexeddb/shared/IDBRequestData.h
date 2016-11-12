@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBRequestData_h
-#define IDBRequestData_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -174,4 +173,3 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBRequestData_h

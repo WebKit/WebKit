@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLiteIDBTransaction_h
-#define SQLiteIDBTransaction_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -96,4 +95,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // SQLiteIDBTransaction_h

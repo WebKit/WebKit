@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaTrackSupportedConstraints_h
-#define MediaTrackSupportedConstraints_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -69,6 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // MediaTrackSupportedConstraints_h
-
-#endif
+#endif // ENABLE(MEDIA_STREAM)

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChannelMergerNode_h
-#define ChannelMergerNode_h
+#pragma once
 
 #include "AudioNode.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChannelMergerNode_h

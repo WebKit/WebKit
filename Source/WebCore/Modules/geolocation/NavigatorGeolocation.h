@@ -17,8 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef NavigatorGeolocation_h
-#define NavigatorGeolocation_h
+#pragma once
 
 #if ENABLE(GEOLOCATION)
 
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)
-
-#endif // NavigatorGeolocation_h

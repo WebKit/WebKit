@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRSASSA_PKCS1_v1_5_h
-#define CryptoAlgorithmRSASSA_PKCS1_v1_5_h
+#pragma once
 
 #include "CryptoAlgorithm.h"
 
@@ -62,7 +61,6 @@ private:
     void platformVerify(const CryptoAlgorithmRsaSsaParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRSASSA_PKCS1_v1_5_h

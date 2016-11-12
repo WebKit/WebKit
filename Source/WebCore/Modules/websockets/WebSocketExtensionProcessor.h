@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketExtensionProcessor_h
-#define WebSocketExtensionProcessor_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -67,8 +66,6 @@ private:
     String m_extensionToken;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketExtensionProcessor_h

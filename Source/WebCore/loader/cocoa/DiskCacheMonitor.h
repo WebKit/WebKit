@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiskCacheMonitor_h
-#define DiskCacheMonitor_h
+#pragma once
 
 #include "ResourceRequest.h"
 #include "SessionID.h"
@@ -56,11 +55,8 @@ private:
 };
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090)
-
 void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef) { }
 PassRefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef) { return nullptr; }
-
 #endif
-} // namespace WebKit
 
-#endif // DiskCacheMonitor_h
+} // namespace WebKit

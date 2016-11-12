@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationError_h
-#define GeolocationError_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GeolocationError_h

@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaResourceLoader_h
-#define MediaResourceLoader_h
+#pragma once
 
 #if ENABLE(VIDEO)
+
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContextDestructionObserver.h"
@@ -88,8 +88,6 @@ private:
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 
-
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO)

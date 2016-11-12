@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBRequestCompletionEvent_h
-#define IDBRequestCompletionEvent_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -46,8 +45,6 @@ private:
     Ref<IDBRequest> m_request;
 };
 
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBRequestCompletionEvent_h

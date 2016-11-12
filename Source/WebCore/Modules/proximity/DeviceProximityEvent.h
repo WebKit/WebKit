@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef DeviceProximityEvent_h
-#define DeviceProximityEvent_h
+#pragma once
 
 #if ENABLE(PROXIMITY_EVENTS)
 
@@ -70,4 +69,3 @@ private:
 } // namespace WebCore
 
 #endif // DeviceProximityEvent_h
-#endif // PROXIMITY_EVENTS

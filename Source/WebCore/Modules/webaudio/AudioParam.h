@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioParam_h
-#define AudioParam_h
+#pragma once
 
 #include "AudioContext.h"
 #include "AudioParamTimeline.h"
@@ -135,5 +134,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AudioParam_h

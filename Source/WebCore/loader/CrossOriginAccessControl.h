@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef CrossOriginAccessControl_h
-#define CrossOriginAccessControl_h
+#pragma once
 
 #include "ResourceHandleTypes.h"
 #include <wtf/Forward.h>
@@ -53,5 +52,3 @@ void cleanRedirectedRequestForAccessControl(ResourceRequest&);
 bool passesAccessControlCheck(const ResourceResponse&, StoredCredentials, SecurityOrigin&, String& errorDescription);
 
 } // namespace WebCore
-
-#endif // CrossOriginAccessControl_h

@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathFunctions_h
-#define XPathFunctions_h
+#pragma once
 
 #include "XPathExpressionNode.h"
 
@@ -48,5 +47,3 @@ private:
 
 } // namespace XPath
 } // namespace WebCore
-
-#endif // XPathFunctions_h

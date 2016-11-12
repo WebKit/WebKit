@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef CrossOriginPreflightResultCache_h
-#define CrossOriginPreflightResultCache_h
+#pragma once
 
 #include "URLHash.h"
 #include "ResourceHandleTypes.h"
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebKitMediaKeyNeededEvent_h
-#define WebKitMediaKeyNeededEvent_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -64,5 +63,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

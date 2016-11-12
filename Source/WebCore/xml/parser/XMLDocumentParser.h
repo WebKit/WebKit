@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef XMLDocumentParser_h
-#define XMLDocumentParser_h
+#pragma once
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -198,5 +197,3 @@ void* xmlDocPtrForString(CachedResourceLoader&, const String& source, const Stri
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
 
 } // namespace WebCore
-
-#endif // XMLDocumentParser_h

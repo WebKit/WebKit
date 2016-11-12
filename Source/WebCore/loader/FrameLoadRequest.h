@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameLoadRequest_h
-#define FrameLoadRequest_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
@@ -155,6 +154,4 @@ private:
     AtomicString m_downloadAttribute;
 };
 
-}
-
-#endif // FrameLoadRequest_h
+} // namespace WebCore

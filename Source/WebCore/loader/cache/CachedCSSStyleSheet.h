@@ -23,8 +23,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedCSSStyleSheet_h
-#define CachedCSSStyleSheet_h
+#pragma once
 
 #include "CachedResource.h"
 
@@ -72,5 +71,3 @@ namespace WebCore {
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedCSSStyleSheet, CachedResource::CSSStyleSheet)
-
-#endif // CachedCSSStyleSheet_h

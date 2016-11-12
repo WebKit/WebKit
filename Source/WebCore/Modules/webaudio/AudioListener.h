@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioListener_h
-#define AudioListener_h
+#pragma once
 
 #include "FloatPoint3D.h"
 #include <wtf/Ref.h>
@@ -89,6 +88,4 @@ private:
     double m_speedOfSound;
 };
 
-} // WebCore
-
-#endif // AudioListener_h
+} // namespace WebCore

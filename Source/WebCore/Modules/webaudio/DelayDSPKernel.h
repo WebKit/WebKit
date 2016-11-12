@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DelayDSPKernel_h
-#define DelayDSPKernel_h
+#pragma once
 
 #include "AudioArray.h"
 #include "AudioDSPKernel.h"
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DelayDSPKernel_h

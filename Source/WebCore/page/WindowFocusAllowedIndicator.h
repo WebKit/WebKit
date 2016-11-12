@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WindowFocusAllowedIndicator_h
-#define WindowFocusAllowedIndicator_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 
@@ -43,5 +42,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WindowFocusAllowedIndicator_h

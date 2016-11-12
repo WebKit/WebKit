@@ -20,8 +20,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef CachedSVGDocumentClient_h
-#define CachedSVGDocumentClient_h
+#pragma once
 
 #include "CachedResourceClient.h"
 
@@ -35,5 +34,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CachedSVGDocumentClient_h

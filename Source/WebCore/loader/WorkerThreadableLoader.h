@@ -28,13 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerThreadableLoader_h
-#define WorkerThreadableLoader_h
+#pragma once
 
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
-
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
@@ -128,5 +126,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerThreadableLoader_h

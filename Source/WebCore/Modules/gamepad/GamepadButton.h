@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadButton_h
-#define GamepadButton_h
+#pragma once
 
 #if ENABLE(GAMEPAD)
 
@@ -50,9 +49,6 @@ private:
     double m_value;
 };
 
-
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-
-#endif // GamepadButton_h

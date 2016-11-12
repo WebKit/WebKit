@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedTextTrack_h
-#define CachedTextTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -50,5 +49,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedTextTrack, CachedResource::TextTrackResource)
 
 #endif // ENABLE(VIDEO_TRACK)
-
-#endif // CachedTextTrack_h

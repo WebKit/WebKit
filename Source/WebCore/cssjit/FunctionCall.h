@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FunctionCall_h
-#define FunctionCall_h
+#pragma once
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
@@ -193,5 +192,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SELECTOR_JIT)
-
-#endif // FunctionCall_h

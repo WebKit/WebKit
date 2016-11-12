@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FormatBlockCommand_h
-#define FormatBlockCommand_h
+#pragma once
 
 #include "ApplyBlockElementCommand.h"
 #include "EditAction.h"
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FormatBlockCommand_h

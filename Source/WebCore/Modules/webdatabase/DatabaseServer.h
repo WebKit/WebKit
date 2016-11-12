@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DatabaseServer_h
-#define DatabaseServer_h
+#pragma once
 
 #include "AbstractDatabaseServer.h"
 
@@ -67,5 +66,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseServer_h

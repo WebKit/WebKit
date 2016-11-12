@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef VibrationClient_h
-#define VibrationClient_h
+#pragma once
 
 namespace WebCore {
 
@@ -37,6 +36,3 @@ public:
 void provideVibrationTo(Page*, VibrationClient*);
 
 } // namespace WebCore
-
-#endif // VibrationClient_h
-

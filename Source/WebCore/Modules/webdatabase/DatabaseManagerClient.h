@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef DatabaseManagerClient_h
-#define DatabaseManagerClient_h
+
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -45,5 +45,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseManagerClient_h

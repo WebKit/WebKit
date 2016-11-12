@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataRSAComponents_h
-#define CryptoKeyDataRSAComponents_h
+#pragma once
 
 #include "CryptoKeyData.h"
 #include <wtf/Vector.h>
@@ -117,4 +116,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY_DATA(CryptoKeyDataRSAComponents, CryptoKeyData::Format::RSAComponents)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataRSAComponents_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DocumentWriter_h
-#define DocumentWriter_h
+#pragma once
 
 #include "URL.h"
 #include <wtf/text/WTFString.h>
@@ -90,5 +89,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DocumentWriter_h

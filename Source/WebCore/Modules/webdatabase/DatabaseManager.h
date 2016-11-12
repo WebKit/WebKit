@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseManager_h
-#define DatabaseManager_h
+#pragma once
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
@@ -42,7 +41,6 @@ class Database;
 class DatabaseCallback;
 class DatabaseContext;
 class DatabaseManagerClient;
-class DatabaseSync;
 class DatabaseTaskSynchronizer;
 class SecurityOrigin;
 class ScriptExecutionContext;
@@ -152,5 +150,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseManager_h

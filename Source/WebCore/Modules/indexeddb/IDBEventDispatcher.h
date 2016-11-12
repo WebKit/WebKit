@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBEventDispatcher_h
-#define IDBEventDispatcher_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -49,5 +48,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBEventDispatcher_h

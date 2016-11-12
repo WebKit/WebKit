@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRegistry_h
-#define CryptoAlgorithmRegistry_h
+#pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
 #include <wtf/Forward.h>
@@ -70,7 +69,6 @@ private:
     HashMap<unsigned, CryptoAlgorithmConstructor> m_identifierToConstructorMap;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRegistry_h

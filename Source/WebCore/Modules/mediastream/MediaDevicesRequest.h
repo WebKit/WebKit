@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef MediaDevicesRequest_h
-#define MediaDevicesRequest_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -37,7 +36,6 @@
 namespace WebCore {
 
 class Document;
-class Frame;
 class MediaDevicesEnumerationRequest;
 class SecurityOrigin;
 
@@ -71,5 +69,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaDevicesRequest_h

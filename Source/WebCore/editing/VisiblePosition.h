@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VisiblePosition_h
-#define VisiblePosition_h
+#pragma once
 
 #include "EditingBoundary.h"
 #include "Position.h"
@@ -174,5 +173,3 @@ TextStream& operator<<(TextStream&, const VisiblePosition&);
 void showTree(const WebCore::VisiblePosition*);
 void showTree(const WebCore::VisiblePosition&);
 #endif
-
-#endif // VisiblePosition_h

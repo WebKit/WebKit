@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceProximityClient_h
-#define DeviceProximityClient_h
+#pragma once
 
 #if ENABLE(PROXIMITY_EVENTS)
 
@@ -49,4 +48,3 @@ void provideDeviceProximityTo(Page*, DeviceProximityClient*);
 } // namespace WebCore
 
 #endif // PROXIMITY_EVENTS
-#endif // DeviceProximityClient_h

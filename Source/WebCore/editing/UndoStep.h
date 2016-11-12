@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UndoStep_h
-#define UndoStep_h
+#pragma once
 
 #include "EditAction.h"
 #include <wtf/RefCounted.h>
@@ -45,6 +44,4 @@ public:
     virtual EditAction editingAction() const = 0;
 };
 
-}
-
-#endif
+} // namespace WebCore

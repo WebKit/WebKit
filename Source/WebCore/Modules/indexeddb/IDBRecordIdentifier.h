@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IDBRecordIdentifier_h
-#define IDBRecordIdentifier_h
+
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -74,6 +74,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBRecordIdentifier_h
+#endif // ENABLE(INDEXED_DATABASE)

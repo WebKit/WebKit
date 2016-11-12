@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IndexValueStore_h
-#define IndexValueStore_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -117,4 +116,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IndexValueStore_h

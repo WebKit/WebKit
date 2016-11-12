@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ChangeVersionData_h
-#define ChangeVersionData_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -44,5 +43,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChangeVersionData_h

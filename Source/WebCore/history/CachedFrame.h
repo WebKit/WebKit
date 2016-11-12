@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef CachedFrame_h
-#define CachedFrame_h
+#pragma once
 
 #include "DOMWindow.h"
 #include "URL.h"
@@ -91,5 +90,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CachedFrame_h

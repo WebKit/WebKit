@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PolicyChecker_h
-#define PolicyChecker_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "PolicyCallback.h"
@@ -110,5 +109,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PolicyChecker_h

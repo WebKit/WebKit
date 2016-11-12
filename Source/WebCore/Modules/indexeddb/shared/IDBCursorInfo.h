@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorInfo_h
-#define IDBCursorInfo_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -132,4 +131,3 @@ bool IDBCursorInfo::decode(Decoder& decoder, IDBCursorInfo& info)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBCursorInfo_h

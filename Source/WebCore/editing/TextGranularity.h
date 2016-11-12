@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextGranularity_h
-#define TextGranularity_h
+#pragma once
 
 namespace WebCore {
 
@@ -43,6 +42,4 @@ enum TextGranularity {
     DocumentBoundary
 };
 
-}
-
-#endif
+} // namespace WebCore

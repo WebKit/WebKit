@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketDeflater_h
-#define WebSocketDeflater_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -85,8 +84,6 @@ private:
     std::unique_ptr<z_stream> m_stream;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketDeflater_h

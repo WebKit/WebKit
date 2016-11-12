@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageEventDispatcher_h
-#define StorageEventDispatcher_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StorageEventDispatcher_h

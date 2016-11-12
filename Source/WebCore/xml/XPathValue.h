@@ -24,13 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathValue_h
-#define XPathValue_h
+#pragma once
 
 #include "XPathNodeSet.h"
 
 namespace WebCore {
-
     namespace XPath {
     
         class Value {
@@ -101,7 +99,5 @@ namespace WebCore {
             RefPtr<Data> m_data;
         };
 
-    }
-}
-
-#endif // XPath_Value_H
+    } // namespace XPath
+} // namespace WebCore

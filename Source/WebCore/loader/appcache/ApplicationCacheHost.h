@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ApplicationCacheHost_h
-#define ApplicationCacheHost_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include "URL.h"
@@ -193,5 +192,3 @@ namespace WebCore {
     };
 
 }  // namespace WebCore
-
-#endif  // ApplicationCacheHost_h

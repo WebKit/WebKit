@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeoNotifier_h
-#define GeoNotifier_h
+#pragma once
 
 #if ENABLE(GEOLOCATION)
 
@@ -79,5 +78,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)
-
-#endif // GeoNotifier_h

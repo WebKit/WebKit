@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AlternativeTextController_h
-#define AlternativeTextController_h
+#pragma once
 
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
@@ -176,5 +175,3 @@ inline bool AlternativeTextController::shouldRemoveMarkersUponEditing()
 }
 
 } // namespace WebCore
-
-#endif // AlternativeTextController_h

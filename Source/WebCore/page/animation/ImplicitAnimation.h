@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImplicitAnimation_h
-#define ImplicitAnimation_h
+#pragma once
 
 #include "AnimationBase.h"
 #include "CSSPropertyNames.h"
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ImplicitAnimation_h

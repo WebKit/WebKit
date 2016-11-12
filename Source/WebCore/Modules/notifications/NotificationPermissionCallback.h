@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NotificationPermissionCallback_h
-#define NotificationPermissionCallback_h
+#pragma once
 
 #if ENABLE(NOTIFICATIONS)
 
@@ -42,5 +41,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS)
-
-#endif // NotificationPermissionCallback_h

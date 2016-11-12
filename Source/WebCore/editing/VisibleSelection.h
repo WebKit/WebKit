@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VisibleSelection_h
-#define VisibleSelection_h
+#pragma once
 
 #include "TextGranularity.h"
 #include "VisiblePosition.h"
@@ -161,5 +160,3 @@ inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
 void showTree(const WebCore::VisibleSelection&);
 void showTree(const WebCore::VisibleSelection*);
 #endif
-
-#endif // VisibleSelection_h

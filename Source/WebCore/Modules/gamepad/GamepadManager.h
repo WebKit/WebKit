@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GamepadManager_h
-#define GamepadManager_h
+#pragma once
 
 #if ENABLE(GAMEPAD)
 
@@ -75,4 +74,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)
-#endif // GamepadManager_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaConstraintsImpl_h
-#define MediaConstraintsImpl_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -82,7 +81,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaConstraintsImpl_h
-
-

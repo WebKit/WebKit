@@ -29,8 +29,7 @@
 // Note that there is not an exact correspondence between the two, since
 // Some input types reside in the same file.
 
-#ifndef AllReplayInputs_h
-#define AllReplayInputs_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -44,5 +43,3 @@ using JSC::name; \
 JS_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_JSC_NAMESPACE)
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // AllReplayInputs_h

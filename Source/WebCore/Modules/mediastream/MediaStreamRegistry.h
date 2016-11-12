@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamRegistry_h
-#define MediaStreamRegistry_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -65,5 +64,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamRegistry_h

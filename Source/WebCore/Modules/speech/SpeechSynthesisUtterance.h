@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechSynthesisUtterance_h
-#define SpeechSynthesisUtterance_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
@@ -83,5 +82,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // SpeechSynthesisUtterance_h

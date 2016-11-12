@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef Vibration_h
-#define Vibration_h
+#pragma once
 
 #if ENABLE(VIBRATION)
 
@@ -59,6 +58,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIBRATION)
-
-#endif // Vibration_h
-

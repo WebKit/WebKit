@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonCryptoUtilities_h
-#define CommonCryptoUtilities_h
+#pragma once
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -113,4 +112,3 @@ bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CommonCryptoUtilities_h

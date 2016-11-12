@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBackingStore_h
-#define IDBBackingStore_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -102,4 +101,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBBackingStore_h

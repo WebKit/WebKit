@@ -24,13 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathPath_h
-#define XPathPath_h
+#pragma once
 
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
-
     namespace XPath {
 
         class Step;
@@ -78,7 +76,5 @@ namespace WebCore {
             std::unique_ptr<LocationPath> m_path;
         };
 
-    }
-}
-
-#endif // XPath_Path_H
+    } // namespace XPath
+} // namespace WebCore

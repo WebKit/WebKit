@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedSVGDocumentReference_h
-#define CachedSVGDocumentReference_h
+#pragma once
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
@@ -53,6 +52,4 @@ private:
     bool m_loadRequested;
 };
 
-};
-
-#endif // CachedSVGDocumentReference_h
+} // namespace WebCore

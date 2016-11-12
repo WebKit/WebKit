@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadInfo_h
-#define ResourceLoadInfo_h
+#pragma once
 
 #include "CachedResource.h"
 #include "URL.h"
@@ -76,7 +75,4 @@ struct ResourceLoadInfo {
     ResourceFlags getResourceFlags() const;
 };
 
-
 } // namespace WebCore
-
-#endif // ResourceLoadInfo_h

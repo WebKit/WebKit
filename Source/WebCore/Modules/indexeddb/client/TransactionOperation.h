@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TransactionOperation_h
-#define TransactionOperation_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -250,4 +249,3 @@ RefPtr<TransactionOperation> createTransactionOperation(
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // TransactionOperation_h

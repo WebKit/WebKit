@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef DatabaseContext_h
-#define DatabaseContext_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include <wtf/RefPtr.h>
@@ -83,5 +82,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DatabaseContext_h

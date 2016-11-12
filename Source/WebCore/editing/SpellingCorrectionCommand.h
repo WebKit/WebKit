@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpellingCorrectionCommand_h
-#define SpellingCorrectionCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 #include "Range.h"
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SpellingCorrectionCommand_h

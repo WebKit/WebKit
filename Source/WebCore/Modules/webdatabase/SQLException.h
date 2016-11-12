@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLException_h
-#define SQLException_h
+#pragma once
 
 #include "ExceptionBase.h"
 
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLException_h

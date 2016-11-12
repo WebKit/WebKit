@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ApplicationCache_h
-#define ApplicationCache_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -109,5 +108,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ApplicationCache_h

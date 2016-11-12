@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLStatement_h
-#define SQLStatement_h
+
+#pragma once
 
 #include "SQLCallbackWrapper.h"
 #include "SQLStatementCallback.h"
@@ -77,5 +77,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLStatement_h

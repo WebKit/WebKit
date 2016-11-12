@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionClearKey_h
-#define CDMSessionClearKey_h
+#pragma once
 
 #include "CDMSession.h"
 #include <wtf/HashMap.h>
@@ -54,8 +53,6 @@ protected:
     String m_sessionId;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // CDMSessionClearKey_h

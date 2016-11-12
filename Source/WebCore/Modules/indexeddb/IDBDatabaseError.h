@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseError_h
-#define IDBDatabaseError_h
+#pragma once
 
 #include "IDBDatabaseException.h"
 #include <wtf/RefCounted.h>
@@ -69,6 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBDatabaseError_h
+#endif // ENABLE(INDEXED_DATABASE)

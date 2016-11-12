@@ -29,8 +29,7 @@
  *
  */
 
-#ifndef PingLoader_h
-#define PingLoader_h
+#pragma once
 
 #include <wtf/RefPtr.h>
 
@@ -57,6 +56,4 @@ private:
     static void startPingLoad(Frame&, ResourceRequest&, ShouldFollowRedirects);
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DelayProcessor_h
-#define DelayProcessor_h
+#pragma once
 
 #include "AudioDSPKernelProcessor.h"
 #include "AudioParam.h"
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DelayProcessor_h

@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLTransactionCoordinator_h
-#define SQLTransactionCoordinator_h
+#pragma once
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -65,5 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLTransactionCoordinator_h

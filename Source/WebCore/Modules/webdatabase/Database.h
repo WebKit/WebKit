@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Database_h
-#define Database_h
+#pragma once
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
@@ -179,5 +178,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Database_h

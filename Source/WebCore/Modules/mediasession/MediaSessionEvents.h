@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionEvents_h
-#define MediaSessionEvents_h
+#pragma once
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -36,8 +35,6 @@ enum MediaEventType {
     TrackPrevious
 };
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif /* MediaSessionEvents_h */
+#endif // ENABLE(MEDIA_SESSION)

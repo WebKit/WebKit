@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StackAllocator_h
-#define StackAllocator_h
+#pragma once
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
@@ -274,5 +273,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SELECTOR_JIT)
-
-#endif // StackAllocator_h

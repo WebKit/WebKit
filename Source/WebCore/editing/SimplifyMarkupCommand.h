@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SimplifyMarkupCommand_h
-#define SimplifyMarkupCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -48,5 +47,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SimplifyMarkupCommand_h

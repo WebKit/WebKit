@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderedPosition_h
-#define RenderedPosition_h
+#pragma once
 
 #include "InlineBox.h"
 #include "TextAffinity.h"
@@ -109,6 +108,4 @@ inline RenderedPosition::RenderedPosition(RenderObject* renderer, InlineBox* box
 
 bool renderObjectContainsPosition(RenderObject*, const Position&);
 
-};
-
-#endif // RenderedPosition_h
+} // namespace WebCore

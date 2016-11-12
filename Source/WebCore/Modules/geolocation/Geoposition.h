@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Geoposition_h
-#define Geoposition_h
+#pragma once
 
 #include "Coordinates.h"
 #include "Event.h"
@@ -61,5 +60,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // Geoposition_h

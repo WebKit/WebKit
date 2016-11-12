@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLTransactionClient_h
-#define SQLTransactionClient_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -48,6 +47,4 @@ public:
     bool didExceedQuota(Database*);
 };
 
-}
-
-#endif // SQLTransactionClient_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyAES_h
-#define CryptoKeyAES_h
+#pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKey.h"
@@ -93,5 +92,3 @@ SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyAES, CryptoKeyClass::AES)
 SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(AesKeyAlgorithm, KeyAlgorithmClass::AES)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-
-#endif // CryptoKeyAES_h

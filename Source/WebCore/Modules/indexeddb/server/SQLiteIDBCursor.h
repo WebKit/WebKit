@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLiteIDBCursor_h
-#define SQLiteIDBCursor_h
+
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -116,9 +116,7 @@ private:
     bool m_backingStoreCursor { false };
 };
 
-
 } // namespace IDBServer
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // SQLiteIDBCursor_h

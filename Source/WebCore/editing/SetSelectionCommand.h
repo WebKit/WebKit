@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SetSelectionCommand_h
-#define SetSelectionCommand_h
+#pragma once
 
 #include "EditCommand.h"
 #include "FrameSelection.h"
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SetSelectionCommand_h

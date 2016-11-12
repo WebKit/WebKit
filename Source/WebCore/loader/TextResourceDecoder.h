@@ -20,8 +20,7 @@
 
 */
 
-#ifndef TextResourceDecoder_h
-#define TextResourceDecoder_h
+#pragma once
 
 #include "TextEncoding.h"
 #include <wtf/RefCounted.h>
@@ -100,6 +99,4 @@ private:
     std::unique_ptr<HTMLMetaCharsetParser> m_charsetParser;
 };
 
-}
-
-#endif
+} // namespace WebCore

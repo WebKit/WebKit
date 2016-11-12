@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PolicyCallback_h
-#define PolicyCallback_h
+#pragma once
 
 #include "FrameLoaderTypes.h"
 #include "NavigationAction.h"
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PolicyCallback_h

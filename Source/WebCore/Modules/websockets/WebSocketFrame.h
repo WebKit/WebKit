@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketFrame_h
-#define WebSocketFrame_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -77,5 +76,3 @@ struct WebSocketFrame {
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketFrame_h

@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathUtil_h
-#define XPathUtil_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -44,8 +43,6 @@ namespace WebCore {
         /* @return whether the given node is a valid context node */
         bool isValidContextNode(Node*);
 
-    }
+    } // namespace XPath
 
-}
-
-#endif // XPath_Util_H
+} // namespace WebCore

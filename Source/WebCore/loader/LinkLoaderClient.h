@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#ifndef LinkLoaderClient_h
-#define LinkLoaderClient_h
+
+#pragma once
 
 namespace WebCore {
 
@@ -44,6 +44,4 @@ public:
     // There is no notification for cancellation.
 };
 
-}
-
-#endif
+} // namespace WebCore

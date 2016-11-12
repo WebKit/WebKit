@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EditCommand_h
-#define EditCommand_h
+#pragma once
 
 #include "AXTextStateChangeIntent.h"
 #include "EditAction.h"
@@ -120,5 +119,3 @@ inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)
 }
 
 } // namespace WebCore
-
-#endif // EditCommand_h

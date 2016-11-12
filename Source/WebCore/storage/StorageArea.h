@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageArea_h
-#define StorageArea_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -63,5 +62,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // StorageArea_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AbstractDatabaseServer_h
-#define AbstractDatabaseServer_h
+#pragma once
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
@@ -79,5 +78,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // AbstractDatabaseServer_h

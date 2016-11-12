@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DatabaseError_h
-#define DatabaseError_h
+#pragma once
 
 namespace WebCore {
 
@@ -38,5 +37,3 @@ enum class DatabaseError {
 };
 
 } // namespace WebCore
-
-#endif // DatabaseError_h

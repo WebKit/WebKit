@@ -23,13 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathVariableReference_h
-#define XPathVariableReference_h
+#pragma once
 
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
-
     namespace XPath {
 
         // Variable references are not used with XPathEvaluator.
@@ -42,7 +40,5 @@ namespace WebCore {
             String m_name;
         };
 
-    }
-}
-
-#endif // XPath_VariableReference_H
+    } // namespace XPath
+} // namespace WebCore

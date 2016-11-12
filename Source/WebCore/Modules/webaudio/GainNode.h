@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GainNode_h
-#define GainNode_h
+#pragma once
 
 #include "AudioNode.h"
 #include "AudioParam.h"
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GainNode_h

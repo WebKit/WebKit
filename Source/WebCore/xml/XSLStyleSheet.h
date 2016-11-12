@@ -20,17 +20,14 @@
  *
  */
 
-#ifndef XSLStyleSheet_h
-#define XSLStyleSheet_h
+#pragma once
 
 #if ENABLE(XSLT)
 
 #include "ProcessingInstruction.h"
 #include "StyleSheet.h"
-
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
-
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 
@@ -128,5 +125,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XSLStyleSheet)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(XSLT)
-
-#endif // XSLStyleSheet_h

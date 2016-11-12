@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaSessionManagerClient_h
-#define WebMediaSessionManagerClient_h
+#pragma once
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
@@ -33,8 +32,6 @@
 #include <wtf/Ref.h>
 
 namespace WebCore {
-
-class MediaPlaybackTarget;
 
 class WebMediaSessionManagerClient {
 public:
@@ -48,5 +45,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-#endif // WebMediaSessionManagerClient_h

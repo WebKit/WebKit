@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FormSubmission_h
-#define FormSubmission_h
+#pragma once
 
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
@@ -128,6 +127,4 @@ private:
     String m_origin;
 };
 
-}
-
-#endif // FormSubmission_h
+} // namespace WebCore

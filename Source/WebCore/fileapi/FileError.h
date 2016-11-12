@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileError_h
-#define FileError_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -67,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FileError_h

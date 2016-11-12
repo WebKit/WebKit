@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UIRequestEvent_h
-#define UIRequestEvent_h
+#pragma once
 
 #include "EventTarget.h"
 #include "UIEvent.h"
@@ -60,5 +59,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDIE_UI)
-
-#endif // UIRequestEvent_h

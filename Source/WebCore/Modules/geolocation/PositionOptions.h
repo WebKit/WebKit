@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PositionOptions_h
-#define PositionOptions_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -78,5 +77,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // PositionOptions_h

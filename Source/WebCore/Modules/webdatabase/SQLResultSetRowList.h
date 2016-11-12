@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLResultSetRowList_h
-#define SQLResultSetRowList_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include "SQLValue.h"
@@ -53,6 +52,4 @@ private:
     Vector<SQLValue> m_result;
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackForwardController_h
-#define BackForwardController_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Forward.h>
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BackForwardController_h

@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FunctorInputCursor_h
-#define FunctorInputCursor_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -98,5 +97,3 @@ inline NondeterministicInputBase* FunctorInputCursor::uncheckedLoadInput(InputQu
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // FunctorInputCursor_h

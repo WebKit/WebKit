@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBGetResult_h
-#define IDBGetResult_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -153,4 +152,3 @@ bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBGetResult_h

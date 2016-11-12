@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaRequest_h
-#define UserMediaRequest_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -44,9 +43,6 @@
 
 namespace WebCore {
 
-class Dictionary;
-class Document;
-class Frame;
 class MediaConstraints;
 class MediaStreamPrivate;
 class UserMediaController;
@@ -104,5 +100,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // UserMediaRequest_h

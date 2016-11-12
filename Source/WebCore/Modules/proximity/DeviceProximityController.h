@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceProximityController_h
-#define DeviceProximityController_h
+#pragma once
 
 #if ENABLE(PROXIMITY_EVENTS)
 
@@ -53,4 +52,3 @@ public:
 } // namespace WebCore
 
 #endif // PROXIMITY_EVENTS
-#endif // DeviceProximityController_h

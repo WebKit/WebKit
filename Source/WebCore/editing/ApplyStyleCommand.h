@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ApplyStyleCommand_h
-#define ApplyStyleCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 #include "HTMLElement.h"
@@ -138,5 +137,3 @@ bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
 RefPtr<HTMLElement> createStyleSpanElement(Document&);
 
 } // namespace WebCore
-
-#endif

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketHandshake_h
-#define WebSocketHandshake_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
@@ -119,5 +118,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketHandshake_h

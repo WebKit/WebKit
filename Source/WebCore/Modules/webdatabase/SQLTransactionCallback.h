@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLTransactionCallback_h
-#define SQLTransactionCallback_h
+#pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -41,6 +40,4 @@ public:
     virtual bool handleEvent(SQLTransaction*) = 0;
 };
 
-}
-
-#endif // SQLTransactionCallback_h
+} // namespace WebCore

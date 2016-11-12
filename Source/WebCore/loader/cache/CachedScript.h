@@ -23,8 +23,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedScript_h
-#define CachedScript_h
+#pragma once
 
 #include "CachedResource.h"
 
@@ -72,5 +71,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedScript, CachedResource::Script)
-
-#endif // CachedScript_h

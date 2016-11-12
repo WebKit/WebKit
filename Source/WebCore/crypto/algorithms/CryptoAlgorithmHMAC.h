@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmHMAC_h
-#define CryptoAlgorithmHMAC_h
+#pragma once
 
 #include "CryptoAlgorithm.h"
 
@@ -62,9 +61,6 @@ private:
     void platformVerify(const CryptoAlgorithmHmacParamsDeprecated&, const CryptoKeyHMAC&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-
-
-#endif // CryptoAlgorithmHMAC_h

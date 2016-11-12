@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedResourceRequestInitiators_h
-#define CachedResourceRequestInitiators_h
+#pragma once
 
 #include "ThreadGlobalData.h"
 #include <wtf/text/AtomicString.h>
@@ -49,5 +48,3 @@ inline const CachedResourceRequestInitiators& cachedResourceRequestInitiators()
 }
 
 } // namespace WebCore
-
-#endif

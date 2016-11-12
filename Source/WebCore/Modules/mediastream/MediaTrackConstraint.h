@@ -24,18 +24,13 @@
  *
  */
 
-#ifndef MediaTrackConstraint_h
-#define MediaTrackConstraint_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "Dictionary.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
-
-namespace Deprecated {
-class ScriptValue;
-}
 
 namespace WebCore {
 
@@ -55,6 +50,4 @@ private:
 
 } // namespace WebCore
 
-#endif // MediaTrackConstraint_h
-
-#endif
+#endif // ENABLE(MEDIA_STREAM)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#pragma once
 
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadPriority.h"
@@ -33,7 +32,6 @@
 
 namespace WebCore {
 
-class BlobRegistry;
 class CachedResource;
 class Frame;
 class NetscapePlugInStreamLoader;
@@ -66,5 +64,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // LoaderStrategy_h

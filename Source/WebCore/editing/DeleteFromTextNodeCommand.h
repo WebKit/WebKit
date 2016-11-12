@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DeleteFromTextNodeCommand_h
-#define DeleteFromTextNodeCommand_h
+#pragma once
 
 #include "EditCommand.h"
 
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DeleteFromTextNodeCommand_h

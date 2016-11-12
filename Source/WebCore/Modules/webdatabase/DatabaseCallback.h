@@ -28,15 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseCallback_h
-#define DatabaseCallback_h
+#pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class Database;
-class DatabaseSync;
 
 class DatabaseCallback : public ThreadSafeRefCounted<DatabaseCallback> {
 public:
@@ -44,6 +42,4 @@ public:
     virtual bool handleEvent(Database*) = 0;
 };
 
-}
-
-#endif // DatabaseCallback_h
+} // namespace WebCore

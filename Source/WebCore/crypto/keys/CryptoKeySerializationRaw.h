@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeySerializationRaw_h
-#define CryptoKeySerializationRaw_h
+#pragma once
 
 #include "CryptoKeySerialization.h"
 #include <wtf/Vector.h>
@@ -64,4 +63,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeySerializationRaw_h

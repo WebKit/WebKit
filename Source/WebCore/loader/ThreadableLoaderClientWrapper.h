@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableLoaderClientWrapper_h
-#define ThreadableLoaderClientWrapper_h
+#pragma once
 
 #include "ThreadableLoaderClient.h"
 #include <wtf/Noncopyable.h>
@@ -102,5 +101,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // ThreadableLoaderClientWrapper_h

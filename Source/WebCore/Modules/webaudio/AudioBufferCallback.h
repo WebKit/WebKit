@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioBufferCallback_h
-#define AudioBufferCallback_h
+#pragma once
 
 #if ENABLE(WEB_AUDIO)
 
@@ -39,8 +38,6 @@ public:
     virtual bool handleEvent(AudioBuffer*) = 0;
 };
 
-} // namespace
+} // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)
-
-#endif // AudioBufferCallback_h

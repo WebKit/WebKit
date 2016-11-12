@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SinkDocument_h
-#define SinkDocument_h
+#pragma once
 
 #include "HTMLDocument.h"
 
@@ -43,7 +42,4 @@ private:
     virtual Ref<DocumentParser> createParser();
 };
 
-
 }; // namespace WebCore
-
-#endif // SinkDocument_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextAlternativeWithRange_h
-#define TextAlternativeWithRange_h
+#pragma once
 
 #include "AlternativeTextClient.h"
 #include <wtf/RetainPtr.h>
@@ -49,5 +48,3 @@ struct TextAlternativeWithRange { };
 #endif
 
 } // namespace WebCore
-
-#endif // TextAlternativeWithRange_h

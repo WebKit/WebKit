@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AsyncFileStream_h
-#define AsyncFileStream_h
+#pragma once
 
 #include <functional>
 #include <wtf/Forward.h>
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AsyncFileStream_h

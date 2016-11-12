@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextAffinity_h
-#define TextAffinity_h
+#pragma once
 
 namespace WebCore {
 
 enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
 } // namespace WebCore
-
-#endif // TextAffinity_h

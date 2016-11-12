@@ -216,6 +216,6 @@ inline int compareBinaryKeyData(const ThreadSafeDataBuffer& a, const ThreadSafeD
     return compareBinaryKeyData(*aData, *bData);
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

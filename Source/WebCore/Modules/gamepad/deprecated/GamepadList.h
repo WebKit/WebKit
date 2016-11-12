@@ -23,8 +23,7 @@
  * DAMAGE.
  */
 
-#ifndef GamepadList_h
-#define GamepadList_h
+#pragma once
 
 #if ENABLE(GAMEPAD_DEPRECATED)
 
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD_DEPRECATED)
-
-#endif // GamepadList_h

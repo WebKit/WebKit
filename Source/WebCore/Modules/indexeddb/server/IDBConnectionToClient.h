@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBConnectionToClient_h
-#define IDBConnectionToClient_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -91,4 +90,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBConnectionToClient_h

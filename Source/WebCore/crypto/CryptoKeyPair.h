@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyPair_h
-#define CryptoKeyPair_h
+#pragma once
 
 #include "CryptoKey.h"
 #include <wtf/RefCounted.h>
@@ -55,4 +54,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyPair_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EditingBoundary_h
-#define EditingBoundary_h
+#pragma once
 
 namespace WebCore {
 
@@ -39,6 +38,4 @@ enum EditableType {
     HasEditableAXRole
 };
 
-}
-
-#endif // EditingBoundary_h
+} // namespace WebCore

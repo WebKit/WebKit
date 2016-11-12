@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamEvent_h
-#define MediaStreamEvent_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MediaStreamEvent_h

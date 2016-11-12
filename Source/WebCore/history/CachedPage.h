@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachedPage_h
-#define CachedPage_h
+#pragma once
 
 #include "CachedFrame.h"
 
@@ -69,6 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CachedPage_h
-

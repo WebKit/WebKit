@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ApplicationCacheGroup_h
-#define ApplicationCacheGroup_h
+#pragma once
 
 #include "DOMApplicationCache.h"
 #include "URL.h"
@@ -200,5 +199,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ApplicationCacheGroup_h

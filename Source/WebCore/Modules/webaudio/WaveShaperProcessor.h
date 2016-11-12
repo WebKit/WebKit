@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WaveShaperProcessor_h
-#define WaveShaperProcessor_h
+#pragma once
 
 #include "AudioDSPKernel.h"
 #include "AudioDSPKernelProcessor.h"
@@ -70,5 +69,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WaveShaperProcessor_h

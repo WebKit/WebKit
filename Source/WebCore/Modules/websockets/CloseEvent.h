@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CloseEvent_h
-#define CloseEvent_h
+#pragma once
 
 #include "Event.h"
 #include "EventNames.h"
@@ -84,5 +83,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CloseEvent_h

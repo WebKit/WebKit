@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaController_h
-#define UserMediaController_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -77,5 +76,3 @@ inline void UserMediaController::cancelMediaDevicesEnumerationRequest(MediaDevic
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // UserMediaController_h

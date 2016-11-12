@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RTCIceServer_h
-#define RTCIceServer_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -61,5 +60,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCIceServer_h

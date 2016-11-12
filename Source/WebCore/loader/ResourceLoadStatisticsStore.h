@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadStatisticsStore_h
-#define ResourceLoadStatisticsStore_h
+#pragma once
 
 #include "ResourceLoadStatistics.h"
 
@@ -73,5 +72,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif /* ResourceLoadStatisticsStore_h */

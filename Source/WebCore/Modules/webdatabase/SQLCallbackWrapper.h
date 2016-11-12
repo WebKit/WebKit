@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLCallbackWrapper_h
-#define SQLCallbackWrapper_h
+
+#pragma once
 
 #include "ScriptExecutionContext.h"
 #include <wtf/Lock.h>
@@ -99,5 +99,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SQLCallbackWrapper_h

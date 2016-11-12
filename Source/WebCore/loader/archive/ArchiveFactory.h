@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArchiveFactory_h
-#define ArchiveFactory_h
+#pragma once
 
 #include "Archive.h"
 
@@ -44,6 +43,4 @@ public:
     static void registerKnownArchiveMIMETypes();
 };
 
-}
-
-#endif // ArchiveFactory_h
+} // namespace WebCore

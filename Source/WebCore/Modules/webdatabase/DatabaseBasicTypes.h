@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DatabaseBasicTypes_h
-#define DatabaseBasicTypes_h
+#pragma once
 
 namespace WebCore {
 
@@ -32,5 +31,3 @@ typedef int DatabaseGuid;
 typedef int ExceptionCode;
 
 } // namespace WebCore
-
-#endif // DatabaseBasicTypes_h

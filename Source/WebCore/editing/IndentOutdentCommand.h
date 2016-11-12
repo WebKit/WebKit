@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IndentOutdentCommand_h
-#define IndentOutdentCommand_h
+#pragma once
 
 #include "ApplyBlockElementCommand.h"
 #include "EditAction.h"
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // IndentOutdentCommand_h

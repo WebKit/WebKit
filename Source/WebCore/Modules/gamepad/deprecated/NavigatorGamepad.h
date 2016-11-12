@@ -23,8 +23,7 @@
  * DAMAGE.
  */
 
-#ifndef NavigatorGamepad_h
-#define NavigatorGamepad_h
+#pragma once
 
 #if ENABLE(GAMEPAD_DEPRECATED)
 
@@ -55,5 +54,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD_DEPRECATED)
-
-#endif // NavigatorGamepad_h

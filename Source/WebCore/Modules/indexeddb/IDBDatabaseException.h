@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseException_h
-#define IDBDatabaseException_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -85,6 +84,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBDatabaseException_h
+#endif // ENABLE(INDEXED_DATABASE)

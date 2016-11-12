@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacyWebArchive_h
-#define LegacyWebArchive_h
+#pragma once
 
 #include "Archive.h"
 #include <functional>
@@ -69,6 +68,4 @@ private:
     bool extract(CFDictionaryRef);
 };
 
-}
-
-#endif // Archive
+} // namespace WebCore

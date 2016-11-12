@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCRtpSenderReceiverBase_h
-#define RTCRtpSenderReceiverBase_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -61,5 +60,3 @@ protected:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // RTCRtpSenderReceiverBase_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AlternativeTextUIController_h
-#define AlternativeTextUIController_h
+#pragma once
 
 #include "AlternativeTextClient.h"
 #include "FloatRect.h"
@@ -71,5 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif
-#endif // AlternativeTextUIController_h
+#endif // ENABLE(DICTATION_ALTERNATIVES)

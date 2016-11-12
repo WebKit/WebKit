@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileReaderLoaderClient_h
-#define FileReaderLoaderClient_h
+#pragma once
 
 namespace WebCore {
 
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // FileReaderLoaderClient_h

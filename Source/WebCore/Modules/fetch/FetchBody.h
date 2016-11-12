@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FetchBody_h
-#define FetchBody_h
+#pragma once
 
 #if ENABLE(FETCH_API)
 
@@ -122,5 +121,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
-
-#endif // FetchBody_h

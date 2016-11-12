@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeAnalyser_h
-#define RealtimeAnalyser_h
+#pragma once
 
 #include "AudioArray.h"
 #include "FFTFrame.h"
@@ -97,5 +96,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RealtimeAnalyser_h

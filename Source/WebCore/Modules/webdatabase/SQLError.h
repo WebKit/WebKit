@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLError_h
-#define SQLError_h
+#pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -66,6 +65,4 @@ private:
     String m_message;
 };
 
-}
-
-#endif // SQLError_h
+} // namespace WebCore

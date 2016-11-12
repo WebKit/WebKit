@@ -78,8 +78,6 @@
 #include "RenderStyle.h"
 #endif
 
-#define EDIT_DEBUG 0
-
 namespace WebCore {
 
 using namespace HTMLNames;

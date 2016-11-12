@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef EditorInsertAction_h
-#define EditorInsertAction_h
+#pragma once
 
 namespace WebCore {
 
@@ -35,6 +34,4 @@ enum EditorInsertAction {
     EditorInsertActionDropped
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

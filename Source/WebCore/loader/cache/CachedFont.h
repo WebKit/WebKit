@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CachedFont_h
-#define CachedFont_h
+#pragma once
 
 #include "CachedResource.h"
 #include "CachedResourceClient.h"
@@ -84,5 +83,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedFont, CachedResource::FontResource)
-
-#endif // CachedFont_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CreateLinkCommand_h
-#define CreateLinkCommand_h
+#pragma once
 
 #include "CompositeEditCommand.h"
 
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CreateLinkCommand_h

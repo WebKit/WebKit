@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WrapContentsInDummySpanCommand_h
-#define WrapContentsInDummySpanCommand_h
+#pragma once
 
 #include "EditCommand.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WrapContentsInDummySpanCommand_h

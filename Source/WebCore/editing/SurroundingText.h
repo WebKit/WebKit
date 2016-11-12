@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SurroundingText_h
-#define SurroundingText_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -54,6 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SurroundingText_h
-

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IndexKey_h
-#define IndexKey_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -53,4 +52,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IndexKey_h

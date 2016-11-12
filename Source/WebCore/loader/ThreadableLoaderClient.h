@@ -28,9 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableLoaderClient_h
-#define ThreadableLoaderClient_h
-
+#pragma once
 
 namespace WebCore {
 
@@ -53,5 +51,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ThreadableLoaderClient_h

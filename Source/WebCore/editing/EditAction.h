@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EditAction_h
-#define EditAction_h
+#pragma once
 
 namespace WebCore {
     typedef enum {
@@ -87,6 +86,4 @@ namespace WebCore {
         EditActionIndent,
         EditActionOutdent
     } EditAction;    
-}
-
-#endif
+} // namespace WebCore

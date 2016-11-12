@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileException_h
-#define FileException_h
+#pragma once
 
 #include "ExceptionBase.h"
 
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FileException_h

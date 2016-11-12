@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoPlaybackQuality_h
-#define VideoPlaybackQuality_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -52,6 +51,4 @@ protected:
     double m_totalFrameDelay;
 };
 
-}
-
-#endif // VideoPlaybackQuality_h
+} // namespace WebCore

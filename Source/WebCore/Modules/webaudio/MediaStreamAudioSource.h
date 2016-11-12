@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamAudioSource_h
-#define MediaStreamAudioSource_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -74,5 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamAudioSource_h

@@ -20,8 +20,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef CachedImageClient_h
-#define CachedImageClient_h
+#pragma once
 
 #include "CachedResourceClient.h"
 
@@ -44,6 +43,4 @@ public:
     virtual void newImageAnimationFrameAvailable(CachedImage& image) { imageChanged(&image); }
 };
 
-}
-
-#endif
+} // namespace WebCore

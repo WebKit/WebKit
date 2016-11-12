@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserInputBridge_h
-#define UserInputBridge_h
+#pragma once
 
 #include "ScrollTypes.h"
 #include <wtf/Noncopyable.h>
@@ -101,5 +100,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // UserInputBridge_h

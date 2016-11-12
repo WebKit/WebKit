@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicyResponseHeaders_h
-#define ContentSecurityPolicyResponseHeaders_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicyResponseHeaders_h */

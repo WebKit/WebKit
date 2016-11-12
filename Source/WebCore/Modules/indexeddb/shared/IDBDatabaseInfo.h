@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseInfo_h
-#define IDBDatabaseInfo_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -110,4 +109,3 @@ bool IDBDatabaseInfo::decode(Decoder& decoder, IDBDatabaseInfo& info)
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBDatabaseInfo_h

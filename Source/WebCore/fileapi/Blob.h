@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_h
-#define Blob_h
+#pragma once
 
 #include "BlobPart.h"
 #include "ScriptWrappable.h"
@@ -113,6 +112,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // Blob_h
-

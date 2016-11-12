@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef XSLTUnicodeSort_h
-#define XSLTUnicodeSort_h
+
+#pragma once
 
 #if ENABLE(XSLT)
 
@@ -34,9 +34,8 @@
 
 namespace WebCore {
 
-    void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr* sorts, int nbsorts);
+void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr* sorts, int nbsorts);
 
-}
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(XSLT)

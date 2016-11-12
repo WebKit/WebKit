@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBResultData.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 namespace IDBServer {

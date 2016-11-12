@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SQLTransactionStateMachine_h
-#define SQLTransactionStateMachine_h
+#pragma once
 
 #include "SQLTransactionState.h"
 #include <wtf/ThreadSafeRefCounted.h>
@@ -109,5 +108,3 @@ void SQLTransactionStateMachine<T>::runStateMachine()
 }
 
 } // namespace WebCore
-
-#endif // SQLTransactionStateMachine_h

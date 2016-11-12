@@ -23,8 +23,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedResourceLoader_h
-#define CachedResourceLoader_h
+#pragma once
 
 #include "CachePolicy.h"
 #include "CachedResource.h"
@@ -220,5 +219,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

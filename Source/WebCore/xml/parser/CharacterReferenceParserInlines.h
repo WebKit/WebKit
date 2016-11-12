@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CharacterReferenceParserInlines_h
-#define CharacterReferenceParserInlines_h
+#pragma once
 
 #include <wtf/text/StringBuilder.h>
 
@@ -153,6 +152,4 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     return false;
 }
 
-}
-
-#endif // CharacterReferenceParserInlines_h
+} // namespace WebCore

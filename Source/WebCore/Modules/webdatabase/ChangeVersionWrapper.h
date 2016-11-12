@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ChangeVersionWrapper_h
-#define ChangeVersionWrapper_h
+
+#pragma once
 
 #include "SQLTransaction.h"
 #include <wtf/Forward.h>
@@ -53,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ChangeVersionWrapper_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WindowFeatures_h
-#define WindowFeatures_h
+#pragma once
 
 #include <functional>
 #include <wtf/Optional.h>
@@ -63,5 +62,3 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
 void processFeaturesString(StringView features, std::function<void(StringView type, StringView value)> callback);
 
 } // namespace WebCore
-
-#endif // WindowFeatures_h

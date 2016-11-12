@@ -29,21 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClient_h
-#define UserMediaClient_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
-
-#include <functional>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaDevicesEnumerationRequest;
-class MediaConstraints;
 class Page;
-class RealtimeMediaSource;
 class UserMediaRequest;
 
 class UserMediaClient {
@@ -65,5 +58,3 @@ WEBCORE_EXPORT void provideUserMediaTo(Page*, UserMediaClient*);
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // UserMediaClient_h

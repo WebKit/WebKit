@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectionRectGatherer_h
-#define SelectionRectGatherer_h
+#pragma once
+
+#if ENABLE(SERVICE_CONTROLS)
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(SERVICE_CONTROLS)
 
 namespace WebCore {
 
@@ -74,4 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_CONTROLS)
-#endif // SelectionRectGatherer_h
