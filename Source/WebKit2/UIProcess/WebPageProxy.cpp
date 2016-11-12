@@ -5287,6 +5287,11 @@ void WebPageProxy::processDidCrash()
         m_navigationClient->processDidCrash(*this);
     else
         m_loaderClient->processDidCrash(*this);
+
+    if (m_controlledByAutomation) {
+        if (auto* automationSession = process().processPool().automationSession())
+            automationSession->terminate();
+    }
 }
 
 #if PLATFORM(IOS)

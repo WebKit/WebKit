@@ -93,6 +93,7 @@ public:
     void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
     void disconnect(Inspector::FrontendChannel*) override;
 #endif
+    void terminate();
 
     // Inspector::AutomationBackendDispatcherHandler API
     void getBrowsingContexts(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>&) override;

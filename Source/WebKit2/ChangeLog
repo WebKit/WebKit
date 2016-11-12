@@ -1,3 +1,24 @@
+2016-11-12  Brian Burg  <bburg@apple.com>
+
+        Web Automation: terminate the automation session if the web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=164671
+        <rdar://problem/29028964>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::disconnect):
+        (WebKit::WebAutomationSession::terminate):
+        Factor out code that disconnects the remote, unpairs, and notifies the client.
+        Then, expose terminate() which can be called without a FrontendChannel.
+        Calling this causes the _WKAutomationDelegate to clear the local-side session in the
+        browser, and disconnecting from the remote will hang up the remote-side session.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidCrash):
+        Terminate the session.
+
 2016-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Use SecurityOriginData as keys in StorageManager

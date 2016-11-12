@@ -129,17 +129,25 @@ void WebAutomationSession::connect(Inspector::FrontendChannel* channel, bool isA
 void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 {
     ASSERT(channel == m_remoteChannel);
+    terminate();
+}
 
-    m_remoteChannel = nullptr;
-    m_frontendRouter->disconnectFrontend(channel);
+#endif // ENABLE(REMOTE_INSPECTOR)
+
+void WebAutomationSession::terminate()
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (Inspector::FrontendChannel* channel = m_remoteChannel) {
+        m_remoteChannel = nullptr;
+        m_frontendRouter->disconnectFrontend(channel);
+    }
 
     setIsPaired(false);
+#endif
 
     if (m_client)
         m_client->didDisconnectFromRemote(this);
 }
-
-#endif // ENABLE(REMOTE_INSPECTOR)
 
 WebPageProxy* WebAutomationSession::webPageProxyForHandle(const String& handle)
 {
