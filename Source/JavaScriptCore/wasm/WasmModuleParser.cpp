@@ -291,6 +291,13 @@ bool ModuleParser::parseTable()
 
 bool ModuleParser::parseMemory()
 {
+    uint8_t count;
+    if (!parseVarUInt1(count))
+        return false;
+
+    if (!count)
+        return true;
+
     uint8_t flags;
     if (!parseVarUInt1(flags))
         return false;
@@ -345,7 +352,7 @@ bool ModuleParser::parseExport()
             uint32_t functionSignatureIndex;
             if (!parseVarUInt32(functionSignatureIndex))
                 return false;
-            if (functionSignatureIndex > m_module->signatures.size())
+            if (functionSignatureIndex >= m_module->signatures.size())
                 return false;
             e.functionSignature = &m_module->signatures[functionSignatureIndex];
         } break;

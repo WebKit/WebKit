@@ -760,6 +760,8 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
     procedure.resetReachability();
     validate(procedure, "After parsing:\n");
 
+    if (verbose)
+        dataLog("Pre SSA: ", procedure);
     fixSSA(procedure);
     if (verbose)
         dataLog("Post SSA: ", procedure);

@@ -68,8 +68,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
     size_t byteSize = arrayBufferView ? arrayBufferView->length() : arrayBuffer->impl()->byteLength();
     const auto* base = arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());
 
-    Wasm::Plan plan(vm, base + byteOffset, byteSize);
+    Wasm::Plan plan(&vm, base + byteOffset, byteSize);
     // On failure, a new WebAssembly.CompileError is thrown.
+    plan.run();
     if (plan.failed())
         return JSValue::encode(throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage())));
 

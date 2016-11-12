@@ -60,14 +60,14 @@ const _maybeRegisterType = (builder, type) => {
     if (typeof(type) === "number") {
         // Type numbers already refer to the type section, no need to register them.
         if (builder._checked) {
-            assert.isNotUndef(typeSection, `Can't use type ${type} if a type section isn't present`);
-            assert.isNotUndef(typeSection.data[type], `Type ${type} doesn't exist in type section`);
+            assert.isNotUndef(typeSection, `Can not use type ${type} if a type section is not present`);
+            assert.isNotUndef(typeSection.data[type], `Type ${type} does not exist in type section`);
         }
         return type;
     }
     assert.hasObjectProperty(type, "params", `Expected type to be a number or object with 'params' and optionally 'ret' fields`);
     const [params, ret] = _normalizeFunctionSignature(type.params, type.ret);
-    assert.isNotUndef(typeSection, `Can't add type if a type section isn't present`);
+    assert.isNotUndef(typeSection, `Can not add type if a type section is not present`);
     // Try reusing an equivalent type from the type section.
     types:
     for (let i = 0; i !== typeSection.data.length; ++i) {
@@ -154,6 +154,156 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
     };
 };
 
+const _checkStackArgs = (op, param) => {
+    for (let expect of paramn) {
+        if (WASM.isValidValueType(expect)) {
+            // FIXME implement stack checks for arguments. https://bugs.webkit.org/show_bug.cgi?id=163421
+        } else {
+            // Handle our own meta-types.
+            switch (expect) {
+            case "addr": break; // FIXME implement addr. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "any": break; // FIXME implement any. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "bool": break; // FIXME implement bool. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "call": break; // FIXME implement call stack argument checks based on function signature. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "global": break; // FIXME implement global. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "local": break; // FIXME implement local. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "prev": break; // FIXME implement prev, checking for whetever the previous value was. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "size": break; // FIXME implement size. https://bugs.webkit.org/show_bug.cgi?id=163421
+            default: throw new Error(`Implementation problem: unhandled meta-type "${expect}" on "${op}"`);
+            }
+        }
+    }
+}
+
+const _checkStackReturn = (op, ret) => {
+    for (let expect of ret) {
+        if (WASM.isValidValueType(expect)) {
+            // FIXME implement stack checks for return. https://bugs.webkit.org/show_bug.cgi?id=163421
+        } else {
+            // Handle our own meta-types.
+            switch (expect) {
+            case "bool": break; // FIXME implement bool. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "call": break; // FIXME implement call stack return check based on function signature. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "control": break; // FIXME implement control. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "global": break; // FIXME implement global. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "local": break; // FIXME implement local. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "prev": break; // FIXME implement prev, checking for whetever the parameter type was. https://bugs.webkit.org/show_bug.cgi?id=163421
+            case "size": break; // FIXME implement size. https://bugs.webkit.org/show_bug.cgi?id=163421
+            default: throw new Error(`Implementation problem: unhandled meta-type "${expect}" on "${op}"`);
+                                            }
+        }
+    }
+};
+
+const _checkImms = (op, imms, expectedImms) => {
+    assert.eq(imms.length, expectedImms.length, `"${op}" expects ${expectedImms.length} immediates, got ${imms.length}`);
+    for (let idx = 0; idx !== expectedImms.length; ++idx) {
+        const got = imms[idx];
+        const expect = expectedImms[idx];
+        switch (expect.name) {
+        case "function_index":
+            assert.truthy(_isValidValue(got, "i32"), `Invalid value on ${op}: got "${got}", expected i32`);
+            // FIXME check function indices. https://bugs.webkit.org/show_bug.cgi?id=163421
+            break;
+        case "local_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "global_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "type_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "value":
+            assert.truthy(_isValidValue(got, ret[0]), `Invalid value on ${op}: got "${got}", expected ${ret[0]}`);
+            break;
+        case "flags": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "offset": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+            // Control:
+        case "default_target": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "relative_depth": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "sig": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "target_count": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "target_table": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        default: throw new Error(`Implementation problem: unhandled immediate "${expect.name}" on "${op}"`);
+        }
+    }
+};
+
+const _createFunctionBuilder = (func, builder, previousBuilder) => {
+    let functionBuilder = {};
+    for (const op in WASM.description.opcode) {
+        const name = _toJavaScriptName(op);
+        const value = WASM.description.opcode[op].value;
+        const ret = WASM.description.opcode[op]["return"];
+        const param = WASM.description.opcode[op].parameter;
+        const imm = WASM.description.opcode[op].immediate;
+
+        const checkStackArgs = builder._checked ? _checkStackArgs : () => {};
+        const checkStackReturn = builder._checked ? _checkStackReturn : () => {};
+        const checkImms = builder._checked ? _checkImms : () => {};
+
+        functionBuilder[name] = (...args) => {
+            let nextBuilder;
+            switch (name) {
+            default:
+                nextBuilder = functionBuilder;
+                break;
+                case "End":
+                nextBuilder = previousBuilder;
+                    break;
+            case "Block":
+                case "Loop":
+            case "If":
+                nextBuilder = _createFunctionBuilder(func, builder, functionBuilder);
+                break;
+            }
+
+            // Passing a function as the argument is a way to nest blocks lexically.
+            const continuation = args[args.length - 1];
+            const hasContinuation = typeof(continuation) === "function";
+            const imms = hasContinuation ? args.slice(0, -1) : args; // FIXME: allow passing in stack values, as-if code were a stack machine. Just check for a builder to this function, and drop. https://bugs.webkit.org/show_bug.cgi?id=163422
+            checkImms(op, imms, imm);
+            checkStackArgs(op, param);
+            checkStackReturn(op, ret);
+            const stackArgs = []; // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+            func.code.push({ name: op, value: value, arguments: stackArgs, immediates: imms });
+            if (hasContinuation)
+                return continuation(nextBuilder).End();
+            return nextBuilder;
+        };
+    }
+    return functionBuilder;
+}
+
+const _createFunction = (section, builder, previousBuilder) => {
+    return (...args) => {
+        const nameOffset = (typeof(args[0]) === "string") >>> 0;
+        const functionName = nameOffset ? args[0] : undefined;
+        let signature = args[0 + nameOffset];
+        const locals = args[1 + nameOffset] === undefined ? [] : args[1 + nameOffset];
+        for (const local of locals)
+            assert.truthy(WASM.isValidValueType(local), `Type of local: ${local} needs to be a valid value type`);
+
+        if (typeof(signature) === "undefined")
+            signature = { params: [] };
+        assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
+        const [params, ret] = _normalizeFunctionSignature(signature.params, signature.ret);
+        signature = { params: params, ret: ret };
+        const func = {
+            name: functionName,
+            type: _maybeRegisterType(builder, signature),
+            signature: signature,
+            locals: params.concat(locals), // Parameters are the first locals.
+            parameterCount: params.length,
+            code: []
+        };
+
+        const functionSection = builder._getSection("Function");
+        if (functionSection)
+            functionSection.data.push(func.type);
+
+        section.data.push(func);
+        builder._registerFunctionToIndexSpace(functionName);
+
+        return _createFunctionBuilder(func, builder, previousBuilder);
+    }
+};
+
 export default class Builder {
     constructor() {
         this.setChecked(true);
@@ -218,6 +368,7 @@ export default class Builder {
                     return importBuilder;
                 };
                 break;
+
             case "Export":
                 this[section] = function() {
                     const s = this._addSection(section);
@@ -231,6 +382,32 @@ export default class Builder {
                     return exportBuilder;
                 };
                 break;
+
+            case "Memory":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this,
+                        InitialMaxPages: (initial, max) => {
+                            s.data.push({ initial, max });
+                            return exportBuilder;
+                        }
+                    };
+                    return exportBuilder;
+                }
+                break;
+
+            case "Function":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this
+                        // FIXME: add ability to add this with whatever.
+                    }
+                    return exportBuilder;
+                }
+                break;
+
             case "Code":
                 this[section] = function() {
                     const s = this._addSection(section);
@@ -254,7 +431,7 @@ export default class Builder {
                                     case "number": {
                                         const index = builder._getFunctionFromIndexSpace(e.index);
                                         if (builder._checked)
-                                            assert.isNotUndef(index, `Export "${e.field}" doesn't correspond to a defined value in the function index space`);
+                                            assert.isNotUndef(index, `Export "${e.field}" does not correspond to a defined value in the function index space`);
                                     } break;
                                     case "undefined":
                                         throw new Error(`Unimplemented: Function().End() with undefined export index`); // FIXME
@@ -269,115 +446,13 @@ export default class Builder {
                             }
                             return builder;
                         },
-                        Function: (a0, a1) => {
-                            let signature = typeof(a0) === "string" ? a1 : a0;
-                            const functionName = typeof(a0) === "string" ? a0 : undefined;
-                            if (typeof(signature) === "undefined")
-                                signature = { params: [] };
-                            assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
-                            const [params, ret] = _normalizeFunctionSignature(signature.params, signature.ret);
-                            signature = { params: params, ret: ret };
-                            const func = {
-                                name: functionName,
-                                type: _maybeRegisterType(builder, signature),
-                                signature: signature,
-                                locals: params, // Parameters are the first locals.
-                                parameterCount: params.length,
-                                code: []
-                            };
-                            s.data.push(func);
-                            builder._registerFunctionToIndexSpace(functionName);
-                            let functionBuilder = {};
-                            for (const op in WASM.description.opcode) {
-                                const name = _toJavaScriptName(op);
-                                const value = WASM.description.opcode[op].value;
-                                const ret = WASM.description.opcode[op]["return"];
-                                const param = WASM.description.opcode[op].parameter;
-                                const imm = WASM.description.opcode[op].immediate;
-                                const checkStackArgs = builder._checked ? op => {
-                                    for (let expect of param) {
-                                        if (WASM.isValidValueType(expect)) {
-                                            // FIXME implement stack checks for arguments. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                        } else {
-                                            // Handle our own meta-types.
-                                            switch (expect) {
-                                            case "addr": break; // FIXME implement addr. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "any": break; // FIXME implement any. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "bool": break; // FIXME implement bool. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "call": break; // FIXME implement call stack argument checks based on function signature. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "global": break; // FIXME implement global. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "local": break; // FIXME implement local. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "prev": break; // FIXME implement prev, checking for whetever the previous value was. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "size": break; // FIXME implement size. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            default: throw new Error(`Implementation problem: unhandled meta-type "${expect}" on "${op}"`);
-                                            }
-                                        }
-                                    }
-                                } : () => {};
-                                const checkStackReturn = builder._checked ? op => {
-                                    for (let expect of ret) {
-                                        if (WASM.isValidValueType(expect)) {
-                                            // FIXME implement stack checks for return. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                        } else {
-                                            // Handle our own meta-types.
-                                            switch (expect) {
-                                            case "bool": break; // FIXME implement bool. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "call": break; // FIXME implement call stack return check based on function signature. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "control": break; // FIXME implement control. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "global": break; // FIXME implement global. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "local": break; // FIXME implement local. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "prev": break; // FIXME implement prev, checking for whetever the parameter type was. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            case "size": break; // FIXME implement size. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            default: throw new Error(`Implementation problem: unhandled meta-type "${expect}" on "${op}"`);
-                                            }
-                                        }
-                                    }
-                                } : () => {};
-                                const checkImms = builder._checked ? (op, imms) => {
-                                    assert.eq(imms.length, imm.length, `"${op}" expects ${imm.length} immediates, got ${imms.length}`);
-                                    for (let idx = 0; idx !== imm.length; ++idx) {
-                                        const got = imms[idx];
-                                        const expect = imm[idx];
-                                        switch (expect.name) {
-                                        case "function_index":
-                                            assert.truthy(_isValidValue(got, "i32"), `Invalid value on ${op}: got "${got}", expected i32`);
-                                            // FIXME check function indices. https://bugs.webkit.org/show_bug.cgi?id=163421
-                                            break;
-                                        case "local_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "global_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "type_index": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "value":
-                                            assert.truthy(_isValidValue(got, ret[0]), `Invalid value on ${op}: got "${got}", expected ${ret[0]}`);
-                                            break;
-                                        case "flags": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "offset": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        // Control:
-                                        case "default_target": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "relative_depth": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "sig": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "target_count": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        case "target_table": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-                                        default: throw new Error(`Implementation problem: unhandled immediate "${expect.name}" on "${op}"`);
-                                        }
-                                    }
-                                } : () => {};
-                                const nextBuilder = name === "End" ? codeBuilder : functionBuilder;
-                                functionBuilder[name] = (...args) => {
-                                    const imms = args; // FIXME: allow passing in stack values, as-if code were a stack machine. Just check for a builder to this function, and drop. https://bugs.webkit.org/show_bug.cgi?id=163422
-                                    checkImms(op, imms);
-                                    checkStackArgs(op);
-                                    checkStackReturn(op);
-                                    const stackArgs = []; // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
-                                    func.code.push({ name: op, value: value, arguments: stackArgs, immediates: imms });
-                                    return nextBuilder;
-                                };
-                            }
-                            return functionBuilder;
-                        }
+
                     };
+                    codeBuilder.Function = _createFunction(s, builder, codeBuilder);
                     return codeBuilder;
                 };
                 break;
+
             default:
                 this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
                 break;
@@ -420,7 +495,7 @@ export default class Builder {
     }
     _getSection(nameOrNumber) {
         switch (typeof(nameOrNumber)) {
-        default: throw new Error(`Implementation problem: can't get section "${nameOrNumber}"`);
+        default: throw new Error(`Implementation problem: can not get section "${nameOrNumber}"`);
         case "string":
             for (const s of this._sections)
                 if (s.name === nameOrNumber)

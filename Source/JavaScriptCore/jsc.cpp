@@ -54,9 +54,11 @@
 #include "JSString.h"
 #include "JSTypedArrays.h"
 #include "LLIntData.h"
+#include "LLIntThunks.h"
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
+#include "ProtoCallFrame.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
 #include "StackVisitor.h"
@@ -65,6 +67,7 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "WasmPlan.h"
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
@@ -905,6 +908,10 @@ static EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState*);
 #endif
 
+#if ENABLE(WEBASSEMBLY)
+static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState*);
+#endif
+
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState*);
@@ -1150,6 +1157,10 @@ protected:
 #if ENABLE(SAMPLING_PROFILER)
         addFunction(vm, "startSamplingProfiler", functionStartSamplingProfiler, 0);
         addFunction(vm, "samplingProfilerStackTraces", functionSamplingProfilerStackTraces, 0);
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+        addFunction(vm, "testWasmModuleFunctions", functionTestWasmModuleFunctions, 0);
 #endif
 
         if (!arguments.isEmpty()) {
@@ -2351,6 +2362,104 @@ EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec
     return result;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
+
+#if ENABLE(WEBASSEMBLY)
+
+static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
+{
+    JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
+    JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
+
+    const String& typeString = type->value(exec);
+    if (typeString == "i64") {
+        RELEASE_ASSERT(value.isString());
+        int64_t result;
+        RELEASE_ASSERT(sscanf(bitwise_cast<const char*>(jsCast<JSString*>(value)->value(exec).characters8()), "%lld", &result) != EOF);
+        return JSValue::decode(result);
+    }
+    RELEASE_ASSERT(value.isNumber());
+
+    if (typeString == "i32") {
+        RELEASE_ASSERT(value.isInt32());
+        return JSValue::decode(value.asInt32());
+    }
+
+    if (typeString == "f32")
+        return JSValue::decode(bitwise_cast<uint32_t>(value.toFloat(exec)));
+
+    RELEASE_ASSERT(typeString == "f64");
+    return value;
+}
+
+static JSValue callWasmFunction(VM* vm, const B3::Compilation& code, Vector<JSValue>& boxedArgs)
+{
+    JSValue firstArgument;
+    int argCount = 1;
+    JSValue* remainingArgs = nullptr;
+    if (boxedArgs.size()) {
+        remainingArgs = boxedArgs.data();
+        firstArgument = *remainingArgs;
+        remainingArgs++;
+        argCount = boxedArgs.size();
+    }
+
+    ProtoCallFrame protoCallFrame;
+    protoCallFrame.init(nullptr, nullptr, firstArgument, argCount, remainingArgs);
+
+    return JSValue::decode(vmEntryToWasm(code.code().executableAddress(), vm, &protoCallFrame));
+}
+
+// testWasmModule(JSArrayBufferView source, number functionCount, ...[[WasmValue, [WasmValue]]]) where the ith copy of [[result, [args]]] is a list
+// of arguments to be passed to the ith wasm function as well as the expected result. WasmValue is an object with "type" and "value" properties.
+static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!Options::useWebAssembly())
+        return throwVMTypeError(exec, scope, ASCIILiteral("testWasmModule should only be called if the useWebAssembly option is set"));
+
+    JSArrayBufferView* source = jsCast<JSArrayBufferView*>(exec->argument(0));
+    uint32_t functionCount = exec->argument(1).toUInt32(exec);
+
+    if (exec->argumentCount() != functionCount + 2)
+        CRASH();
+
+    Wasm::Plan plan(&vm, static_cast<uint8_t*>(source->vector()), source->length());
+    plan.run();
+    if (plan.failed())
+        CRASH();
+
+    if (plan.compiledFunctionCount() != functionCount)
+        CRASH();
+
+    for (uint32_t i = 0; i < functionCount; ++i) {
+        if (!plan.compiledFunction(i))
+            dataLogLn("failed to compile function at index", i);
+
+        JSArray* testCases = jsCast<JSArray*>(exec->argument(i + 2));
+        for (unsigned testIndex = 0; testIndex < testCases->length(); ++testIndex) {
+            JSArray* test = jsCast<JSArray*>(testCases->getIndexQuickly(testIndex));
+            JSObject* result = jsCast<JSObject*>(test->getIndexQuickly(0));
+            JSArray* arguments = jsCast<JSArray*>(test->getIndexQuickly(1));
+
+            Vector<JSValue> boxedArgs;
+            for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
+                boxedArgs.append(box(exec, vm, arguments->getIndexQuickly(argIndex)));
+
+            JSValue callResult = callWasmFunction(&vm, *plan.compiledFunction(i)->jsEntryPoint, boxedArgs);
+            JSValue expected = box(exec, vm, result);
+            if (callResult != expected) {
+                WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(" (callResult == ", RawPointer(bitwise_cast<void*>(callResult)), ", expected == ", RawPointer(bitwise_cast<void*>(expected)), ")").data());
+                CRASH();
+            }
+        }
+    }
+
+    return encodedJSUndefined();
+}
+
+#endif // ENABLE(WEBASSEBLY)
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to

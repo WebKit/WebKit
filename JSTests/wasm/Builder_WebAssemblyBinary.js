@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as assert from 'assert.js';
 import LowLevelBinary from 'LowLevelBinary.js';
 import * as WASM from 'WASM.js';
 
@@ -30,11 +31,11 @@ const put = (bin, type, value) => bin[type](value);
 
 const emitters = {
     Type: (section, bin) => {
-        put(bin, "varuint", section.data.length);
+        put(bin, "varuint32", section.data.length);
         for (const entry of section.data) {
             const funcTypeConstructor = -0x20; // FIXME Move this to wasm.json.
             put(bin, "varint7", funcTypeConstructor);
-            put(bin, "varuint", entry.params.length);
+            put(bin, "varuint32", entry.params.length);
             for (const param of entry.params)
                 put(bin, "uint8", WASM.valueTypeValue[param]);
             if (entry.ret === "void")
@@ -46,42 +47,81 @@ const emitters = {
         }
     },
     Import: (section, bin) => {
-        put(bin, "varuint", section.data.length);
+        put(bin, "varuint32", section.data.length);
         for (const entry of section.data) {
             put(bin, "string", entry.module);
             put(bin, "string", entry.field);
             put(bin, "uint8", WASM.externalKindValue[entry.kind]);
             switch (entry.kind) {
             default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
-            case "Function": put(bin, "varuint", entry.type); break;
+            case "Function": put(bin, "varuint32", entry.type); break;
             case "Table": throw new Error(`Not yet implemented`);
             case "Memory": throw new Error(`Not yet implemented`);
             case "Global": throw new Error(`Not yet implemented`);
             }
         }
     },
-    Function: (section, bin) => { throw new Error(`Not yet implemented`); },
+
+    Function: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const signature of section.data)
+            put(bin, "varuint32", signature);
+    },
+
     Table: (section, bin) => { throw new Error(`Not yet implemented`); },
-    Memory: (section, bin) => { throw new Error(`Not yet implemented`); },
+
+    Memory: (section, bin) => {
+        // Flags, currently can only be [0,1]
+        put(bin, "varuint1", section.data.length);
+        for (const memory of section.data) {
+            put(bin, "varuint32", memory.max ? 1 : 0);
+            put(bin, "varuint32", memory.initial);
+            if (memory.max)
+                put(bin, "varuint32", memory.max);
+        }
+    },
+
     Global: (section, bin) => { throw new Error(`Not yet implemented`); },
     Export: (section, bin) => { throw new Error(`Not yet implemented`); },
     Start: (section, bin) => { throw new Error(`Not yet implemented`); },
     Element: (section, bin) => { throw new Error(`Not yet implemented`); },
+
     Code: (section, bin) => {
-        put(bin, "varuint", section.data.length);
+        put(bin, "varuint32", section.data.length);
         for (const func of section.data) {
-            let funcBin = bin.newPatchable("varuint");
-            const localCount = func.locals.length;
-            put(funcBin, "varuint", localCount);
-            if (localCount !== 0) throw new Error(`Unimplemented: locals`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+            let funcBin = bin.newPatchable("varuint32");
+            const localCount = func.locals.length - func.parameterCount;
+            put(funcBin, "varuint32", localCount);
+            for (let i = func.parameterCount; i < func.locals.length; ++i) {
+                put(funcBin, "varuint32", 1);
+                put(funcBin, "uint8", WASM.valueTypeValue[func.locals[i]]);
+            }
+
             for (const op of func.code) {
                 put(funcBin, "uint8", op.value);
-                if (op.arguments.length !== 0) throw new Error(`Unimplemented: arguments`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
-                if (op.immediates.length !== 0) throw new Error(`Unimplemented: immediates`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+                if (op.arguments.length !== 0)
+                    throw new Error(`Unimplemented: arguments`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+
+                switch (op.name) {
+                default:
+                    for (let i = 0; i < op.immediates.length; ++i) {
+                        const type = WASM.description.opcode[op.name].immediate[i].type
+                        if (!funcBin[type])
+                            throw new TypeError(`Unknown type: ${type} in op: ${op.name}`);
+                        put(funcBin, type, op.immediates[i]);
+                    }
+                    break;
+                case "br_table":
+                    put(funcBin, "varuint32", op.immediates.length - 1);
+                    for (let imm of op.immediates)
+                        put(funcBin, "varuint32", imm);
+                    break;
+                }
             }
             funcBin.apply();
         }
     },
+
     Data: (section, bin) => { throw new Error(`Not yet implemented`); },
 };
 
@@ -91,7 +131,7 @@ export const Binary = (preamble, sections) => {
         put(wasmBin, p.type, preamble[p.name]);
     for (const section of sections) {
         put(wasmBin, WASM.sectionEncodingType, section.id);
-        let sectionBin = wasmBin.newPatchable("varuint");
+        let sectionBin = wasmBin.newPatchable("varuint32");
         const emitter = emitters[section.name];
         if (emitter)
             emitter(section, sectionBin);

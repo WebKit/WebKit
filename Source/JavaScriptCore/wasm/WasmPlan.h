@@ -38,9 +38,11 @@ class Memory;
 
 class Plan {
 public:
-    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>);
-    JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t);
+    JS_EXPORT_PRIVATE Plan(VM*, Vector<uint8_t>);
+    JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
+
+    JS_EXPORT_PRIVATE void run();
 
     bool WARN_UNUSED_RETURN failed() const { return m_failed; }
     const String& errorMessage() const
@@ -79,6 +81,9 @@ private:
     std::unique_ptr<ModuleInformation> m_moduleInformation;
     CompiledFunctions m_compiledFunctions;
 
+    VM* m_vm;
+    const uint8_t* m_source;
+    const size_t m_sourceLength;
     bool m_failed { true };
     String m_errorMessage;
 };

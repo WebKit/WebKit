@@ -57,7 +57,7 @@ public:
 private:
     static const bool verbose = false;
 
-    bool WARN_UNUSED_RETURN parseBlock();
+    bool WARN_UNUSED_RETURN parseBody();
     bool WARN_UNUSED_RETURN parseExpression(OpType);
     bool WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
     bool WARN_UNUSED_RETURN addReturn();
@@ -109,11 +109,11 @@ bool FunctionParser<Context>::parse()
             return false;
     }
 
-    return parseBlock();
+    return parseBody();
 }
 
 template<typename Context>
-bool FunctionParser<Context>::parseBlock()
+bool FunctionParser<Context>::parseBody()
 {
     while (true) {
         uint8_t op;

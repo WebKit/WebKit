@@ -23,16 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as WASM from 'WASM.js';
+
 const _initialAllocationSize = 1024;
 const _growAllocationSize = allocated => allocated * 2;
 
-export const varuintMin = 0;
+export const varuint32Min = 0;
 export const varint7Min = -0b1000000;
 export const varint7Max = 0b111111;
 export const varuint7Max = 0b1111111;
-export const varuintMax = ((((1 << 31) >>> 0) - 1) * 2) + 1;
-export const varintMin = -((1 << 31) >>> 0);
-export const varintMax = ((1 << 31) - 1) >>> 0;
+export const varuint32Max = ((((1 << 31) >>> 0) - 1) * 2) + 1;
+export const varint32Min = -((1 << 31) >>> 0);
+export const varint32Max = ((1 << 31) - 1) >>> 0;
 export const varBitsMax = 5;
 
 const _getterRangeCheck = (llb, at, size) => {
@@ -75,6 +77,8 @@ export default class LowLevelBinary {
 
     // Utilities.
     get() { return this._buf; }
+    trim() { this._buf = this._buf.slice(0, this._used); }
+
     hexdump() { return _hexdump(this._buf, this._used); }
     trim() { this._buf = this._buf.slice(0, this._used); }
     _maybeGrow(bytes) {
@@ -110,18 +114,18 @@ export default class LowLevelBinary {
         this._push8(v >>> 16);
         this._push8(v >>> 24);
     }
-    varuint(v) {
-        if (v < varuintMin || varuintMax < v)
-            throw new RangeError(`Invalid varuint ${v} range is [${varuintMin}, ${varuintMax}]`);
+    varuint32(v) {
+        if (v < varuint32Min || varuint32Max < v)
+            throw new RangeError(`Invalid varuint32 ${v} range is [${varuint32Min}, ${varuint32Max}]`);
         while (v >= 0x80) {
             this.uint8(0x80 | (v & 0x7F));
             v >>>= 7;
         }
         this.uint8(v);
     }
-    varint(v) {
-        if (v < varintMin || varintMax < v)
-            throw new RangeError(`Invalid varint ${v} range is [${varintMin}, ${varintMax}]`);
+    varint32(v) {
+        if (v < varint32Min || varint32Max < v)
+            throw new RangeError(`Invalid varint32 ${v} range is [${varint32Min}, ${varint32Max}]`);
         do {
             const b = v & 0x7F;
             v >>= 7;
@@ -135,20 +139,23 @@ export default class LowLevelBinary {
     varuint1(v) {
         if (v !== 0 && v !== 1)
             throw new RangeError(`Invalid varuint1 ${v} range is [0, 1]`);
-        this.varuint(v);
+        this.varuint32(v);
     }
     varint7(v) {
         if (v < varint7Min || varint7Max < v)
             throw new RangeError(`Invalid varint7 ${v} range is [${varint7Min}, ${varint7Max}]`);
-        this.varint(v);
+        this.varint32(v);
     }
     varuint7(v) {
-        if (v < varuintMin || varuint7Max < v)
-            throw new RangeError(`Invalid varuint7 ${v} range is [${varuintMin}, ${varuint7Max}]`);
-        this.varuint(v);
+        if (v < varuint32Min || varuint7Max < v)
+            throw new RangeError(`Invalid varuint7 ${v} range is [${varuint32Min}, ${varuint7Max}]`);
+        this.varuint32(v);
+    }
+    inline_signature_type(v) {
+        this.varint7(WASM.valueTypeValue[v]);
     }
     string(str) {
-        let patch = this.newPatchable("varuint");
+        let patch = this.newPatchable("varuint32");
         for (const char of str)
             patch.uint16(char.charCodeAt());
         patch.apply();
@@ -168,7 +175,7 @@ export default class LowLevelBinary {
         _getterRangeCheck(this, at, 4);
         return (this._buf[at] | (this._buf[at + 1] << 8) | (this._buf[at + 2] << 16) | (this._buf[at + 3] << 24)) >>> 0;
     }
-    getVaruint(at) {
+    getVaruint32(at) {
         let v = 0;
         let shift = 0;
         let byte = 0;
@@ -179,10 +186,10 @@ export default class LowLevelBinary {
             shift += 7;
         } while ((byte & 0x80) !== 0);
         if (shift - 7 > 32) throw new RangeError(`Shifting too much at ${at}`);
-        if ((shift == 35) && ((byte & 0xF0) != 0)) throw new Error(`Unexpected non-significant varuint bits in last byte 0x${byte.toString(16)}`);
+        if ((shift == 35) && ((byte & 0xF0) != 0)) throw new Error(`Unexpected non-significant varuint32 bits in last byte 0x${byte.toString(16)}`);
         return { value: v, next: at };
     }
-    getVarint(at) {
+    getVarint32(at) {
         let v = 0;
         let shift = 0;
         let byte = 0;
@@ -192,7 +199,7 @@ export default class LowLevelBinary {
             shift += 7;
         } while ((byte & 0x80) !== 0);
         if (shift - 7 > 32) throw new RangeError(`Shifting too much at ${at}`);
-        if ((shift == 35) && (((byte << 26) >> 30) != ((byte << 25) >> 31))) throw new Error(`Unexpected non-significant varint bits in last byte 0x${byte.toString(16)}`);
+        if ((shift == 35) && (((byte << 26) >> 30) != ((byte << 25) >> 31))) throw new Error(`Unexpected non-significant varint32 bits in last byte 0x${byte.toString(16)}`);
         if ((byte & 0x40) === 0x40) {
             const sext = shift < 32 ? 32 - shift : 0;
             v = (v << sext) >> sext;
@@ -200,12 +207,12 @@ export default class LowLevelBinary {
         return { value: v, next: at };
     }
     getVaruint7(at) {
-        const res = this.getVaruint(at);
+        const res = this.getVaruint32(at);
         if (res.value > varuint7Max) throw new Error(`Expected a varuint7, got value ${res.value}`);
         return res;
     }
     getString(at) {
-        const size = this.getVaruint(at);
+        const size = this.getVaruint32(at);
         let str = "";
         for (let i = size.next; i !== size.next + size.value; i += 2)
             str += String.fromCharCode(this.getUint16(i));

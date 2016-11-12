@@ -1,3 +1,68 @@
+2016-11-11  Keith Miller  <keith_miller@apple.com>
+
+        Move Wasm tests to JS
+        https://bugs.webkit.org/show_bug.cgi?id=164611
+
+        Reviewed by Geoffrey Garen.
+
+        This patch translates most of the tests from testWasm.cpp to the JS testing api. Most of the
+        ommited tests were earliest tests, which tested trivial things, like adding two
+        constants. Some tests are ommited for other reasons, however. These are:
+
+        1) Tests using I64 since the testing api does not yet know how to handle 64-bit numbers.  2)
+        Tests that would validate the memory of the module once wasm was done with it since that's
+        not really possible in JS.
+
+        In order to make such a translation easier this patch also adds some features to the JS
+        testing api:
+
+        1) Blocks can now be done lexically by adding a lambda as the last argument of the block
+        opcode. For example one can do:
+            ...
+            .Block("i32", b => b.I32Const(1) )
+
+        and the nested lambda will automatically have an end attached.
+
+        2) The JS testing api can now handle inline signature types.
+
+        3) Relocate some code to make it easier to follow and prevent 44 space indentation.
+
+        4) Rename varuint/varint to varuint32/varint32, this lets them be directly called from the
+        wasm.json without being remapped.
+
+        5) Add support for Memory and Function sections to the Builder.
+
+        6) Add support for local variables.
+
+        On the JSC side, we needed to expose a new function to validate the compiled wasm code
+        behaves the way we expect. At least until the JS Wasm API is finished. The new validation
+        function, testWasmModuleFunctions, takes an array buffer containing the wasm binary, the
+        number of functions in the blob and tests for each of those functions.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (box):
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * testWasm.cpp:
+        (checkPlan):
+        (runWasmTests):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseBlock): Deleted.
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseMemory):
+        (JSC::Wasm::ModuleParser::parseExport):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmPlan.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+
 2016-11-11  Saam Barati  <sbarati@apple.com>
 
         Unreviewed try to fix windows build after https://bugs.webkit.org/show_bug.cgi?id=164650

@@ -279,6 +279,7 @@ inline JSValue boxd(double value)
 
 static void checkPlan(Plan& plan, unsigned expectedNumberOfFunctions)
 {
+    plan.run();
     if (plan.failed()) {
         dataLogLn("Module failed to compile with error: ", plan.errorMessage());
         CRASH();
@@ -327,7 +328,7 @@ static void runWasmTests()
             0x0f, 0x14, 0x01, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -373,7 +374,7 @@ static void runWasmTests()
             0x10, 0x0d, 0x40, 0x09, 0x0f, 0x15, 0x01, 0x14, 0x01, 0x10, 0x0e, 0x40, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -411,7 +412,7 @@ static void runWasmTests()
             0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -444,7 +445,7 @@ static void runWasmTests()
             0x10, 0x00, 0x4d, 0x03, 0x01, 0x10, 0x01, 0x04, 0x10, 0x02, 0x06, 0x01, 0x0f, 0x0f, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -471,7 +472,7 @@ static void runWasmTests()
             0x4d, 0x03, 0x01, 0x10, 0x01, 0x04, 0x10, 0x02, 0x0f, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -509,7 +510,7 @@ static void runWasmTests()
             0x0f, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -539,7 +540,7 @@ static void runWasmTests()
             0x16, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 2);
 
         // Test this doesn't crash.
@@ -565,7 +566,7 @@ static void runWasmTests()
             0x16, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 2);
 
         // Test this doesn't crash.
@@ -596,7 +597,7 @@ static void runWasmTests()
             0x14, 0x00, 0x14, 0x00, 0x14, 0x00, 0x16, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 2);
 
         // Test this doesn't crash.
@@ -627,7 +628,7 @@ static void runWasmTests()
             0x5c, 0x16, 0x00, 0x5d, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -653,11 +654,8 @@ static void runWasmTests()
             0x0f, 0x88, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x00, 0x14, 0x01, 0x5b, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
-        if (plan.compiledFunctionCount() != 2 || !plan.compiledFunction(0) || !plan.compiledFunction(1)) {
-            dataLogLn("Module failed to compile correctly.");
-            CRASH();
-        }
+        Plan plan(vm, vector);
+        checkPlan(plan, 2);
 
         // Test this doesn't crash.
         CHECK_EQ(invoke<int>(*plan.compiledFunction(1)->jsEntryPoint, { box(0), box(0) }), 0);
@@ -684,7 +682,7 @@ static void runWasmTests()
             0x16, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 2);
 
         // Test this doesn't crash.
@@ -713,7 +711,7 @@ static void runWasmTests()
             0x14, 0x01, 0x14, 0x00, 0x34, 0x03, 0x00, 0x14, 0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -740,7 +738,7 @@ static void runWasmTests()
             0x01, 0x2a, 0x02, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -777,7 +775,7 @@ static void runWasmTests()
             0x0f, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -829,7 +827,7 @@ static void runWasmTests()
             0x2e, 0x00, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f, 0x0f, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -870,7 +868,7 @@ static void runWasmTests()
             0x01, 0x20, 0x00, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -898,7 +896,7 @@ static void runWasmTests()
             0x20, 0x00, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -925,7 +923,7 @@ static void runWasmTests()
             0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -953,7 +951,7 @@ static void runWasmTests()
             0x01, 0x2a, 0x02, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -990,7 +988,7 @@ static void runWasmTests()
             0x0f, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -1042,7 +1040,7 @@ static void runWasmTests()
             0x2e, 0x00, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f, 0x0f, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -1083,7 +1081,7 @@ static void runWasmTests()
             0x01, 0x20, 0x00, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
         ASSERT(plan.memory()->size());
 
@@ -1111,7 +1109,7 @@ static void runWasmTests()
             0x20, 0x00, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1138,7 +1136,7 @@ static void runWasmTests()
             0x03, 0x00, 0x06, 0x00, 0x04, 0x10, 0x01, 0x09, 0x0f, 0x10, 0x00, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1176,7 +1174,7 @@ static void runWasmTests()
             0x15, 0x00, 0x06, 0x00, 0x0f, 0x00, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1200,7 +1198,7 @@ static void runWasmTests()
             0x8b, 0x80, 0x80, 0x80, 0x00, 0x01, 0x85, 0x80, 0x80, 0x80, 0x00, 0x00, 0x10, 0x05, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1218,7 +1216,7 @@ static void runWasmTests()
             0x40, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1235,7 +1233,7 @@ static void runWasmTests()
             0x40, 0x10, 0x03, 0x40, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1252,7 +1250,7 @@ static void runWasmTests()
             0x10, 0x03, 0x40, 0x10, 0x03, 0x40, 0x09, 0x0f, 0x00, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1268,7 +1266,7 @@ static void runWasmTests()
             0x01, 0x88, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x00, 0x14, 0x01, 0x40, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1294,7 +1292,7 @@ static void runWasmTests()
             0x01, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1327,7 +1325,7 @@ static void runWasmTests()
             0x10, 0x01, 0x41, 0x15, 0x00, 0x06, 0x01, 0x0f, 0x0f, 0x14, 0x01, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1368,7 +1366,7 @@ static void runWasmTests()
             0x01, 0x40, 0x15, 0x04, 0x06, 0x00, 0x0f, 0x0f, 0x0f, 0x14, 0x02, 0x09, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.
@@ -1418,7 +1416,7 @@ static void runWasmTests()
             0x00, 0x0f, 0x00, 0x0f
         };
 
-        Plan plan(*vm, vector);
+        Plan plan(vm, vector);
         checkPlan(plan, 1);
 
         // Test this doesn't crash.

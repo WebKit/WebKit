@@ -41,17 +41,24 @@ namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
     
-Plan::Plan(VM& vm, Vector<uint8_t> source)
+Plan::Plan(VM* vm, Vector<uint8_t> source)
     : Plan(vm, source.data(), source.size())
 {
 }
 
-Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
+Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength)
+    : m_vm(vm)
+    , m_source(source)
+    , m_sourceLength(sourceLength)
+{
+}
+
+void Plan::run()
 {
     if (verbose)
         dataLogLn("Starting plan.");
     {
-        ModuleParser moduleParser(source, sourceLength);
+        ModuleParser moduleParser(m_source, m_sourceLength);
         if (!moduleParser.parse()) {
             if (verbose)
                 dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
@@ -75,17 +82,22 @@ Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
     for (const FunctionInformation& info : m_moduleInformation->functions) {
         if (verbose)
             dataLogLn("Processing function starting at: ", info.start, " and ending at: ", info.end);
-        const uint8_t* functionStart = source + info.start;
+        const uint8_t* functionStart = m_source + info.start;
         size_t functionLength = info.end - info.start;
-        ASSERT(functionLength <= sourceLength);
+        ASSERT(functionLength <= m_sourceLength);
 
         String error = validateFunction(functionStart, functionLength, info.signature, m_moduleInformation->functions);
         if (!error.isNull()) {
+            if (verbose) {
+                for (unsigned i = 0; i < functionLength; ++i)
+                    dataLog(RawPointer(reinterpret_cast<void*>(functionStart[i])), ", ");
+                dataLogLn();
+            }
             m_errorMessage = error;
             return;
         }
 
-        m_compiledFunctions.uncheckedAppend(parseAndCompile(vm, functionStart, functionLength, m_moduleInformation->memory.get(), info.signature, m_moduleInformation->functions));
+        m_compiledFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory.get(), info.signature, m_moduleInformation->functions));
     }
 
     // Patch the call sites for each function.
