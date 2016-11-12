@@ -1,3 +1,15 @@
+2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        SPI imports in AVKitSPI.h should be guarded by USE(APPLE_INTERNAL_SDK)
+        https://bugs.webkit.org/show_bug.cgi?id=164672
+
+        Reviewed by Dan Bernstein.
+
+        Fixes the OpenSource build when ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) is on.
+
+        * platform/spi/cocoa/AVKitSPI.h: Add USE(APPLE_INTERNAL_SDK) guards around AVKit function bar SPI headers.
+        Additionally, define AVFunctionBarPlaybackControlsProvider in the case where AVKit SPI is unavailable.
+
 2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         event.composedPath() does not include window

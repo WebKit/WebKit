@@ -151,8 +151,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#if PLATFORM(MAC)
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#if PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+#if USE(APPLE_INTERNAL_SDK)
 #import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
 #import <AVKit/AVFunctionBarScrubber.h>
 #else
@@ -169,11 +170,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL hasEnabledVideo;
 @end
 
+@interface AVFunctionBarPlaybackControlsProvider : NSResponder
+@property (strong, readonly, nullable) NSTouchBar *touchBar;
+@property (nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@end
+
 @interface AVFunctionBarScrubber : NSView
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
 NS_ASSUME_NONNULL_END
 
-#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#endif // PLATFORM(MAC)
+#endif
+
+#endif // PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
