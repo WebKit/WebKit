@@ -1,3 +1,18 @@
+2016-11-12  Dan Bernstein  <mitz@apple.com>
+
+        run-safari does not work for open source contributors
+        https://bugs.webkit.org/show_bug.cgi?id=164667
+        <rdar://problem/29229894>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/run-api-tests:
+        (archCommandLineArgumentsForRestrictedEnvironmentVariables): Moved from here…
+        * Scripts/webkitdirs.pm:
+        (archCommandLineArgumentsForRestrictedEnvironmentVariables): …to here
+        (runMacWebKitApp): Have arch(1) carry the DYLD_* variables we set in our environmet over
+          to the environment of the app being run.
+
 2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Removed unused INCLUDE_OPTIONS_FOR_DEBUGGING

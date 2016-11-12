@@ -388,17 +388,6 @@ sub prepareEnvironmentForRunningTestTool()
     setupMacWebKitEnvironment(productDir());
 }
 
-sub archCommandLineArgumentsForRestrictedEnvironmentVariables()
-{
-    my @arguments = ();
-    foreach my $key (keys(%ENV)) {
-        if ($key =~ /^DYLD_/) {
-            push @arguments, "-e", "$key=$ENV{$key}";
-        }
-    }
-    return @arguments;
-}
-
 sub testToolPaths()
 {
     if (!isAppleWinWebKit()) {

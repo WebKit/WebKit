@@ -59,6 +59,7 @@ BEGIN {
        &XcodeStaticAnalyzerOption
        &appDisplayNameFromBundle
        &appendToEnvironmentVariableList
+       &archCommandLineArgumentsForRestrictedEnvironmentVariables
        &baseProductDir
        &chdirWebKit
        &checkFrameworks
@@ -2437,6 +2438,17 @@ sub runIOSWebKitApp($)
     die "Not using an iOS SDK."
 }
 
+sub archCommandLineArgumentsForRestrictedEnvironmentVariables()
+{
+    my @arguments = ();
+    foreach my $key (keys(%ENV)) {
+        if ($key =~ /^DYLD_/) {
+            push @arguments, "-e", "$key=$ENV{$key}";
+        }
+    }
+    return @arguments;
+}
+
 sub runMacWebKitApp($;$)
 {
     my ($appPath, $useOpenCommand) = @_;
@@ -2450,7 +2462,7 @@ sub runMacWebKitApp($;$)
         return system("open", "-W", "-a", $appPath, "--args", argumentsForRunAndDebugMacWebKitApp());
     }
     if (architecture()) {
-        return system "arch", "-" . architecture(), $appPath, argumentsForRunAndDebugMacWebKitApp();
+        return system "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
     return system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
 }
