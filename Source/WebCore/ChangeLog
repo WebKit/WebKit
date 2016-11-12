@@ -1,3 +1,18 @@
+2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The main content heuristic should be robust when handling large media elements
+        https://bugs.webkit.org/show_bug.cgi?id=164676
+        <rdar://problem/29211503>
+
+        Reviewed by Eric Carlson.
+
+        Handles integer overflow gracefully when performing the main content check for very large media elements. If the
+        heuristic comes across such an element, it will now bail early and reject the video as main content. Also adds a
+        new API test: VideoControlsManager.VideoControlsManagerPageWithEnormousVideo.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementRectMostlyInMainFrame):
+
 2016-11-12  Chris Dumez  <cdumez@apple.com>
 
         Speed up setting attributes of input elements of type 'text'

@@ -1,3 +1,19 @@
+2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The main content heuristic should be robust when handling large media elements
+        https://bugs.webkit.org/show_bug.cgi?id=164676
+        <rdar://problem/29211503>
+
+        Reviewed by Eric Carlson.
+
+        Added a new test verifying that enormous video elements are handled gracefully when put through the main
+        content heuristic.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/enormous-video-with-sound.html: Added.
+
 2016-11-12  Dan Bernstein  <mitz@apple.com>
 
         run-safari does not work for open source contributors
