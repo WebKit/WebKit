@@ -107,7 +107,6 @@ use constant {
 };
 
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
-use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
 use constant SIMULATOR_DEVICE_STATE_BOOTED => "3";
 use constant SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT  => "For WebKit Development";
@@ -2120,8 +2119,6 @@ sub setPathForRunningWebKitApp
 sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded
 {
     return unless checkForArgumentAndRemoveFromARGV("--help");
-
-    my ($includeOptionsForDebugging) = @_;
 
     print STDERR <<EOF;
 Usage: @{[basename($0)]} [options] [args ...]
