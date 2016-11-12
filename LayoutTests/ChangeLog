@@ -1,3 +1,18 @@
+2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        event.composedPath() does not include window
+        https://bugs.webkit.org/show_bug.cgi?id=164609
+        <rdar://problem/29210383>
+
+        Reviewed by Antti Koivisto.
+
+        Added a W3C style testharness.js test for dispatching an inside a shadow tree connected to a document.
+
+        * fast/shadow-dom/event-path-with-window-expected.txt: Added.
+        * fast/shadow-dom/event-path-with-window.html: Added.
+        * fast/shadow-dom/resources/event-path-test-helpers.js:
+        (dispatchEventWithLog): Traverse from document to window. Also include the event object in the log.
+
 2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: DataView get methods should allow for missing offset, set methods should allow for missing value

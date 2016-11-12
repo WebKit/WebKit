@@ -7,7 +7,7 @@ function dispatchEventWithLog(shadow, target, event) {
     var attachedNodes = [];
     for (var nodeKey in shadow) {
         var startingNode = shadow[nodeKey];
-        for (var node = startingNode; node; node = node.parentNode) {
+        for (var node = startingNode; node; node = node == document ? window : node.parentNode) {
             if (attachedNodes.indexOf(node) >= 0)
                 continue;
             attachedNodes.push(node);
@@ -25,7 +25,7 @@ function dispatchEventWithLog(shadow, target, event) {
 
     target.dispatchEvent(event);
 
-    return {eventPath: eventPath, relatedTargets: relatedTargets, pathAtTargets: pathAtTargets};
+    return {event: event, eventPath: eventPath, relatedTargets: relatedTargets, pathAtTargets: pathAtTargets};
 }
 
 /*

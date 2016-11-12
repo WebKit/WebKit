@@ -21,6 +21,7 @@
 #include "config.h"
 #include "EventPath.h"
 
+#include "DOMWindow.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"
@@ -31,6 +32,23 @@
 #include "TouchEvent.h"
 
 namespace WebCore {
+
+class WindowEventContext final : public EventContext {
+public:
+    WindowEventContext(Node&, DOMWindow&, EventTarget*);
+    void handleLocalEvents(Event&) const final;
+};
+
+WindowEventContext::WindowEventContext(Node& node, DOMWindow& currentTarget, EventTarget* target)
+    : EventContext(&node, &currentTarget, target)
+{ }
+
+void WindowEventContext::handleLocalEvents(Event& event) const
+{
+    event.setTarget(m_target.get());
+    event.setCurrentTarget(m_currentTarget.get());
+    m_currentTarget->fireEventListeners(event);
+}
 
 static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)
 {
@@ -108,10 +126,18 @@ EventPath::EventPath(Node& originalTarget, Event& event)
                 break;
 
             ContainerNode* parent = node->parentNode();
-            if (!parent)
+            if (UNLIKELY(!parent)) {
+                // https://dom.spec.whatwg.org/#interface-document
+                if (is<Document>(*node) && event.type() != eventNames().loadEvent) {
+                    ASSERT(target);
+                    if (auto* window = downcast<Document>(*node).domWindow())
+                        m_path.append(std::make_unique<WindowEventContext>(*node, *window, target));
+                }
                 return;
+            }
 
-            if (ShadowRoot* shadowRootOfParent = parent->shadowRoot()) {
+            auto* shadowRootOfParent = parent->shadowRoot();
+            if (UNLIKELY(shadowRootOfParent)) {
                 if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
                     // node is assigned to a slot. Continue dispatching the event at this slot.
                     parent = assignedSlot;
@@ -144,7 +170,10 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
     TreeScope* previousTreeScope = nullptr;
     size_t originalEventPathSize = m_path.size();
     for (unsigned contextIndex = 0; contextIndex < originalEventPathSize; contextIndex++) {
-        auto& context = downcast<MouseOrFocusEventContext>(*m_path[contextIndex]);
+        auto& ambgiousContext = *m_path[contextIndex];
+        if (!is<MouseOrFocusEventContext>(ambgiousContext))
+            continue;
+        auto& context = downcast<MouseOrFocusEventContext>(ambgiousContext);
 
         Node& currentTarget = *context.node();
         TreeScope& currentTreeScope = currentTarget.treeScope();
@@ -187,8 +216,10 @@ void EventPath::retargetTouch(TouchEventContext::TouchListType touchListType, co
         if (UNLIKELY(previousTreeScope && &currentTreeScope != previousTreeScope))
             retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
 
-        Node* currentRelatedNode = retargeter.currentNode(currentTarget);
-        downcast<TouchEventContext>(*context).touchList(touchListType)->append(touch.cloneWithNewTarget(currentRelatedNode));
+        if (is<TouchEventContext>(*context)) {
+            Node* currentRelatedNode = retargeter.currentNode(currentTarget);
+            downcast<TouchEventContext>(*context).touchList(touchListType)->append(touch.cloneWithNewTarget(currentRelatedNode));
+        }
 
         previousTreeScope = &currentTreeScope;
     }
@@ -223,18 +254,25 @@ bool EventPath::hasEventListeners(const AtomicString& eventType) const
     return false;
 }
 
+// https://dom.spec.whatwg.org/#dom-event-composedpath
 Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
 {
     Vector<EventTarget*> path;
     const Node* targetNode = const_cast<EventTarget&>(target).toNode();
-    if (!targetNode)
-        return path;
+    if (!targetNode) {
+        const DOMWindow* domWindow = const_cast<EventTarget&>(target).toDOMWindow();
+        if (!domWindow)
+            return path;
+        targetNode = domWindow->document();
+        ASSERT(targetNode);
+    }
 
     for (auto& context : m_path) {
         if (Node* nodeInPath = context->currentTarget()->toNode()) {
             if (targetNode->isUnclosedNode(*nodeInPath))
                 path.append(context->currentTarget());
-        }
+        } else
+            path.append(context->currentTarget());
     }
 
     return path;

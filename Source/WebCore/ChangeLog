@@ -1,3 +1,37 @@
+2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        event.composedPath() does not include window
+        https://bugs.webkit.org/show_bug.cgi?id=164609
+        <rdar://problem/29210383>
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug by including WindowContext be a part of the regular EventPath. This also simplifies
+        dispatchEventInDOM which used to had a special logic for dispatching an event on the window.
+
+        Also fixed a bug in EventDispatcher::dispatchEvent that event.target would be nullptr when an event was
+        dispatched inside a disconnected shadow tree or prevented from propagating to the document tree.
+        Preserve the final target by simply saving event.target() prior to invoking the default event handler instead.
+
+        Test: fast/shadow-dom/event-path-with-window.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::WindowEventContext): Deleted. Moved to EventPath.cpp.
+        (WebCore::dispatchEventInDOM): Removed the code for WindowContext. The generic event dispatching logic
+        will do the same work now.
+        (WebCore::EventDispatcher::dispatchEvent): Restore the original target instead of using that of WindowContext.
+        * dom/EventPath.cpp:
+        (WebCore::WindowEventContext): Moved from EventDispatcher.cpp. Also made it a subclass of EventContext.
+        (WebCore::WindowEventContext::handleLocalEvents): Added.
+        (WebCore::EventPath::EventPath): When the parent's nullptr, check if the current node is Document. If it is,
+        follow https://dom.spec.whatwg.org/#interface-document where it says:
+        "A document’s get the parent algorithm, given an event, returns null if event’s type attribute value is 'load'
+         or document does not have a browsing context, and the document’s associated Window object otherwise."
+        (WebCore::EventPath::setRelatedTarget): Skip over WindowContext.
+        (WebCore::EventPath::retargetTouch): Ditto.
+        (WebCore::EventPath::computePathUnclosedToTarget): When the target is DOMWindow, use its document as the target.
+        Also, include any event target that is not a node in the event path.
+
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support all the correct blend modes
