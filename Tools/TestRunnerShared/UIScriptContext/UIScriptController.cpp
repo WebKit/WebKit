@@ -278,6 +278,10 @@ JSObjectRef UIScriptController::selectionRangeViewRects() const
     return nullptr;
 }
 
+void UIScriptController::removeAllDynamicDictionaries()
+{
+}
+
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 {
 }

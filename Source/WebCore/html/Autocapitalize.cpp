@@ -30,43 +30,43 @@
 
 namespace WebCore {
 
-WebAutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString& attributeValue)
+AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString& attributeValue)
 {
     // Omitted / missing values are the Default state.
     if (attributeValue.isEmpty())
-        return WebAutocapitalizeTypeDefault;
+        return AutocapitalizeTypeDefault;
 
     if (equalLettersIgnoringASCIICase(attributeValue, "on") || equalLettersIgnoringASCIICase(attributeValue, "sentences"))
-        return WebAutocapitalizeTypeSentences;
+        return AutocapitalizeTypeSentences;
     if (equalLettersIgnoringASCIICase(attributeValue, "off") || equalLettersIgnoringASCIICase(attributeValue, "none"))
-        return WebAutocapitalizeTypeNone;
+        return AutocapitalizeTypeNone;
     if (equalLettersIgnoringASCIICase(attributeValue, "words"))
-        return WebAutocapitalizeTypeWords;
+        return AutocapitalizeTypeWords;
     if (equalLettersIgnoringASCIICase(attributeValue, "characters"))
-        return WebAutocapitalizeTypeAllCharacters;
+        return AutocapitalizeTypeAllCharacters;
 
     // Unrecognized values fall back to "on".
-    return WebAutocapitalizeTypeSentences;
+    return AutocapitalizeTypeSentences;
 }
 
-const AtomicString& stringForAutocapitalizeType(WebAutocapitalizeType type)
+const AtomicString& stringForAutocapitalizeType(AutocapitalizeType type)
 {
     switch (type) {
-    case WebAutocapitalizeTypeDefault:
+    case AutocapitalizeTypeDefault:
         return nullAtom;
-    case WebAutocapitalizeTypeNone: {
+    case AutocapitalizeTypeNone: {
         static NeverDestroyed<const AtomicString> valueNone("none", AtomicString::ConstructFromLiteral);
         return valueNone;
     }
-    case WebAutocapitalizeTypeSentences: {
+    case AutocapitalizeTypeSentences: {
         static NeverDestroyed<const AtomicString> valueSentences("sentences", AtomicString::ConstructFromLiteral);
         return valueSentences;
     }
-    case WebAutocapitalizeTypeWords: {
+    case AutocapitalizeTypeWords: {
         static NeverDestroyed<const AtomicString> valueWords("words", AtomicString::ConstructFromLiteral);
         return valueWords;
     }
-    case WebAutocapitalizeTypeAllCharacters: {
+    case AutocapitalizeTypeAllCharacters: {
         static NeverDestroyed<const AtomicString> valueAllCharacters("characters", AtomicString::ConstructFromLiteral);
         return valueAllCharacters;
     }

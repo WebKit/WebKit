@@ -602,39 +602,24 @@ HTMLFormElement* HTMLFormControlElement::virtualForm() const
 
 // FIXME: We should look to share this code with class HTMLFormElement instead of duplicating the logic.
 
-bool HTMLFormControlElement::autocorrect() const
+bool HTMLFormControlElement::shouldAutocorrect() const
 {
     const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
     if (HTMLFormElement* form = this->form())
-        return form->autocorrect();
+        return form->shouldAutocorrect();
     return true;
 }
 
-void HTMLFormControlElement::setAutocorrect(bool autocorrect)
+AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 {
-    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomicString("on", AtomicString::ConstructFromLiteral) : AtomicString("off", AtomicString::ConstructFromLiteral));
-}
-
-WebAutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
-{
-    WebAutocapitalizeType type = autocapitalizeTypeForAttributeValue(attributeWithoutSynchronization(autocapitalizeAttr));
-    if (type == WebAutocapitalizeTypeDefault) {
+    AutocapitalizeType type = HTMLElement::autocapitalizeType();
+    if (type == AutocapitalizeTypeDefault) {
         if (HTMLFormElement* form = this->form())
             return form->autocapitalizeType();
     }
     return type;
-}
-
-const AtomicString& HTMLFormControlElement::autocapitalize() const
-{
-    return stringForAutocapitalizeType(autocapitalizeType());
-}
-
-void HTMLFormControlElement::setAutocapitalize(const AtomicString& value)
-{
-    setAttributeWithoutSynchronization(autocapitalizeAttr, value);
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKitLegacy/DOMHTMLElement.h>
 
-#include "AutocapitalizeTypes.h"
-#include <wtf/text/AtomicString.h>
+@interface DOMHTMLElement (DOMHTMLElementPrivate)
 
-namespace WebCore {
+@property BOOL autocorrect;
+@property (copy) NSString *autocapitalize;
 
-AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString&);
-const AtomicString& stringForAutocapitalizeType(AutocapitalizeType);
-
-} // namespace WebCore
+@end

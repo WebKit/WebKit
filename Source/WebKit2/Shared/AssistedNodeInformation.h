@@ -27,9 +27,9 @@
 #define AssistedNodeInformation_h
 
 #include "ArgumentCoders.h"
+#include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/WebAutocapitalize.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -102,7 +102,7 @@ struct AssistedNodeInformation {
     bool allowsUserScaling { false };
     bool allowsUserScalingIgnoringAlwaysScalable { false };
     bool insideFixedPosition { false };
-    WebAutocapitalizeType autocapitalizeType { WebAutocapitalizeTypeDefault };
+    AutocapitalizeType autocapitalizeType { AutocapitalizeTypeDefault };
     InputType elementType { InputType::None };
     String formAction;
     Vector<OptionItem> selectOptions;

@@ -22,6 +22,10 @@
 
 #pragma once
 
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#include "Autocapitalize.h"
+#endif
+
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -91,6 +95,16 @@ public:
     // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
     bool canBeActuallyDisabled() const;
     bool isActuallyDisabled() const;
+
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+    WEBCORE_EXPORT virtual AutocapitalizeType autocapitalizeType() const;
+    WEBCORE_EXPORT const AtomicString& autocapitalize() const;
+    WEBCORE_EXPORT void setAutocapitalize(const AtomicString& value);
+
+    bool autocorrect() const { return shouldAutocorrect(); }
+    WEBCORE_EXPORT virtual bool shouldAutocorrect() const;
+    WEBCORE_EXPORT void setAutocorrect(bool);
+#endif
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);

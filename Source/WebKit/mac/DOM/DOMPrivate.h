@@ -25,9 +25,9 @@
  */
 
 #import <WebKitLegacy/DOM.h>
+#import <WebKitLegacy/WebAutocapitalizeTypes.h>
 
 #if TARGET_OS_IPHONE
-#import <WebKitLegacy/WebAutocapitalize.h>
 #import <CoreText/CoreText.h>
 #endif
 

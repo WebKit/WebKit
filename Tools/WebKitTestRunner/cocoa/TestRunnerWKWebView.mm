@@ -46,6 +46,7 @@
 @interface TestRunnerWKWebView ()
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
 @property (nonatomic, copy) void (^showKeyboardCompletionHandler)(void);
+@property (nonatomic) BOOL isShowingKeyboard;
 @end
 
 @implementation TestRunnerWKWebView
@@ -123,12 +124,20 @@
 
 - (void)_keyboardDidShow:(NSNotification *)notification
 {
+    if (self.isShowingKeyboard)
+        return;
+
+    self.isShowingKeyboard = YES;
     if (self.didShowKeyboardCallback)
         self.didShowKeyboardCallback();
 }
 
 - (void)_keyboardDidHide:(NSNotification *)notification
 {
+    if (!self.isShowingKeyboard)
+        return;
+
+    self.isShowingKeyboard = NO;
     if (self.didHideKeyboardCallback)
         self.didHideKeyboardCallback();
 }

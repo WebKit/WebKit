@@ -325,32 +325,4 @@ DOMHTMLTextAreaElement *kit(HTMLTextAreaElement* value)
     unwrap(*self).setSelectionRange(start, end);
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-
-- (BOOL)autocorrect
-{
-    JSMainThreadNullState state;
-    return unwrap(*self).autocorrect();
-}
-
-- (void)setAutocorrect:(BOOL)newAutocorrect
-{
-    JSMainThreadNullState state;
-    unwrap(*self).setAutocorrect(newAutocorrect);
-}
-
-- (NSString *)autocapitalize
-{
-    JSMainThreadNullState state;
-    return unwrap(*self).autocapitalize();
-}
-
-- (void)setAutocapitalize:(NSString *)newAutocapitalize
-{
-    JSMainThreadNullState state;
-    unwrap(*self).setAutocapitalize(newAutocapitalize);
-}
-
-#endif
-
 @end

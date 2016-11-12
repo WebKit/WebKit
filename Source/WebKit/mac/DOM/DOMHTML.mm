@@ -241,12 +241,28 @@ using namespace WebCore;
 
 @end
 
+static WebAutocapitalizeType webAutocapitalizeType(AutocapitalizeType type)
+{
+    switch (type) {
+    case AutocapitalizeTypeDefault:
+        return WebAutocapitalizeTypeDefault;
+    case AutocapitalizeTypeNone:
+        return WebAutocapitalizeTypeNone;
+    case AutocapitalizeTypeWords:
+        return WebAutocapitalizeTypeWords;
+    case AutocapitalizeTypeSentences:
+        return WebAutocapitalizeTypeSentences;
+    case AutocapitalizeTypeAllCharacters:
+        return WebAutocapitalizeTypeAllCharacters;
+    }
+}
+
 @implementation DOMHTMLInputElement (AutocapitalizeAdditions)
 
 - (WebAutocapitalizeType)_autocapitalizeType
 {
     WebCore::HTMLInputElement* inputElement = core(self);
-    return static_cast<WebAutocapitalizeType>(inputElement->autocapitalizeType());
+    return webAutocapitalizeType(inputElement->autocapitalizeType());
 }
 
 @end
@@ -256,7 +272,7 @@ using namespace WebCore;
 - (WebAutocapitalizeType)_autocapitalizeType
 {
     WebCore::HTMLTextAreaElement* textareaElement = core(self);
-    return static_cast<WebAutocapitalizeType>(textareaElement->autocapitalizeType());
+    return webAutocapitalizeType(textareaElement->autocapitalizeType());
 }
 
 @end

@@ -58,7 +58,5 @@ interface HTMLTextAreaElement : HTMLElement {
 
     void setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
 
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
     attribute DOMString autocomplete;
 };

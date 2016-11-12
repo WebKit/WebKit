@@ -1059,6 +1059,37 @@ bool HTMLElement::isActuallyDisabled() const
     return canBeActuallyDisabled() && isDisabledFormControl();
 }
 
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+
+const AtomicString& HTMLElement::autocapitalize() const
+{
+    return stringForAutocapitalizeType(autocapitalizeType());
+}
+
+AutocapitalizeType HTMLElement::autocapitalizeType() const
+{
+    return autocapitalizeTypeForAttributeValue(attributeWithoutSynchronization(HTMLNames::autocapitalizeAttr));
+}
+
+void HTMLElement::setAutocapitalize(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(autocapitalizeAttr, value);
+}
+
+bool HTMLElement::shouldAutocorrect() const
+{
+    auto autocorrectValue = attributeWithoutSynchronization(HTMLNames::autocorrectAttr);
+    // Unrecognized values fall back to "on".
+    return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
+}
+
+void HTMLElement::setAutocorrect(bool autocorrect)
+{
+    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomicString("on", AtomicString::ConstructFromLiteral) : AtomicString("off", AtomicString::ConstructFromLiteral));
+}
+
+#endif
+
 } // namespace WebCore
 
 #ifndef NDEBUG

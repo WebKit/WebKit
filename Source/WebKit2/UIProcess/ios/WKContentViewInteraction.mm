@@ -2894,18 +2894,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 // end of UITextInput protocol implementation
 
-static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType webkitType)
+static UITextAutocapitalizationType toUITextAutocapitalize(AutocapitalizeType webkitType)
 {
     switch (webkitType) {
-    case WebAutocapitalizeTypeDefault:
+    case AutocapitalizeTypeDefault:
         return UITextAutocapitalizationTypeSentences;
-    case WebAutocapitalizeTypeNone:
+    case AutocapitalizeTypeNone:
         return UITextAutocapitalizationTypeNone;
-    case WebAutocapitalizeTypeWords:
+    case AutocapitalizeTypeWords:
         return UITextAutocapitalizationTypeWords;
-    case WebAutocapitalizeTypeSentences:
+    case AutocapitalizeTypeSentences:
         return UITextAutocapitalizationTypeSentences;
-    case WebAutocapitalizeTypeAllCharacters:
+    case AutocapitalizeTypeAllCharacters:
         return UITextAutocapitalizationTypeAllCharacters;
     }
 

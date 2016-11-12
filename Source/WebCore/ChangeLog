@@ -1,3 +1,63 @@
+2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] autocorrect and autocapitalize attributes do not work in contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=164538
+        <rdar://problem/8418711>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds autocorrect and autocapitalize getters and setters to HTMLElements. These check the `autocorrect` and
+        `autocapitalize` attributes and return whether or not the element supports autocorrect, and the
+        autocapitalization type, respectively. By default, autocorrection is enabled and autocapitalization is enabled
+        on the sentence level for elements. Also refactors/renames WebAutocapitalizeType so that in WebCore, we deal
+        solely with AutocapitalizeTypes and WebKit1 converts from AutocapitalizeType to WebAutocapitalizeType as needed
+        for UIKit.
+
+        Tests: fast/events/ios/contenteditable-autocapitalize.html
+               fast/events/ios/contenteditable-autocorrect.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/Autocapitalize.cpp:
+        (WebCore::autocapitalizeTypeForAttributeValue):
+        (WebCore::stringForAutocapitalizeType):
+        * html/Autocapitalize.h:
+        * html/AutocapitalizeTypes.h: Renamed from Source/WebCore/html/WebAutocapitalize.h.
+
+        Move WebAutocapitalizeType into AutocapitalizeTypes.h as simply AutocapitalizeType.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::autocapitalize):
+        (WebCore::HTMLElement::autocapitalizeType):
+        (WebCore::HTMLElement::setAutocapitalize):
+        (WebCore::HTMLElement::shouldAutocorrect):
+        (WebCore::HTMLElement::setAutocorrect):
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::autocorrect):
+        * html/HTMLElement.idl:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::shouldAutocorrect):
+        (WebCore::HTMLFormControlElement::autocapitalizeType):
+        (WebCore::HTMLFormControlElement::autocorrect): Deleted.
+        (WebCore::HTMLFormControlElement::setAutocorrect): Deleted.
+        (WebCore::HTMLFormControlElement::autocapitalize): Deleted.
+        (WebCore::HTMLFormControlElement::setAutocapitalize): Deleted.
+
+        Fold autocorrect/autocapitalize member functions into HTMLElement and remove element-specific code in
+        HTML(FormControl|Form)Element.cpp.
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::shouldAutocorrect):
+        (WebCore::HTMLFormElement::autocorrect): Deleted.
+        (WebCore::HTMLFormElement::setAutocorrect): Deleted.
+        (WebCore::HTMLFormElement::autocapitalizeType): Deleted.
+        (WebCore::HTMLFormElement::autocapitalize): Deleted.
+        (WebCore::HTMLFormElement::setAutocapitalize): Deleted.
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.idl:
+
 2016-11-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add support for paths as basic shapes.
@@ -912,7 +972,7 @@
         * css/parser/CSSPropertyParser.cpp:
         (WebCore::CSSPropertyParser::parseShorthand):
 
-2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+2016-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Composition state should be cleared when changing focus to a non-editable element
         https://bugs.webkit.org/show_bug.cgi?id=164595

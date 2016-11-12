@@ -47,6 +47,9 @@
 
     [CEReactions] attribute boolean spellcheck;
 
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
+
     void click();
 
     void focus();

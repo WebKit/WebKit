@@ -1,3 +1,36 @@
+2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] autocorrect and autocapitalize attributes do not work in contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=164538
+        <rdar://problem/8418711>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds support for being able to test autocorrect and autocapitalize attributes in contenteditable areas. To do
+        this, we add removeAllDynamicDictionaries to UIScriptController in order to ensure that autocorrect suggestions
+        are reset to their defaults prior to running contenteditable-autocorrect-off.html.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::removeAllDynamicDictionaries):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._createSimulatorApp):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::removeAllDynamicDictionaries):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _keyboardDidShow:]):
+        (-[TestRunnerWKWebView _keyboardDidHide:]):
+
+        Work around an issue where consecutive UIKeyboardDidShowNotification would cause keyboard appearance callbacks
+        to be fired multiple times. This was causing a single key press to cause two characters to be typed. While this
+        does not affect the correctness of existing tests, the new autocorrection test requires this workaround.
+
+        * WebKitTestRunner/ios/UIKitSPI.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex):
+        (WTR::UIScriptController::removeAllDynamicDictionaries):
+
 2016-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Build all Mac API tests
@@ -18,7 +51,7 @@
         * TestWebKitAPI/Tests/WTF/HashMap.cpp:
         (TestWebKitAPI::TEST):
 
-2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+2016-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Composition state should be cleared when changing focus to a non-editable element
         https://bugs.webkit.org/show_bug.cgi?id=164595

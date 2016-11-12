@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAutocapitalize_h
-#define WebAutocapitalize_h
+#pragma once
 
 typedef enum {
-    WebAutocapitalizeTypeDefault,
-    WebAutocapitalizeTypeNone,
-    WebAutocapitalizeTypeWords,
-    WebAutocapitalizeTypeSentences,
-    WebAutocapitalizeTypeAllCharacters
-} WebAutocapitalizeType;
-
-#endif // WebAutocapitalize_h
+    AutocapitalizeTypeDefault,
+    AutocapitalizeTypeNone,
+    AutocapitalizeTypeWords,
+    AutocapitalizeTypeSentences,
+    AutocapitalizeTypeAllCharacters
+} AutocapitalizeType;

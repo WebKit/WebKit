@@ -1,3 +1,20 @@
+2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] autocorrect and autocapitalize attributes do not work in contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=164538
+        <rdar://problem/8418711>
+
+        Reviewed by Ryosuke Niwa.
+
+        Consult HTMLElement::autocorrect() and HTMLElement::autocapitalizeType() when assembling the assisted node
+        information for the currently assisted node.
+
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toUITextAutocapitalize):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2016-11-11  Beth Dakin  <bdakin@apple.com>
 
         Move to modern TouchBar methods

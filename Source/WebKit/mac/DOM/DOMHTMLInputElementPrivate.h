@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKitLegacy/DOMHTMLElementPrivate.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 
 @class DOMHTMLElement;
@@ -51,8 +52,6 @@
 @property (readonly, strong) DOMNodeList *labels;
 @property (copy) NSString *selectionDirection;
 @property BOOL incremental;
-@property BOOL autocorrect;
-@property (copy) NSString *autocapitalize;
 @property BOOL capture;
 
 - (void)stepUp:(int)n;

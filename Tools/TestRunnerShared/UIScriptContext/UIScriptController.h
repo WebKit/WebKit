@@ -118,6 +118,7 @@ public:
     JSObjectRef selectionRangeViewRects() const;
 
     void insertText(JSStringRef, int location, int length);
+    void removeAllDynamicDictionaries();
 
     void uiScriptComplete(JSStringRef result);
 

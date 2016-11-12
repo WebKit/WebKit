@@ -256,6 +256,34 @@
     IMPL->click();
 }
 
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+
+- (BOOL)autocorrect
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->shouldAutocorrect();
+}
+
+- (void)setAutocorrect:(BOOL)newAutocorrect
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setAutocorrect(newAutocorrect);
+}
+
+- (NSString *)autocapitalize
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->autocapitalize();
+}
+
+- (void)setAutocapitalize:(NSString *)newAutocapitalize
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setAutocapitalize(newAutocapitalize);
+}
+
+#endif
+
 @end
 
 WebCore::HTMLElement* core(DOMHTMLElement *wrapper)

@@ -33,6 +33,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
+#import "UIKitSPI.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
@@ -276,7 +277,8 @@ void UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex(lon
         return;
 
 #if USE(APPLE_INTERNAL_SDK)
-    if (![[UIKeyboardPredictionViewClass activeInstance] hasPredictions]) {
+    UIKeyboardPredictionView *predictionView = (UIKeyboardPredictionView *)[UIKeyboardPredictionViewClass activeInstance];
+    if (![predictionView hasPredictions]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, interval * NSEC_PER_SEC), dispatch_get_main_queue(), ^() {
             waitForTextPredictionsViewAndSelectCandidateAtIndex(index, callbackID, interval);
         });
@@ -284,10 +286,10 @@ void UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex(lon
     }
 
     PlatformWKView webView = TestController::singleton().mainWebView()->platformView();
-    CGRect predictionViewFrame = [[UIKeyboardPredictionViewClass activeInstance] frame];
+    CGRect predictionViewFrame = [predictionView frame];
     // This assumes there are 3 predicted text cells of equal width, which is the case on iOS.
     float offsetX = (index * 2 + 1) * CGRectGetWidth(predictionViewFrame) / 6;
-    float offsetY = CGRectGetHeight(webView.window.frame) - CGRectGetHeight([[[UIKeyboardPredictionViewClass activeInstance] superview] frame]) + CGRectGetHeight(predictionViewFrame) / 2;
+    float offsetY = CGRectGetHeight(webView.window.frame) - CGRectGetHeight([[predictionView superview] frame]) + CGRectGetHeight(predictionViewFrame) / 2;
     [[HIDEventGenerator sharedHIDEventGenerator] tap:CGPointMake(offsetX, offsetY) completionBlock:^{
         if (m_context)
             m_context->asyncTaskComplete(callbackID);
@@ -390,6 +392,11 @@ JSObjectRef UIScriptController::selectionRangeViewRects() const
         }];
     }
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
+void UIScriptController::removeAllDynamicDictionaries()
+{
+    [UIKeyboard removeAllDynamicDictionaries];
 }
 
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()

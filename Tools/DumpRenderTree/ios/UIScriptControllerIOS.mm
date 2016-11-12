@@ -215,6 +215,10 @@ JSObjectRef UIScriptController::selectionRangeViewRects() const
     return nullptr;
 }
 
+void UIScriptController::removeAllDynamicDictionaries()
+{
+}
+
 }
 
 #endif // PLATFORM(IOS)

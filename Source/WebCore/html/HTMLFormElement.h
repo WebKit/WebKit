@@ -63,12 +63,7 @@ public:
     WEBCORE_EXPORT const AtomicString& autocomplete() const;
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WEBCORE_EXPORT bool autocorrect() const;
-    WEBCORE_EXPORT void setAutocorrect(bool);
-
-    WEBCORE_EXPORT WebAutocapitalizeType autocapitalizeType() const;
-    WEBCORE_EXPORT const AtomicString& autocapitalize() const;
-    WEBCORE_EXPORT void setAutocapitalize(const AtomicString&);
+    WEBCORE_EXPORT bool shouldAutocorrect() const final;
 #endif
 
     // FIXME: Should rename these two functions to say "form control" or "form-associated element" instead of "form element".

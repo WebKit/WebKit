@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKitLegacy/DOMHTMLElementPrivate.h>
 #import <WebKitLegacy/DOMHTMLTextAreaElement.h>
 
 @class DOMNodeList;
@@ -37,8 +38,6 @@
 @property (readonly) unsigned textLength;
 @property (readonly, strong) DOMNodeList *labels;
 @property (copy) NSString *selectionDirection;
-@property BOOL autocorrect;
-@property (copy) NSString *autocapitalize;
 @property (copy) NSString *autocomplete;
 - (void)setRangeText:(NSString *)replacement;
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode;

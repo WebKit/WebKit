@@ -40,10 +40,6 @@
 
     getter Element (unsigned long index);
 
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
-
     [ImplementedAs=submitFromJavaScript] void submit();
     void reset();
     boolean checkValidity();

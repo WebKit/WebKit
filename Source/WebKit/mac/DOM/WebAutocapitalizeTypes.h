@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UIKitSPI_h
-#define UIKitSPI_h
-
-#import <wtf/Platform.h>
-
-#if PLATFORM(IOS)
-
-#import <UIKit/UIKit.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <UIKit/UIApplication_Private.h>
-#import <UIKit/UIKeyboard.h>
-#import <UIKit/UIWindow_Private.h>
-
-@interface UIKeyboardPredictionView : UIView
-+ (UIKeyboardPredictionView *)activeInstance;
-- (BOOL)hasPredictions;
-@end
-
-#else
-
-#import "IOKitSPI.h"
-
-@interface UIApplication ()
-- (void)_enqueueHIDEvent:(IOHIDEventRef)event;
-- (void)_handleHIDEvent:(IOHIDEventRef)event;
-@end
-
-@interface UIWindow ()
-- (uint32_t)_contextId;
-@end
-
-@interface UIKeyboard : UIView
-+ (void)removeAllDynamicDictionaries;
-@end
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // PLATFORM(IOS)
-
-#endif // UIKitSPI_h
+typedef enum {
+    WebAutocapitalizeTypeDefault,
+    WebAutocapitalizeTypeNone,
+    WebAutocapitalizeTypeWords,
+    WebAutocapitalizeTypeSentences,
+    WebAutocapitalizeTypeAllCharacters
+} WebAutocapitalizeType;

@@ -798,6 +798,8 @@
 		E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
 /* End PBXBuildFile section */
@@ -1558,6 +1560,8 @@
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLElementPrivate.h; sourceTree = "<group>"; };
+		F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutocapitalizeTypes.h; sourceTree = "<group>"; };
 		F508946902B71D59018A9CD4 /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSViewExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSViewExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5143A370221DCCE01A80181 /* WebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrame.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2350,6 +2354,7 @@
 				93D435821D57ABEE00AB85EA /* DOMHTMLElement.h */,
 				93D435831D57ABEE00AB85EA /* DOMHTMLElement.mm */,
 				93D435841D57ABEE00AB85EA /* DOMHTMLElementInternal.h */,
+				F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */,
 				93D435851D57ABEE00AB85EA /* DOMHTMLEmbedElement.h */,
 				93D435861D57ABEE00AB85EA /* DOMHTMLEmbedElement.mm */,
 				93D435871D57ABEE00AB85EA /* DOMHTMLFieldSetElement.h */,
@@ -2550,6 +2555,7 @@
 				93D4364A1D57ABEE00AB85EA /* ObjCEventListener.mm */,
 				93D4364B1D57ABEE00AB85EA /* ObjCNodeFilterCondition.h */,
 				93D4364C1D57ABEE00AB85EA /* ObjCNodeFilterCondition.mm */,
+				F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */,
 				846171F90624AE5B0071A4A3 /* WebDOMOperations.h */,
 				846171FA0624AE5B0071A4A3 /* WebDOMOperations.mm */,
 				AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */,
@@ -2731,6 +2737,7 @@
 				93D4364D1D57ABEE00AB85EA /* DOM.h in Headers */,
 				93D4364F1D57ABEE00AB85EA /* DOMAbstractView.h in Headers */,
 				93D436511D57ABEE00AB85EA /* DOMAbstractViewFrame.h in Headers */,
+				F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */,
 				93D436521D57ABEE00AB85EA /* DOMAbstractViewInternal.h in Headers */,
 				93D436531D57ABEE00AB85EA /* DOMAttr.h in Headers */,
 				93D436551D57ABEE00AB85EA /* DOMAttrInternal.h in Headers */,
@@ -2761,6 +2768,7 @@
 				93D4367D1D57ABEE00AB85EA /* DOMCSSStyleRule.h in Headers */,
 				93D4367F1D57ABEE00AB85EA /* DOMCSSStyleSheet.h in Headers */,
 				93D436811D57ABEE00AB85EA /* DOMCSSStyleSheetInternal.h in Headers */,
+				F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */,
 				93D436821D57ABEE00AB85EA /* DOMCSSUnknownRule.h in Headers */,
 				93D436841D57ABEE00AB85EA /* DOMCSSValue.h in Headers */,
 				93D436861D57ABEE00AB85EA /* DOMCSSValueInternal.h in Headers */,

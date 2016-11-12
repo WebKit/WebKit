@@ -161,34 +161,6 @@
     return IMPL->length();
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-- (BOOL)autocorrect
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->autocorrect();
-}
-
-- (void)setAutocorrect:(BOOL)newAutocorrect
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAutocorrect(newAutocorrect);
-}
-#endif
-
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-- (NSString *)autocapitalize
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->autocapitalize();
-}
-
-- (void)setAutocapitalize:(NSString *)newAutocapitalize
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAutocapitalize(newAutocapitalize);
-}
-#endif
-
 - (void)submit
 {
     WebCore::JSMainThreadNullState state;

@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script>
+        let write = message => output.innerHTML += message + "<br>";
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        let remainingInputEventCount = 0;
+        let resolveExpectedInputEvents = null;
+        function handleInput() {
+            remainingInputEventCount--;
+            if (resolveExpectedInputEvents && !remainingInputEventCount)
+                resolveExpectedInputEvents();
+        }
+
+        function runUIScriptAndExpectInputEvents(inputEventCount, nextAutocapitalizeType)
+        {
+            remainingInputEventCount = inputEventCount;
+            resolveExpectedInputEvents = () => {
+                write(`With autocapitalize: ${editable.autocapitalize}, the output is: "${editable.textContent}"`);
+                editable.autocapitalize = nextAutocapitalizeType;
+                editable.textContent = "";
+                editable.blur();
+            };
+
+            return new Promise(function(resolve) {
+                let rect = editable.getBoundingClientRect();
+                testRunner.runUIScript(`(function() {
+                    uiController.didShowKeyboardCallback = function() {
+                        uiController.typeCharacterUsingHardwareKeyboard("t", function() {
+                            uiController.typeCharacterUsingHardwareKeyboard("o", function() {});
+                        });
+                    }
+                    uiController.didHideKeyboardCallback = function() {
+                        uiController.uiScriptComplete();
+                    }
+                    uiController.singleTapAtPoint(${rect.left + rect.width / 2}, ${rect.top + rect.height / 2}, function() {});
+                })();`, resolve);
+            });
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            runUIScriptAndExpectInputEvents(2, "sentences")
+                .then(() => runUIScriptAndExpectInputEvents(2, "characters"))
+                .then(() => runUIScriptAndExpectInputEvents(2, null))
+                .then(() => testRunner.notifyDone());
+        }
+    </script>
+    <style>
+    #editable {
+        width: 200px;
+        height: 100px;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
+    </style>
+</head>
+
+<body onload=runTest()>
+    <div contenteditable autocapitalize="none" id="editable" oninput=handleInput()></div>
+    <p>To manually test, type 't' into the contenteditable. The 't' should not be autocapitalized.</p>
+    <div id="output"></div>
+</body>
+
+</html>
