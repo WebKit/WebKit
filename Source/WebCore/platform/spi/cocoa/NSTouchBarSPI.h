@@ -34,13 +34,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSTouchBarItem : NSObject
-@end
-
-@interface NSColorPickerTouchBarItem : NSTouchBarItem
-@end
-
-@interface NSTouchBar : NSObject
+@interface NSTouchBar ()
 @property (readonly, copy, nullable) NSArray<NSTouchBarItem *> *items;
 @property (strong, nullable) NSTouchBarItem *escapeKeyReplacementItem;
 @end
