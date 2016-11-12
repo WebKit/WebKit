@@ -39,12 +39,14 @@
 using namespace WebCore;
 
 @synthesize contentDuration=_contentDuration;
-@synthesize seekToTime=_seekToTime;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
 @synthesize playing=_playing;
 @synthesize canTogglePlayback=_canTogglePlayback;
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+@synthesize seekToTime=_seekToTime;
+#endif
 
 - (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
