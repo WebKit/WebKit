@@ -172,7 +172,7 @@ EncodedJSValue setData(ExecState* exec)
     if (!dataView)
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
     
-    unsigned byteOffset = exec->uncheckedArgument(0).toIndex(exec, "byteOffset");
+    unsigned byteOffset = exec->argument(0).toIndex(exec, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);

@@ -1,3 +1,15 @@
+2016-11-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Follow-up fix to r208639.
+
+        Unreviewed fix. This is a straightfoward change where I forgot to
+        switch from uncheckedArgument() to argument() in once case after
+        dropping an argumentCount check. All other cases do this properly.
+        This addresses an ASSERT seen on the bots running tests.
+
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::setData):
+
 2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: DataView with explicit undefined byteLength should be the same as it not being present
