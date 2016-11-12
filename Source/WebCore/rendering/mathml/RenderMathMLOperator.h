@@ -80,8 +80,6 @@ private:
     Optional<int> firstLineBaseline() const final;
     RenderMathMLOperator* unembellishedOperator() final { return this; }
 
-    bool shouldAllowStretching() const;
-
     LayoutUnit verticalStretchedOperatorShift() const;
 
     LayoutUnit m_stretchHeightAboveBaseline { 0 };

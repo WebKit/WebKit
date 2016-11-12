@@ -1,3 +1,27 @@
+2016-11-12  Frederic Wang  <fwang@igalia.com>
+
+        Remove RenderMathMLOperator::shouldAllowStretching
+        https://bugs.webkit.org/show_bug.cgi?id=164313
+
+        Reviewed by Darin Adler.
+
+        RenderMathMLOperator::shouldAllowStretching is an old function from early implementations of
+        MathML. Its name is now confusing since it also includes non-stretchy large operators.
+        Moreover, it is not really useful and is actually only used by two functions: useMathOperator
+        and updateMathOperator. The former is almost equivalent and is used as a replacement of
+        shouldAllowStretching everywhere else. We rewrite the two remaining calls with the finer
+        test functions isStretchy() and isLargeOperatorInDisplayStyle().
+
+        No new tests, behavior unchanged.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateMathOperator): Reorder the conditionals to avoid the
+        use of RenderMathMLOperator::shouldAllowStretching and match useMathOperator.
+        (WebCore::RenderMathMLOperator::useMathOperator): Rewrite shouldAllowStretching() using
+        isStretchy() and isLargeOperatorInDisplayStyle().
+        (WebCore::RenderMathMLOperator::shouldAllowStretching): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h: Remove declaration of shouldAllowStretching.
+
 2016-11-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use #pragma once in WebCore
