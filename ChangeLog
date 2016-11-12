@@ -1,3 +1,16 @@
+2016-11-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r207872.
+        https://bugs.webkit.org/show_bug.cgi?id=162623
+
+        Did not disable anything, just made them public
+
+        Reverted changeset:
+
+        "[GTK][GStreamer] Disable MEDIA_SOURCE and ENCRYPTED_MEDIA_V2 by default"
+        https://bugs.webkit.org/show_bug.cgi?id=162623
+        http://trac.webkit.org/changeset/207872
+
 2016-11-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Use libgcrypt instead of GnuTLS for CryptoDigest
