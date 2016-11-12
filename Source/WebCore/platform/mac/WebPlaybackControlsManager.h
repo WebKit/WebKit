@@ -42,7 +42,11 @@ class WebPlaybackSessionInterfaceMac;
 OBJC_CLASS AVValueTiming;
 
 WEBCORE_EXPORT
-@interface WebPlaybackControlsManager : NSObject <AVFunctionBarPlaybackControlsControlling> {
+@interface WebPlaybackControlsManager : NSObject
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    <AVFunctionBarPlaybackControlsControlling>
+#endif
+{
     NSTimeInterval _contentDuration;
 
     RetainPtr<AVValueTiming> _timing;

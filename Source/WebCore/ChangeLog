@@ -1,6 +1,12 @@
 2016-11-12  Dan Bernstein  <mitz@apple.com>
 
-        Tried to fix the build
+        Tried to fix the 32-bit build.
+
+        * platform/mac/WebPlaybackControlsManager.h:
+
+2016-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build.
 
         * platform/mac/WebPlaybackControlsManager.h: Declared conformance to
           AVFunctionBarPlaybackControlsControlling, which is expected in WebKit::WebViewImpl.
@@ -14,7 +20,7 @@
 
 2016-11-12  Dan Bernstein  <mitz@apple.com>
 
-        Tried to fix the build
+        Tried to fix the build.
 
         * platform/spi/cocoa/NSTouchBarSPI.h: Removed duplicate @interface declarations.
 
