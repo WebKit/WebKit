@@ -237,8 +237,17 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (argCount > 2) {
-            length = exec->uncheckedArgument(2).toIndex(exec, ViewClass::TypedArrayStorageType == TypeDataView ? "byteLength" : "length");
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (ViewClass::TypedArrayStorageType == TypeDataView) {
+                // If the DataView byteLength is present but undefined, treat it as missing.
+                JSValue byteLengthValue = exec->uncheckedArgument(2);
+                if (!byteLengthValue.isUndefined()) {
+                    length = byteLengthValue.toIndex(exec, "byteLength");
+                    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+                }
+            } else {
+                length = exec->uncheckedArgument(2).toIndex(exec, "length");
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            }
         }
     }
 

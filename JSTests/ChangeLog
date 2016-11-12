@@ -1,5 +1,17 @@
 2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: DataView with explicit undefined byteLength should be the same as it not being present
+        https://bugs.webkit.org/show_bug.cgi?id=164453
+
+        Reviewed by Darin Adler.
+
+        * stress/dataview-construct.js: Added.
+        (assert):
+        (shouldThrow):
+        * test262.yaml:
+
+2016-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: DataView get methods should allow for missing offset, set methods should allow for missing value
         https://bugs.webkit.org/show_bug.cgi?id=164451
 
