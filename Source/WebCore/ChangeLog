@@ -1,3 +1,14 @@
+2016-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Clean up a couple of macOS *SPI headers
+        https://bugs.webkit.org/show_bug.cgi?id=164687
+
+        Reviewed by Sam Weinig.
+
+        * platform/spi/cocoa/NSTouchBarSPI.h: Replaced hardcoded strings with global declarations.
+        * platform/spi/mac/NSSpellCheckerSPI.h: Addressed FIXME by importing private header, and removed declarations
+          that already appear in the SDK.
+
 2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The main content heuristic should be robust when handling large media elements

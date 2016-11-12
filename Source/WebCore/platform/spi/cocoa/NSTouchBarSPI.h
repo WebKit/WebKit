@@ -51,8 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#define NSTouchBarWillEnterCustomization @"NSTouchBarWillEnterCustomization"
-#define NSTouchBarDidExitCustomization @"NSTouchBarDidExitCustomization"
+APPKIT_EXTERN NSNotificationName const NSTouchBarWillEnterCustomization;
+APPKIT_EXTERN NSNotificationName const NSTouchBarDidExitCustomization;
 
 NS_ASSUME_NONNULL_END
 

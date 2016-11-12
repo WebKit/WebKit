@@ -22,22 +22,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef NSSpellCheckerSPI_h
-#define NSSpellCheckerSPI_h
 
 #if HAVE(ADVANCED_SPELL_CHECKING)
 
-// FIXME: This header should include system headers when possible.
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AppKit/NSTextChecker.h>
+
+#else
 
 extern NSString *NSTextCheckingInsertionPointKey;
-extern NSNotificationName const NSSpellCheckerDidChangeAutomaticTextCompletionNotification;
 
 @interface NSSpellChecker ()
-- (NSInteger)requestCandidatesForSelectedRange:(NSRange)selectedRange inString:(NSString *)stringToCheck types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag completionHandler:(void (^)(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates))completionHandler;
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;
-+ (BOOL)isAutomaticTextCompletionEnabled;
 @end
 
-#endif // HAVE(ADVANCED_SPELL_CHECKING)
+#endif
 
-#endif // NSSpellCheckerSPI_h
+#endif // HAVE(ADVANCED_SPELL_CHECKING)
