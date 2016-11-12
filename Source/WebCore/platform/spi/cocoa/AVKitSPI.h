@@ -172,7 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AVFunctionBarPlaybackControlsProvider : NSResponder
 @property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
 @interface AVFunctionBarScrubber : NSView

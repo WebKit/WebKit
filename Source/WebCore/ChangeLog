@@ -1,3 +1,14 @@
+2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Follow-up: fix the OpenSource build on Mac after r208642
+        https://bugs.webkit.org/show_bug.cgi?id=164677
+
+        Reviewed by Ryosuke Niwa.
+
+        The playbackControlsController property should also be `assign`.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2016-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         SPI imports in AVKitSPI.h should be guarded by USE(APPLE_INTERNAL_SDK)
