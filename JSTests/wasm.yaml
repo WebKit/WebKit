@@ -25,3 +25,5 @@
   cmd: runWebAssembly
 - path: wasm/js-api/
   cmd: runWebAssembly
+- path: wasm/function-tests
+  cmd: runWebAssembly

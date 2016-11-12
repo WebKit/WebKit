@@ -155,7 +155,7 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
 };
 
 const _checkStackArgs = (op, param) => {
-    for (let expect of paramn) {
+    for (let expect of param) {
         if (WASM.isValidValueType(expect)) {
             // FIXME implement stack checks for arguments. https://bugs.webkit.org/show_bug.cgi?id=163421
         } else {
@@ -195,7 +195,7 @@ const _checkStackReturn = (op, ret) => {
     }
 };
 
-const _checkImms = (op, imms, expectedImms) => {
+const _checkImms = (op, imms, expectedImms, ret) => {
     assert.eq(imms.length, expectedImms.length, `"${op}" expects ${expectedImms.length} immediates, got ${imms.length}`);
     for (let idx = 0; idx !== expectedImms.length; ++idx) {
         const got = imms[idx];
@@ -257,7 +257,7 @@ const _createFunctionBuilder = (func, builder, previousBuilder) => {
             const continuation = args[args.length - 1];
             const hasContinuation = typeof(continuation) === "function";
             const imms = hasContinuation ? args.slice(0, -1) : args; // FIXME: allow passing in stack values, as-if code were a stack machine. Just check for a builder to this function, and drop. https://bugs.webkit.org/show_bug.cgi?id=163422
-            checkImms(op, imms, imm);
+            checkImms(op, imms, imm, ret);
             checkStackArgs(op, param);
             checkStackReturn(op, ret);
             const stackArgs = []; // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706

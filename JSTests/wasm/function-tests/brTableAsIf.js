@@ -1,4 +1,4 @@
-import Builder from '../../Builder.js'
+import Builder from '../Builder.js'
 
 const b = new Builder();
 b.setChecked(false);

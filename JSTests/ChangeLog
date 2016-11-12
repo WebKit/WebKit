@@ -1,5 +1,38 @@
 2016-11-11  Keith Miller  <keith_miller@apple.com>
 
+        Relocate wasm tests and actually add them to the test runner
+        https://bugs.webkit.org/show_bug.cgi?id=164668
+
+        Reviewed by Yusuke Suzuki.
+
+        This moves the Wasm tests from their current location down a level.
+        Without relocating, the tests cannot properly be run by the wasm test runner.
+
+        * wasm.yaml:
+        * wasm/Builder.js: Fix typos, yay lazy synatx checking!
+        * wasm/LowLevelBinary.js: Fix typos, yay lazy synatx checking!
+        (export.default.LowLevelBinary.prototype.get return):
+        * wasm/function-tests/add-12.js: Renamed from JSTests/wasm/js-api/function-tests/add-12.js.
+        * wasm/function-tests/br-if-loop-less-than.js: Renamed from JSTests/wasm/js-api/function-tests/br-if-loop-less-than.js.
+        * wasm/function-tests/brTableAsIf.js: Renamed from JSTests/wasm/js-api/function-tests/brTableAsIf.js.
+        * wasm/function-tests/brTableManyValues.js: Renamed from JSTests/wasm/js-api/function-tests/brTableManyValues.js.
+        * wasm/function-tests/brTableWithLoop.js: Renamed from JSTests/wasm/js-api/function-tests/brTableWithLoop.js.
+        * wasm/function-tests/dumb-eq-if-then-else.js: Renamed from JSTests/wasm/js-api/function-tests/dumb-eq-if-then-else.js.
+        * wasm/function-tests/dumb-less-than-fallthrough.js: Renamed from JSTests/wasm/js-api/function-tests/dumb-less-than-fallthrough.js.
+        * wasm/function-tests/dumb-less-than-ite.js: Renamed from JSTests/wasm/js-api/function-tests/dumb-less-than-ite.js.
+        * wasm/function-tests/factorial.js: Renamed from JSTests/wasm/js-api/function-tests/factorial.js.
+        * wasm/function-tests/float-sub.js: Renamed from JSTests/wasm/js-api/function-tests/float-sub.js.
+        * wasm/function-tests/i32-load.js: Renamed from JSTests/wasm/js-api/function-tests/i32-load.js.
+        * wasm/function-tests/i32-load8-s.js: Renamed from JSTests/wasm/js-api/function-tests/i32-load8-s.js.
+        * wasm/function-tests/if-then-else-fallthrough.js: Renamed from JSTests/wasm/js-api/function-tests/if-then-else-fallthrough.js.
+        * wasm/function-tests/if-then-fallthrough.js: Renamed from JSTests/wasm/js-api/function-tests/if-then-fallthrough.js.
+        * wasm/function-tests/loop-mult.js: Renamed from JSTests/wasm/js-api/function-tests/loop-mult.js.
+        * wasm/function-tests/loop-sum.js: Renamed from JSTests/wasm/js-api/function-tests/loop-sum.js.
+        * wasm/function-tests/ret5.js: Renamed from JSTests/wasm/js-api/function-tests/ret5.js.
+        * wasm/self-test/test_BuilderJSON.js: Rebasline
+
+2016-11-11  Keith Miller  <keith_miller@apple.com>
+
         Move Wasm tests to JS
         https://bugs.webkit.org/show_bug.cgi?id=164611
 

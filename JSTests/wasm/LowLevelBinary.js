@@ -80,7 +80,6 @@ export default class LowLevelBinary {
     trim() { this._buf = this._buf.slice(0, this._used); }
 
     hexdump() { return _hexdump(this._buf, this._used); }
-    trim() { this._buf = this._buf.slice(0, this._used); }
     _maybeGrow(bytes) {
         const allocated = this._buf.length;
         if (allocated - this._used < bytes) {

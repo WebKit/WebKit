@@ -140,12 +140,12 @@ const assertOpThrows = (opFn, message) => {
 
 (function ImportFunctionWithoutTypeSection() {
     const i = (new Builder()).Import();
-    assert.throws(() => i.Function("foo", "bar", 0), Error, `Shouldn't be undefined: Can't use type 0 if a type section isn't present`);
+    assert.throws(() => i.Function("foo", "bar", 0), Error, `Shouldn't be undefined: Can not use type 0 if a type section is not present`);
 })();
 
 (function ImportFunctionWithInvalidType() {
     const i = (new Builder()).Type().End().Import();
-    assert.throws(() => i.Function("foo", "bar", 0), Error, `Shouldn't be undefined: Type 0 doesn't exist in type section`);
+    assert.throws(() => i.Function("foo", "bar", 0), Error, `Shouldn't be undefined: Type 0 does not exist in type section`);
 })();
 
 (function ImportFunction() {
@@ -211,12 +211,12 @@ const assertOpThrows = (opFn, message) => {
 
 (function ExportFunctionWithoutTypeSection() {
     const e = (new Builder()).Export();
-    assert.throws(() => e.Function("foo", 0, 0), Error, `Shouldn't be undefined: Can't use type 0 if a type section isn't present`);
+    assert.throws(() => e.Function("foo", 0, 0), Error, `Shouldn't be undefined: Can not use type 0 if a type section is not present`);
 })();
 
 (function ExportFunctionWithInvalidType() {
     const e = (new Builder()).Type().End().Export();
-    assert.throws(() => e.Function("foo", 0, 0), Error, `Shouldn't be undefined: Type 0 doesn't exist in type section`);
+    assert.throws(() => e.Function("foo", 0, 0), Error, `Shouldn't be undefined: Type 0 does not exist in type section`);
 })();
 
 (function ExportAnImport() {
