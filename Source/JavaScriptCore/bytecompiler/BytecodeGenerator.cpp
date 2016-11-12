@@ -52,6 +52,7 @@
 #include "UnlinkedInstructionStream.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include <wtf/BitVector.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/SmallPtrSet.h>
 #include <wtf/StdLibExtras.h>
@@ -3043,6 +3044,49 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     instructions().append(argv.size() ? argv[0]->index() : 0); // argv
     instructions().append(argv.size()); // argc
     instructions().append(newArrayAllocationProfile());
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitNewArrayWithSpread(RegisterID* dst, ElementNode* elements)
+{
+    BitVector bitVector;
+    Vector<RefPtr<RegisterID>, 16> argv;
+    for (ElementNode* node = elements; node; node = node->next()) {
+        bitVector.set(argv.size(), node->value()->isSpreadExpression());
+
+        argv.append(newTemporary());
+        // op_new_array_with_spread requires the initial values to be a sequential range of registers.
+        RELEASE_ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() - 1);
+    }
+
+    RELEASE_ASSERT(argv.size());
+
+    {
+        unsigned i = 0;
+        for (ElementNode* node = elements; node; node = node->next()) {
+            if (node->value()->isSpreadExpression()) {
+                ExpressionNode* expression = static_cast<SpreadExpressionNode*>(node->value())->expression();
+                RefPtr<RegisterID> tmp = newTemporary();
+                emitNode(tmp.get(), expression);
+
+                emitOpcode(op_spread);
+                instructions().append(argv[i].get()->index());
+                instructions().append(tmp.get()->index());
+            } else {
+                ExpressionNode* expression = node->value();
+                emitNode(argv[i].get(), expression);
+            }
+            i++;
+        }
+    }
+
+    unsigned bitVectorIndex = m_codeBlock->addBitVector(WTFMove(bitVector));
+    emitOpcode(op_new_array_with_spread);
+    instructions().append(dst->index());
+    instructions().append(argv[0]->index()); // argv
+    instructions().append(argv.size()); // argc
+    instructions().append(bitVectorIndex);
+
     return dst;
 }
 

@@ -156,6 +156,9 @@ private:
     RefPtr<Data> m_data;
 };
 
+ObjectPropertyCondition generateConditionForSelfEquivalence(
+    VM&, JSCell* owner, JSObject* object, UniquedStringImpl* uid);
+
 ObjectPropertyConditionSet generateConditionsForPropertyMiss(
     VM&, JSCell* owner, ExecState*, Structure* headStructure, UniquedStringImpl* uid);
 ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(

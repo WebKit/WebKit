@@ -365,6 +365,21 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     if (!firstPutElement && !m_elision)
         return generator.emitNewArray(generator.finalDestination(dst), m_element, length);
 
+    if (firstPutElement && firstPutElement->value()->isSpreadExpression()) {
+        bool hasElision = false;
+        for (ElementNode* node = m_element; node; node = node->next()) {
+            if (!!node->elision()) {
+                hasElision = true;
+                break;
+            }
+        }
+        if (!!m_elision)
+            hasElision = true;
+
+        if (!hasElision)
+            return generator.emitNewArrayWithSpread(generator.finalDestination(dst), m_element);
+    }
+
     RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element, length);
     ElementNode* n = firstPutElement;
     for (; n; n = n->next()) {

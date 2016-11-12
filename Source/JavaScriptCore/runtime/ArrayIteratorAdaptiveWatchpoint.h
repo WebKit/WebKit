@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,62 +20,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TrackedReferences.h"
+#pragma once
 
-#include "JSCInlines.h"
-#include <wtf/CommaPrinter.h>
+#include "AdaptiveInferredPropertyValueWatchpointBase.h"
 
 namespace JSC {
 
-TrackedReferences::TrackedReferences()
-{
-}
+class JSGlobalObject;
 
-TrackedReferences::~TrackedReferences()
-{
-}
+class ArrayIteratorAdaptiveWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
+public:
+    typedef AdaptiveInferredPropertyValueWatchpointBase Base;
+    ArrayIteratorAdaptiveWatchpoint(const ObjectPropertyCondition&, JSGlobalObject*);
 
-void TrackedReferences::add(JSCell* cell)
-{
-    if (cell)
-        m_references.add(cell);
-}
+private:
+    void handleFire(const FireDetail&) override;
 
-void TrackedReferences::add(JSValue value)
-{
-    if (value.isCell())
-        add(value.asCell());
-}
-
-void TrackedReferences::check(JSCell* cell) const
-{
-    if (!cell)
-        return;
-    
-    if (m_references.contains(cell))
-        return;
-    
-    dataLog("Found untracked reference: ", JSValue(cell), "\n");
-    dataLog("All tracked references: ", *this, "\n");
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void TrackedReferences::check(JSValue value) const
-{
-    if (value.isCell())
-        check(value.asCell());
-}
-
-void TrackedReferences::dump(PrintStream& out) const
-{
-    CommaPrinter comma;
-    for (JSCell* cell : m_references)
-        out.print(comma, RawPointer(cell));
-}
+    JSGlobalObject* m_globalObject;
+};
 
 } // namespace JSC
-

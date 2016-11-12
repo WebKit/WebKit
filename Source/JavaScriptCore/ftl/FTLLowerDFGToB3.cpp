@@ -727,6 +727,12 @@ private:
         case NewArray:
             compileNewArray();
             break;
+        case NewArrayWithSpread:
+            compileNewArrayWithSpread();
+            break;
+        case Spread:
+            compileSpread();
+            break;
         case NewArrayBuffer:
             compileNewArrayBuffer();
             break;
@@ -4294,6 +4300,195 @@ private:
         
         m_out.storePtr(m_out.intPtrZero, m_out.absolute(scratchBuffer->activeLengthPtr()));
         
+        setJSValue(result);
+    }
+
+    void compileNewArrayWithSpread()
+    {
+        if (m_graph.isWatchingHavingABadTimeWatchpoint(m_node)) {
+            unsigned startLength = 0;
+            BitVector* bitVector = m_node->bitVector();
+            for (unsigned i = 0; i < m_node->numChildren(); ++i) {
+                if (!bitVector->get(i))
+                    ++startLength;
+            }
+
+            LValue length = m_out.constInt32(startLength);
+
+            for (unsigned i = 0; i < m_node->numChildren(); ++i) {
+                if (bitVector->get(i)) {
+                    Edge use = m_graph.varArgChild(m_node, i);
+                    LValue fixedArray = lowCell(use);
+                    length = m_out.add(length, m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
+                }
+            }
+
+            Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->originalArrayStructureForIndexingType(ArrayWithContiguous);
+            ArrayValues arrayValues = allocateUninitializedContiguousJSArray(length, structure);
+            LValue result = arrayValues.array;
+            LValue storage = arrayValues.butterfly;
+            LValue index = m_out.constIntPtr(0);
+
+            for (unsigned i = 0; i < m_node->numChildren(); ++i) {
+                Edge use = m_graph.varArgChild(m_node, i);
+                if (bitVector->get(i)) {
+                    LBasicBlock loopStart = m_out.newBlock();
+                    LBasicBlock continuation = m_out.newBlock();
+
+                    LValue fixedArray = lowCell(use);
+
+                    ValueFromBlock fixedIndexStart = m_out.anchor(m_out.constIntPtr(0));
+                    ValueFromBlock arrayIndexStart = m_out.anchor(index);
+                    ValueFromBlock arrayIndexStartForFinish = m_out.anchor(index);
+
+                    LValue fixedArraySize = m_out.zeroExtPtr(m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
+
+                    m_out.branch(
+                        m_out.isZero64(fixedArraySize),
+                        unsure(continuation), unsure(loopStart));
+
+                    LBasicBlock lastNext = m_out.appendTo(loopStart, continuation);
+
+                    LValue arrayIndex = m_out.phi(pointerType(), arrayIndexStart);
+                    LValue fixedArrayIndex = m_out.phi(pointerType(), fixedIndexStart);
+
+                    LValue item = m_out.load64(m_out.baseIndex(m_heaps.JSFixedArray_buffer, fixedArray, fixedArrayIndex));
+                    m_out.store64(item, m_out.baseIndex(m_heaps.indexedContiguousProperties, storage, arrayIndex));
+
+                    LValue nextArrayIndex = m_out.add(arrayIndex, m_out.constIntPtr(1));
+                    LValue nextFixedArrayIndex = m_out.add(fixedArrayIndex, m_out.constIntPtr(1));
+                    ValueFromBlock arrayIndexLoopForFinish = m_out.anchor(nextArrayIndex);
+
+                    m_out.addIncomingToPhi(fixedArrayIndex, m_out.anchor(nextFixedArrayIndex));
+                    m_out.addIncomingToPhi(arrayIndex, m_out.anchor(nextArrayIndex));
+
+                    m_out.branch(
+                        m_out.below(nextFixedArrayIndex, fixedArraySize),
+                        unsure(loopStart), unsure(continuation));
+
+                    m_out.appendTo(continuation, lastNext);
+                    index = m_out.phi(pointerType(), arrayIndexStartForFinish, arrayIndexLoopForFinish);
+                } else {
+                    IndexedAbstractHeap& heap = m_heaps.indexedContiguousProperties;
+                    LValue item = lowJSValue(use);
+                    m_out.store64(item, m_out.baseIndex(heap, storage, index));
+                    index = m_out.add(index, m_out.constIntPtr(1));
+                }
+            }
+
+            setJSValue(result);
+            return;
+        }
+
+        ASSERT(m_node->numChildren());
+        size_t scratchSize = sizeof(EncodedJSValue) * m_node->numChildren();
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+        BitVector* bitVector = m_node->bitVector();
+        for (unsigned i = 0; i < m_node->numChildren(); ++i) {
+            Edge use = m_graph.m_varArgChildren[m_node->firstChild() + i];
+            LValue value;
+            if (bitVector->get(i))
+                value = lowCell(use);
+            else
+                value = lowJSValue(use);
+            m_out.store64(value, m_out.absolute(&buffer[i]));
+        }
+
+        m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->activeLengthPtr()));
+        LValue result = vmCall(Int64, m_out.operation(operationNewArrayWithSpreadSlow), m_callFrame, m_out.constIntPtr(buffer), m_out.constInt32(m_node->numChildren()));
+        m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->activeLengthPtr()));
+
+        setJSValue(result);
+    }
+
+    void compileSpread()
+    {
+        LValue argument = lowCell(m_node->child1());
+
+        LValue result;
+        if (m_node->child1().useKind() == ArrayUse) {
+            speculateArray(m_node->child1());
+
+            LBasicBlock preLoop = m_out.newBlock();
+            LBasicBlock loopSelection = m_out.newBlock();
+            LBasicBlock contiguousLoopStart = m_out.newBlock();
+            LBasicBlock doubleLoopStart = m_out.newBlock();
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue indexingShape = m_out.load8ZeroExt32(argument, m_heaps.JSCell_indexingType);
+            indexingShape = m_out.bitAnd(indexingShape, m_out.constInt32(IndexingShapeMask));
+            LValue isOKIndexingType = m_out.belowOrEqual(
+                m_out.sub(indexingShape, m_out.constInt32(Int32Shape)),
+                m_out.constInt32(ContiguousShape - Int32Shape));
+
+            m_out.branch(isOKIndexingType, unsure(preLoop), unsure(slowPath));
+            LBasicBlock lastNext = m_out.appendTo(preLoop, loopSelection);
+
+            LValue butterfly = m_out.loadPtr(argument, m_heaps.JSObject_butterfly);
+            LValue length = m_out.load32NonNegative(butterfly, m_heaps.Butterfly_publicLength);
+            static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
+            LValue size = m_out.add(
+                m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
+                m_out.constIntPtr(JSFixedArray::offsetOfData()));
+
+            LValue fastAllocation = allocateVariableSizedCell<JSFixedArray>(size, m_graph.m_vm.fixedArrayStructure.get(), slowPath);
+            ValueFromBlock fastResult = m_out.anchor(fastAllocation);
+            m_out.store32(length, fastAllocation, m_heaps.JSFixedArray_size);
+
+            ValueFromBlock startIndexForContiguous = m_out.anchor(m_out.constIntPtr(0));
+            ValueFromBlock startIndexForDouble = m_out.anchor(m_out.constIntPtr(0));
+
+            m_out.branch(m_out.isZero32(length), unsure(continuation), unsure(loopSelection));
+
+            m_out.appendTo(loopSelection, contiguousLoopStart);
+            m_out.branch(m_out.equal(indexingShape, m_out.constInt32(DoubleShape)),
+                unsure(doubleLoopStart), unsure(contiguousLoopStart));
+
+            {
+                m_out.appendTo(contiguousLoopStart, doubleLoopStart);
+                LValue index = m_out.phi(pointerType(), startIndexForContiguous);
+
+                TypedPointer loadSite = m_out.baseIndex(m_heaps.root, butterfly, index, ScaleEight); // We read TOP here since we can be reading either int32 or contiguous properties.
+                LValue value = m_out.load64(loadSite);
+                value = m_out.select(m_out.isZero64(value), m_out.constInt64(JSValue::encode(jsUndefined())), value);
+                m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fastAllocation, index));
+
+                LValue nextIndex = m_out.add(index, m_out.constIntPtr(1));
+                m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+
+                m_out.branch(m_out.below(nextIndex, m_out.zeroExtPtr(length)),
+                    unsure(contiguousLoopStart), unsure(continuation));
+            }
+
+            {
+                m_out.appendTo(doubleLoopStart, slowPath);
+                LValue index = m_out.phi(pointerType(), startIndexForDouble);
+
+                LValue value = m_out.loadDouble(m_out.baseIndex(m_heaps.indexedDoubleProperties, butterfly, index));
+                LValue isNaN = m_out.doubleNotEqualOrUnordered(value, value);
+                LValue holeResult = m_out.constInt64(JSValue::encode(jsUndefined()));
+                LValue normalResult = boxDouble(value);
+                value = m_out.select(isNaN, holeResult, normalResult);
+                m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fastAllocation, index));
+
+                LValue nextIndex = m_out.add(index, m_out.constIntPtr(1));
+                m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+
+                m_out.branch(m_out.below(nextIndex, m_out.zeroExtPtr(length)),
+                    unsure(doubleLoopStart), unsure(continuation));
+            }
+
+            m_out.appendTo(slowPath, continuation);
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationSpreadFastArray), m_callFrame, argument));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            result = m_out.phi(Int64, fastResult, slowResult);
+        } else
+            result = vmCall(Int64, m_out.operation(operationSpreadGeneric), m_callFrame, argument);
+
         setJSValue(result);
     }
     
@@ -9740,6 +9935,15 @@ private:
         LValue allocator = allocatorForSize(
             vm().heap.subspaceForObjectOfType<ClassType>(), size, slowPath);
         return allocateObject(allocator, structure, butterfly, slowPath);
+    }
+
+    template<typename ClassType>
+    LValue allocateVariableSizedCell(
+        LValue size, Structure* structure, LBasicBlock slowPath)
+    {
+        LValue allocator = allocatorForSize(
+            vm().heap.subspaceForObjectOfType<ClassType>(), size, slowPath);
+        return allocateCell(allocator, structure, slowPath);
     }
     
     LValue allocateObject(Structure* structure)

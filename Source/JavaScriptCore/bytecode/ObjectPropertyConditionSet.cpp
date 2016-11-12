@@ -421,5 +421,11 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
         }, Concurrent);
 }
 
+ObjectPropertyCondition generateConditionForSelfEquivalence(
+    VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid)
+{
+    return generateCondition(vm, owner, object, uid, PropertyCondition::Equivalence);
+}
+
 } // namespace JSC
 

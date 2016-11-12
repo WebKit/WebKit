@@ -1061,6 +1061,12 @@ public:
         }
     }
 
+    BitVector* bitVector()
+    {
+        ASSERT(op() == NewArrayWithSpread);
+        return m_opInfo.as<BitVector*>();
+    }
+
     // Return the indexing type that an array allocation *wants* to use. It may end up using a different
     // type if we're having a bad time. You can determine the actual indexing type by asking the global
     // object:

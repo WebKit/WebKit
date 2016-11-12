@@ -161,6 +161,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
         functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
         return;
     }
+    case op_spread:
     case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
@@ -277,6 +278,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
+    case op_new_array_with_spread:
     case op_new_array:
     case op_strcat: {
         int base = instruction[2].u.operand;
@@ -384,6 +386,8 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_to_primitive:
     case op_create_this:
     case op_new_array:
+    case op_new_array_with_spread:
+    case op_spread:
     case op_new_array_buffer:
     case op_new_array_with_size:
     case op_new_regexp:

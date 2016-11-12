@@ -48,6 +48,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JSCInlines.h"
+#include "JSFixedArray.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
@@ -1878,6 +1879,96 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
     result->butterfly(); // Ensure that the butterfly is in to-space.
     return result;
+}
+
+JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buffer, uint32_t numItems)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
+    unsigned length = 0;
+    for (unsigned i = 0; i < numItems; i++) {
+        JSValue value = JSValue::decode(values[i]);
+        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(value))
+            length += array->size();
+        else
+            ++length;
+    }
+
+
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+
+    JSArray* result = JSArray::tryCreateUninitialized(vm, structure, length);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    unsigned index = 0;
+    for (unsigned i = 0; i < numItems; i++) {
+        JSValue value = JSValue::decode(values[i]);
+        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(value)) {
+            // We are spreading.
+            for (unsigned i = 0; i < array->size(); i++) {
+                result->initializeIndex(vm, index, array->get(i));
+                ++index;
+            }
+        } else {
+            // We are not spreading.
+            result->initializeIndex(vm, index, value);
+            ++index;
+        }
+    }
+
+    return result;
+}
+
+JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSGlobalObject* globalObject = iterable->structure(vm)->globalObject();
+    if (!globalObject)
+        globalObject = exec->lexicalGlobalObject();
+
+    if (isJSArray(iterable) && globalObject->isArrayIteratorProtocolFastAndNonObservable()) {
+        JSArray* array = jsCast<JSArray*>(iterable);
+        return JSFixedArray::createFromArray(exec, vm, array);
+    }
+
+    // FIXME: we can probably make this path faster by having our caller JS code call directly into
+    // the iteration protocol builtin: https://bugs.webkit.org/show_bug.cgi?id=164520
+
+    JSArray* array;
+    {
+        JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
+        CallData callData;
+        CallType callType = JSC::getCallData(iterationFunction, callData);
+        ASSERT(callType != CallType::None);
+
+        MarkedArgumentBuffer arguments;
+        arguments.append(iterable);
+        JSValue arrayResult = call(exec, iterationFunction, callType, callData, jsNull(), arguments);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        array = jsCast<JSArray*>(arrayResult);
+    }
+
+    return JSFixedArray::createFromArray(exec, vm, array);
+}
+
+JSCell* JIT_OPERATION operationSpreadFastArray(ExecState* exec, JSCell* cell)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(isJSArray(cell));
+    JSArray* array = jsCast<JSArray*>(cell);
+    ASSERT(array->globalObject()->isArrayIteratorProtocolFastAndNonObservable());
+
+    return JSFixedArray::createFromArray(exec, vm, array);
 }
 
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
