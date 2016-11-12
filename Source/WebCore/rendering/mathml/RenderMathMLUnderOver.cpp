@@ -247,9 +247,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         return;
 
     if (!isValid()) {
-        setLogicalWidth(0);
-        setLogicalHeight(0);
-        clearNeedsLayout();
+        layoutInvalidMarkup();
         return;
     }
 

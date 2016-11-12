@@ -1,3 +1,17 @@
+2016-11-12  Frederic Wang  <fwang@igalia.com>
+
+        Ensure MathML render tree are clean by the end of FrameView::layout().
+        https://bugs.webkit.org/show_bug.cgi?id=162824
+
+        Reviewed by Darin Adler.
+
+        * mathml/invalid-markup-expected.txt: Added.
+        * mathml/invalid-markup.html: Added.
+        * mathml/mn-as-list-item-assert-expected.txt: Update text expectation now that invalid
+        subtree appears in the output.
+        * mathml/msubsup-fuzz-expected.txt: Ditto.
+        * accessibility/mac/mathml-multiscript.txt: Ditto.
+
 2016-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         event.composedPath() does not include window

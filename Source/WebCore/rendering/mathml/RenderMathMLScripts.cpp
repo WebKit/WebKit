@@ -182,12 +182,16 @@ LayoutUnit RenderMathMLScripts::italicCorrection(const ReferenceChildren& refere
 
 void RenderMathMLScripts::computePreferredLogicalWidths()
 {
+    ASSERT(preferredLogicalWidthsDirty());
+
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
     auto possibleReference = validateAndGetReferenceChildren();
-    if (!possibleReference)
+    if (!possibleReference) {
+        setPreferredLogicalWidthsDirty(false);
         return;
+    }
     auto& reference = possibleReference.value();
 
     LayoutUnit baseItalicCorrection = std::min(reference.base->maxPreferredLogicalWidth(), italicCorrection(reference));
@@ -228,6 +232,8 @@ void RenderMathMLScripts::computePreferredLogicalWidths()
     }
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+
+    setPreferredLogicalWidthsDirty(false);
 }
 
 auto RenderMathMLScripts::verticalParameters() const -> VerticalParameters
@@ -357,9 +363,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     auto possibleReference = validateAndGetReferenceChildren();
     if (!possibleReference) {
-        setLogicalWidth(0);
-        setLogicalHeight(0);
-        clearNeedsLayout();
+        layoutInvalidMarkup();
         return;
     }
     auto& reference = possibleReference.value();

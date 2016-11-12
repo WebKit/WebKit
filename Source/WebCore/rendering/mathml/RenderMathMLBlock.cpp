@@ -248,6 +248,18 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
+void RenderMathMLBlock::layoutInvalidMarkup()
+{
+    // Invalid MathML subtrees are just renderered as empty boxes.
+    // FIXME: https://webkit.org/b/135460 - Should we display some "invalid" markup message instead?
+    ASSERT(needsLayout());
+    for (auto child = firstChildBox(); child; child = child->nextSiblingBox())
+        child->layoutIfNeeded();
+    setLogicalWidth(0);
+    setLogicalHeight(0);
+    clearNeedsLayout();
+}
+
 }
 
 #endif

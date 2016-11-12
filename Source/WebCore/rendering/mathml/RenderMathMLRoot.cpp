@@ -185,9 +185,7 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_baseWidth = 0;
 
     if (!isValid()) {
-        setLogicalWidth(0);
-        setLogicalHeight(0);
-        clearNeedsLayout();
+        layoutInvalidMarkup();
         return;
     }
 

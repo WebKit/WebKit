@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script>
+      description("Test passes if it does not debug assert.");
+    </script>
+  </head>
+  <body>
+    <div>
+      <p>Test 1: Invalid &lt;mfrac&gt; tag:</p>
+      <math>
+        <mfrac></mfrac>
+        <mfrac><mn>1</mn><mn>2</mn><mn>3</mn></mfrac>
+      </math>
+    </div>
+    <div>
+      <p>Test 2: Invalid &lt;mroot&gt; tag:</p>
+      <math>
+        <mroot></mroot>
+        <mroot><mn>1</mn><mn>2</mn><mn>3</mn></mroot>
+      </math>
+    </div>
+    <div>
+      <p>Test 3: Invalid &lt;munder&gt; tag:</p>
+      <math>
+        <munder></munder>
+        <munder><mn>1</mn><mn>2</mn><mn>3</mn></munder>
+      </math>
+    </div>
+    <div>
+      <p>Test 4: Invalid &lt;mover&gt; tag:</p>
+      <math>
+        <mover></mover>
+        <mover><mn>1</mn><mn>2</mn><mn>3</mn></mover>
+      </math>
+    </div>
+    <div>
+      <p>Test 5: Invalid &lt;munderover&gt; tag:</p>
+      <math>
+        <munderover></munderover>
+        <munderover><mn>1</mn><mn>2</mn></munderover>
+        <munderover><mn>1</mn><mn>2</mn><mn>3</mn><mn>4</mn></munderover>
+      </math>
+    </div>
+    <div>
+      <p>Test 6: Invalid &lt;msub&gt; tag:</p>
+      <math>
+        <msub></msub>
+        <msub><mn>1</mn><mn>2</mn><mn>3</mn></msub>
+      </math>
+    </div>
+    <div>
+      <p>Test 7: Invalid &lt;msup&gt; tag:</p>
+      <math>
+        <msup></msup>
+        <msup><mn>1</mn><mn>2</mn><mn>3</mn></msup>
+      </math>
+    </div>
+    <div>
+      <p>Test 8: Invalid &lt;msubsup&gt; tag:</p>
+      <math>
+        <msubsup></msubsup>
+        <msubsup><mn>1</mn><mn>2</mn></msubsup>
+        <msubsup><mn>1</mn><mn>2</mn><mn>3</mn><mn>4</mn></msubsup>
+      </math>
+    </div>
+    <div>
+      <p>Test 9: Invalid &lt;mmultiscripts&gt; tag:</p>
+      <math>
+        <mmultiscripts>
+        </mmultiscripts>
+        <mmultiscripts>
+          <mn>1</mn>
+          <mn>2</mn>
+          <mn>3</mn>
+          <mprescripts/>
+          <mn>4</mn>
+        </mmultiscripts>
+        <mmultiscripts>
+          <mn>1</mn>
+          <mn>2</mn>
+          <mprescripts/>
+          <mn>3</mn>
+          <mn>4</mn>
+        </mmultiscripts>
+      </math>
+    </div>
+  </body>
+</html>

@@ -180,9 +180,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
 
     if (!isValid()) {
-        setLogicalWidth(0);
-        setLogicalHeight(0);
-        clearNeedsLayout();
+        layoutInvalidMarkup();
         return;
     }
 

@@ -1,5 +1,33 @@
 2016-11-12  Frederic Wang  <fwang@igalia.com>
 
+        Ensure MathML render tree are clean by the end of FrameView::layout().
+        https://bugs.webkit.org/show_bug.cgi?id=162824
+
+        Reviewed by Darin Adler.
+
+        clearNeedsLayout is not called during the layout of invalid MathML markup. We introduce a new
+        helper function to perform proper layout of such markup and we now call it from the various
+        MathML layoutBlock functions. Additionally, we ensure that the preferred width is dirty after
+        computation in RenderMathMLScripts::computePreferredLogicalWidths.
+
+        Test: mathml/invalid-markup.html
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::layoutInvalidMarkup): Helper function to layout invalid markup.
+        * rendering/mathml/RenderMathMLBlock.h: Declare layoutInvalidMarkup.
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::layoutBlock): Call layoutInvalidMarkup.
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::layoutBlock): Ditto.
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::computePreferredLogicalWidths): Set the preferred width dirty
+        after computation to avoid that it is computed again and again.
+        (WebCore::RenderMathMLScripts::layoutBlock): Call layoutInvalidMarkup.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layoutBlock): Ditto.
+
+2016-11-12  Frederic Wang  <fwang@igalia.com>
+
         Remove RenderMathMLOperator::shouldAllowStretching
         https://bugs.webkit.org/show_bug.cgi?id=164313
 
