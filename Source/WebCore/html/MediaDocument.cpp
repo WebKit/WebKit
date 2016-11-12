@@ -24,20 +24,22 @@
  */
 
 #include "config.h"
+#include "MediaDocument.h"
 
 #if ENABLE(VIDEO)
-#include "MediaDocument.h"
 
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLBodyElement.h"
 #include "HTMLEmbedElement.h"
+#include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
@@ -80,58 +82,57 @@ private:
     
 void MediaDocumentParser::createDocumentStructure()
 {
-    auto rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement);
-    document()->setCSSTarget(rootElement.ptr());
-    downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
+    auto& document = *this->document();
 
-    if (document()->frame())
-        document()->frame()->injectUserScripts(InjectAtDocumentStart);
+    auto rootElement = HTMLHtmlElement::create(document);
+    document.appendChild(rootElement);
+    document.setCSSTarget(rootElement.ptr());
+    rootElement->insertedByParser();
+
+    if (document.frame())
+        document.frame()->injectUserScripts(InjectAtDocumentStart);
 
 #if PLATFORM(IOS)
-    auto headElement = document()->createElement(headTag, false);
+    auto headElement = HTMLHeadElement::create(document);
     rootElement->appendChild(headElement);
 
-    auto metaElement = document()->createElement(metaTag, false);
+    auto metaElement = HTMLMetaElement::create(document);
     metaElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("viewport", AtomicString::ConstructFromLiteral));
     metaElement->setAttributeWithoutSynchronization(contentAttr, AtomicString("width=device-width,initial-scale=1,user-scalable=no", AtomicString::ConstructFromLiteral));
     headElement->appendChild(metaElement);
 #endif
 
-    auto body = document()->createElement(bodyTag, false);
+    auto body = HTMLBodyElement::create(document);
     rootElement->appendChild(body);
 
-    auto mediaElement = document()->createElement(videoTag, false);
-
-    m_mediaElement = downcast<HTMLVideoElement>(mediaElement.ptr());
-    m_mediaElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom);
-    m_mediaElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom);
-
-    m_mediaElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("media", AtomicString::ConstructFromLiteral));
+    auto videoElement = HTMLVideoElement::create(document);
+    m_mediaElement = videoElement.ptr();
+    videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom);
+    videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom);
+    videoElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("media", AtomicString::ConstructFromLiteral));
 
     StringBuilder elementStyle;
     elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
 #if PLATFORM(IOS)
     elementStyle.appendLiteral("width: 100%; height: 100%;");
 #endif
-    m_mediaElement->setAttribute(styleAttr, elementStyle.toString());
+    videoElement->setAttribute(styleAttr, elementStyle.toString());
 
-    auto sourceElement = document()->createElement(sourceTag, false);
-    HTMLSourceElement& source = downcast<HTMLSourceElement>(sourceElement.get());
-    source.setSrc(document()->url());
+    auto sourceElement = HTMLSourceElement::create(document);
+    sourceElement->setSrc(document.url());
 
-    if (DocumentLoader* loader = document()->loader())
-        source.setType(loader->responseMIMEType());
+    if (auto* loader = document.loader())
+        sourceElement->setType(loader->responseMIMEType());
 
-    m_mediaElement->appendChild(sourceElement);
-    body->appendChild(mediaElement);
+    videoElement->appendChild(sourceElement);
+    body->appendChild(videoElement);
 
-    Frame* frame = document()->frame();
+    Frame* frame = document.frame();
     if (!frame)
         return;
 
     frame->loader().activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
-    frame->loader().setOutgoingReferrer(frame->document()->completeURL(m_outgoingReferrer));
+    frame->loader().setOutgoingReferrer(document.completeURL(m_outgoingReferrer));
 }
 
 void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
@@ -241,19 +242,17 @@ void MediaDocument::replaceMediaElementTimerFired()
     htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
     htmlBody->setAttributeWithoutSynchronization(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
 
-    if (HTMLVideoElement* videoElement = descendantVideoElement(*htmlBody)) {
-        RefPtr<Element> element = Document::createElement(embedTag, false);
-        HTMLEmbedElement& embedElement = downcast<HTMLEmbedElement>(*element);
+    if (auto* videoElement = descendantVideoElement(*htmlBody)) {
+        auto embedElement = HTMLEmbedElement::create(*this);
 
-        embedElement.setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-        embedElement.setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-        embedElement.setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
-        embedElement.setAttributeWithoutSynchronization(srcAttr, url().string());
+        embedElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(srcAttr, url().string());
 
-        DocumentLoader* documentLoader = loader();
-        ASSERT(documentLoader);
-        if (documentLoader)
-            embedElement.setAttributeWithoutSynchronization(typeAttr, documentLoader->writer().mimeType());
+        ASSERT(loader());
+        if (auto* loader = this->loader())
+            embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
         videoElement->parentNode()->replaceChild(embedElement, *videoElement);
     }
@@ -272,4 +271,5 @@ void MediaDocument::mediaElementNaturalSizeChanged(const IntSize& newSize)
 }
 
 }
+
 #endif

@@ -33,6 +33,7 @@
 #import "EditingStyle.h"
 #import "Frame.h"
 #import "FrameSelection.h"
+#import "HTMLSpanElement.h"
 #import "NSAttributedStringSPI.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
@@ -68,7 +69,7 @@ const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRem
     if (!typingStyle || !typingStyle->style())
         return &position.deprecatedNode()->renderer()->style();
 
-    Ref<Element> styleElement = frame->document()->createElement(HTMLNames::spanTag, false);
+    auto styleElement = HTMLSpanElement::create(*frame->document());
 
     String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);

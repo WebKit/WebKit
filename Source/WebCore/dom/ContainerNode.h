@@ -24,7 +24,6 @@
 #pragma once
 
 #include "CollectionType.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 
 namespace WebCore {

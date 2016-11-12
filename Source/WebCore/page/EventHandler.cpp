@@ -43,7 +43,6 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventNames.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FileList.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"

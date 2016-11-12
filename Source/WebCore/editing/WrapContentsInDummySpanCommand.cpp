@@ -27,7 +27,6 @@
 #include "WrapContentsInDummySpanCommand.h"
 
 #include "ApplyStyleCommand.h"
-#include "ExceptionCodePlaceholder.h"
 
 namespace WebCore {
 

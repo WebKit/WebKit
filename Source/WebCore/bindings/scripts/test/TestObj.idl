@@ -138,7 +138,7 @@ enum TestConfidence { "high", "kinda-low" };
     void methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
     void methodWithOptionalEnumArg(optional TestEnumType enumArg);
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
-    [MayThrowLegacyException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
+    [MayThrowException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
 
 #if defined(TESTING_JS)
     void methodWithUSVStringArg(USVString str);
@@ -153,13 +153,10 @@ enum TestConfidence { "high", "kinda-low" };
     [MayThrowException] void methodWithException();
     [MayThrowException] long methodWithExceptionReturningLong();
     [MayThrowException] TestObj methodWithExceptionReturningObject();
-    [MayThrowLegacyException] void methodWithLegacyException();
     [GetterMayThrowException] attribute long attributeWithGetterException;
-    [GetterMayThrowLegacyException] attribute long attributeWithGetterLegacyException;
     [SetterMayThrowException] attribute long attributeWithSetterException;
-    [SetterMayThrowLegacyException] attribute long attributeWithSetterLegacyException;
-    [GetterMayThrowLegacyException] attribute DOMString stringAttrWithGetterException;
-    [SetterMayThrowLegacyException] attribute DOMString stringAttrWithSetterException;
+    [GetterMayThrowException] attribute DOMString stringAttrWithGetterException;
+    [SetterMayThrowException] attribute DOMString stringAttrWithSetterException;
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
@@ -184,11 +181,11 @@ enum TestConfidence { "high", "kinda-low" };
     // 'CallWith' extended attribute
     [CallWith=ScriptState] void withScriptStateVoid();
     [CallWith=ScriptState] TestObj withScriptStateObj();
-    [CallWith=ScriptState, MayThrowLegacyException] void withScriptStateVoidException();
-    [CallWith=ScriptState, MayThrowLegacyException] TestObj withScriptStateObjException();
+    [CallWith=ScriptState, MayThrowException] void withScriptStateVoidException();
+    [CallWith=ScriptState, MayThrowException] TestObj withScriptStateObjException();
     [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
     [CallWith=ScriptExecutionContext&ScriptState] void withScriptExecutionContextAndScriptState();
-    [CallWith=ScriptExecutionContext&ScriptState, MayThrowLegacyException] TestObj withScriptExecutionContextAndScriptStateObjException();
+    [CallWith=ScriptExecutionContext&ScriptState, MayThrowException] TestObj withScriptExecutionContextAndScriptStateObjException();
     [CallWith=  ScriptExecutionContext  &  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
     [CallWith=ScriptArguments&CallStack] void withScriptArgumentsAndCallStack();
     [CallWith=Document] void withDocumentArgument();
@@ -198,10 +195,10 @@ enum TestConfidence { "high", "kinda-low" };
     [CallWith=ScriptState] attribute long withScriptStateAttribute;
     [CallWith=ScriptState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
-    [CallWith=ScriptState, GetterMayThrowLegacyException] attribute TestObj withScriptStateAttributeRaises;
-    [CallWith=ScriptExecutionContext, GetterMayThrowLegacyException] attribute TestObj withScriptExecutionContextAttributeRaises;
+    [CallWith=ScriptState, GetterMayThrowException] attribute TestObj withScriptStateAttributeRaises;
+    [CallWith=ScriptExecutionContext, GetterMayThrowException] attribute TestObj withScriptExecutionContextAttributeRaises;
     [CallWith=ScriptExecutionContext&ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttribute;
-    [CallWith=ScriptExecutionContext&ScriptState,GetterMayThrowLegacyException] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises;
+    [CallWith=ScriptExecutionContext&ScriptState,GetterMayThrowException] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises;
     [CallWith=  ScriptExecutionContext  &  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
     [CallWith=ScriptArguments&CallStack] attribute TestObj withScriptArgumentsAndCallStackAttribute;
 
@@ -333,8 +330,8 @@ enum TestConfidence { "high", "kinda-low" };
 
 #if defined(TESTING_JS)
     void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
-    [MayThrowLegacyException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
-    [MayThrowLegacyException] DOMStringList domStringListFunction(DOMStringList values);
+    [MayThrowException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
+    [MayThrowException] DOMStringList domStringListFunction(DOMStringList values);
 
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
 
@@ -342,7 +339,7 @@ enum TestConfidence { "high", "kinda-low" };
 #endif
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
-    [CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] SVGDocument getSVGDocument();
 
     void convert1(TestNode value);
     void convert2(TestNode? value);
@@ -394,7 +391,7 @@ enum TestConfidence { "high", "kinda-low" };
     attribute USVString? nullableUSVStringSettableAttribute;
 #endif
 
-    [GetterMayThrowLegacyException] attribute long? nullableStringValue;
+    [GetterMayThrowException] attribute long? nullableStringValue;
 
     // Identifiers with a leading underscore, which should be removed.
     const unsigned short               _readonly = 0;
@@ -407,12 +404,12 @@ enum TestConfidence { "high", "kinda-low" };
     // Promise function
     Promise<void> testPromiseFunction();
     Promise<void> testPromiseFunctionWithFloatArgument(float a);
-    [MayThrowLegacyException] Promise<void> testPromiseFunctionWithException();
+    [MayThrowException] Promise<void> testPromiseFunctionWithException();
     Promise<void> testPromiseFunctionWithOptionalIntArgument(optional long a);
     Promise<void> testPromiseOverloadedFunction(float a);
     Promise<void> testPromiseOverloadedFunction(FetchRequest request);
     static Promise<void> testStaticPromiseFunction();
-    [MayThrowLegacyException] static Promise<void> testStaticPromiseFunctionWithException();
+    [MayThrowException] static Promise<void> testStaticPromiseFunctionWithException();
     [Custom] Promise<void> testCustomPromiseFunction();
 
     // PutForwards

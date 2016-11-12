@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "ExceptionCodePlaceholder.h"
 #include "MediaPlayer.h"
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"

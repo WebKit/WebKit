@@ -43,6 +43,11 @@ Ref<RubyElement> RubyElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new RubyElement(tagName, document));
 }
 
+Ref<RubyElement> RubyElement::create(Document& document)
+{
+    return adoptRef(*new RubyElement(rubyTag, document));
+}
+
 RenderPtr<RenderElement> RubyElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (style.display() == INLINE)

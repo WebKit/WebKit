@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RemoveNodeCommand.h"
 
-#include "ExceptionCodePlaceholder.h"
 #include "RenderElement.h"
 #include "htmlediting.h"
 #include <wtf/Assertions.h>

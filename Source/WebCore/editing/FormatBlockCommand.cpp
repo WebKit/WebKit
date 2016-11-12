@@ -28,7 +28,6 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "ExceptionCodePlaceholder.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"

@@ -28,6 +28,7 @@ namespace WebCore {
 
 class HTMLMetaElement final : public HTMLElement {
 public:
+    static Ref<HTMLMetaElement> create(Document&);
     static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);
 
     const AtomicString& content() const;

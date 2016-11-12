@@ -36,7 +36,6 @@
 #include "CSSStyleSheet.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FontCache.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
@@ -783,7 +782,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     if (!document.isHTMLDocument() && !document.isSVGDocument())
         return nullptr;
 
-    Ref<Element> styleElement = document.createElement(HTMLNames::styleTag, false);
+    auto styleElement = HTMLStyleElement::create(document);
     styleElement->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomicString("text/css", AtomicString::ConstructFromLiteral));
 
     ContainerNode* targetNode;

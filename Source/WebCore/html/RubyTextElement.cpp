@@ -45,6 +45,11 @@ Ref<RubyTextElement> RubyTextElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new RubyTextElement(tagName, document));
 }
 
+Ref<RubyTextElement> RubyTextElement::create(Document& document)
+{
+    return adoptRef(*new RubyTextElement(rtTag, document));
+}
+
 RenderPtr<RenderElement> RubyTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     // RenderRubyText requires its parent to be RenderRubyRun.

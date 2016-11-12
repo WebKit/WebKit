@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "HTMLVideoElement.h"
 
 #if ENABLE(VIDEO)
-
-#include "HTMLVideoElement.h"
 
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
@@ -66,12 +65,17 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    Ref<HTMLVideoElement> videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
+    auto videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
     videoElement->suspendIfNeeded();
     return videoElement;
 }
 
-bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style) 
+Ref<HTMLVideoElement> HTMLVideoElement::create(Document& document)
+{
+    return create(videoTag, document, false);
+}
+
+bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 {
     return HTMLElement::rendererIsNeeded(style); 
 }

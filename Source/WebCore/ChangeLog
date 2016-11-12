@@ -1,3 +1,205 @@
+2016-11-11  Darin Adler  <darin@apple.com>
+
+        Remove LegacyException support from bindings script
+        https://bugs.webkit.org/show_bug.cgi?id=164516
+
+        Reviewed by Youenn Fablet.
+
+        Besides removing LegacyException support from the bindings script, this patch
+        also removes most uses of ExceptionCodePlaceholder.h. Also, some call sites of
+        createElement were using ASSERT_NO_EXCEPTION on an argument that was not even an
+        ExceptionCode&, so to fix that, this changes most call sites to use specific create
+        functions for specific element classes, rather than using Document::createElement.
+
+        * Modules/mediasource/SourceBuffer.cpp: Removed include of
+        ExceptionCodePlaceholder.h.
+        * Modules/mediastream/MediaStreamTrack.cpp: Ditto.
+        * Modules/websockets/WebSocketChannel.cpp: Ditto.
+        * bindings/js/JSBlobCustom.cpp: Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Removed support for GetterMayThrowLegacyException,
+        SetterMayThrowLegacyException, and MayThrowLegacyException.
+        (GenerateParametersCheck): Ditto.
+        (GenerateImplementationFunctionCall): Ditto.
+        (GenerateConstructorDefinition): Ditto.
+
+        * bindings/scripts/IDLAttributes.txt: Removed ConstructorMayThrowLegacyException,
+        GetterMayThrowLegacyException, MayThrowLegacyException, and SetterMayThrowLegacyException.
+
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Updated exepected results.
+
+        * bindings/scripts/test/TestImplements.idl: Use non-legacy exceptions.
+        * bindings/scripts/test/TestInterface.idl: Ditto.
+        * bindings/scripts/test/TestNamedConstructor.idl: Ditto.
+        * bindings/scripts/test/TestObj.idl: Ditto.
+        * bindings/scripts/test/TestSupplemental.idl: Ditto.
+        * bindings/scripts/test/TestTypedefs.idl: Ditto.
+
+        * dom/ContainerNode.h: Removed include of ExceptionCodePlaceholder.h.
+        * editing/AlternativeTextController.cpp: Ditto.
+        * editing/AppendNodeCommand.cpp: Ditto.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Use specific create function
+        instead of Document::createElement.
+
+        * editing/DeleteFromTextNodeCommand.cpp: Removed include of
+        ExceptionCodePlaceholder.h.
+        * editing/Editor.cpp: Ditto.
+        * editing/EditorCommand.cpp: Ditto.
+        * editing/FormatBlockCommand.cpp: Ditto.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem): Use specific create
+        function instead of Document::createElement.
+
+        * editing/InsertListCommand.cpp: Removed include of ExceptionCodePlaceholder.h.
+        * editing/InsertNodeBeforeCommand.cpp: Ditto.
+        * editing/RemoveNodeCommand.cpp: Ditto.
+        * editing/ReplaceSelectionCommand.cpp: Ditto.
+        * editing/TextIterator.cpp: Ditto.
+        * editing/WrapContentsInDummySpanCommand.cpp: Ditto.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::styleForSelectionStart): Use specific create function instead
+        of Document::createElement.
+        * editing/htmlediting.cpp:
+        (WebCore::createTabSpanElement): Ditto.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readURL): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readURL): Ditto.
+
+        * editing/markup.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry): Use specific create function
+        instead of Document::createElement.
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename): Ditto.
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate): Ditto.
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument): Ditto.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::create): Added overload that just takes a Document.
+        * html/HTMLEmbedElement.h: Updated for above.
+
+        * html/HTMLMediaElement.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::create): Added overload that just takes a Document.
+        * html/HTMLMetaElement.h: Updated for above.
+
+        * html/HTMLOutputElement.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * html/HTMLSelectElement.cpp: Ditto.
+        (WebCore::HTMLSelectElement::setLength): Use specific create function
+        instead of Document::createElement.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::create): Added overload that just takes a Document.
+        * html/HTMLSourceElement.h: Updated for above.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement): Moved data member initialization
+        to class definition.
+        (WebCore::HTMLStyleElement::create): Added overload that just takes a Document.
+        * html/HTMLStyleElement.h: Updated for above. Also made finishParsingChildren public.
+
+        * html/HTMLTableElement.cpp: Removed include of ExceptionCodePlaceholder.h.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::create): Added overload that just takes a Document.
+        * html/HTMLVideoElement.h: Updated for above.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Use specific create function
+        instead of Document::createElement.
+
+        * html/InputType.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure): Use specific create
+        function instead of Document::createElement.
+        (WebCore::MediaDocument::replaceMediaElementTimerFired): Ditto.
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure): Ditto.
+
+        * html/RangeInputType.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * html/RubyElement.cpp:
+        (WebCore::RubyElement::create): Added overload that just takes a Document.
+        * html/RubyElement.h: Updated for above.
+
+        * html/RubyTextElement.cpp:
+        (WebCore::RubyTextElement::create): Added overload that just takes a Document.
+        * html/RubyTextElement.h: Updated for above.
+
+        * html/ValidationMessage.cpp: Removed include of ExceptionCodePlaceholder.h.
+        * html/canvas/CanvasRenderingContext2D.cpp: Ditto.
+        * html/shadow/MediaControlElementTypes.cpp: Ditto.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        Use specific create function instead of Document::createElement.
+
+        * html/shadow/MediaControls.cpp: Removed include of ExceptionCodePlaceholder.h.
+        * html/shadow/MediaControlsApple.cpp: Ditto.
+        * html/track/InbandDataTextTrack.cpp: Ditto.
+        * html/track/InbandGenericTextTrack.cpp: Ditto.
+        * html/track/InbandTextTrack.cpp: Ditto.
+        * html/track/VTTRegion.cpp: Ditto.
+
+        * html/track/WebVTTElement.cpp:
+        (WebCore::WebVTTElement::createEquivalentHTMLElement): Use specific create
+        function instead of Document::createElement.
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createInspectorStyleSheetForDocument): Ditto.
+
+        * page/ContextMenuController.cpp: Removed include of ExceptionCodePlaceholder.h.
+        * page/DOMWindow.cpp: Ditto.
+        * page/DragController.cpp: Ditto.
+        * page/EventHandler.cpp: Ditto.
+        * page/Page.cpp: Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm: Ditto.
+        * platform/mac/PasteboardMac.mm: Ditto.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm: Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp: Ditto.
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp: Ditto.
+        * rendering/RenderNamedFlowThread.cpp: Ditto.
+        * rendering/RenderThemeEfl.cpp: Ditto.
+        * rendering/RenderThemeMac.mm: Ditto.
+        * rendering/style/SVGRenderStyle.h: Ditto.
+        * svg/SVGTRefElement.cpp: Ditto.
+
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::XMLErrors): Take a reference and initialize data member
+        in class definition.
+        (WebCore::createXHTMLParserErrorHeader): Take a reference, and mostly use
+        specific create functions instead of createElement.
+        (WebCore::XMLErrors::insertErrorMessageBlock): Ditto.
+        * xml/XMLErrors.h: Updated for above.
+
+        * xml/XMLTreeViewer.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::handleError): Pass a reference.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp: Removed include of
+        ExceptionCodePlaceholder.h.
+
 2016-11-12  Dan Bernstein  <mitz@apple.com>
 
         Clean up a couple of macOS *SPI headers

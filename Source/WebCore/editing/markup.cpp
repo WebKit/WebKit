@@ -39,7 +39,6 @@
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "File.h"
 #include "Frame.h"
 #include "HTMLAttachmentElement.h"

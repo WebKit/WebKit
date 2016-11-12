@@ -31,7 +31,6 @@
 
 #include "Document.h"
 #include "Event.h"
-#include "ExceptionCodePlaceholder.h"
 #include "HTMLMediaElement.h"
 #include "InbandDataTextTrack.h"
 #include "InbandGenericTextTrack.h"

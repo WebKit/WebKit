@@ -38,9 +38,8 @@ class Document;
 
 class XMLErrors {
 public:
-    explicit XMLErrors(Document*);
+    explicit XMLErrors(Document&);
 
-    // Exposed for callbacks:
     enum ErrorType { warning, nonFatal, fatal };
     void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
     void handleError(ErrorType, const char* message, TextPosition);
@@ -50,9 +49,8 @@ public:
 private:
     void appendErrorMessage(const String& typeString, TextPosition, const char* message);
 
-    Document* m_document;
-
-    int m_errorCount;
+    Document& m_document;
+    int m_errorCount { 0 };
     TextPosition m_lastErrorPosition;
     StringBuilder m_errorMessages;
 };

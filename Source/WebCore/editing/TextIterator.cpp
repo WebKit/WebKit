@@ -28,7 +28,6 @@
 #include "TextIterator.h"
 
 #include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FontCascade.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"

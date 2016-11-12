@@ -27,7 +27,6 @@
 #include "DeleteFromTextNodeCommand.h"
 
 #include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Text.h"
 #include "htmlediting.h"
 

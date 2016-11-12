@@ -37,7 +37,6 @@
 #include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"

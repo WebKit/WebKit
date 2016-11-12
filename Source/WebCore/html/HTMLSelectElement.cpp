@@ -34,7 +34,6 @@
 #include "ElementTraversal.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FormController.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -459,8 +458,7 @@ ExceptionOr<void> HTMLSelectElement::setLength(unsigned newLength)
 
     if (diff < 0) { // Add dummy elements.
         do {
-            auto option = document().createElement(optionTag, false);
-            auto result = add(downcast<HTMLOptionElement>(option.ptr()), Nullopt);
+            auto result = add(HTMLOptionElement::create(document()).ptr(), Nullopt);
             if (result.hasException())
                 return result;
         } while (++diff);

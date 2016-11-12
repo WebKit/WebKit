@@ -32,7 +32,6 @@
 #include "Editor.h"
 #include "Element.h"
 #include "Event.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"

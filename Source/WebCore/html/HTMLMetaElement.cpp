@@ -38,6 +38,11 @@ inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(metaTag));
 }
 
+Ref<HTMLMetaElement> HTMLMetaElement::create(Document& document)
+{
+    return adoptRef(*new HTMLMetaElement(metaTag, document));
+}
+
 Ref<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLMetaElement(tagName, document));

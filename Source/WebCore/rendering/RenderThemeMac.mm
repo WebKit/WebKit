@@ -29,7 +29,6 @@
 #import "CoreGraphicsSPI.h"
 #import "Document.h"
 #import "Element.h"
-#import "ExceptionCodePlaceholder.h"
 #import "FileList.h"
 #import "FloatRoundedRect.h"
 #import "FocusController.h"

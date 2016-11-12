@@ -42,6 +42,7 @@
 #import "Frame.h"
 #import "FrameLoaderClient.h"
 #import "FrameView.h"
+#import "HTMLAnchorElement.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLConverter.h"
 #import "HTMLElement.h"
@@ -628,7 +629,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
     if (url.string().isEmpty())
         return false;
 
-    auto anchor = frame.document()->createElement(HTMLNames::aTag, false);
+    auto anchor = HTMLAnchorElement::create(*frame.document());
     anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
     anchor->appendChild(frame.document()->createTextNode([title precomposedStringWithCanonicalMapping]));
 

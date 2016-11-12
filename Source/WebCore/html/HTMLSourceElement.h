@@ -33,6 +33,7 @@ namespace WebCore {
 
 class HTMLSourceElement final : public HTMLElement, public ActiveDOMObject {
 public:
+    static Ref<HTMLSourceElement> create(Document&);
     static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
 
     String media() const;

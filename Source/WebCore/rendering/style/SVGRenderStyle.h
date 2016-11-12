@@ -26,7 +26,6 @@
 
 #include "CSSValueList.h"
 #include "DataRef.h"
-#include "ExceptionCodePlaceholder.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"

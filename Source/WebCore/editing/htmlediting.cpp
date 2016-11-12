@@ -29,7 +29,6 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "Editor.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDListElement.h"
@@ -930,14 +929,14 @@ HTMLSpanElement* tabSpanNode(const Node* node)
 
 static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
 {
-    auto spanElement = document.createElement(spanTag, false);
+    auto spanElement = HTMLSpanElement::create(document);
 
     spanElement->setAttributeWithoutSynchronization(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
 
     spanElement->appendChild(tabTextNode);
 
-    return spanElement;
+    return WTFMove(spanElement);
 }
 
 Ref<Element> createTabSpanElement(Document& document, const String& tabText)

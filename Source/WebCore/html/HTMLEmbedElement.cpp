@@ -54,6 +54,11 @@ Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLEmbedElement(tagName, document, createdByParser));
 }
 
+Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)
+{
+    return adoptRef(*new HTMLEmbedElement(embedTag, document, false));
+}
+
 static inline RenderWidget* findWidgetRenderer(const Node* node)
 {
     if (!node->renderer()) {

@@ -37,6 +37,7 @@ class RenderVideo;
 
 class HTMLVideoElement final : public HTMLMediaElement {
 public:
+    static Ref<HTMLVideoElement> create(Document&);
     static Ref<HTMLVideoElement> create(const QualifiedName&, Document&, bool createdByParser);
 
     WEBCORE_EXPORT unsigned videoWidth() const;

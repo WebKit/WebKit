@@ -39,6 +39,7 @@
 #import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
+#import "HTMLAnchorElement.h"
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
@@ -475,7 +476,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
             return fragment;
         }
     } else {
-        auto anchor = frame.document()->createElement(HTMLNames::aTag, false);
+        auto anchor = HTMLAnchorElement::create(*frame.document());
         anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
         anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
 

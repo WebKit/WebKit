@@ -36,7 +36,6 @@
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventHandler.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
 #include "FrameView.h"

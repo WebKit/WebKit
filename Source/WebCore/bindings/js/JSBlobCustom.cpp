@@ -34,7 +34,6 @@
 
 #include "Blob.h"
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
 #include "JSFile.h"

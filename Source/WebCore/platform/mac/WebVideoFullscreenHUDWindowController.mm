@@ -23,12 +23,10 @@
  */
 
 #import "config.h"
+#import "WebVideoFullscreenHUDWindowController.h"
 
 #if ENABLE(VIDEO)
 
-#import "WebVideoFullscreenHUDWindowController.h"
-
-#import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/HTMLVideoElement.h>

@@ -43,7 +43,6 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"

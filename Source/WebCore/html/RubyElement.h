@@ -31,6 +31,7 @@ namespace WebCore {
 
 class RubyElement final : public HTMLElement {
 public:
+    static Ref<RubyElement> create(Document&);
     static Ref<RubyElement> create(const QualifiedName&, Document&);
 
 private:

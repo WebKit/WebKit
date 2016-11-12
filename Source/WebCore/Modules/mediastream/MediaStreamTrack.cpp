@@ -34,7 +34,6 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "JSOverconstrainedError.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaSourceSettings.h"

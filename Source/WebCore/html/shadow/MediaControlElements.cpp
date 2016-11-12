@@ -28,17 +28,19 @@
  */
 
 #include "config.h"
+#include "MediaControlElements.h"
 
 #if ENABLE(VIDEO)
-#include "MediaControlElements.h"
 
 #include "DOMTokenList.h"
 #include "ElementChildIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "HTMLHeadingElement.h"
+#include "HTMLLIElement.h"
+#include "HTMLUListElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "Language.h"
@@ -54,9 +56,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#if ENABLE(VIDEO_TRACK)
 #include "TextTrackList.h"
-#endif
 #include "VTTRegionList.h"
 
 namespace WebCore {
@@ -805,13 +805,13 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     auto& captionPreferences = document().page()->group().captionPreferences();
     Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(&trackList);
 
-    auto captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
+    auto captionsHeader = HTMLHeadingElement::create(h3Tag, document());
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
     appendChild(captionsHeader);
-    auto captionsMenuList = document().createElement(ulTag, ASSERT_NO_EXCEPTION);
+    auto captionsMenuList = HTMLUListElement::create(document());
 
     for (auto& textTrack : tracksForMenu) {
-        auto menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
+        auto menuItem = HTMLLIElement::create(document());
         menuItem->appendChild(document().createTextNode(captionPreferences.displayNameForTrack(textTrack.get())));
         captionsMenuList->appendChild(menuItem);
         m_menuItems.append(menuItem.ptr());

@@ -26,11 +26,11 @@
 #include "PluginDocument.h"
 
 #include "DocumentLoader.h"
-#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
@@ -66,19 +66,21 @@ private:
 
 void PluginDocumentParser::createDocumentStructure()
 {
-    auto rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement);
-    downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
+    auto& document = downcast<PluginDocument>(*this->document());
 
-    if (document()->frame())
-        document()->frame()->injectUserScripts(InjectAtDocumentStart);
+    auto rootElement = HTMLHtmlElement::create(document);
+    document.appendChild(rootElement);
+    rootElement->insertedByParser();
+
+    if (document.frame())
+        document.frame()->injectUserScripts(InjectAtDocumentStart);
 
 #if PLATFORM(IOS)
     // Should not be able to zoom into standalone plug-in documents.
-    document()->processViewport(ASCIILiteral("user-scalable=no"), ViewportArguments::PluginDocument);
+    document.processViewport(ASCIILiteral("user-scalable=no"), ViewportArguments::PluginDocument);
 #endif
 
-    auto body = document()->createElement(bodyTag, false);
+    auto body = HTMLBodyElement::create(document);
     body->setAttributeWithoutSynchronization(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
     body->setAttributeWithoutSynchronization(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
 #if PLATFORM(IOS)
@@ -89,21 +91,20 @@ void PluginDocumentParser::createDocumentStructure()
 
     rootElement->appendChild(body);
         
-    auto embedElement = document()->createElement(embedTag, false);
+    auto embedElement = HTMLEmbedElement::create(document);
         
-    m_embedElement = downcast<HTMLEmbedElement>(embedElement.ptr());
-    m_embedElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-    m_embedElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    m_embedElement = embedElement.ptr();
+    embedElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    embedElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
     
-    m_embedElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
-    m_embedElement->setAttributeWithoutSynchronization(srcAttr, document()->url().string());
+    embedElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
+    embedElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     
-    DocumentLoader* loader = document()->loader();
-    ASSERT(loader);
-    if (loader)
+    ASSERT(document.loader());
+    if (auto* loader = document.loader())
         m_embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
-    downcast<PluginDocument>(*document()).setPluginElement(m_embedElement);
+    document.setPluginElement(m_embedElement);
 
     body->appendChild(embedElement);
 }

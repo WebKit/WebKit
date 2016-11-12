@@ -33,7 +33,6 @@ ConstantsScope=*
 Constructor
 ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorMayThrowException
-ConstructorMayThrowLegacyException
 Custom
 CustomCall
 CustomConstructor
@@ -67,7 +66,6 @@ Exposed=*
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot|ImplScriptExecutionContext
 GetterMayThrowException
-GetterMayThrowLegacyException
 Global=*
 Immutable
 ImplementedAs=*
@@ -93,7 +91,6 @@ JSLegacyParent=*
 LenientThis
 MasqueradesAsUndefined
 MayThrowException
-MayThrowLegacyException
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
 NewObject
@@ -113,7 +110,6 @@ ReportExternalMemoryCost
 RequiresExistingAtomicString
 SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 SetterMayThrowException
-SetterMayThrowLegacyException
 SkipVTableValidation
 SuppressToJSObject
 TreatNullAs=EmptyString

@@ -50,8 +50,6 @@ static StyleEventSender& styleLoadEventSender()
 inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , m_styleSheetOwner(document, createdByParser)
-    , m_firedLoad(false)
-    , m_loadedSheet(false)
 {
     ASSERT(hasTagName(styleTag));
 }
@@ -66,6 +64,11 @@ HTMLStyleElement::~HTMLStyleElement()
 Ref<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(*new HTMLStyleElement(tagName, document, createdByParser));
+}
+
+Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
+{
+    return adoptRef(*new HTMLStyleElement(styleTag, document, false));
 }
 
 void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

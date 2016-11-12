@@ -30,6 +30,8 @@
 #include "ElementTraversal.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
+#include "HTMLOListElement.h"
+#include "HTMLUListElement.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertListCommand.h"
 #include "RenderElement.h"
@@ -72,7 +74,11 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
     RefPtr<Element> previousList = ElementTraversal::previousSibling(*selectedListItem);
     RefPtr<Element> nextList = ElementTraversal::nextSibling(*selectedListItem);
 
-    RefPtr<Element> newList = document().createElement(listNode->tagQName(), false);
+    RefPtr<Element> newList;
+    if (is<HTMLUListElement>(*listNode))
+        newList = HTMLUListElement::create(document());
+    else
+        newList = HTMLOListElement::create(document());
     insertNodeBefore(newList, selectedListItem);
 
     moveParagraphWithClones(start, end, newList.get(), selectedListItem.get());

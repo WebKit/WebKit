@@ -29,7 +29,6 @@
 
 #include "CSSValueKeywords.h"
 #include "CairoUtilitiesEfl.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FloatRoundedRect.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
