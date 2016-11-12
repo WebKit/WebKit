@@ -39,6 +39,7 @@
 using namespace WebCore;
 
 @synthesize contentDuration=_contentDuration;
+@synthesize seekToTime=_seekToTime;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
@@ -73,6 +74,18 @@ using namespace WebCore;
 - (void)setSeekableTimeRanges:(NSArray *)timeRanges
 {
     _seekableTimeRanges = timeRanges;
+}
+
+- (BOOL)isSeeking
+{
+    return NO;
+}
+
+- (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter
+{
+    UNUSED_PARAM(toleranceBefore);
+    UNUSED_PARAM(toleranceAfter);
+    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->seekToTime(time);
 }
 
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex

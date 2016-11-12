@@ -35,16 +35,18 @@ class WebPlaybackSessionInterfaceMac;
 #if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #import <WebKitAdditions/WebPlaybackControlsControllerAdditions.h>
 #else
+#import <WebCore/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
 OBJC_CLASS AVValueTiming;
 
 WEBCORE_EXPORT
-@interface WebPlaybackControlsManager : NSObject {
+@interface WebPlaybackControlsManager : NSObject <AVFunctionBarPlaybackControlsControlling> {
     NSTimeInterval _contentDuration;
 
     RetainPtr<AVValueTiming> _timing;
+    NSTimeInterval _seekToTime;
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
