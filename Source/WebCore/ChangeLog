@@ -1,3 +1,35 @@
+2016-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        RenderObject::flowThreadState should follow containing block instead of parent.
+        https://bugs.webkit.org/show_bug.cgi?id=164629
+
+        Reviewed by Simon Fraser.
+
+        Currently every descendant of a region/multicolumn container is considered to be part of the
+        flowthread including out-of-flow renderers. They all have the InsideFlowThread flag set.
+        However since out-of-flow renderers are not really part of the flowthread layout context,
+        whenever the layout code actually checks for their flowthread containers, we return nullptr and
+        try to handle this seemingly defective state gracefully (that is, flag indicates "inside the flow thread" state,
+        but there's no flow tread container).
+ 
+        This patch fixes this confused state by setting the RenderObject::flowThreadState flag based on
+        the containing block's state instead of the parent's.
+
+        Not testable, since we seem to manage out-of-flow elements just fine even
+        when they have the InsideFlowThread flag set. 
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::adjustFlowThreadStateIncludingDescendants): This is an iterative DFS pre-order traversal so
+        we set the flow state first on containers.
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computedFlowThreadState):
+        (WebCore::RenderObject::initializeFlowThreadStateOnInsertion):
+        * rendering/RenderObject.h:
+
 2016-11-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.currentScript should be null when running a script inside a shadow tree

@@ -820,6 +820,7 @@ protected:
 
     void initializeFlowThreadStateOnInsertion();
     void resetFlowThreadStateOnRemoval();
+    static FlowThreadState computedFlowThreadState(const RenderObject&);
 
 private:
 #ifndef NDEBUG

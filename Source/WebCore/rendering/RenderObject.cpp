@@ -177,18 +177,36 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
     }
 }
 
+RenderObject::FlowThreadState RenderObject::computedFlowThreadState(const RenderObject& renderer)
+{
+    if (!renderer.parent())
+        return renderer.flowThreadState();
+
+    auto inheritedFlowState = RenderObject::NotInsideFlowThread;
+    if (is<RenderText>(renderer))
+        inheritedFlowState = renderer.parent()->flowThreadState();
+    else if (auto* containingBlock = renderer.containingBlock())
+        inheritedFlowState = containingBlock->flowThreadState();
+    else {
+        // Splitting lines or doing continuation, so just keep the current state.
+        inheritedFlowState = renderer.flowThreadState();
+    }
+    return inheritedFlowState;
+}
+
 void RenderObject::initializeFlowThreadStateOnInsertion()
 {
     ASSERT(parent());
-
-    if (flowThreadState() == parent()->flowThreadState())
-        return;
 
     // A RenderFlowThread is always considered to be inside itself, so it never has to change its state in response to parent changes.
     if (isRenderFlowThread())
         return;
 
-    setFlowThreadStateIncludingDescendants(parent()->flowThreadState());
+    auto computedState = computedFlowThreadState(*this);
+    if (flowThreadState() == computedState)
+        return;
+
+    setFlowThreadStateIncludingDescendants(computedState);
 }
 
 void RenderObject::resetFlowThreadStateOnRemoval()

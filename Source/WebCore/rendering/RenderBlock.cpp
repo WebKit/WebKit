@@ -427,7 +427,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     RenderBox::styleDidChange(diff, oldStyle);
 
     if (hadTransform != hasTransform())
-        resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+        adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
 
     auto& newStyle = style();
     if (!isAnonymousBlock()) {

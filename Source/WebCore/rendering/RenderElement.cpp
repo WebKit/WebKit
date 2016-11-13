@@ -46,6 +46,7 @@
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
@@ -411,8 +412,8 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
 
     // Make sure we invalidate the containing block cache for flows when the contianing block context changes
     // so that styleDidChange can safely use RenderBlock::locateFlowThreadContainingBlock()
-    if (is<RenderBlock>(*this) && oldStyle.position() != m_style.position())
-        downcast<RenderBlock>(*this).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+    if (oldStyle.position() != m_style.position())
+        adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
 
     styleDidChange(diff, &oldStyle);
 
@@ -2183,6 +2184,21 @@ RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
     // Respect the image's orientation if it's being used as a full-page image or it's
     // an <img> and the setting to respect it everywhere is set.
     return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(element())) ? RespectImageOrientation : DoNotRespectImageOrientation;
+}
+
+void RenderElement::adjustFlowThreadStateOnContainingBlockChangeIfNeeded()
+{
+    if (flowThreadState() == NotInsideFlowThread)
+        return;
+
+    // Invalidate the containing block caches.
+    if (is<RenderBlock>(*this))
+        downcast<RenderBlock>(*this).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+    
+    // Adjust the flow tread state on the subtree.
+    setFlowThreadState(RenderObject::computedFlowThreadState(*this));
+    for (auto& descendant : descendantsOfType<RenderObject>(*this))
+        descendant.setFlowThreadState(RenderObject::computedFlowThreadState(descendant));
 }
 
 void RenderElement::removeFromRenderFlowThread()

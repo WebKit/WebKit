@@ -281,6 +281,7 @@ protected:
     void updateOutlineAutoAncestor(bool hasOutlineAuto);
 
     void removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState);
+    void adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
