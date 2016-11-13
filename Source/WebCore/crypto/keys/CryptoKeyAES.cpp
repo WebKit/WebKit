@@ -106,7 +106,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyAES::buildAlgorithm() const
 {
-    return std::make_unique<AesKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().nameForIdentifier(algorithmIdentifier()), m_key.size() * 8);
+    return std::make_unique<AesKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()), m_key.size() * 8);
 }
 
 std::unique_ptr<CryptoKeyData> CryptoKeyAES::exportData() const

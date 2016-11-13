@@ -162,7 +162,7 @@ size_t CryptoKeyRSA::keySizeInBits() const
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
 {
-    String name = CryptoAlgorithmRegistry::singleton().nameForIdentifier(algorithmIdentifier());
+    String name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
     Vector<uint8_t> modulus;
     Vector<uint8_t> publicExponent;
     CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
@@ -174,7 +174,7 @@ std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
 
     size_t modulusLength = modulus.size() * 8;
     if (m_restrictedToSpecificHash)
-        return std::make_unique<RsaHashedKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent), CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash));
+        return std::make_unique<RsaHashedKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent), CryptoAlgorithmRegistry::singleton().name(m_hash));
     return std::make_unique<RsaKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent));
 }
 

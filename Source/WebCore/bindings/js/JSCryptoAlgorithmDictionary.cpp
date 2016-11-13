@@ -87,11 +87,13 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
         return false;
     }
 
-    if (!CryptoAlgorithmRegistry::singleton().getIdentifierForName(algorithmName, algorithmIdentifier)) {
+    auto identifier = CryptoAlgorithmRegistry::singleton().identifier(algorithmName);
+    if (!identifier) {
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return false;
     }
 
+    algorithmIdentifier = *identifier;
     return true;
 }
 

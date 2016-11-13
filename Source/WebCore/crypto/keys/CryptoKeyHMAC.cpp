@@ -116,8 +116,8 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyHMAC::buildAlgorithm() const
 {
-    return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().nameForIdentifier(algorithmIdentifier()),
-        CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash), m_key.size() * 8);
+    return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()),
+        CryptoAlgorithmRegistry::singleton().name(m_hash), m_key.size() * 8);
 }
 
 std::unique_ptr<CryptoKeyData> CryptoKeyHMAC::exportData() const

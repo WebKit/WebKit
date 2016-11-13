@@ -55,12 +55,14 @@ static int getGCryptDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
     }
 }
 
-static bool calculateSignature(int algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data, Vector<uint8_t>& signature)
+static Optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
 {
     size_t digestLength = gcry_mac_get_algo_maclen(algorithm);
     const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>("");
 
     bool result = false;
+    Vector<uint8_t> signature;
+
     gcry_mac_hd_t hd;
     gcry_error_t err;
 
@@ -88,44 +90,43 @@ cleanup:
     if (hd)
         gcry_mac_close(hd);
 
-    return result;
+    if (!result)
+        return Nullopt;
+
+    return WTFMove(signature);
 }
 
-void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    UNUSED_PARAM(failureCallback);
     int algorithm = getGCryptDigestAlgorithm(parameters.hash);
-    if (algorithm == GCRY_MAC_NONE) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (algorithm == GCRY_MAC_NONE)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    Vector<uint8_t> signature;
-    if (calculateSignature(algorithm, key.key(), data, signature))
-        callback(signature);
+    auto signature = calculateSignature(algorithm, key.key(), data);
+    if (signature)
+        callback(*signature);
     else
         failureCallback();
+    return { };
 }
 
-void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback)
 {
-    UNUSED_PARAM(failureCallback);
     int algorithm = getGCryptDigestAlgorithm(parameters.hash);
-    if (algorithm == GCRY_MAC_NONE) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (algorithm == GCRY_MAC_NONE)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    Vector<uint8_t> signature;
-    if (!calculateSignature(algorithm, key.key(), data, signature)) {
+    auto signature = calculateSignature(algorithm, key.key(), data);
+    if (!signature) {
         failureCallback();
-        return;
+        return { };
     }
 
     // Using a constant time comparison to prevent timing attacks.
-    bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
+    bool result = signature.value().size() == expectedSignature.second && !constantTimeMemcmp(signature.value().data(), expectedSignature.first, signature.value().size());
 
     callback(result);
+    return { };
 }
 
 }

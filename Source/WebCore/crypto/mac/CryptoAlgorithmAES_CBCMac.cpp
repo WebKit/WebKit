@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmAesCbcParamsDeprecated.h"
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
@@ -82,14 +81,16 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     callback(result);
 }
 
-void CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     transformAES_CBC(kCCEncrypt, parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
+    return { };
 }
 
-void CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     transformAES_CBC(kCCDecrypt, parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
+    return { };
 }
 
 } // namespace WebCore

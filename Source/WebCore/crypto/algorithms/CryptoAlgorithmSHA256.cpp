@@ -32,16 +32,6 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmSHA256::s_name = "SHA-256";
-
-CryptoAlgorithmSHA256::CryptoAlgorithmSHA256()
-{
-}
-
-CryptoAlgorithmSHA256::~CryptoAlgorithmSHA256()
-{
-}
-
 Ref<CryptoAlgorithm> CryptoAlgorithmSHA256::create()
 {
     return adoptRef(*new CryptoAlgorithmSHA256);
@@ -52,17 +42,16 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA256::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_256);
+    auto digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_256);
     if (!digest) {
         failureCallback();
-        return;
+        return { };
     }
-
     digest->addBytes(data.first, data.second);
-
     callback(digest->computeHash());
+    return { };
 }
 
 }

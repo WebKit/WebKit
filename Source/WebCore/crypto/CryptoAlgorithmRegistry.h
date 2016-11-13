@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class CryptoAlgorithm;
 
 class CryptoAlgorithmRegistry {
@@ -46,8 +44,8 @@ class CryptoAlgorithmRegistry {
 public:
     static CryptoAlgorithmRegistry& singleton();
 
-    bool getIdentifierForName(const String&, CryptoAlgorithmIdentifier&);
-    String nameForIdentifier(CryptoAlgorithmIdentifier);
+    Optional<CryptoAlgorithmIdentifier> identifier(const String&);
+    String name(CryptoAlgorithmIdentifier);
 
     RefPtr<CryptoAlgorithm> create(CryptoAlgorithmIdentifier);
 
@@ -55,7 +53,7 @@ private:
     CryptoAlgorithmRegistry();
     void platformRegisterAlgorithms();
 
-    typedef Ref<CryptoAlgorithm> (*CryptoAlgorithmConstructor)();
+    using CryptoAlgorithmConstructor = Ref<CryptoAlgorithm> (*)();
 
     template<typename AlgorithmClass> void registerAlgorithm()
     {
@@ -64,9 +62,8 @@ private:
 
     void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
 
-    HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_nameToIdentifierMap;
-    HashMap<unsigned, String> m_identifierToNameMap;
-    HashMap<unsigned, CryptoAlgorithmConstructor> m_identifierToConstructorMap;
+    HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers;
+    HashMap<unsigned, std::pair<String, CryptoAlgorithmConstructor>> m_constructors;
 };
 
 } // namespace WebCore

@@ -36,26 +36,21 @@
 
 namespace WebCore {
 
-static bool getCommonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCHmacAlgorithm& algorithm)
+static Optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
-        algorithm = kCCHmacAlgSHA1;
-        return true;
+        return kCCHmacAlgSHA1;
     case CryptoAlgorithmIdentifier::SHA_224:
-        algorithm = kCCHmacAlgSHA224;
-        return true;
+        return kCCHmacAlgSHA224;
     case CryptoAlgorithmIdentifier::SHA_256:
-        algorithm = kCCHmacAlgSHA256;
-        return true;
+        return kCCHmacAlgSHA256;
     case CryptoAlgorithmIdentifier::SHA_384:
-        algorithm = kCCHmacAlgSHA384;
-        return true;
+        return kCCHmacAlgSHA384;
     case CryptoAlgorithmIdentifier::SHA_512:
-        algorithm = kCCHmacAlgSHA512;
-        return true;
+        return kCCHmacAlgSHA512;
     default:
-        return false;
+        return Nullopt;
     }
 }
 
@@ -89,33 +84,29 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     return result;
 }
 
-void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
 {
-    CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
-
-    callback(signature);
+    auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
+    if (!algorithm)
+        return Exception { NOT_SUPPORTED_ERR };
+    callback(calculateSignature(*algorithm, key.key(), data));
+    return { };
 }
 
-void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&&)
 {
-    CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
+    if (!algorithm)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
+    auto signature = calculateSignature(*algorithm, key.key(), data);
 
     // Using a constant time comparison to prevent timing attacks.
     bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
 
     callback(result);
+
+    return { };
 }
 
 }

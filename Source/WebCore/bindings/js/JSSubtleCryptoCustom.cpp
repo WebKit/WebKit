@@ -81,8 +81,8 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
         auto params = convertDictionary<CryptoAlgorithmParameters>(state, value);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        CryptoAlgorithmIdentifier identifier;
-        if (!CryptoAlgorithmRegistry::singleton().getIdentifierForName(params.name, identifier)) {
+        auto identifier = CryptoAlgorithmRegistry::singleton().identifier(params.name);
+        if (!identifier) {
             setDOMException(&state, NOT_SUPPORTED_ERR);
             return nullptr;
         }
@@ -90,7 +90,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
         std::unique_ptr<CryptoAlgorithmParameters> result;
         switch (operation) {
         case Operations::Digest:
-            switch (identifier) {
+            switch (*identifier) {
             case CryptoAlgorithmIdentifier::SHA_1:
             case CryptoAlgorithmIdentifier::SHA_224:
             case CryptoAlgorithmIdentifier::SHA_256:
@@ -104,7 +104,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             break;
         case Operations::GenerateKey:
-            switch (identifier) {
+            switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
                 auto params = convertDictionary<CryptoAlgorithmRsaKeyGenParams>(state, value);
                 RETURN_IF_EXCEPTION(scope, nullptr);
@@ -146,7 +146,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             break;
         case Operations::ImportKey:
-            switch (identifier) {
+            switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
@@ -186,7 +186,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             return nullptr;
         }
 
-        result->identifier = identifier;
+        result->identifier = *identifier;
         return result;
     }
 
@@ -194,7 +194,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
     return nullptr;
 }
 
-static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(const CryptoKeyUsage usage)
+static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(CryptoKeyUsage usage)
 {
     switch (usage) {
     case CryptoKeyUsage::Encrypt:
@@ -353,7 +353,7 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     // The spec suggests we should perform the following task asynchronously regardless what kind of keys it produces
     // as of 11 December 2014: https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-generateKey
     // That's simply not efficient for AES and HMAC keys. Therefore, we perform it as an async task conditionally.
-    algorithm->generateKey(WTFMove(params), extractable, keyUsages, WTFMove(callback), WTFMove(exceptionCallback), scriptExecutionContextFromExecState(&state));
+    algorithm->generateKey(WTFMove(params), extractable, keyUsages, WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state));
 }
 
 static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)

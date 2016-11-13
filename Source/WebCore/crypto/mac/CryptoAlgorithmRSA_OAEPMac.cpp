@@ -35,13 +35,11 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
+        return Exception { NOT_SUPPORTED_ERR };
 
     Vector<uint8_t> cipherText(1024);
     size_t cipherTextLength = cipherText.size();
@@ -49,31 +47,31 @@ void CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParams
     CCCryptorStatus status = CCRSACryptorEncrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, cipherText.data(), &cipherTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
 
     cipherText.resize(cipherTextLength);
     callback(cipherText);
+    return { };
 }
 
-void CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
+        return Exception { NOT_SUPPORTED_ERR };
 
     Vector<uint8_t> plainText(1024);
     size_t plainTextLength = plainText.size();
     CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, plainText.data(), &plainTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
 
     plainText.resize(plainTextLength);
     callback(plainText);
+    return { };
 }
 
 } // namespace WebCore

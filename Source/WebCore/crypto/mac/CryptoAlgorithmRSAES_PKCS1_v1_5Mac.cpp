@@ -33,32 +33,34 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     Vector<uint8_t> cipherText(1024);
     size_t cipherTextLength = cipherText.size();
     CCCryptorStatus status = CCRSACryptorEncrypt(key.platformKey(), ccPKCS1Padding, data.first, data.second, cipherText.data(), &cipherTextLength, 0, 0, kCCDigestNone);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
 
     cipherText.resize(cipherTextLength);
     callback(cipherText);
+    return { };
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     Vector<uint8_t> plainText(1024);
     size_t plainTextLength = plainText.size();
     CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccPKCS1Padding, data.first, data.second, plainText.data(), &plainTextLength, 0, 0, kCCDigestNone);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
 
     plainText.resize(plainTextLength);
     callback(plainText);
+    return { };
 }
 
 } // namespace WebCore

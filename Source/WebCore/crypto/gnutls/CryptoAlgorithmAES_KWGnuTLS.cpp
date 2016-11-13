@@ -28,32 +28,21 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoKeyAES.h"
 #include "ExceptionCode.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
 } // namespace WebCore

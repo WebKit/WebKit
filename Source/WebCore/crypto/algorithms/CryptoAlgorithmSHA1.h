@@ -33,18 +33,14 @@ namespace WebCore {
 
 class CryptoAlgorithmSHA1 final : public CryptoAlgorithm {
 public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_1;
-
+    static constexpr const char* s_name = "SHA-1";
+    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_1;
     static Ref<CryptoAlgorithm> create();
 
-    CryptoAlgorithmIdentifier identifier() const override;
-
-    void digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-
 private:
-    CryptoAlgorithmSHA1();
-    virtual ~CryptoAlgorithmSHA1();
+    CryptoAlgorithmSHA1() = default;
+    CryptoAlgorithmIdentifier identifier() const final;
+    ExceptionOr<void> digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback) final;
 };
 
 } // namespace WebCore

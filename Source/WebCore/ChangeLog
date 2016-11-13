@@ -1,3 +1,221 @@
+2016-11-13  Darin Adler  <darin@apple.com>
+
+        Move crypto code from ExceptionCode to ExceptionOr
+        https://bugs.webkit.org/show_bug.cgi?id=164698
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::getAlgorithmIdentifier):
+        Use the new identifier function instead of getIdentifierForName.
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters): Ditto.
+        (WebCore::toCryptoKeyUsageBitmap): Removed a stray meaningless const.
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise): Pass
+        ScriptExecutionContext as a reference instead of a pointer.
+
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::createAlgorithmFromJSValue): Use the more efficient version
+        of setDOMException that uses scope.
+        (WebCore::JSWebKitSubtleCrypto::encrypt): Ditto. Also updated to use
+        ExceptionOr instead of ExceptionCode.
+        (WebCore::JSWebKitSubtleCrypto::decrypt): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::sign): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::verify): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::digest): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::generateKey): Ditto.
+        (WebCore::importKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::wrapKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::unwrapKey): Ditto.
+
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::CryptoAlgorithm): Deleted.
+        (WebCore::CryptoAlgorithm::~CryptoAlgorithm): Deleted.
+        (WebCore::CryptoAlgorithm::generateKey): Use ExceptionOr.
+        (WebCore::CryptoAlgorithm::encrypt): Ditto.
+        (WebCore::CryptoAlgorithm::decrypt): Ditto.
+        (WebCore::CryptoAlgorithm::sign): Ditto.
+        (WebCore::CryptoAlgorithm::verify): Ditto.
+        (WebCore::CryptoAlgorithm::digest): Ditto.
+        (WebCore::CryptoAlgorithm::deriveKey): Ditto.
+        (WebCore::CryptoAlgorithm::deriveBits): Ditto.
+        (WebCore::CryptoAlgorithm::importKey): Ditto.
+        (WebCore::CryptoAlgorithm::encryptForWrapKey): Ditto.
+        (WebCore::CryptoAlgorithm::decryptForUnwrapKey): Ditto.
+        * crypto/CryptoAlgorithm.h: Use ExceptionOr.
+        Moved the destructor into the header since it's more efficient for
+        derived classes to have it inlined. Removed the protected constructor
+        because since there are pure virtual functions in the class, there is
+        no risk of anyone misusing the public constructor.
+
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::identifier): Renamed from
+        getIdentifierForName and changed to use an Optional rather than
+        using a boolean plus an out argument.
+        (WebCore::CryptoAlgorithmRegistry::name): Renamed to name from
+        nameForIdentifier. Also updated to share a single map containing
+        both names and constructors.
+        (WebCore::CryptoAlgorithmRegistry::create): Share single map as above.
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm): Updated assertions
+        to a mroe straightforward style. Share single map for names and constructors.
+        * crypto/CryptoAlgorithmRegistry.h: Updated for above.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::CryptoAlgorithmAES_CBC): Deleted.
+        (WebCore::CryptoAlgorithmAES_CBC::~CryptoAlgorithmAES_CBC): Deleted.
+        (WebCore::CryptoAlgorithmAES_CBC::keyAlgorithmMatches): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey): Ditto.
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt): Ditto.
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt): Ditto.
+        (WebCore::CryptoAlgorithmAES_CBC::importKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::CryptoAlgorithmAES_KW): Deleted.
+        (WebCore::CryptoAlgorithmAES_KW::~CryptoAlgorithmAES_KW): Deleted.
+        (WebCore::CryptoAlgorithmAES_KW::keyAlgorithmMatches): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmAES_KW::generateKey): Ditto.
+        (WebCore::CryptoAlgorithmAES_KW::importKey): Ditto.
+        (WebCore::CryptoAlgorithmAES_KW::encryptForWrapKey): Ditto.
+        (WebCore::CryptoAlgorithmAES_KW::decryptForUnwrapKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::CryptoAlgorithmHMAC): Deleted.
+        (WebCore::CryptoAlgorithmHMAC::~CryptoAlgorithmHMAC): Deleted.
+        (WebCore::CryptoAlgorithmHMAC::generateKey): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmHMAC::sign): Ditto.
+        (WebCore::CryptoAlgorithmHMAC::verify): Ditto.
+        (WebCore::CryptoAlgorithmHMAC::importKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmHMAC.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::CryptoAlgorithmRSAES_PKCS1_v1_5): Deleted.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::~CryptoAlgorithmRSAES_PKCS1_v1_5): Deleted.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::CryptoAlgorithmRSASSA_PKCS1_v1_5): Deleted.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::~CryptoAlgorithmRSASSA_PKCS1_v1_5): Deleted.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign): Ditto.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify): Ditto.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::CryptoAlgorithmRSA_OAEP): Deleted.
+        (WebCore::CryptoAlgorithmRSA_OAEP::~CryptoAlgorithmRSA_OAEP): Deleted.
+        (WebCore::CryptoAlgorithmRSA_OAEP::generateKey): Use references, ExceptionOr.
+        (WebCore::CryptoAlgorithmRSA_OAEP::encrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSA_OAEP::decrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey): Ditto.
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::CryptoAlgorithmSHA1): Deleted.
+        (WebCore::CryptoAlgorithmSHA1::~CryptoAlgorithmSHA1): Deleted.
+        (WebCore::CryptoAlgorithmSHA1::digest): Use ExceptionOr.
+        * crypto/algorithms/CryptoAlgorithmSHA1.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::CryptoAlgorithmSHA224): Deleted.
+        (WebCore::CryptoAlgorithmSHA224::~CryptoAlgorithmSHA224): Deleted.
+        (WebCore::CryptoAlgorithmSHA224::digest): Use ExceptionOr.
+        * crypto/algorithms/CryptoAlgorithmSHA224.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::CryptoAlgorithmSHA256): Deleted.
+        (WebCore::CryptoAlgorithmSHA256::~CryptoAlgorithmSHA256): Deleted.
+        (WebCore::CryptoAlgorithmSHA256::digest): Use ExceptionOr.
+        * crypto/algorithms/CryptoAlgorithmSHA256.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::CryptoAlgorithmSHA384): Deleted.
+        (WebCore::CryptoAlgorithmSHA384::~CryptoAlgorithmSHA384): Deleted.
+        (WebCore::CryptoAlgorithmSHA384::digest): Use ExceptionOr.
+        * crypto/algorithms/CryptoAlgorithmSHA384.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::CryptoAlgorithmSHA512): Deleted.
+        (WebCore::CryptoAlgorithmSHA512::~CryptoAlgorithmSHA512): Deleted.
+        (WebCore::CryptoAlgorithmSHA512::digest): Use ExceptionOr.
+        * crypto/algorithms/CryptoAlgorithmSHA512.h: Updated for above.
+        Also use constexpr for s_name and s_identifier.
+
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::calculateSignature): Use Optional instead of a boolean
+        return value and an out argument.
+        (WebCore::CryptoAlgorithmHMAC::platformSign): Use ExceptionOr.
+        (WebCore::CryptoAlgorithmHMAC::platformVerify): Ditto.
+        * crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt): Ditto.
+        * crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt): Ditto.
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign): Ditto.
+        (WebCore::CryptoAlgorithmHMAC::platformVerify): Ditto.
+        * crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt): Ditto.
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign): Ditto.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify): Ditto.
+        * crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt): Ditto.
+
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::buildAlgorithm): Updated to use name instead
+        of nameForIdentifier.
+        * crypto/keys/CryptoKeyHMAC.cpp: Ditto.
+        (WebCore::CryptoKeyHMAC::buildAlgorithm):
+
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt): Use ExceptionOr.
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt): Ditto.
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt): Ditto.
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::commonCryptoHMACAlgorithm): Renamed from
+        getCommonCryptoHMACAlgorithm and changed to use Optional instead of
+        a boolean return value and an out argument.
+        (WebCore::CryptoAlgorithmHMAC::platformSign): Use ExceptionOr.
+        (WebCore::CryptoAlgorithmHMAC::platformVerify): Ditto.
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt): Ditto.
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::cryptoDigestAlgorithm): Renamed from
+        getCryptoDigestAlgorithm and changed to use Optional instead of
+        a boolean return value and an out argument.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign): Use ExceptionOr.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify): Ditto.
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt): Ditto.
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt): Ditto.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::buildAlgorithm): Updated to use name instead
+        of nameForIdentifier.
+
 2016-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use #pragma once in WebCore

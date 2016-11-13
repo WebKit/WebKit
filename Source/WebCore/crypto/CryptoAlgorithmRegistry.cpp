@@ -34,65 +34,65 @@
 
 namespace WebCore {
 
+static StaticLock registryMutex;
+
 CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::singleton()
 {
     static NeverDestroyed<CryptoAlgorithmRegistry> registry;
-
     return registry;
 }
-
-static StaticLock registryMutex;
 
 CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
 {
     platformRegisterAlgorithms();
 }
 
-bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlgorithmIdentifier& result)
+Optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const String& name)
 {
     if (name.isEmpty())
-        return false;
+        return Nullopt;
 
     std::lock_guard<StaticLock> lock(registryMutex);
 
-    auto iter = m_nameToIdentifierMap.find(name.isolatedCopy());
-    if (iter == m_nameToIdentifierMap.end())
-        return false;
+    // FIXME: How is it helpful to call isolatedCopy on the argument to find?
+    auto identifier = m_identifiers.find(name.isolatedCopy());
+    if (identifier == m_identifiers.end())
+        return Nullopt;
 
-    result = iter->value;
-    return true;
+    return identifier->value;
 }
 
-String CryptoAlgorithmRegistry::nameForIdentifier(CryptoAlgorithmIdentifier identifier)
+String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
 {
     std::lock_guard<StaticLock> lock(registryMutex);
 
-    return m_identifierToNameMap.get(static_cast<unsigned>(identifier)).isolatedCopy();
+    auto contructor = m_constructors.find(static_cast<unsigned>(identifier));
+    if (contructor == m_constructors.end())
+        return { };
+
+    return contructor->value.first.isolatedCopy();
 }
 
 RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
     std::lock_guard<StaticLock> lock(registryMutex);
 
-    auto iter = m_identifierToConstructorMap.find(static_cast<unsigned>(identifier));
-    if (iter == m_identifierToConstructorMap.end())
+    auto contructor = m_constructors.find(static_cast<unsigned>(identifier));
+    if (contructor == m_constructors.end())
         return nullptr;
 
-    return iter->value();
+    return contructor->value.second();
 }
 
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
     std::lock_guard<StaticLock> lock(registryMutex);
 
-    bool added = m_nameToIdentifierMap.add(name, identifier).isNewEntry;
-    ASSERT_UNUSED(added, added);
+    ASSERT(!m_identifiers.contains(name));
+    ASSERT(!m_constructors.contains(static_cast<unsigned>(identifier)));
 
-    added = m_identifierToNameMap.add(static_cast<unsigned>(identifier), name).isNewEntry;
-    ASSERT_UNUSED(added, added);
-
-    added = m_identifierToConstructorMap.add(static_cast<unsigned>(identifier), constructor).isNewEntry;
-    ASSERT_UNUSED(added, added);
+    m_identifiers.add(name, identifier);
+    m_constructors.add(static_cast<unsigned>(identifier), std::make_pair(name, constructor));
 }
 
 

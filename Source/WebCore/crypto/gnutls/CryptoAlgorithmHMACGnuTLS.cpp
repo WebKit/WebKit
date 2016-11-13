@@ -68,28 +68,20 @@ static Vector<uint8_t> calculateSignature(gnutls_mac_algorithm_t algorithm, cons
     return result;
 }
 
-void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
 {
-    UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
-    if (algorithm == GNUTLS_MAC_UNKNOWN) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
-
-    callback(signature);
+    if (algorithm == GNUTLS_MAC_UNKNOWN)
+        return Exception { NOT_SUPPORTED_ERR };
+    callback(calculateSignature(algorithm, key.key(), data));
+    return { };
 }
 
-void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&&)
 {
-    UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
-    if (algorithm == GNUTLS_MAC_UNKNOWN) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (algorithm == GNUTLS_MAC_UNKNOWN)
+        return Exception { NOT_SUPPORTED_ERR };
 
     Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
 
@@ -97,6 +89,8 @@ void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecat
     bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
 
     callback(result);
+
+    return { };
 }
 
 }

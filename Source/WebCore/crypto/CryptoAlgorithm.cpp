@@ -32,15 +32,7 @@
 
 namespace WebCore {
 
-CryptoAlgorithm::CryptoAlgorithm()
-{
-}
-
-CryptoAlgorithm::~CryptoAlgorithm()
-{
-}
-
-void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
@@ -50,59 +42,59 @@ void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::u
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
-void CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::decrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::decrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::sign(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::sign(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::verify(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, const CryptoOperationData&, BoolCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::verify(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, const CryptoOperationData&, BoolCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, VoidCallback&&, ExceptionCode& ec, ScriptExecutionContext*)
+ExceptionOr<void> CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, VoidCallback&&, ScriptExecutionContext&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, unsigned long, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, unsigned long, VectorCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&&)
 {
-    ec = NOT_SUPPORTED_ERR;
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithm::encryptForWrapKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::encryptForWrapKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    encrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback), ec);
+    return encrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
 }
 
-void CryptoAlgorithm::decryptForUnwrapKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithm::decryptForUnwrapKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    decrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback), ec);
+    return decrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
 }
 
 }

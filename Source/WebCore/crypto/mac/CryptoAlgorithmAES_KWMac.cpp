@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     if (data.second % 8) {
         // RFC 3394 uses 64-bit blocks as input.
         // <rdar://problem/15949992> CommonCrypto doesn't detect incorrect data length, silently producing a bad cyphertext.
         failureCallback();
-        return;
+        return { };
     }
 
     Vector<uint8_t> result(CCSymmetricWrappedSize(kCCWRAPAES, data.second));
@@ -48,29 +48,31 @@ void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const Crypt
     int status = CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.key().data(), key.key().size(), data.first, data.second, result.data(), &resultSize);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
     result.shrink(resultSize);
     callback(result);
+    return { };
 }
 
-void CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, data.second));
     size_t resultSize = result.size();
 
     if (resultSize % 8) {
         failureCallback();
-        return;
+        return { };
     }
 
     int status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.key().data(), key.key().size(), data.first, data.second, result.data(), &resultSize);
     if (status) {
         failureCallback();
-        return;
+        return { };
     }
     result.shrink(resultSize);
     callback(result);
+    return { };
 }
 
 } // namespace WebCore

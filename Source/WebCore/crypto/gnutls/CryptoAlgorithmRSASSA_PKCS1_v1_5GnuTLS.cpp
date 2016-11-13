@@ -35,29 +35,16 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, const CryptoOperationData&, BoolCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(signature);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
 } // namespace WebCore

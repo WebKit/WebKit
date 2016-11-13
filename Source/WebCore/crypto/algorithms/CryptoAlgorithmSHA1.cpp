@@ -32,16 +32,6 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmSHA1::s_name = "SHA-1";
-
-CryptoAlgorithmSHA1::CryptoAlgorithmSHA1()
-{
-}
-
-CryptoAlgorithmSHA1::~CryptoAlgorithmSHA1()
-{
-}
-
 Ref<CryptoAlgorithm> CryptoAlgorithmSHA1::create()
 {
     return adoptRef(*new CryptoAlgorithmSHA1);
@@ -52,17 +42,16 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA1::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmSHA1::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+ExceptionOr<void> CryptoAlgorithmSHA1::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_1);
+    auto digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_1);
     if (!digest) {
         failureCallback();
-        return;
+        return { };
     }
-
     digest->addBytes(data.first, data.second);
-
     callback(digest->computeHash());
+    return { };
 }
 
 }

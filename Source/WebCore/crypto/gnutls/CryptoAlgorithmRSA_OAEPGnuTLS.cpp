@@ -28,35 +28,21 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmRsaOaepParamsDeprecated.h"
-#include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
-void CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(failureCallback);
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
 } // namespace WebCore
