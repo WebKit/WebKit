@@ -455,6 +455,7 @@
 		AD57AC201DA7465000FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1E1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp */; };
 		AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD57AC1F1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp */; };
 		AD57AC221DA7466E00FF1BDE /* many-iframes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = AD57AC1D1DA7463800FF1BDE /* many-iframes.html */; };
+		AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD7C434C1DD2A5470026888B /* Expected.cpp */; };
 		ADCEBBA61D9AE229002E283A /* Consume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADCEBBA51D99D4CF002E283A /* Consume.cpp */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
 		B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B01517A2C400915916 /* attributedStringCustomFont.html */; };
@@ -1112,6 +1113,7 @@
 		AD57AC1D1DA7463800FF1BDE /* many-iframes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "many-iframes.html"; sourceTree = "<group>"; };
 		AD57AC1E1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp; sourceTree = "<group>"; };
 		AD57AC1F1DA7464D00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DidRemoveFrameFromHiearchyInPageCache.cpp; sourceTree = "<group>"; };
+		AD7C434C1DD2A5470026888B /* Expected.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Expected.cpp; sourceTree = "<group>"; };
 		ADCEBBA51D99D4CF002E283A /* Consume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Consume.cpp; sourceTree = "<group>"; };
 		B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathExtras.cpp; sourceTree = "<group>"; };
 		B55AD1D1179F336600AC1494 /* PreventImageLoadWithAutoResizing.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PreventImageLoadWithAutoResizing.mm; path = WebKit2ObjC/PreventImageLoadWithAutoResizing.mm; sourceTree = "<group>"; };
@@ -1799,6 +1801,7 @@
 		BC9096461255618900083756 /* WTF */ = {
 			isa = PBXGroup;
 			children = (
+				AD7C434C1DD2A5470026888B /* Expected.cpp */,
 				C0991C4F143C7D68007998F2 /* cf */,
 				7CBBA07519BB8A0900BBF025 /* darwin */,
 				BC029B1A1486B23800817DA9 /* ns */,
@@ -2331,6 +2334,7 @@
 				7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */,
 				7C83DF011D0A590C00FEBCF3 /* Optional.cpp in Sources */,
 				ADCEBBA61D9AE229002E283A /* Consume.cpp in Sources */,
+				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				7C83DF021D0A590C00FEBCF3 /* OSObjectPtr.cpp in Sources */,
 				7C83DF591D0A590C00FEBCF3 /* ParkingLot.cpp in Sources */,
 				7C83DF131D0A590C00FEBCF3 /* RedBlackTree.cpp in Sources */,

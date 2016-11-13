@@ -1,3 +1,55 @@
+2016-11-13  JF Bastien  <jfbastien@apple.com>
+
+        Implement WTF::Expected
+        https://bugs.webkit.org/show_bug.cgi?id=164526
+
+        Reviewed by Yusuke Suzuki.
+
+        std::expected isn't in C++17, and may be in C++20. It's a nice
+        complement to std::any / std::optional because it's a type-tagged
+        union which has a single expected result but could also contain an
+        error.
+
+        This would be useful in the WebAssembly parser, for example.
+
+        Using this implementation will allow us to provide feedback to the
+        standards committee and guide std::expected's design before it
+        gets standardized. I've already sent a bunch of feedback to the
+        author based on my experience implementing this.
+
+        This could supplement WTF::Either and WTF::ExceptionOr.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Compiler.h: Add RELAXED_CONSTEXPR
+        * wtf/Expected.h: Added.
+        (WTF::UnexpectedType::UnexpectedType):
+        (WTF::UnexpectedType::value):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::operator<):
+        (WTF::operator>):
+        (WTF::operator<=):
+        (WTF::operator>=):
+        (WTF::makeUnexpected):
+        (WTF::ExpectedDetail::Throw):
+        (WTF::ExpectedDetail::ConstexprBase::ConstexprBase):
+        (WTF::ExpectedDetail::Base::Base):
+        (WTF::ExpectedDetail::Base::~Base):
+        (WTF::Expected::Expected):
+        (WTF::Expected::operator=):
+        (WTF::Expected::swap):
+        (WTF::Expected::operator->):
+        (WTF::Expected::operator*):
+        (WTF::Expected::operator bool):
+        (WTF::Expected::hasValue):
+        (WTF::Expected::value):
+        (WTF::Expected::error):
+        (WTF::Expected::getUnexpected):
+        (WTF::Expected::valueOr):
+        (WTF::swap):
+        (WTF::makeExpected):
+        (WTF::makeExpectedFromError):
+
 2016-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Allow mutable lambdas in HashMap::ensure

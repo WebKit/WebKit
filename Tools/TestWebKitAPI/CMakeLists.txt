@@ -50,6 +50,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/DateMath.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/EnumTraits.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Expected.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashCountedSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
@@ -61,6 +62,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/NakedPtr.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Optional.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/OptionSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ParkingLot.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp

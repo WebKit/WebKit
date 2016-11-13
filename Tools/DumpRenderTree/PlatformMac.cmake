@@ -76,7 +76,7 @@ list(APPEND DumpRenderTree_ObjC_SOURCES
     mac/ObjCController.m
     mac/ObjCPlugin.m
     mac/ObjCPluginFunction.m
-    mac/TextInputController.m
+    mac/TextInputControllerMac.m
 )
 
 list(APPEND DumpRenderTree_Cpp_SOURCES
