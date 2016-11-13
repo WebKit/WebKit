@@ -131,7 +131,7 @@ public:
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
 
-    WEBCORE_EXPORT void setViewportIsStable(bool stable) { m_viewportIsStable = stable; }
+    void setViewportIsStable(bool stable) { m_viewportIsStable = stable; }
     bool viewportIsStable() const { return m_viewportIsStable; }
 
 #if PLATFORM(IOS)

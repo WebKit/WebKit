@@ -1,3 +1,9 @@
+2016-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix building with newer versions of clang.
+
+        * page/FrameView.h: Don’t export an inline function.
+
 2016-11-13  Darin Adler  <darin@apple.com>
 
         Move crypto code from ExceptionCode to ExceptionOr
