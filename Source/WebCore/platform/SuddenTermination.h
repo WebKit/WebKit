@@ -33,10 +33,10 @@ namespace WebCore {
     // Once disabled via one or more more calls to disableSuddenTermination(), fast shutdown
     // is not valid until enableSuddenTermination() has been called an equal number of times.
     // On Mac, these are thin wrappers around Mac OS X functions of the same name.
+#if PLATFORM(MAC)
     WEBCORE_EXPORT void disableSuddenTermination();
     WEBCORE_EXPORT void enableSuddenTermination();
-
-#if !PLATFORM(MAC)
+#else
     inline void disableSuddenTermination() { }
     inline void enableSuddenTermination() { }
 #endif
