@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleMedia_h
-#define StyleMedia_h
+#pragma once
 
 #include "DOMWindowProperty.h"
 #include <wtf/RefCounted.h>
@@ -46,6 +45,4 @@ private:
     explicit StyleMedia(Frame*);
 };
 
-} // namespace
-
-#endif // StyleMedia_h
+} // namespace WebCore

@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RuleFeature_h
-#define RuleFeature_h
+#pragma once
 
 #include "CSSSelector.h"
 #include <wtf/Forward.h>
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RuleFeature_h

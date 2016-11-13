@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef InlineTextBox_h
-#define InlineTextBox_h
+#pragma once
 
 #include "InlineBox.h"
 #include "RenderText.h"
@@ -183,5 +182,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineTextBox, isInlineTextBox())
-
-#endif // InlineTextBox_h

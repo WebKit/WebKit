@@ -20,15 +20,12 @@
  *
  */
 
-#ifndef RenderTextControlSingleLine_h
-#define RenderTextControlSingleLine_h
+#pragma once
 
 #include "HTMLInputElement.h"
 #include "RenderTextControl.h"
 
 namespace WebCore {
-
-class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
@@ -105,5 +102,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlSingleLine, isTextField())
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlInnerBlock, isTextControlInnerBlock())
-
-#endif // RenderTextControlSingleLine_h

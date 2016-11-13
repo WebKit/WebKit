@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGElementRareData_h
-#define SVGElementRareData_h
+#pragma once
 
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -86,6 +85,4 @@ private:
     std::unique_ptr<RenderStyle> m_overrideComputedStyle;
 };
 
-}
-
-#endif
+} // namespace WebCore

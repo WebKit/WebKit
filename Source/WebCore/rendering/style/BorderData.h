@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef BorderData_h
-#define BorderData_h
+#pragma once
 
 #include "BorderValue.h"
 #include "IntRect.h"
@@ -142,5 +141,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BorderData_h

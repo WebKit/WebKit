@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGParsingError_h
-#define SVGParsingError_h
+#pragma once
 
 namespace WebCore {
 
@@ -36,5 +35,3 @@ enum SVGParsingError {
 };
 
 } // namespace WebCore
-
-#endif // SVGParsingError_h

@@ -17,12 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RadialGradientAttributes_h
-#define RadialGradientAttributes_h
+#pragma once
 
 #include "GradientAttributes.h"
 
 namespace WebCore {
+
 struct RadialGradientAttributes : GradientAttributes {
     RadialGradientAttributes()
         : m_cx(LengthModeWidth, "50%")
@@ -77,5 +77,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

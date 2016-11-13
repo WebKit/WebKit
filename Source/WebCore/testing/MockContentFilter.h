@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockContentFilter_h
-#define MockContentFilter_h
+#pragma once
 
 #include "MockContentFilterSettings.h"
 #include "PlatformContentFilter.h"
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MockContentFilter_h

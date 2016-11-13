@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef GradientAttributes_h
-#define GradientAttributes_h
+#pragma once
 
 #include "SVGGradientElement.h"
 #include "SVGUnitTypes.h"
@@ -94,5 +93,3 @@ struct SameSizeAsGradientAttributes {
 COMPILE_ASSERT(sizeof(GradientAttributes) == sizeof(SameSizeAsGradientAttributes), GradientAttributes_size_guard);
 
 } // namespace WebCore
-
-#endif

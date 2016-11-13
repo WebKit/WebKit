@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderTableCaption_h
-#define RenderTableCaption_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 
@@ -47,5 +46,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCaption, isTableCaption())
-
-#endif // RenderTableCaption_h

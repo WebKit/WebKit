@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGRect_h
-#define SVGRect_h
+#pragma once
 
 #include "FloatRect.h"
 #include "SVGPropertyTraits.h"
@@ -44,5 +43,3 @@ struct SVGPropertyTraits<FloatRect> {
 };
 
 } // namespace WebCore
-
-#endif // SVGRect_h

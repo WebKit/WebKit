@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SMILTimeContainer_h
-#define SMILTimeContainer_h
+#pragma once
 
 #include "QualifiedName.h"
 #include "SMILTime.h"
@@ -94,6 +93,5 @@ private:
     bool m_preventScheduledAnimationsChanges;
 #endif
 };
-}
 
-#endif // SMILTimeContainer_h
+} // namespace WebCore

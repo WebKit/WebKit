@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPropertyTraits_h
-#define SVGPropertyTraits_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +63,4 @@ struct SVGIDLEnumLimits {
     static unsigned highestExposedEnumValue() { return SVGPropertyTraits<EnumType>::highestEnumValue(); }
 };
 
-}
-
-#endif
+} // namespace WebCore

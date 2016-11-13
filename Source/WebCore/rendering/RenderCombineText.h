@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderCombineText_h
-#define RenderCombineText_h
+#pragma once
 
 #include "FontCascade.h"
 #include "RenderElement.h"
@@ -62,5 +61,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCombineText, isCombineText())
-
-#endif // RenderCombineText_h

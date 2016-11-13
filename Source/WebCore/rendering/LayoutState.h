@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LayoutState_h
-#define LayoutState_h
+#pragma once
 
 #include "LayoutRect.h"
 #include <wtf/Noncopyable.h>
@@ -128,5 +127,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // LayoutState_h

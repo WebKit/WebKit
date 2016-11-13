@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSValueList_h
-#define CSSValueList_h
+#pragma once
 
 #include "CSSValue.h"
 #include <wtf/Vector.h>
@@ -107,5 +106,3 @@ inline void CSSValueList::prepend(Ref<CSSValue>&& value)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValueList, isValueList())
-
-#endif // CSSValueList_h

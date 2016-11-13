@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGImageForContainer_h
-#define SVGImageForContainer_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
@@ -79,5 +78,5 @@ private:
     const FloatSize m_containerSize;
     const float m_zoom;
 };
-}
-#endif // SVGImageForContainer_h
+
+} // namespace WebCore

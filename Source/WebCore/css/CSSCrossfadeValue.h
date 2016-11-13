@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSCrossfadeValue_h
-#define CSSCrossfadeValue_h
+#pragma once
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
@@ -115,5 +114,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCrossfadeValue, isCrossfadeValue())
-
-#endif // CSSCrossfadeValue_h

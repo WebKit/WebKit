@@ -27,11 +27,9 @@
  *
  */
 
-#ifndef RenderThemeEfl_h
-#define RenderThemeEfl_h
+#pragma once
 
 #include "RenderTheme.h"
-
 #include <Eina.h>
 #include <cairo.h>
 #include <wtf/efl/UniquePtrEfl.h>
@@ -255,6 +253,5 @@ private:
     ThemePartCacheEntry* getThemePartFromCache(FormType, const IntSize&);
     void clearThemePartCache();
 };
-}
 
-#endif // RenderThemeEfl_h
+} // namespace WebCore

@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedPropertyDescription_h
-#define SVGAnimatedPropertyDescription_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -81,6 +80,4 @@ struct SVGAnimatedPropertyDescriptionHash {
 
 struct SVGAnimatedPropertyDescriptionHashTraits : WTF::SimpleClassHashTraits<SVGAnimatedPropertyDescription> { };
  
-}
-
-#endif // SVGAnimatedPropertyDescription_h
+} // namespace WebCore

@@ -17,8 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef PointerEventsHitRules_h
-#define PointerEventsHitRules_h
+#pragma once
 
 #include "HitTestRequest.h"
 #include "RenderStyleConstants.h"
@@ -42,8 +41,4 @@ public:
     bool canHitFill;  
 };
 
-}
-
-#endif
-
-// vim:ts=4:noet
+} // namespace WebCore

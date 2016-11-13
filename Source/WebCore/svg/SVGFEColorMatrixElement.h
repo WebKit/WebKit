@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEColorMatrixElement_h
-#define SVGFEColorMatrixElement_h
+#pragma once
 
 #include "FEColorMatrix.h"
 #include "SVGAnimatedEnumeration.h"
@@ -85,5 +84,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

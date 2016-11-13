@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FilterEffectRenderer_h
-#define FilterEffectRenderer_h
+#pragma once
 
 #include "Filter.h"
 #include "FilterEffect.h"
@@ -38,7 +37,6 @@
 #include "SourceGraphic.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
 
 namespace WebCore {
 
@@ -150,5 +148,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FilterEffectRenderer_h

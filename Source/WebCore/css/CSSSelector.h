@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSSelector_h
-#define CSSSelector_h
+#pragma once
 
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
@@ -585,5 +584,3 @@ inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
 }
 
 } // namespace WebCore
-
-#endif // CSSSelector_h

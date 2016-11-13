@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GridPosition_h
-#define GridPosition_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -131,6 +130,4 @@ private:
 
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-#endif // GridPosition_h
+#endif // ENABLE(CSS_GRID_LAYOUT)

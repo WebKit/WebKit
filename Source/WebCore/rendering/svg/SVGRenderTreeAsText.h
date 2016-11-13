@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGRenderTreeAsText_h
-#define SVGRenderTreeAsText_h
+#pragma once
 
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
@@ -85,5 +84,3 @@ TextStream& operator<<(TextStream& ts, Pointer* t)
 }
 
 } // namespace WebCore
-
-#endif // SVGRenderTreeAsText_h

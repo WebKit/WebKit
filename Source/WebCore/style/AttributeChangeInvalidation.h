@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AttributeChangeInvalidation_h
-#define AttributeChangeInvalidation_h
+#pragma once
 
 #include "Element.h"
 
@@ -68,6 +67,3 @@ inline AttributeChangeInvalidation::~AttributeChangeInvalidation()
     
 }
 }
-
-#endif
-

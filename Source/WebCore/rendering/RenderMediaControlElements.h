@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMediaControlElements_h
-#define RenderMediaControlElements_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -72,6 +71,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)
-
-#endif // RenderMediaControlElements_h
-

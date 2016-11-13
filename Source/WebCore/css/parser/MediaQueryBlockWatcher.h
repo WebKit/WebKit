@@ -27,8 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MediaQueryBlockWatcher_h
-#define MediaQueryBlockWatcher_h
+#pragma once
 
 namespace WebCore {
 
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MediaQueryBlockWatcher_h

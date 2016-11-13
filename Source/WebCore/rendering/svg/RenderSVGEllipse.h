@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderSVGEllipse_h
-#define RenderSVGEllipse_h
+#pragma once
 
 #include "RenderSVGShape.h"
 
@@ -54,6 +53,4 @@ private:
     bool m_usePathFallback;
 };
 
-}
-
-#endif
+} // namespace WebCore

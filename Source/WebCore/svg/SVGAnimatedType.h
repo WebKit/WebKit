@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedType_h
-#define SVGAnimatedType_h
+#pragma once
 
 #include "FloatRect.h"
 #include "SVGAngleValue.h"
@@ -301,5 +300,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGAnimatedType_h

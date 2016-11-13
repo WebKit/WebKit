@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineInfo_h
-#define LineInfo_h
+#pragma once
 
 #include "LineWidth.h"
 
@@ -71,6 +70,4 @@ private:
     unsigned m_runsFromLeadingWhitespace;
 };
 
-}
-
-#endif // LineInfo_h
+} // namespace WebCore

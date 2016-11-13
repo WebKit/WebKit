@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RectangleShape_h
-#define RectangleShape_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -67,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RectangleShape_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleLineLayoutFlowContents_h
-#define SimpleLineLayoutFlowContents_h
+#pragma once
 
 #include "RenderObject.h"
 
@@ -66,5 +65,3 @@ inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, 
 
 }
 }
-
-#endif

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGImageLoader_h
-#define SVGImageLoader_h
+#pragma once
 
 #include "ImageLoader.h"
 
@@ -37,5 +36,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGImageLoader_h

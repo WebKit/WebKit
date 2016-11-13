@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGMaskElement_h
-#define SVGMaskElement_h
+#pragma once
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
@@ -68,6 +67,4 @@ private:
     void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(this); }
 };
 
-}
-
-#endif
+} // namespace WebCore

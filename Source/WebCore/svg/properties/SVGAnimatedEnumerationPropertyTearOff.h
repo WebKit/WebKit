@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedEnumerationPropertyTearOff_h
-#define SVGAnimatedEnumerationPropertyTearOff_h
+#pragma once
 
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGException.h"
@@ -83,6 +82,4 @@ private:
 template<typename EnumType>
 unsigned SVGAnimatedEnumerationPropertyTearOff<EnumType>::m_outOfRangeEnumValue = 0;
 
-}
-
-#endif // SVGAnimatedEnumerationPropertyTearOff_h
+} // namespace WebCore

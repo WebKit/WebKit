@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef DocumentRuleSets_h
-#define DocumentRuleSets_h
+#pragma once
 
 #include "CSSDefaultStyleSheets.h"
 #include "RuleFeature.h"
@@ -38,7 +37,6 @@ class CSSStyleSheet;
 class ExtensionStyleSheets;
 class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
-class RuleSet;
 
 class DocumentRuleSets {
 public:
@@ -99,5 +97,3 @@ inline RuleFeatureSet& DocumentRuleSets::mutableFeatures()
 }
 
 } // namespace WebCore
-
-#endif // DocumentRuleSets_h

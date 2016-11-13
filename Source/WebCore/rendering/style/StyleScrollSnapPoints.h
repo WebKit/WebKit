@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleScrollSnapPoints_h
-#define StyleScrollSnapPoints_h
+#pragma once
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
@@ -69,5 +68,3 @@ inline bool operator!=(const StyleScrollSnapPoints& a, const StyleScrollSnapPoin
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SCROLL_SNAP)
-
-#endif // StyleScrollSnapPoints_h

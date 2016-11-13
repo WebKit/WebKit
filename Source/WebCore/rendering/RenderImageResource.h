@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RenderImageResource_h
-#define RenderImageResource_h
+#pragma once
 
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderImage_h

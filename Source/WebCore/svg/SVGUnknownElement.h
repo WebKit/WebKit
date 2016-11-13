@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGUnknownElement_h
-#define SVGUnknownElement_h
+#pragma once
 
 #include "SVGElement.h"
 
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGUnknownElement_h

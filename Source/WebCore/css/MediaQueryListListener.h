@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef MediaQueryListListener_h
-#define MediaQueryListListener_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MediaQueryListListener_h

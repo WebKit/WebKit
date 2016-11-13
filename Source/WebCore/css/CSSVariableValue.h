@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSVariableValue_h
-#define CSSVariableValue_h
+#pragma once
 
 #include "CSSValue.h"
 
@@ -67,6 +66,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSVariableValue, isVariableValue())
-
-#endif
-

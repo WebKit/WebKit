@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGImageCache_h
-#define SVGImageCache_h
+#pragma once
 
 #include "FloatSize.h"
 #include "Image.h"
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGImageCache_h

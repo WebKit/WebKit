@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderFullScreen_h
-#define RenderFullScreen_h
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -59,5 +58,3 @@ protected:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFullScreen, isRenderFullScreen())
 
 #endif // ENABLE(FULLSCREEN_API)
-
-#endif // RenderFullScreen_h

@@ -22,11 +22,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef StyleSelfAlignmentData_h
-#define StyleSelfAlignmentData_h
+
+#pragma once
 
 #include "RenderStyleConstants.h"
-
 
 namespace WebCore {
 
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleSelfAlignmentData_h

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef StyleCachedImage_h
-#define StyleCachedImage_h
+#pragma once
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
@@ -77,5 +76,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleCachedImage, isCachedImage)
-
-#endif // StyleCachedImage_h

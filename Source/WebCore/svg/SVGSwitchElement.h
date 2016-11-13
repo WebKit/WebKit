@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGSwitchElement_h
-#define SVGSwitchElement_h
+#pragma once
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

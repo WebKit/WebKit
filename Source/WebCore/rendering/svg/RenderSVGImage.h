@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGImage_h
-#define RenderSVGImage_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
@@ -92,5 +91,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isSVGImage())
-
-#endif // RenderSVGImage_h

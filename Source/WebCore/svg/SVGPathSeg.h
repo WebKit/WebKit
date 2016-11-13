@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSeg_h
-#define SVGPathSeg_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -89,5 +88,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

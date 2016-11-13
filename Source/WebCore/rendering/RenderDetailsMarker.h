@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef RenderDetailsMarker_h
-#define RenderDetailsMarker_h
+#pragma once
 
 #if ENABLE(DETAILS_ELEMENT)
+
 #include "DetailsMarkerControl.h"
 #include "RenderBlockFlow.h"
 
@@ -50,6 +50,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isDetailsMarker())
 
 #endif // ENABLE(DETAILS_ELEMENT)
-
-#endif // RenderDetailsMarker_h
-

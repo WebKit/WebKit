@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontFeatureValue_h
-#define CSSFontFeatureValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include "FontTaggedSettings.h"
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontFeatureValue, isFontFeatureValue())
-
-#endif

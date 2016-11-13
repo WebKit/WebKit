@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEOffsetElement_h
-#define SVGFEOffsetElement_h
+#pragma once
 
 #include "FEOffset.h"
 #include "SVGAnimatedNumber.h"
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

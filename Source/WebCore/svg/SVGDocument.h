@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGDocument_h
-#define SVGDocument_h
+#pragma once
 
 #include "XMLDocument.h"
 
@@ -57,5 +56,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGDocument)
     static bool isType(const WebCore::Document& document) { return document.isSVGDocument(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // SVGDocument_h

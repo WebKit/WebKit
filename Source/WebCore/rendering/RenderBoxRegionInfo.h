@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RenderBoxRegionInfo_h
-#define RenderBoxRegionInfo_h
+#pragma once
 
 #include "RenderOverflow.h"
 
@@ -64,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderBoxRegionInfo_h

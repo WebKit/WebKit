@@ -109,5 +109,3 @@ PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTe
 }
 
 }
-
-// vim:ts=4:noet

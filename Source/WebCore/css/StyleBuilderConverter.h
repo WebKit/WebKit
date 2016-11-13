@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleBuilderConverter_h
-#define StyleBuilderConverter_h
+#pragma once
 
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
@@ -1521,5 +1520,3 @@ inline HangingPunctuation StyleBuilderConverter::convertHangingPunctuation(Style
 }
 
 } // namespace WebCore
-
-#endif // StyleBuilderConverter_h

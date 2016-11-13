@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSKeyframeRule_h
-#define CSSKeyframeRule_h
+#pragma once
 
 #include "CSSParser.h"
 #include "CSSRule.h"
@@ -99,5 +98,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSKeyframeRule_h

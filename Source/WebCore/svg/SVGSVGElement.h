@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGSVGElement_h
-#define SVGSVGElement_h
+#pragma once
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
@@ -191,5 +190,3 @@ inline float SVGSVGElement::createSVGNumber()
 }
 
 } // namespace WebCore
-
-#endif

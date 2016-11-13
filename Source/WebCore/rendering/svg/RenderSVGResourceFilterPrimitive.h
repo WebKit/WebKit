@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderSVGResourceFilterPrimitive_h
-#define RenderSVGResourceFilterPrimitive_h
+#pragma once
 
 #include "RenderSVGResourceFilter.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderSVGResourceFilterPrimitive_h

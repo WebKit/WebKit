@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderOverflow_h
-#define RenderOverflow_h
+#pragma once
 
 #include "LayoutRect.h"
 #include <wtf/RefCounted.h>
@@ -105,5 +104,3 @@ inline void RenderOverflow::setVisualOverflow(const LayoutRect& rect)
 }
 
 } // namespace WebCore
-
-#endif // RenderOverflow_h

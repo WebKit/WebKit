@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GridTrackSize_h
-#define GridTrackSize_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -145,6 +144,4 @@ private:
 
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-#endif // GridTrackSize_h
+#endif // ENABLE(CSS_GRID_LAYOUT)

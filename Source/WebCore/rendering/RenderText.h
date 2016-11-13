@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderText_h
-#define RenderText_h
+#pragma once
 
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
@@ -295,5 +294,3 @@ inline RenderText* Text::renderer() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isText())
-
-#endif // RenderText_h

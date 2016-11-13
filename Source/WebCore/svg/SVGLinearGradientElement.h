@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLinearGradientElement_h
-#define SVGLinearGradientElement_h
+#pragma once
 
 #include "SVGAnimatedLength.h"
 #include "SVGGradientElement.h"
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

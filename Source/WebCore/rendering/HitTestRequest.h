@@ -20,8 +20,7 @@
  *
 */
 
-#ifndef HitTestRequest_h
-#define HitTestRequest_h
+#pragma once
 
 namespace WebCore {
 
@@ -73,5 +72,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HitTestRequest_h

@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderMultiColumnSpannerPlaceholder_h
-#define RenderMultiColumnSpannerPlaceholder_h
+#pragma once
 
 #include "RenderBox.h"
 
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnSpannerPlaceholder, isRenderMultiColumnSpannerPlaceholder())
-
-#endif // RenderMultiColumnSpannerPlaceholder_h

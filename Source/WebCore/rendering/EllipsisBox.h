@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef EllipsisBox_h
-#define EllipsisBox_h
+#pragma once
 
 #include "InlineElementBox.h"
 #include "RenderBlockFlow.h"
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // EllipsisBox_h

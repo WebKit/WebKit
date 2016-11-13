@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef StyleGeneratedImage_h
-#define StyleGeneratedImage_h
+#pragma once
 
 #include "StyleImage.h"
 
@@ -70,5 +69,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleGeneratedImage, isGeneratedImage)
-
-#endif // StyleGeneratedImage_h

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResource_h
-#define RenderSVGResource_h
+#pragma once
 
 #include "RenderSVGShape.h"
 #include "RenderStyleConstants.h"
@@ -76,11 +75,9 @@ public:
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
 };
 
-}
+} // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(ToValueTypeName, ResourceType) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::ResourceType; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

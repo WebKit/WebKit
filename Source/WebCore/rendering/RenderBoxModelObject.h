@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef RenderBoxModelObject_h
-#define RenderBoxModelObject_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "RenderLayerModelObject.h"
@@ -328,5 +327,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isBoxModelObject())
-
-#endif // RenderBoxModelObject_h

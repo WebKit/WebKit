@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RasterShape_h
-#define RasterShape_h
+#pragma once
 
 #include "FloatRect.h"
 #include "Shape.h"
@@ -107,5 +106,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RasterShape_h

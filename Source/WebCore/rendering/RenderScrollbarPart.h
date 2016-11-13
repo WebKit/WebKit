@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderScrollbarPart_h
-#define RenderScrollbarPart_h
+#pragma once
 
 #include "RenderBlock.h"
 #include "ScrollTypes.h"
@@ -76,5 +75,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderScrollbarPart, isRenderScrollbarPart())
-
-#endif // RenderScrollbarPart_h

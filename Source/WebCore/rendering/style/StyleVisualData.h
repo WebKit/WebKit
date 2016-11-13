@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleVisualData_h
-#define StyleVisualData_h
+#pragma once
 
 #include "LengthBox.h"
 #include "RenderStyleConstants.h"
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleVisualData_h

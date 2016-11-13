@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSCustomPropertyValue_h
-#define CSSCustomPropertyValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include "CSSVariableData.h"
@@ -134,5 +133,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCustomPropertyValue, isCustomPropertyValue())
-
-#endif // CSSCustomPropertyValue_h

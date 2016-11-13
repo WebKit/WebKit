@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderPtr_h
-#define RenderPtr_h
+#pragma once
 
 #include <algorithm>
 #include <cstddef>
@@ -177,5 +176,3 @@ template<typename T> struct HashTraits<WebCore::RenderPtr<T>> : SimpleClassHashT
 };
 
 } // namespace WTF
-
-#endif // RenderPtr_h

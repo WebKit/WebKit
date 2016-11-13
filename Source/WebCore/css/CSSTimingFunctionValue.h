@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSTimingFunctionValue_h
-#define CSSTimingFunctionValue_h
+#pragma once
 
 #include "CSSValue.h"
 
@@ -125,5 +124,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSSpringTimingFunctionValue, isSpringTimingFunctionValue())
-
-#endif // CSSTimingFunctionValue_h

@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSShadowValue_h
-#define CSSShadowValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include <wtf/RefPtr.h>
@@ -64,5 +63,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSShadowValue, isShadowValue())
-
-#endif // CSSShadowValue_h

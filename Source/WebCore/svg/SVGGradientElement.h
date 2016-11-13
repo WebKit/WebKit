@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGGradientElement_h
-#define SVGGradientElement_h
+#pragma once
 
 #include "Gradient.h"
 #include "SVGAnimatedBoolean.h"
@@ -119,5 +118,3 @@ static bool isType(const WebCore::Node& node)
     return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node));
 }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

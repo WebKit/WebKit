@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGRenderSupport_h
-#define SVGRenderSupport_h
+#pragma once
 
 #include "PaintInfo.h"
 
@@ -103,5 +102,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGRenderSupport_h

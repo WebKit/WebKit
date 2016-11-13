@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleDeprecatedFlexibleBoxData_h
-#define StyleDeprecatedFlexibleBoxData_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleDeprecatedFlexibleBoxData_h

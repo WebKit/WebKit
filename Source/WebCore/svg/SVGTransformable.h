@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTransformable_h
-#define SVGTransformable_h
+#pragma once
 
 #include "SVGLocatable.h"
 #include "SVGTransform.h"
@@ -48,5 +47,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // SVGTransformable_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSUnsetValue_h
-#define CSSUnsetValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include <wtf/NeverDestroyed.h>
@@ -53,5 +52,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSUnsetValue, isUnsetValue())
-
-#endif // CSSUnsetValue_h

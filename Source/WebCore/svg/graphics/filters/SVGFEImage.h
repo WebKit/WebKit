@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEImage_h
-#define SVGFEImage_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "SVGPreserveAspectRatioValue.h"
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGFEImage_h

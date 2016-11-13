@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef ShadowData_h
-#define ShadowData_h
+#pragma once
 
 #include "Color.h"
 #include "FloatRect.h"
@@ -98,5 +97,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ShadowData_h

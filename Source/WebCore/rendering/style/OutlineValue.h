@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef OutlineValue_h
-#define OutlineValue_h
+#pragma once
 
 #include "BorderValue.h"
 
@@ -50,5 +49,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // OutlineValue_h

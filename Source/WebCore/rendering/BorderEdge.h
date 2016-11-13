@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BorderEdge_h
-#define BorderEdge_h
+#pragma once
 
 #include "Color.h"
 #include "LayoutUnit.h"
@@ -89,5 +88,3 @@ inline bool includesAdjacentEdges(BorderEdgeFlags flags)
 }
 
 } // namespace WebCore
-
-#endif // BorderEdge_h

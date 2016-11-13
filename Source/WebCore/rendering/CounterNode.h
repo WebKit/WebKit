@@ -19,8 +19,7 @@
  *
 */
 
-#ifndef CounterNode_h
-#define CounterNode_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -97,5 +96,3 @@ private:
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showCounterTree(const WebCore::CounterNode*);
 #endif
-
-#endif // CounterNode_h

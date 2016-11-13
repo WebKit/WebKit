@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef DataRef_h
-#define DataRef_h
+#pragma once
 
 #include <wtf/Ref.h>
 
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DataRef_h

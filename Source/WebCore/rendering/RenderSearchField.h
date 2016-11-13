@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderSearchField_h
-#define RenderSearchField_h
+#pragma once
 
 #include "PopupMenuClient.h"
 #include "RenderTextControlSingleLine.h"
@@ -93,5 +92,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSearchField, isTextField())
-
-#endif

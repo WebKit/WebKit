@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderRubyBase_h
-#define RenderRubyBase_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 
@@ -80,5 +79,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyBase, isRubyBase())
-
-#endif // RenderRubyBase_h

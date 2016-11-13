@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleTransformData_h
-#define StyleTransformData_h
+#pragma once
 
 #include "Length.h"
 #include "TransformOperations.h"
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleTransformData_h

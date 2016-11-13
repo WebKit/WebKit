@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEComponentTransferElement_h
-#define SVGFEComponentTransferElement_h
+#pragma once
 
 #include "FEComponentTransfer.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -43,5 +42,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

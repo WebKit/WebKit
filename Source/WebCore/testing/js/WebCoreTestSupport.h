@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreTestSupport_h
-#define WebCoreTestSupport_h
+#pragma once
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSString* JSStringRef;
@@ -65,5 +64,3 @@ void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value) T
 void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value) TEST_SUPPORT_EXPORT;
 
 } // namespace WebCoreTestSupport
-
-#endif

@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderButton_h
-#define RenderButton_h
+#pragma once
 
 #include "RenderFlexibleBox.h"
 #include "Timer.h"
@@ -83,5 +82,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderButton, isRenderButton())
-
-#endif // RenderButton_h

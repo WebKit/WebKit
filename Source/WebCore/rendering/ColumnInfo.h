@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ColumnInfo_h
-#define ColumnInfo_h
+#pragma once
 
 #include "LayoutUnit.h"
 
@@ -114,6 +113,4 @@ private:
     PaginationUnit m_paginationUnit;
 };
 
-}
-
-#endif
+} // namespace WebCore

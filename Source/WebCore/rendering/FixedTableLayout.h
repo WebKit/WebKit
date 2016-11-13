@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FixedTableLayout_h
-#define FixedTableLayout_h
+#pragma once
 
 #include "LayoutUnit.h"
 #include "Length.h"
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FixedTableLayout_h

@@ -23,11 +23,9 @@
  *
  */
 
-#ifndef StyleFlexibleBoxData_h
-#define StyleFlexibleBoxData_h
+#pragma once
 
 #include "Length.h"
-
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -57,5 +55,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleFlexibleBoxData_h

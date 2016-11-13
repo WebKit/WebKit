@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef TrailingObjects_h
-#define TrailingObjects_h
+#pragma once
 
 #include <wtf/Vector.h>
 
@@ -75,6 +74,4 @@ private:
     Vector<std::reference_wrapper<RenderBoxModelObject>, 4> m_boxes;
 };
 
-}
-
-#endif // TrailingObjects_h
+} // namespace WebCore

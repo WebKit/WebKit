@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RenderView_h
-#define RenderView_h
+#pragma once
 
 #include "FrameView.h"
 #include "LayoutState.h"
@@ -459,5 +458,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderView, isRenderView())
-
-#endif // RenderView_h

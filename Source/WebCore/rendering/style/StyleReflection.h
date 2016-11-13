@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleReflection_h
-#define StyleReflection_h
+#pragma once
 
 #include "CSSReflectionDirection.h"
 #include "Length.h"
@@ -67,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleReflection_h

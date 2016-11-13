@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VerticalPositionCache_h
-#define VerticalPositionCache_h
+#pragma once
 
 #include "FontBaseline.h"
 #include <wtf/HashMap.h>
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // VerticalPositionCache_h

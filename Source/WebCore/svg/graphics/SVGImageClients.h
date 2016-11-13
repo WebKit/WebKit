@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGImageClients_h
-#define SVGImageClients_h
+#pragma once
 
 #include "EmptyClients.h"
 
@@ -60,6 +59,4 @@ private:
     SVGImage* m_image;
 };
 
-}
-
-#endif // SVGImageClients_h
+} // namespace WebCore

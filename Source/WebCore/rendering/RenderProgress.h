@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderProgress_h
-#define RenderProgress_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 
@@ -61,6 +60,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderProgress, isProgress())
-
-#endif // RenderProgress_h
-

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InlineElementBox_h
-#define InlineElementBox_h
+#pragma once
 
 #include "InlineBox.h"
 
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineElementBox, isInlineElementBox())
-
-#endif // InlineElementBox_h

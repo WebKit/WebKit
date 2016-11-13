@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef RenderFieldset_h
-#define RenderFieldset_h
+#pragma once
 
 #include "HTMLFieldSetElement.h"
 #include "RenderBlockFlow.h"
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFieldset, isFieldset())
-
-#endif // RenderFieldset_h

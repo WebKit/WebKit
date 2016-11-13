@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGResourcesCache_h
-#define SVGResourcesCache_h
+#pragma once
 
 #include "RenderStyleConstants.h"
 #include <memory>
@@ -67,6 +66,4 @@ private:
     CacheMap m_cache;
 };
 
-}
-
-#endif
+} // namespace WebCore

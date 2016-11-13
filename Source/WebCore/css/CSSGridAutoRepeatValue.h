@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSGridAutoRepeatValue_h
-#define CSSGridAutoRepeatValue_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -75,5 +74,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGridAutoRepeatValue, isGridAutoRepeatValue());
 
 #endif // ENABLE(CSS_GRID_LAYOUT)
-
-#endif // CSSGridAutoRepeatValue_h

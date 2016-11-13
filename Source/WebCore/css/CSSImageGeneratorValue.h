@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSImageGeneratorValue_h
-#define CSSImageGeneratorValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include "FloatSize.h"
@@ -97,5 +96,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSImageGeneratorValue, isImageGeneratorValue())
-
-#endif // CSSImageGeneratorValue_h

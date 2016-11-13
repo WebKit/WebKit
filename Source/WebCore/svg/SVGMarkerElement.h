@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGMarkerElement_h
-#define SVGMarkerElement_h
+#pragma once
 
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedBoolean.h"
@@ -173,6 +172,4 @@ private:
     mutable SVGSynchronizableAnimatedProperty<SVGMarkerOrientType> m_orientType;
 };
 
-}
-
-#endif
+} // namespace WebCore

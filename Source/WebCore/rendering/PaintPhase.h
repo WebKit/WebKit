@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PaintPhase_h
-#define PaintPhase_h
+#pragma once
 
 namespace WebCore {
 
@@ -69,5 +68,3 @@ enum PaintBehaviorFlags {
 typedef unsigned PaintBehavior;
 
 } // namespace WebCore
-
-#endif // PaintPhase_h

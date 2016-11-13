@@ -119,4 +119,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::CSSRule& rule) { return rule.type() == WebCore::predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-

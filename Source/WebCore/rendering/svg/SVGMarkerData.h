@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGMarkerData_h
-#define SVGMarkerData_h
+#pragma once
 
 #include "FloatConversion.h"
 #include "Path.h"
@@ -153,6 +152,4 @@ private:
     bool m_reverseStart;
 };
 
-}
-
-#endif // SVGMarkerData_h
+} // namespace WebCore

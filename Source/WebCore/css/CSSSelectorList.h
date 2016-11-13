@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSSelectorList_h
-#define CSSSelectorList_h
+#pragma once
 
 #include "CSSSelector.h"
 #include <memory>
@@ -87,5 +86,3 @@ inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
 }
 
 } // namespace WebCore
-
-#endif // CSSSelectorList_h

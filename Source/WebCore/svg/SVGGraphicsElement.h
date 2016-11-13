@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGGraphicsElement_h
-#define SVGGraphicsElement_h
+#pragma once
 
 #include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
@@ -90,5 +89,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGGraphicsElement)
     static bool isType(const WebCore::SVGElement& element) { return element.isSVGGraphicsElement(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // SVGGraphicsElement_h

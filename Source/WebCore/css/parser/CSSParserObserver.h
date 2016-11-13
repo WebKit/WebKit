@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSParserObserver_h
-#define CSSParserObserver_h
+#pragma once
 
 #include "CSSPropertySourceData.h"
 #include "StyleRule.h"
@@ -51,5 +50,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CSSParserObserver_h

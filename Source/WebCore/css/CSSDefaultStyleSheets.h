@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef CSSDefaultStyleSheets_h
-#define CSSDefaultStyleSheets_h
+#pragma once
 
 namespace WebCore {
 
@@ -53,5 +52,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // CSSDefaultStyleSheets_h

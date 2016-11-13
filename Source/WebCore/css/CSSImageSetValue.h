@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSImageSetValue_h
-#define CSSImageSetValue_h
+#pragma once
 
 #include "CSSValueList.h"
 #include "CachedImageClient.h"
@@ -81,5 +80,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSImageSetValue, isImageSetValue())
-
-#endif // CSSImageSetValue_h

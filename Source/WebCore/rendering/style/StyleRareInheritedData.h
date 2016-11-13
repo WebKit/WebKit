@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleRareInheritedData_h
-#define StyleRareInheritedData_h
+#pragma once
 
 #include "Color.h"
 #include "DataRef.h"
@@ -166,5 +165,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleRareInheritedData_h

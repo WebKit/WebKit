@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGResourcesCycleSolver_h
-#define SVGResourcesCycleSolver_h
+#pragma once
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -46,6 +45,4 @@ private:
     HashSet<RenderSVGResourceContainer*> m_allResources; 
 };
 
-}
-
-#endif
+} // namespace WebCore

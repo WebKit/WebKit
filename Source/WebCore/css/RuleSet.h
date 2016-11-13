@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RuleSet_h
-#define RuleSet_h
+#pragma once
 
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
@@ -229,9 +228,8 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(AtomicStringImpl* key, b
 } // namespace WebCore
 
 namespace WTF {
+
 // RuleData is simple enough that initializing to 0 and moving with memcpy will totally work.
 template<> struct VectorTraits<WebCore::RuleData> : SimpleClassVectorTraits { };
 
 } // namespace WTF
-
-#endif // RuleSet_h

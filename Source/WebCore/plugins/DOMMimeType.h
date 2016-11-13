@@ -17,12 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef DOMMimeType_h
-#define DOMMimeType_h
+#pragma once
 
 #include "FrameDestructionObserver.h"
 #include "PluginData.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -48,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMMimeType_h

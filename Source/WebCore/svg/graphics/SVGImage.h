@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGImage_h
-#define SVGImage_h
+#pragma once
 
 #include "Image.h"
 #include "URL.h"
@@ -115,5 +114,3 @@ bool isInSVGImage(const Element*);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_IMAGE(SVGImage)
-
-#endif // SVGImage_h

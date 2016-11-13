@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OrderIterator_h
-#define OrderIterator_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif //  OrderIterator_h

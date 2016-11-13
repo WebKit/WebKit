@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BoxShape_h
-#define BoxShape_h
+#pragma once
 
 #include "FloatRoundedRect.h"
 #include "RenderStyleConstants.h"
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // BoxShape_h

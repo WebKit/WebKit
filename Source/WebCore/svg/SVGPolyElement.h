@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPolyElement_h
-#define SVGPolyElement_h
+#pragma once
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
@@ -69,5 +68,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPolyElement)
     static bool isType(const WebCore::SVGElement& element) { return element.hasTagName(WebCore::SVGNames::polygonTag) || element.hasTagName(WebCore::SVGNames::polylineTag); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

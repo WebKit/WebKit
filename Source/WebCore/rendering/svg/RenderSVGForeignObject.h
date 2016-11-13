@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGForeignObject_h
-#define RenderSVGForeignObject_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "FloatPoint.h"
@@ -74,6 +73,4 @@ private:
     mutable AffineTransform m_localToParentTransform;
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
  
-#ifndef SVGZoomEvent_h
-#define SVGZoomEvent_h
+#pragma once
 
 #include "FloatRect.h"
 #include "SVGPoint.h"
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGZoomEvent_h

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef CounterContent_h
-#define CounterContent_h
+#pragma once
 
 #include "RenderStyleConstants.h"
 #include <wtf/text/AtomicString.h>
@@ -57,7 +56,4 @@ static inline bool operator==(const CounterContent& a, const CounterContent& b)
         && a.separator() == b.separator();
 }
 
-
 } // namespace WebCore
-
-#endif // CounterContent_h

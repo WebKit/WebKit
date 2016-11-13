@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGParserUtilities_h
-#define SVGParserUtilities_h
+#pragma once
 
 #include "ParserUtilities.h"
 #include <wtf/HashSet.h>
@@ -87,5 +86,3 @@ bool parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<Stri
 bool parseGlyphName(const String& input, HashSet<String>& values);
 
 } // namespace WebCore
-
-#endif // SVGParserUtilities_h

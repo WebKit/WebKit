@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathBuilder_h
-#define SVGPathBuilder_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "SVGPathConsumer.h"
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGPathBuilder_h

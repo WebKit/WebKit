@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegWithContext_h
-#define SVGPathSegWithContext_h
+#pragma once
 
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
 
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

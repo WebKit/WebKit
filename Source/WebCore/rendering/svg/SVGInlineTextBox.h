@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGInlineTextBox_h
-#define SVGInlineTextBox_h
+#pragma once
 
 #include "InlineTextBox.h"
 #include "SVGTextLayoutEngine.h"
@@ -95,5 +94,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(SVGInlineTextBox, isSVGInlineTextBox())
-
-#endif // SVGInlineTextBox_h

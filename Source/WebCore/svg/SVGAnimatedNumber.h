@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedNumber_h
-#define SVGAnimatedNumber_h
+#pragma once
 
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
@@ -57,5 +56,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

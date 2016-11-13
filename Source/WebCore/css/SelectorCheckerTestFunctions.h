@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectorCheckerTestFunctions_h
-#define SelectorCheckerTestFunctions_h
+#pragma once
 
 #include "FocusController.h"
 #include "HTMLInputElement.h"
@@ -376,5 +375,3 @@ ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 #endif
 
 } // namespace WebCore
-
-#endif // SelectorCheckerTestFunctions_h

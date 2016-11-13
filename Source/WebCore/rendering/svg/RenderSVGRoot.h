@@ -20,12 +20,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGRoot_h
-#define RenderSVGRoot_h
+#pragma once
 
 #include "FloatRect.h"
 #include "RenderReplaced.h"
-
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -129,5 +127,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGRoot, isSVGRoot())
-
-#endif // RenderSVGRoot_h

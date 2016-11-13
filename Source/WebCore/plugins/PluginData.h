@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef PluginData_h
-#define PluginData_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -117,5 +116,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // PluginData_h

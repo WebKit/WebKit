@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockContentFilterSettings_h
-#define MockContentFilterSettings_h
+#pragma once
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -91,5 +90,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MockContentFilterSettings_h

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEDropShadowElement_h
-#define SVGFEDropShadowElement_h
+#pragma once
 
 #include "FEDropShadow.h"
 #include "SVGAnimatedNumber.h"
@@ -52,5 +51,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif

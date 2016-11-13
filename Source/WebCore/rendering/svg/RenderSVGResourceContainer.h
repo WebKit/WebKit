@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceContainer_h
-#define RenderSVGResourceContainer_h
+#pragma once
 
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
@@ -102,5 +101,3 @@ Renderer* getRenderSVGResourceById(Document& document, const AtomicString& id)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceContainer, isSVGResourceContainer())
-
-#endif // RenderSVGResourceContainer_h

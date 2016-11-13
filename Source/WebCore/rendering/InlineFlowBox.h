@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef InlineFlowBox_h
-#define InlineFlowBox_h
+#pragma once
 
 #include "InlineBox.h"
 #include "RenderOverflow.h"
@@ -378,5 +377,3 @@ SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineFlowBox, isInlineFlowBox())
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::InlineFlowBox*);
 #endif
-
-#endif // InlineFlowBox_h

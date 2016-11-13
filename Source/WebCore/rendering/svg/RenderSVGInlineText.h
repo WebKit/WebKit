@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGInlineText_h
-#define RenderSVGInlineText_h
+#pragma once
 
 #include "FontCascade.h"
 #include "RenderText.h"
@@ -72,5 +71,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInlineText, isSVGInlineText())
-
-#endif // RenderSVGInlineText_h

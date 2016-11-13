@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShapeInterval_h
-#define ShapeInterval_h
+#pragma once
 
 #include <wtf/Vector.h>
 
@@ -106,5 +105,3 @@ typedef Vector<IntShapeInterval> IntShapeIntervals;
 typedef Vector<FloatShapeInterval> FloatShapeIntervals;
 
 } // namespace WebCore
-
-#endif // ShapeInterval_h

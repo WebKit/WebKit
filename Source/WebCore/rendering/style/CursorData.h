@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef CursorData_h
-#define CursorData_h
+#pragma once
 
 #include "IntPoint.h"
 #include "StyleImage.h"
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CursorData_h

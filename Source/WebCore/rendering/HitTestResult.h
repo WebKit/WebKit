@@ -19,8 +19,7 @@
  *
 */
 
-#ifndef HitTestResult_h
-#define HitTestResult_h
+#pragma once
 
 #include "FloatQuad.h"
 #include "FloatRect.h"
@@ -37,13 +36,11 @@ namespace WebCore {
 
 class Element;
 class Frame;
-#if ENABLE(VIDEO)
 class HTMLMediaElement;
-#endif
 class Image;
-class URL;
 class Node;
 class Scrollbar;
+class URL;
 
 class HitTestResult {
 public:
@@ -175,5 +172,3 @@ private:
 WEBCORE_EXPORT String displayString(const String&, const Node*);
 
 } // namespace WebCore
-
-#endif // HitTestResult_h

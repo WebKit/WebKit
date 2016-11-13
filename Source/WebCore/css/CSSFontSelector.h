@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontSelector_h
-#define CSSFontSelector_h
+#pragma once
 
 #include "CSSFontFace.h"
 #include "CSSFontFaceSet.h"
@@ -118,5 +117,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSFontSelector_h

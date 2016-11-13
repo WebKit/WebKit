@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef ElementRuleCollector_h
-#define ElementRuleCollector_h
+#pragma once
 
 #include "MediaQueryEvaluator.h"
 #include "SelectorChecker.h"
@@ -117,5 +116,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ElementRuleCollector_h

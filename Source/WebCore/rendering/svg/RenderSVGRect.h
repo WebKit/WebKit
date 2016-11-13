@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderSVGRect_h
-#define RenderSVGRect_h
+#pragma once
 
 #include "RenderSVGPath.h"
 #include "SVGRectElement.h"
@@ -59,6 +58,4 @@ private:
     bool m_usePathFallback;
 };
 
-}
-
-#endif
+} // namespace WebCore

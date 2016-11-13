@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGHKernElement_h
-#define SVGHKernElement_h
+#pragma once
 
 #if ENABLE(SVG_FONTS)
+
 #include "SVGFontElement.h"
 
 namespace WebCore {
@@ -42,4 +42,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)
-#endif

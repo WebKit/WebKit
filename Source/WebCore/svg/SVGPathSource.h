@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSource_h
-#define SVGPathSource_h
+#pragma once
 
 #include "SVGPathSeg.h"
 
@@ -49,5 +48,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // SVGPathSource_h

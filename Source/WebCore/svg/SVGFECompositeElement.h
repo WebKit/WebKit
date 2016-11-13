@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFECompositeElement_h
-#define SVGFECompositeElement_h
+#pragma once
 
 #include "FEComposite.h"
 #include "SVGAnimatedEnumeration.h"
@@ -104,5 +103,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

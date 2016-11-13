@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGViewportContainer_h
-#define RenderSVGViewportContainer_h
+#pragma once
 
 #include "RenderSVGContainer.h"
 
@@ -70,5 +69,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGViewportContainer, isSVGViewportContainer())
-
-#endif // RenderSVGViewportContainer_h

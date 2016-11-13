@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGInlineFlowBox_h
-#define SVGInlineFlowBox_h
+#pragma once
 
 #include "InlineFlowBox.h"
 #include "RenderSVGInline.h"
@@ -54,5 +53,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(SVGInlineFlowBox, isSVGInlineFlowBox())
-
-#endif // SVGInlineFlowBox_h

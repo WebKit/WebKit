@@ -16,8 +16,7 @@
  *
  */
 
-#ifndef RegionOversetState_h
-#define RegionOversetState_h
+#pragma once
 
 namespace WebCore {
 
@@ -29,5 +28,3 @@ enum RegionOversetState {
 };
 
 } // namespace WebCore
-
-#endif // RegionOversetState_h

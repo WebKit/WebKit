@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontFaceSource_h
-#define CSSFontFaceSource_h
+#pragma once
 
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
@@ -94,6 +93,4 @@ private:
     Status m_status { Status::Pending };
 };
 
-}
-
-#endif
+} // namespace WebCore

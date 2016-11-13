@@ -21,8 +21,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGRenderStyle_h
-#define SVGRenderStyle_h
+#pragma once
 
 #include "CSSValueList.h"
 #include "DataRef.h"
@@ -489,5 +488,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGRenderStyle_h

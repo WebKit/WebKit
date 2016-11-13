@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PatternAttributes_h
-#define PatternAttributes_h
+#pragma once
 
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
@@ -160,5 +159,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

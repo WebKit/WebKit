@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderFrameBase_h
-#define RenderFrameBase_h
+#pragma once
 
 #include "FrameView.h"
 #include "RenderWidget.h"
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderFrameBase_h

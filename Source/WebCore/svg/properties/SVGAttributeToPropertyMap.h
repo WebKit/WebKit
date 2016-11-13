@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAttributeToPropertyMap_h
-#define SVGAttributeToPropertyMap_h
+#pragma once
 
 #include "SVGPropertyInfo.h"
 #include <wtf/HashMap.h>
@@ -47,6 +46,4 @@ private:
     HashMap<QualifiedName, PropertyInfoVector> m_map;
 };
 
-}
-
-#endif
+} // namespace WebCore

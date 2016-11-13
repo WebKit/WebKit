@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef RenderFlowThread_h
-#define RenderFlowThread_h
+#pragma once
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
@@ -381,5 +380,3 @@ template <> struct ValueToString<RenderRegion*> {
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlowThread, isRenderFlowThread())
-
-#endif // RenderFlowThread_h

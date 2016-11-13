@@ -27,8 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef CSSParserObserverWrapper_h
-#define CSSParserObserverWrapper_h
+#pragma once
 
 #include "CSSParserObserver.h"
 
@@ -76,5 +75,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSParserObserverWrapper_h

@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSCursorImageValue_h
-#define CSSCursorImageValue_h
+#pragma once
 
 #include "CSSImageValue.h"
 #include "IntPoint.h"
@@ -77,5 +76,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCursorImageValue, isCursorImageValue())
-
-#endif // CSSCursorImageValue_h

@@ -18,12 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef DashboardRegion_h
-#define DashboardRegion_h
-
-#include "Rect.h"
+#pragma once
 
 #if ENABLE(DASHBOARD_SUPPORT)
+
+#include "Rect.h"
 
 namespace WebCore {
 
@@ -47,8 +46,6 @@ private:
     DashboardRegion() : m_isCircle(false), m_isRectangle(false) { }
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore
 
 #endif

@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourcePattern_h
-#define RenderSVGResourcePattern_h
+#pragma once
 
 #include "ImageBuffer.h"
 #include "Pattern.h"
@@ -70,8 +69,6 @@ private:
     HashMap<RenderElement*, std::unique_ptr<PatternData>> m_patternMap;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourcePattern, PatternResourceType)
-
-#endif

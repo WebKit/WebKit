@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleLineLayoutResolver_h
-#define SimpleLineLayoutResolver_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
@@ -290,5 +289,3 @@ inline LineResolver lineResolver(const RenderBlockFlow& flow, const Layout& layo
 
 }
 }
-
-#endif

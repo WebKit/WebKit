@@ -22,8 +22,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGRenderingContext_h
-#define SVGRenderingContext_h
+#pragma once
 
 #include "ImageBuffer.h"
 #include "PaintInfo.h"
@@ -31,9 +30,9 @@
 namespace WebCore {
 
 class AffineTransform;
+class FloatRect;
 class RenderElement;
 class RenderObject;
-class FloatRect;
 class RenderSVGResourceFilter;
 
 // SVGRenderingContext 
@@ -112,5 +111,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGRenderingContext_h

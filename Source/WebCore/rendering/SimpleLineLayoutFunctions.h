@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleLineLayoutFunctions_h
-#define SimpleLineLayoutFunctions_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
@@ -136,5 +135,3 @@ inline LayoutUnit baselineFromFlow(const RenderBlockFlow& flow)
 
 }
 }
-
-#endif

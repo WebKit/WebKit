@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceFilter_h
-#define RenderSVGResourceFilter_h
+#pragma once
 
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
@@ -30,7 +29,6 @@
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SVGUnitTypes.h"
-
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -100,5 +98,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderSVGResourceFilter)
     static bool isType(const WebCore::RenderObject& renderer) { return renderer.isSVGResourceFilter(); }
     static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // RenderSVGResourceFilter_h

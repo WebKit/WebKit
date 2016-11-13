@@ -27,9 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-#ifndef CSSPropertyParserHelpers_h
-#define CSSPropertyParserHelpers_h
+#pragma once
 
 #include "CSSCustomIdentValue.h"
 #include "CSSParserMode.h"
@@ -114,5 +112,3 @@ static inline bool isCSSWideKeyword(const CSSValueID& id)
 } // namespace CSSPropertyParserHelpers
 
 } // namespace WebCore
-
-#endif // CSSPropertyParserHelpers_h

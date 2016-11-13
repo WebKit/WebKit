@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineClampValue_h
-#define LineClampValue_h
+#pragma once
 
 #include "RenderStyleConstants.h"
 
@@ -65,5 +64,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // LineClampValue_h

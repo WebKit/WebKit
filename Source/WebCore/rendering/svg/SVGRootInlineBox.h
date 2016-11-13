@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGRootInlineBox_h
-#define SVGRootInlineBox_h
+#pragma once
 
 #include "RootInlineBox.h"
 #include "SVGRenderSupport.h"
@@ -62,5 +61,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(SVGRootInlineBox, isSVGRootInlineBox())
-
-#endif // SVGRootInlineBox_h

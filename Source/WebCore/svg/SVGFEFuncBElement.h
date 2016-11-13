@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEFuncBElement_h
-#define SVGFEFuncBElement_h
+#pragma once
 
 #include "SVGComponentTransferFunctionElement.h"
 
@@ -34,5 +33,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

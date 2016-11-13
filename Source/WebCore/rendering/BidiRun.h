@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef BidiRun_h
-#define BidiRun_h
+#pragma once
 
 #include <wtf/StdLibExtras.h>
 #include "BidiResolver.h"
@@ -48,6 +47,4 @@ private:
     InlineBox* m_box;
 };
 
-}
-
-#endif // BidiRun_h
+} // namespace WebCore

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderSnapshottedPlugIn_h
-#define RenderSnapshottedPlugIn_h
+#pragma once
 
 #include "RenderEmbeddedObject.h"
 #include "RenderImageResource.h"
@@ -66,5 +65,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSnapshottedPlugIn, isSnapshottedPlugIn())
-
-#endif // RenderSnapshottedPlugIn_h

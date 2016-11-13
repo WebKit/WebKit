@@ -25,8 +25,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SelectorChecker_h
-#define SelectorChecker_h
+#pragma once
 
 #include "CSSSelector.h"
 #include "Element.h"
@@ -127,6 +126,4 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         || pseudoType == CSSSelector::PseudoClassFocus;
 }
 
-}
-
-#endif
+} // namespace WebCore

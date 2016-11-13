@@ -28,8 +28,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CSSParserMode_h
-#define CSSParserMode_h
+#pragma once
 
 #include "TextEncoding.h"
 #include "URL.h"
@@ -160,7 +159,7 @@ struct CSSParserContextHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-}
+} // namespace WebCore
 
 namespace WTF {
 template<> struct HashTraits<WebCore::CSSParserContext> : GenericHashTraits<WebCore::CSSParserContext> {
@@ -172,6 +171,4 @@ template<> struct HashTraits<WebCore::CSSParserContext> : GenericHashTraits<WebC
 template<> struct DefaultHash<WebCore::CSSParserContext> {
     typedef WebCore::CSSParserContextHash Hash;
 };
-}
-
-#endif // CSSParserMode_h
+} // namespace WTF

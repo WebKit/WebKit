@@ -28,8 +28,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSRegionRule_h
-#define WebKitCSSRegionRule_h
+#pragma once
 
 #include "CSSGroupingRule.h"
 
@@ -55,5 +54,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(WebKitCSSRegionRule, CSSRule::WEBKIT_REGION_RULE)
 
 #endif // ENABLE(CSS_REGIONS)
-
-#endif // WebKitCSSRegionRule_h

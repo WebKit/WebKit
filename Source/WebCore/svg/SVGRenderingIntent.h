@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGRenderingIntent_h
-#define SVGRenderingIntent_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -40,5 +39,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGRenderingIntent_h

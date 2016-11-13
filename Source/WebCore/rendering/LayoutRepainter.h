@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef LayoutRepainter_h
-#define LayoutRepainter_h
+#pragma once
 
 #include "LayoutRect.h"
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // LayoutRepainter_h

@@ -26,8 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSSupportsRule_h
-#define CSSSupportsRule_h
+#pragma once
 
 #include "CSSGroupingRule.h"
 
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSSupportsRule, CSSRule::SUPPORTS_RULE)
-
-#endif // CSSSupportsRule_h

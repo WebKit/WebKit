@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderTheme_h
-#define RenderTheme_h
+#pragma once
 
 #include "BorderData.h"
 #include "ControlStates.h"
@@ -49,9 +48,7 @@ class PopupMenu;
 class RenderAttachment;
 class RenderBox;
 class RenderMenuList;
-#if ENABLE(METER_ELEMENT)
 class RenderMeter;
-#endif
 class RenderObject;
 class RenderProgress;
 class RenderSnapshottedPlugIn;
@@ -421,5 +418,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderTheme_h

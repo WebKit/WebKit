@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSParserIdioms_h
-#define CSSParserIdioms_h
+#pragma once
 
 #include "CSSParserMode.h"
 #include <wtf/ASCIICType.h>
@@ -67,6 +66,4 @@ bool isValueAllowedInMode(unsigned short, CSSParserMode);
 
 URL completeURL(const CSSParserContext&, const String& url);
 
-}
-
-#endif
+} // namespace WebCore

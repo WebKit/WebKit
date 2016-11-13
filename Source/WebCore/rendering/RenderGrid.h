@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderGrid_h
-#define RenderGrid_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -233,6 +232,4 @@ size_t inline RenderGrid::autoRepeatCountForDirection(GridTrackSizingDirection d
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderGrid, isRenderGrid())
 
-#endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-#endif // RenderGrid_h
+#endif // ENABLE(CSS_GRID_LAYOUT)

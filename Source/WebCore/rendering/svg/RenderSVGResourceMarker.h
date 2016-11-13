@@ -17,12 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceMarker_h
-#define RenderSVGResourceMarker_h
+#pragma once
 
 #include "RenderSVGResourceContainer.h"
 #include "SVGMarkerElement.h"
-
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -76,8 +74,6 @@ private:
     FloatRect m_viewport;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceMarker, MarkerResourceType)
-
-#endif

@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Shape_h
-#define Shape_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "Path.h"
@@ -103,5 +102,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Shape_h

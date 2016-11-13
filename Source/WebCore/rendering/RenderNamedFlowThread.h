@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RenderNamedFlowThread_h
-#define RenderNamedFlowThread_h
+#pragma once
 
 #include "RenderFlowThread.h"
 #include "SelectionSubtreeRoot.h"
@@ -150,5 +148,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderNamedFlowThread, isRenderNamedFlowThread())
-
-#endif // RenderNamedFlowThread_h

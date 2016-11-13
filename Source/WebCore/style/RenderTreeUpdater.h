@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderTreeUpdater_h
-#define RenderTreeUpdater_h
+#pragma once
 
 #include "RenderTreePosition.h"
 #include "StyleChange.h"
@@ -84,5 +83,4 @@ private:
     HashSet<Text*> m_invalidatedWhitespaceOnlyTextSiblings;
 };
 
-}
-#endif
+} // namespace WebCore

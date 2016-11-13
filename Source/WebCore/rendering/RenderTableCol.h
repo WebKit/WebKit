@@ -23,8 +23,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderTableCol_h
-#define RenderTableCol_h
+#pragma once
 
 #include "RenderBox.h"
 
@@ -105,5 +104,3 @@ inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentAfter() con
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCol, isRenderTableCol())
-
-#endif // RenderTableCol_h

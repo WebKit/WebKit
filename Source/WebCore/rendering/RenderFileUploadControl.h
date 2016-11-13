@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderFileUploadControl_h
-#define RenderFileUploadControl_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 
@@ -67,5 +66,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFileUploadControl, isFileUploadControl())
-
-#endif // RenderFileUploadControl_h

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleInheritedData_h
-#define StyleInheritedData_h
+#pragma once
 
 #include "Color.h"
 #include "FontCascade.h"
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleInheritedData_h

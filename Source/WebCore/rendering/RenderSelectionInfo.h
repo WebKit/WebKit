@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef RenderSelectionInfo_h
-#define RenderSelectionInfo_h
+#pragma once
 
 #include "GapRects.h"
 #include "RenderBlock.h"
@@ -76,6 +75,3 @@ private:
 };
 
 } // namespace WebCore
-
-
-#endif // RenderSelectionInfo_h

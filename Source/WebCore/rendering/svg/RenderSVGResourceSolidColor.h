@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceSolidColor_h
-#define RenderSVGResourceSolidColor_h
+#pragma once
 
 #include "Color.h"
 #include "RenderSVGResource.h"
@@ -47,8 +46,6 @@ private:
     Color m_color;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceSolidColor, SolidColorResourceType)
-
-#endif

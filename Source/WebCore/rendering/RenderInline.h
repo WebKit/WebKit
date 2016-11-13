@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderInline_h
-#define RenderInline_h
+#pragma once
 
 #include "InlineFlowBox.h"
 #include "RenderBoxModelObject.h"
@@ -187,5 +186,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderInline, isRenderInline())
-
-#endif // RenderInline_h

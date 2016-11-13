@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderChildIterator_h
-#define RenderChildIterator_h
+#pragma once
 
 #include "RenderIterator.h"
 
@@ -193,6 +192,4 @@ inline RenderChildConstIteratorAdapter<T> childrenOfType(const RenderElement& pa
     return RenderChildConstIteratorAdapter<T>(parent);
 }
 
-}
-
-#endif
+} // namespace WebCore

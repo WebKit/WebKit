@@ -18,11 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFilterBuilder_h
-#define SVGFilterBuilder_h
+#pragma once
 
 #include "FilterEffect.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -76,5 +74,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // SVGFilterBuilder_h

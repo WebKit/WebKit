@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef InlineBox_h
-#define InlineBox_h
+#pragma once
 
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
@@ -459,5 +458,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 void showNodeTree(const WebCore::InlineBox*);
 void showLineTree(const WebCore::InlineBox*);
 #endif
-
-#endif // InlineBox_h

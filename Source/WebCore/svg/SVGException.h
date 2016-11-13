@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGException_h
-#define SVGException_h
+#pragma once
 
 #include "ExceptionBase.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGException_h

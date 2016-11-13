@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef FlowThreadController_h
-#define FlowThreadController_h
+#pragma once
 
 #include "RenderView.h"
 #include <memory>
@@ -99,6 +98,4 @@ private:
     HashMap<const Element*, RenderNamedFlowThread*> m_mapNamedFlowContentElement;
 };
 
-}
-
-#endif
+} // namespace WebCore

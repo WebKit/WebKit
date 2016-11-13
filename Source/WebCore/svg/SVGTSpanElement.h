@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTSpanElement_h
-#define SVGTSpanElement_h
+#pragma once
 
 #include "SVGTextPositioningElement.h"
 
@@ -38,5 +37,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

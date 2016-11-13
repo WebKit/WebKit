@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderLayerModelObject_h
-#define RenderLayerModelObject_h
+#pragma once
 
 #include "RenderElement.h"
 
@@ -72,5 +71,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLayerModelObject, isRenderLayerModelObject())
-
-#endif // RenderLayerModelObject_h

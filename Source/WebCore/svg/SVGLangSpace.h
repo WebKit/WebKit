@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLangSpace_h
-#define SVGLangSpace_h
+#pragma once
 
 #include "QualifiedName.h"
 #include <wtf/HashSet.h>
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGLangSpace_h

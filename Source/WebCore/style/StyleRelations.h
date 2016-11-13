@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleRelations_h
-#define StyleRelations_h
+#pragma once
 
 #include <wtf/Vector.h>
 
@@ -74,5 +73,3 @@ void commitRelations(std::unique_ptr<Relations>, Update&);
 
 }
 }
-
-#endif

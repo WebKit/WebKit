@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPropertyInfo_h
-#define SVGPropertyInfo_h
+#pragma once
 
 #include "QualifiedName.h"
 
@@ -71,6 +70,4 @@ public:
     LookupOrCreateWrapperForAnimatedProperty lookupOrCreateWrapperForAnimatedProperty;
 };
 
-}
-
-#endif // SVGPropertyInfo_h
+} // namespace WebCore

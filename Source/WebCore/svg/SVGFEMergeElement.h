@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEMergeElement_h
-#define SVGFEMergeElement_h
+#pragma once
 
 #include "FEMerge.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -37,5 +36,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

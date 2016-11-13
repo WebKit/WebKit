@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGGradientStop_h
-#define RenderSVGGradientStop_h
+#pragma once
 
 #include "RenderElement.h"
 #include "SVGStopElement.h"
@@ -63,5 +62,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGGradientStop, isSVGGradientStop())
-
-#endif // RenderSVGGradientStop_h

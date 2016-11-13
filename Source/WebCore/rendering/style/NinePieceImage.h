@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef NinePieceImage_h
-#define NinePieceImage_h
+#pragma once
 
 #include "DataRef.h"
 #include "LayoutRect.h"
@@ -213,5 +212,3 @@ private:
 TextStream& operator<<(TextStream&, const NinePieceImage&);
 
 } // namespace WebCore
-
-#endif // NinePieceImage_h

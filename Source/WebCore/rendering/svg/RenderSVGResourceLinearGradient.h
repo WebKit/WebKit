@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceLinearGradient_h
-#define RenderSVGResourceLinearGradient_h
+#pragma once
 
 #include "LinearGradientAttributes.h"
 #include "RenderSVGResourceGradient.h"
@@ -52,8 +51,6 @@ private:
     LinearGradientAttributes m_attributes;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceLinearGradient, LinearGradientResourceType)
-
-#endif

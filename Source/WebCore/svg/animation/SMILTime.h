@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SMILTime_h
-#define SMILTime_h
+#pragma once
 
 #include <algorithm>
 #include <cmath>
@@ -96,6 +95,4 @@ SMILTime operator-(const SMILTime&, const SMILTime&);
 // So multiplying times does not make too much sense but SMIL defines it for duration * repeatCount
 SMILTime operator*(const SMILTime&, const SMILTime&);
 
-}
-
-#endif // SMILTime_h
+} // namespace WebCore

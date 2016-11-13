@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef DOMMimeTypeArray_h
-#define DOMMimeTypeArray_h
+#pragma once
 
 #include "DOMMimeType.h"
 #include "DOMWindowProperty.h"
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMMimeTypeArray_h

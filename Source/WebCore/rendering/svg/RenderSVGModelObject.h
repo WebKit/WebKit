@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderSVGModelObject_h
-#define RenderSVGModelObject_h
+#pragma once
 
 #include "RenderElement.h"
 #include "SVGElement.h"
@@ -83,5 +82,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGModelObject, isRenderSVGModelObject())
-
-#endif

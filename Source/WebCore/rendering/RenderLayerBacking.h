@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderLayerBacking_h
-#define RenderLayerBacking_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
@@ -390,5 +389,3 @@ enum CanvasCompositingStrategy {
 CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject&);
 
 } // namespace WebCore
-
-#endif // RenderLayerBacking_h

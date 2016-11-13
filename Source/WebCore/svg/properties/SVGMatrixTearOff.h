@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGMatrixTearOff_h
-#define SVGMatrixTearOff_h
+#pragma once
 
 #include "SVGPropertyTearOff.h"
 #include "SVGTransform.h"
@@ -60,6 +59,4 @@ private:
     WeakPtrFactory<SVGPropertyTearOffBase> m_weakFactory;
 };
 
-}
-
-#endif // SVGMatrixTearOff_h
+} // namespace WebCore

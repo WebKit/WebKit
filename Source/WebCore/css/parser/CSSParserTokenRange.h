@@ -27,8 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef CSSParserTokenRange_h
-#define CSSParserTokenRange_h
+#pragma once
 
 #include "CSSParserToken.h"
 #include <wtf/Vector.h>
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSParserTokenRange_h

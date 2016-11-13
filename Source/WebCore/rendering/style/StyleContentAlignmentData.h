@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef StyleContentAlignmentData_h
-#define StyleContentAlignmentData_h
+
+#pragma once
 
 #include "RenderStyleConstants.h"
 
@@ -65,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleContentAlignmentData_h

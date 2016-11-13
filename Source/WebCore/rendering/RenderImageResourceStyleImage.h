@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RenderImageResourceStyleImage_h
-#define RenderImageResourceStyleImage_h
+#pragma once
 
 #include "RenderImageResource.h"
 #include "StyleImage.h"
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderImageStyleImage_h

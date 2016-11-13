@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextPaintStyle_h
-#define TextPaintStyle_h
+#pragma once
 
 #include "Color.h"
 
@@ -56,6 +55,4 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const Rende
 enum FillColorType { UseNormalFillColor, UseEmphasisMarkColor };
 void updateGraphicsContext(GraphicsContext&, const TextPaintStyle&, FillColorType = UseNormalFillColor);
 
-}
-
-#endif
+} // namespace WebCore

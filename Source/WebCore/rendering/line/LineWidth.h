@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineWidth_h
-#define LineWidth_h
+#pragma once
 
 #include "LayoutUnit.h"
 
@@ -97,6 +96,4 @@ private:
 
 IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle&);
 
-}
-
-#endif // LineWidth_h
+} // namespace WebCore

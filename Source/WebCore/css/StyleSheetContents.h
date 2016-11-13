@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef StyleSheetContents_h
-#define StyleSheetContents_h
+#pragma once
 
 #include "CSSParserMode.h"
 #include "CachePolicy.h"
@@ -175,6 +174,4 @@ private:
     Vector<CSSStyleSheet*> m_clients;
 };
 
-} // namespace
-
-#endif
+} // namespace WebCore

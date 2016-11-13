@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSLineBoxContainValue_h
-#define CSSLineBoxContainValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include <wtf/RefPtr.h>
@@ -58,5 +57,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSLineBoxContainValue, isLineBoxContainValue())
-
-#endif // CSSLineBoxContainValue_h

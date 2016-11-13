@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypeConversions_h
-#define TypeConversions_h
+#pragma once
 
 #include "Node.h"
 #include <wtf/FastMalloc.h>
@@ -149,5 +148,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

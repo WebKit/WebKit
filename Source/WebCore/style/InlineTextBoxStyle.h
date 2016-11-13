@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InlineTextBoxStyle_h
-#define InlineTextBoxStyle_h
+#pragma once
 
 #include "FontCascade.h"
 #include "RenderStyleConstants.h"
@@ -49,6 +48,4 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
 void getWavyStrokeParameters(float strokeThickness, float& controlPointDistance, float& step);
 int computeUnderlineOffset(TextUnderlinePosition, const FontMetrics&, const InlineTextBox*, int textDecorationThickness);
     
-}
-
-#endif
+} // namespace WebCore

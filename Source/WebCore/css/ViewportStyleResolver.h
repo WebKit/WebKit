@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ViewportStyleResolver_h
-#define ViewportStyleResolver_h
+#pragma once
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 
@@ -70,5 +69,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
-
-#endif // ViewportStyleResolver_h

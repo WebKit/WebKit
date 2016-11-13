@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockPageOverlay_h
-#define MockPageOverlay_h
+#pragma once
 
 #include "PageOverlay.h"
 
@@ -46,6 +45,4 @@ private:
     RefPtr<PageOverlay> m_overlay;
 };
 
-}
-
-#endif // MockPageOverlay_h
+} // namespace WebCore

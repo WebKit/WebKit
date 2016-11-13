@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderTextLineBoxes_h
-#define RenderTextLineBoxes_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "RenderObject.h"
@@ -95,6 +94,4 @@ private:
     InlineTextBox* m_last;
 };
 
-}
-
-#endif
+} // namespace WebCore

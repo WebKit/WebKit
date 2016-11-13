@@ -21,8 +21,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LengthFunctions_h
-#define LengthFunctions_h
+#pragma once
 
 #include "LayoutUnit.h"
 #include "Length.h"
@@ -75,5 +74,3 @@ inline int minimumIntValueForLength(const Length& length, LayoutUnit maximumValu
 }
 
 } // namespace WebCore
-
-#endif // LengthFunctions_h

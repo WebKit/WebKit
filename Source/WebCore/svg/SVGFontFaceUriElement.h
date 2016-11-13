@@ -17,10 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFontFaceUriElement_h
-#define SVGFontFaceUriElement_h
+#pragma once
 
 #if ENABLE(SVG_FONTS)
+
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "SVGElement.h"
@@ -53,5 +53,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)
-
-#endif // SVGFontFaceUriElement_h

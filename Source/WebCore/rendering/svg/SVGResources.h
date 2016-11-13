@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGResources_h
-#define SVGResources_h
+#pragma once
 
 #include "RenderSVGResourceMarker.h"
-
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -160,6 +158,4 @@ private:
     RenderSVGResourceContainer* m_linkedResource;
 };
 
-}
-
-#endif
+} // namespace WebCore

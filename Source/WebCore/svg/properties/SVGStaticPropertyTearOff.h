@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGStaticPropertyTearOff_h
-#define SVGStaticPropertyTearOff_h
+#pragma once
 
 #include "SVGPropertyTearOff.h"
 
@@ -59,6 +58,4 @@ private:
 #pragma pack(pop)
 #endif
 
-}
-
-#endif // SVGStaticPropertyTearOff_h
+} // namespace WebCore

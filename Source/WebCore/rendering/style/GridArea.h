@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GridArea_h
-#define GridArea_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -207,6 +206,4 @@ typedef HashMap<String, GridArea> NamedGridAreaMap;
 
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-#endif // GridArea_h
+#endif // ENABLE(CSS_GRID_LAYOUT)

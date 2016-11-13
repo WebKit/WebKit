@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef RenderRegion_h
-#define RenderRegion_h
+#pragma once
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
@@ -190,5 +189,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRegion, isRenderRegion())
-
-#endif // RenderRegion_h

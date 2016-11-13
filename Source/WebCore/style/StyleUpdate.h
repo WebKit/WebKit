@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleUpdate_h
-#define StyleUpdate_h
+#pragma once
 
 #include "Node.h"
 #include "StyleChange.h"
@@ -85,4 +84,3 @@ private:
 
 }
 }
-#endif

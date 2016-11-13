@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef CollapsedBorderValue_h
-#define CollapsedBorderValue_h
+#pragma once
 
 #include "BorderValue.h"
 #include "LayoutUnit.h"
@@ -77,5 +76,3 @@ inline LayoutUnit CollapsedBorderValue::adjustedCollapsedBorderWidth(float borde
 }
 
 } // namespace WebCore
-
-#endif // CollapsedBorderValue_h

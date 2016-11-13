@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PaintInfo_h
-#define PaintInfo_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
@@ -127,5 +126,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PaintInfo_h

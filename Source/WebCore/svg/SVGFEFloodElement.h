@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEFloodElement_h
-#define SVGFEFloodElement_h
+#pragma once
 
 #include "FEFlood.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -38,5 +37,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef BorderValue_h
-#define BorderValue_h
+#pragma once
 
 #include "Color.h"
 #include "RenderStyleConstants.h"
@@ -85,5 +84,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // BorderValue_h

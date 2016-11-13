@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef TextPainter_h
-#define TextPainter_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
@@ -125,5 +124,3 @@ inline bool ShadowApplier::shadowIsCompletelyCoveredByText(bool textIsOpaque)
 }
 
 } // namespace WebCore
-
-#endif // TextPainter_h

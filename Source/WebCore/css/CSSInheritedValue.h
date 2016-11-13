@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSInheritedValue_h
-#define CSSInheritedValue_h
+#pragma once
 
 #include "CSSValue.h"
 #include <wtf/NeverDestroyed.h>
@@ -48,5 +47,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSInheritedValue, isInheritedValue())
-
-#endif // CSSInheritedValue_h

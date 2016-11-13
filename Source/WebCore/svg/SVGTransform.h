@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTransform_h
-#define SVGTransform_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "SVGMatrix.h"
@@ -94,5 +93,3 @@ inline bool operator!=(const SVGTransform& a, const SVGTransform& b)
 }
 
 } // namespace WebCore
-
-#endif

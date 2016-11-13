@@ -19,10 +19,7 @@
  *
  */
 
-#ifndef CSSHelper_h
-#define CSSHelper_h
-
-#include <wtf/Forward.h>
+#pragma once
 
 namespace WebCore {
 
@@ -32,5 +29,3 @@ namespace WebCore {
 const float cssPixelsPerInch = 96;
 
 } // namespace WebCore
-
-#endif // CSSHelper_h

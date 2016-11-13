@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGProperty_h
-#define SVGProperty_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -38,6 +37,4 @@ public:
     virtual void commitChange() = 0;
 };
 
-}
-
-#endif // SVGProperty_h
+} // namespace WebCore

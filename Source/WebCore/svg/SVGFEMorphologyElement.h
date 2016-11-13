@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEMorphologyElement_h
-#define SVGFEMorphologyElement_h
+#pragma once
 
 #include "FEMorphology.h"
 #include "SVGAnimatedEnumeration.h"
@@ -82,5 +81,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

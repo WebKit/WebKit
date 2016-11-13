@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderReplica_h
-#define RenderReplica_h
+#pragma once
 
 #include "RenderBox.h"
 
@@ -50,9 +49,6 @@ private:
     bool isReplica() const override { return true; }
     bool canHaveChildren() const override { return false; }
     void computePreferredLogicalWidths() override;
-
 };
 
 } // namespace WebCore
-
-#endif // RenderReplica_h

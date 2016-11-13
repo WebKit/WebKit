@@ -17,8 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef DOMPlugin_h
-#define DOMPlugin_h
+#pragma once
 
 #include "FrameDestructionObserver.h"
 #include "DOMMimeType.h"
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMPlugin_h

@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGInline_h
-#define RenderSVGInline_h
+#pragma once
 
 #include "RenderInline.h"
 #include "SVGGraphicsElement.h"
@@ -68,5 +67,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInline, isSVGInline())
-
-#endif // !RenderSVGTSpan_H

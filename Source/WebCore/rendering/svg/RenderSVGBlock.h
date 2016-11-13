@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGBlock_h
-#define RenderSVGBlock_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 #include "SVGGraphicsElement.h"
@@ -50,5 +49,4 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
-}
-#endif
+} // namespace WebCore

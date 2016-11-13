@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSPropertyParser_h
-#define CSSPropertyParser_h
+#pragma once
 
 #include "CSSParserTokenRange.h"
 #include "StyleRule.h"
@@ -109,5 +108,3 @@ CSSPropertyID cssPropertyID(StringView);
 CSSValueID cssValueKeywordID(StringView);
 
 } // namespace WebCore
-
-#endif // CSSPropertyParser_h

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderRuby_h
-#define RenderRuby_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
@@ -97,5 +96,3 @@ inline bool isRuby(const RenderObject* renderer) { return (renderer && isRuby(*r
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsInline, isRubyInline())
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsBlock, isRubyBlock())
-
-#endif // RenderRuby_h

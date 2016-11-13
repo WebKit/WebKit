@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderElement_h
-#define RenderElement_h
+#pragma once
 
 #include "AnimationController.h"
 #include "LengthFunctions.h"
@@ -490,5 +489,3 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())
-
-#endif // RenderElement_h

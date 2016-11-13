@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderListItem_h
-#define RenderListItem_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 #include "RenderPtr.h"
@@ -96,5 +95,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListItem, isListItem())
-
-#endif // RenderListItem_h

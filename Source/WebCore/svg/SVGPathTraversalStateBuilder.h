@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathTraversalStateBuilder_h
-#define SVGPathTraversalStateBuilder_h
+#pragma once
 
 #include "SVGPathConsumer.h"
 #include "SVGPoint.h"
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGPathTraversalStateBuilder_h

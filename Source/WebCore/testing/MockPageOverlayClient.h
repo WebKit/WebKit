@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockPageOverlayClient_h
-#define MockPageOverlayClient_h
+#pragma once
 
 #include "MockPageOverlay.h"
 #include "PageOverlay.h"
@@ -62,6 +61,4 @@ private:
     HashSet<RefPtr<MockPageOverlay>> m_overlays;
 };
 
-}
-
-#endif // MockPageOverlayClient_h
+} // namespace WebCore

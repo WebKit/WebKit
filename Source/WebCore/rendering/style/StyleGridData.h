@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef StyleGridData_h
-#define StyleGridData_h
+#pragma once
 
 #if ENABLE(CSS_GRID_LAYOUT)
 
@@ -113,6 +112,4 @@ private:
 
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-#endif // StyleGridData_h
+#endif // ENABLE(CSS_GRID_LAYOUT)

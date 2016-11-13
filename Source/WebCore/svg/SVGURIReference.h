@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGURIReference_h
-#define SVGURIReference_h
+#pragma once
 
 #include "Document.h"
 #include "QualifiedName.h"
@@ -55,5 +54,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // SVGURIReference_h

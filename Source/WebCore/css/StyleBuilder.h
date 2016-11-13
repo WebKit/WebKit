@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleBuilder_h
-#define StyleBuilder_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 
@@ -40,5 +39,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // StyleBuilder_h

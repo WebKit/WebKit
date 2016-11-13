@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderBox_h
-#define RenderBox_h
+#pragma once
 
 #include "FrameView.h"
 #include "RenderBoxModelObject.h"
@@ -781,5 +780,3 @@ inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBox, isBox())
-
-#endif // RenderBox_h

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextQuery_h
-#define SVGTextQuery_h
+#pragma once
 
 #include "FloatRect.h"
 #include "SVGPoint.h"
@@ -69,6 +68,4 @@ private:
     Vector<SVGInlineTextBox*> m_textBoxes;
 };
 
-}
-
-#endif
+} // namespace WebCore

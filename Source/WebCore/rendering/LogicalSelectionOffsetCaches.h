@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef LogicalSelectionOffsetCaches_h
-#define LogicalSelectionOffsetCaches_h
+#pragma once
 
 #include "RenderBlock.h"
 
@@ -130,5 +129,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // LogicalSelectionOffsetCaches_h

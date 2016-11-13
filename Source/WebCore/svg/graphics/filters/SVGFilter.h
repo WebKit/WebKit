@@ -18,15 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFilter_h
-#define SVGFilter_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -63,5 +61,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGFilter)
     static bool isType(const WebCore::Filter& filter) { return filter.isSVGFilter(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // SVGFilter_h

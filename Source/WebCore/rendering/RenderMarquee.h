@@ -41,8 +41,7 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
-#ifndef RenderMarquee_h
-#define RenderMarquee_h
+#pragma once
 
 #include "Length.h"
 #include "RenderStyleConstants.h"
@@ -96,5 +95,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderMarquee_h

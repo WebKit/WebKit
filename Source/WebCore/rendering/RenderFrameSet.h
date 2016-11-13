@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef RenderFrameSet_h
-#define RenderFrameSet_h
+#pragma once
 
 #include "RenderBox.h"
 
@@ -129,5 +128,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrameSet, isFrameSet())
-
-#endif // RenderFrameSet_h

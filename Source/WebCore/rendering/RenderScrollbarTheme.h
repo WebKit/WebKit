@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderScrollbarTheme_h
-#define RenderScrollbarTheme_h
+#pragma once
 
 #include "ScrollbarThemeComposite.h"
 
@@ -82,5 +81,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // RenderScrollbarTheme_h

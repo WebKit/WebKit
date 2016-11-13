@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderIterator_h
-#define RenderIterator_h
+#pragma once
 
 #include "RenderElement.h"
 
@@ -358,9 +357,7 @@ inline bool RenderConstIterator<T>::operator!=(const RenderConstIterator& other)
     return !(*this == other);
 }
 
-}
+} // namespace WebCore
 
 #include "RenderAncestorIterator.h"
 #include "RenderChildIterator.h"
-
-#endif

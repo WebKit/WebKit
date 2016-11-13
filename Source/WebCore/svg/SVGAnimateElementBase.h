@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimateElementBase_h
-#define SVGAnimateElementBase_h
+#pragma once
 
 #include "SVGAnimatedType.h"
 #include "SVGAnimatedTypeAnimator.h"
@@ -82,5 +81,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimateElementBase)
     }
     static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // SVGAnimateElementBase_h

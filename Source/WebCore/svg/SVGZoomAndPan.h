@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGZoomAndPan_h
-#define SVGZoomAndPan_h
+#pragma once
 
 #include "QualifiedName.h"
 #include "SVGNames.h"
@@ -67,5 +66,3 @@ template<class DerivedClass> void SVGZoomAndPan::parseAttribute(DerivedClass& el
 }
 
 } // namespace WebCore
-
-#endif // SVGZoomAndPan_h

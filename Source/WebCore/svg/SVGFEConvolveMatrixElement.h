@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEConvolveMatrixElement_h
-#define SVGFEConvolveMatrixElement_h
+#pragma once
 
 #include "FEConvolveMatrix.h"
 #include "SVGAnimatedBoolean.h"
@@ -100,5 +99,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

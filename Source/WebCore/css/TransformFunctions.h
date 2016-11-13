@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TransformFunctions_h
-#define TransformFunctions_h
+#pragma once
 
 #include "TransformOperations.h"
 
@@ -45,5 +44,4 @@ struct Length;
 bool transformsForValue(const CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
 Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
 
-}
-#endif
+} // namespace WebCore

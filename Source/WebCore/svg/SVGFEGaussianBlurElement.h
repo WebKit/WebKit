@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEGaussianBlurElement_h
-#define SVGFEGaussianBlurElement_h
+#pragma once
 
 #include "FEGaussianBlur.h"
 #include "SVGAnimatedEnumeration.h"
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

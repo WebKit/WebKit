@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegCurvetoCubicSmoothAbs_h
-#define SVGPathSegCurvetoCubicSmoothAbs_h
+#pragma once
 
 #include "SVGPathSegCurvetoCubicSmooth.h"
 
@@ -44,5 +43,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

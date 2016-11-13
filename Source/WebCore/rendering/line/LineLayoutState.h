@@ -31,8 +31,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineLayoutState_h
-#define LineLayoutState_h
+#pragma once
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
@@ -182,6 +181,4 @@ private:
     bool m_usesRepaintBounds : 1;
 };
 
-}
-
-#endif // LineLayoutState_h
+} // namespace WebCore

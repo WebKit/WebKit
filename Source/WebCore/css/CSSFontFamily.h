@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontFamily_h
-#define CSSFontFamily_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +49,3 @@ inline bool operator==(const CSSFontFamily& a, const CSSFontFamily& b)
 }
 
 } // namespace WebCore
-
-#endif // CSSFontFamily_h
-

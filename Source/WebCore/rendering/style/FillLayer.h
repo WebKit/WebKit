@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef FillLayer_h
-#define FillLayer_h
+#pragma once
 
 #include "GraphicsTypes.h"
 #include "LengthSize.h"
@@ -217,5 +216,3 @@ TextStream& operator<<(TextStream&, FillSize);
 TextStream& operator<<(TextStream&, const FillLayer&);
 
 } // namespace WebCore
-
-#endif // FillLayer_h

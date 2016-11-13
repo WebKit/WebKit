@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTransformDistance_h
-#define SVGTransformDistance_h
+#pragma once
 
 #include "SVGTransform.h"
 
@@ -48,6 +47,5 @@ private:
     float m_cy;
     AffineTransform m_transform; // for storing scale, translation or matrix transforms
 };
-}
 
-#endif // SVGTransformDistance_h
+} // namespace WebCore

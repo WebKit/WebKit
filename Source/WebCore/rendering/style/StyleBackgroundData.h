@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleBackgroundData_h
-#define StyleBackgroundData_h
+#pragma once
 
 #include "Color.h"
 #include "FillLayer.h"
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleBackgroundData_h

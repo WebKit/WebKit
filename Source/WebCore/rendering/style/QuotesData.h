@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef QuotesData_h
-#define QuotesData_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -60,5 +59,3 @@ inline bool operator!=(const QuotesData& a, const QuotesData& b)
 }
 
 } // namespace WebCore
-
-#endif // QuotesData_h

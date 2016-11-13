@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FloatingObjects_h
-#define FloatingObjects_h
+#pragma once
 
 #include "PODIntervalTree.h"
 #include "RootInlineBox.h"
@@ -174,5 +173,3 @@ template<> struct ValueToString<FloatingObject*> {
 #endif
 
 } // namespace WebCore
-
-#endif // FloatingObjects_h

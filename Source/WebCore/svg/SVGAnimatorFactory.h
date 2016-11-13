@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatorFactory_h
-#define SVGAnimatorFactory_h
+#pragma once
 
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedBoolean.h"
@@ -97,5 +96,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGAnimatorFactory_h

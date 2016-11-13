@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RootInlineBox_h
-#define RootInlineBox_h
+#pragma once
 
 #include "BidiContext.h"
 #include "InlineFlowBox.h"
@@ -243,5 +242,3 @@ inline RootInlineBox* RootInlineBox::prevRootBox() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(RootInlineBox, isRootInlineBox())
-
-#endif // RootInlineBox_h

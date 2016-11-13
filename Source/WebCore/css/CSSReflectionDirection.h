@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSReflectionDirection_h
-#define CSSReflectionDirection_h
+#pragma once
 
 namespace WebCore {
 
 enum CSSReflectionDirection { ReflectionBelow, ReflectionAbove, ReflectionLeft, ReflectionRight };
 
 } // namespace WebCore
-
-#endif // CSSReflectionDirection_h

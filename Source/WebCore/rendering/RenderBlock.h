@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderBlock_h
-#define RenderBlock_h
+#pragma once
 
 #include "GapRects.h"
 #include "LineWidth.h"
@@ -540,5 +539,3 @@ inline RenderBlock* RenderBlock::createAnonymousBlock(EDisplay display) const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBlock, isRenderBlock())
-
-#endif // RenderBlock_h

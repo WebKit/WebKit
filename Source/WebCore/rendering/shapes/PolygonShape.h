@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PolygonShape_h
-#define PolygonShape_h
+#pragma once
 
 #include "FloatPolygon.h"
 #include "Shape.h"
@@ -76,5 +75,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PolygonShape_h

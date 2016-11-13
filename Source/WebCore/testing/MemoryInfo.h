@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryInfo_h
-#define MemoryInfo_h
+#pragma once
 
 #include "JSDOMWindow.h"
 #include <wtf/RefCounted.h>
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MemoryInfo_h

@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef SelectionSubtreeRoot_h
-#define SelectionSubtreeRoot_h
+#pragma once
 
 #include "RenderObject.h"
 #include "RenderSelectionInfo.h"
@@ -118,5 +117,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SelectionSubtreeRoot_h

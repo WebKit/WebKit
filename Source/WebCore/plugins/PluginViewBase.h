@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginViewBase_h
-#define PluginViewBase_h
+#pragma once
 
 #include "AudioHardwareListener.h"
 #include "BridgeJSC.h"
@@ -91,5 +90,3 @@ protected:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_WIDGET(PluginViewBase, isPluginViewBase())
-
-#endif // PluginViewBase_h

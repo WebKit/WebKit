@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPolygonElement_h
-#define SVGPolygonElement_h
+#pragma once
 
 #include "SVGPolyElement.h"
 
@@ -34,5 +33,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

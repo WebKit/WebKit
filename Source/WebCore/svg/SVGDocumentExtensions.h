@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGDocumentExtensions_h
-#define SVGDocumentExtensions_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -29,15 +28,13 @@
 namespace WebCore {
 
 class Document;
+class Element;
 class RenderSVGResourceContainer;
 class SVGElement;
-#if ENABLE(SVG_FONTS)
 class SVGFontFaceElement;
-#endif
 class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
-class Element;
 
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
@@ -111,6 +108,4 @@ private:
     std::unique_ptr<PendingElements> removePendingResourceForRemoval(const AtomicString&);
 };
 
-}
-
-#endif
+} // namespace WebCore

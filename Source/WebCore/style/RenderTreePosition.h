@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderTreePosition_h
-#define RenderTreePosition_h
+#pragma once
 
 #include "RenderElement.h"
 #include "RenderNamedFlowThread.h"
@@ -99,6 +98,4 @@ inline void RenderTreePosition::insert(RenderObject& renderer)
     m_parent.addChild(&renderer, m_nextSibling);
 }
 
-}
-
-#endif
+} // namespace WebCore

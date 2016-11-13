@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextChunk_h
-#define SVGTextChunk_h
+#pragma once
 
 #include "SVGRenderStyleDefs.h"
 #include "SVGTextContentElement.h"
@@ -72,5 +71,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

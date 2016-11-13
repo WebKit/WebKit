@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleSharingResolver_h
-#define StyleSharingResolver_h
+#pragma once
 
 #include <wtf/HashMap.h>
 
@@ -69,5 +68,3 @@ private:
 
 }
 }
-
-#endif

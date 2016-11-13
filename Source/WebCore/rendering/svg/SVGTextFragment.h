@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextFragment_h
-#define SVGTextFragment_h
+#pragma once
 
 #include "AffineTransform.h"
 
@@ -109,5 +108,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

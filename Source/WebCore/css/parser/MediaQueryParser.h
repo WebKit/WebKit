@@ -27,8 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MediaQueryParser_h
-#define MediaQueryParser_h
+#pragma once
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
@@ -132,9 +131,6 @@ private:
     const static State SkipUntilComma;
     const static State SkipUntilBlockEnd;
     const static State Done;
-
 };
 
 } // namespace WebCore
-
-#endif // MediaQueryParser_h

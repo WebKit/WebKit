@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ClipRect_h
-#define ClipRect_h
+#pragma once
 
 #include "LayoutRect.h"
 
@@ -103,6 +102,5 @@ inline ClipRect intersection(const ClipRect& a, const ClipRect& b)
     c.intersect(b);
     return c;
 }
-}
 
-#endif
+} // namespace WebCore

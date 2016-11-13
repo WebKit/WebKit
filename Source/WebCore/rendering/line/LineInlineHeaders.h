@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef LineInlineHeaders_h
-#define LineInlineHeaders_h
+#pragma once
 
 #include "RenderLayer.h"
 
@@ -137,6 +136,4 @@ inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child, IndentT
     child.layer()->setStaticBlockPosition(blockHeight);
 }
 
-}
-
-#endif
+} // namespace WebCore

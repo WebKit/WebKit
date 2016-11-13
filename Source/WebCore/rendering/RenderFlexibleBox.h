@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderFlexibleBox_h
-#define RenderFlexibleBox_h
+#pragma once
 
 #include "OrderIterator.h"
 #include "RenderBlock.h"
@@ -173,5 +172,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isFlexibleBox())
-
-#endif // RenderFlexibleBox_h

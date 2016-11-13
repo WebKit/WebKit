@@ -28,8 +28,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSViewportRule_h
-#define WebKitCSSViewportRule_h
+#pragma once
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 
@@ -64,7 +63,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WebKitCSSViewportRule_h
 
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)

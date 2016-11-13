@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedPropertyMacros_h
-#define SVGAnimatedPropertyMacros_h
+#pragma once
 
 #include "Element.h"
 #include "SVGAnimatedProperty.h"
@@ -188,6 +187,4 @@ void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
         wrapper->detachListWrappers(newListSize); \
 }
 
-}
-
-#endif // SVGAnimatedPropertyMacros_h
+} // namespace WebCore

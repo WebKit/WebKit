@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef CursorList_h
-#define CursorList_h
+#pragma once
 
 #include "CursorData.h"
 #include <wtf/RefCounted.h>
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CursorList_h

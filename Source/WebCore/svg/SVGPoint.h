@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGPoint_h
-#define SVGPoint_h
+#pragma once
 
 #include "FloatPoint.h"
 
@@ -33,5 +32,3 @@ namespace WebCore {
 typedef FloatPoint SVGPoint;
 
 } // namespace WebCore
-
-#endif // SVGPoint_h

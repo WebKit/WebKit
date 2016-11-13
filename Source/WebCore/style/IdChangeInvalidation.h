@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IdChangeInvalidation_h
-#define IdChangeInvalidation_h
+#pragma once
 
 #include "Element.h"
 
@@ -67,6 +66,3 @@ inline IdChangeInvalidation::~IdChangeInvalidation()
 
 }
 }
-
-#endif
-

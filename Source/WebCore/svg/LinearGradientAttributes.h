@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef LinearGradientAttributes_h
-#define LinearGradientAttributes_h
+#pragma once
 
 #include "GradientAttributes.h"
 
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

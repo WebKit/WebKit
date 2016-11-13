@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OverlapTestRequestClient_h
-#define OverlapTestRequestClient_h
+#pragma once
 
 namespace WebCore {
     
@@ -35,5 +34,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // OverlapTestRequestClient_h

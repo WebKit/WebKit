@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSValuePool_h
-#define CSSValuePool_h
+#pragma once
 
 #include "CSSFontFamily.h"
 #include "CSSInheritedValue.h"
@@ -102,6 +101,4 @@ private:
     LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
 };
 
-}
-
-#endif
+} // namespace WebCore

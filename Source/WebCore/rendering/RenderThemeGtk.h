@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef RenderThemeGtk_h
-#define RenderThemeGtk_h
+#pragma once
 
 #include "RenderTheme.h"
 
@@ -191,6 +190,4 @@ private:
 #endif // GTK_API_VERSION_2
 };
 
-}
-
-#endif // RenderThemeGtk_h
+} // namespace WebCore

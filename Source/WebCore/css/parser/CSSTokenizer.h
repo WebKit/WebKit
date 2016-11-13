@@ -27,8 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef CSSTokenizer_h
-#define CSSTokenizer_h
+#pragma once
 
 #include "CSSParserToken.h"
 #include "InputStreamPreprocessor.h"
@@ -136,5 +135,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSTokenizer_h

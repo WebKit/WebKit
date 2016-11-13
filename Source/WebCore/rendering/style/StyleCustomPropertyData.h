@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef StyleCustomPropertyData_h
-#define StyleCustomPropertyData_h
+#pragma once
 
 #include "CSSCustomPropertyValue.h"
 #include <wtf/Forward.h>
@@ -84,5 +83,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleCustomPropertyData_h

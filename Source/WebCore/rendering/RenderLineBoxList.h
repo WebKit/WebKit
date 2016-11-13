@@ -26,9 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RenderLineBoxList_h
-#define RenderLineBoxList_h
+#pragma once
 
 #include "RenderObject.h"
 
@@ -89,5 +87,3 @@ inline void RenderLineBoxList::checkConsistency() const
 #endif
 
 } // namespace WebCore
-
-#endif // RenderFlow_h

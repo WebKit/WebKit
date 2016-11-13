@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RenderRegionSet_h
-#define RenderRegionSet_h
+#pragma once
 
 #include "RenderRegion.h"
 #include "RenderBoxRegionInfo.h"
@@ -61,6 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderRegionSet_h
-

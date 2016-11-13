@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RenderSlider_h
-#define RenderSlider_h
+#pragma once
 
 #include "RenderFlexibleBox.h"
 
@@ -27,7 +26,6 @@ namespace WebCore {
 
 class HTMLInputElement;
 class MouseEvent;
-class SliderThumbElement;
 
 class RenderSlider final : public RenderFlexibleBox {
 public:
@@ -56,5 +54,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSlider, isSlider())
-
-#endif // RenderSlider_h

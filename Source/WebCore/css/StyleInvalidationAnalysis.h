@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleInvalidationAnalysis_h
-#define StyleInvalidationAnalysis_h
+#pragma once
 
 #include <wtf/text/AtomicStringImpl.h>
 
@@ -61,6 +60,4 @@ private:
     bool m_didInvalidateHostChildren { false };
 };
 
-}
-
-#endif
+} // namespace WebCore

@@ -23,16 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSNamedImageValue_h
-#define CSSNamedImageValue_h
+#pragma once
 
 #include "CSSImageGeneratorValue.h"
-
 #include "Image.h"
 
 namespace WebCore {
-
-class Document;
 
 class CSSNamedImageValue final : public CSSImageGeneratorValue {
 public:
@@ -63,5 +59,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSNamedImageValue, isNamedImageValue())
-
-#endif // CSSNamedImageValue_h

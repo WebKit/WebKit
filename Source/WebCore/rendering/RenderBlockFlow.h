@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderBlockFlow_h
-#define RenderBlockFlow_h
+#pragma once
 
 #include "FloatingObjects.h"
 #include "LineWidth.h"
@@ -37,7 +36,6 @@ class FloatWithRect;
 class LayoutStateMaintainer;
 class LineBreaker;
 class LineInfo;
-class LineWidth;
 class RenderMultiColumnFlowThread;
 class RenderNamedFlowFragment;
 class RenderRubyRun;
@@ -654,5 +652,3 @@ inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBlockFlow, isRenderBlockFlow())
-
-#endif // RenderBlockFlow_h

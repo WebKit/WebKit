@@ -27,8 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef RenderNamedFlowFragment_h
-#define RenderNamedFlowFragment_h
+#pragma once
 
 #include "RenderRegion.h"
 
@@ -166,5 +165,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderNamedFlowFragment, isRenderNamedFlowFragment())
-
-#endif // RenderNamedFlowFragment_h

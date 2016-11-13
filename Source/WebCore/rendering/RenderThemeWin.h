@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef RenderThemeWin_h
-#define RenderThemeWin_h
+#pragma once
 
 #include "RenderTheme.h"
 
@@ -179,6 +178,4 @@ private:
     String m_mediaControlsStyleSheet;
 };
 
-};
-
-#endif
+} // namespace WebCore

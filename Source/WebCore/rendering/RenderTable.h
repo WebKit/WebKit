@@ -22,8 +22,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderTable_h
-#define RenderTable_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "CollapsedBorderValue.h"
@@ -389,5 +388,3 @@ inline std::unique_ptr<RenderBox> RenderTable::createAnonymousBoxWithSameTypeAs(
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isTable())
-
-#endif // RenderTable_h

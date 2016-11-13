@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleLineLayout_h
-#define SimpleLineLayout_h
+#pragma once
 
 #include "TextFlags.h"
 #include <wtf/Vector.h>
@@ -91,6 +90,4 @@ std::unique_ptr<Layout> create(RenderBlockFlow&);
 
 #if COMPILER(MSVC)
 #pragma warning(pop)
-#endif
-
 #endif

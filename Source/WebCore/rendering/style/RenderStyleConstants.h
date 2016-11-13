@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RenderStyleConstants_h
-#define RenderStyleConstants_h
+#pragma once
 
 #include <initializer_list>
 
@@ -719,5 +718,3 @@ TextStream& operator<<(TextStream&, EMaskSourceType);
 TextStream& operator<<(TextStream&, Edge);
 
 } // namespace WebCore
-
-#endif // RenderStyleConstants_h

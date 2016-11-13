@@ -24,8 +24,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CSSFilterImageValue_h
-#define CSSFilterImageValue_h
+#pragma once
 
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
@@ -119,5 +118,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFilterImageValue, isFilterImageValue())
-
-#endif // CSSFilterImageValue_h

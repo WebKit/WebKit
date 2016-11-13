@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderRubyRun_h
-#define RenderRubyRun_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 
@@ -92,5 +91,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyRun, isRubyRun())
-
-#endif // RenderRubyRun_h

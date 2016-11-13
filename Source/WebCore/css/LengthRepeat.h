@@ -23,14 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LengthRepeat_h
-#define LengthRepeat_h
+#pragma once
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
 #include "CSSPrimitiveValue.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -65,6 +63,4 @@ private:
 
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_SCROLL_SNAP) */
-
-#endif // LengthRepeat_h
+#endif // ENABLE(CSS_SCROLL_SNAP)

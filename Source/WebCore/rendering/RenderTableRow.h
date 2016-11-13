@@ -22,8 +22,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderTableRow_h
-#define RenderTableRow_h
+#pragma once
 
 #include "RenderTableSection.h"
 
@@ -159,5 +158,3 @@ inline std::unique_ptr<RenderBox> RenderTableRow::createAnonymousBoxWithSameType
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isTableRow())
-
-#endif // RenderTableRow_h

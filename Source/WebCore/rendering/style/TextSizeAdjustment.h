@@ -18,10 +18,11 @@
  *
  */
 
-#ifndef TextSizeAdjustment_h
-#define TextSizeAdjustment_h
+#pragma once
 
 #if ENABLE(TEXT_AUTOSIZING)
+
+namespace WebCore {
 
 enum TextSizeAdjustmentType { AutoTextSizeAdjustment = -1, NoTextSizeAdjustment = -2 };
 
@@ -44,6 +45,6 @@ private:
     float m_value;
 };
 
-#endif // ENABLE(TEXT_AUTOSIZING)
+} // namespace WebCore
 
-#endif // TextSizeAdjustment_h
+#endif // ENABLE(TEXT_AUTOSIZING)

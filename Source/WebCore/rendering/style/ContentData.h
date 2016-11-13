@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef ContentData_h
-#define ContentData_h
+#pragma once
 
 #include "CounterContent.h"
 #include "StyleImage.h"
@@ -250,5 +249,3 @@ SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(ImageContentData, Image)
 SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(TextContentData, Text)
 SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(CounterContentData, Counter)
 SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(QuoteContentData, Quote)
-
-#endif // ContentData_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleChange_h
-#define StyleChange_h
+#pragma once
 
 namespace WebCore {
 
@@ -38,5 +37,3 @@ Change determineChange(const RenderStyle&, const RenderStyle&);
 
 }
 }
-
-#endif

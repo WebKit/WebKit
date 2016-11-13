@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderLayerCompositor_h
-#define RenderLayerCompositor_h
+#pragma once
 
 #include "ChromeClient.h"
 #include "GraphicsLayerClient.h"
@@ -570,5 +569,3 @@ private:
 void paintScrollbar(Scrollbar*, GraphicsContext&, const IntRect& clip);
 
 } // namespace WebCore
-
-#endif // RenderLayerCompositor_h

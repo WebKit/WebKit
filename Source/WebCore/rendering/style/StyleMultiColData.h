@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleMultiColData_h
-#define StyleMultiColData_h
+#pragma once
 
 #include "BorderValue.h"
 #include "Length.h"
@@ -72,5 +71,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleMultiColData_h

@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RenderWidget_h
-#define RenderWidget_h
+#pragma once
 
 #include "HTMLFrameOwnerElement.h"
 #include "OverlapTestRequestClient.h"
@@ -119,5 +118,3 @@ inline void RenderWidget::deref()
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isWidget())
-
-#endif // RenderWidget_h

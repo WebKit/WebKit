@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RenderMultiColumnFlowThread_h
-#define RenderMultiColumnFlowThread_h
+#pragma once
 
 #include "RenderFlowThread.h"
-
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -155,6 +152,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())
-
-#endif // RenderMultiColumnFlowThread_h
-

@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderSVGResourceGradient_h
-#define RenderSVGResourceGradient_h
+#pragma once
 
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -75,6 +74,4 @@ private:
 #endif
 };
 
-}
-
-#endif
+} // namespace WebCore

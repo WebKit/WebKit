@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MallocStatistics_h
-#define MallocStatistics_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

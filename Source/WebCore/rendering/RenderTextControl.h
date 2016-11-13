@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RenderTextControl_h
-#define RenderTextControl_h
+#pragma once
 
 #include "RenderBlockFlow.h"
 #include "RenderFlexibleBox.h"
@@ -110,5 +109,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControl, isTextControl())
-
-#endif // RenderTextControl_h

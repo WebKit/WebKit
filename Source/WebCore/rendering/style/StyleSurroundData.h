@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleSurroundData_h
-#define StyleSurroundData_h
+#pragma once
 
 #include "BorderData.h"
 #include "LengthBox.h"
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleSurroundData_h

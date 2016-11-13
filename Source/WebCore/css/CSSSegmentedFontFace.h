@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSSegmentedFontFace_h
-#define CSSSegmentedFontFace_h
+#pragma once
 
 #include "CSSFontFace.h"
 #include "FontCache.h"
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSSegmentedFontFace_h

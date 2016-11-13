@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedPathSegListPropertyTearOff_h
-#define SVGAnimatedPathSegListPropertyTearOff_h
+#pragma once
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGPathByteStream.h"
@@ -124,6 +123,4 @@ private:
     SVGPathByteStream* m_animatedPathByteStream;
 };
 
-}
-
-#endif // SVGAnimatedPathSegListPropertyTearOff_h
+} // namespace WebCore

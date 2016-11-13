@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FontVariantBuilder_h
-#define FontVariantBuilder_h
+#pragma once
 
 #include <wtf/Ref.h>
 
@@ -42,6 +41,4 @@ FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue&);
 
 Ref<CSSValue> computeFontVariant(const FontVariantSettings&);
 
-}
-
-#endif
+} // namespace WebCore

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef KeyframeList_h
-#define KeyframeList_h
+#pragma once
 
 #include "CSSPropertyNames.h"
 #include "StyleInheritedData.h"
@@ -97,5 +96,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // KeyframeList_h
