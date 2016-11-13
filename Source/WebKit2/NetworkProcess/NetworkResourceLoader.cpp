@@ -350,11 +350,11 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 #endif
 
     if (shouldContinueDidReceiveResponse) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should not wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
         return ShouldContinueDidReceiveResponse::Yes;
     }
 
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should not wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
     return ShouldContinueDidReceiveResponse::No;
 }
 

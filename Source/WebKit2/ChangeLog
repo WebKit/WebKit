@@ -1,3 +1,23 @@
+2016-11-12  Daniel Bates  <dabates@apple.com>
+
+        Incorrect release log message emitted when waiting/not waiting for the WebProcess continue a load
+        https://bugs.webkit.org/show_bug.cgi?id=164605
+
+        Reviewed by Darin Adler.
+
+        Currently we emit a release log message of the form "didReceiveResponse: Should wait for
+        message from WebContent process ..." when we are not waiting for the WebProcess and emit
+        a message of the form "didReceiveResponse: Should not wait for message from WebContent
+        process" when we are waiting on the WebProcess. Invert these messages to reflect whether
+        we are waiting for the WebProcess to send message NetworkResourceLoader::ContinueDidReceiveResponsewhether.
+
+        For the main resource NetworkResourceLoader::didReceiveResponse() returns ShouldContinueDidReceiveResponse::No
+        because we are waiting for the WebProcess to send message NetworkResourceLoader::ContinueDidReceiveResponse
+        to continue the load. For a subresource we do not need to wait for the WebProcess to allow the load to continue
+        and hence NetworkResourceLoader::didReceiveResponse() returns ShouldContinueDidReceiveResponse::Yes.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+
 2016-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Share some code with Mac for post-async-scroll state reconciliation
