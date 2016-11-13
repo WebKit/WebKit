@@ -1,3 +1,20 @@
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to get the UI-side scrolling tree as text via UIScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=164697
+
+        Reviewed by Zalan Bujtas.
+
+        Add a property to WKWebView to retrieve the scrolling tree as text, for testing.
+        Expose it via the RemoteScrollingCoordinatorProxy.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollingTreeAsText]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeAsText):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+
 2016-11-12  Daniel Bates  <dabates@apple.com>
 
         Incorrect release log message emitted when waiting/not waiting for the WebProcess continue a load

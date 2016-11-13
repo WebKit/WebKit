@@ -30,6 +30,7 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -124,6 +125,34 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
     return FloatPoint(contentSizePoint - scrollableAreaSize()).expandedTo(FloatPoint());
 }
 
+void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ts.dumpProperty("scrollable area size", m_scrollableAreaSize);
+    ts.dumpProperty("total content size", m_totalContentsSize);
+    if (m_totalContentsSizeForRubberBand != m_totalContentsSize)
+        ts.dumpProperty("total content size for rubber band", m_totalContentsSizeForRubberBand);
+    if (m_reachableContentsSize != m_totalContentsSize)
+        ts.dumpProperty("reachable content size", m_reachableContentsSize);
+    ts.dumpProperty("scrollable area size", m_lastCommittedScrollPosition);
+    if (m_scrollOrigin != IntPoint())
+        ts.dumpProperty("scrollable area size", m_scrollOrigin);
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (m_horizontalSnapOffsets.size())
+        ts.dumpProperty("horizontal snap offsets", m_horizontalSnapOffsets);
+
+    if (m_verticalSnapOffsets.size())
+        ts.dumpProperty("horizontal snap offsets", m_verticalSnapOffsets);
+
+    if (m_currentHorizontalSnapPointIndex)
+        ts.dumpProperty("current horizontal snap point index", m_verticalSnapOffsets);
+
+    if (m_currentVerticalSnapPointIndex)
+        ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
+    
+#endif
+}
 
 } // namespace WebCore
 

@@ -1,5 +1,17 @@
 2016-11-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a way to get the UI-side scrolling tree as text via UIScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=164697
+
+        Reviewed by Zalan Bujtas.
+
+        Add a test that dumps the scrolling state tree with a fixed element.
+
+        * scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Added.
+        * scrollingcoordinator/ios/ui-scrolling-tree.html: Added.
+
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Share some code with Mac for post-async-scroll state reconciliation
         https://bugs.webkit.org/show_bug.cgi?id=164694
 

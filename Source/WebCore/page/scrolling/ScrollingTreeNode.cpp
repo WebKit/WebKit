@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -70,6 +71,24 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode* node)
 
     for (auto& child : *m_children)
         child->removeChild(node);
+}
+
+void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs)
+        ts.dumpProperty("nodeID", scrollingNodeID());
+}
+
+void ScrollingTreeNode::dump(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    dumpProperties(ts, behavior);
+
+    if (m_children) {
+        for (auto& child : *m_children) {
+            TextStream::GroupScope scope(ts);
+            child->dump(ts, behavior);
+        }
+    }
 }
 
 } // namespace WebCore

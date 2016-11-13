@@ -133,6 +133,32 @@ FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint
     return toFloatSize(scrollPosition) - FloatSize(0, headerHeight() + topContentInset());
 }
 
+void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior) const
+{
+    ts << "frame scrolling node";
+
+    ts.dumpProperty("layout viewport", m_layoutViewport);
+    ts.dumpProperty("min layoutViewport origin", m_minLayoutViewportOrigin);
+    ts.dumpProperty("max layoutViewport origin", m_maxLayoutViewportOrigin);
+
+    if (m_frameScaleFactor != 1)
+        ts.dumpProperty("frame scale factor", m_frameScaleFactor);
+    if (m_topContentInset)
+        ts.dumpProperty("top content inset", m_topContentInset);
+
+    if (m_headerHeight)
+        ts.dumpProperty("header height", m_headerHeight);
+    if (m_footerHeight)
+        ts.dumpProperty("footer height", m_footerHeight);
+    if (m_synchronousScrollingReasons)
+        ts.dumpProperty("synchronous scrolling reasons", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
+
+    ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
+    if (m_fixedElementsLayoutRelativeToFrame)
+        ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

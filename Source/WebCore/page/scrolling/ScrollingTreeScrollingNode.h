@@ -92,6 +92,8 @@ protected:
 
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
 
+    WEBCORE_EXPORT void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+
 private:
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;

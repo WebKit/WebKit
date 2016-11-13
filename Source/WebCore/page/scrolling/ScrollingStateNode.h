@@ -40,9 +40,11 @@ class ScrollingStateTree;
 class TextStream;
 
 enum ScrollingStateTreeAsTextBehaviorFlags {
-    ScrollingStateTreeAsTextBehaviorNormal               = 0,
-    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs      = 1 << 0,
-    ScrollingStateTreeAsTextBehaviorDebug                = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs
+    ScrollingStateTreeAsTextBehaviorNormal                  = 0,
+    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs         = 1 << 0,
+    ScrollingStateTreeAsTextBehaviorIncludeNodeIDs          = 1 << 1,
+    ScrollingStateTreeAsTextBehaviorIncludeLayerPositions   = 1 << 2,
+    ScrollingStateTreeAsTextBehaviorDebug                   = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs | ScrollingStateTreeAsTextBehaviorIncludeNodeIDs | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions
 };
 typedef unsigned ScrollingStateTreeAsTextBehavior;
 

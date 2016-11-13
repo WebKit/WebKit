@@ -32,6 +32,7 @@
 #include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
+#include "TextStream.h"
 #include <QuartzCore/CALayer.h>
 
 namespace WebCore {
@@ -99,6 +100,22 @@ void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTre
 
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, deltaForDescendants);
+}
+
+void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    ts << "sticky node";
+
+    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ts.dumpProperty("sticky constraints", m_constraints);
+
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+        FloatRect layerBounds = [m_layer bounds];
+        FloatPoint anchorPoint = [m_layer anchorPoint];
+        FloatPoint position = [m_layer position];
+        FloatPoint layerTopLeft = position - toFloatSize(anchorPoint) * layerBounds.size() + m_constraints.alignmentOffset();
+        ts.dumpProperty("layer top left", layerTopLeft);
+    }
 }
 
 } // namespace WebCore

@@ -4687,6 +4687,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return [_contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.m_rectViews"];
 }
 
+- (NSString *)_scrollingTreeAsText
+{
+    WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
+    if (!coordinator)
+        return @"";
+
+    return coordinator->scrollingTreeAsText();
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

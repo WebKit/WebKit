@@ -1,3 +1,23 @@
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to get the UI-side scrolling tree as text via UIScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=164697
+
+        Reviewed by Zalan Bujtas.
+
+        Add UIScriptController::scrollingTreeAsText(), which gets the state of the scrolling
+        tree in the UI process, including the current positions of CALayers. This will be used
+        to test UI-side scrolling and visual viewports.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::scrollingTreeAsText):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::scrollingTreeAsText):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::scrollingTreeAsText):
+
 2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The main content heuristic should be robust when handling large media elements

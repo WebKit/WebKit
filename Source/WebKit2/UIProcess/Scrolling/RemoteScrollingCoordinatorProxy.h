@@ -94,6 +94,8 @@ public:
 #endif
 #endif
 
+    String scrollingTreeAsText() const;
+
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
 #if ENABLE(CSS_SCROLL_SNAP)

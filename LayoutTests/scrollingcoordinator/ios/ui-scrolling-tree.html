@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            width: 1300px;
+            height: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getScrollingTreeUIScript(x, y)
+        {
+            return `(function() {
+                return uiController.scrollingTreeAsText;
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            testRunner.runUIScript(getScrollingTreeUIScript(), function(scrollingTree) {
+                document.getElementById('layers').textContent = scrollingTree;
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="fixed"></div>
+<pre id="layers"></pre>
+</body>
+</html>

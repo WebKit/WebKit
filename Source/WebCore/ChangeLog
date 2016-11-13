@@ -1,3 +1,38 @@
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to get the UI-side scrolling tree as text via UIScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=164697
+
+        Reviewed by Zalan Bujtas.
+
+        Add dumping to ScrollingTreeNode and subclasses (previously, we could only dump
+        the scrolling state tree). This re-uses the flags used for state tree dumping.
+
+        NodeIDs are not dumped by default because they can depend on earlier tests.
+
+        Test: scrollingcoordinator/ios/ui-scrolling-tree.html
+
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollingTreeAsText):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::dumpProperties):
+        (WebCore::ScrollingTreeNode::dump):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::dumpProperties):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::dumpProperties):
+
 2016-11-12  Darin Adler  <darin@apple.com>
 
         Remove some use of ExceptionCode in MediaStream

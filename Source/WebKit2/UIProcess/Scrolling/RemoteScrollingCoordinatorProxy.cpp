@@ -185,6 +185,14 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingN
     }
 }
 
+String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
+{
+    if (m_scrollingTree)
+        return m_scrollingTree->scrollingTreeAsText();
+    
+    return emptyString();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

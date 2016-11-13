@@ -145,6 +145,8 @@ public:
         --m_fixedOrStickyNodeCount;
     }
     
+    WEBCORE_EXPORT String scrollingTreeAsText();
+    
 protected:
     void setMainFrameScrollPosition(FloatPoint);
     void setVisualViewportEnabled(bool b) { m_visualViewportEnabled = b; }

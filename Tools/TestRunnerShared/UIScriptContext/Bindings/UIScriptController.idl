@@ -159,5 +159,7 @@ interface UIScriptController {
     void insertText(DOMString text, long location, long length);
     void removeAllDynamicDictionaries();
 
+    readonly attribute DOMString scrollingTreeAsText;
+
     void uiScriptComplete(DOMString result);
 };

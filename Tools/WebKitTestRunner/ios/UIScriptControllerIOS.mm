@@ -399,6 +399,12 @@ void UIScriptController::removeAllDynamicDictionaries()
     [UIKeyboard removeAllDynamicDictionaries];
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return JSStringCreateWithCFString((CFStringRef)[webView _scrollingTreeAsText]);
+}
+
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

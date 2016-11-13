@@ -381,6 +381,30 @@ void ScrollingTree::clearLatchedNode()
     m_latchedNode = 0;
 }
 
+String ScrollingTree::scrollingTreeAsText()
+{
+    TextStream ts(TextStream::LineMode::MultipleLine);
+
+    TextStream::GroupScope scope(ts);
+    ts << "scrolling tree";
+    
+    if (m_latchedNode)
+        ts.dumpProperty("latched node", m_latchedNode);
+
+    if (m_mainFrameScrollPosition != IntPoint())
+        ts.dumpProperty("main frame scroll position", m_mainFrameScrollPosition);
+    
+    {
+        LockHolder lock(m_mutex);
+        if (m_rootNode) {
+            TextStream::GroupScope scope(ts);
+            m_rootNode->dump(ts, ScrollingStateTreeAsTextBehaviorIncludeLayerPositions);
+        }
+    }
+
+    return ts.release();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

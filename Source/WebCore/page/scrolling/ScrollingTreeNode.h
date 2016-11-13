@@ -30,13 +30,13 @@
 #include "IntRect.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
+#include "ScrollingStateNode.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
 class ScrollingStateFixedNode;
-class ScrollingStateNode;
 class ScrollingStateScrollingNode;
 
 class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
@@ -66,11 +66,15 @@ public:
     void appendChild(PassRefPtr<ScrollingTreeNode>);
     void removeChild(ScrollingTreeNode*);
 
+    WEBCORE_EXPORT void dump(TextStream&, ScrollingStateTreeAsTextBehavior) const;
+
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
     std::unique_ptr<ScrollingTreeChildrenVector> m_children;
+
+    WEBCORE_EXPORT virtual void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
 private:
     ScrollingTree& m_scrollingTree;

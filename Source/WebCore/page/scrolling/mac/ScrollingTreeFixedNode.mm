@@ -30,6 +30,7 @@
 
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
+#include "TextStream.h"
 #include <QuartzCore/CALayer.h>
 
 namespace WebCore {
@@ -84,6 +85,21 @@ void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTree
 
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, newDelta);
+}
+
+void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    ts << "fixed node";
+    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ts.dumpProperty("fixed constraints", m_constraints);
+    
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+        FloatRect layerBounds = [m_layer bounds];
+        FloatPoint anchorPoint = [m_layer anchorPoint];
+        FloatPoint position = [m_layer position];
+        FloatPoint layerTopLeft = position - toFloatSize(anchorPoint) * layerBounds.size() + m_constraints.alignmentOffset();
+        ts.dumpProperty("layer top left", layerTopLeft);
+    }
 }
 
 } // namespace WebCore
