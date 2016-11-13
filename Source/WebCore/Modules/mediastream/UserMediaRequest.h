@@ -38,8 +38,6 @@
 #include "Document.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaDevices.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -48,13 +46,11 @@ class MediaStreamPrivate;
 class UserMediaController;
 class SecurityOrigin;
 
-typedef int ExceptionCode;
-
 class UserMediaRequest : public RefCounted<UserMediaRequest>, private ContextDestructionObserver {
 public:
-    static void start(Document*, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&, ExceptionCode&);
+    static ExceptionOr<void> start(Document&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);
 
-    ~UserMediaRequest();
+    virtual ~UserMediaRequest();
 
     void start();
 
@@ -78,9 +74,8 @@ public:
     Document* document() const { return downcast<Document>(scriptExecutionContext()); }
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);
+    UserMediaRequest(Document&, UserMediaController&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);
 
-    // ContextDestructionObserver
     void contextDestroyed() final;
     
     Ref<MediaConstraintsImpl> m_audioConstraints;

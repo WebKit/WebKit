@@ -32,15 +32,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ContextDestructionObserver.h"
 #include "JSDOMPromise.h"
 #include "MediaDeviceInfo.h"
-#include "ScriptWrappable.h"
-#include <functional>
 
 namespace WebCore {
 
-class Dictionary;
 class Document;
 class MediaConstraintsImpl;
 class MediaStream;
@@ -48,20 +44,19 @@ class MediaTrackSupportedConstraints;
 
 class MediaDevices : public ScriptWrappable, public RefCounted<MediaDevices>, public ContextDestructionObserver {
 public:
-    static Ref<MediaDevices> create(ScriptExecutionContext*);
-    virtual ~MediaDevices();
+    static Ref<MediaDevices> create(Document&);
 
     Document* document() const;
 
-    typedef DOMPromise<MediaStream> Promise;
-    typedef DOMPromise<MediaDeviceInfoVector> EnumerateDevicesPromise;
+    using Promise = DOMPromise<MediaStream>;
+    using EnumerateDevicesPromise = DOMPromise<MediaDeviceInfoVector>;
 
     ExceptionOr<void> getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&&) const;
-    ExceptionOr<void> enumerateDevices(EnumerateDevicesPromise&&) const;
+    void enumerateDevices(EnumerateDevicesPromise&&) const;
     RefPtr<MediaTrackSupportedConstraints> getSupportedConstraints();
 
 private:
-    explicit MediaDevices(ScriptExecutionContext*);
+    explicit MediaDevices(Document&);
 };
 
 } // namespace WebCore

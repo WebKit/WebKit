@@ -42,15 +42,15 @@
 
 namespace WebCore {
 
-RefPtr<MediaDevicesRequest> MediaDevicesRequest::create(Document* document, MediaDevices::EnumerateDevicesPromise&& promise, ExceptionCode&)
-{
-    return adoptRef(*new MediaDevicesRequest(document, WTFMove(promise)));
-}
-
-MediaDevicesRequest::MediaDevicesRequest(ScriptExecutionContext* context, MediaDevices::EnumerateDevicesPromise&& promise)
-    : ContextDestructionObserver(context)
+inline MediaDevicesRequest::MediaDevicesRequest(Document& document, MediaDevices::EnumerateDevicesPromise&& promise)
+    : ContextDestructionObserver(&document)
     , m_promise(WTFMove(promise))
 {
+}
+
+Ref<MediaDevicesRequest> MediaDevicesRequest::create(Document& document, MediaDevices::EnumerateDevicesPromise&& promise)
+{
+    return adoptRef(*new MediaDevicesRequest(document, WTFMove(promise)));
 }
 
 MediaDevicesRequest::~MediaDevicesRequest()

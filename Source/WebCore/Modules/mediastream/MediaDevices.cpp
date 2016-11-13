@@ -33,29 +33,22 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Dictionary.h"
 #include "Document.h"
 #include "MediaDevicesRequest.h"
-#include "MediaStream.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
-#include "UserMediaController.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {
 
-Ref<MediaDevices> MediaDevices::create(ScriptExecutionContext* context)
-{
-    return adoptRef(*new MediaDevices(context));
-}
-
-MediaDevices::MediaDevices(ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+inline MediaDevices::MediaDevices(Document& document)
+    : ContextDestructionObserver(&document)
 {
 }
 
-MediaDevices::~MediaDevices()
+Ref<MediaDevices> MediaDevices::create(Document& document)
 {
+    return adoptRef(*new MediaDevices(document));
 }
 
 Document* MediaDevices::document() const
@@ -65,22 +58,18 @@ Document* MediaDevices::document() const
 
 ExceptionOr<void> MediaDevices::getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&& promise) const
 {
-    ExceptionCode ec = 0;
-    UserMediaRequest::start(document(), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise), ec);
-    if (ec)
-        return Exception { ec };
-    return { };
+    auto* document = this->document();
+    if (!document)
+        return Exception { INVALID_STATE_ERR };
+    return UserMediaRequest::start(*document, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise));
 }
 
-ExceptionOr<void> MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
+void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
 {
-    ExceptionCode ec = 0;
-    auto request = MediaDevicesRequest::create(document(), WTFMove(promise), ec);
-    if (ec)
-        return Exception { ec };
-    if (request)
-        request->start();
-    return { };
+    auto* document = this->document();
+    if (!document)
+        return;
+    MediaDevicesRequest::create(*document, WTFMove(promise))->start();
 }
 
 RefPtr<MediaTrackSupportedConstraints> MediaDevices::getSupportedConstraints()

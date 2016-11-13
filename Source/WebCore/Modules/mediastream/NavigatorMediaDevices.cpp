@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#include "NavigatorMediaDevices.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "NavigatorMediaDevices.h"
 
 #include "Document.h"
 #include "Frame.h"
@@ -68,7 +68,7 @@ MediaDevices* NavigatorMediaDevices::mediaDevices(Navigator& navigator)
 MediaDevices* NavigatorMediaDevices::mediaDevices() const
 {
     if (!m_mediaDevices && frame())
-        m_mediaDevices = MediaDevices::create(frame()->document());
+        m_mediaDevices = MediaDevices::create(*frame()->document());
     return m_mediaDevices.get();
 }
 

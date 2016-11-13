@@ -32,12 +32,10 @@
  */
 
 #include "config.h"
+#include "UserMediaRequest.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "UserMediaRequest.h"
-
-#include "Document.h"
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -55,28 +53,26 @@
 
 namespace WebCore {
 
-void UserMediaRequest::start(Document* document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise, ExceptionCode& ec)
+ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise)
 {
-    UserMediaController* userMedia = UserMediaController::from(document ? document->page() : nullptr);
-    if (!userMedia) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    auto* userMedia = UserMediaController::from(document.page());
+    if (!userMedia)
+        return Exception { NOT_SUPPORTED_ERR }; // FIXME: Why is it better to return an exception here instead of rejecting the promise as we do just below?
 
     if (!audioConstraints->isValid() && !videoConstraints->isValid()) {
         promise.reject(TypeError);
-        return;
+        return { };
     }
 
-    auto request = adoptRef(*new UserMediaRequest(document, userMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)));
-    request->start();
+    adoptRef(*new UserMediaRequest(document, *userMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)))->start();
+    return { };
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise)
-    : ContextDestructionObserver(context)
+UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise)
+    : ContextDestructionObserver(&document)
     , m_audioConstraints(WTFMove(audioConstraints))
     , m_videoConstraints(WTFMove(videoConstraints))
-    , m_controller(controller)
+    , m_controller(&controller)
     , m_promise(WTFMove(promise))
 {
 }

@@ -1,3 +1,41 @@
+2016-11-12  Darin Adler  <darin@apple.com>
+
+        Remove some use of ExceptionCode in MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=164690
+
+        Reviewed by Sam Weinig.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices): Take a Document&.
+        (WebCore::MediaDevices::create): Ditto.
+        (WebCore::MediaDevices::~MediaDevices): Deleted.
+        (WebCore::MediaDevices::getUserMedia): Check document for null and
+        pass a reference to UserMediaRequest::start. Removed unused ExceptionCode
+        argument to UserMediaRequest::start, since the only exception was for
+        a null document.
+        (WebCore::MediaDevices::enumerateDevices): Check document for null and
+        pass a reference to MediaDevicesRequest::create. Removed exception
+        handling entirely because MediaDevicesRequest::create was not ever
+        raising an exception before.
+        * Modules/mediastream/MediaDevices.h: Updated for above changes.
+        * Modules/mediastream/MediaDevices.idl: Removed MayThrowException from
+        enumerateDevices, because it never throws an exception.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::MediaDevicesRequest): Take a Document&.
+        Removed unused ExceptionCode& argument.
+        (WebCore::MediaDevicesRequest::create): Ditto.
+        * Modules/mediastream/MediaDevicesRequest.h: Updated for above changes.
+
+        * Modules/mediastream/NavigatorMediaDevices.cpp:
+        (WebCore::NavigatorMediaDevices::mediaDevices): Pass a reference.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::start): Use ExceptionOr.
+        (WebCore::UserMediaRequest::UserMediaRequest): Take a Document& and
+        a UserMediaController&.
+        * Modules/mediastream/UserMediaRequest.h: Updated for above changes.
+
 2016-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Share some code with Mac for post-async-scroll state reconciliation

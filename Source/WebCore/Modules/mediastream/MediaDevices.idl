@@ -35,5 +35,5 @@
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     [Custom, MayThrowException, PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(Dictionary options);
-    [MayThrowException] Promise<sequence<MediaDeviceInfo>> enumerateDevices();
+    Promise<sequence<MediaDeviceInfo>> enumerateDevices();
 };

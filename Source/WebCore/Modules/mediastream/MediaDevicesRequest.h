@@ -28,10 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
 #include "MediaDevices.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,11 +36,9 @@ class Document;
 class MediaDevicesEnumerationRequest;
 class SecurityOrigin;
 
-typedef int ExceptionCode;
-
 class MediaDevicesRequest : public RefCounted<MediaDevicesRequest>, private ContextDestructionObserver {
 public:
-    static RefPtr<MediaDevicesRequest> create(Document*, MediaDevices::EnumerateDevicesPromise&&, ExceptionCode&);
+    static Ref<MediaDevicesRequest> create(Document&, MediaDevices::EnumerateDevicesPromise&&);
 
     virtual ~MediaDevicesRequest();
 
@@ -52,9 +47,8 @@ public:
     SecurityOrigin* securityOrigin() const;
 
 private:
-    MediaDevicesRequest(ScriptExecutionContext*, MediaDevices::EnumerateDevicesPromise&&);
+    MediaDevicesRequest(Document&, MediaDevices::EnumerateDevicesPromise&&);
 
-    // ContextDestructionObserver
     void contextDestroyed() final;
 
     String hashID(const String&);
