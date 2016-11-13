@@ -3060,9 +3060,12 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 
-    frameView.setConstrainsScrollingToContentEdge(false);
-    frameView.setScrollOffset(frameView.scrollOffsetFromPosition(scrollPosition));
-    frameView.setConstrainsScrollingToContentEdge(true);
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
+        Optional<FloatRect> customFixedPositionRect;
+        if (m_isInStableState)
+            customFixedPositionRect = visibleContentRectUpdateInfo.customFixedPositionRect();
+        scrollingCoordinator->reconcileScrollingState(frameView, scrollPosition, customFixedPositionRect, false, SetOrSyncScrollingLayerPosition::SyncScrollingLayerPosition);
+    }
 }
 
 void WebPage::willStartUserTriggeredZooming()

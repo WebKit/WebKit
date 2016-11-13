@@ -121,8 +121,8 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
     LayoutPoint newLocation = FrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport);
 
     if (layoutViewport.location() != newLocation) {
-        LOG_WITH_STREAM(Scrolling, stream << " new layoutViewport " << layoutViewport);
         layoutViewport.setLocation(newLocation);
+        LOG_WITH_STREAM(Scrolling, stream << " new layoutViewport " << layoutViewport);
     }
 
     return layoutViewport;

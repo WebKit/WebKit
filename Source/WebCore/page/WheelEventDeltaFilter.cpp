@@ -60,7 +60,6 @@ bool WheelEventDeltaFilter::isFilteringDeltas() const
 
 FloatSize WheelEventDeltaFilter::filteredDelta() const
 {
-    LOG_WITH_STREAM(Scrolling, stream << "BasicWheelEventDeltaFilter::filteredDelta returning " << m_currentFilteredDelta);
     return m_currentFilteredDelta;
 }
 

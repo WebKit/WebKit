@@ -103,6 +103,8 @@ private:
     WEBCORE_EXPORT void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* = nullptr) override;
     WEBCORE_EXPORT void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry* = nullptr) override;
     
+    WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool programmaticScroll, SetOrSyncScrollingLayerPosition) override;
+
     bool isRubberBandInProgress() const override;
     void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
@@ -110,7 +112,7 @@ private:
     bool isScrollSnapInProgress() const override;
 #endif
 
-    WEBCORE_EXPORT void syncChildPositions(const LayoutRect& viewportRect) override;
+    WEBCORE_EXPORT void syncViewportConstrainedLayerPositions(const LayoutRect& viewportRect) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
     WEBCORE_EXPORT void setSynchronousScrollingReasons(SynchronousScrollingReasons) override;

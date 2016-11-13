@@ -824,6 +824,8 @@ void RenderLayer::updateLayerPositionsAfterDocumentScroll()
 {
     ASSERT(this == renderer().view().layer());
 
+    LOG(Scrolling, "RenderLayer::updateLayerPositionsAfterDocumentScroll");
+
     RenderGeometryMap geometryMap(UseTransforms);
     updateLayerPositionsAfterScroll(&geometryMap);
 }

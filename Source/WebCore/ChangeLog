@@ -1,3 +1,47 @@
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Share some code with Mac for post-async-scroll state reconciliation
+        https://bugs.webkit.org/show_bug.cgi?id=164694
+
+        Reviewed by Zalan Bujtas.
+
+        When an async scroll notifications get back to the main thread in
+        AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(), we call 
+        syncViewportConstrainedLayerPositions() to poke the new layer positions on the
+        GraphicsLayers to match the changes made on the scrolling thread.
+
+        However, this was not done on iOS, which will be problematic for a future patch
+        where we require GraphicsLayer positions and the current fixedPositionViewport rect
+        to have been computed when in a consistent state.
+
+        Fix by factoring some code into reconcileScrollingState(), which is called on iOS/WK2
+        from WebPage::updateVisibleContentRects() rather than setting the FrameView's scroll offset
+        directly.
+
+        Test: scrollingcoordinator/ios/sync-layer-positions-after-scroll.html
+
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::filteredDelta):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        (WebCore::AsyncScrollingCoordinator::syncViewportConstrainedLayerPositions):
+        (WebCore::AsyncScrollingCoordinator::syncChildPositions): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::reconcileScrollingState):
+        (WebCore::ScrollingCoordinator::syncViewportConstrainedLayerPositions):
+        (WebCore::ScrollingCoordinator::syncChildPositions): Deleted.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition):
+        * platform/Logging.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollOffset):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::adjustTileCoverageRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterDocumentScroll):
+
 2016-11-12  Zalan Bujtas  <zalan@apple.com>
 
         RenderObject::flowThreadState should follow containing block instead of parent.

@@ -1,3 +1,16 @@
+2016-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Share some code with Mac for post-async-scroll state reconciliation
+        https://bugs.webkit.org/show_bug.cgi?id=164694
+
+        Reviewed by Zalan Bujtas.
+
+        Rather than calling FrameView directly, call reconcileScrollingState() on the scrolling
+        coordinator.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2016-11-12  Brian Burg  <bburg@apple.com>
 
         Web Automation: terminate the automation session if the web process crashes

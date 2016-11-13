@@ -418,7 +418,7 @@ void ScrollView::notifyPageThatContentAreaWillPaint() const
 
 void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollOffset " << offset);
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset);
 
     IntPoint constrainedOffset = offset;
     if (constrainsScrollingToContentEdge())

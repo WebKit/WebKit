@@ -79,6 +79,7 @@ namespace WebCore {
     M(StorageAPI) \
     M(SVG) \
     M(TextAutosizing) \
+    M(Tiling) \
     M(Threading) \
     M(URLParser) \
     M(WebAudio) \
