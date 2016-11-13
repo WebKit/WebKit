@@ -4784,7 +4784,6 @@ String Document::queryCommandValue(const String& commandName)
 
 void Document::pushCurrentScript(HTMLScriptElement* newCurrentScript)
 {
-    ASSERT(newCurrentScript);
     m_currentScriptStack.append(newCurrentScript);
 }
 

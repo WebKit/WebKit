@@ -1,3 +1,14 @@
+2016-11-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.currentScript should be null when running a script inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=164693
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaselined the imported test now that there are no errors.
+
+        * web-platform-tests/shadow-dom/Document-prototype-currentScript-expected.txt:
+
 2016-11-11  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: "close pending flag" and firing blocked events all need fixing.

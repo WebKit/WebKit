@@ -1,3 +1,27 @@
+2016-11-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.currentScript should be null when running a script inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=164693
+
+        Reviewed by Yusuke Suzuki.
+
+        Fixed the bug that we were returning the old or outer script element in document.currentScript
+        while executing a script element inside a shadow tree. Return null instead.
+
+        New behavior matches the latest HTML5 specification:
+        https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
+        where it says for the classic script type, "if the script element's root is not a shadow root, then set
+        the script element's node document's currentScript attribute to the script element. Otherwise, set it to null."
+
+        No new tests. imported/w3c/web-platform-tests/shadow-dom/Document-prototype-currentScript.html covers it.
+
+        * dom/CurrentScriptIncrementer.h:
+        (WebCore::CurrentScriptIncrementer::CurrentScriptIncrementer): Push nullptr when the script element
+        is inside a shadow tree.
+        (WebCore::CurrentScriptIncrementer::~CurrentScriptIncrementer): Changed to use an early exit.
+        * dom/Document.cpp:
+        (WebCore::Document::pushCurrentScript): Removed the assertion since the argument can now be nullptr.
+
 2016-11-12  Darin Adler  <darin@apple.com>
 
         Remove a few assorted uses of ExceptionCode
