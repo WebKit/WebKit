@@ -142,10 +142,12 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
         WebInspector.frameResourceManager.adoptOrphanedResourcesForTarget(this);
 
         if (this.RuntimeAgent) {
-            this.RuntimeAgent.enable();
             this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
-            // FIXME: Enable Type Profiler
-            // FIXME: Enable Code Coverage Profiler
+            this.RuntimeAgent.enable();
+            if (WebInspector.showJavaScriptTypeInformationSetting && WebInspector.showJavaScriptTypeInformationSetting.value)
+                this.RuntimeAgent.enableTypeProfiler();
+            if (WebInspector.enableControlFlowProfilerSetting && WebInspector.enableControlFlowProfilerSetting.value)
+                this.RuntimeAgent.enableControlFlowProfiler();
         }
 
         if (this.DebuggerAgent)

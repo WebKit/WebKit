@@ -253,7 +253,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             callback(allRequestNodes);
         }
 
-        RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
+        this._script.target.RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
     }
 
     // Private

@@ -56,7 +56,7 @@ WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspecto
         var sourceID = this._script.id;
         var startTime = Date.now();
 
-        RuntimeAgent.getBasicBlocks(sourceID, function(error, basicBlocks) {
+        this._script.target.RuntimeAgent.getBasicBlocks(sourceID, function(error, basicBlocks) {
             if (error) {
                 console.error("Error in getting basic block locations: " + error);
                 return;

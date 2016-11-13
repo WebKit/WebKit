@@ -1,3 +1,30 @@
+2016-11-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Type Profiler and Code Coverage Profiler should work in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=164682
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        Use the target associated with the Script.
+
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.WorkerTarget.prototype.initialize):
+        When initializing a Worker Target, match the existing state
+        of the Page for these profilers.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation):
+        (WebInspector.SourceCodeTextEditor.prototype.willDismissPopover):
+        Use the correct target for this Script / Resource.
+
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WebInspector.SourceCodeTextEditor.prototype.set _basicBlockAnnotatorEnabled):
+        Enable / disable for all targets when toggling profilers.
+
 2016-11-11  Anthony Ricaud  <rik@webkit.org>
 
         Web Inspector: Whitespace in Editor should be less visible than regular content
