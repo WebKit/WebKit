@@ -307,6 +307,7 @@ namespace JSC { namespace DFG {
     macro(MaterializeNewObject, NodeResultJS | NodeHasVarArgs) \
     macro(PhantomNewFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomNewGeneratorFunction, NodeResultJS | NodeMustGenerate) \
+    macro(PhantomNewAsyncFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomCreateActivation, NodeResultJS | NodeMustGenerate) \
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     \
@@ -354,6 +355,8 @@ namespace JSC { namespace DFG {
     macro(NewFunction, NodeResultJS) \
     \
     macro(NewGeneratorFunction, NodeResultJS) \
+    \
+    macro(NewAsyncFunction, NodeResultJS) \
     \
     /* These aren't terminals but always exit */ \
     macro(Throw, NodeMustGenerate) \

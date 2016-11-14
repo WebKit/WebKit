@@ -119,6 +119,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CreateActivation:
     case NewFunction:
     case NewGeneratorFunction:
+    case NewAsyncFunction:
     case GetClosureVar:
     case PutClosureVar:
     case CreateDirectArguments:
@@ -226,6 +227,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomNewObject:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
+    case PhantomNewAsyncFunction:
     case PhantomCreateActivation:
     case PutHint:
     case CheckStructureImmediate:

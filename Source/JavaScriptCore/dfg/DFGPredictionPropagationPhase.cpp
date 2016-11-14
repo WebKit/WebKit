@@ -730,7 +730,8 @@ private:
         case GetSetter:
         case GetCallee:
         case NewFunction:
-        case NewGeneratorFunction: {
+        case NewGeneratorFunction:
+        case NewAsyncFunction: {
             setPrediction(SpecFunction);
             break;
         }
@@ -1007,6 +1008,7 @@ private:
         case PhantomNewObject:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
+        case PhantomNewAsyncFunction:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:

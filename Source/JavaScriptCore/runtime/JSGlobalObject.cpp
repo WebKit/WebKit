@@ -612,7 +612,6 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     m_throwTypeErrorFunction.set(vm, this, throwTypeErrorFunction);
 
     JSCell* functionConstructor = FunctionConstructor::create(vm, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
-    m_functionConstructor.set(vm, this, (FunctionConstructor*)functionConstructor);
 
     ArrayConstructor* arrayConstructor = ArrayConstructor::create(vm, this, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get(), m_speciesGetterSetter.get());
     m_arrayConstructor.set(vm, this, arrayConstructor);
@@ -668,15 +667,10 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
     m_generatorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_generatorFunctionPrototype.get(), DontEnum | ReadOnly);
     m_generatorFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->prototype, m_generatorPrototype.get(), DontEnum | ReadOnly);
 
-    m_asyncFunctionStructure.initLater(
-        [](LazyClassStructure::Initializer& init) {
-            AsyncFunctionPrototype* asyncFunctionPrototype = AsyncFunctionPrototype::create(init.vm, AsyncFunctionPrototype::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()));
-            init.setPrototype(asyncFunctionPrototype);
-            init.setStructure(JSAsyncFunction::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(PropertyName(nullptr), AsyncFunctionConstructor::create(init.vm, AsyncFunctionConstructor::createStructure(init.vm, init.global, init.global->m_functionConstructor.get()), asyncFunctionPrototype));
-
-            init.global->putDirectWithoutTransition(init.vm, init.vm.propertyNames->builtinNames().asyncFunctionResumePrivateName(), JSFunction::createBuiltinFunction(init.vm, asyncFunctionPrototypeAsyncFunctionResumeCodeGenerator(init.vm), init.global), DontEnum | DontDelete | ReadOnly);
-        });
+    m_asyncFunctionPrototype.set(vm, this, AsyncFunctionPrototype::create(vm, AsyncFunctionPrototype::createStructure(vm, this, m_functionPrototype.get())));
+    AsyncFunctionConstructor* asyncFunctionConstructor = AsyncFunctionConstructor::create(vm, AsyncFunctionConstructor::createStructure(vm, this, functionConstructor), m_asyncFunctionPrototype.get());
+    m_asyncFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, asyncFunctionConstructor, DontEnum | ReadOnly);
+    m_asyncFunctionStructure.set(vm, this, JSAsyncFunction::createStructure(vm, this, m_asyncFunctionPrototype.get()));
 
     m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, DontEnum);
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, DontEnum);
@@ -1175,7 +1169,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
     visitor.append(&thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);
     visitor.append(&thisObject->m_moduleLoader);
-    visitor.append(&thisObject->m_functionConstructor);
 
     visitor.append(&thisObject->m_objectPrototype);
     visitor.append(&thisObject->m_functionPrototype);
@@ -1184,7 +1177,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_iteratorPrototype);
     visitor.append(&thisObject->m_generatorFunctionPrototype);
     visitor.append(&thisObject->m_generatorPrototype);
-    thisObject->m_asyncFunctionStructure.visit(visitor);
+    visitor.append(&thisObject->m_asyncFunctionPrototype);
     visitor.append(&thisObject->m_moduleLoaderPrototype);
 
     thisObject->m_debuggerScopeStructure.visit(visitor);
@@ -1220,6 +1213,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_symbolObjectStructure);
     visitor.append(&thisObject->m_regExpStructure);
     visitor.append(&thisObject->m_generatorFunctionStructure);
+    visitor.append(&thisObject->m_asyncFunctionStructure);
     visitor.append(&thisObject->m_iteratorResultObjectStructure);
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
     visitor.append(&thisObject->m_moduleRecordStructure);

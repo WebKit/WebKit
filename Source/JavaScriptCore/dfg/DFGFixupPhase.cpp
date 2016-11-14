@@ -1435,6 +1435,7 @@ private:
         case PhantomNewObject:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
+        case PhantomNewAsyncFunction:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -1596,7 +1597,8 @@ private:
         case CreateScopedArguments:
         case CreateActivation:
         case NewFunction:
-        case NewGeneratorFunction: {
+        case NewGeneratorFunction:
+        case NewAsyncFunction: {
             fixEdge<CellUse>(node->child1());
             break;
         }

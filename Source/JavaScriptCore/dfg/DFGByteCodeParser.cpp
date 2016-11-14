@@ -5325,23 +5325,29 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_new_func:
-        case op_new_generator_func: {
+        case op_new_generator_func:
+        case op_new_async_func: {
             FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(decl);
-            NodeType op = (opcodeID == op_new_generator_func) ? NewGeneratorFunction : NewFunction;
+            NodeType op = (opcodeID == op_new_generator_func) ? NewGeneratorFunction :
+                (opcodeID == op_new_async_func) ? NewAsyncFunction : NewFunction;
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_generator_func), "The length of op_new_func should eqaual to one of op_new_generator_func");
+            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_func), "The length of op_new_func should eqaual to one of op_new_async_func");
             NEXT_OPCODE(op_new_func);
         }
 
         case op_new_func_exp:
-        case op_new_generator_func_exp: {
+        case op_new_generator_func_exp:
+        case op_new_async_func_exp: {
             FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(expr);
-            NodeType op = (opcodeID == op_new_generator_func_exp) ? NewGeneratorFunction : NewFunction;
+            NodeType op = (opcodeID == op_new_generator_func_exp) ? NewGeneratorFunction :
+                (opcodeID == op_new_async_func_exp) ? NewAsyncFunction : NewFunction;
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
-            
+    
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_generator_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_generator_func_exp");
+            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_async_func_exp");
             NEXT_OPCODE(op_new_func_exp);
         }
 

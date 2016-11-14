@@ -44,6 +44,24 @@
 - path: stress/async-await-reserved-word.js
   cmd: runDefault
 
+# FTLJIT
+- path: stress/async-function-create-optimized.js
+  cmd: runDefault
+- path: stress/async-function-create-nobaseline.js
+  cmd: runDefault
+- path: stress/async-function-declaration-sinking-no-double-allocate.js
+  cmd: runDefault
+- path: stress/async-function-declaration-sinking-osrexit.js
+  cmd: runDefault
+- path: stress/async-function-declaration-sinking-put.js
+  cmd: runDefault
+- path: stress/async-function-expression-sinking-no-double-allocate.js
+  cmd: runDefault
+- path: stress/async-function-expression-sinking-osrexit.js
+  cmd: runDefault
+- path: stress/async-function-expression-sinking-put.js
+  cmd: runDefault
+
 # Test262
 - path: test262/test/built-ins/AsyncFunction/AsyncFunction-construct.js
   cmd: runTest262 :normal, "NoException", ["../../../harness/assert.js", "../../../harness/sta.js"], []

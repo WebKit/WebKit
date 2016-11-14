@@ -303,6 +303,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutToArguments:
     case NewFunction:
     case NewGeneratorFunction:
+    case NewAsyncFunction:
     case Jump:
     case Branch:
     case Switch:
@@ -351,6 +352,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PhantomNewObject:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
+    case PhantomNewAsyncFunction:
     case PhantomCreateActivation:
     case PutHint:
     case CheckStructureImmediate:

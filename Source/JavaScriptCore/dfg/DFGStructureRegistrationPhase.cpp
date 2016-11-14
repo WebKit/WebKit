@@ -177,6 +177,9 @@ public:
                 case NewGeneratorFunction:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->generatorFunctionStructure());
                     break;
+                case NewAsyncFunction:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->asyncFunctionStructure());
+                    break;
 
                 default:
                     break;

@@ -50,6 +50,7 @@
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
+#include "JSAsyncFunction.h"
 #include "JSCInlines.h"
 #include "JSEnvironmentRecord.h"
 #include "JSFixedArray.h"
@@ -6360,7 +6361,7 @@ template <typename ClassType> void SpeculativeJIT::compileNewFunctionCommon(GPRR
 void SpeculativeJIT::compileNewFunction(Node* node)
 {
     NodeType nodeType = node->op();
-    ASSERT(nodeType == NewFunction || nodeType == NewGeneratorFunction);
+    ASSERT(nodeType == NewFunction || nodeType == NewGeneratorFunction || nodeType == NewAsyncFunction);
     
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
@@ -6375,6 +6376,8 @@ void SpeculativeJIT::compileNewFunction(Node* node)
 
         if (nodeType == NewGeneratorFunction)
             callOperation(operationNewGeneratorFunction, resultGPR, scopeGPR, executable);
+        else if (nodeType == NewAsyncFunction)
+            callOperation(operationNewAsyncFunction, resultGPR, scopeGPR, executable);
         else
             callOperation(operationNewFunction, resultGPR, scopeGPR, executable);
         m_jit.exceptionCheck();
@@ -6384,6 +6387,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
 
     Structure* structure =
         nodeType == NewGeneratorFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->generatorFunctionStructure() :
+        nodeType == NewAsyncFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->asyncFunctionStructure() :
         m_jit.graph().globalObjectFor(node->origin.semantic)->functionStructure();
     
     GPRTemporary result(this);
@@ -6406,6 +6410,12 @@ void SpeculativeJIT::compileNewFunction(Node* node)
         compileNewFunctionCommon<JSGeneratorFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSGeneratorFunction::allocationSize(0), executable, JSGeneratorFunction::offsetOfScopeChain(), JSGeneratorFunction::offsetOfExecutable(), JSGeneratorFunction::offsetOfRareData());
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));
+    }
+
+    if (nodeType == NewAsyncFunction) {
+        compileNewFunctionCommon<JSAsyncFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSAsyncFunction::allocationSize(0), executable, JSAsyncFunction::offsetOfScopeChain(), JSAsyncFunction::offsetOfExecutable(), JSAsyncFunction::offsetOfRareData());
+
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));
     }
 
     cellResult(resultGPR, node);

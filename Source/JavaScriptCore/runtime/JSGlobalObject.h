@@ -241,7 +241,6 @@ public:
     LazyProperty<JSGlobalObject, NativeErrorConstructor> m_syntaxErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     LazyProperty<JSGlobalObject, NativeErrorConstructor> m_URIErrorConstructor;
-    WriteBarrier<FunctionConstructor> m_functionConstructor;
     WriteBarrier<ObjectConstructor> m_objectConstructor;
     WriteBarrier<ArrayConstructor> m_arrayConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
@@ -316,7 +315,8 @@ public:
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpStructure;
-    LazyClassStructure m_asyncFunctionStructure;
+    WriteBarrier<AsyncFunctionPrototype> m_asyncFunctionPrototype;
+    WriteBarrier<Structure> m_asyncFunctionStructure;
     WriteBarrier<Structure> m_generatorFunctionStructure;
     WriteBarrier<Structure> m_dollarVMStructure;
     WriteBarrier<Structure> m_iteratorResultObjectStructure;
@@ -550,19 +550,7 @@ public:
     IteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
-
-    LazyClassStructure& lazyAsyncFunctionStructure()
-    {
-        return m_asyncFunctionStructure;
-    }
-    const LazyClassStructure& lazyAsyncFunctionStructure() const
-    {
-        return m_asyncFunctionStructure;
-    }
-    AsyncFunctionPrototype* asyncFunctionPrototype() const { return reinterpret_cast<AsyncFunctionPrototype*>(lazyAsyncFunctionStructure().prototype(this)); }
-    AsyncFunctionPrototype* asyncFunctionPrototypeConcurrently() const { return reinterpret_cast<AsyncFunctionPrototype*>(lazyAsyncFunctionStructure().prototypeConcurrently()); }
-    Structure* asyncFunctionStructure() const { return lazyAsyncFunctionStructure().get(this); }
-    Structure* asyncFunctionStructureConcurrently() const { return lazyAsyncFunctionStructure().getConcurrently(); }
+    AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
 
     Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(this); }
     Structure* withScopeStructure() const { return m_withScopeStructure.get(this); }
@@ -622,6 +610,7 @@ public:
     Structure* mapStructure() const { return m_mapStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
+    Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(this); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }

@@ -710,6 +710,7 @@ private:
             break;
         case NewFunction:
         case NewGeneratorFunction:
+        case NewAsyncFunction:
             compileNewFunction();
             break;
         case CreateDirectArguments:
@@ -1081,6 +1082,7 @@ private:
         case PhantomNewObject:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
+        case PhantomNewAsyncFunction:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -3967,8 +3969,9 @@ private:
     
     void compileNewFunction()
     {
-        ASSERT(m_node->op() == NewFunction || m_node->op() == NewGeneratorFunction);
+        ASSERT(m_node->op() == NewFunction || m_node->op() == NewGeneratorFunction || m_node->op() == NewAsyncFunction);
         bool isGeneratorFunction = m_node->op() == NewGeneratorFunction;
+        bool isAsyncFunction = m_node->op() == NewAsyncFunction;
         
         LValue scope = lowCell(m_node->child1());
         
@@ -3976,6 +3979,7 @@ private:
         if (executable->singletonFunction()->isStillValid()) {
             LValue callResult =
                 isGeneratorFunction ? vmCall(Int64, m_out.operation(operationNewGeneratorFunction), m_callFrame, scope, weakPointer(executable)) :
+                isAsyncFunction ? vmCall(Int64, m_out.operation(operationNewAsyncFunction), m_callFrame, scope, weakPointer(executable)) :
                 vmCall(Int64, m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
             setJSValue(callResult);
             return;
@@ -3983,6 +3987,7 @@ private:
         
         Structure* structure =
             isGeneratorFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->generatorFunctionStructure() :
+            isAsyncFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->asyncFunctionStructure() :
             m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure();
         
         LBasicBlock slowPath = m_out.newBlock();
@@ -4013,6 +4018,12 @@ private:
                 if (isGeneratorFunction) {
                     return createLazyCallGenerator(
                         operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint,
+                        locations[0].directGPR(), locations[1].directGPR(),
+                        CCallHelpers::TrustedImmPtr(executable));
+                }
+                if (isAsyncFunction) {
+                    return createLazyCallGenerator(
+                        operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint,
                         locations[0].directGPR(), locations[1].directGPR(),
                         CCallHelpers::TrustedImmPtr(executable));
                 }

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@globalPrivate
 function asyncFunctionResume(generator, sentValue, resumeMode)
 {
     "use strict";

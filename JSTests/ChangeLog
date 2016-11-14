@@ -1,3 +1,22 @@
+2016-11-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Handle new_async_func / new_async_func_exp in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164037
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests based on tests from https://trac.webkit.org/changeset/194216.
+
+        * asyncFunctionTests.yaml:
+        * stress/async-function-create-nobaseline.js: Added.
+        * stress/async-function-create-optimized.js: Added.
+        * stress/async-function-declaration-sinking-no-double-allocate.js: Added.
+        * stress/async-function-declaration-sinking-osrexit.js: Added.
+        * stress/async-function-declaration-sinking-put.js: Added.
+        * stress/async-function-expression-sinking-no-double-allocate.js: Added.
+        * stress/async-function-expression-sinking-osrexit.js: Added.
+        * stress/async-function-expression-sinking-put.js: Added.
+
 2016-11-14  Mark Lam  <mark.lam@apple.com>
 
         Some of JSStringView::SafeView methods are not idiomatically safe for JSString to StringView conversions.

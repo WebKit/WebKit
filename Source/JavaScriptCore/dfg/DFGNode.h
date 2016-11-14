@@ -587,7 +587,7 @@ public:
 
     void convertToPhantomNewFunction()
     {
-        ASSERT(m_op == NewFunction || m_op == NewGeneratorFunction);
+        ASSERT(m_op == NewFunction || m_op == NewGeneratorFunction || m_op == NewAsyncFunction);
         m_op = PhantomNewFunction;
         m_flags |= NodeMustGenerate;
         m_opInfo = OpInfoWrapper();
@@ -599,6 +599,16 @@ public:
     {
         ASSERT(m_op == NewGeneratorFunction);
         m_op = PhantomNewGeneratorFunction;
+        m_flags |= NodeMustGenerate;
+        m_opInfo = OpInfoWrapper();
+        m_opInfo2 = OpInfoWrapper();
+        children = AdjacencyList();
+    }
+
+    void convertToPhantomNewAsyncFunction()
+    {
+        ASSERT(m_op == NewAsyncFunction);
+        m_op = PhantomNewAsyncFunction;
         m_flags |= NodeMustGenerate;
         m_opInfo = OpInfoWrapper();
         m_opInfo2 = OpInfoWrapper();
@@ -1498,6 +1508,7 @@ public:
         case OverridesHasInstance:
         case NewFunction:
         case NewGeneratorFunction:
+        case NewAsyncFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
         case NewRegexp:
@@ -1733,6 +1744,7 @@ public:
         switch (op()) {
         case NewFunction:
         case NewGeneratorFunction:
+        case NewAsyncFunction:
             return true;
         default:
             return false;
@@ -1744,6 +1756,7 @@ public:
         switch (op()) {
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
+        case PhantomNewAsyncFunction:
             return true;
         default:
             return false;
@@ -1759,6 +1772,7 @@ public:
         case PhantomClonedArguments:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
+        case PhantomNewAsyncFunction:
         case PhantomCreateActivation:
             return true;
         default:

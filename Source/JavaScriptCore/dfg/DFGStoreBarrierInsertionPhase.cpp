@@ -317,6 +317,7 @@ private:
             case CreateClonedArguments:
             case NewFunction:
             case NewGeneratorFunction:
+            case NewAsyncFunction:
                 // Nodes that allocate get to set their epoch because for those nodes we know
                 // that they will be the newest object in the heap.
                 m_node->setEpoch(m_currentEpoch);

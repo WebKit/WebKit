@@ -5179,6 +5179,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewFunction:
     case NewGeneratorFunction:
+    case NewAsyncFunction:
         compileNewFunction(node);
         break;
 
@@ -5820,6 +5821,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewObject:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
+    case PhantomNewAsyncFunction:
     case PhantomCreateActivation:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
