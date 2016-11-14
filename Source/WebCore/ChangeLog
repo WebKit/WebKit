@@ -1,5 +1,21 @@
 2016-11-13  Darin Adler  <darin@apple.com>
 
+        Remove ExceptionCodePlaceholder
+        https://bugs.webkit.org/show_bug.cgi?id=164703
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Removed ExceptionCodePlaceholder.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Removed ExceptionCodePlaceholder.h/cpp.
+        Also let Xcode make a change to the file, I think removing an unreferenced
+        dead entry for a file that is already listed under a different ID.
+        * dom/DOMAllInOne.cpp: Removed ExceptionCodePlaceholder.cpp.
+        * dom/ExceptionCodePlaceholder.cpp: Removed.
+        * dom/ExceptionCodePlaceholder.h: Removed.
+        * inspector/InspectorDatabaseAgent.cpp: Removed include of ExceptionCodePlaceholder.h.
+
+2016-11-13  Darin Adler  <darin@apple.com>
+
         Fix exception handling in SQL database code, streamline and update code
         https://bugs.webkit.org/show_bug.cgi?id=164685
 

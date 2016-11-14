@@ -2375,7 +2375,6 @@
 		577483191DB4491F00716EF9 /* CryptoAlgorithmHmacKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 577483181DB4491F00716EF9 /* CryptoAlgorithmHmacKeyParams.h */; };
 		5778BD821DA4806C009E3009 /* SubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 5778BD811DA4802C009E3009 /* SubtleCrypto.h */; };
 		5778BD841DA4817B009E3009 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */; };
-		579F6E051DCD7EE400546D80 /* CryptoAlgorithmRsaHashedKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233741DCD6D3B00F28D01 /* CryptoAlgorithmRsaHashedKeyGenParams.h */; };
 		57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D0018F1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */; };
@@ -4013,7 +4012,6 @@
 		A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B4EA6814C9348400C8F5BF /* JSMallocStatistics.cpp */; };
 		A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B4EA7914C9348400C8F5BF /* JSInternalSettings.h */; };
 		A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */; };
-		A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E497410752ACB00C9B896 /* SerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */; };
 		A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */; };
@@ -4057,7 +4055,6 @@
 		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
 		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */; };
 		A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */; };
 		A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CFB3D00B7ED10A0070C32D /* DragImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */; };
@@ -11614,7 +11611,6 @@
 		A72763BE16689BFB002FCACB /* UserActionElementSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserActionElementSet.h; sourceTree = "<group>"; };
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
-		A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodePlaceholder.h; sourceTree = "<group>"; };
 		A75E497410752ACB00C9B896 /* SerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedScriptValue.h; sourceTree = "<group>"; };
 		A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
 		A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FEBlend.cpp; sourceTree = "<group>"; };
@@ -11666,7 +11662,6 @@
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
 		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
 		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
-		A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodePlaceholder.cpp; sourceTree = "<group>"; };
 		A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DragImage.cpp; sourceTree = "<group>"; };
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
 		A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageMac.mm; sourceTree = "<group>"; };
@@ -23960,8 +23955,6 @@
 				BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */,
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
-				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
-				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
 				93D196301D6CAB7600FC7E47 /* ExceptionOr.h */,
 				E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */,
 				E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */,
@@ -25011,7 +25004,6 @@
 				E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */,
 				E1233F0D185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.h in Headers */,
 				57E2336E1DCD43FD00F28D01 /* CryptoAlgorithmRsaHashedImportParams.h in Headers */,
-				57F8273B1DB72D64009D2BF4 /* CryptoAlgorithmRsaHashedKeyGenParams.h in Headers */,
 				57FEDD3F1DB6D59200EB96F5 /* CryptoAlgorithmRsaKeyGenParams.h in Headers */,
 				E1BD331E182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h in Headers */,
 				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h in Headers */,
@@ -25361,7 +25353,6 @@
 				BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */,
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				973DC640145A9409002842C2 /* ExceptionCodeDescription.h in Headers */,
-				A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */,
 				9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */,
 				9767CE0C145ABC13005E64DB /* ExceptionInterfaces.h in Headers */,
 				93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */,
@@ -29102,7 +29093,6 @@
 				262EC41D1D110B9000BA78FC /* EventTrackingRegions.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
 				973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */,
-				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,

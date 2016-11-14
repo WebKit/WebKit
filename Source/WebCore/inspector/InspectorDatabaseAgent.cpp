@@ -32,7 +32,6 @@
 
 #include "Database.h"
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "InspectorDatabaseResource.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
