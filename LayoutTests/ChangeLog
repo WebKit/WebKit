@@ -1,3 +1,13 @@
+2016-11-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove incorrect cursor result
+        https://bugs.webkit.org/show_bug.cgi?id=164717
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/cursor-parsing-expected.txt:
+        * fast/css/cursor-parsing.html:
+
 2016-11-14  Youenn Fablet  <youenn@apple.com>
 
         Refresh RTCDataChannel abstract infrastructure
