@@ -1,3 +1,13 @@
+2016-11-14  Chris Dumez  <cdumez@apple.com>
+
+        Fix the !ENABLE(FETCH_API) build after r208613
+        https://bugs.webkit.org/show_bug.cgi?id=164713
+
+        Reviewed by Youenn Fablet.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2016-11-13  Darin Adler  <darin@apple.com>
 
         Remove many includes of ExceptionCode.h

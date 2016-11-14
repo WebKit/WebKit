@@ -1734,9 +1734,8 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    putDirect(vm, clientData.builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
-    putDirect(vm, clientData.builtinNames().publicAndPrivateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPublicAndPrivateMethod), ReadOnly | DontEnum);
+    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
+    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPublicAndPrivateMethod), ReadOnly | DontEnum);
     if (RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled())
         addValueIterableMethods(*globalObject(), *this);
     JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());

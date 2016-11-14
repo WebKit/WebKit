@@ -2930,13 +2930,13 @@ sub GenerateImplementation
             push(@implContent, "#endif\n") if $conditionalString;
         }
 
-        my $firstPrivateFunction = 1;
         foreach my $function (@{$interface->functions}) {
             next unless ($function->extendedAttributes->{PrivateIdentifier});
             AddToImplIncludes("WebCoreJSClientData.h");
-            push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
-            $firstPrivateFunction = 0;
-            push(@implContent, "    putDirect(vm, clientData.builtinNames()." . $function->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $function) . "), ReadOnly | DontEnum);\n");
+            my $conditionalString = $codeGenerator->GenerateConditionalString($function);
+            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+            push(@implContent, "    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $function->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $function) . "), ReadOnly | DontEnum);\n");
+            push(@implContent, "#endif\n") if $conditionalString;
         }
 
         if ($interface->iterable) {
