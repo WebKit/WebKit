@@ -1,4 +1,4 @@
-//@ if $jitTests then runMiscNoCJITTest("--useDFGJIT=false", "--useLLInt=false") else skip end
+//@ if $jitTests then runNoCJIT("--useDFGJIT=false", "--useLLInt=false") else skip end
 
 function foo(o) {
     return o.f;

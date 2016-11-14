@@ -1,3 +1,21 @@
+2016-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Enhance run-jsc-stress-test script to allow optional test specific options to be added for all test run configurations.
+        https://bugs.webkit.org/show_bug.cgi?id=164695
+
+        Reviewed by Keith Miller.
+
+        This gives us more flexibility when specific tests needs to enable special JSC
+        options in order to exercise specific code paths to be tested.  It also saves us
+        from having to create duplicate test run configurations e.g. runMiscFTLNoCJITTest.
+        We can now just use runFTLNoCJIT in its place.
+
+        Also replaced the ifJSCArgIsntProvidedAreWeReleaseBuild variable with $buildType
+        so that we have the ability to skip certain tests for release or debug builds.
+        This will be needed in the upcoming patch for https://webkit.org/b/155145.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role

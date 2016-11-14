@@ -117,6 +117,7 @@ $hostOS = nil
 $filter = nil
 $envVars = []
 $quickMode = false
+$buildType = "release"
 
 
 def usage
@@ -153,7 +154,6 @@ def usage
 end
 
 jscArg = nil
-ifJSCArgIsntProvidedAreWeReleaseBuild = true
 
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
@@ -226,9 +226,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--quick'
         $quickMode = true
     when '--debug'
-        ifJSCArgIsntProvidedAreWeReleaseBuild = false
+        $buildType = "debug"
     when '--release'
-        ifJSCArgIsntProvidedAreWeReleaseBuild = true
+        $buildType = "release"
     end
 }
 
@@ -252,7 +252,7 @@ end
 unless jscArg
     # If we're not provided a JSC path, try to come up with a sensible JSC path automagically.
     command = SCRIPTS_PATH.join("webkit-build-directory").to_s
-    command += ifJSCArgIsntProvidedAreWeReleaseBuild ? " --release" : " --debug"
+    command += ($buildType == "release") ? " --release" : " --debug"
     command += " --executablePath"
 
     output = `#{command}`.split("\n")
@@ -791,115 +791,111 @@ def run(kind, *options)
     addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
 end
 
-def runNoFTL
-    run("no-ftl")
+def runNoFTL(*optionalTestSpecificOptions)
+    run("no-ftl", *optionalTestSpecificOptions)
 end
 
-def runWithRAMSize(size)
-    run("ram-size-#{size}", "--forceRAMSize=#{size}")
+def runWithRAMSize(size, *optionalTestSpecificOptions)
+    run("ram-size-#{size}", "--forceRAMSize=#{size}", *optionalTestSpecificOptions)
 end
 
-def runOneLargeHeap
+def runOneLargeHeap(*optionalTestSpecificOptions)
     if $memoryLimited
         $didAddRunCommand = true
         puts "Skipping #{$collectionName}/#{$benchmark}"
     else
-        run("default")
+        run("default", *optionalTestSpecificOptions)
     end
 end
 
-def runNoJIT
-    run("no-jit", "--useJIT=false")
+def runNoJIT(*optionalTestSpecificOptions)
+    run("no-jit", "--useJIT=false", *optionalTestSpecificOptions)
 end
 
-def runNoLLInt
+def runNoLLInt(*optionalTestSpecificOptions)
     if $jitTests
-        run("no-llint", "--useLLInt=false")
+        run("no-llint", "--useLLInt=false", *optionalTestSpecificOptions)
     end
 end
 
-def runNoCJITValidate
-    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *NO_CJIT_OPTIONS)
+def runNoCJITValidate(*optionalTestSpecificOptions)
+    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runNoCJITValidatePhases
-    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", *NO_CJIT_OPTIONS)
+def runNoCJITValidatePhases(*optionalTestSpecificOptions)
+    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runDefault
-    run("default", *FTL_OPTIONS)
+def runDefault(*optionalTestSpecificOptions)
+    run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJIT
-    run("ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJIT(*optionalTestSpecificOptions)
+    run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITValidate
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITNoPutStackValidate
-    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITNoInlineValidate
-    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITOSRValidation
-    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runDFGEager
-    run("dfg-eager", *EAGER_OPTIONS)
+def runDFGEager(*optionalTestSpecificOptions)
+    run("dfg-eager", *(EAGER_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runDFGEagerNoCJITValidate
-    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
+    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLEager
-    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS))
+def runFTLEager(*optionalTestSpecificOptions)
+    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLEagerNoCJITValidate
-    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLEagerNoCJITOSRValidation
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runNoCJITNoASO
-    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
+def runNoCJITNoASO(*optionalTestSpecificOptions)
+    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runNoCJITNoAccessInlining
-    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *NO_CJIT_OPTIONS)
+def runNoCJITNoAccessInlining(*optionalTestSpecificOptions)
+    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITNoAccessInlining
-    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITNoAccessInlining(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITSmallPool
-    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+def runFTLNoCJITSmallPool(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runMiscNoCJITTest(*options)
-    run("misc-no-cjit", *(NO_CJIT_OPTIONS + options))
+def runNoCJIT(*optionalTestSpecificOptions)
+    run("no-cjit", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runMiscFTLNoCJITTest(*options)
-    run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + options))
+def runDFGMaximalFlushPhase(*optionalTestSpecificOptions)
+    run("dfg-maximal-flush-validate-no-cjit", "--forceCodeBlockToJettisonDueToOldAge=true", "--validateGraph=true", "--useMaximalFlushInsertionPhase=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runDFGMaximalFlushPhase
-    run("dfg-maximal-flush-validate-no-cjit", "--forceCodeBlockToJettisonDueToOldAge=true", "--validateGraph=true", "--useMaximalFlushInsertionPhase=true", *NO_CJIT_OPTIONS)
-end
-
-def runShadowChicken
-    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true")
+def runShadowChicken(*optionalTestSpecificOptions)
+    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true", *optionalTestSpecificOptions)
 end
 
 def defaultRun

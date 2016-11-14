@@ -1,4 +1,4 @@
-//@ runMiscNoCJITTest("--forceDebuggerBytecodeGeneration=true", "--alwaysUseShadowChicken=true")
+//@ runNoCJIT("--forceDebuggerBytecodeGeneration=true", "--alwaysUseShadowChicken=true")
 
 "use strict";
 

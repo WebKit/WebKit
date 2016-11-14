@@ -1,4 +1,4 @@
-//@ runMiscNoCJITTest("--useLLInt=false", "--useDFGJIT=false")
+//@ runNoCJIT("--useLLInt=false", "--useDFGJIT=false")
 
 function foo(o) {
     return o.i7;

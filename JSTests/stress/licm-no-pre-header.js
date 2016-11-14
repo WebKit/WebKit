@@ -1,4 +1,4 @@
-//@ runMiscFTLNoCJITTest("--createPreHeaders=false")
+//@ runFTLNoCJIT("--createPreHeaders=false")
 
 function foo(array) {
     var result = 0;

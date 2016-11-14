@@ -1,4 +1,4 @@
-//@ runMiscFTLNoCJITTest("--deferGCShouldCollectWithProbability=true", "--deferGCProbability=1.0")
+//@ runFTLNoCJIT("--deferGCShouldCollectWithProbability=true", "--deferGCProbability=1.0")
 
 function foo(a) {
     return a.push(25);

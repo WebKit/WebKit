@@ -1,4 +1,4 @@
-//@ runMiscFTLNoCJITTest("--createPreHeaders=false")
+//@ runFTLNoCJIT("--createPreHeaders=false")
 
 function foo(object, predicate) {
     var result = 0;

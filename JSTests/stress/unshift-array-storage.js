@@ -1,4 +1,4 @@
-//@ runMiscFTLNoCJITTest("--scribbleFreeCells=true", "--deferGCShouldCollectWithProbability=true", "--deferGCProbability=1")
+//@ runFTLNoCJIT("--scribbleFreeCells=true", "--deferGCShouldCollectWithProbability=true", "--deferGCProbability=1")
 
 // Create some array storage.
 var array = [];
