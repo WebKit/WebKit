@@ -1,3 +1,15 @@
+2016-11-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support percentages in word-spacing
+        https://bugs.webkit.org/show_bug.cgi?id=164721
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeLetterSpacing):
+        (WebCore::consumeWordSpacing):
+        (WebCore::consumeSpacing): Deleted.
+
 2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: In ARIA 1.1, the implicit value for aria-level on headings is 2

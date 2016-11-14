@@ -787,14 +787,22 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
     return list;
 }
 
-static RefPtr<CSSValue> consumeSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeLetterSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
-    // FIXME: allow <percentage>s in word-spacing.
+    
     return consumeLength(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
 }
 
+static RefPtr<CSSValue> consumeWordSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().id() == CSSValueNormal)
+        return consumeIdent(range);
+    
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
+}
+    
 static RefPtr<CSSValue> consumeTabSize(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSPrimitiveValue> parsedValue = consumeInteger(range, 0);
@@ -3448,8 +3456,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyFontWeight:
         return consumeFontWeight(m_range);
     case CSSPropertyLetterSpacing:
+        return consumeLetterSpacing(m_range, m_context.mode);
     case CSSPropertyWordSpacing:
-        return consumeSpacing(m_range, m_context.mode);
+        return consumeWordSpacing(m_range, m_context.mode);
     case CSSPropertyTabSize:
         return consumeTabSize(m_range, m_context.mode);
 #if ENABLE(TEXT_AUTOSIZING)
