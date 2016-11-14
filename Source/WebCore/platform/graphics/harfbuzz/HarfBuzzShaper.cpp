@@ -83,6 +83,11 @@ HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(const Font* fontData, unsigned startInd
 void HarfBuzzShaper::HarfBuzzRun::applyShapeResult(hb_buffer_t* harfBuzzBuffer)
 {
     m_numGlyphs = hb_buffer_get_length(harfBuzzBuffer);
+    if (!m_numGlyphs) {
+        // HarfBuzzShaper::fillGlyphBuffer gets offsets()[0]
+        m_offsets.resize(1);
+        return;
+    }
     m_glyphs.resize(m_numGlyphs);
     m_advances.resize(m_numGlyphs);
     m_glyphToCharacterIndexes.resize(m_numGlyphs);

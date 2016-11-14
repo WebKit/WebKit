@@ -1,3 +1,27 @@
+2016-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [HarfBuzz] HarfBuzzShaper should not assume numGlyphs is greater than 0
+        https://bugs.webkit.org/show_bug.cgi?id=164500
+
+        Reviewed by Myles C. Maxfield.
+
+        Test: fast/text/international/harfbuzz-runs-with-no-glyph.html
+
+        HarfBuzzShaper assumes numGlyphs of HarfBuzzRun is greater than
+        zero. But this is not necessarily true. If a font does not have a
+        glyph of SPACE (U+0020), HarfBuzz removes ignorable glyphs. In
+        this case, HarfBuzzRun can have no glyphs.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::applyShapeResult): Resize
+        m_offsets to one if m_numGlyphs is zero.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::glyphs): Use Vector::data()
+        instread of operator[0].
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::advances): Ditto.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::offsets): Ditto.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::glyphToCharacterIndexes): Ditto.
+
 2016-11-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (204441): newsplex.com map does not load
