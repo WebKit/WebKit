@@ -28,7 +28,7 @@
 namespace WTF {
 
 #if !defined(NDEBUG)
-void fastSetMaxSingleAllocationSize(size_t);
+WTF_EXPORT_PRIVATE void fastSetMaxSingleAllocationSize(size_t);
 #endif
 
 class TryMallocReturnValue {
