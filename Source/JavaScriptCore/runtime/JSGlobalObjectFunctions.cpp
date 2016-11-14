@@ -27,6 +27,7 @@
 
 #include "CallFrame.h"
 #include "EvalExecutable.h"
+#include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -680,8 +681,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     }
 
     JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
-    VariableEnvironment emptyTDZVariables; // Indirect eval does not have access to the lexical scope.
-    EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false, DerivedContextType::None, false, EvalContextType::None, &emptyTDZVariables);
+    EvalExecutable* eval = IndirectEvalExecutable::create(exec, makeSource(s), false, DerivedContextType::None, false, EvalContextType::None);
     if (!eval)
         return JSValue::encode(jsUndefined());
 

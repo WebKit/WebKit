@@ -28,12 +28,7 @@
 
 #pragma once
 
-#include "EvalExecutable.h"
-#include "JSGlobalObject.h"
-#include "JSScope.h"
-#include "Options.h"
-#include "SourceCode.h"
-#include "SourceCodeKey.h"
+#include "DirectEvalExecutable.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -44,7 +39,6 @@ namespace JSC {
 
     class EvalCodeCache {
     public:
-        // Specialized cache key (compared with SourceCodeKey) for eval code cache.
         class CacheKey {
         public:
             CacheKey(const String& source, CallSiteIndex callSiteIndex)
@@ -90,23 +84,15 @@ namespace JSC {
             CallSiteIndex m_callSiteIndex;
         };
 
-        EvalExecutable* tryGet(const String& evalSource, CallSiteIndex callSiteIndex)
+        DirectEvalExecutable* tryGet(const String& evalSource, CallSiteIndex callSiteIndex)
         {
             return m_cacheMap.fastGet(CacheKey(evalSource, callSiteIndex)).get();
         }
         
-        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, bool inStrictContext, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext, JSScope* scope)
+        void set(ExecState* exec, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)
         {
-            VariableEnvironment variablesUnderTDZ;
-            JSScope::collectVariablesUnderTDZ(scope, variablesUnderTDZ);
-            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
-            if (!evalExecutable)
-                return nullptr;
-
             if (m_cacheMap.size() < maxCacheEntries)
-                m_cacheMap.set(CacheKey(evalSource, callSiteIndex), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
-
-            return evalExecutable;
+                m_cacheMap.set(CacheKey(evalSource, callSiteIndex), WriteBarrier<DirectEvalExecutable>(exec->vm(), owner, evalExecutable));
         }
 
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
@@ -121,7 +107,7 @@ namespace JSC {
     private:
         static const int maxCacheEntries = 64;
 
-        typedef HashMap<CacheKey, WriteBarrier<EvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
+        typedef HashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;
     };
 

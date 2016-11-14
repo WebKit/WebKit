@@ -43,6 +43,7 @@
 #include "DFGExitProfile.h"
 #include "DeferredCompilationCallback.h"
 #include "EvalCodeCache.h"
+#include "EvalExecutable.h"
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
 #include "FunctionExecutable.h"

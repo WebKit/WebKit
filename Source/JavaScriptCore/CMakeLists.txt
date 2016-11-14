@@ -683,6 +683,7 @@ set(JavaScriptCore_SOURCES
     runtime/DatePrototype.cpp
     runtime/DirectArguments.cpp
     runtime/DirectArgumentsOffset.cpp
+    runtime/DirectEvalExecutable.cpp
     runtime/DumpContext.cpp
     runtime/ECMAScriptSpecInternalFunctions.cpp
     runtime/Error.cpp
@@ -710,6 +711,7 @@ set(JavaScriptCore_SOURCES
     runtime/HashMapImpl.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp
+    runtime/IndirectEvalExecutable.cpp
     runtime/InferredType.cpp
     runtime/InferredTypeTable.cpp
     runtime/InferredValue.cpp

@@ -180,7 +180,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     ParserError error;
     VM& vm = exec.vm();
     CodeCache* codeCache = vm.codeCache();
-    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, name, source, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, error);
 
     auto& globalObject = *exec.lexicalGlobalObject();
     if (globalObject.hasDebugger())

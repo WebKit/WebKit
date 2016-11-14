@@ -29,14 +29,17 @@
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "DirectArguments.h"
+#include "DirectEvalExecutable.h"
+#include "EvalExecutable.h"
 #include "Exception.h"
 #include "Heap.h"
+#include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "JSArray.h"
 #include "JSArrayBufferView.h"
 #include "JSCell.h"
-#include "JSFunction.h"
 #include "JSEnvironmentRecord.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSModuleRecord.h"
 #include "JSObject.h"
@@ -52,12 +55,11 @@
 #include "StructureChain.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
+#include "VM.h"
 #include "VMEntryRecord.h"
 #include "ValueProfile.h"
-#include "VM.h"
 #include "Watchdog.h"
 #include <wtf/text/StringImpl.h>
-
 
 namespace JSC {
 

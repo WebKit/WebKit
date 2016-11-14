@@ -49,6 +49,7 @@
 #include "Debugger.h"
 #include "DebuggerScope.h"
 #include "DirectArguments.h"
+#include "DirectEvalExecutable.h"
 #include "ECMAScriptSpecInternalFunctions.h"
 #include "Error.h"
 #include "ErrorConstructor.h"
@@ -60,6 +61,7 @@
 #include "GeneratorPrototype.h"
 #include "GetterSetter.h"
 #include "HeapIterationScope.h"
+#include "IndirectEvalExecutable.h"
 #include "InspectorInstrumentationObject.h"
 #include "Interpreter.h"
 #include "IteratorPrototype.h"
@@ -1317,7 +1319,7 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getProgramCodeBlock(
+    UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getUnlinkedProgramCodeBlock(
         vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, 
         debuggerMode, error);
 
@@ -1332,7 +1334,32 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     return unlinkedCodeBlock;
 }
 
-UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, const VariableEnvironment* variablesUnderTDZ)
+UnlinkedEvalCodeBlock* JSGlobalObject::createLocalEvalCodeBlock(CallFrame* callFrame, DirectEvalExecutable* executable, const VariableEnvironment* variablesUnderTDZ)
+{
+    VM& vm = this->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ParserError error;
+    JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+    EvalContextType evalContextType = executable->executableInfo().evalContextType();
+
+    // We don't bother with CodeCache here because local eval uses a specialized EvalCodeCache.
+    UnlinkedEvalCodeBlock* unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(
+        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, JSParserScriptMode::Classic, debuggerMode, error, evalContextType, variablesUnderTDZ);
+
+    if (hasDebugger())
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
+
+    if (error.isValid()) {
+        throwVMError(callFrame, scope, error.toErrorObject(this, executable->source()));
+        return nullptr;
+    }
+
+    return unlinkedCodeBlock;
+}
+
+UnlinkedEvalCodeBlock* JSGlobalObject::createGlobalEvalCodeBlock(CallFrame* callFrame, IndirectEvalExecutable* executable)
 {
     VM& vm = this->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1342,8 +1369,8 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     EvalContextType evalContextType = executable->executableInfo().evalContextType();
     
-    UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm.codeCache()->getEvalCodeBlock(
-        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+    UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedGlobalEvalCodeBlock(
+        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
@@ -1363,7 +1390,7 @@ UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(Cal
 
     ParserError error;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getModuleProgramCodeBlock(
+    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedModuleProgramCodeBlock(
         vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
 
     if (hasDebugger())

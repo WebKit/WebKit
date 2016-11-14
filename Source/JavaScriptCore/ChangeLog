@@ -1,3 +1,106 @@
+2016-11-11  Geoffrey Garen  <ggaren@apple.com>
+
+        JSC should distinguish between local and global eval
+        https://bugs.webkit.org/show_bug.cgi?id=164628
+
+        Reviewed by Saam Barati.
+
+        Local use of the 'eval' keyword and invocation of the global window.eval
+        function are distinct operations in JavaScript.
+
+        This patch splits out LocalEvalExecutable vs GlobalEvalExecutable in
+        order to help distinguish these operations in code.
+
+        Our code used to do some silly things for lack of distinguishing these
+        cases. For example, it would double cache local eval in CodeCache and
+        EvalCodeCache. This made CodeCache seem more complicated than it really
+        was.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added some files.
+
+        * bytecode/CodeBlock.h:
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::set):
+        (JSC::EvalCodeCache::getSlow): Deleted. Moved code generation out of
+        the cache to avoid tight coupling. Now the cache just caches.
+
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension): Updated for interface
+        changes.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval): Moved code generation here so the cache didn't need to build
+        it in.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock): No need to check for TDZ
+        variables any more. We only cache global programs, and global variable
+        access always does TDZ checks.
+
+        (JSC::CodeCache::getUnlinkedProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalEvalCodeBlock):
+        (JSC::CodeCache::getUnlinkedModuleProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+
+        (JSC::CodeCache::CodeCache): Deleted.
+        (JSC::CodeCache::~CodeCache): Deleted.
+        (JSC::CodeCache::getGlobalCodeBlock): Deleted.
+        (JSC::CodeCache::getProgramCodeBlock): Deleted.
+        (JSC::CodeCache::getEvalCodeBlock): Deleted.
+        (JSC::CodeCache::getModuleProgramCodeBlock): Deleted.
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode): Deleted.
+
+        * runtime/CodeCache.h:
+        (JSC::CodeCache::clear):
+        (JSC::generateUnlinkedCodeBlock): Moved unlinked code block creation
+        out of the CodeCache class and into a stand-alone function because
+        we need it for local eval, which does not live in CodeCache.
+
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::create): Deleted.
+        * runtime/EvalExecutable.h:
+        (): Deleted.
+        * runtime/GlobalEvalExecutable.cpp: Added.
+        (JSC::GlobalEvalExecutable::create):
+        (JSC::GlobalEvalExecutable::GlobalEvalExecutable):
+        * runtime/GlobalEvalExecutable.h: Added.
+        * runtime/LocalEvalExecutable.cpp: Added.
+        (JSC::LocalEvalExecutable::create):
+        (JSC::LocalEvalExecutable::LocalEvalExecutable):
+        * runtime/LocalEvalExecutable.h: Added. Split out Local vs Global
+        EvalExecutable classes to distinguish these operations in code. The key
+        difference is that LocalEvalExecutable does not live in the CodeCache
+        and only lives in the EvalCodeCache.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createLocalEvalCodeBlock):
+        (JSC::JSGlobalObject::createGlobalEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        (JSC::JSScope::collectVariablesUnderTDZ): Deleted. We don't include
+        global lexical variables in our concept of TDZ scopes anymore. Global
+        variable access always does TDZ checks unconditionally. So, only closure
+        scope accesses give specific consideration to TDZ checks.
+
+        * runtime/JSScope.h:
+
 2016-11-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Handle new_async_func / new_async_func_exp in DFG / FTL

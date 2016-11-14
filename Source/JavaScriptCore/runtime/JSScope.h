@@ -51,7 +51,7 @@ public:
     static bool hasConstantScope(ResolveType);
     static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);
 
-    static void collectVariablesUnderTDZ(JSScope*, VariableEnvironment& result);
+    static void collectClosureVariablesUnderTDZ(JSScope*, VariableEnvironment& result);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

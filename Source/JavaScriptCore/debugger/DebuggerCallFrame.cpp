@@ -241,9 +241,9 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         evalContextType = EvalContextType::None;
 
     VariableEnvironment variablesUnderTDZ;
-    JSScope::collectVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
+    JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
 
-    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
+    EvalExecutable* eval = DirectEvalExecutable::create(callFrame, makeSource(script), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

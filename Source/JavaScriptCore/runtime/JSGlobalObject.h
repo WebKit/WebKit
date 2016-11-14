@@ -71,6 +71,7 @@ class GeneratorPrototype;
 class GeneratorFunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
+class IndirectEvalExecutable;
 class InputCursor;
 class JSArrayBuffer;
 class JSArrayBufferConstructor;
@@ -86,6 +87,7 @@ class JSSharedArrayBufferConstructor;
 class JSSharedArrayBufferPrototype;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
+class DirectEvalExecutable;
 class LLIntOffsetsExtractor;
 class Microtask;
 class ModuleLoaderPrototype;
@@ -827,7 +829,8 @@ public:
     WeakRandom& weakRandom() { return m_weakRandom; }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, const VariableEnvironment*);
+    UnlinkedEvalCodeBlock* createLocalEvalCodeBlock(CallFrame*, DirectEvalExecutable*, const VariableEnvironment*);
+    UnlinkedEvalCodeBlock* createGlobalEvalCodeBlock(CallFrame*, IndirectEvalExecutable*);
     UnlinkedModuleProgramCodeBlock* createModuleProgramCodeBlock(CallFrame*, ModuleProgramExecutable*);
 
     bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }

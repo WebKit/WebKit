@@ -30,8 +30,9 @@
 namespace JSC {
 
 class UnlinkedEvalCodeBlock final : public UnlinkedGlobalCodeBlock {
-private:
-    friend class CodeCache;
+public:
+    typedef UnlinkedGlobalCodeBlock Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static UnlinkedEvalCodeBlock* create(VM* vm, const ExecutableInfo& info, DebuggerMode debuggerMode)
     {
@@ -39,10 +40,6 @@ private:
         instance->finishCreation(*vm);
         return instance;
     }
-
-public:
-    typedef UnlinkedGlobalCodeBlock Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static void destroy(JSCell*);
 

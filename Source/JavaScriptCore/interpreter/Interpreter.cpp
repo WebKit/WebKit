@@ -131,7 +131,7 @@ JSValue eval(CallFrame* callFrame)
     else
         evalContextType = EvalContextType::None;
 
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(programSource, callerCallSiteIndex);
+    DirectEvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(programSource, callerCallSiteIndex);
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
@@ -148,10 +148,13 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!scope.exception());
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, callerCodeBlock->isStrictMode(), derivedContextType, evalContextType, isArrowFunctionContext, callerScopeChain);
-
+        VariableEnvironment variablesUnderTDZ;
+        JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
+        eval = DirectEvalExecutable::create(callFrame, makeSource(programSource), callerCodeBlock->isStrictMode(), derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
         if (!eval)
             return jsUndefined();
+
+        callerCodeBlock->evalCodeCache().set(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, eval);
     }
 
     JSValue thisValue = callerFrame->thisValue();
