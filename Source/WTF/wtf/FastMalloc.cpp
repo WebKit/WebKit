@@ -46,6 +46,33 @@
 
 namespace WTF {
 
+#if !defined(NDEBUG)
+namespace {
+size_t maxSingleAllocationSize = std::numeric_limits<size_t>::max();
+};
+
+void fastSetMaxSingleAllocationSize(size_t size)
+{
+    maxSingleAllocationSize = size;
+}
+
+#define ASSERT_IS_WITHIN_LIMIT(size) do { \
+        size_t size__ = (size); \
+        ASSERT_WITH_MESSAGE((size__) <= maxSingleAllocationSize, "Requested size (%zu) exceeds max single allocation size set for testing (%zu)", (size__), maxSingleAllocationSize); \
+    } while (false)
+
+#define FAIL_IF_EXCEEDS_LIMIT(size) do { \
+        if (UNLIKELY((size) > maxSingleAllocationSize)) \
+            return nullptr; \
+    } while (false)
+
+#else // !defined(NDEBUG)
+
+#define ASSERT_IS_WITHIN_LIMIT(size)
+#define FAIL_IF_EXCEEDS_LIMIT(size)
+
+#endif // !defined(NDEBUG)
+
 void* fastZeroedMalloc(size_t n) 
 {
     void* result = fastMalloc(n);
@@ -98,11 +125,16 @@ size_t fastMallocGoodSize(size_t bytes)
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
-    return _aligned_malloc(size, alignment);
+    ASSERT_IS_WITHIN_LIMIT(size);
+    void* p = _aligned_malloc(size, alignment);
+    if (UNLIKELY(!p))
+        CRASH();
+    return p;
 }
 
 void* tryFastAlignedMalloc(size_t alignment, size_t size) 
 {
+    FAIL_IF_EXCEEDS_LIMIT(size);
     return _aligned_malloc(size, alignment);
 }
 
@@ -115,13 +147,17 @@ void fastAlignedFree(void* p)
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
+    ASSERT_IS_WITHIN_LIMIT(size);
     void* p = nullptr;
     posix_memalign(&p, alignment, size);
+    if (UNLIKELY(!p))
+        CRASH();
     return p;
 }
 
 void* tryFastAlignedMalloc(size_t alignment, size_t size) 
 {
+    FAIL_IF_EXCEEDS_LIMIT(size);
     void* p = nullptr;
     posix_memalign(&p, alignment, size);
     return p;
@@ -136,11 +172,13 @@ void fastAlignedFree(void* p)
 
 TryMallocReturnValue tryFastMalloc(size_t n) 
 {
+    FAIL_IF_EXCEEDS_LIMIT(n);
     return malloc(n);
 }
 
 void* fastMalloc(size_t n) 
 {
+    ASSERT_IS_WITHIN_LIMIT(n);
     void* result = malloc(n);
     if (!result)
         CRASH();
@@ -150,11 +188,13 @@ void* fastMalloc(size_t n)
 
 TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
 {
+    FAIL_IF_EXCEEDS_LIMIT(n_elements * element_size);
     return calloc(n_elements, element_size);
 }
 
 void* fastCalloc(size_t n_elements, size_t element_size)
 {
+    ASSERT_IS_WITHIN_LIMIT(n_elements * element_size);
     void* result = calloc(n_elements, element_size);
     if (!result)
         CRASH();
@@ -169,6 +209,7 @@ void fastFree(void* p)
 
 void* fastRealloc(void* p, size_t n)
 {
+    ASSERT_IS_WITHIN_LIMIT(n);
     void* result = realloc(p, n);
     if (!result)
         CRASH();
@@ -211,11 +252,13 @@ bool isFastMallocEnabled()
 
 void* fastMalloc(size_t size)
 {
+    ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::malloc(size);
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)
 {
+    ASSERT_IS_WITHIN_LIMIT(numElements * elementSize);
     Checked<size_t> checkedSize = elementSize;
     checkedSize *= numElements;
     void* result = fastZeroedMalloc(checkedSize.unsafeGet());
@@ -226,6 +269,7 @@ void* fastCalloc(size_t numElements, size_t elementSize)
 
 void* fastRealloc(void* object, size_t size)
 {
+    ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::realloc(object, size);
 }
 
@@ -249,11 +293,13 @@ size_t fastMallocGoodSize(size_t size)
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
+    ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::memalign(alignment, size);
 }
 
 void* tryFastAlignedMalloc(size_t alignment, size_t size) 
 {
+    FAIL_IF_EXCEEDS_LIMIT(size);
     return bmalloc::api::tryMemalign(alignment, size);
 }
 
@@ -264,11 +310,13 @@ void fastAlignedFree(void* p)
 
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
+    FAIL_IF_EXCEEDS_LIMIT(size);
     return bmalloc::api::tryMalloc(size);
 }
     
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 {
+    FAIL_IF_EXCEEDS_LIMIT(numElements * elementSize);
     Checked<size_t, RecordOverflow> checkedSize = elementSize;
     checkedSize *= numElements;
     if (checkedSize.hasOverflowed())

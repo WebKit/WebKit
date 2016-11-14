@@ -1,3 +1,18 @@
+2016-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Add debugging facility to limit the max single allocation size.
+        https://bugs.webkit.org/show_bug.cgi?id=164681
+
+        Reviewed by Keith Miller.
+
+        Added JSC option to set FastMalloc's maxSingleAllocationSize for testing purposes.
+        This option is only available on Debug builds.
+
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2016-11-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Follow-up fix to r208639.

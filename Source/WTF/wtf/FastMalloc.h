@@ -27,6 +27,10 @@
 
 namespace WTF {
 
+#if !defined(NDEBUG)
+void fastSetMaxSingleAllocationSize(size_t);
+#endif
+
 class TryMallocReturnValue {
 public:
     TryMallocReturnValue(void*);
@@ -101,6 +105,10 @@ template<typename T> inline bool TryMallocReturnValue::getValue(T*& data)
 }
 
 } // namespace WTF
+
+#if !defined(NDEBUG)
+using WTF::fastSetMaxSingleAllocationSize;
+#endif
 
 using WTF::isFastMallocEnabled;
 using WTF::fastCalloc;

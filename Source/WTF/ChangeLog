@@ -1,3 +1,36 @@
+2016-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Add debugging facility to limit the max single allocation size.
+        https://bugs.webkit.org/show_bug.cgi?id=164681
+
+        Reviewed by Keith Miller.
+
+        This is useful for simulating memory allocation failures on resource constraint
+        devices for testing purposes.
+
+        This facility is only conditionally compiled in on debug builds.  It does not
+        have any burden on release builds at all.  When in use, the max single allocation
+        size limit applies to individual allocations.  For malloc (and similar), the
+        allocation will crash in FastMalloc if the requested size exceeds the set max
+        single allocation size.  For tryMalloc (and similar), the allocation returns
+        nullptr if the requested size exceeds the set max single allocation size.  The
+        max single allocation size is set to std::numeric_limit<size_t>::max() by default
+        (i.e. when not set and no limit is in effect).
+
+        Also fixed non-bmalloc versions of fastAlignedMalloc() to crash when allocation
+        fails.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastSetMaxSingleAllocationSize):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastAlignedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+        * wtf/FastMalloc.h:
+
 2016-11-13  JF Bastien  <jfbastien@apple.com>
 
         Implement WTF::Expected

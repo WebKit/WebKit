@@ -323,6 +323,7 @@ typedef const char* optionString;
     v(bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xdeadbeef") \
     v(bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever") \
     v(bool, dumpObjectStatistics, false, Normal, nullptr) \
+    v(unsigned, maxSingleAllocationSize, 0, Configurable, "debugging option to limit individual allocations to a max size (0 = limit not set, N = limit size in bytes)") \
     \
     v(gcLogLevel, logGC, GCLogging::None, Normal, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \
     v(bool, useGC, true, Normal, nullptr) \
