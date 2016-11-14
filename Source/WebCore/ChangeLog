@@ -1,3 +1,32 @@
+2016-11-14  Dean Jackson  <dino@apple.com>
+
+        Handle filter() image type in new CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=164673
+        <rdar://problems/29231376>
+
+        Reviewed by Darin Adler.
+
+        Add support for the <image> type filter() to the
+        new CSS Parser. This involved moving some functions
+        from CSSPropertyParser into CSSPropertyParserHelpers.
+
+        Covered by fast/filter-image tests.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeShadow):
+        (WebCore::parseSingleShadow): Deleted.
+        (WebCore::consumeFilterFunction): Deleted.
+        (WebCore::consumeFilter): Deleted.
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeFilterImage):
+        (WebCore::CSSPropertyParserHelpers::consumeGeneratedImage):
+        (WebCore::CSSPropertyParserHelpers::isGeneratedImage):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeFilter):
+        (WebCore::CSSPropertyParserHelpers::consumeSingleShadow):
+        * css/parser/CSSPropertyParserHelpers.h:
+
 2016-11-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support percentages in word-spacing

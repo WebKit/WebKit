@@ -31,10 +31,6 @@
       -webkit-animation: no-anim 2s linear;
     }
 
-    #string {
-      -webkit-animation: string-anim 2s linear;
-    }
-
     #multiple1 {
       -webkit-animation: multiple-anim1 2s linear;
     }
@@ -88,11 +84,6 @@
         to   { background-image: filter(url(resources/blue.svg), sepia(0)); }
     }
 
-    @-webkit-keyframes string-anim {
-        from { background-image: filter('resources/image.svg', sepia(1)); }
-        to   { background-image: filter(url(resources/image.svg), sepia(0)); }
-    }
-
     @-webkit-keyframes multiple-anim1 {
         from { background-image: filter(url(resources/image.svg), sepia(0.25) blur(3px) hue-rotate(45deg)); }
         to   { background-image: filter(url(resources/image.svg), sepia(0.75)); }
@@ -137,7 +128,6 @@
       ["grayscale-anim",  1, "grayscale", "backgroundImage", "filter(url(image.svg), grayscale(0.5))", 0.05],
       ["sepia-anim",  1, "sepia", "backgroundImage", "filter(url(image.svg), sepia(0.5))", 0.05],
       ["no-anim",  1, "no", "backgroundImage", "filter(url(blue.svg), sepia(0))", 0],
-      ["string-anim",  1, "string", "backgroundImage", "filter(url(image.svg), sepia(0.5))", 0],
       ["multiple-anim1",  1, "multiple1", "backgroundImage", "filter(url(image.svg), sepia(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
       ["multiple-anim2",  1, "multiple2", "backgroundImage", "filter(url(image.svg), contrast(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
       ["url-to-filter-anim",  1, "urlfilter", "backgroundImage", " filter(url(image.svg), sepia(0.25))", 0.05],
@@ -158,7 +148,6 @@
 <div class="box" id="grayscale"></div>
 <div class="box" id="sepia"></div>
 <div class="box" id="no"></div>
-<div class="box" id="string"></div>
 <div class="box" id="multiple1"></div>
 <div class="box" id="multiple2"></div>
 <div class="box" id="urlfilter"></div>

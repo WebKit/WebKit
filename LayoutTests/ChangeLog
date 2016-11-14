@@ -1,3 +1,17 @@
+2016-11-14  Dean Jackson  <dino@apple.com>
+
+        Handle filter() image type in new CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=164673
+        <rdar://problems/29231376>
+
+        Reviewed by Darin Adler.
+
+        Remove the test that allows a string value for the
+        image source rather than a url().
+
+        * fast/filter-image/filter-image-animation-expected.txt:
+        * fast/filter-image/filter-image-animation.html:
+
 2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: In ARIA 1.1, the implicit value for aria-level on headings is 2

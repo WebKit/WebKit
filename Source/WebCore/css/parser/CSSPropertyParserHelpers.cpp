@@ -33,6 +33,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
+#include "CSSFilterImageValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
@@ -1086,7 +1087,24 @@ static RefPtr<CSSValue> consumeWebkitNamedImage(CSSParserTokenRange& args)
         return nullptr;
     return CSSNamedImageValue::create(imageName);
 }
-    
+
+static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    auto imageValue = consumeImageOrNone(args, context);
+    if (!imageValue || !consumeCommaIncludingWhitespace(args))
+        return nullptr;
+
+    auto filterValue = consumeFilter(args, context);
+
+    if (!filterValue)
+        return nullptr;
+
+    if (!args.atEnd())
+        return nullptr;
+
+    return CSSFilterImageValue::create(imageValue.releaseNonNull(), filterValue.releaseNonNull());
+}
+
 static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSParserContext context)
 {
     CSSValueID id = range.peek().functionId();
@@ -1117,7 +1135,8 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeWebkitCanvas(args);
     else if (id == CSSValueWebkitNamedImage)
         result = consumeWebkitNamedImage(args);
-
+    else if (id == CSSValueWebkitFilter || id == CSSValueFilter)
+        result = consumeFilterImage(args, context);
     if (!result || !args.atEnd())
         return nullptr;
     range = rangeCopy;
@@ -1161,7 +1180,111 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueWebkitLinearGradient || id == CSSValueWebkitRadialGradient
         || id == CSSValueWebkitRepeatingLinearGradient || id == CSSValueWebkitRepeatingRadialGradient
         || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValueWebkitCanvas
-        || id == CSSValueCrossFade || id == CSSValueWebkitNamedImage;
+        || id == CSSValueCrossFade || id == CSSValueWebkitNamedImage || id == CSSValueWebkitFilter || id == CSSValueFilter;
+}
+
+RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    CSSValueID filterType = range.peek().functionId();
+    if (filterType < CSSValueInvert || filterType > CSSValueDropShadow)
+        return nullptr;
+    CSSParserTokenRange args = consumeFunction(range);
+    auto filterValue = CSSFunctionValue::create(filterType);
+    RefPtr<CSSValue> parsedValue;
+
+    if (filterType == CSSValueDropShadow)
+        parsedValue = consumeSingleShadow(args, context.mode, false, false);
+    else {
+        if (args.atEnd())
+            return filterValue.ptr();
+        if (filterType == CSSValueBrightness) {
+            parsedValue = consumePercent(args, ValueRangeAll);
+            if (!parsedValue)
+                parsedValue = consumeNumber(args, ValueRangeAll);
+        } else if (filterType == CSSValueHueRotate)
+            parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
+        else if (filterType == CSSValueBlur)
+            parsedValue = consumeLength(args, HTMLStandardMode, ValueRangeNonNegative);
+        else {
+            parsedValue = consumePercent(args, ValueRangeNonNegative);
+            if (!parsedValue)
+                parsedValue = consumeNumber(args, ValueRangeNonNegative);
+            if (parsedValue && filterType != CSSValueSaturate && filterType != CSSValueContrast) {
+                bool isPercentage = downcast<CSSPrimitiveValue>(*parsedValue).isPercentage();
+                double maxAllowed = isPercentage ? 100.0 : 1.0;
+                if (downcast<CSSPrimitiveValue>(*parsedValue).doubleValue() > maxAllowed)
+                    parsedValue = CSSPrimitiveValue::create(maxAllowed, isPercentage ? CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE : CSSPrimitiveValue::UnitTypes::CSS_NUMBER);
+            }
+        }
+    }
+    if (!parsedValue || !args.atEnd())
+        return nullptr;
+    filterValue->append(*parsedValue);
+    return filterValue.ptr();
+}
+
+RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    auto list = CSSValueList::createSpaceSeparated();
+    do {
+        RefPtr<CSSValue> filterValue = consumeUrl(range);
+        if (!filterValue) {
+            filterValue = consumeFilterFunction(range, context);
+            if (!filterValue)
+                return nullptr;
+        }
+        list->append(filterValue.releaseNonNull());
+    } while (!range.atEnd());
+
+    return list.ptr();
+}
+
+RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool allowInset, bool allowSpread)
+{
+    RefPtr<CSSPrimitiveValue> style;
+    RefPtr<CSSPrimitiveValue> color;
+
+    if (range.atEnd())
+        return nullptr;
+    if (range.peek().id() == CSSValueInset) {
+        if (!allowInset)
+            return nullptr;
+        style = consumeIdent(range);
+    }
+    color = consumeColor(range, cssParserMode);
+
+    auto horizontalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+    if (!horizontalOffset)
+        return nullptr;
+
+    auto verticalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+    if (!verticalOffset)
+        return nullptr;
+
+    auto blurRadius = consumeLength(range, cssParserMode, ValueRangeAll);
+    RefPtr<CSSPrimitiveValue> spreadDistance;
+    if (blurRadius) {
+        // Blur radius must be non-negative.
+        if (blurRadius->doubleValue() < 0)
+            return nullptr;
+        if (allowSpread)
+            spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
+    }
+
+    if (!range.atEnd()) {
+        if (!color)
+            color = consumeColor(range, cssParserMode);
+        if (range.peek().id() == CSSValueInset) {
+            if (!allowInset || style)
+                return nullptr;
+            style = consumeIdent(range);
+        }
+    }
+
+    return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
 }
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, ConsumeGeneratedImage generatedImage)

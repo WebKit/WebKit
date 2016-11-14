@@ -1165,6 +1165,8 @@ repeating-radial-gradient
 -webkit-repeating-radial-gradient
 -webkit-image-set
 -webkit-named-image
+filter
+-webkit-filter
 
 // deprecated gradients
 from
