@@ -1,3 +1,14 @@
+2016-11-14  Pranjal Jumde  <pjumde@apple.com>
+
+        Keychain access in WebKit should be limited to a single process. Earlier this was blocked on the networking framework requiring direct access to keychain, this will be resolved in the upcoming version of macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=163710
+        <rdar://problem/24357468>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-11-13  Darin Adler  <darin@apple.com>
 
         Remove many includes of ExceptionCode.h
