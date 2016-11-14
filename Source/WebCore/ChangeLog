@@ -1,3 +1,22 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Move updateSignalingState to PeerConnectionBackend
+        https://bugs.webkit.org/show_bug.cgi?id=164719
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        Refactoring MediaEndpointPeerConnection signaling state update to PeerConnectionBackend.
+        It is not specific to MediaEndpointPeerConnection and can be reused for other backends.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::updateSignalingState):
+        * Modules/mediastream/PeerConnectionBackend.h:
+
 2016-11-14  Dean Jackson  <dino@apple.com>
 
         Handle filter() image type in new CSS Parser

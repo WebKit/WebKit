@@ -110,6 +110,8 @@ protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&);
     void doneGatheringCandidates();
 
+    void updateSignalingState(PeerConnectionStates::SignalingState);
+
     void createOfferSucceeded(String&&);
     void createOfferFailed(Exception&&);
 

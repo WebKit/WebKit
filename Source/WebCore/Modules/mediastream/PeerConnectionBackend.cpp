@@ -34,6 +34,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "EventNames.h"
 #include "JSRTCSessionDescription.h"
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateEvent.h"
@@ -274,6 +275,16 @@ void PeerConnectionBackend::doneGatheringCandidates()
 
     m_peerConnection.fireEvent(RTCIceCandidateEvent::create(false, false, nullptr));
     m_peerConnection.updateIceGatheringState(PeerConnectionStates::IceGatheringState::Complete);
+}
+
+void PeerConnectionBackend::updateSignalingState(PeerConnectionStates::SignalingState newSignalingState)
+{
+    ASSERT(isMainThread());
+
+    if (newSignalingState != m_peerConnection.internalSignalingState()) {
+        m_peerConnection.setSignalingState(newSignalingState);
+        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
+    }
 }
 
 void PeerConnectionBackend::stop()

@@ -409,10 +409,7 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
         break;
     }
 
-    if (newSignalingState != m_peerConnection.internalSignalingState()) {
-        m_peerConnection.setSignalingState(newSignalingState);
-        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
-    }
+    updateSignalingState(newSignalingState);
 
     if (m_peerConnection.internalIceGatheringState() == IceGatheringState::New && mediaDescriptions.size())
         m_peerConnection.updateIceGatheringState(IceGatheringState::Gathering);
@@ -578,11 +575,7 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
         break;
     }
 
-    if (newSignalingState != m_peerConnection.internalSignalingState()) {
-        m_peerConnection.setSignalingState(newSignalingState);
-        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
-    }
-
+    updateSignalingState(newSignalingState);
     setRemoteDescriptionSucceeded();
 }
 
