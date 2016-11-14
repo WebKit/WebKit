@@ -1,3 +1,29 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Support WPT templated tests
+        https://bugs.webkit.org/show_bug.cgi?id=164707
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/IndexedDB/interfaces.worker-expected.txt: Added.
+        * web-platform-tests/IndexedDB/interfaces.worker.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.any-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.any.html: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-open.worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-open.worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-send.worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-send.worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.worker.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html: Added.
+        * web-platform-tests/url/historical.worker-expected.txt: Added.
+        * web-platform-tests/url/historical.worker.html: Added.
+
 2016-11-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.currentScript should be null when running a script inside a shadow tree

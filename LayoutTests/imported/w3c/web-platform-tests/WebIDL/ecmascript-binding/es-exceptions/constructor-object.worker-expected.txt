@@ -1,0 +1,10 @@
+
+FAIL existence and properties of DOMException assert_equals: prototype of self's property "DOMException" is not Error expected function "function Error() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
+PASS existence and properties of DOMException.prototype 
+PASS existence of name and code properties on DOMException.prototype 
+PASS existence and properties of exception interface prototype object's "constructor" property 
+

@@ -360,6 +360,16 @@ class TestImporter(object):
             return True
         return self.options.convert_test_harness_links
 
+    def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
+        content = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
+        if (orig_filepath.endswith('.worker.js')):
+            self.filesystem.write_text_file(new_filepath.replace('.worker.js', '.worker.html'), content)
+            return
+        if (orig_filepath.endswith('.any.js')):
+            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.any.html'), content)
+            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.worker.html'), content)
+            return
+
     def import_tests(self):
         total_imported_tests = 0
         total_imported_reftests = 0
@@ -453,6 +463,8 @@ class TestImporter(object):
                     self.write_init_py(new_filepath)
                 else:
                     self.filesystem.copyfile(orig_filepath, new_filepath)
+
+                self.write_html_files_for_templated_js_tests(orig_filepath, new_filepath)
 
                 copied_files.append(new_filepath.replace(self._webkit_root, ''))
 

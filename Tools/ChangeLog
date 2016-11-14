@@ -1,3 +1,14 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Support WPT templated tests
+        https://bugs.webkit.org/show_bug.cgi?id=164707
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.write_html_files_for_templated_js_tests): Generating empty HTML files for templated JS tests.
+        (TestImporter.import_tests):
+
 2016-11-13  JF Bastien  <jfbastien@apple.com>
 
         Implement WTF::Expected
