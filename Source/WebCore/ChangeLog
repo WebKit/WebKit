@@ -1,3 +1,20 @@
+2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: In ARIA 1.1, the implicit value for aria-level on headings is 2
+        https://bugs.webkit.org/show_bug.cgi?id=164714
+
+        Reviewed by Chris Fleizach.
+
+        Return 2 rather than 0 if there is not a valid author-provided value
+        for aria-level on an ARIA heading.
+
+        No new tests required as we have sufficient coverage. Added one new
+        test case to heading-level.html and updated expectations for it and
+        for xml-roles-exposed.html.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::headingLevel):
+
 2016-11-14  Youenn Fablet  <youenn@apple.com>
 
         Refresh RTCDataChannel abstract infrastructure
