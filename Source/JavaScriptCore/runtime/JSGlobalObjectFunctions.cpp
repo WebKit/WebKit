@@ -57,13 +57,17 @@ namespace JSC {
 static const char* const ObjectProtoCalledOnNullOrUndefinedError = "Object.prototype.__proto__ called on null or undefined";
 
 template<typename CallbackWhenNoException>
-static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(JSString::SafeView&)>::type toSafeView(ExecState* exec, JSValue value, CallbackWhenNoException callback)
+static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)>::type toStringView(ExecState* exec, JSValue value, CallbackWhenNoException callback)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSString* string = value.toStringOrNull(exec);
     if (UNLIKELY(!string))
         return { };
     JSString::SafeView view = string->view(exec);
-    return callback(view);
+    StringView stringView = view.get();
+    RETURN_IF_EXCEPTION(scope, { });
+    return callback(stringView);
 }
 
 template<unsigned charactersCount>
@@ -158,7 +162,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
 
 static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape)
 {
-    return toSafeView(exec, exec->argument(0), [&] (JSString::SafeView& view) {
+    return toStringView(exec, exec->argument(0), [&] (StringView view) {
         if (view.is8Bit())
             return encode(exec, doNotEscape, view.characters8(), view.length());
         return encode(exec, doNotEscape, view.characters16(), view.length());
@@ -236,7 +240,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
 
 static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
 {
-    return toSafeView(exec, exec->argument(0), [&] (JSString::SafeView& view) {
+    return toStringView(exec, exec->argument(0), [&] (StringView view) {
         if (view.is8Bit())
             return decode(exec, view.characters8(), view.length(), doNotUnescape, strict);
         return decode(exec, view.characters16(), view.length(), doNotUnescape, strict);
@@ -707,8 +711,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     }
 
     // If ToString throws, we shouldn't call ToInt32.
-    return toSafeView(exec, value, [&] (JSString::SafeView& view) {
-        return JSValue::encode(jsNumber(parseInt(view.get(), radixValue.toInt32(exec))));
+    return toStringView(exec, value, [&] (StringView view) {
+        return JSValue::encode(jsNumber(parseInt(view, radixValue.toInt32(exec))));
     });
 }
 
@@ -765,7 +769,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         "*+-./@_"
     );
 
-    return JSValue::encode(toSafeView(exec, exec->argument(0), [&] (JSString::SafeView& view) {
+    return JSValue::encode(toStringView(exec, exec->argument(0), [&] (StringView view) {
         JSStringBuilder builder;
         if (view.is8Bit()) {
             const LChar* c = view.characters8();
@@ -804,7 +808,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
-    return JSValue::encode(toSafeView(exec, exec->argument(0), [&] (JSString::SafeView& view) {
+    return JSValue::encode(toStringView(exec, exec->argument(0), [&] (StringView view) {
         StringBuilder builder;
         int k = 0;
         int len = view.length();

@@ -1,5 +1,43 @@
 2016-11-14  Mark Lam  <mark.lam@apple.com>
 
+        Some of JSStringView::SafeView methods are not idiomatically safe for JSString to StringView conversions.
+        https://bugs.webkit.org/show_bug.cgi?id=164701
+        <rdar://problem/27462104>
+
+        Reviewed by Darin Adler.
+
+        The characters8(), characters16(), and operator[] in JSString::SafeView converts
+        the underlying JSString to a StringView via get(), and then uses the StringView
+        without first checking if an exception was thrown during the conversion.  This is
+        unsafe because the conversion may have failed.
+        
+        Instead, we should remove these 3 convenience methods, and make the caller
+        explicitly call get() and do the appropriate exception checks before using the
+        StringView.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::toStringView):
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::toSafeView): Deleted.
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSString.h:
+        (JSC::JSString::SafeView::length):
+        (JSC::JSString::SafeView::characters8): Deleted.
+        (JSC::JSString::SafeView::characters16): Deleted.
+        (JSC::JSString::SafeView::operator[]): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncNormalize):
+
+2016-11-14  Mark Lam  <mark.lam@apple.com>
+
         RegExpObject::exec/match should handle errors gracefully.
         https://bugs.webkit.org/show_bug.cgi?id=155145
         <rdar://problem/27435934>

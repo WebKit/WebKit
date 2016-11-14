@@ -482,9 +482,6 @@ public:
 
     bool is8Bit() const { return m_string->is8Bit(); }
     unsigned length() const { return m_string->length(); }
-    const LChar* characters8() const { return get().characters8(); }
-    const UChar* characters16() const { return get().characters16(); }
-    UChar operator[](unsigned index) const { return get()[index]; }
 
 private:
     ExecState& m_state;

@@ -763,16 +763,18 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
         return throwVMError(exec, scope, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
     JSString::SafeView source = exec->uncheckedArgument(0).toString(exec)->view(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    StringView view = source.get();
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue unfiltered;
     LocalScope localScope(vm);
-    if (source.is8Bit()) {
-        LiteralParser<LChar> jsonParser(exec, source.characters8(), source.length(), StrictJSON);
+    if (view.is8Bit()) {
+        LiteralParser<LChar> jsonParser(exec, view.characters8(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         if (!unfiltered)
             return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
     } else {
-        LiteralParser<UChar> jsonParser(exec, source.characters16(), source.length(), StrictJSON);
+        LiteralParser<UChar> jsonParser(exec, view.characters16(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         if (!unfiltered)
             return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
