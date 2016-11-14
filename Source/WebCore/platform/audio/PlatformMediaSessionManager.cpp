@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PlatformMediaSessionManager.h"
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 #include "AudioSession.h"
 #include "Document.h"
@@ -37,12 +36,14 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC)
-
 void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 {
 }
+#endif
 
-#if !PLATFORM(IOS)
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
+#if !PLATFORM(COCOA)
 static PlatformMediaSessionManager* platformMediaSessionManager = nullptr;
 
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
@@ -56,9 +57,7 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 {
     return platformMediaSessionManager;
 }
-#endif // !PLATFORM(IOS)
-
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(COCOA)
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
     : m_systemSleepListener(SystemSleepListener::create(*this))
@@ -441,6 +440,6 @@ bool PlatformMediaSessionManager::anyOfSessions(std::function<bool(PlatformMedia
     return found;
 }
 
-}
+#endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
-#endif
+} // namespace WebCore

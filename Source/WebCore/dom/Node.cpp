@@ -41,6 +41,7 @@
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
+#include "ExceptionCode.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"

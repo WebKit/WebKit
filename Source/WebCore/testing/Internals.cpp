@@ -2527,7 +2527,7 @@ ExceptionOr<String> Internals::captionsStyleSheetOverride()
 #if ENABLE(VIDEO_TRACK)
     return document->page()->group().captionPreferences().captionsStyleSheetOverride();
 #else
-    return emptyString();
+    return String { emptyString() };
 #endif
 }
 

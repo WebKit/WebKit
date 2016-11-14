@@ -1,5 +1,17 @@
 2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix various --minimal build issue
+        https://bugs.webkit.org/show_bug.cgi?id=164479
+
+        Reviewed by Darin Adler.
+
+        * dom/Node.cpp:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::captionsStyleSheetOverride):
+
+2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix the !ENABLE(VIDEO_TRACK) build
         https://bugs.webkit.org/show_bug.cgi?id=164476
 
