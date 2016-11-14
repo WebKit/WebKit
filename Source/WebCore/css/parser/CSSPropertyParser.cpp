@@ -2683,6 +2683,7 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundSize(CSSPropertyID property, C
     return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
@@ -2699,6 +2700,7 @@ static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
         parsedValues->append(denseAlgorithm.releaseNonNull());
     return parsedValues;
 }
+#endif
 
 static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
@@ -3559,9 +3561,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
         return consumeAnimationPropertyList(property, m_range, m_context);
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
         return consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
+#endif
     case CSSPropertyShapeMargin:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
     case CSSPropertyShapeImageThreshold:
@@ -4709,6 +4713,7 @@ static bool isCustomIdentValue(const CSSValue& value)
     return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isString();
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
@@ -4967,6 +4972,7 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     
     return true;
 }
+#endif
 
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
@@ -5119,6 +5125,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeTransformOrigin(important);
     case CSSPropertyPerspectiveOrigin:
         return consumePerspectiveOrigin(important);
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridGap: {
         RefPtr<CSSValue> rowGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
         RefPtr<CSSValue> columnGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
@@ -5139,6 +5146,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeGridTemplateShorthand(CSSPropertyGridTemplate, important);
     case CSSPropertyGrid:
         return consumeGridShorthand(important);
+#endif
     case CSSPropertyWebkitMarquee:
         return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:
