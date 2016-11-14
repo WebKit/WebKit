@@ -22,12 +22,12 @@
 #include "SVGPolyElement.h"
 
 #include "Document.h"
-#include "FloatPoint.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGPoint.h"
 
 namespace WebCore {
 

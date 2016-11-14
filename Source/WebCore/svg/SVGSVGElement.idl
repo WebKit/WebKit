@@ -31,7 +31,7 @@ interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength height;
     attribute DOMString contentScriptType;
     attribute DOMString contentStyleType;
-    readonly attribute SVGRect viewport;
+    [NewObject] readonly attribute SVGRect viewport;
     readonly attribute unrestricted float pixelUnitToMillimeterX;
     readonly attribute unrestricted float pixelUnitToMillimeterY;
     readonly attribute unrestricted float screenPixelToMillimeterX;
@@ -39,7 +39,7 @@ interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute boolean useCurrentView;
     readonly attribute SVGViewSpec currentView;
     attribute unrestricted float currentScale;
-    readonly attribute SVGPoint currentTranslate;
+    [NewObject] readonly attribute SVGPoint currentTranslate;
 
     unsigned long suspendRedraw(optional unsigned long maxWaitMilliseconds = 0);
     void unsuspendRedraw(optional unsigned long suspendHandleId = 0);
@@ -62,14 +62,14 @@ interface SVGSVGElement : SVGGraphicsElement {
 
     void deselectAll();
 
-    SVGNumber createSVGNumber();
-    SVGLength createSVGLength();
+    [NewObject] SVGNumber createSVGNumber();
+    [NewObject] SVGLength createSVGLength();
     [NewObject] SVGAngle createSVGAngle();
-    SVGPoint createSVGPoint();
-    SVGMatrix createSVGMatrix();
-    SVGRect createSVGRect();
-    SVGTransform createSVGTransform();
-    SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
+    [NewObject] SVGPoint createSVGPoint();
+    [NewObject] SVGMatrix createSVGMatrix();
+    [NewObject] SVGRect createSVGRect();
+    [NewObject] SVGTransform createSVGTransform();
+    [NewObject] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
     Element getElementById([RequiresExistingAtomicString] DOMString elementId);
 };

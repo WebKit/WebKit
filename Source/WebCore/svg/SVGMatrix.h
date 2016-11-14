@@ -1,124 +1,297 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "ExceptionOr.h"
-#include "SVGException.h"
+#include "ExceptionCode.h"
+#include "SVGMatrixValue.h"
+#include "SVGPropertyTearOff.h"
 
 namespace WebCore {
 
-class SVGMatrix final : public AffineTransform {
+class SVGMatrix : public SVGPropertyTearOff<SVGMatrixValue> {
 public:
-    SVGMatrix() { }
-    SVGMatrix(const AffineTransform& other)
-        : AffineTransform(other)
+    static Ref<SVGMatrix> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
     {
+        ASSERT(animatedProperty);
+        return adoptRef(*new SVGMatrix(animatedProperty, role, value));
     }
 
-    SVGMatrix(double a, double b, double c, double d, double e, double f)
-        : AffineTransform(a, b, c, d, e, f)
+    static Ref<SVGMatrix> create(const SVGMatrixValue& initialValue = { })
     {
+        return adoptRef(*new SVGMatrix(initialValue));
     }
 
-    SVGMatrix translate(double tx, double ty)
+    static Ref<SVGMatrix> create(const SVGMatrixValue* initialValue)
     {
-        AffineTransform copy { *this };
-        copy.translate(tx, ty);
-        return SVGMatrix { copy };
+        return adoptRef(*new SVGMatrix(initialValue));
     }
 
-    SVGMatrix scale(double s)
+    template<typename T> static ExceptionOr<Ref<SVGMatrix>> create(ExceptionOr<T>&& initialValue)
     {
-        AffineTransform copy { *this };
-        copy.scale(s, s);
-        return SVGMatrix { copy };
+        if (initialValue.hasException())
+            return initialValue.releaseException();
+        return create(initialValue.releaseReturnValue());
     }
 
-    SVGMatrix scaleNonUniform(double sx, double sy)
+    double a()
     {
-        AffineTransform copy { *this };
-        copy.scale(sx, sy);
-        return SVGMatrix { copy };
+        return propertyReference().a();
     }
 
-    SVGMatrix rotate(double d)
+    ExceptionOr<void> setA(double value)
     {
-        AffineTransform copy { *this };
-        copy.rotate(d);
-        return SVGMatrix { copy };
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setA(value);
+        commitChange();
+
+        return { };
     }
 
-    SVGMatrix flipX()
+    double b()
     {
-        AffineTransform copy { *this };
-        copy.flipX();
-        return SVGMatrix { copy };
+        return propertyReference().b();
     }
 
-    SVGMatrix flipY()
+    ExceptionOr<void> setB(double value)
     {
-        AffineTransform copy { *this };
-        copy.flipY();
-        return SVGMatrix { copy };
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setB(value);
+        commitChange();
+
+        return { };
     }
 
-    SVGMatrix skewX(double angle)
+    double c()
     {
-        AffineTransform copy { *this };
-        copy.skewX(angle);
-        return SVGMatrix { copy };
+        return propertyReference().c();
     }
 
-    SVGMatrix skewY(double angle)
+    ExceptionOr<void> setC(double value)
     {
-        AffineTransform copy { *this };
-        copy.skewY(angle);
-        return SVGMatrix { copy };
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setC(value);
+        commitChange();
+
+        return { };
     }
 
-    SVGMatrix multiply(const SVGMatrix& other)
+    double d()
     {
-        AffineTransform copy { *this };
-        copy *= static_cast<const AffineTransform&>(other);
-        return SVGMatrix { copy };
+        return propertyReference().d();
     }
 
-    ExceptionOr<SVGMatrix> inverse() const
+    ExceptionOr<void> setD(double value)
     {
-        if (auto inverse = AffineTransform::inverse())
-            return SVGMatrix { inverse.value() };
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setD(value);
+        commitChange();
+
+        return { };
+    }
+
+    double e()
+    {
+        return propertyReference().e();
+    }
+
+    ExceptionOr<void> setE(double value)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setE(value);
+        commitChange();
+
+        return { };
+    }
+
+    double f()
+    {
+        return propertyReference().f();
+    }
+
+    ExceptionOr<void> setF(double value)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setF(value);
+        commitChange();
+
+        return { };
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> multiply(SVGMatrix& secondMatrix)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().multiply(secondMatrix.propertyReference());
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> inverse()
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().inverse();
+        if (result.hasException())
+            return result.releaseException();
         
-        return Exception { SVGException::SVG_MATRIX_NOT_INVERTABLE };
+        commitChange();
+        return SVGMatrix::create(result.releaseReturnValue());
     }
 
-    ExceptionOr<SVGMatrix> rotateFromVector(double x, double y)
+    ExceptionOr<Ref<SVGMatrix>> translate(float x, float y)
     {
-        if (!x || !y)
-            return Exception { SVGException::SVG_INVALID_VALUE_ERR };
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
-        AffineTransform copy { *this };
-        copy.rotateFromVector(x, y);
-        return SVGMatrix { copy };
+        auto result = propertyReference().translate(x, y);        
+        commitChange();
+
+        return SVGMatrix::create(result);
     }
 
+    ExceptionOr<Ref<SVGMatrix>> scale(float scaleFactor)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().scale(scaleFactor);        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> scaleNonUniform(float scaleFactorX, float scaleFactorY)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().scaleNonUniform(scaleFactorX, scaleFactorY);        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> rotate(float angle)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().rotate(angle);        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> rotateFromVector(float x, float y)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().rotateFromVector(x, y);        
+        if (result.hasException())
+            return result.releaseException();
+        
+        commitChange();
+        return SVGMatrix::create(result.releaseReturnValue());
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> flipX()
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().flipX();        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> flipY()
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().flipY();        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> skewX(float angle)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().skewX(angle);        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+    ExceptionOr<Ref<SVGMatrix>> skewY(float angle)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        auto result = propertyReference().skewY(angle);        
+        commitChange();
+
+        return SVGMatrix::create(result);
+    }
+
+protected:
+    SVGMatrix(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
+        : SVGPropertyTearOff<SVGMatrixValue>(animatedProperty, role, value)
+    {
+    }
+
+    explicit SVGMatrix(const SVGMatrixValue& initialValue)
+        : SVGPropertyTearOff<SVGMatrixValue>(initialValue)
+    {
+    }
+
+    explicit SVGMatrix(const SVGMatrixValue* initialValue)
+        : SVGPropertyTearOff<SVGMatrixValue>(initialValue)
+    {
+    }
 };
 
 } // namespace WebCore

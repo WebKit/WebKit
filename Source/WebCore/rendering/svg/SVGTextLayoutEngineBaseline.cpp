@@ -36,7 +36,7 @@ SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const FontCascade& font
 float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& style, SVGElement* context) const
 {
     if (style.baselineShift() == BS_LENGTH) {
-        SVGLength baselineShiftValueLength = style.baselineShiftValue();
+        auto baselineShiftValueLength = style.baselineShiftValue();
         if (baselineShiftValueLength.unitType() == LengthTypePercentage)
             return baselineShiftValueLength.valueAsPercentage() * m_font.pixelSize();
 

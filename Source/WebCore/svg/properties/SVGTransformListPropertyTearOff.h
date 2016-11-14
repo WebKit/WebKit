@@ -35,15 +35,13 @@ public:
         return adoptRef(*new SVGTransformListPropertyTearOff(animatedProperty, role, values, wrappers));
     }
 
-    ExceptionOr<Ref<SVGPropertyTearOff<SVGTransform>>> createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix)
+    ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(SVGMatrix& matrix)
     {
         ASSERT(m_values);
-        if (!matrix)
-            return Exception { TYPE_MISMATCH_ERR };
-        return SVGPropertyTearOff<SVGTransform>::create(m_values->createSVGTransformFromMatrix(matrix->propertyReference()));
+        return m_values->createSVGTransformFromMatrix(matrix);
     }
 
-    ExceptionOr<RefPtr<SVGPropertyTearOff<SVGTransform>>> consolidate()
+    ExceptionOr<RefPtr<SVGTransform>> consolidate()
     {
         ASSERT(m_values);
         ASSERT(m_wrappers);
@@ -51,8 +49,7 @@ public:
         auto result = canAlterList();
         if (result.hasException())
             return result.releaseException();
-        if (!result.releaseReturnValue())
-            return nullptr;
+        ASSERT(result.releaseReturnValue());
 
         ASSERT(m_values->size() == m_wrappers->size());
 
@@ -61,8 +58,9 @@ public:
             return nullptr;
 
         detachListWrappers(0);
-        RefPtr<SVGPropertyTearOff<SVGTransform>> wrapper = SVGPropertyTearOff<SVGTransform>::create(m_values->consolidate());
-        m_wrappers->append(wrapper);
+        
+        RefPtr<SVGTransform> wrapper = m_values->consolidate();
+        m_wrappers->append(wrapper.get());
 
         ASSERT(m_values->size() == m_wrappers->size());
         return WTFMove(wrapper);

@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class SVGElement;
-class SVGLength;
+class SVGLengthValue;
 
 struct Length;
 
@@ -60,9 +60,9 @@ public:
         return SVGLengthContext::resolveRectangle(context, type, viewport, context->x(), context->y(), context->width(), context->height());
     }
 
-    static FloatRect resolveRectangle(const SVGElement*, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLength& x, const SVGLength& y, const SVGLength& width, const SVGLength& height);
-    static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLength& x, const SVGLength& y);
-    static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLength&);
+    static FloatRect resolveRectangle(const SVGElement*, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height);
+    static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue& x, const SVGLengthValue& y);
+    static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
     float valueForLength(const Length&, SVGLengthMode = LengthModeOther);
     ExceptionOr<float> convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit) const;

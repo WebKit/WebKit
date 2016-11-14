@@ -82,32 +82,32 @@ public:
         return Base::clearValuesAndWrappers();
     }
 
-    ExceptionOr<PtrListItemTearOff> initialize(PtrListItemTearOff newItem)
+    ExceptionOr<Ref<ListItemTearOff>> initialize(ListItemTearOff& newItem)
     {
         return Base::initializeValuesAndWrappers(newItem);
     }
 
-    ExceptionOr<PtrListItemTearOff> getItem(unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> getItem(unsigned index)
     {
         return Base::getItemValuesAndWrappers(m_animatedProperty.get(), index);
     }
 
-    ExceptionOr<PtrListItemTearOff> insertItemBefore(PtrListItemTearOff newItem, unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> insertItemBefore(ListItemTearOff& newItem, unsigned index)
     {
         return Base::insertItemBeforeValuesAndWrappers(newItem, index);
     }
 
-    ExceptionOr<PtrListItemTearOff> replaceItem(PtrListItemTearOff newItem, unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> replaceItem(ListItemTearOff& newItem, unsigned index)
     {
         return Base::replaceItemValuesAndWrappers(newItem, index);
     }
 
-    ExceptionOr<PtrListItemTearOff> removeItem(unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> removeItem(unsigned index)
     {
         return Base::removeItemValuesAndWrappers(m_animatedProperty.get(), index);
     }
 
-    ExceptionOr<PtrListItemTearOff> appendItem(PtrListItemTearOff newItem)
+    ExceptionOr<Ref<ListItemTearOff>> appendItem(ListItemTearOff& newItem)
     {
         return Base::appendItemValuesAndWrappers(newItem);
     }
@@ -159,7 +159,7 @@ protected:
         return true;
     }
 
-    bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify) override
+    bool processIncomingListItemWrapper(Ref<ListItemTearOff>& newItem, unsigned* indexToModify) override
     {
         SVGAnimatedProperty* animatedPropertyOfItem = newItem->animatedProperty();
 
@@ -184,7 +184,7 @@ protected:
         // 'newItem' is already living in another list. If it's not our list, synchronize the other lists wrappers after the removal.
         bool livesInOtherList = animatedPropertyOfItem != m_animatedProperty;
         AnimatedListPropertyTearOff* propertyTearOff = static_cast<AnimatedListPropertyTearOff*>(animatedPropertyOfItem);
-        int indexToRemove = propertyTearOff->findItem(newItem.get());
+        int indexToRemove = propertyTearOff->findItem(newItem.ptr());
         ASSERT(indexToRemove != -1);
 
         // Do not remove newItem if already in this list at the target index.

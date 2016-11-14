@@ -30,6 +30,8 @@
 #include "RenderSVGText.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
+#include "SVGPoint.h"
+#include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
@@ -77,7 +79,7 @@ void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
     SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
     if (!ownerType.m_textLength.shouldSynchronize)
         return;
-    AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType.m_specifiedTextLength));
+    AtomicString value(SVGPropertyTraits<SVGLengthValue>::toString(ownerType.m_specifiedTextLength));
     ownerType.m_textLength.synchronize(&ownerType, textLengthPropertyInfo()->attributeName, value);
 }
 
@@ -85,13 +87,13 @@ Ref<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(
 {
     ASSERT(contextElement);
     SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength>
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLengthValue>
         (&ownerType, textLengthPropertyInfo(), ownerType.m_textLength.value);
 }
 
 Ref<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
 {
-    static NeverDestroyed<SVGLength> defaultTextLength(LengthModeOther);
+    static NeverDestroyed<SVGLengthValue> defaultTextLength(LengthModeOther);
     if (m_specifiedTextLength == defaultTextLength)
         m_textLength.value.newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength());
 
@@ -121,28 +123,28 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
     return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
 }
 
-ExceptionOr<SVGPoint> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
+ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
         return Exception { INDEX_SIZE_ERR };
 
-    return SVGTextQuery(renderer()).startPositionOfCharacter(charnum);
+    return SVGPoint::create(SVGTextQuery(renderer()).startPositionOfCharacter(charnum));
 }
 
-ExceptionOr<SVGPoint> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
+ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
         return Exception { INDEX_SIZE_ERR };
 
-    return SVGTextQuery(renderer()).endPositionOfCharacter(charnum);
+    return SVGPoint::create(SVGTextQuery(renderer()).endPositionOfCharacter(charnum));
 }
 
-ExceptionOr<FloatRect> SVGTextContentElement::getExtentOfChar(unsigned charnum)
+ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
         return Exception { INDEX_SIZE_ERR };
 
-    return SVGTextQuery(renderer()).extentOfCharacter(charnum);
+    return SVGRect::create(SVGTextQuery(renderer()).extentOfCharacter(charnum));
 }
 
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
@@ -153,10 +155,10 @@ ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
     return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
 }
 
-int SVGTextContentElement::getCharNumAtPosition(const SVGPoint& point)
+int SVGTextContentElement::getCharNumAtPosition(SVGPoint& point)
 {
     document().updateLayoutIgnorePendingStylesheets();
-    return SVGTextQuery(renderer()).characterNumberAtPosition(point);
+    return SVGTextQuery(renderer()).characterNumberAtPosition(point.propertyReference());
 }
 
 ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars)
@@ -227,7 +229,7 @@ void SVGTextContentElement::parseAttribute(const QualifiedName& name, const Atom
         if (propertyValue > 0)
             setLengthAdjustBaseValue(propertyValue);
     } else if (name == SVGNames::textLengthAttr)
-        m_textLength.value = SVGLength::construct(LengthModeOther, value, parseError, ForbidNegativeLengths);
+        m_textLength.value = SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths);
 
     reportAttributeParsingError(parseError, name, value);
 

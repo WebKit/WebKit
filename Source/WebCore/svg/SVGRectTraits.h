@@ -23,16 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGTransform.h"
+#pragma once
 
-#include "SVGMatrixTearOff.h"
+#include "FloatRect.h"
+#include "SVGPropertyTraits.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-Ref<SVGMatrix> SVGTransform::matrix()
-{
-    return SVGMatrixTearOff::create(*this, propertyReference().svgMatrix());
-}
+template<>
+struct SVGPropertyTraits<FloatRect> {
+    static FloatRect initialValue() { return { }; }
+    static String toString(const FloatRect& type)
+    {
+        StringBuilder builder;
+        builder.appendNumber(type.x());
+        builder.append(' ');
+        builder.appendNumber(type.y());
+        builder.append(' ');
+        builder.appendNumber(type.width());
+        builder.append(' ');
+        builder.appendNumber(type.height());
+        return builder.toString();
+    }
+};
 
 } // namespace WebCore

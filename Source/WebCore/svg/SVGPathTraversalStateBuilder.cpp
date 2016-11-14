@@ -66,7 +66,7 @@ float SVGPathTraversalStateBuilder::totalLength() const
     return m_traversalState.totalLength();
 }
 
-SVGPoint SVGPathTraversalStateBuilder::currentPoint() const
+FloatPoint SVGPathTraversalStateBuilder::currentPoint() const
 {
     return m_traversalState.current();
 }

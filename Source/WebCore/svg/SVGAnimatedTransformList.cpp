@@ -33,7 +33,7 @@ namespace WebCore {
 
 SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
     : SVGAnimatedTypeAnimator(AnimatedTransformList, animationElement, contextElement)
-    , m_transformTypeString(SVGTransform::transformTypePrefixForParsing(downcast<SVGAnimateTransformElement>(animationElement)->transformType()))
+    , m_transformTypeString(SVGTransformValue::transformTypePrefixForParsing(downcast<SVGAnimateTransformElement>(animationElement)->transformType()))
 {
     // Only <animateTransform> uses this animator, as <animate> doesn't allow to animate transform lists directly.
     ASSERT(animationElement->hasTagName(SVGNames::animateTransformTag));
@@ -77,15 +77,15 @@ void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, S
     ASSERT(from->type() == AnimatedTransformList);
     ASSERT(from->type() == to->type());
 
-    const SVGTransformList& fromTransformList = from->transformList();
-    SVGTransformList& toTransformList = to->transformList();
-    unsigned fromTransformListSize = fromTransformList.size();
+    const auto& fromTransformList = from->transformList();
+    auto& toTransformList = to->transformList();
+    auto fromTransformListSize = fromTransformList.size();
     if (!fromTransformListSize || fromTransformListSize != toTransformList.size())
         return;
 
     ASSERT(fromTransformListSize == 1);
-    const SVGTransform& fromTransform = fromTransformList[0];
-    SVGTransform& toTransform = toTransformList[0];
+    const auto& fromTransform = fromTransformList[0];
+    auto& toTransform = toTransformList[0];
 
     ASSERT(fromTransform.type() == toTransform.type());
     toTransform = SVGTransformDistance::addSVGTransforms(fromTransform, toTransform);
@@ -98,10 +98,10 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     // Spec: To animations provide specific functionality to get a smooth change from the underlying value to the
     // ‘to’ attribute value, which conflicts mathematically with the requirement for additive transform animations
     // to be post-multiplied. As a consequence, in SVG 1.1 the behavior of to animations for ‘animateTransform’ is undefined.
-    const SVGTransformList& fromTransformList = from->transformList();
-    const SVGTransformList& toTransformList = to->transformList();
-    const SVGTransformList& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
-    SVGTransformList& animatedTransformList = animated->transformList();
+    const auto& fromTransformList = from->transformList();
+    const auto& toTransformList = to->transformList();
+    const auto& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
+    auto& animatedTransformList = animated->transformList();
 
     // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
     if (!m_animationElement->adjustFromToListValues<SVGTransformList>(fromTransformList, toTransformList, animatedTransformList, percentage, false))
@@ -111,12 +111,12 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     if (!animatedTransformList.isEmpty() && (!m_animationElement->isAdditive() || m_animationElement->animationMode() == ToAnimation))
         animatedTransformList.clear();
 
-    unsigned fromTransformListSize = fromTransformList.size();
-    const SVGTransform& toTransform = toTransformList[0];
-    const SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
-    SVGTransform currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
+    auto fromTransformListSize = fromTransformList.size();
+    const auto& toTransform = toTransformList[0];
+    const auto effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransformValue(toTransform.type(), SVGTransformValue::ConstructZeroTransform);
+    auto currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
     if (m_animationElement->isAccumulated() && repeatCount) {
-        const SVGTransform effectiveToAtEnd = toAtEndOfDurationTransformList.size() ? toAtEndOfDurationTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
+        const auto effectiveToAtEnd = toAtEndOfDurationTransformList.size() ? toAtEndOfDurationTransformList[0] : SVGTransformValue(toTransform.type(), SVGTransformValue::ConstructZeroTransform);
         animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, effectiveToAtEnd, repeatCount));
     } else
         animatedTransformList.append(currentTransform);
@@ -128,11 +128,11 @@ float SVGAnimatedTransformListAnimator::calculateDistance(const String& fromStri
 
     // FIXME: This is not correct in all cases. The spec demands that each component (translate x and y for example)
     // is paced separately. To implement this we need to treat each component as individual animation everywhere.
-    std::unique_ptr<SVGAnimatedType> from = constructFromString(fromString);
-    std::unique_ptr<SVGAnimatedType> to = constructFromString(toString);
+    auto from = constructFromString(fromString);
+    auto to = constructFromString(toString);
 
-    SVGTransformList& fromTransformList = from->transformList();
-    SVGTransformList& toTransformList = to->transformList();
+    auto& fromTransformList = from->transformList();
+    auto& toTransformList = to->transformList();
     unsigned itemsCount = fromTransformList.size();
     if (!itemsCount || itemsCount != toTransformList.size())
         return -1;

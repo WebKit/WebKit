@@ -138,7 +138,7 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createIntegerOptionalInteger(s
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLength(std::unique_ptr<SVGLength> length)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLength(std::unique_ptr<SVGLengthValue> length)
 {
     ASSERT(length);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedLength);
@@ -279,10 +279,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         return true;
     case AnimatedLength:
         ASSERT(m_data.length);
-        return !m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName)).hasException();
+        return !m_data.length->setValueAsString(value, SVGLengthValue::lengthModeForAnimatedLengthAttribute(attrName)).hasException();
     case AnimatedLengthList:
         ASSERT(m_data.lengthList);
-        m_data.lengthList->parse(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName));
+        m_data.lengthList->parse(value, SVGLengthValue::lengthModeForAnimatedLengthAttribute(attrName));
         return true;
     case AnimatedNumber:
         ASSERT(m_data.number);

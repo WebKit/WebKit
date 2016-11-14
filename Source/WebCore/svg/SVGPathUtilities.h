@@ -21,11 +21,11 @@
 #pragma once
 
 #include "SVGPathConsumer.h"
-#include "SVGPoint.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class FloatPoint;
 class Path;
 class SVGPathByteStream;
 class SVGPathElement;
@@ -55,6 +55,6 @@ bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathBy
 
 bool getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream&, float length, unsigned& pathSeg);
 bool getTotalLengthOfSVGPathByteStream(const SVGPathByteStream&, float& totalLength);
-bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length, SVGPoint&);
+bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length, FloatPoint&);
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ public:
     static SVGPaint::SVGPaintType initialStrokePaintType() { return SVGPaint::SVG_PAINTTYPE_NONE; }
     static Color initialStrokePaintColor() { return Color(); }
     static String initialStrokePaintUri() { return String(); }
-    static Vector<SVGLength> initialStrokeDashArray() { return Vector<SVGLength>(); }
+    static Vector<SVGLengthValue> initialStrokeDashArray() { return { }; }
     static float initialStrokeMiterLimit() { return 4; }
     static float initialStopOpacity() { return 1; }
     static Color initialStopColor() { return Color(0, 0, 0); }
@@ -94,16 +94,16 @@ public:
     static EMaskType initialMaskType() { return MT_LUMINANCE; }
     static PaintOrder initialPaintOrder() { return PaintOrderNormal; }
 
-    static SVGLength initialBaselineShiftValue()
+    static SVGLengthValue initialBaselineShiftValue()
     {
-        SVGLength length;
+        SVGLengthValue length;
         length.newValueSpecifiedUnits(LengthTypeNumber, 0);
         return length;
     }
 
-    static SVGLength initialKerning()
+    static SVGLengthValue initialKerning()
     {
-        SVGLength length;
+        SVGLengthValue length;
         length.newValueSpecifiedUnits(LengthTypeNumber, 0);
         return length;
     }
@@ -215,7 +215,7 @@ public:
         }
     }
 
-    void setStrokeDashArray(const Vector<SVGLength>& obj)
+    void setStrokeDashArray(const Vector<SVGLengthValue>& obj)
     {
         if (!(stroke->dashArray == obj))
             stroke.access()->dashArray = obj;
@@ -239,7 +239,7 @@ public:
             stroke.access()->dashOffset = obj;
     }
 
-    void setKerning(const SVGLength& obj)
+    void setKerning(const SVGLengthValue& obj)
     {
         if (!(text->kerning == obj))
             text.access()->kerning = obj;
@@ -275,7 +275,7 @@ public:
             misc.access()->lightingColor = obj;
     }
 
-    void setBaselineShiftValue(const SVGLength& obj)
+    void setBaselineShiftValue(const SVGLengthValue& obj)
     {
         if (!(misc->baselineShiftValue == obj))
             misc.access()->baselineShiftValue = obj;
@@ -340,17 +340,17 @@ public:
     const SVGPaint::SVGPaintType& strokePaintType() const { return stroke->paintType; }
     const Color& strokePaintColor() const { return stroke->paintColor; }
     const String& strokePaintUri() const { return stroke->paintUri; }
-    Vector<SVGLength> strokeDashArray() const { return stroke->dashArray; }
+    Vector<SVGLengthValue> strokeDashArray() const { return stroke->dashArray; }
     float strokeMiterLimit() const { return stroke->miterLimit; }
     const Length& strokeWidth() const { return stroke->width; }
     const Length& strokeDashOffset() const { return stroke->dashOffset; }
-    SVGLength kerning() const { return text->kerning; }
+    SVGLengthValue kerning() const { return text->kerning; }
     float stopOpacity() const { return stops->opacity; }
     const Color& stopColor() const { return stops->color; }
     float floodOpacity() const { return misc->floodOpacity; }
     const Color& floodColor() const { return misc->floodColor; }
     const Color& lightingColor() const { return misc->lightingColor; }
-    SVGLength baselineShiftValue() const { return misc->baselineShiftValue; }
+    SVGLengthValue baselineShiftValue() const { return misc->baselineShiftValue; }
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
     const Length& cx() const { return layout->cx; }
     const Length& cy() const { return layout->cy; }

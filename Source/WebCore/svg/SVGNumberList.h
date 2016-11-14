@@ -25,8 +25,7 @@
 
 namespace WebCore {
 
-template<typename T> 
-class SVGPropertyTearOff;
+class SVGNumber;
 
 class SVGNumberList final : public Vector<float> {
 public:
@@ -39,7 +38,7 @@ template<> struct SVGPropertyTraits<SVGNumberList> {
     static String toString(const SVGNumberList& type) { return type.valueAsString(); }
 
     using ListItemType = float;
-    using ListItemTearOff = SVGPropertyTearOff<float>;
+    using ListItemTearOff = SVGNumber;
 };
 
 } // namespace WebCore

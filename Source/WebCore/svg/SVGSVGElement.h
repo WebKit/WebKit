@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
@@ -32,9 +33,14 @@
 
 namespace WebCore {
 
-class SVGAngle;
-class SVGViewSpec;
 class SMILTimeContainer;
+class SVGAngle;
+class SVGLength;
+class SVGMatrix;
+class SVGNumber;
+class SVGRect;
+class SVGTransform;
+class SVGViewSpec;
 
 class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
 
@@ -55,7 +61,7 @@ public: // DOM
     const AtomicString& contentStyleType() const;
     void setContentStyleType(const AtomicString&);
 
-    FloatRect viewport() const;
+    Ref<SVGRect> viewport() const;
 
     float pixelUnitToMillimeterX() const;
     float pixelUnitToMillimeterY() const;
@@ -68,7 +74,8 @@ public: // DOM
     float currentScale() const;
     void setCurrentScale(float);
 
-    SVGPoint& currentTranslate();
+    Ref<SVGPoint> currentTranslate();
+    FloatPoint currentTranslateValue();
 
     unsigned suspendRedraw(unsigned maxWaitMilliseconds);
     void unsuspendRedraw(unsigned suspendHandleId);
@@ -82,20 +89,20 @@ public: // DOM
     float getCurrentTime() const;
     void setCurrentTime(float);
 
-    Ref<NodeList> getIntersectionList(const FloatRect&, SVGElement* referenceElement);
-    Ref<NodeList> getEnclosureList(const FloatRect&, SVGElement* referenceElement);
-    static bool checkIntersection(const SVGElement*, const FloatRect&);
-    static bool checkEnclosure(const SVGElement*, const FloatRect&);
+    Ref<NodeList> getIntersectionList(SVGRect&, SVGElement* referenceElement);
+    Ref<NodeList> getEnclosureList(SVGRect&, SVGElement* referenceElement);
+    static bool checkIntersection(const SVGElement*, SVGRect&);
+    static bool checkEnclosure(const SVGElement*, SVGRect&);
     void deselectAll();
 
-    static float createSVGNumber();
-    static SVGLength createSVGLength();
+    static Ref<SVGNumber> createSVGNumber();
+    static Ref<SVGLength> createSVGLength();
     static Ref<SVGAngle> createSVGAngle();
-    static SVGPoint createSVGPoint();
-    static SVGMatrix createSVGMatrix();
-    static FloatRect createSVGRect();
-    static SVGTransform createSVGTransform();
-    static SVGTransform createSVGTransformFromMatrix(const SVGMatrix&);
+    static Ref<SVGPoint> createSVGPoint();
+    static Ref<SVGMatrix> createSVGMatrix();
+    static Ref<SVGRect> createSVGRect();
+    static Ref<SVGTransform> createSVGTransform();
+    static Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&);
 
     Element* getElementById(const AtomicString&);
 
@@ -145,12 +152,12 @@ private:
 
     Frame* frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);
-    Ref<NodeList> collectIntersectionOrEnclosureList(const FloatRect&, SVGElement*, bool (*checkFunction)(const SVGElement*, const FloatRect&));
+    Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(const SVGElement*, SVGRect&));
 
     bool m_useCurrentView { false };
     SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };
     Ref<SMILTimeContainer> m_timeContainer;
-    SVGPoint m_currentTranslate;
+    FloatPoint m_currentTranslate;
     RefPtr<SVGViewSpec> m_viewSpec;
 };
 
@@ -159,7 +166,7 @@ inline bool SVGSVGElement::useCurrentView() const
     return m_useCurrentView;
 }
 
-inline SVGPoint& SVGSVGElement::currentTranslate()
+inline FloatPoint SVGSVGElement::currentTranslateValue()
 {
     return m_currentTranslate;
 }
@@ -182,11 +189,6 @@ inline SMILTimeContainer& SVGSVGElement::timeContainer()
 inline bool SVGSVGElement::hasEmptyViewBox() const
 {
     return viewBoxIsValid() && viewBox().isEmpty();
-}
-
-inline float SVGSVGElement::createSVGNumber()
-{
-    return 0;
 }
 
 } // namespace WebCore

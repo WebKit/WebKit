@@ -47,6 +47,7 @@
 #include "SVGPathSegMovetoAbs.h"
 #include "SVGPathSegMovetoRel.h"
 #include "SVGPathUtilities.h"
+#include "SVGPoint.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -99,11 +100,11 @@ float SVGPathElement::getTotalLength() const
     return totalLength;
 }
 
-SVGPoint SVGPathElement::getPointAtLength(float length) const
+Ref<SVGPoint> SVGPathElement::getPointAtLength(float length) const
 {
-    SVGPoint point;
+    FloatPoint point;
     getPointAtLengthOfSVGPathByteStream(pathByteStream(), length, point);
-    return point;
+    return SVGPoint::create(point);
 }
 
 unsigned SVGPathElement::getPathSegAtLength(float length) const

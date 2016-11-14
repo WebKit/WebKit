@@ -29,13 +29,19 @@ namespace WebCore {
 
 class AffineTransform;
 class Path;
+class SVGRect;
+class SVGMatrix;
 
 class SVGGraphicsElement : public SVGElement, public SVGTransformable, public SVGTests {
 public:
     virtual ~SVGGraphicsElement();
 
+    Ref<SVGMatrix> getCTMForBindings();
     AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) override;
+
+    Ref<SVGMatrix> getScreenCTMForBindings();
     AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) override;
+
     SVGElement* nearestViewportElement() const override;
     SVGElement* farthestViewportElement() const override;
 
@@ -43,6 +49,7 @@ public:
     AffineTransform animatedLocalTransform() const override;
     AffineTransform* supplementalTransform() override;
 
+    Ref<SVGRect> getBBoxForBindings();
     FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) override;
 
     bool shouldIsolateBlending() const { return m_shouldIsolateBlending; }

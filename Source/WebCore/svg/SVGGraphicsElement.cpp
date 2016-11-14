@@ -21,11 +21,12 @@
 #include "config.h"
 #include "SVGGraphicsElement.h"
 
-#include "AffineTransform.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
+#include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
+#include "SVGRect.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -50,9 +51,19 @@ SVGGraphicsElement::~SVGGraphicsElement()
 {
 }
 
+Ref<SVGMatrix> SVGGraphicsElement::getCTMForBindings()
+{
+    return SVGMatrix::create(getCTM());
+}
+
 AffineTransform SVGGraphicsElement::getCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
+}
+
+Ref<SVGMatrix> SVGGraphicsElement::getScreenCTMForBindings()
+{
+    return SVGMatrix::create(getScreenCTM());
 }
 
 AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy)
@@ -154,6 +165,11 @@ SVGElement* SVGGraphicsElement::nearestViewportElement() const
 SVGElement* SVGGraphicsElement::farthestViewportElement() const
 {
     return SVGTransformable::farthestViewportElement(this);
+}
+
+Ref<SVGRect> SVGGraphicsElement::getBBoxForBindings()
+{
+    return SVGRect::create(getBBox());
 }
 
 FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)

@@ -53,7 +53,7 @@ void SVGDocument::startPan(const FloatPoint& start)
     auto* element = rootElement(*this);
     if (!element)
         return;
-    m_panningOffset = start - element->currentTranslate();
+    m_panningOffset = start - element->currentTranslateValue();
 }
 
 void SVGDocument::updatePan(const FloatPoint& position) const

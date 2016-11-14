@@ -20,16 +20,15 @@
 
 #pragma once
 
-#include "SVGPoint.h"
+#include "FloatPoint.h"
 #include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-template<typename T> 
-class SVGPropertyTearOff;
+class SVGPoint;
 
-class SVGPointList final : public Vector<SVGPoint> {
+class SVGPointList final : public Vector<FloatPoint> {
 public:
     String valueAsString() const;
 };
@@ -37,8 +36,8 @@ public:
 template<> struct SVGPropertyTraits<SVGPointList> {
     static SVGPointList initialValue() { return SVGPointList(); }
 
-    using ListItemType = SVGPoint;
-    using ListItemTearOff = SVGPropertyTearOff<SVGPoint>;
+    using ListItemType = FloatPoint;
+    using ListItemTearOff = SVGPoint;
 };
 
 } // namespace WebCore

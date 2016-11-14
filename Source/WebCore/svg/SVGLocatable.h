@@ -28,6 +28,7 @@ namespace WebCore {
 
 class FloatRect;
 class SVGElement;
+class SVGMatrix;
 
 class SVGLocatable {
 public:
@@ -42,7 +43,8 @@ public:
     virtual FloatRect getBBox(StyleUpdateStrategy) = 0;
     virtual AffineTransform getCTM(StyleUpdateStrategy) = 0;
     virtual AffineTransform getScreenCTM(StyleUpdateStrategy) = 0;
-    ExceptionOr<AffineTransform> getTransformToElement(SVGElement*, StyleUpdateStrategy = AllowStyleUpdate);
+
+    ExceptionOr<Ref<SVGMatrix>> getTransformToElement(SVGElement*, StyleUpdateStrategy = AllowStyleUpdate);
 
     static SVGElement* nearestViewportElement(const SVGElement*);
     static SVGElement* farthestViewportElement(const SVGElement*);

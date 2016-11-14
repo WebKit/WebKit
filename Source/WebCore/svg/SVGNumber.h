@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,93 +26,64 @@
 #pragma once
 
 #include "ExceptionCode.h"
-#include "FloatPoint.h"
-#include "SVGMatrix.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
 
-class SVGPoint : public SVGPropertyTearOff<FloatPoint> {
+class SVGNumber : public SVGPropertyTearOff<float> {
 public:
-    static Ref<SVGPoint> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatPoint& value)
+    static Ref<SVGNumber> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, float& value)
     {
         ASSERT(animatedProperty);
-        return adoptRef(*new SVGPoint(animatedProperty, role, value));
+        return adoptRef(*new SVGNumber(animatedProperty, role, value));
     }
 
-    static Ref<SVGPoint> create(const FloatPoint& initialValue = { })
+    static Ref<SVGNumber> create(const float& initialValue = { })
     {
-        return adoptRef(*new SVGPoint(initialValue));
+        return adoptRef(*new SVGNumber(initialValue));
     }
 
-    static Ref<SVGPoint> create(const FloatPoint* initialValue)
+    static Ref<SVGNumber> create(const float* initialValue)
     {
-        return adoptRef(*new SVGPoint(initialValue));
+        return adoptRef(*new SVGNumber(initialValue));
     }
 
-    template<typename T> static ExceptionOr<Ref<SVGPoint>> create(ExceptionOr<T>&& initialValue)
+    template<typename T> static ExceptionOr<Ref<SVGNumber>> create(ExceptionOr<T>&& initialValue)
     {
         if (initialValue.hasException())
             return initialValue.releaseException();
         return create(initialValue.releaseReturnValue());
     }
 
-    float x()
+    float valueForBindings()
     {
-        return propertyReference().x();
+        return propertyReference();
     }
 
-    ExceptionOr<void> setX(float xValue)
+    ExceptionOr<void> setValueForBindings(float value)
     {
         if (isReadOnly())
             return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
-        propertyReference().setX(xValue);
+        propertyReference() = value;
         commitChange();
 
         return { };
     }
 
-    float y()
-    {
-        return propertyReference().y();
-    }
-
-    ExceptionOr<void> setY(float xValue)
-    {
-        if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
-
-        propertyReference().setY(xValue);
-        commitChange();
-
-        return { };
-    }
-
-    ExceptionOr<Ref<SVGPoint>> matrixTransform(SVGMatrix& matrix)
-    {
-        if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
-
-        auto newPoint = propertyReference().matrixTransform(matrix.propertyReference());
-        commitChange();
-
-        return SVGPoint::create(newPoint);
-    }
-
-protected:
-    SVGPoint(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatPoint& value)
-        : SVGPropertyTearOff<FloatPoint>(animatedProperty, role, value)
+private:
+    SVGNumber(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, float& value)
+        : SVGPropertyTearOff<float>(animatedProperty, role, value)
     {
     }
 
-    explicit SVGPoint(const FloatPoint& initialValue)
-        : SVGPropertyTearOff<FloatPoint>(initialValue)
+    explicit SVGNumber(const float& initialValue)
+        : SVGPropertyTearOff<float>(initialValue)
     {
     }
 
-    explicit SVGPoint(const FloatPoint* initialValue)
-        : SVGPropertyTearOff<FloatPoint>(initialValue)
+    explicit SVGNumber(const float* initialValue)
+        : SVGPropertyTearOff<float>(initialValue)
     {
     }
 };

@@ -73,18 +73,18 @@ public:
     unsigned getNumberOfChars();
     float getComputedTextLength();
     ExceptionOr<float> getSubStringLength(unsigned charnum, unsigned nchars);
-    ExceptionOr<SVGPoint> getStartPositionOfChar(unsigned charnum);
-    ExceptionOr<SVGPoint> getEndPositionOfChar(unsigned charnum);
-    ExceptionOr<FloatRect> getExtentOfChar(unsigned charnum);
+    ExceptionOr<Ref<SVGPoint>> getStartPositionOfChar(unsigned charnum);
+    ExceptionOr<Ref<SVGPoint>> getEndPositionOfChar(unsigned charnum);
+    ExceptionOr<Ref<SVGRect>> getExtentOfChar(unsigned charnum);
     ExceptionOr<float> getRotationOfChar(unsigned charnum);
-    int getCharNumAtPosition(const SVGPoint&);
+    int getCharNumAtPosition(SVGPoint&);
     ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 
     // textLength is not declared using the standard DECLARE_ANIMATED_LENGTH macro
     // as its getter needs special handling (return getComputedTextLength(), instead of m_textLength).
-    SVGLength& specifiedTextLength() { return m_specifiedTextLength; }
+    SVGLengthValue& specifiedTextLength() { return m_specifiedTextLength; }
     Ref<SVGAnimatedLength> textLengthAnimated();
     static const SVGPropertyInfo* textLengthPropertyInfo();
 
@@ -108,8 +108,8 @@ private:
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);
     static Ref<SVGAnimatedProperty> lookupOrCreateTextLengthWrapper(SVGElement* contextElement);
-    mutable SVGSynchronizableAnimatedProperty<SVGLength> m_textLength;
-    SVGLength m_specifiedTextLength;
+    mutable SVGSynchronizableAnimatedProperty<SVGLengthValue> m_textLength;
+    SVGLengthValue m_specifiedTextLength;
   
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextContentElement)
         DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust, SVGLengthAdjustType)

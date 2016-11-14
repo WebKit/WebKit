@@ -93,9 +93,9 @@ SVGTransformable::~SVGTransformable()
 {
 }
 
-bool SVGTransformable::parseTransformValue(SVGTransform::SVGTransformType type, const UChar*& ptr, const UChar* end, SVGTransform& transform)
+bool SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, const UChar*& ptr, const UChar* end, SVGTransformValue& transform)
 {
-    if (type == SVGTransform::SVG_TRANSFORM_UNKNOWN)
+    if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
         return false;
 
     int valueCount = 0;
@@ -104,34 +104,34 @@ bool SVGTransformable::parseTransformValue(SVGTransform::SVGTransformType type, 
         return false;
 
     switch (type) {
-    case SVGTransform::SVG_TRANSFORM_UNKNOWN:
+    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
         ASSERT_NOT_REACHED();
         break;
-    case SVGTransform::SVG_TRANSFORM_SKEWX:
+    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
         transform.setSkewX(values[0]);
         break;
-    case SVGTransform::SVG_TRANSFORM_SKEWY:
+    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
         transform.setSkewY(values[0]);
         break;
-    case SVGTransform::SVG_TRANSFORM_SCALE:
+    case SVGTransformValue::SVG_TRANSFORM_SCALE:
         if (valueCount == 1) // Spec: if only one param given, assume uniform scaling
             transform.setScale(values[0], values[0]);
         else
             transform.setScale(values[0], values[1]);
         break;
-    case SVGTransform::SVG_TRANSFORM_TRANSLATE:
+    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
         if (valueCount == 1) // Spec: if only one param given, assume 2nd param to be 0
             transform.setTranslate(values[0], 0);
         else
             transform.setTranslate(values[0], values[1]);
         break;
-    case SVGTransform::SVG_TRANSFORM_ROTATE:
+    case SVGTransformValue::SVG_TRANSFORM_ROTATE:
         if (valueCount == 1)
             transform.setRotate(values[0], 0, 0);
         else
             transform.setRotate(values[0], values[1], values[2]);
         break;
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
+    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         transform.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
         break;
     }
@@ -146,39 +146,39 @@ static const UChar translateDesc[] =  {'t', 'r', 'a', 'n', 's', 'l', 'a', 't', '
 static const UChar rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
 static const UChar matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
 
-static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransform::SVGTransformType& type)
+static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType& type)
 {
     if (currTransform >= end)
         return false;
 
     if (*currTransform == 's') {
         if (skipString(currTransform, end, skewXDesc, WTF_ARRAY_LENGTH(skewXDesc)))
-            type = SVGTransform::SVG_TRANSFORM_SKEWX;
+            type = SVGTransformValue::SVG_TRANSFORM_SKEWX;
         else if (skipString(currTransform, end, skewYDesc, WTF_ARRAY_LENGTH(skewYDesc)))
-            type = SVGTransform::SVG_TRANSFORM_SKEWY;
+            type = SVGTransformValue::SVG_TRANSFORM_SKEWY;
         else if (skipString(currTransform, end, scaleDesc, WTF_ARRAY_LENGTH(scaleDesc)))
-            type = SVGTransform::SVG_TRANSFORM_SCALE;
+            type = SVGTransformValue::SVG_TRANSFORM_SCALE;
         else
             return false;
     } else if (skipString(currTransform, end, translateDesc, WTF_ARRAY_LENGTH(translateDesc)))
-        type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
+        type = SVGTransformValue::SVG_TRANSFORM_TRANSLATE;
     else if (skipString(currTransform, end, rotateDesc, WTF_ARRAY_LENGTH(rotateDesc)))
-        type = SVGTransform::SVG_TRANSFORM_ROTATE;
+        type = SVGTransformValue::SVG_TRANSFORM_ROTATE;
     else if (skipString(currTransform, end, matrixDesc, WTF_ARRAY_LENGTH(matrixDesc)))
-        type = SVGTransform::SVG_TRANSFORM_MATRIX;
+        type = SVGTransformValue::SVG_TRANSFORM_MATRIX;
     else
         return false;
 
     return true;
 }
 
-SVGTransform::SVGTransformType SVGTransformable::parseTransformType(const String& typeString)
+SVGTransformValue::SVGTransformType SVGTransformable::parseTransformType(const String& typeString)
 {
-    SVGTransform::SVGTransformType type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
+    SVGTransformValue::SVGTransformType type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
     auto upconvertedCharacters = StringView(typeString).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
     parseAndSkipType(characters, characters + typeString.length(), type);
-    return static_cast<SVGTransform::SVGTransformType>(type);
+    return type;
 }
 
 bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)
@@ -189,13 +189,13 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UCh
     bool delimParsed = false;
     while (currTransform < end) {
         delimParsed = false;
-        SVGTransform::SVGTransformType type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
+        SVGTransformValue::SVGTransformType type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
         skipOptionalSVGSpaces(currTransform, end);
 
         if (!parseAndSkipType(currTransform, end, type))
             return false;
 
-        SVGTransform transform;
+        SVGTransformValue transform;
         if (!parseTransformValue(type, currTransform, end, transform))
             return false;
 

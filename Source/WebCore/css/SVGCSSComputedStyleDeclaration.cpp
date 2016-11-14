@@ -81,17 +81,16 @@ static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(EGlyphOrien
     }
 }
 
-static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLength>& dashes)
+static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>& dashes)
 {
     if (dashes.isEmpty())
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
 
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    const Vector<SVGLength>::const_iterator end = dashes.end();
-    for (Vector<SVGLength>::const_iterator it = dashes.begin(); it != end; ++it)
-        list->append(SVGLength::toCSSPrimitiveValue(*it));
+    auto list = CSSValueList::createCommaSeparated();
+    for (auto& length : dashes)
+        list->append(SVGLengthValue::toCSSPrimitiveValue(length));
 
-    return list;
+    return WTFMove(list);
 }
 
 RefPtr<SVGPaint> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(RefPtr<SVGPaint>&& paint, const RenderStyle* style) const
@@ -166,7 +165,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         case CSSPropertyFill:
             return adjustSVGPaintForCurrentColor(SVGPaint::create(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), svgStyle.fillPaintColor()), style);
         case CSSPropertyKerning:
-            return SVGLength::toCSSPrimitiveValue(svgStyle.kerning());
+            return SVGLengthValue::toCSSPrimitiveValue(svgStyle.kerning());
         case CSSPropertyMarkerEnd:
             if (!svgStyle.markerEndResource().isEmpty())
                 return CSSPrimitiveValue::create(svgStyle.markerEndResource(), CSSPrimitiveValue::CSS_URI);
@@ -192,7 +191,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
                 case BS_SUB:
                     return CSSPrimitiveValue::createIdentifier(CSSValueSub);
                 case BS_LENGTH:
-                    return SVGLength::toCSSPrimitiveValue(svgStyle.baselineShiftValue());
+                    return SVGLengthValue::toCSSPrimitiveValue(svgStyle.baselineShiftValue());
             }
             ASSERT_NOT_REACHED();
             return nullptr;

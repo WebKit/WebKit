@@ -20,25 +20,24 @@
 
 #pragma once
 
-#include "SVGLength.h"
+#include "SVGLengthValue.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-template<typename T> 
-class SVGPropertyTearOff;
+class SVGLength;
 
-class SVGLengthList final : public Vector<SVGLength> {
+class SVGLengthList final : public Vector<SVGLengthValue> {
 public:
     void parse(const String& value, SVGLengthMode);
     String valueAsString() const;
 };
 
 template<> struct SVGPropertyTraits<SVGLengthList> {
-    using ListItemType = SVGLength;
-    using ListItemTearOff = SVGPropertyTearOff<SVGLength>;
+    using ListItemType = SVGLengthValue;
+    using ListItemTearOff = SVGLength;
 
-    static SVGLengthList initialValue() { return SVGLengthList(); }
+    static SVGLengthList initialValue() { return  { }; }
     static String toString(const SVGLengthList& type) { return type.valueAsString(); }
 };
 

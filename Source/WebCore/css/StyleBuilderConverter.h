@@ -121,9 +121,9 @@ public:
 #if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(StyleResolver&, const CSSValue&);
 #endif
-    static SVGLength convertSVGLength(StyleResolver&, const CSSValue&);
-    static Vector<SVGLength> convertSVGLengthVector(StyleResolver&, const CSSValue&);
-    static Vector<SVGLength> convertStrokeDashArray(StyleResolver&, const CSSValue&);
+    static SVGLengthValue convertSVGLengthValue(StyleResolver&, const CSSValue&);
+    static Vector<SVGLengthValue> convertSVGLengthVector(StyleResolver&, const CSSValue&);
+    static Vector<SVGLengthValue> convertStrokeDashArray(StyleResolver&, const CSSValue&);
     static PaintOrder convertPaintOrder(StyleResolver&, const CSSValue&);
     static float convertOpacity(StyleResolver&, const CSSValue&);
     static String convertSVGURIReference(StyleResolver&, const CSSValue&);
@@ -1257,24 +1257,24 @@ inline bool StyleBuilderConverter::convertOverflowScrolling(StyleResolver&, cons
 }
 #endif
 
-inline SVGLength StyleBuilderConverter::convertSVGLength(StyleResolver&, const CSSValue& value)
+inline SVGLengthValue StyleBuilderConverter::convertSVGLengthValue(StyleResolver&, const CSSValue& value)
 {
-    return SVGLength::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value));
+    return SVGLengthValue::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value));
 }
 
-inline Vector<SVGLength> StyleBuilderConverter::convertSVGLengthVector(StyleResolver& styleResolver, const CSSValue& value)
+inline Vector<SVGLengthValue> StyleBuilderConverter::convertSVGLengthVector(StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& valueList = downcast<CSSValueList>(value);
 
-    Vector<SVGLength> svgLengths;
+    Vector<SVGLengthValue> svgLengths;
     svgLengths.reserveInitialCapacity(valueList.length());
     for (auto& item : valueList)
-        svgLengths.uncheckedAppend(convertSVGLength(styleResolver, item));
+        svgLengths.uncheckedAppend(convertSVGLengthValue(styleResolver, item));
 
     return svgLengths;
 }
 
-inline Vector<SVGLength> StyleBuilderConverter::convertStrokeDashArray(StyleResolver& styleResolver, const CSSValue& value)
+inline Vector<SVGLengthValue> StyleBuilderConverter::convertStrokeDashArray(StyleResolver& styleResolver, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);

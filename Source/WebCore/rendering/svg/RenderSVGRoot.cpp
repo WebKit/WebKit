@@ -39,7 +39,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
 #include "SVGImage.h"
-#include "SVGLength.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -340,10 +339,10 @@ void RenderSVGRoot::removeChild(RenderObject& child)
 void RenderSVGRoot::buildLocalToBorderBoxTransform()
 {
     float scale = style().effectiveZoom();
-    SVGPoint translate = svgSVGElement().currentTranslate();
+    FloatPoint translate = svgSVGElement().currentTranslateValue();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentWidth() / scale, contentHeight() / scale);
-    if (borderAndPadding.isZero() && scale == 1 && translate == SVGPoint::zero())
+    if (borderAndPadding.isZero() && scale == 1 && translate == FloatPoint::zero())
         return;
     m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;
 }

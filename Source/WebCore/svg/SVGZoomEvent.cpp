@@ -20,9 +20,11 @@
  */
 
 #include "config.h"
-
 #include "SVGZoomEvent.h"
+
 #include "EventNames.h"
+#include "SVGPoint.h"
+#include "SVGRect.h"
 
 namespace WebCore {
 
@@ -32,9 +34,9 @@ SVGZoomEvent::SVGZoomEvent()
 {
 }
 
-FloatRect SVGZoomEvent::zoomRectScreen() const
+Ref<SVGRect> SVGZoomEvent::zoomRectScreen() const
 {
-    return m_zoomRectScreen;
+    return SVGRect::create(m_zoomRectScreen);
 }
 
 float SVGZoomEvent::previousScale() const
@@ -47,9 +49,9 @@ void SVGZoomEvent::setPreviousScale(float scale)
     m_previousScale = scale;
 }
 
-SVGPoint SVGZoomEvent::previousTranslate() const
+Ref<SVGPoint> SVGZoomEvent::previousTranslate() const
 {
-    return m_previousTranslate;
+    return SVGPoint::create(m_previousTranslate);
 }
 
 float SVGZoomEvent::newScale() const
@@ -62,9 +64,9 @@ void SVGZoomEvent::setNewScale(float scale)
     m_newScale = scale;
 }
 
-SVGPoint SVGZoomEvent::newTranslate() const
+Ref<SVGPoint> SVGZoomEvent::newTranslate() const
 {
-    return m_newTranslate;
+    return SVGPoint::create(m_newTranslate);
 }
 
 EventInterface SVGZoomEvent::eventInterface() const

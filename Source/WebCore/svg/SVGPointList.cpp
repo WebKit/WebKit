@@ -35,7 +35,7 @@ String SVGPointList::valueAsString() const
         if (i > 0)
             builder.append(' '); // FIXME: Shouldn't we use commas to seperate?
 
-        const SVGPoint& point = at(i);
+        const auto& point = at(i);
         builder.appendNumber(point.x());
         builder.append(' ');
         builder.appendNumber(point.y());

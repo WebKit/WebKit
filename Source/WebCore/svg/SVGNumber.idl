@@ -21,6 +21,6 @@
  */
 
 interface SVGNumber {
-    attribute unrestricted float value;
+    [SetterMayThrowException, ImplementedAs=valueForBindings] attribute unrestricted float value;
 };
 

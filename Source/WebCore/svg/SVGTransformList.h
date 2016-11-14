@@ -26,13 +26,10 @@
 
 namespace WebCore {
 
-template<typename T> 
-class SVGPropertyTearOff;
-
-class SVGTransformList final : public Vector<SVGTransform, 1> {
+class SVGTransformList final : public Vector<SVGTransformValue, 1> {
 public:
-    SVGTransform createSVGTransformFromMatrix(const SVGMatrix&) const;
-    SVGTransform consolidate();
+    Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&) const;
+    Ref<SVGTransform> consolidate();
 
     bool concatenate(AffineTransform& result) const;
  
@@ -41,11 +38,11 @@ public:
 };
 
 template<> struct SVGPropertyTraits<SVGTransformList> {
-    static SVGTransformList initialValue() { return SVGTransformList(); }
+    static SVGTransformList initialValue() { return { }; }
     static String toString(const SVGTransformList& type) { return type.valueAsString(); }
 
-    using ListItemType = SVGTransform;
-    using ListItemTearOff = SVGPropertyTearOff<SVGTransform>;
+    using ListItemType = SVGTransformValue;
+    using ListItemTearOff = SVGTransform;
 };
 
 } // namespace WebCore

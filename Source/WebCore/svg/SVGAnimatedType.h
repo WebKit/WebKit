@@ -22,8 +22,8 @@
 #include "FloatRect.h"
 #include "SVGAngleValue.h"
 #include "SVGColor.h"
-#include "SVGLength.h"
 #include "SVGLengthList.h"
+#include "SVGLengthValue.h"
 #include "SVGNumberList.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatioValue.h"
@@ -46,7 +46,7 @@ public:
     static std::unique_ptr<SVGAnimatedType> createEnumeration(std::unique_ptr<unsigned>);
     static std::unique_ptr<SVGAnimatedType> createInteger(std::unique_ptr<int>);
     static std::unique_ptr<SVGAnimatedType> createIntegerOptionalInteger(std::unique_ptr<std::pair<int, int>>);
-    static std::unique_ptr<SVGAnimatedType> createLength(std::unique_ptr<SVGLength>);
+    static std::unique_ptr<SVGAnimatedType> createLength(std::unique_ptr<SVGLengthValue>);
     static std::unique_ptr<SVGAnimatedType> createLengthList(std::unique_ptr<SVGLengthList>);
     static std::unique_ptr<SVGAnimatedType> createNumber(std::unique_ptr<float>);
     static std::unique_ptr<SVGAnimatedType> createNumberList(std::unique_ptr<SVGNumberList>);
@@ -98,7 +98,7 @@ public:
         return *m_data.integerOptionalInteger;
     }
 
-    const SVGLength& length() const
+    const SVGLengthValue& length() const
     {
         ASSERT(m_type == AnimatedLength);
         return *m_data.length;
@@ -201,7 +201,7 @@ public:
         return *m_data.integerOptionalInteger;
     }
 
-    SVGLength& length()
+    SVGLengthValue& length()
     {
         ASSERT(m_type == AnimatedLength);
         return *m_data.length;
@@ -285,7 +285,7 @@ private:
         unsigned* enumeration;
         int* integer;
         std::pair<int, int>* integerOptionalInteger;
-        SVGLength* length;
+        SVGLengthValue* length;
         SVGLengthList* lengthList;
         float* number;
         SVGNumberList* numberList;

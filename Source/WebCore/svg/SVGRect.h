@@ -19,27 +19,116 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "SVGPropertyTraits.h"
-#include <wtf/text/StringBuilder.h>
+#include "SVGPropertyTearOff.h"
+#include "SVGRectTraits.h"
 
 namespace WebCore {
 
-template<>
-struct SVGPropertyTraits<FloatRect> {
-    static FloatRect initialValue() { return FloatRect(); }
-    static String toString(const FloatRect& type)
+class SVGRect : public SVGPropertyTearOff<FloatRect> {
+public:
+    static Ref<SVGRect> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatRect& value)
     {
-        StringBuilder builder;
-        builder.appendNumber(type.x());
-        builder.append(' ');
-        builder.appendNumber(type.y());
-        builder.append(' ');
-        builder.appendNumber(type.width());
-        builder.append(' ');
-        builder.appendNumber(type.height());
-        return builder.toString();
+        ASSERT(animatedProperty);
+        return adoptRef(*new SVGRect(animatedProperty, role, value));
+    }
+
+    static Ref<SVGRect> create(const FloatRect& initialValue = { })
+    {
+        return adoptRef(*new SVGRect(initialValue));
+    }
+
+    static Ref<SVGRect> create(const FloatRect* initialValue)
+    {
+        return adoptRef(*new SVGRect(initialValue));
+    }
+
+    template<typename T> static ExceptionOr<Ref<SVGRect>> create(ExceptionOr<T>&& initialValue)
+    {
+        if (initialValue.hasException())
+            return initialValue.releaseException();
+        return create(initialValue.releaseReturnValue());
+    }
+
+    float x()
+    {
+        return propertyReference().x();
+    }
+
+    ExceptionOr<void> setX(float xValue)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setX(xValue);
+        commitChange();
+
+        return { };
+    }
+
+    float y()
+    {
+        return propertyReference().y();
+    }
+
+    ExceptionOr<void> setY(float xValue)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setY(xValue);
+        commitChange();
+
+        return { };
+    }
+
+    float width()
+    {
+        return propertyReference().width();
+    }
+
+    ExceptionOr<void> setWidth(float widthValue)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setWidth(widthValue);
+        commitChange();
+
+        return { };
+    }
+
+    float height()
+    {
+        return propertyReference().height();
+    }
+
+    ExceptionOr<void> setHeight(float heightValue)
+    {
+        if (isReadOnly())
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+
+        propertyReference().setHeight(heightValue);
+        commitChange();
+
+        return { };
+    }
+
+private:
+    SVGRect(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatRect& value)
+        : SVGPropertyTearOff<FloatRect>(animatedProperty, role, value)
+    {
+    }
+
+    explicit SVGRect(const FloatRect& initialValue)
+        : SVGPropertyTearOff<FloatRect>(initialValue)
+    {
+    }
+
+    explicit SVGRect(const FloatRect* initialValue)
+        : SVGPropertyTearOff<FloatRect>(initialValue)
+    {
     }
 };
+
 
 } // namespace WebCore

@@ -144,13 +144,13 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicStr
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::refXAttr)
-        setRefXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+        setRefXBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::refYAttr)
-        setRefYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+        setRefYBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::markerWidthAttr)
-        setMarkerWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+        setMarkerWidthBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::markerHeightAttr)
-        setMarkerHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+        setMarkerHeightBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 

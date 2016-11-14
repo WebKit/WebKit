@@ -35,15 +35,15 @@ struct LinearGradientAttributes : GradientAttributes {
     {
     }
 
-    SVGLength x1() const { return m_x1; }
-    SVGLength y1() const { return m_y1; }
-    SVGLength x2() const { return m_x2; }
-    SVGLength y2() const { return m_y2; }
+    SVGLengthValue x1() const { return m_x1; }
+    SVGLengthValue y1() const { return m_y1; }
+    SVGLengthValue x2() const { return m_x2; }
+    SVGLengthValue y2() const { return m_y2; }
 
-    void setX1(const SVGLength& value) { m_x1 = value; m_x1Set = true; }
-    void setY1(const SVGLength& value) { m_y1 = value; m_y1Set = true; }
-    void setX2(const SVGLength& value) { m_x2 = value; m_x2Set = true; }
-    void setY2(const SVGLength& value) { m_y2 = value; m_y2Set = true; }
+    void setX1(SVGLengthValue value) { m_x1 = value; m_x1Set = true; }
+    void setY1(SVGLengthValue value) { m_y1 = value; m_y1Set = true; }
+    void setX2(SVGLengthValue value) { m_x2 = value; m_x2Set = true; }
+    void setY2(SVGLengthValue value) { m_y2 = value; m_y2Set = true; }
 
     bool hasX1() const { return m_x1Set; }
     bool hasY1() const { return m_y1Set; }
@@ -52,10 +52,10 @@ struct LinearGradientAttributes : GradientAttributes {
 
 private:
     // Properties
-    SVGLength m_x1;
-    SVGLength m_y1;
-    SVGLength m_x2;
-    SVGLength m_y2;
+    SVGLengthValue m_x1;
+    SVGLengthValue m_y1;
+    SVGLengthValue m_x2;
+    SVGLengthValue m_y2;
 
     // Property states
     bool m_x1Set : 1;

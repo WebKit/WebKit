@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGPathUtilities.h"
 
+#include "FloatPoint.h"
 #include "Path.h"
 #include "PathTraversalState.h"
 #include "SVGPathBlender.h"
@@ -192,7 +193,7 @@ bool getTotalLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float& t
     return ok;
 }
 
-bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float length, SVGPoint& point)
+bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float length, FloatPoint& point)
 {
     if (stream.isEmpty())
         return false;

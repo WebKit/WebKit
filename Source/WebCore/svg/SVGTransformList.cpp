@@ -23,27 +23,26 @@
 
 #include "AffineTransform.h"
 #include "SVGSVGElement.h"
-#include "SVGTransform.h"
 #include "SVGTransformable.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-SVGTransform SVGTransformList::createSVGTransformFromMatrix(const SVGMatrix& matrix) const
+Ref<SVGTransform> SVGTransformList::createSVGTransformFromMatrix(SVGMatrix& matrix) const
 {
     return SVGSVGElement::createSVGTransformFromMatrix(matrix);
 }
 
-SVGTransform SVGTransformList::consolidate()
+Ref<SVGTransform> SVGTransformList::consolidate()
 {
     AffineTransform matrix;
     if (!concatenate(matrix))
-        return SVGTransform();
+        return SVGTransform::create();
 
-    SVGTransform transform(matrix);
+    SVGTransformValue transform(matrix);
     clear();
     append(transform);
-    return transform;
+    return SVGTransform::create(transform);
 }
 
 bool SVGTransformList::concatenate(AffineTransform& result) const

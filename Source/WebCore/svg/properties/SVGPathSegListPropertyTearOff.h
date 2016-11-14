@@ -142,7 +142,7 @@ private:
     }
 
     bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) final;
-    bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*) final
+    bool processIncomingListItemWrapper(Ref<ListItemTearOff>&, unsigned*) final
     {
         ASSERT_NOT_REACHED();
         return true;

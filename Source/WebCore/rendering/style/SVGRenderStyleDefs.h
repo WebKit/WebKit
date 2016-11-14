@@ -29,7 +29,7 @@
 #pragma once
 
 #include "Length.h"
-#include "SVGLength.h"
+#include "SVGLengthValue.h"
 #include "SVGPaint.h"
 #include "ShadowData.h"
 #include <wtf/RefCounted.h>
@@ -150,7 +150,7 @@ namespace WebCore {
 
         Length width;
         Length dashOffset;
-        Vector<SVGLength> dashArray;
+        Vector<SVGLengthValue> dashArray;
 
         SVGPaint::SVGPaintType paintType;
         Color paintColor;
@@ -194,7 +194,7 @@ namespace WebCore {
             return !(*this == other);
         }
 
-        SVGLength kerning;
+        SVGLengthValue kerning;
 
     private:
         StyleTextData();
@@ -218,7 +218,7 @@ namespace WebCore {
         Color lightingColor;
 
         // non-inherited text stuff lives here not in StyleTextData.
-        SVGLength baselineShiftValue;
+        SVGLengthValue baselineShiftValue;
 
     private:
         StyleMiscData();

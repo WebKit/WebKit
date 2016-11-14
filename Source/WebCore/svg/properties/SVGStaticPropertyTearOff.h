@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "SVGPropertyTearOff.h"
-
 namespace WebCore {
 
 #if COMPILER(MSVC)
@@ -28,10 +26,12 @@ namespace WebCore {
 // alignment warning (C4121). 16 is the next-largest size allowed for packing, so we use that.
 #pragma pack(push, 16)
 #endif
-template<typename ContextElement, typename PropertyType>
-class SVGStaticPropertyTearOff final : public SVGPropertyTearOff<PropertyType> {
+template<typename ContextElement, typename PropertyTearOff>
+class SVGStaticPropertyTearOff final : public PropertyTearOff {
 public:
-    typedef SVGStaticPropertyTearOff<ContextElement, PropertyType> Self;
+    using Self = SVGStaticPropertyTearOff<ContextElement, PropertyTearOff>;
+    using PropertyType = typename PropertyTearOff::PropertyType;
+
     typedef void (ContextElement::*UpdateMethod)();
 
     // Used for non-animated POD types that are not associated with a SVGAnimatedProperty object, nor with a XML DOM attribute
@@ -45,7 +45,7 @@ public:
 
 private:
     SVGStaticPropertyTearOff(ContextElement* contextElement, PropertyType& value, UpdateMethod update)
-        : SVGPropertyTearOff<PropertyType>(0, UndefinedRole, value)
+        : PropertyTearOff(0, UndefinedRole, value)
         , m_update(update)
         , m_contextElement(contextElement)
     {

@@ -962,7 +962,7 @@ inline void StyleBuilderCustom::applyValueBaselineShift(StyleResolver& styleReso
         }
     } else {
         svgStyle.setBaselineShift(BS_LENGTH);
-        svgStyle.setBaselineShiftValue(SVGLength::fromCSSPrimitiveValue(primitiveValue));
+        svgStyle.setBaselineShiftValue(SVGLengthValue::fromCSSPrimitiveValue(primitiveValue));
     }
 }
 

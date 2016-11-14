@@ -22,6 +22,7 @@
 
 #include "SVGAnimateElementBase.h"
 #include "SVGParserUtilities.h"
+#include "SVGPoint.h"
 #include "SVGPointList.h"
 
 namespace WebCore {

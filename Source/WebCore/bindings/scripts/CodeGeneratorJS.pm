@@ -842,7 +842,7 @@ sub GetImplClassName
 {
     my $interface = shift;
 
-    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
+    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
     return $svgNativeType if $svgNativeType;
 
     return $interface->type->name;
@@ -1342,10 +1342,7 @@ sub GenerateHeader
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = GetImplClassName($interface);
-    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
-    my $svgPropertyOrListPropertyType;
-    $svgPropertyOrListPropertyType = $svgPropertyType if $svgPropertyType;
-    $svgPropertyOrListPropertyType = $svgListPropertyType if $svgListPropertyType;
+    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
 
     my $numConstants = @{$interface->constants};
     my $numAttributes = @{$interface->attributes};
@@ -1358,7 +1355,7 @@ sub GenerateHeader
     } else {
         # Implementation class forward declaration
         if (IsDOMGlobalObject($interface)) {
-            AddClassForwardIfNeeded($interface->type) unless $svgPropertyOrListPropertyType;
+            AddClassForwardIfNeeded($interface->type) unless $svgListPropertyType;
         }
     }
 
@@ -1391,7 +1388,7 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($interface->extendedAttributes->{MasqueradesAsUndefined}) {
-        AddIncludesForImplementationTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
+        AddIncludesForImplementationTypeInHeader($implType) unless $svgListPropertyType;
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), \"Allocated masquerading object\");\n");
@@ -1407,7 +1404,7 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");  
     } else {
-        AddIncludesForImplementationTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
+        AddIncludesForImplementationTypeInHeader($implType) unless $svgListPropertyType;
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTFMove(impl));\n");
@@ -2969,10 +2966,7 @@ sub GenerateImplementation
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
-    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
-    my $svgPropertyOrListPropertyType;
-    $svgPropertyOrListPropertyType = $svgPropertyType if $svgPropertyType;
-    $svgPropertyOrListPropertyType = $svgListPropertyType if $svgListPropertyType;
+    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
@@ -3342,14 +3336,6 @@ sub GenerateImplementation
 
                 if ($svgListPropertyType) {
                     push(@implContent, "    JSValue result =  " . NativeToJSValueUsingReferences($attribute, 0, $interface, "thisObject.wrapped().$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "thisObject") . ";\n");
-                } elsif ($svgPropertyOrListPropertyType) {
-                    push(@implContent, "    $svgPropertyOrListPropertyType& impl = thisObject.wrapped().propertyReference();\n");
-                    if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
-                        push(@implContent, "    JSValue result = " . NativeToJSValueUsingReferences($attribute, 0, $interface, "impl", "thisObject") . ";\n");
-                    } else {
-                        push(@implContent, "    JSValue result = " . NativeToJSValueUsingReferences($attribute, 0, $interface, "impl.$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "thisObject") . ";\n");
-
-                    }
                 } else {
                     my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
                     my $implementedBy = $attribute->extendedAttributes->{ImplementedBy};
@@ -3618,23 +3604,11 @@ sub GenerateImplementation
                     push (@implContent, "        return false;\n");
                 }
 
-                if ($svgPropertyOrListPropertyType) {
-                    if ($svgPropertyType) {
-                        push(@implContent, "    if (impl.isReadOnly()) {\n");
-                        push(@implContent, "        setDOMException(&state, throwScope, NO_MODIFICATION_ALLOWED_ERR);\n");
-                        push(@implContent, "        return false;\n");
-                        push(@implContent, "    }\n");
-                        $implIncludes{"ExceptionCode.h"} = 1;
-                    }
-                    push(@implContent, "    $svgPropertyOrListPropertyType& podImpl = impl.propertyReference();\n");
-                    if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
-                        push(@implContent, "    podImpl = nativeValue;\n");
-                    } else {
-                        my $functionString = "podImpl.set$implSetterFunctionName(nativeValue)";
-                        $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
-                        push(@implContent, "    $functionString;\n");
-                    }
-                    push(@implContent, "    impl.commitChange();\n") if $svgPropertyType;
+                if ($svgListPropertyType) {
+                    push(@implContent, "    ${svgListPropertyType}& podImpl = impl.propertyReference();\n");
+                    my $functionString = "podImpl.set$implSetterFunctionName(nativeValue)";
+                    $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
+                    push(@implContent, "    $functionString;\n");
                     push(@implContent, "    return true;\n");
                 } else {
                     my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
@@ -3791,8 +3765,8 @@ END
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
-                    GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
+                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
+                    GenerateImplementationFunctionCall($function, $functionString, "    ", $interface);
                 }
             } else {
                 my $methodName = $function->name;
@@ -3837,19 +3811,11 @@ END
                     push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(*state));\n");
                 } else {
                     push(@implContent, "    auto& impl = castedThis->wrapped();\n");
-                    if ($svgPropertyType) {
-                        push(@implContent, "    if (impl.isReadOnly()) {\n");
-                        push(@implContent, "        setDOMException(state, throwScope, NO_MODIFICATION_ALLOWED_ERR);\n");
-                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                        push(@implContent, "    }\n");
-                        push(@implContent, "    $svgPropertyType& podImpl = impl.propertyReference();\n");
-                        $implIncludes{"ExceptionCode.h"} = 1;
-                    }
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
-                    GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
+                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
+                    GenerateImplementationFunctionCall($function, $functionString, "    ", $interface);
                 }
             }
 
@@ -3884,8 +3850,6 @@ END
                     $implFunctionName = "WebCore::${implementedBy}::${functionImplementationName}";
                 } elsif ($function->isStatic) {
                     $implFunctionName = "${interfaceName}::${functionImplementationName}";
-                } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
-                    $implFunctionName = "podImpl.${functionImplementationName}";
                 } else {
                     $implFunctionName = "impl.${functionImplementationName}";
                 }
@@ -4358,7 +4322,7 @@ sub NeedsExplicitPropagateExceptionCall
 
 sub GenerateParametersCheck
 {
-    my ($outputArray, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType) = @_;
+    my ($outputArray, $function, $interface, $functionImplementationName) = @_;
 
     my $interfaceName = $interface->type->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
@@ -4373,8 +4337,6 @@ sub GenerateParametersCheck
         $functionName = "WebCore::${implementedBy}::${functionImplementationName}";
     } elsif ($function->isStatic) {
         $functionName = "${interfaceName}::${functionImplementationName}";
-    } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
-        $functionName = "podImpl.${functionImplementationName}";
     } else {
         $functionName = "impl.${functionImplementationName}";
     }
@@ -4943,7 +4905,7 @@ sub GenerateCallbackImplementationContent
 
 sub GenerateImplementationFunctionCall()
 {
-    my ($function, $functionString, $indent, $svgPropertyType, $interface) = @_;
+    my ($function, $functionString, $indent, $interface) = @_;
 
     my $nondeterministic = $function->extendedAttributes->{Nondeterministic};
 
@@ -4960,7 +4922,6 @@ sub GenerateImplementationFunctionCall()
         } else {
             push(@implContent, $indent . "$functionString;\n");
         }
-        push(@implContent, $indent . "impl.commitChange();\n") if $svgPropertyType and !$function->isStatic;
         push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
         my $thisObject = $function->isStatic ? 0 : "castedThis";
@@ -5308,21 +5269,16 @@ sub GetSVGPropertyTypes
 
     my $interfaceName = $interface->type->name;
 
-    my $svgPropertyType;
     my $svgListPropertyType;
     my $svgNativeType;
 
-    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $interfaceName =~ /SVG/;
+    return ($svgListPropertyType, $svgNativeType) if not $interfaceName =~ /SVG/;
 
     $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($interface->type);
-    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $svgNativeType;
+    return ($svgListPropertyType, $svgNativeType) if not $svgNativeType;
 
     my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($interface->type);
-    if ($svgNativeType =~ /SVGPropertyTearOff/) {
-        $svgPropertyType = $svgWrappedNativeType;
-        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
-        $headerIncludes{"SVGAnimatedPropertyTearOff.h"} = 1;
-    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
+    if ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
         $svgListPropertyType = $svgWrappedNativeType;
         $headerIncludes{"$svgWrappedNativeType.h"} = 1;
         $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
@@ -5338,14 +5294,7 @@ sub GetSVGPropertyTypes
         $headerIncludes{"SVGPathSegListPropertyTearOff.h"} = 1;
     }
 
-    return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
-}
-
-sub IsNativeType
-{
-    my $type = shift;
-
-    return exists $nativeType{$type->name};
+    return ($svgListPropertyType, $svgNativeType);
 }
 
 sub GetIntegerConversionConfiguration
@@ -5570,25 +5519,7 @@ sub NativeToJSValue
             $value = "static_cast<" . GetNativeType($interface, $type) . ">($value)";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $interface->type->name =~ /List$/) {
             my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-            if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($type) and !$inFunctionCall and not defined $context->extendedAttributes->{Immutable}) {
-                my $getter = $value;
-                $getter =~ s/impl\.//;
-                $getter =~ s/impl->//;
-                $getter =~ s/\(\)//;
-                my $updateMethod = "&" . $interface->type->name . "::update" . $codeGenerator->WK_ucfirst($getter);
-
-                my $selfIsTearOffType = $codeGenerator->IsSVGTypeNeedingTearOff($interface->type);
-                if ($selfIsTearOffType) {
-                    # FIXME: Why SVGMatrix specifically?
-                    AddToImplIncludes("SVGMatrixTearOff.h", $conditional);
-                    $value = "SVGMatrixTearOff::create($wrapped, $value)";
-                } else {
-                    AddToImplIncludes("SVGStaticPropertyTearOff.h", $conditional);
-                    my $interfaceName = $interface->type->name;
-                    $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$interfaceName, /;
-                    $value = "${tearOffType}::create(impl, $value, $updateMethod)";
-                }
-            } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
+            if ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
                 $value = "${tearOffType}::create(impl, $value)";
             } elsif (not $tearOffType =~ /SVG(Point|PathSeg)List/) {
                 $value = "${tearOffType}::create($value)";
@@ -6024,7 +5955,7 @@ sub GenerateConstructorDefinition
 
             # FIXME: For now, we do not support SVG constructors.
             # FIXME: Currently [Constructor(...)] does not yet support optional arguments without [Default=...]
-            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $interface, "constructorCallback", undef, undef, undef);
+            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $interface, "constructorCallback");
 
             push(@constructorArgList, "*state") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ScriptState");;
 

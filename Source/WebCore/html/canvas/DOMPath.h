@@ -52,6 +52,7 @@ public:
 
 #if ENABLE(CANVAS_PATH)
     void addPath(const DOMPath* path) { addPath(path, AffineTransform()); }
+    void addPath(const DOMPath* path, SVGMatrix& matrix) { addPath(path, matrix.propertyReference()); }
     void addPath(const DOMPath* path, const AffineTransform& transform)
     {
         if (!path || !transform.isInvertible())

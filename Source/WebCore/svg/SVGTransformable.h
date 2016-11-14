@@ -21,7 +21,7 @@
 #pragma once
 
 #include "SVGLocatable.h"
-#include "SVGTransform.h"
+#include "SVGTransformValue.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,8 +39,8 @@ public:
     virtual ~SVGTransformable();
 
     static bool parseTransformAttribute(SVGTransformList&, const UChar*& ptr, const UChar* end, TransformParsingMode mode = ClearList);
-    static bool parseTransformValue(SVGTransform::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransform&);
-    static SVGTransform::SVGTransformType parseTransformType(const String&);
+    static bool parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransformValue&);
+    static SVGTransformValue::SVGTransformType parseTransformType(const String&);
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;

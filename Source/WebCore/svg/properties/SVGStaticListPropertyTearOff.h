@@ -27,7 +27,7 @@ template<typename PropertyType> class SVGStaticListPropertyTearOff final : publi
 public:
     using Base = SVGListProperty<PropertyType>;
     using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
-    using ListItemTearOff = SVGPropertyTearOff<ListItemType>;
+    using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
 
     using Base::m_role;
     using Base::m_values;
@@ -96,7 +96,7 @@ private:
         return true;
     }
 
-    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
+    virtual bool processIncomingListItemWrapper(Ref<ListItemTearOff>&, unsigned*)
     {
         ASSERT_NOT_REACHED();
         return true;

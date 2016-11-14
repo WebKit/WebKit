@@ -30,7 +30,7 @@ namespace WebCore {
 
 inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElementBase(tagName, document)
-    , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
+    , m_type(SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
 {
     ASSERT(hasTagName(SVGNames::animateTransformTag));
 }
@@ -56,8 +56,8 @@ void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const
 {
     if (name == SVGNames::typeAttr) {
         m_type = SVGTransformable::parseTransformType(value);
-        if (m_type == SVGTransform::SVG_TRANSFORM_MATRIX)
-            m_type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
+        if (m_type == SVGTransformValue::SVG_TRANSFORM_MATRIX)
+            m_type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
         return;
     }
 

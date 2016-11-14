@@ -1751,8 +1751,8 @@ public:
     void setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
     const Length& strokeWidth() const { return svgStyle().strokeWidth(); }
     void setStrokeWidth(Length w) { accessSVGStyle().setStrokeWidth(w); }
-    Vector<SVGLength> strokeDashArray() const { return svgStyle().strokeDashArray(); }
-    void setStrokeDashArray(Vector<SVGLength> array) { accessSVGStyle().setStrokeDashArray(array); }
+    Vector<SVGLengthValue> strokeDashArray() const { return svgStyle().strokeDashArray(); }
+    void setStrokeDashArray(Vector<SVGLengthValue> array) { accessSVGStyle().setStrokeDashArray(array); }
     const Length& strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
     void setStrokeDashOffset(Length d) { accessSVGStyle().setStrokeDashOffset(d); }
     float strokeMiterLimit() const { return svgStyle().strokeMiterLimit(); }
@@ -1783,10 +1783,10 @@ public:
     void setFloodColor(const Color& c) { accessSVGStyle().setFloodColor(c); }
     void setLightingColor(const Color& c) { accessSVGStyle().setLightingColor(c); }
 
-    SVGLength baselineShiftValue() const { return svgStyle().baselineShiftValue(); }
-    void setBaselineShiftValue(SVGLength s) { accessSVGStyle().setBaselineShiftValue(s); }
-    SVGLength kerning() const { return svgStyle().kerning(); }
-    void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
+    SVGLengthValue baselineShiftValue() const { return svgStyle().baselineShiftValue(); }
+    void setBaselineShiftValue(SVGLengthValue s) { accessSVGStyle().setBaselineShiftValue(s); }
+    SVGLengthValue kerning() const { return svgStyle().kerning(); }
+    void setKerning(SVGLengthValue k) { accessSVGStyle().setKerning(k); }
 
     void setShapeOutside(RefPtr<ShapeValue>&& value)
     {

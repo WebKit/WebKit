@@ -40,7 +40,7 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
         if (ptr == start)
             break;
 
-        SVGLength length(mode);
+        SVGLengthValue length(mode);
         String valueString(start, ptr - start);
         if (valueString.isEmpty())
             return;

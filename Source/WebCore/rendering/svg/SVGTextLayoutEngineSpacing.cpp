@@ -40,7 +40,7 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderStyle* style, SVGElement* contextElement, const UChar* currentCharacter)
 {
     float kerning = 0;
-    SVGLength kerningLength = style->kerning();
+    auto kerningLength = style->kerning();
     if (kerningLength.unitType() == LengthTypePercentage)
         kerning = kerningLength.valueAsPercentage() * m_font.pixelSize();
     else {

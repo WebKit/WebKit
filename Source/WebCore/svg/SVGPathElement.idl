@@ -28,7 +28,7 @@ interface SVGPathElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedNumber pathLength;
 
     unrestricted float getTotalLength();
-    SVGPoint getPointAtLength(optional unrestricted float distance = NaN);
+    [NewObject] SVGPoint getPointAtLength(optional unrestricted float distance = NaN);
     unsigned long getPathSegAtLength(optional unrestricted float distance = NaN);
 
     SVGPathSegClosePath createSVGPathSegClosePath();

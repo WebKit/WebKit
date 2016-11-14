@@ -32,12 +32,12 @@ class SVGPropertyTearOff;
 template<typename PropertyType>
 class SVGAnimatedListPropertyTearOff : public SVGAnimatedProperty {
 public:
-    typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
-    typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
-    typedef Vector<RefPtr<ListItemTearOff>> ListWrapperCache;
-    typedef SVGListProperty<PropertyType> ListProperty;
-    typedef SVGListPropertyTearOff<PropertyType> ListPropertyTearOff;
-    typedef PropertyType ContentType;
+    using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
+    using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
+    using ListWrapperCache = Vector<RefPtr<ListItemTearOff>>;
+    using ListProperty = SVGListProperty<PropertyType>;
+    using ListPropertyTearOff = SVGListPropertyTearOff<PropertyType>;
+    using ContentType = PropertyType;
 
     virtual RefPtr<ListProperty> baseVal()
     {
@@ -73,7 +73,6 @@ public:
     {
         // This should ever be called for our baseVal, as animVal can't modify the list.
         // It's safe to cast to ListPropertyTearOff here as all classes inheriting from us supply their own removeItemFromList() method.
-        typedef SVGPropertyTearOff<typename SVGPropertyTraits<PropertyType>::ListItemType> ListItemTearOff;
         return static_pointer_cast<ListPropertyTearOff>(baseVal())->findItem(static_cast<ListItemTearOff*>(property));
     }
 

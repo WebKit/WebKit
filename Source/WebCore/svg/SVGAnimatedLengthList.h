@@ -21,7 +21,7 @@
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
-#include "SVGLengthList.h"
+#include "SVGLength.h"
 
 namespace WebCore {
 

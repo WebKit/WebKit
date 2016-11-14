@@ -37,19 +37,19 @@ struct RadialGradientAttributes : GradientAttributes {
     {
     }
 
-    SVGLength cx() const { return m_cx; }
-    SVGLength cy() const { return m_cy; }
-    SVGLength r() const { return m_r; }
-    SVGLength fx() const { return m_fx; }
-    SVGLength fy() const { return m_fy; }
-    SVGLength fr() const { return m_fr; }
+    SVGLengthValue cx() const { return m_cx; }
+    SVGLengthValue cy() const { return m_cy; }
+    SVGLengthValue r() const { return m_r; }
+    SVGLengthValue fx() const { return m_fx; }
+    SVGLengthValue fy() const { return m_fy; }
+    SVGLengthValue fr() const { return m_fr; }
 
-    void setCx(const SVGLength& value) { m_cx = value; m_cxSet = true; }
-    void setCy(const SVGLength& value) { m_cy = value; m_cySet = true; }
-    void setR(const SVGLength& value) { m_r = value; m_rSet = true; }
-    void setFx(const SVGLength& value) { m_fx = value; m_fxSet = true; }
-    void setFy(const SVGLength& value) { m_fy = value; m_fySet = true; }
-    void setFr(const SVGLength& value) { m_fr = value; m_frSet = true; }
+    void setCx(SVGLengthValue value) { m_cx = value; m_cxSet = true; }
+    void setCy(SVGLengthValue value) { m_cy = value; m_cySet = true; }
+    void setR(SVGLengthValue value) { m_r = value; m_rSet = true; }
+    void setFx(SVGLengthValue value) { m_fx = value; m_fxSet = true; }
+    void setFy(SVGLengthValue value) { m_fy = value; m_fySet = true; }
+    void setFr(SVGLengthValue value) { m_fr = value; m_frSet = true; }
 
     bool hasCx() const { return m_cxSet; }
     bool hasCy() const { return m_cySet; }
@@ -60,12 +60,12 @@ struct RadialGradientAttributes : GradientAttributes {
 
 private:
     // Properties
-    SVGLength m_cx;
-    SVGLength m_cy;
-    SVGLength m_r;
-    SVGLength m_fx;
-    SVGLength m_fy;
-    SVGLength m_fr;
+    SVGLengthValue m_cx;
+    SVGLengthValue m_cy;
+    SVGLengthValue m_r;
+    SVGLengthValue m_fx;
+    SVGLengthValue m_fy;
+    SVGLengthValue m_fr;
 
     // Property states
     bool m_cxSet : 1;

@@ -30,6 +30,7 @@
 #include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathUtilities.h"
+#include "SVGPoint.h"
 #include "SVGPolygonElement.h"
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
