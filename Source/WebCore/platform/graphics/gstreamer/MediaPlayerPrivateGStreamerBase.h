@@ -156,6 +156,8 @@ protected:
 #endif
 #endif
 
+    GstElement* videoSink() const { return m_videoSink.get(); }
+
     void setStreamVolumeElement(GstStreamVolume*);
     virtual GstElement* createAudioSink() { return 0; }
     virtual GstElement* audioSink() const { return 0; }
