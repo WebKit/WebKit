@@ -1,5 +1,23 @@
 2016-11-14  Chris Dumez  <cdumez@apple.com>
 
+        Avoid copying attributes vector when constructing a CustomElement in HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=164734
+
+        Reviewed by Ryosuke Niwa.
+
+        Avoid copying attributes vector when constructing a CustomElement in HTMLTreeBuilder.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertCustomElement):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::HTMLStackItem):
+        (WebCore::HTMLStackItem::create):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::didCreateCustomOrCallbackElement):
+
+2016-11-14  Chris Dumez  <cdumez@apple.com>
+
         Inline QualifiedName::toString() method
         https://bugs.webkit.org/show_bug.cgi?id=164726
 

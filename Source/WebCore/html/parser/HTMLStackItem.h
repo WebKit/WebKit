@@ -39,7 +39,7 @@ class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
     // Normal HTMLElementStack and HTMLFormattingElementList items.
     static Ref<HTMLStackItem> create(Ref<Element>&&, AtomicHTMLToken&, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
-    static Ref<HTMLStackItem> create(Ref<Element>&&, const AtomicString&, const Vector<Attribute>&);
+    static Ref<HTMLStackItem> create(Ref<Element>&&, const AtomicString&, Vector<Attribute>&&);
 
     // Document fragment or element for parsing context.
     static Ref<HTMLStackItem> create(Element&);
@@ -62,7 +62,7 @@ public:
 
 private:
     HTMLStackItem(Ref<Element>&&, AtomicHTMLToken&, const AtomicString& namespaceURI);
-    HTMLStackItem(Ref<Element>&&, const AtomicString& localName, const AtomicString& namespaceURI, const Vector<Attribute>&);
+    HTMLStackItem(Ref<Element>&&, const AtomicString& localName, const AtomicString& namespaceURI, Vector<Attribute>&&);
     explicit HTMLStackItem(Element&);
     explicit HTMLStackItem(DocumentFragment&);
 
@@ -90,19 +90,18 @@ inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHT
     return adoptRef(*new HTMLStackItem(WTFMove(element), token, namespaceURI));
 }
 
-inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, const AtomicString& localName, const AtomicString& namespaceURI, const Vector<Attribute>& attributes)
+inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, const AtomicString& localName, const AtomicString& namespaceURI, Vector<Attribute>&& attributes)
     : m_node(WTFMove(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
-    , m_attributes(attributes)
+    , m_attributes(WTFMove(attributes))
 {
-    // FIXME: We should find a way to move the attributes vector in the normal code path instead of copying it.
 }
 
-inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, const AtomicString& localName, const Vector<Attribute>& attributes)
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>&& attributes)
 {
     auto& namespaceURI = element.get().namespaceURI();
-    return adoptRef(*new HTMLStackItem(WTFMove(element), localName, namespaceURI, attributes));
+    return adoptRef(*new HTMLStackItem(WTFMove(element), localName, namespaceURI, WTFMove(attributes)));
 }
 
 inline HTMLStackItem::HTMLStackItem(Element& element)

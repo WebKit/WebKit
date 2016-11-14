@@ -103,7 +103,7 @@ public:
     void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLElement(AtomicHTMLToken&);
     JSCustomElementInterface* insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&);
-    void insertCustomElement(Ref<Element>&&, const AtomicString& localName, Vector<Attribute>&);
+    void insertCustomElement(Ref<Element>&&, const AtomicString& localName, Vector<Attribute>&&);
     void insertSelfClosingHTMLElement(AtomicHTMLToken&);
     void insertFormattingElement(AtomicHTMLToken&);
     void insertHTMLHeadElement(AtomicHTMLToken&);

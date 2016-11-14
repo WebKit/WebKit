@@ -872,7 +872,7 @@ inline void HTMLTreeBuilder::insertGenericHTMLElement(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::didCreateCustomOrCallbackElement(Ref<Element>&& element, CustomElementConstructionData& data)
 {
-    m_tree.insertCustomElement(WTFMove(element), data.name, data.attributes);
+    m_tree.insertCustomElement(WTFMove(element), data.name, WTFMove(data.attributes));
 }
 
 void HTMLTreeBuilder::processTemplateStartTag(AtomicHTMLToken& token)

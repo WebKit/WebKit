@@ -490,11 +490,11 @@ JSCustomElementInterface* HTMLConstructionSite::insertHTMLElementOrFindCustomEle
     return nullptr;
 }
 
-void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>& attributes)
+void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>&& attributes)
 {
     setAttributes(element, attributes, m_parserContentPolicy);
     attachLater(currentNode(), element.copyRef());
-    m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, attributes));
+    m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, WTFMove(attributes)));
 }
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
