@@ -1621,6 +1621,18 @@ bool AccessibilityUIElement::isIgnored() const
     return result;
 }
 
+bool AccessibilityUIElement::isSingleLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isMultiLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::hasPopup() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

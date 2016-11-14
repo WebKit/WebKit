@@ -1911,6 +1911,16 @@ bool AccessibilityUIElement::isIgnored() const
     return false;
 }
 
+bool AccessibilityUIElement::isSingleLine() const
+{
+    return checkElementState(m_element.get(), ATK_STATE_SINGLE_LINE);
+}
+
+bool AccessibilityUIElement::isMultiLine() const
+{
+    return checkElementState(m_element.get(), ATK_STATE_MULTI_LINE);
+}
+
 bool AccessibilityUIElement::hasPopup() const
 {
     if (!ATK_IS_OBJECT(m_element.get()))

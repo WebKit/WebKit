@@ -886,6 +886,18 @@ bool AccessibilityUIElement::isIgnored() const
     return false;
 }
 
+bool AccessibilityUIElement::isSingleLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isMultiLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::hasPopup() const
 {
     DWORD state = accessibilityState(m_element);

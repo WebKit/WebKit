@@ -841,10 +841,10 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     }
 
     // Mutually exclusive, so we group these two
-    if (coreObject->roleValue() == TextFieldRole)
-        atk_state_set_add_state(stateSet, ATK_STATE_SINGLE_LINE);
-    else if (coreObject->roleValue() == TextAreaRole)
+    if (coreObject->roleValue() == TextAreaRole || coreObject->ariaIsMultiline())
         atk_state_set_add_state(stateSet, ATK_STATE_MULTI_LINE);
+    else if (coreObject->roleValue() == TextFieldRole || coreObject->roleValue() == SearchFieldRole)
+        atk_state_set_add_state(stateSet, ATK_STATE_SINGLE_LINE);
 
     // TODO: ATK_STATE_SENSITIVE
 

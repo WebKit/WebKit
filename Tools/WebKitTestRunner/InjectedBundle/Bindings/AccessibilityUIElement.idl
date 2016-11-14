@@ -90,6 +90,8 @@ interface AccessibilityUIElement {
     readonly attribute boolean isCollapsed;
     readonly attribute boolean hasPopup;
     readonly attribute boolean isIgnored;
+    readonly attribute boolean isSingleLine;
+    readonly attribute boolean isMultiLine;
     readonly attribute boolean isOffScreen;
     readonly attribute boolean isValid;
     readonly attribute long hierarchicalLevel;

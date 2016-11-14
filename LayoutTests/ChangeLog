@@ -1,3 +1,13 @@
+2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role
+        https://bugs.webkit.org/show_bug.cgi?id=164712
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/singleline-and-multiline-expected.txt: Added.
+        * accessibility/gtk/singleline-and-multiline.html: Added.
+
 2016-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz] HarfBuzzShaper should not assume numGlyphs is greater than 0

@@ -984,6 +984,18 @@ bool AccessibilityUIElement::isIgnored() const
     return !isAccessibilityElement;
 }
 
+bool AccessibilityUIElement::isSingleLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isMultiLine() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::hasPopup() const
 {
     return false;

@@ -1,3 +1,18 @@
+2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role
+        https://bugs.webkit.org/show_bug.cgi?id=164712
+
+        Reviewed by Chris Fleizach.
+
+        Include SearchFieldRole when adding STATE_SINGLE_LINE and STATE_MULTI_LINE
+        to AtkStateSet.
+
+        Test: accessibility/gtk/singleline-and-multiline.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+
 2016-11-14  Youenn Fablet  <youennf@gmail.com>
 
         RTCRtpTransceiver should have Ref of sender and receiver

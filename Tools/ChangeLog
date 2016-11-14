@@ -1,3 +1,35 @@
+2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role
+        https://bugs.webkit.org/show_bug.cgi?id=164712
+
+        Reviewed by Chris Fleizach.
+
+        Add AccessibilityUIElement::isSingleLine, AccessibilityUIElement::isMultiLine
+        to DRT and WKTR. Implement it for ATK.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::isSingleLine):
+        (AccessibilityUIElement::isMultiLine):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isSingleLine):
+        (AccessibilityUIElement::isMultiLine):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isSingleLine):
+        (AccessibilityUIElement::isMultiLine):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isSingleLine):
+        (WTR::AccessibilityUIElement::isMultiLine):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::isSingleLine):
+        (WTR::AccessibilityUIElement::isMultiLine):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isSingleLine):
+        (WTR::AccessibilityUIElement::isMultiLine):
+
 2016-11-14  Youenn Fablet  <youenn@apple.com>
 
         Support WPT templated tests

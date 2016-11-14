@@ -155,6 +155,8 @@ public:
     bool isOffScreen() const;
     bool isCollapsed() const;
     bool isIgnored() const;
+    bool isSingleLine() const;
+    bool isMultiLine() const;
     bool hasPopup() const;
     int hierarchicalLevel() const;
     double clickPointX();

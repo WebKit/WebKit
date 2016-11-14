@@ -1,0 +1,24 @@
+  
+Verifies the correct states are exposed for native and ARIA text input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textbox1.isSingleLine is true
+PASS textbox1.isMultiLine is false
+PASS textbox2.isSingleLine is false
+PASS textbox2.isMultiLine is true
+PASS searchbox1.isSingleLine is true
+PASS searchbox1.isMultiLine is false
+PASS searchbox2.isSingleLine is false
+PASS searchbox2.isMultiLine is true
+PASS input.isSingleLine is true
+PASS input.isMultiLine is false
+PASS password.isSingleLine is true
+PASS password.isMultiLine is false
+PASS textarea.isSingleLine is false
+PASS textarea.isMultiLine is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
