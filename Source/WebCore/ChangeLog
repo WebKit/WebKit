@@ -1,5 +1,15 @@
 2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the !ENABLE(CSS_BOX_DECORATION_BREAK) build
+        https://bugs.webkit.org/show_bug.cgi?id=164478
+
+        Reviewed by Darin Adler.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+
+2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix the !ENABLE(CSS_GRID_LAYOUT) build
         https://bugs.webkit.org/show_bug.cgi?id=164477
 
