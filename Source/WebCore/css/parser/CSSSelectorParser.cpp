@@ -486,7 +486,9 @@ static bool isPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassType)
 static bool isPseudoElementFunction(CSSSelector::PseudoElementType pseudoElementType)
 {
     switch (pseudoElementType) {
+#if ENABLE(VIDEO_TRACK)
     case CSSSelector::PseudoElementCue:
+#endif
     case CSSSelector::PseudoElementSlotted:
         return true;
     default:
@@ -634,6 +636,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     
     if (selector->match() == CSSSelector::PseudoElement) {
         switch (selector->pseudoElementType()) {
+#if ENABLE(VIDEO_TRACK)
         case CSSSelector::PseudoElementCue: {
             DisallowPseudoElementsScope scope(this);
             std::unique_ptr<CSSSelectorList> selectorList = std::unique_ptr<CSSSelectorList>(new CSSSelectorList());
@@ -643,6 +646,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
         }
+#endif
         case CSSSelector::PseudoElementSlotted: {
             DisallowPseudoElementsScope scope(this);
 

@@ -1,3 +1,18 @@
+2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(VIDEO_TRACK) build
+        https://bugs.webkit.org/show_bug.cgi?id=164476
+
+        Reviewed by Darin Adler.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isPseudoElementFunction):
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2016-11-14  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Do not use gstreamer-gl when accelerated compositing is disabled

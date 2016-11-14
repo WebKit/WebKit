@@ -263,7 +263,7 @@ public:
     // connection of ShadowDescendant, and the current shadow DOM code doesn't expect this. When
     // we do fix this issue, make sure to patch the namespace prependTag code to remove the slotted
     // special case, since it will be covered by this function once again.
-    bool needsImplicitShadowCombinatorForMatching() const { return match() == CSSSelector::PseudoElement && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed || pseudoElementType() == CSSSelector::PseudoElementCue); }
+    bool needsImplicitShadowCombinatorForMatching() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
@@ -282,6 +282,17 @@ private:
 inline bool CSSParserSelector::hasShadowDescendant() const
 {
     return m_selector->relation() == CSSSelector::ShadowDescendant;
+}
+
+inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
+{
+    return match() == CSSSelector::PseudoElement
+        && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom
+            || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom
+#if ENABLE(VIDEO_TRACK)
+            || pseudoElementType() == CSSSelector::PseudoElementCue
+#endif
+            || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
 }
 
 inline void CSSParserValue::setFromValueList(std::unique_ptr<CSSParserValueList> valueList)

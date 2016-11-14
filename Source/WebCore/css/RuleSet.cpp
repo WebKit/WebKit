@@ -207,7 +207,9 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     const CSSSelector* focusSelector = nullptr;
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
+#if ENABLE(VIDEO_TRACK)
     const CSSSelector* cuePseudoElementSelector = nullptr;
+#endif
     const CSSSelector* selector = ruleData.selector();
     do {
         switch (selector->match()) {
@@ -285,10 +287,12 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
         selector = selector->tagHistory();
     } while (selector);
 
+#if ENABLE(VIDEO_TRACK)
     if (cuePseudoElementSelector) {
         m_cuePseudoRules.append(ruleData);
         return;
     }
+#endif
 
     if (slottedPseudoElementSelector) {
         // ::slotted pseudo elements work accross shadow boundary making filtering difficult.
