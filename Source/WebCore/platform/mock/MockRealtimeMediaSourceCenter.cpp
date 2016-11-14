@@ -100,19 +100,19 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsH
 
 void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<Ref<RealtimeMediaSource>> audioSources;
+    Vector<Ref<RealtimeMediaSource>> videoSources;
 
     if (audioDeviceID == MockRealtimeMediaSource::mockAudioSourcePersistentID()) {
         auto source = MockRealtimeAudioSource::create(MockRealtimeMediaSource::mockAudioSourceName(), audioConstraints);
         if (source)
-            audioSources.append(source.leakRef());
+            audioSources.append(source.releaseNonNull());
     }
 
     if (videoDeviceID == MockRealtimeMediaSource::mockVideoSourcePersistentID()) {
         auto source = MockRealtimeVideoSource::create(MockRealtimeMediaSource::mockVideoSourceName(), videoConstraints);
         if (source)
-            videoSources.append(source.leakRef());
+            videoSources.append(source.releaseNonNull());
     }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())

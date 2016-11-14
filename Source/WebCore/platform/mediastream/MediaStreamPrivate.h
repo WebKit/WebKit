@@ -68,8 +68,8 @@ public:
         virtual void didRemoveTrack(MediaStreamTrackPrivate&) { }
     };
 
-    static RefPtr<MediaStreamPrivate> create(const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources);
-    static RefPtr<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector&);
+    static Ref<MediaStreamPrivate> create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources);
+    static Ref<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector&);
 
     virtual ~MediaStreamPrivate();
 

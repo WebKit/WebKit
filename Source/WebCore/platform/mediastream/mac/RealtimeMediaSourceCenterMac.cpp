@@ -93,8 +93,8 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(ValidConstraintsHa
 
 void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<Ref<RealtimeMediaSource>> audioSources;
+    Vector<Ref<RealtimeMediaSource>> videoSources;
     String invalidConstraint;
 
     if (!audioDeviceID.isEmpty()) {
@@ -105,7 +105,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler compl
 #endif
 
         if (audioSource)
-            audioSources.append(WTFMove(audioSource));
+            audioSources.append(audioSource.releaseNonNull());
     }
     if (!videoDeviceID.isEmpty()) {
         auto videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, videoConstraints, invalidConstraint);
@@ -114,7 +114,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler compl
             LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), video constraints failed to apply: %s", this, invalidConstraint.utf8().data());
 #endif
         if (videoSource)
-            videoSources.append(WTFMove(videoSource));
+            videoSources.append(videoSource.releaseNonNull());
     }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())

@@ -1,3 +1,24 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        MediaStreamPrivate::create should take vectors of Ref
+        https://bugs.webkit.org/show_bug.cgi?id=164670
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::create):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::createMediaStream):
+
 2016-11-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role

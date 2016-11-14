@@ -120,8 +120,8 @@ Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
 
 void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 {
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+    Vector<Ref<RealtimeMediaSource>> audioSources;
+    Vector<Ref<RealtimeMediaSource>> videoSources;
 
     for (auto item = sources; item; item = item->next) {
         OwrMediaSource* source = OWR_MEDIA_SOURCE(item->data);
@@ -149,16 +149,16 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
             ASSERT_NOT_REACHED();
         }
 
-        RefPtr<RealtimeMediaSourceOwr> mediaSource = adoptRef(new RealtimeMediaSourceOwr(source, id, mediaSourceType, sourceName));
+        auto mediaSource = adoptRef(*new RealtimeMediaSourceOwr(source, id, mediaSourceType, sourceName));
 
         RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(id);
         if (sourceIterator == m_sourceMap.end())
-            m_sourceMap.add(id, mediaSource);
+            m_sourceMap.add(id, mediaSource.copyRef());
 
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            audioSources.append(mediaSource);
+            audioSources.append(WTFMove(mediaSource));
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            videoSources.append(mediaSource);
+            videoSources.append(WTFMove(mediaSource));
     }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())

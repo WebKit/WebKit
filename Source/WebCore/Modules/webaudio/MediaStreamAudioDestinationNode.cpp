@@ -49,8 +49,9 @@ MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContext& c
     setNodeType(NodeTypeMediaStreamAudioDestination);
 
     m_source = MediaStreamAudioSource::create();
-    Vector<RefPtr<RealtimeMediaSource>> audioSources(1, m_source);
-    m_stream = MediaStream::create(*context.scriptExecutionContext(), MediaStreamPrivate::create(WTFMove(audioSources), Vector<RefPtr<RealtimeMediaSource>>()));
+    Vector<Ref<RealtimeMediaSource>> audioSources;
+    audioSources.append(*m_source);
+    m_stream = MediaStream::create(*context.scriptExecutionContext(), MediaStreamPrivate::create(audioSources, { }));
 
     m_source->setAudioFormat(numberOfChannels, context.sampleRate());
 
