@@ -1,3 +1,13 @@
+2016-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed sandbox fix after r208702
+
+        Correct version check to avoid breaking users in Safari Technology Preview
+        or WebKit nightlies.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-11-14  Pranjal Jumde  <pjumde@apple.com>
 
         Keychain access in WebKit should be limited to a single process. Earlier this was blocked on the networking framework requiring direct access to keychain, this will be resolved in the upcoming version of macOS.

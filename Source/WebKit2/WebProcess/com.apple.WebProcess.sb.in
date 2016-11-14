@@ -208,14 +208,14 @@
        (global-name "com.apple.CoreAuthentication.agent.libxpc")
        (global-name "com.apple.SecurityServer"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
 (allow file-read* file-write* (home-subpath "/Library/Keychains")) ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
 #endif
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
 (allow file-read*
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
        (subpath "/Library/Keychains")
 #endif
        (subpath "/private/var/db/mds")
