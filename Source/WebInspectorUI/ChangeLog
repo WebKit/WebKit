@@ -1,3 +1,27 @@
+2016-11-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Settings tab should look more like a native macOS view
+        https://bugs.webkit.org/show_bug.cgi?id=164708
+        <rdar://problem/29241296>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings):
+        (.content-view.settings > .header):
+        (.content-view.settings > .setting-container):
+        Match macOS Sierra default font size for settings view.
+
+        (.content-view.settings > .setting-container > .setting-name):
+        (.content-view.settings > .setting-container > .setting-value-controller):
+        (.content-view.settings > .setting-container > .setting-value-controller input):
+        (.content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"]):
+        Make checkbox larger.
+
+        (.content-view.settings > .setting-container > .setting-value-controller select):
+        (.content-view.settings > .setting-container > .setting-value-controller input[type="number"]):
+        Decrease the width of the number fields to make them just wide enough to fit 2 digit numbers.
+
 2016-11-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Type Profiler and Code Coverage Profiler should work in Workers

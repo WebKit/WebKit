@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +26,26 @@
 
 .content-view.settings {
     overflow-y: auto;
-    font-weight: lighter;
+    background-color: hsl(0, 0%, 93%);
 }
 
 .content-view.settings > .header {
     margin: 6vh auto 4vh;
     text-align: center;
     font-size: 32px;
+    font-weight: lighter;
 }
 
 .content-view.settings > .setting-container {
     display: flex;
     align-items: center;
     margin: 1em 0;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .content-view.settings > .setting-container > .setting-name {
     width: 50%;
-    margin-right: 2px;
+    margin-right: 6px;
     text-align: right;
 }
 
@@ -51,11 +53,31 @@
     display: flex;
     align-items: center;
     width: 50%;
-    margin-left: 2px;
+}
+
+.content-view.settings > .setting-container > .setting-value-controller input {
+    font-size: inherit;
+}
+
+.content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.content-view.settings > .setting-container > .setting-value-controller select {
+    /*
+    To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
+    Setting the font-size to 13px actually sets it to 11px.
+    */
+    font-size: 16px;
+
+    /* Vertically align <select> with its label text. */
+    position: relative;
+    top: 0.5px;
 }
 
 .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
-    max-width: 50px;
-    margin: 0 5px;
+    max-width: 42px;
+    margin: 0 5px 0 2px;
     text-align: right;
 }
