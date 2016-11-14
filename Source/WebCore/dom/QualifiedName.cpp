@@ -90,14 +90,6 @@ QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()
     qualifiedNameCache().remove(this);
 }
 
-String QualifiedName::toString() const
-{
-    if (!hasPrefix())
-        return localName();
-
-    return prefix().string() + ':' + localName().string();
-}
-
 // Global init routines
 DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom)
 

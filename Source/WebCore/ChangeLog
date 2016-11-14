@@ -1,3 +1,17 @@
+2016-11-14  Chris Dumez  <cdumez@apple.com>
+
+        Inline QualifiedName::toString() method
+        https://bugs.webkit.org/show_bug.cgi?id=164726
+
+        Reviewed by Ryosuke Niwa.
+
+        Inline QualifiedName::toString() method to limit performance impact of r208674.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::toString): Deleted.
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::toString):
+
 2016-11-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the font-synthesis property

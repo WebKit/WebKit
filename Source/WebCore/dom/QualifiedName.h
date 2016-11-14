@@ -143,6 +143,14 @@ struct QualifiedNameHash {
 void createQualifiedName(void* targetAddress, StringImpl* name);
 void createQualifiedName(void* targetAddress, StringImpl* name, const AtomicString& nameNamespace);
 
+inline String QualifiedName::toString() const
+{
+    if (!hasPrefix())
+        return localName();
+
+    return prefix().string() + ':' + localName().string();
+}
+
 } // namespace WebCore
 
 namespace WTF {
