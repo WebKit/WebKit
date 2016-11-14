@@ -1,3 +1,14 @@
+2016-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Disable Warning Filter in Debugger Tab By Default
+        https://bugs.webkit.org/show_bug.cgi?id=164723
+        rdar://problem/29251780
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel): Made "debugger-show-resources-with-issues-only" false by default.
+
 2016-11-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Settings tab should look more like a native macOS view
