@@ -57,10 +57,13 @@ ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
 
 JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
-    String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
-    VM& vm = globalObject->vm();
+    String input = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     bool globalOrSticky = regExp->globalOrSticky();
 
@@ -91,10 +94,14 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
 MatchResult RegExpObject::matchInline(
     ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
-    String input = string->value(exec); // FIXME: Handle errors. https://bugs.webkit.org/show_bug.cgi?id=155145
-    VM& vm = globalObject->vm();
+    String input = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, MatchResult());
+
     if (!regExp->global() && !regExp->sticky())
         return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 

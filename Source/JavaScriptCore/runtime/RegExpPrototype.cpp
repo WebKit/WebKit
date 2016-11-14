@@ -105,8 +105,10 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(ExecState* exec)
     if (!thisValue.inherits(RegExpObject::info()))
         return throwVMTypeError(exec, scope);
     JSString* string = exec->argument(0).toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
+    scope.release();
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->test(exec, exec->lexicalGlobalObject(), string)));
 }
 
@@ -119,8 +121,10 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     if (!thisValue.inherits(RegExpObject::info()))
         return throwVMTypeError(exec, scope, "Builtin RegExp exec can only be called on a RegExp object");
     JSString* string = exec->argument(0).toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
+    scope.release();
     return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
 }
 
@@ -133,10 +137,14 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
     if (!thisValue.inherits(RegExpObject::info()))
         return throwVMTypeError(exec, scope);
     JSString* string = exec->argument(0).toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !string);
     if (!string)
-        return JSValue::encode(jsUndefined());
-    if (!asRegExpObject(thisValue)->regExp()->global())
+        return encodedJSValue();
+    if (!asRegExpObject(thisValue)->regExp()->global()) {
+        scope.release();
         return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
+    }
+    scope.release();
     return JSValue::encode(asRegExpObject(thisValue)->matchGlobal(exec, exec->lexicalGlobalObject(), string));
 }
 

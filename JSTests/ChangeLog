@@ -1,5 +1,17 @@
 2016-11-14  Mark Lam  <mark.lam@apple.com>
 
+        RegExpObject::exec/match should handle errors gracefully.
+        https://bugs.webkit.org/show_bug.cgi?id=155145
+        <rdar://problem/27435934>
+
+        Reviewed by Keith Miller.
+
+        * stress/regexp-prototype-exec-on-too-long-rope.js: Added.
+        * stress/regexp-prototype-match-on-too-long-rope.js: Added.
+        * stress/regexp-prototype-test-on-too-long-rope.js: Added.
+
+2016-11-14  Mark Lam  <mark.lam@apple.com>
+
         Enhance run-jsc-stress-test script to allow optional test specific options to be added for all test run configurations.
         https://bugs.webkit.org/show_bug.cgi?id=164695
 

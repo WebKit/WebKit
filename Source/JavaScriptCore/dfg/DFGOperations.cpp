@@ -792,12 +792,15 @@ EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSGlobalObject
     
     VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue argument = JSValue::decode(encodedArgument);
 
     JSString* input = argument.toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !input);
     if (!input)
-        return JSValue::encode(jsUndefined());
+        return encodedJSValue();
+    scope.release();
     return JSValue::encode(regExpObject->execInline(exec, globalObject, input));
 }
         
@@ -816,8 +819,10 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
         return throwVMTypeError(exec, scope);
 
     JSString* input = argument.toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !input);
     if (!input)
         return JSValue::encode(jsUndefined());
+    scope.release();
     return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
 }
         
@@ -863,8 +868,10 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     }
 
     JSString* input = argument.toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !input);
     if (!input)
         return false;
+    scope.release();
     return asRegExpObject(base)->test(exec, globalObject, input);
 }
 
