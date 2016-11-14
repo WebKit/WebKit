@@ -142,7 +142,7 @@ public:
         Vector<SQLValue> sqlValues;
         Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
         Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
-        transaction->executeSQL(m_sqlStatement, sqlValues, WTFMove(callback), WTFMove(errorCallback), IGNORE_EXCEPTION);
+        transaction->executeSQL(m_sqlStatement, sqlValues, WTFMove(callback), WTFMove(errorCallback));
         return true;
     }
 private:

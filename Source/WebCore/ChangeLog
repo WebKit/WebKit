@@ -1,3 +1,288 @@
+2016-11-13  Darin Adler  <darin@apple.com>
+
+        Fix exception handling in SQL database code, streamline and update code
+        https://bugs.webkit.org/show_bug.cgi?id=164685
+
+        Reviewed by Sam Weinig.
+
+        Removed some old abstraction layers that were no longer in use. For example,
+        i n many cases, calls were going through DatabaseManager, which called through
+        an abstract class AbstractDatabaseServer to a concrete class DatabaseServer,
+        which then called through to DatabaseTracker. Clients now mostly just call
+        DatabaseTracker directly.
+
+        * CMakeLists.txt: Removed DatabaseServer.cpp and SQLTransactionClient.cpp.
+
+        * Modules/webdatabase/AbstractDatabaseServer.h: Removed.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase): Use ExceptionOr instead of
+        DatabaseError to communicate DOM exceptions from DatabaseManager.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database): Use a reference instead of a RefPtr&& for database
+        context. Use unsigned instead of unsigned long. Modernize code to use more
+        initialization rather than assignment, to initialize scalar data members in the
+        class definition, and to use HashMap::ensure.
+        (WebCore::Database::databaseThread): Added. This class asserts that there is a
+        thread in the constructor, and so it is useful to have a helper for all the other
+        functions that assumes the thread is present and returns a reference rather than
+        a pointer.
+        (WebCore::Database::~Database): Updated since m_scriptExecutionContext is now
+        a Ref instead of a RefPtr.
+        (WebCore::Database::openAndVerifyVersion): Use ExceptionOr and databaseThread.
+        (WebCore::Database::close): Use databaseThread.
+        (WebCore::Database::performClose): Ditto.
+        (WebCore::DoneCreatingDatabaseOnExitCaller::DoneCreatingDatabaseOnExitCaller):
+        Use a reference. Removed unused m_openSuccceeded.
+        (WebCore::DoneCreatingDatabaseOnExitCaller::~DoneCreatingDatabaseOnExitCaller):
+        Use DatabaseTracker::singleton by its new name.
+        (WebCore::DoneCreatingDatabaseOnExitCaller::setOpenSucceeded): Deleted.
+        (WebCore::Database::performOpenAndVerify): Use ExceptionOr and update for above.
+        (WebCore::Database::closeDatabase): Updated for name change.
+        (WebCore::Database::scheduleTransaction): Updated for above, simplified and
+        streamlined.
+        (WebCore::Database::scheduleTransactionStep): Use databaseThread.
+        (WebCore::Database::transactionClient): Deleted. This object is no longer needed.
+        (WebCore::Database::transactionCoordinator): Use databaseThread.
+        (WebCore::Database::markAsDeletedAndClose): Removed unnecessary null check for
+        databaseThread, which can never be null.
+        (WebCore::Database::estimatedSize): Use unsigned, not unsigned long.
+        (WebCore::Database::disableAuthorizer): Removed assertion about RefPtr that is
+        now a Ref and never could have been null.
+        (WebCore::Database::enableAuthorizer): Ditto.
+        (WebCore::Database::setAuthorizerPermissions): Ditto.
+        (WebCore::Database::lastActionChangedDatabase): Ditto.
+        (WebCore::Database::lastActionWasInsert): Ditto.
+        (WebCore::Database::resetDeletes): Ditto.
+        (WebCore::Database::hadDeletes): Ditto.
+        (WebCore::Database::resetAuthorizer): Removed null check for a RefPtr that is now
+        a Ref and never could have been null.
+        (WebCore::Database::runTransaction): Simplified a bit.
+        (WebCore::Database::tableNames): Use databaseThread.
+        (WebCore::Database::securityOrigin): Changed to return a reference instead of a
+        pointer because all the callers need it to do that. If called on the wrong thread,
+        this will now do a RELEASE_ASSERT_NOT_REACHED. In the old code it would return a
+        null pointer and then the caller would dereference it a moment later, so it would
+        still be a crash.
+        (WebCore::Database::maximumSize): Removed const since it's not really needed and
+        the DatabaseTracker wants a non-const reference to this database.
+        (WebCore::Database::didCommitWriteTransaction): Added. Moved this code here from
+        SQLTransactionClient. There is no abstraction layer, so no reason to not have
+        this code, quite comparable to the rest of the code in the class, here. I am
+        assuming this served some more useful purpose back when we had a different back end
+        for Chromium?
+        (WebCore::Database::didExceedQuota): Ditto.
+        * Modules/webdatabase/Database.h: Updated for above changes. Made some functions
+        return references instead of pointers. Use Ref instead of RefPtr for some things that
+        can never be null.
+        * Modules/webdatabase/Database.idl: Added ImplementationLacksVTable because the
+        Database class is not polymorphic.
+
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::DatabaseContext): Take a reference instead of a pointer.
+        Moved data member initialization into class definition. Remove code that tries to do
+        debug accounting and databasecontext registration and instead just make sure to keep
+        the ScriptExecutionContext pointing at the DatabaseContext.
+        (WebCore::DatabaseContext::~DatabaseContext): Ditto.
+        (WebCore::DatabaseContext::stopDatabases): Ditto.
+        * Modules/webdatabase/DatabaseContext.h: Updated for the above. Also used the
+        scriptExecutionContext function inherited from the base class intead of adding our
+        own, and added a existingDatabaseThread() function, letting us get at the database
+        thread efficiently without creating a new one.
+
+        * Modules/webdatabase/DatabaseError.h: Removed. We now use DOM exceptions directly
+        instead of our own error enumeration that has to be translated to a DOM exception.
+
+        * Modules/webdatabase/DatabaseManager.cpp: Moved the ProposedDatabase class here
+        from the header file, and had it use references instead of pointers.
+        (WebCore::DatabaseManager::DatabaseManager): Deleted. There was nothing left to
+        initialize once the refactoring was done.
+        (WebCore::DatabaseManager::initialize): Call DatabaseTracker directly instead of
+        calling through m_server.
+        (WebCore::DatabaseManager::setClient): Ditto.
+        (WebCore::DatabaseManager::databaseDirectoryPath): Deleted. Callers will use the
+        function in DatabaseTracker directly.
+        (WebCore::DatabaseManager::setDatabaseDirectoryPath): Ditto.
+        (WebCore::DatabaseManager::existingDatabaseContextFor): Deleted. Callers will use
+        the ScriptExecutionContext::databaseContext function instead.
+        (WebCore::DatabaseManager::databaseContext): Renamed from databaseContextFor.
+        (WebCore::DatabaseManager::registerDatabaseContext): Deleted.
+        (WebCore::DatabaseManager::unregisterDatabaseContext): Deleted.
+        (WebCore::DatabaseManager::didConstructDatabaseContext): Deleted.
+        (WebCore::DatabaseManager::didDestructDatabaseContext): Deleted.
+        (WebCore::DatabaseManager::exceptionCodeForDatabaseError): Deleted.
+        (WebCore::logOpenDatabaseError): Tweaked conditionals a bit.
+        (WebCore::DatabaseManager::openDatabaseBackend): Use ExceptionOr. Changed to call
+        tryToOpenDatabaseBackend function here in this class rather than using m_server.
+        (WebCore::DatabaseManager::tryToOpenDatabaseBackend): Added. Moved here from the
+        DatabaseServer class.
+        (WebCore::DatabaseManager::addProposedDatabase): Take a reference.
+        (WebCore::DatabaseManager::removeProposedDatabase): Ditto.
+        (WebCore::DatabaseManager::openDatabase): Use ExceptionOr.
+        (WebCore::DatabaseManager::hasOpenDatabases): Use ScriptContext::databaseContext
+        directly instead of using helper functions in this class.
+        (WebCore::DatabaseManager::stopDatabases): Ditto.
+        (WebCore::DatabaseManager::fullPathForDatabase): Take a reference and also call
+        DatabaseTracker directly instead of calling through m_server.
+        (WebCore::DatabaseManager::hasEntryForOrigin): Deleted. Callers will use the
+        function in DatabaseTracker directly.
+        (WebCore::DatabaseManager::origins): Ditto.
+        (WebCore::DatabaseManager::databaseNamesForOrigin): Ditto.
+        (WebCore::DatabaseManager::detailsForNameAndOrigin): Call DatabaseTracker directly
+        instead of calling through m_server.
+        (WebCore::DatabaseManager::usageForOrigin): Deleted. Callers will use the
+        function in DatabaseTracker directly.
+        (WebCore::DatabaseManager::quotaForOrigin): Ditto.
+        (WebCore::DatabaseManager::setQuota): Ditto.
+        (WebCore::DatabaseManager::deleteAllDatabasesImmediately): Ditto.
+        (WebCore::DatabaseManager::deleteOrigin): Ditto.
+        (WebCore::DatabaseManager::deleteDatabase): Ditto.
+        (WebCore::DatabaseManager::closeAllDatabases): Ditto.
+        (WebCore::DatabaseManager::logErrorMessage): Take a reference.
+        * Modules/webdatabase/DatabaseManager.h: Updated for changes above.
+
+        * Modules/webdatabase/DatabaseManagerClient.h: Use references for security origins.
+        Also changed #if for iOS so that other platforms can call the iOS-specific functions
+        and they have inline empty bodies; lets us clean up call sites to not need conditionals.
+
+        * Modules/webdatabase/DatabaseServer.cpp: Removed.
+        * Modules/webdatabase/DatabaseServer.h: Removed.
+
+        * Modules/webdatabase/DatabaseTask.cpp:
+        (WebCore::isolatedCopy): Added. Helper functions for making isolated copies of
+        exceptions, which can contain strings.
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask): Use ExceptionOr<void> instead of
+        a DatabaseError, a String, and a success boolean.
+        (WebCore::DatabaseOpenTask::doPerformTask): Updated to use ExceptoinOr.
+        (WebCore::DatabaseTableNamesTask::DatabaseTableNamesTask): Renamed.
+        (WebCore::DatabaseTableNamesTask::doPerformTask): Added a comment.
+        * Modules/webdatabase/DatabaseTask.h: Updated for above changes.
+
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread): Initialized data members in the class
+        definition. Removed m_transactionClient.
+        (WebCore::DatabaseThread::recordDatabaseOpen): Take a reference.
+        (WebCore::DatabaseThread::recordDatabaseClosed): Ditto.
+        (WebCore::DatabaseThread::scheduleTask): Use an rvalue reference.
+        (WebCore::DatabaseThread::scheduleImmediateTask): Ditto.
+        (WebCore::DatabaseThread::unscheduleDatabaseTasks): Use a lambda instead of a
+        class for the same-database predicate.
+        * Modules/webdatabase/DatabaseThread.h: Updated for above.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::isolatedCopy): Added. Helper for making an isolated copy of a vector
+        of strings.
+        (WebCore::DatabaseTracker::singleton): Renamed from tracker.
+        (WebCore::DatabaseTracker::DatabaseTracker): Moved the code from
+        setDatabaseDirectoryPath in here.
+        (WebCore::DatabaseTracker::setDatabaseDirectoryPath): Deleted.
+        (WebCore::DatabaseTracker::databaseDirectoryPath): Deleted.
+        (WebCore::DatabaseTracker::hasAdequateQuotaForOrigin): Use ExceptionOr.
+        (WebCore::DatabaseTracker::canEstablishDatabase): Ditto.
+        (WebCore::DatabaseTracker::retryCanEstablishDatabase): Ditto.
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock): Take a reference.
+        (WebCore::DatabaseTracker::hasEntryForOrigin): Deleted.
+        (WebCore::DatabaseTracker::hasEntryForDatabase): Take a reference.
+        (WebCore::DatabaseTracker::maximumSize): Renamed from getMaxSizeForDatabase
+        and changed to take a reference.
+        (WebCore::DatabaseTracker::originPath): Take a reference.
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock): Ditto.
+        (WebCore::DatabaseTracker::fullPathForDatabase): Ditto.
+        (WebCore::DatabaseTracker::origins): Changed to use a return value instead
+        of using an out argument.
+        (WebCore::DatabaseTracker::databaseNamesNoLock): Ditto. Also renamed from
+        databaseNamesForOriginNoLock.
+        (WebCore::DatabaseTracker::databaseNames): Ditto. Also renamed from
+        databaseNamesForOrigin.
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin): Take a reference.
+        (WebCore::DatabaseTracker::setDatabaseDetails): Ditto.
+        (WebCore::DatabaseTracker::doneCreatingDatabase): Ditto.
+        (WebCore::DatabaseTracker::addOpenDatabase): Ditto.
+        (WebCore::DatabaseTracker::removeOpenDatabase): Ditto.
+        (WebCore::DatabaseTracker::getOpenDatabases): Deleted.
+        (WebCore::DatabaseTracker::originLockFor): Take a reference.
+        (WebCore::DatabaseTracker::deleteOriginLockFor): Take a reference.
+        (WebCore::DatabaseTracker::usage): Renamed from usageForOrigin. Take a reference.
+        (WebCore::DatabaseTracker::quotaNoLock): Renamed from quotaForOriginNoLock.
+        Take a reference.
+        (WebCore::DatabaseTracker::quota): Renamed from quatoForOrigin. Take a reference.
+        (WebCore::DatabaseTracker::setQuota): Take a reference.
+        (WebCore::DatabaseTracker::addDatabase): Ditto.
+        (WebCore::DatabaseTracker::deleteAllDatabasesImmediately): Updated now that
+        origins has a return value.
+        (WebCore::DatabaseTracker::deleteDatabasesModifiedSince): Ditto.
+        (WebCore::DatabaseTracker::deleteOrigin): Take a reference.
+        (WebCore::DatabaseTracker::isDeletingDatabaseOrOriginFor): Ditto.
+        (WebCore::DatabaseTracker::recordCreatingDatabase): Updated to take a reference,
+        use unique_ptr, and use HashCountedSet.
+        (WebCore::DatabaseTracker::doneCreatingDatabase): Ditto.
+        (WebCore::DatabaseTracker::creatingDatabase): Ditto.
+        (WebCore::DatabaseTracker::canDeleteDatabase): Take a reference.
+        (WebCore::DatabaseTracker::recordDeletingDatabase): Updated to take a reference,
+        and use unique_ptr.
+        (WebCore::DatabaseTracker::doneDeletingDatabase): Ditto.
+        (WebCore::DatabaseTracker::isDeletingDatabase): Ditto.
+        (WebCore::DatabaseTracker::canDeleteOrigin): Take a reference.
+        (WebCore::DatabaseTracker::isDeletingOrigin): Ditto.
+        (WebCore::DatabaseTracker::recordDeletingOrigin): Ditto.
+        (WebCore::DatabaseTracker::doneDeletingOrigin): Ditto.
+        (WebCore::DatabaseTracker::deleteDatabase): Ditto.
+        (WebCore::DatabaseTracker::deleteDatabaseFile): Ditto.
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases): Ditto.
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged): Ditto.
+        (WebCore::DatabaseTracker::notifyDatabasesChanged): Ditto.
+        * Modules/webdatabase/DatabaseTracker.h: Updated for above changes.
+
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement): Updated since Database::scriptExecutionContext
+        now returns a reference.
+
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction): Moved data member initialization to
+        the calss definition. Also updated since Database::scriptExecutionContext now
+        returns a reference.
+        (WebCore::SQLTransaction::executeSQL): Use ExceptionOr.
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase): Updated since
+        databaseContext now returns a reference.
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback): Updated to call
+        didExceedQuota on the database instead of the transaction client.
+        (WebCore::SQLTransaction::postflightAndCommit): Updated to call
+        didCommitWriteTransaction on the database instead of the transaction client.
+        (WebCore::SQLTransaction::acquireOriginLock): Updated for name change of
+        DatabaseTracker::tracker to DatbaseTracker::singleton.
+        * Modules/webdatabase/SQLTransaction.h: Updated for above.
+        * Modules/webdatabase/SQLTransaction.idl: Added MayThrowException to
+        executeSql. Not technically needed since it's a custom binding.
+
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::doCleanup): Updated assertion to use
+        Database::databaseThread.
+        (WebCore::SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown): Ditto.
+
+        * Modules/webdatabase/SQLTransactionClient.cpp: Removed.
+        * Modules/webdatabase/SQLTransactionClient.h: Removed.
+
+        * Modules/webdatabase/SQLTransactionCoordinator.cpp:
+        (WebCore::getDatabaseIdentifier): Updated to pass a reference.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed various deleted files.
+        Also let Xcode change the whitespace on some lines.
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql): Use ExceptionOr, specifically by
+        using the propagateException function.
+
+        * dom/ScriptExecutionContext.h: Added databaseContext function. Before, we
+        had setDatabaseContext, but no way to inspect the pointer that was stored.
+
+        * inspector/InspectorDatabaseAgent.cpp: Removed IGNORE_EXCEPTION in a call
+        to executeSQL, which no longer has an ExceptionCode out argument.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Pass a reference in the call to
+        DatabaseManager::stopDatabases.
+
 2016-11-13  Dan Bernstein  <mitz@apple.com>
 
         Try to fix building with newer versions of clang.

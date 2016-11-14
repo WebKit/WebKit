@@ -26,7 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface Database {
+[
+    ImplementationLacksVTable
+] interface Database {
     readonly attribute DOMString version;
     void changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback? callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
     void transaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);

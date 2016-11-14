@@ -37,7 +37,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
-#include <WebCore/DatabaseManager.h>
+#include <WebCore/DatabaseTracker.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -212,14 +212,13 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
 
 void WKBundleClearAllDatabases(WKBundleRef)
 {
-    DatabaseManager::singleton().deleteAllDatabasesImmediately();
+    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 }
 
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
-    // Historically, we've used the following (somewhat non-sensical) string
-    // for the databaseIdentifier of local files.
-    DatabaseManager::singleton().setQuota(SecurityOrigin::createFromDatabaseIdentifier("file__0").ptr(), quota);
+    // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
+    DatabaseTracker::singleton().setQuota(SecurityOrigin::createFromDatabaseIdentifier("file__0"), quota);
 }
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)

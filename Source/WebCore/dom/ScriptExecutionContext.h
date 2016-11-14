@@ -200,6 +200,7 @@ public:
 
     virtual EventQueue& eventQueue() const = 0;
 
+    DatabaseContext* databaseContext() { return m_databaseContext.get(); }
     void setDatabaseContext(DatabaseContext*);
 
 #if ENABLE(SUBTLE_CRYPTO)

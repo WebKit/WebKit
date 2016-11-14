@@ -29,8 +29,5 @@
 [
     SkipVTableValidation,
 ] interface SQLTransaction {
-    [Custom] void executeSql(DOMString sqlStatement,
-                             ObjectArray arguments,
-                             optional SQLStatementCallback? callback,
-                             optional SQLStatementErrorCallback? errorCallback);
+    [Custom, MayThrowException] void executeSql(DOMString sqlStatement, ObjectArray arguments, optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
 };

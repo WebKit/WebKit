@@ -478,7 +478,6 @@ JSC::VM& ScriptExecutionContext::vm()
 
 void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)
 {
-    ASSERT(!m_databaseContext);
     m_databaseContext = databaseContext;
 }
 

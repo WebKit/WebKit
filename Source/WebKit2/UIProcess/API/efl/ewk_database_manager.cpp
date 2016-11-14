@@ -51,14 +51,12 @@ void EwkDatabaseManager::getDatabaseOrigins(Ewk_Database_Manager_Get_Database_Or
 
     RefPtr<ArrayCallback> arrayCallback = ArrayCallback::create(toGenericCallbackFunction(context, callback));
 
-    Vector<RefPtr<WebCore::SecurityOrigin>> origins;
+    auto origins = WebCore::DatabaseTracker::trackerWithDatabasePath(API::WebsiteDataStore::defaultWebSQLDatabaseDirectory())->origins();
+
     Vector<RefPtr<API::Object>> securityOrigins;
-
-    WebCore::DatabaseTracker::trackerWithDatabasePath(API::WebsiteDataStore::defaultWebSQLDatabaseDirectory())->origins(origins);
     securityOrigins.reserveInitialCapacity(origins.size());
-
-    for (const auto& originIdentifier : origins)
-        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(*originIdentifier));
+    for (auto& originIdentifier : origins)
+        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(originIdentifier));
 
     arrayCallback->performCallbackWithReturnValue(API::Array::create(WTFMove(securityOrigins)).ptr());
 }

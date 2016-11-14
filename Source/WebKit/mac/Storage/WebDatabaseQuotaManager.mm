@@ -26,7 +26,7 @@
 #import "WebDatabaseQuotaManager.h"
 
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/DatabaseManager.h>
+#import <WebCore/DatabaseTracker.h>
 
 using namespace WebCore;
 
@@ -34,6 +34,9 @@ using namespace WebCore;
 
 - (id)initWithOrigin:(WebSecurityOrigin *)origin
 {
+    if (!origin)
+        return nil;
+
     self = [super init];
     if (!self)
         return nil;
@@ -49,12 +52,12 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseManager::singleton().usageForOrigin([_origin _core]);
+    return DatabaseTracker::singleton().usage(*[_origin _core]);
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseManager::singleton().quotaForOrigin([_origin _core]);
+    return DatabaseTracker::singleton().quota(*[_origin _core]);
 }
 
 // If the quota is set to a value lower than the current usage, that quota will
@@ -62,7 +65,7 @@ using namespace WebCore;
 // prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseManager::singleton().setQuota([_origin _core], quota);
+    DatabaseTracker::singleton().setQuota(*[_origin _core], quota);
 }
 
 @end

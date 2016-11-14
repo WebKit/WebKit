@@ -1,3 +1,44 @@
+2016-11-13  Darin Adler  <darin@apple.com>
+
+        Fix exception handling in SQL database code, streamline and update code
+        https://bugs.webkit.org/show_bug.cgi?id=164685
+
+        Reviewed by Sam Weinig.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager origins]): Updated to use DatabaseTracker and pass
+        a reference.
+        (-[WebDatabaseManager databasesWithOrigin:]): Ditto.
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Pass reference,
+        but continue to use DatabaseManager.
+        (-[WebDatabaseManager deleteOrigin:]): Use DatabaseTracker and pass a
+        reference.
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]): Ditto.
+
+        * Storage/WebDatabaseManagerClient.h: Updated to take references.
+        * Storage/WebDatabaseManagerClient.mm:
+        (WebDatabaseManagerClient::WebDatabaseManagerClient): Initialize data
+        members in the class definition.
+        (DidModifyOriginData::dispatchToMainThread): Take references.
+        (DidModifyOriginData::DidModifyOriginData): Ditto.
+        (WebDatabaseManagerClient::dispatchDidModifyOrigin): Ditto.
+        (WebDatabaseManagerClient::dispatchDidModifyDatabase): Ditto.
+        (WebDatabaseManagerClient::dispatchDidAddNewOrigin): Ditto. Also use
+        DatabaseTracker::singleton instead of tracker.
+
+        * Storage/WebDatabaseQuotaManager.mm:
+        (-[WebDatabaseQuotaManager initWithOrigin:]): Reject nil pointer argument.
+        (-[WebDatabaseQuotaManager usage]): Use reference instead of pointer.
+        (-[WebDatabaseQuotaManager quota]): Ditto.
+        (-[WebDatabaseQuotaManager setQuota:]): Ditto.
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin initWithURL:]): Tweaked code a bit.
+        (-[WebSecurityOrigin usage]): Use DatabaseTracker and pass a reference.
+        (-[WebSecurityOrigin quota]): Ditto.
+        (-[WebSecurityOrigin setQuota:]): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]): Pass a reference.
+
 2016-11-12  Darin Adler  <darin@apple.com>
 
         Remove a few assorted uses of ExceptionCode

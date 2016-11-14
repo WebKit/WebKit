@@ -71,6 +71,8 @@ private:
     Optional<Exception> m_exception;
 };
 
+ExceptionOr<void> isolatedCopy(ExceptionOr<void>&&);
+
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Exception&& exception)
     : m_value(WTFMove(exception))
 {
@@ -139,6 +141,13 @@ inline bool ExceptionOr<void>::hasException() const
 inline Exception&& ExceptionOr<void>::releaseException()
 {
     return WTFMove(m_exception.value());
+}
+
+inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
+{
+    if (value.hasException())
+        return isolatedCopy(value.releaseException());
+    return { };
 }
 
 }

@@ -43,7 +43,6 @@
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransactionBackend.h"
 #include "SQLTransactionCallback.h"
-#include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include "SQLTransactionErrorCallback.h"
 #include "SQLiteTransaction.h"
@@ -60,17 +59,12 @@ Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLT
 
 SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
     : m_database(WTFMove(database))
-    , m_callbackWrapper(WTFMove(callback), m_database->scriptExecutionContext())
-    , m_successCallbackWrapper(WTFMove(successCallback), m_database->scriptExecutionContext())
-    , m_errorCallbackWrapper(WTFMove(errorCallback), m_database->scriptExecutionContext())
+    , m_callbackWrapper(WTFMove(callback), &m_database->scriptExecutionContext())
+    , m_successCallbackWrapper(WTFMove(successCallback), &m_database->scriptExecutionContext())
+    , m_errorCallbackWrapper(WTFMove(errorCallback), &m_database->scriptExecutionContext())
     , m_wrapper(WTFMove(wrapper))
     , m_nextStep(&SQLTransaction::acquireLock)
-    , m_executeSqlAllowed(false)
-    , m_shouldRetryCurrentStatement(false)
-    , m_modifiedDatabase(false)
-    , m_lockAcquired(false)
     , m_readOnly(readOnly)
-    , m_hasVersionMismatch(false)
     , m_backend(*this)
 {
 }
@@ -79,15 +73,13 @@ SQLTransaction::~SQLTransaction()
 {
 }
 
-void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& callbackError, ExceptionCode& ec)
+ExceptionOr<void> SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& callbackError)
 {
-    if (!m_executeSqlAllowed || !m_database->opened()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    if (!m_executeSqlAllowed || !m_database->opened())
+        return Exception { INVALID_STATE_ERR };
 
     int permissions = DatabaseAuthorizer::ReadWriteMask;
-    if (!m_database->databaseContext()->allowDatabaseAccess())
+    if (!m_database->databaseContext().allowDatabaseAccess())
         permissions |= DatabaseAuthorizer::NoAccessMask;
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
@@ -98,6 +90,8 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         statement->setDatabaseDeletedError();
 
     enqueueStatement(WTFMove(statement));
+
+    return { };
 }
 
 void SQLTransaction::lockAcquired()
@@ -193,7 +187,7 @@ void SQLTransaction::checkAndHandleClosedDatabase()
     m_errorCallbackWrapper.clear();
 
     // The next steps should be executed only if we're on the DB thread.
-    if (currentThread() != m_database->databaseContext()->databaseThread()->getThreadID())
+    if (currentThread() != m_database->databaseThread().getThreadID())
         return;
 
     // The current SQLite transaction should be stopped, as well
@@ -436,7 +430,7 @@ void SQLTransaction::deliverQuotaIncreaseCallback()
     ASSERT(m_currentStatement);
     ASSERT(!m_shouldRetryCurrentStatement);
 
-    m_shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(&database());
+    m_shouldRetryCurrentStatement = m_database->didExceedQuota();
 
     m_backend.requestTransitToState(SQLTransactionState::RunStatements);
 }
@@ -606,7 +600,7 @@ void SQLTransaction::postflightAndCommit()
 
     // The commit was successful. If the transaction modified this database, notify the delegates.
     if (m_modifiedDatabase)
-        m_database->transactionClient()->didCommitWriteTransaction(m_database.ptr());
+        m_database->didCommitWriteTransaction();
 
     // Spec 4.3.2.8: Deliver success callback, if there is one.
     scheduleCallback(&SQLTransaction::deliverSuccessCallback);
@@ -615,7 +609,7 @@ void SQLTransaction::postflightAndCommit()
 void SQLTransaction::acquireOriginLock()
 {
     ASSERT(!m_originLock);
-    m_originLock = DatabaseTracker::tracker().originLockFor(m_database->securityOrigin());
+    m_originLock = DatabaseTracker::singleton().originLockFor(m_database->securityOrigin());
     m_originLock->lock();
 }
 

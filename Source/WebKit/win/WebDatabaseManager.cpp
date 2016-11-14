@@ -35,10 +35,10 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include "WebSecurityOrigin.h"
-
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DatabaseManager.h>
+#include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
@@ -228,9 +228,11 @@ HRESULT WebDatabaseManager::origins(_COM_Outptr_opt_ IEnumVARIANT** result)
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    Vector<RefPtr<SecurityOrigin> > origins;
-    DatabaseManager::singleton().origins(origins);
-        COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin> > > > enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin> > >::adopt(origins));
+    Vector<RefPtr<SecurityOrigin>> origins;
+    for (auto& origin : DatabaseTracker::singleton().origins())
+        origins.append(origin.ptr());
+
+    COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin>>>> enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin>>>::adopt(origins));
 
     *result = enumVariant.leakRef();
     return S_OK;
@@ -253,10 +255,9 @@ HRESULT WebDatabaseManager::databasesWithOrigin(_In_opt_ IWebSecurityOrigin* ori
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    Vector<String> databaseNames;
-    DatabaseManager::singleton().databaseNamesForOrigin(webSecurityOrigin->securityOrigin(), databaseNames);
+    auto databaseNames = DatabaseTracker::singleton().databaseNames(*webSecurityOrigin->securityOrigin());
 
-    COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
+    COMPtr<COMEnumVariant<Vector<String>>> enumVariant(AdoptCOM, COMEnumVariant<Vector<String>>::adopt(databaseNames));
 
     *result = enumVariant.leakRef();
     return S_OK;
@@ -277,8 +278,8 @@ HRESULT WebDatabaseManager::detailsForDatabase(_In_ BSTR databaseName, _In_opt_ 
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseDetails details = DatabaseManager::singleton().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
-        webSecurityOrigin->securityOrigin());
+    auto details = DatabaseManager::singleton().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
+        *webSecurityOrigin->securityOrigin());
 
     if (details.name().isNull())
         return E_INVALIDARG;
@@ -286,13 +287,13 @@ HRESULT WebDatabaseManager::detailsForDatabase(_In_ BSTR databaseName, _In_opt_ 
     *result = DatabaseDetailsPropertyBag::createInstance(details);
     return S_OK;
 }
-    
+
 HRESULT WebDatabaseManager::deleteAllDatabases()
 {
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::singleton().deleteAllDatabasesImmediately();
+    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 
     return S_OK;
 }
@@ -309,7 +310,7 @@ HRESULT WebDatabaseManager::deleteOrigin(_In_opt_ IWebSecurityOrigin* origin)
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseManager::singleton().deleteOrigin(webSecurityOrigin->securityOrigin());
+    DatabaseTracker::singleton().deleteOrigin(*webSecurityOrigin->securityOrigin());
 
     return S_OK;
 }
@@ -329,7 +330,7 @@ HRESULT WebDatabaseManager::deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWeb
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseManager::singleton().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
+    DatabaseTracker::singleton().deleteDatabase(*webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
 
     return S_OK;
 }
@@ -364,7 +365,7 @@ private:
     {
         ASSERT(isMainThread());
         DidModifyOriginData* info = static_cast<DidModifyOriginData*>(context);
-        info->databaseManager->dispatchDidModifyOrigin(info->origin.get());
+        info->databaseManager->dispatchDidModifyOrigin(*info->origin);
         delete info;
     }
 
@@ -372,17 +373,17 @@ private:
     RefPtr<SecurityOrigin> origin;
 };
 
-void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)
+void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin& origin)
 {
     if (!isMainThread()) {
-        DidModifyOriginData::dispatchToMainThread(this, origin);
+        DidModifyOriginData::dispatchToMainThread(this, &origin);
         return;
     }
 
     static BSTR databaseDidModifyOriginName = SysAllocString(WebDatabaseDidModifyOriginNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
 
-    COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
+    COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(&origin));
     notifyCenter->postNotificationName(databaseDidModifyOriginName, securityOrigin.get(), 0);
 }
 
@@ -394,22 +395,22 @@ HRESULT WebDatabaseManager::setQuota(_In_ BSTR origin, unsigned long long quota)
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::singleton().setQuota(SecurityOrigin::createFromString(origin).ptr(), quota);
+    DatabaseTracker::singleton().setQuota(SecurityOrigin::createFromString(origin), quota);
 
     return S_OK;
 }
 
-void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const String& databaseName)
+void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin& origin, const String& databaseName)
 {
     if (!isMainThread()) {
-        DidModifyOriginData::dispatchToMainThread(this, origin);
+        DidModifyOriginData::dispatchToMainThread(this, &origin);
         return;
     }
 
     static BSTR databaseDidModifyOriginName = SysAllocString(WebDatabaseDidModifyDatabaseNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
 
-    COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
+    COMPtr<WebSecurityOrigin> securityOrigin(AdoptCOM, WebSecurityOrigin::createInstance(&origin));
 
     HashMap<String, String> userInfo;
     userInfo.set(WebDatabaseNameKey, databaseName);

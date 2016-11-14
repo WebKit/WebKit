@@ -31,7 +31,7 @@
 
 #include "MarshallingHelpers.h"
 #include <WebCore/BString.h>
-#include <WebCore/DatabaseManager.h>
+#include <WebCore/DatabaseTracker.h>
 #include <WebCore/URL.h>
 
 using namespace WebCore;
@@ -129,7 +129,7 @@ HRESULT WebSecurityOrigin::usage(_Out_ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseManager::singleton().usageForOrigin(m_securityOrigin.get());
+    *result = DatabaseTracker::singleton().usage(*m_securityOrigin);
 
     return S_OK;
 }
@@ -139,13 +139,13 @@ HRESULT WebSecurityOrigin::quota(_Out_ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseManager::singleton().quotaForOrigin(m_securityOrigin.get());
+    *result = DatabaseTracker::singleton().quota(*m_securityOrigin);
     return S_OK;
 }
         
 HRESULT WebSecurityOrigin::setQuota(unsigned long long quota) 
 {
-    DatabaseManager::singleton().setQuota(m_securityOrigin.get(), quota);
+    DatabaseTracker::singleton().setQuota(*m_securityOrigin, quota);
 
     return S_OK;
 }

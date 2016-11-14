@@ -29,8 +29,6 @@
 #pragma once
 
 #include <memory>
-#include <wtf/Deque.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
@@ -42,7 +40,6 @@ class Database;
 class DatabaseTask;
 class DatabaseTaskSynchronizer;
 class Document;
-class SQLTransactionClient;
 class SQLTransactionCoordinator;
 
 class DatabaseThread : public ThreadSafeRefCounted<DatabaseThread> {
@@ -54,16 +51,15 @@ public:
     void requestTermination(DatabaseTaskSynchronizer* cleanupSync);
     bool terminationRequested(DatabaseTaskSynchronizer* = nullptr) const;
 
-    void scheduleTask(std::unique_ptr<DatabaseTask>);
-    void scheduleImmediateTask(std::unique_ptr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
-    void unscheduleDatabaseTasks(Database*);
+    void scheduleTask(std::unique_ptr<DatabaseTask>&&);
+    void scheduleImmediateTask(std::unique_ptr<DatabaseTask>&&); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
+    void unscheduleDatabaseTasks(Database&);
     bool hasPendingDatabaseActivity() const;
 
-    void recordDatabaseOpen(Database*);
-    void recordDatabaseClosed(Database*);
+    void recordDatabaseOpen(Database&);
+    void recordDatabaseClosed(Database&);
     ThreadIdentifier getThreadID() { return m_threadID; }
 
-    SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
 
 private:
@@ -73,19 +69,18 @@ private:
     void databaseThread();
 
     Lock m_threadCreationMutex;
-    ThreadIdentifier m_threadID;
+    ThreadIdentifier m_threadID { 0 };
     RefPtr<DatabaseThread> m_selfRef;
 
     MessageQueue<DatabaseTask> m_queue;
 
     // This set keeps track of the open databases that have been used on this thread.
-    typedef HashSet<RefPtr<Database>> DatabaseSet;
+    using DatabaseSet = HashSet<RefPtr<Database>>;
     mutable Lock m_openDatabaseSetMutex;
     DatabaseSet m_openDatabaseSet;
 
-    std::unique_ptr<SQLTransactionClient> m_transactionClient;
     std::unique_ptr<SQLTransactionCoordinator> m_transactionCoordinator;
-    DatabaseTaskSynchronizer* m_cleanupSync;
+    DatabaseTaskSynchronizer* m_cleanupSync { nullptr };
 };
 
 } // namespace WebCore

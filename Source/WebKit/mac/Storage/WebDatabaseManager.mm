@@ -33,6 +33,7 @@
 #import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseManager.h>
+#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -92,52 +93,47 @@ static NSString *databasesDirectoryPath();
 
 - (NSArray *)origins
 {
-    Vector<RefPtr<SecurityOrigin>> coreOrigins;
-    DatabaseManager::singleton().origins(coreOrigins);
+    auto coreOrigins = DatabaseTracker::singleton().origins();
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
-
-    for (unsigned i = 0; i < coreOrigins.size(); ++i) {
-        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigins[i].get()];
+    for (auto& coreOrigin : coreOrigins) {
+        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigin.ptr()];
         [webOrigins addObject:webOrigin];
         [webOrigin release];
     }
-
     return [webOrigins autorelease];
 }
 
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    Vector<String> nameVector;
-    if (!DatabaseManager::singleton().databaseNamesForOrigin([origin _core], nameVector))
+    if (!origin)
         return nil;
-    
+    Vector<String> nameVector = DatabaseTracker::singleton().databaseNames(*[origin _core]);
     NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
-
-    for (unsigned i = 0; i < nameVector.size(); ++i)
-        [names addObject:(NSString *)nameVector[i]];
-
+    for (auto& name : nameVector)
+        [names addObject:(NSString *)name];
     return [names autorelease];
 }
 
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
-    
-    DatabaseDetails details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, [origin _core]);
+    if (!origin)
+        return nil;
+
+    DatabaseDetails details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
     if (details.name().isNull())
         return nil;
         
+    static const id keys[3] = { WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey };
     id objects[3];
     objects[0] = details.displayName().isEmpty() ? databaseIdentifier : (NSString *)details.displayName();
     objects[1] = [NSNumber numberWithUnsignedLongLong:details.expectedUsage()];
     objects[2] = [NSNumber numberWithUnsignedLongLong:details.currentUsage()];
-    
     return [[[NSDictionary alloc] initWithObjects:objects forKeys:keys count:3] autorelease];
 }
 
 - (void)deleteAllDatabases
 {
-    DatabaseManager::singleton().deleteAllDatabasesImmediately();
+    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 #if PLATFORM(IOS)
     // FIXME: This needs to be removed once DatabaseTrackers in multiple processes
     // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
@@ -147,12 +143,12 @@ static NSString *databasesDirectoryPath();
 
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    return DatabaseManager::singleton().deleteOrigin([origin _core]);
+    return origin && DatabaseTracker::singleton().deleteOrigin(*[origin _core]);
 }
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return DatabaseManager::singleton().deleteDatabase([origin _core], databaseIdentifier);
+    return origin && DatabaseTracker::singleton().deleteDatabase(*[origin _core], databaseIdentifier);
 }
 
 // For DumpRenderTree support only
@@ -164,6 +160,7 @@ static NSString *databasesDirectoryPath();
 }
 
 #if PLATFORM(IOS)
+
 static bool isFileHidden(NSString *file)
 {
     ASSERT([file length]);
@@ -232,11 +229,13 @@ static bool isFileHidden(NSString *file)
         DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish();
     });
 }
+
 #endif // PLATFORM(IOS)
 
 @end
 
 #if PLATFORM(IOS)
+
 @implementation WebDatabaseManager (WebDatabaseManagerInternal)
 
 static Lock& transactionBackgroundTaskIdentifierLock()
@@ -281,7 +280,7 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
         return;
     
     setTransactionBackgroundTaskIdentifier(startBackgroundTask(^ {
-        DatabaseTracker::tracker().closeAllDatabases(CurrentQueryBehavior::Interrupt);
+        DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
         [WebDatabaseManager endBackgroundTask];
     }));
 }

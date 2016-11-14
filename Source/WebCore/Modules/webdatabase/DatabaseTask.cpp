@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "DatabaseTask.h"
 
@@ -35,10 +36,6 @@
 namespace WebCore {
 
 DatabaseTaskSynchronizer::DatabaseTaskSynchronizer()
-    : m_taskCompleted(false)
-#ifndef NDEBUG
-    , m_hasCheckedForTermination(false)
-#endif
 {
 }
 
@@ -61,25 +58,18 @@ void DatabaseTaskSynchronizer::taskCompleted()
 DatabaseTask::DatabaseTask(Database& database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)
     , m_synchronizer(synchronizer)
-#if !LOG_DISABLED
-    , m_complete(false)
-#endif
 {
 }
 
 DatabaseTask::~DatabaseTask()
 {
-#if !LOG_DISABLED
     ASSERT(m_complete || !m_synchronizer);
-#endif
 }
 
 void DatabaseTask::performTask()
 {
     // Database tasks are meant to be used only once, so make sure this one hasn't been performed before.
-#if !LOG_DISABLED
     ASSERT(!m_complete);
-#endif
 
     LOG(StorageAPI, "Performing %s %p\n", debugTaskName(), this);
 
@@ -90,7 +80,7 @@ void DatabaseTask::performTask()
     if (m_synchronizer)
         m_synchronizer->taskCompleted();
 
-#if !LOG_DISABLED
+#if !ASSERT_DISABLED
     m_complete = true;
 #endif
 }
@@ -98,28 +88,25 @@ void DatabaseTask::performTask()
 // *** DatabaseOpenTask ***
 // Opens the database file and verifies the version matches the expected version.
 
-DatabaseOpenTask::DatabaseOpenTask(Database& database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer& synchronizer, DatabaseError& error, String& errorMessage, bool& success)
+DatabaseOpenTask::DatabaseOpenTask(Database& database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer& synchronizer, ExceptionOr<void>& result)
     : DatabaseTask(database, &synchronizer)
     , m_setVersionInNewDatabase(setVersionInNewDatabase)
-    , m_error(error)
-    , m_errorMessage(errorMessage)
-    , m_success(success)
+    , m_result(result)
 {
 }
 
 void DatabaseOpenTask::doPerformTask()
 {
-    String errorMessage;
-    m_success = database().performOpenAndVerify(m_setVersionInNewDatabase, m_error, errorMessage);
-    if (!m_success)
-        m_errorMessage = errorMessage.isolatedCopy();
+    m_result = isolatedCopy(database().performOpenAndVerify(m_setVersionInNewDatabase));
 }
 
 #if !LOG_DISABLED
+
 const char* DatabaseOpenTask::debugTaskName() const
 {
     return "DatabaseOpenTask";
 }
+
 #endif
 
 // *** DatabaseCloseTask ***
@@ -136,10 +123,12 @@ void DatabaseCloseTask::doPerformTask()
 }
 
 #if !LOG_DISABLED
+
 const char* DatabaseCloseTask::debugTaskName() const
 {
     return "DatabaseCloseTask";
 }
+
 #endif
 
 // *** DatabaseTransactionTask ***
@@ -173,31 +162,36 @@ void DatabaseTransactionTask::doPerformTask()
 }
 
 #if !LOG_DISABLED
+
 const char* DatabaseTransactionTask::debugTaskName() const
 {
     return "DatabaseTransactionTask";
 }
+
 #endif
 
 // *** DatabaseTableNamesTask ***
 // Retrieves a list of all tables in the database - for WebInspector support.
 
-DatabaseTableNamesTask::DatabaseTableNamesTask(Database& database, DatabaseTaskSynchronizer& synchronizer, Vector<String>& names)
+DatabaseTableNamesTask::DatabaseTableNamesTask(Database& database, DatabaseTaskSynchronizer& synchronizer, Vector<String>& result)
     : DatabaseTask(database, &synchronizer)
-    , m_tableNames(names)
+    , m_result(result)
 {
 }
 
 void DatabaseTableNamesTask::doPerformTask()
 {
-    m_tableNames = database().performGetTableNames();
+    // FIXME: Why no need for an isolatedCopy here?
+    m_result = database().performGetTableNames();
 }
 
 #if !LOG_DISABLED
+
 const char* DatabaseTableNamesTask::debugTaskName() const
 {
     return "DatabaseTableNamesTask";
 }
+
 #endif
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007,2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,9 @@
 using namespace WebCore;
 
 #if PLATFORM(IOS)
-static CFStringRef WebDatabaseOriginWasAddedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasAddedNotification");
-static CFStringRef WebDatabaseWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseWasDeletedNotification");
-static CFStringRef WebDatabaseOriginWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasDeletedNotification");
+static const CFStringRef WebDatabaseOriginWasAddedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasAddedNotification");
+static const CFStringRef WebDatabaseWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseWasDeletedNotification");
+static const CFStringRef WebDatabaseOriginWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasDeletedNotification");
 #endif
 
 WebDatabaseManagerClient* WebDatabaseManagerClient::sharedWebDatabaseManagerClient()
@@ -77,11 +77,6 @@ static void onDatabaseOriginDeleted(CFNotificationCenterRef, void* observer, CFS
 #endif
 
 WebDatabaseManagerClient::WebDatabaseManagerClient()
-#if PLATFORM(IOS)
-    : m_isHandlingNewDatabaseOriginNotification(false)
-    , m_isHandlingDeleteDatabaseNotification(false)
-    , m_isHandlingDeleteDatabaseOriginNotification(false)
-#endif
 {
 #if PLATFORM(IOS)
     CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter(); 
@@ -99,58 +94,53 @@ WebDatabaseManagerClient::~WebDatabaseManagerClient()
 }
 
 class DidModifyOriginData {
-    WTF_MAKE_NONCOPYABLE(DidModifyOriginData);
 public:
-    static void dispatchToMainThread(WebDatabaseManagerClient* client, SecurityOrigin* origin)
+    static void dispatchToMainThread(WebDatabaseManagerClient& client, SecurityOrigin& origin)
     {
-        auto context = std::make_unique<DidModifyOriginData>(client, origin->isolatedCopy());
+        auto context = std::make_unique<DidModifyOriginData>(client, origin);
         callOnMainThread([context = WTFMove(context)] {
-            context->client->dispatchDidModifyOrigin(context->origin.get());
+            context->client.dispatchDidModifyOrigin(context->origin);
         });
     }
 
-    DidModifyOriginData(WebDatabaseManagerClient* client, PassRefPtr<SecurityOrigin> origin)
+    DidModifyOriginData(WebDatabaseManagerClient& client, SecurityOrigin& origin)
         : client(client)
-        , origin(origin)
+        , origin(origin.isolatedCopy())
     {
     }
 
 private:
-    WebDatabaseManagerClient* client;
-    RefPtr<SecurityOrigin> origin;
+    WebDatabaseManagerClient& client;
+    Ref<SecurityOrigin> origin;
 };
 
-void WebDatabaseManagerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
+void WebDatabaseManagerClient::dispatchDidModifyOrigin(SecurityOrigin& origin)
 {
     if (!isMainThread()) {
-        DidModifyOriginData::dispatchToMainThread(this, origin);
+        DidModifyOriginData::dispatchToMainThread(*this, origin);
         return;
     }
 
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
+    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification 
-                                                        object:webSecurityOrigin.get()];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification object:webSecurityOrigin.get()];
 }
 
-void WebDatabaseManagerClient::dispatchDidModifyDatabase(SecurityOrigin* origin, const String& databaseIdentifier)
+void WebDatabaseManagerClient::dispatchDidModifyDatabase(SecurityOrigin& origin, const String& databaseIdentifier)
 {
     if (!isMainThread()) {
-        DidModifyOriginData::dispatchToMainThread(this, origin);
+        DidModifyOriginData::dispatchToMainThread(*this, origin);
         return;
     }
 
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
-    RetainPtr<NSDictionary> userInfo = adoptNS([[NSDictionary alloc] 
-                                               initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification
-                                                        object:webSecurityOrigin.get()
-                                                      userInfo:userInfo.get()];
+    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
+    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification object:webSecurityOrigin.get() userInfo:userInfo.get()];
 }
 
 #if PLATFORM(IOS)
-void WebDatabaseManagerClient::dispatchDidAddNewOrigin(SecurityOrigin*)
+
+void WebDatabaseManagerClient::dispatchDidAddNewOrigin(SecurityOrigin&)
 {    
     m_isHandlingNewDatabaseOriginNotification = true;
     // Send a notification to all apps that a new origin has been added, so other apps with opened database can refresh their origin maps.
@@ -198,7 +188,7 @@ void WebDatabaseManagerClient::databaseWasDeleted()
         return;
     }
     
-    DatabaseTracker::tracker().removeDeletedOpenedDatabases();
+    DatabaseTracker::singleton().removeDeletedOpenedDatabases();
 }
 
 void WebDatabaseManagerClient::databaseOriginWasDeleted()

@@ -27,7 +27,7 @@
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
-#include "DatabaseError.h"
+#include "ExceptionOr.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -36,117 +36,59 @@
 
 namespace WebCore {
 
-class AbstractDatabaseServer;
 class Database;
 class DatabaseCallback;
 class DatabaseContext;
 class DatabaseManagerClient;
 class DatabaseTaskSynchronizer;
+class Exception;
 class SecurityOrigin;
 class ScriptExecutionContext;
 
 class DatabaseManager {
-    WTF_MAKE_NONCOPYABLE(DatabaseManager); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DatabaseManager);
     friend class WTF::NeverDestroyed<DatabaseManager>;
 public:
     WEBCORE_EXPORT static DatabaseManager& singleton();
 
     WEBCORE_EXPORT void initialize(const String& databasePath);
     WEBCORE_EXPORT void setClient(DatabaseManagerClient*);
-    String databaseDirectoryPath() const;
-    void setDatabaseDirectoryPath(const String&);
 
     bool isAvailable();
     WEBCORE_EXPORT void setIsAvailable(bool);
 
     // This gets a DatabaseContext for the specified ScriptExecutionContext.
     // If one doesn't already exist, it will create a new one.
-    RefPtr<DatabaseContext> databaseContextFor(ScriptExecutionContext*);
+    Ref<DatabaseContext> databaseContext(ScriptExecutionContext&);
 
-    // These 2 methods are for DatabaseContext (un)registration, and should only
-    // be called by the DatabaseContext constructor and destructor.
-    void registerDatabaseContext(DatabaseContext*);
-    void unregisterDatabaseContext(DatabaseContext*);
+    ExceptionOr<Ref<Database>> openDatabase(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
 
-#if !ASSERT_DISABLED
-    void didConstructDatabaseContext();
-    void didDestructDatabaseContext();
-#else
-    void didConstructDatabaseContext() { }
-    void didDestructDatabaseContext() { }
-#endif
+    WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext&);
+    void stopDatabases(ScriptExecutionContext&, DatabaseTaskSynchronizer*);
 
-    static ExceptionCode exceptionCodeForDatabaseError(DatabaseError);
+    String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
 
-    RefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, RefPtr<DatabaseCallback>&&, DatabaseError&);
-
-    WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext*);
-
-    WEBCORE_EXPORT void closeAllDatabases();
-
-    void stopDatabases(ScriptExecutionContext*, DatabaseTaskSynchronizer*);
-
-    String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
-
-    bool hasEntryForOrigin(SecurityOrigin*);
-    WEBCORE_EXPORT void origins(Vector<RefPtr<SecurityOrigin>>& result);
-    WEBCORE_EXPORT bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
-    WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
-
-    WEBCORE_EXPORT unsigned long long usageForOrigin(SecurityOrigin*);
-    WEBCORE_EXPORT unsigned long long quotaForOrigin(SecurityOrigin*);
-
-    WEBCORE_EXPORT void setQuota(SecurityOrigin*, unsigned long long);
-
-    WEBCORE_EXPORT void deleteAllDatabasesImmediately();
-    WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
-    WEBCORE_EXPORT bool deleteDatabase(SecurityOrigin*, const String& name);
+    WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin&);
 
 private:
-    class ProposedDatabase {
-    public:
-        ProposedDatabase(DatabaseManager&, SecurityOrigin*,
-            const String& name, const String& displayName, unsigned long estimatedSize);
-        ~ProposedDatabase();
-
-        SecurityOrigin* origin() { return m_origin.get(); }
-        DatabaseDetails& details() { return m_details; }
-
-    private:
-        DatabaseManager& m_manager;
-        RefPtr<SecurityOrigin> m_origin;
-        DatabaseDetails m_details;
-    };
-
-    DatabaseManager();
+    DatabaseManager() = default;
     ~DatabaseManager() = delete;
 
-    // This gets a DatabaseContext for the specified ScriptExecutionContext if
-    // it already exist previously. Otherwise, it returns 0.
-    RefPtr<DatabaseContext> existingDatabaseContextFor(ScriptExecutionContext*);
+    enum OpenAttempt { FirstTryToOpenDatabase, RetryOpenDatabase };
+    ExceptionOr<Ref<Database>> openDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
+    static ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(DatabaseContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
 
-    RefPtr<Database> openDatabaseBackend(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    class ProposedDatabase;
+    void addProposedDatabase(ProposedDatabase&);
+    void removeProposedDatabase(ProposedDatabase&);
 
-    void addProposedDatabase(ProposedDatabase*);
-    void removeProposedDatabase(ProposedDatabase*);
+    static void logErrorMessage(ScriptExecutionContext&, const String& message);
 
-    static void logErrorMessage(ScriptExecutionContext*, const String& message);
+    DatabaseManagerClient* m_client { nullptr };
+    bool m_databaseIsAvailable { true };
 
-    AbstractDatabaseServer* m_server;
-    DatabaseManagerClient* m_client;
-    bool m_databaseIsAvailable;
-
-    // Access to the following fields require locking m_lock below:
-    typedef HashMap<ScriptExecutionContext*, DatabaseContext*> ContextMap;
-    ContextMap m_contextMap;
-#if !ASSERT_DISABLED
-    int m_databaseContextRegisteredCount;
-    int m_databaseContextInstanceCount;
-#endif
+    Lock m_proposedDatabasesMutex;
     HashSet<ProposedDatabase*> m_proposedDatabases;
-
-    // This mutex protects m_contextMap, and m_proposedDatabases.
-    Lock m_mutex;
 };
 
 } // namespace WebCore

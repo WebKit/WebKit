@@ -1,3 +1,28 @@
+2016-11-13  Darin Adler  <darin@apple.com>
+
+        Fix exception handling in SQL database code, streamline and update code
+        https://bugs.webkit.org/show_bug.cgi?id=164685
+
+        Reviewed by Sam Weinig.
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::origins): Use DatabaseTracker.
+        (WebDatabaseManager::databasesWithOrigin): Ditto.
+        (WebDatabaseManager::detailsForDatabase): Use reference.
+        (WebDatabaseManager::deleteAllDatabases): Use DatabaseTracker.
+        (WebDatabaseManager::deleteOrigin): Ditto.
+        (WebDatabaseManager::deleteDatabase): Ditto.
+        (WebDatabaseManager::dispatchDidModifyOrigin): Use reference
+        and DatabaseTracker.
+        (WebDatabaseManager::setQuota): Ditto.
+        (WebDatabaseManager::dispatchDidModifyDatabase): Ditto.
+        * WebDatabaseManager.h: Updated client functions to take a reference.
+
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::usage): Update to use DatabaseTracker.
+        (WebSecurityOrigin::quota): Ditto.
+        (WebSecurityOrigin::setQuota): Ditto.
+
 2016-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] defer resolution of getUserMedia promise made in a background tab

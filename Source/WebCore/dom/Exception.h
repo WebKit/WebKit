@@ -45,11 +45,18 @@ private:
     String m_message;
 };
 
+Exception isolatedCopy(Exception&&);
+
 inline Exception::Exception(ExceptionCode code, String&& message)
     : m_code(code)
     , m_message(WTFMove(message))
 {
     ASSERT(code);
+}
+
+inline Exception isolatedCopy(Exception&& value)
+{
+    return Exception { value.code(), value.releaseMessage().isolatedCopy() };
 }
 
 }

@@ -33,17 +33,13 @@
 #include "DatabaseTask.h"
 #include "Logging.h"
 #include "SQLTransaction.h"
-#include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include <wtf/AutodrainedPool.h>
 
 namespace WebCore {
 
 DatabaseThread::DatabaseThread()
-    : m_threadID(0)
-    , m_transactionClient(std::make_unique<SQLTransactionClient>())
-    , m_transactionCoordinator(std::make_unique<SQLTransactionCoordinator>())
-    , m_cleanupSync(nullptr)
+    : m_transactionCoordinator(std::make_unique<SQLTransactionCoordinator>())
 {
     m_selfRef = this;
 }
@@ -72,7 +68,7 @@ bool DatabaseThread::start()
     return m_threadID;
 }
 
-void DatabaseThread::requestTermination(DatabaseTaskSynchronizer *cleanupSync)
+void DatabaseThread::requestTermination(DatabaseTaskSynchronizer* cleanupSync)
 {
     m_cleanupSync = cleanupSync;
     LOG(StorageAPI, "DatabaseThread %p was asked to terminate\n", this);
@@ -142,52 +138,42 @@ void DatabaseThread::databaseThread()
         cleanupSync->taskCompleted();
 }
 
-void DatabaseThread::recordDatabaseOpen(Database* database)
+void DatabaseThread::recordDatabaseOpen(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
     ASSERT(currentThread() == m_threadID);
-    ASSERT(database);
-    ASSERT(!m_openDatabaseSet.contains(database));
-    m_openDatabaseSet.add(database);
+    ASSERT(!m_openDatabaseSet.contains(&database));
+    m_openDatabaseSet.add(&database);
 }
 
-void DatabaseThread::recordDatabaseClosed(Database* database)
+void DatabaseThread::recordDatabaseClosed(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
     ASSERT(currentThread() == m_threadID);
-    ASSERT(database);
-    ASSERT(m_queue.killed() || m_openDatabaseSet.contains(database));
-    m_openDatabaseSet.remove(database);
+    ASSERT(m_queue.killed() || m_openDatabaseSet.contains(&database));
+    m_openDatabaseSet.remove(&database);
 }
 
-void DatabaseThread::scheduleTask(std::unique_ptr<DatabaseTask> task)
+void DatabaseThread::scheduleTask(std::unique_ptr<DatabaseTask>&& task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
     m_queue.append(WTFMove(task));
 }
 
-void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
+void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask>&& task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
     m_queue.prepend(WTFMove(task));
 }
 
-class SameDatabasePredicate {
-public:
-    SameDatabasePredicate(const Database* database) : m_database(database) { }
-    bool operator()(const DatabaseTask& task) const { return &task.database() == m_database; }
-private:
-    const Database* m_database;
-};
-
-void DatabaseThread::unscheduleDatabaseTasks(Database* database)
+void DatabaseThread::unscheduleDatabaseTasks(Database& database)
 {
-    // Note that the thread loop is running, so some tasks for the database
-    // may still be executed. This is unavoidable.
-    SameDatabasePredicate predicate(database);
-    m_queue.removeIf(predicate);
+    // The thread loop is running, sp some tasks for this database may still be executed. This is unavoidable.
+    m_queue.removeIf([&database] (const DatabaseTask& task) {
+        return &task.database() == &database;
+    });
 }
 
 bool DatabaseThread::hasPendingDatabaseActivity() const

@@ -46,9 +46,6 @@ public:
     static void initializeTracker(const String& storagePath, WebCore::StorageTrackerClient*);
     static StorageTracker& tracker();
 
-    void setDatabaseDirectoryPath(const String&);
-    String databaseDirectoryPath() const;
-
     void setOriginDetails(const String& originIdentifier, const String& databaseFile);
     
     void deleteAllOrigins();

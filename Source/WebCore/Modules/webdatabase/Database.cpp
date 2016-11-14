@@ -79,9 +79,9 @@ namespace WebCore {
 // The only databases instances not tracked by the tracker's open database
 // list are the ones that have not been added yet, or the ones that we
 // attempted an open on but failed to. Such instances only exist in the
-// DatabaseServer's factory methods for creating database backends.
+// factory functions for creating database backends.
 //
-// The factory methods will either call openAndVerifyVersion() or
+// The factory functions will either call openAndVerifyVersion() or
 // performOpenAndVerify(). These methods will add the newly instantiated
 // database backend if they succeed in opening the requested database.
 // In the case of failure to open the database, the factory methods will
@@ -202,48 +202,43 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
     return guid;
 }
 
-Database::Database(RefPtr<DatabaseContext>&& databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : m_scriptExecutionContext(databaseContext->scriptExecutionContext())
-    , m_databaseContext(WTFMove(databaseContext))
-    , m_deleted(false)
-    , m_name(name.isolatedCopy())
+Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize)
+    : m_scriptExecutionContext(*context.scriptExecutionContext())
+    , m_contextThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
+    , m_databaseThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
+    , m_databaseContext(context)
+    , m_name((name.isNull() ? emptyString() : name).isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
-    , m_opened(false)
-    , m_new(false)
-    , m_transactionInProgress(false)
-    , m_isTransactionQueueEnabled(true)
+    , m_filename(DatabaseManager::singleton().fullPathForDatabase(*m_scriptExecutionContext->securityOrigin(), m_name))
+    , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
-    m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
-
-    m_databaseAuthorizer = DatabaseAuthorizer::create(unqualifiedInfoTableName);
-
-    if (m_name.isNull())
-        m_name = emptyString();
-
     {
         std::lock_guard<StaticLock> locker(guidMutex);
 
-        m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
-        std::unique_ptr<HashSet<Database*>>& hashSet = guidToDatabaseMap().add(m_guid, nullptr).iterator->value;
-        if (!hashSet)
-            hashSet = std::make_unique<HashSet<Database*>>();
-        hashSet->add(this);
+        m_guid = guidForOriginAndName(securityOrigin().toString(), name);
+        guidToDatabaseMap().ensure(m_guid, [] {
+            return std::make_unique<HashSet<Database*>>();
+        }).iterator->value->add(this);
     }
 
-    m_filename = DatabaseManager::singleton().fullPathForDatabase(securityOrigin(), m_name);
+    m_databaseContext->databaseThread();
 
-    m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
+    ASSERT(m_databaseContext->existingDatabaseThread());
+}
 
-    ASSERT(m_databaseContext->databaseThread());
+DatabaseThread& Database::databaseThread()
+{
+    ASSERT(m_databaseContext->existingDatabaseThread());
+    return *m_databaseContext->existingDatabaseThread();
 }
 
 Database::~Database()
 {
     // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!m_scriptExecutionContext->isContextThread()) {
-        Ref<ScriptExecutionContext> passedContext = m_scriptExecutionContext.releaseNonNull();
+        auto passedContext = m_scriptExecutionContext.copyRef();
         auto& contextRef = passedContext.get();
         contextRef.postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(passedContext)] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, &context == passedContext.ptr());
@@ -262,18 +257,19 @@ Database::~Database()
     ASSERT(!m_opened);
 }
 
-bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+ExceptionOr<void> Database::openAndVerifyVersion(bool setVersionInNewDatabase)
 {
     DatabaseTaskSynchronizer synchronizer;
-    if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
-        return false;
+    auto& thread = databaseThread();
+    if (thread.terminationRequested(&synchronizer))
+        return Exception { INVALID_STATE_ERR };
 
-    bool success = false;
-    auto task = std::make_unique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, error, errorMessage, success);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
+    ExceptionOr<void> result;
+    auto task = std::make_unique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
+    thread.scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
-    return success;
+    return result;
 }
 
 void Database::interrupt()
@@ -284,16 +280,15 @@ void Database::interrupt()
 
 void Database::close()
 {
-    if (!databaseContext()->databaseThread())
-        return;
+    auto& thread = databaseThread();
 
     DatabaseTaskSynchronizer synchronizer;
-    if (databaseContext()->databaseThread()->terminationRequested(&synchronizer)) {
+    if (thread.terminationRequested(&synchronizer)) {
         LOG(StorageAPI, "Database handle %p is on a terminated DatabaseThread, cannot be marked for normal closure\n", this);
         return;
     }
 
-    databaseContext()->databaseThread()->scheduleImmediateTask(std::make_unique<DatabaseCloseTask>(*this, synchronizer));
+    thread.scheduleImmediateTask(std::make_unique<DatabaseCloseTask>(*this, synchronizer));
 
     // FIXME: iOS depends on this function blocking until the database is closed as part
     // of closing all open databases from a process assertion expiration handler.
@@ -303,8 +298,7 @@ void Database::close()
 
 void Database::performClose()
 {
-    ASSERT(databaseContext()->databaseThread());
-    ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
+    ASSERT(currentThread() == databaseThread().getThreadID());
 
     {
         LockHolder locker(m_transactionInProgressMutex);
@@ -312,10 +306,8 @@ void Database::performClose()
         // Clean up transactions that have not been scheduled yet:
         // Transaction phase 1 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
-        while (!m_transactionQueue.isEmpty()) {
-            auto transaction = m_transactionQueue.takeFirst();
-            transaction->notifyDatabaseThreadIsShuttingDown();
-        }
+        while (!m_transactionQueue.isEmpty())
+            m_transactionQueue.takeFirst()->notifyDatabaseThreadIsShuttingDown();
 
         m_isTransactionQueueEnabled = false;
         m_transactionInProgress = false;
@@ -330,35 +322,30 @@ void Database::performClose()
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
     Ref<Database> protectedThis(*this);
-    databaseContext()->databaseThread()->recordDatabaseClosed(this);
-    databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
+    auto& thread = databaseThread();
+    thread.recordDatabaseClosed(*this);
+    thread.unscheduleDatabaseTasks(*this);
 }
 
 class DoneCreatingDatabaseOnExitCaller {
 public:
-    DoneCreatingDatabaseOnExitCaller(Database* database)
+    DoneCreatingDatabaseOnExitCaller(Database& database)
         : m_database(database)
-        , m_openSucceeded(false)
     {
     }
+
     ~DoneCreatingDatabaseOnExitCaller()
     {
-        DatabaseTracker::tracker().doneCreatingDatabase(m_database);
+        DatabaseTracker::singleton().doneCreatingDatabase(m_database);
     }
 
-    void setOpenSucceeded() { m_openSucceeded = true; }
-
 private:
-    Database* m_database;
-    bool m_openSucceeded;
+    Database& m_database;
 };
 
-bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase)
 {
-    DoneCreatingDatabaseOnExitCaller onExitCaller(this);
-    ASSERT(errorMessage.isEmpty());
-    ASSERT(error == DatabaseError::None); // Better not have any errors already.
-    error = DatabaseError::InvalidDatabaseState; // Presumed failure. We'll clear it if we succeed below.
+    DoneCreatingDatabaseOnExitCaller onExitCaller(*this);
 
     const int maxSqliteBusyWaitTime = 30000;
 
@@ -371,10 +358,8 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-    if (!m_sqliteDatabase.open(m_filename, true)) {
-        errorMessage = formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDatabase.open(m_filename, true))
+        return Exception { INVALID_STATE_ERR, formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg()) };
     if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
         LOG_ERROR("Unable to turn on incremental auto-vacuum (%d %s)", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
 
@@ -395,9 +380,9 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
             SQLiteTransaction transaction(m_sqliteDatabase);
             transaction.begin();
             if (!transaction.inProgress()) {
-                errorMessage = formatErrorMessage("unable to open database, failed to start transaction", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
+                String message = formatErrorMessage("unable to open database, failed to start transaction", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 m_sqliteDatabase.close();
-                return false;
+                return Exception { INVALID_STATE_ERR, WTFMove(message) };
             }
 
             String tableName(unqualifiedInfoTableName);
@@ -405,16 +390,16 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
                 m_new = true;
 
                 if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-                    errorMessage = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
+                    String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
-                    return false;
+                return Exception { INVALID_STATE_ERR, WTFMove(message) };
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
-                errorMessage = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
+                String message = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase.close();
-                return false;
+                return Exception { INVALID_STATE_ERR, WTFMove(message) };
             }
 
             if (currentVersion.length()) {
@@ -422,10 +407,10 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
             } else if (!m_new || shouldSetVersionInNewDatabase) {
                 LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
                 if (!setVersionInDatabase(m_expectedVersion, false)) {
-                    errorMessage = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
+                    String message = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
-                    return false;
+                    return Exception { INVALID_STATE_ERR, WTFMove(message) };
                 }
                 currentVersion = m_expectedVersion;
             }
@@ -442,29 +427,21 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
     // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
     if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
-        errorMessage = "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'";
         m_sqliteDatabase.close();
-        return false;
+        return Exception { INVALID_STATE_ERR, "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'" };
     }
 
-    ASSERT(m_databaseAuthorizer);
-    m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
+    m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer.ptr());
 
-    // See comment at the top this file regarding calling addOpenDatabase().
-    DatabaseTracker::tracker().addOpenDatabase(static_cast<Database*>(this));
+    DatabaseTracker::singleton().addOpenDatabase(*this);
     m_opened = true;
-
-    // Declare success:
-    error = DatabaseError::None; // Clear the presumed error from above.
-    onExitCaller.setOpenSucceeded();
 
     if (m_new && !shouldSetVersionInNewDatabase)
         m_expectedVersion = emptyString(); // The caller provided a creationCallback which will set the expected version.
 
-    if (databaseContext()->databaseThread())
-        databaseContext()->databaseThread()->recordDatabaseOpen(this);
+    databaseThread().recordDatabaseOpen(*this);
 
-    return true;
+    return { };
 }
 
 void Database::closeDatabase()
@@ -474,8 +451,10 @@ void Database::closeDatabase()
 
     m_sqliteDatabase.close();
     m_opened = false;
+
     // See comment at the top this file regarding calling removeOpenDatabase().
-    DatabaseTracker::tracker().removeOpenDatabase(this);
+    DatabaseTracker::singleton().removeOpenDatabase(*this);
+
     {
         std::lock_guard<StaticLock> locker(guidMutex);
 
@@ -561,28 +540,27 @@ bool Database::getActualVersionForTransaction(String &actualVersion)
 void Database::scheduleTransaction()
 {
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
-    RefPtr<SQLTransaction> transaction;
 
-    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
-        transaction = m_transactionQueue.takeFirst();
-
-    if (transaction && databaseContext()->databaseThread()) {
-        auto task = std::make_unique<DatabaseTransactionTask>(WTFMove(transaction));
-        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
-        m_transactionInProgress = true;
-        databaseContext()->databaseThread()->scheduleTask(WTFMove(task));
-    } else
+    if (!m_isTransactionQueueEnabled || m_transactionQueue.isEmpty()) {
         m_transactionInProgress = false;
+        return;
+    }
+
+    m_transactionInProgress = true;
+
+    auto transaction = m_transactionQueue.takeFirst();
+    auto task = std::make_unique<DatabaseTransactionTask>(WTFMove(transaction));
+    LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
+    databaseThread().scheduleTask(WTFMove(task));
 }
 
 void Database::scheduleTransactionStep(SQLTransaction& transaction)
 {
-    if (!databaseContext()->databaseThread())
-        return;
+    auto& thread = databaseThread();
 
     auto task = std::make_unique<DatabaseTransactionTask>(&transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    databaseContext()->databaseThread()->scheduleTask(WTFMove(task));
+    thread.scheduleTask(WTFMove(task));
 }
 
 void Database::inProgressTransactionCompleted()
@@ -598,14 +576,9 @@ bool Database::hasPendingTransaction()
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 
-SQLTransactionClient* Database::transactionClient() const
+SQLTransactionCoordinator* Database::transactionCoordinator()
 {
-    return databaseContext()->databaseThread()->transactionClient();
-}
-
-SQLTransactionCoordinator* Database::transactionCoordinator() const
-{
-    return databaseContext()->databaseThread()->transactionCoordinator();
+    return databaseThread().transactionCoordinator();
 }
 
 String Database::version() const
@@ -621,7 +594,7 @@ String Database::version() const
 
 void Database::markAsDeletedAndClose()
 {
-    if (m_deleted || !databaseContext()->databaseThread())
+    if (m_deleted)
         return;
 
     LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
@@ -657,7 +630,7 @@ String Database::displayName() const
     return m_displayName.isolatedCopy();
 }
 
-unsigned long Database::estimatedSize() const
+unsigned Database::estimatedSize() const
 {
     return m_estimatedSize;
 }
@@ -676,50 +649,42 @@ DatabaseDetails Database::details() const
 
 void Database::disableAuthorizer()
 {
-    ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->disable();
 }
 
 void Database::enableAuthorizer()
 {
-    ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->enable();
 }
 
 void Database::setAuthorizerPermissions(int permissions)
 {
-    ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->setPermissions(permissions);
 }
 
 bool Database::lastActionChangedDatabase()
 {
-    ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionChangedDatabase();
 }
 
 bool Database::lastActionWasInsert()
 {
-    ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionWasInsert();
 }
 
 void Database::resetDeletes()
 {
-    ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->resetDeletes();
 }
 
 bool Database::hadDeletes()
 {
-    ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->hadDeletes();
 }
 
 void Database::resetAuthorizer()
 {
-    if (m_databaseAuthorizer)
-        m_databaseAuthorizer->reset();
+    m_databaseAuthorizer->reset();
 }
 
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
@@ -735,8 +700,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
         return;
     }
 
-    auto transaction = SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), WTFMove(wrapper), readOnly);
-    m_transactionQueue.append(transaction.ptr());
+    m_transactionQueue.append(SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), WTFMove(wrapper), readOnly));
     if (!m_transactionInProgress)
         scheduleTransaction();
 }
@@ -802,35 +766,53 @@ Vector<String> Database::tableNames()
     // in dealing with them. However, if the code changes, this may not be true anymore.
     Vector<String> result;
     DatabaseTaskSynchronizer synchronizer;
-    if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
+    auto& thread = databaseThread();
+    if (thread.terminationRequested(&synchronizer))
         return result;
 
     auto task = std::make_unique<DatabaseTableNamesTask>(*this, synchronizer, result);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
+    thread.scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
     return result;
 }
 
-SecurityOrigin* Database::securityOrigin() const
+SecurityOrigin& Database::securityOrigin()
 {
     if (m_scriptExecutionContext->isContextThread())
         return m_contextThreadSecurityOrigin.get();
-    if (currentThread() == databaseContext()->databaseThread()->getThreadID())
+    auto& thread = databaseThread();
+    if (currentThread() == thread.getThreadID())
         return m_databaseThreadSecurityOrigin.get();
-    return 0;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-unsigned long long Database::maximumSize() const
+unsigned long long Database::maximumSize()
 {
-    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
+    return DatabaseTracker::singleton().maximumSize(*this);
+}
+
+void Database::didCommitWriteTransaction()
+{
+    DatabaseTracker::singleton().scheduleNotifyDatabaseChanged(securityOrigin(), stringIdentifier());
+}
+
+bool Database::didExceedQuota()
+{
+    ASSERT(databaseContext().scriptExecutionContext()->isContextThread());
+    auto& tracker = DatabaseTracker::singleton();
+    auto oldQuota = tracker.quota(securityOrigin());
+    databaseContext().databaseExceededQuota(stringIdentifier(), details());
+    return tracker.quota(securityOrigin()) > oldQuota;
 }
 
 #if !LOG_DISABLED || !ERROR_DISABLED
+
 String Database::databaseDebugName() const
 {
     return m_contextThreadSecurityOrigin->toString() + "::" + m_name;
 }
+
 #endif
 
 } // namespace WebCore

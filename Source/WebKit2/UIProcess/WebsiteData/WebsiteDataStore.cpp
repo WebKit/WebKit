@@ -376,14 +376,11 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([webSQLDatabaseDirectory = m_configuration.webSQLDatabaseDirectory.isolatedCopy(), callbackAggregator] {
-            Vector<RefPtr<WebCore::SecurityOrigin>> origins;
-            WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins(origins);
-
+            auto origins = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins();
             RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins)]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
                     websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases, 0 });
-
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
@@ -900,10 +897,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), callbackAggregator, webSQLDatabaseDirectory = m_configuration.webSQLDatabaseDirectory.isolatedCopy()] {
             auto databaseTracker = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory);
-
-            for (const auto& origin : origins)
-                databaseTracker->deleteOrigin(origin.securityOrigin().ptr());
-
+            for (auto& origin : origins)
+                databaseTracker->deleteOrigin(origin.securityOrigin());
             RunLoop::main().dispatch([callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });

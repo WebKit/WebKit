@@ -107,9 +107,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
         errorCallback = JSSQLStatementErrorCallback::create(object, jsCast<JSDOMGlobalObject*>(globalObject()));
     }
 
-    ExceptionCode ec = 0;
-    wrapped().executeSQL(sqlStatement, sqlValues, WTFMove(callback), WTFMove(errorCallback), ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, wrapped().executeSQL(sqlStatement, sqlValues, WTFMove(callback), WTFMove(errorCallback)));
 
     return jsUndefined();
 }

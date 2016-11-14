@@ -29,33 +29,32 @@
 #pragma once
 
 #include "DatabaseBasicTypes.h"
-#include "DatabaseError.h"
+#include "ExceptionOr.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class DatabaseCallback;
-class DatabaseDetails;
 class DatabaseContext;
+class DatabaseDetails;
+class DatabaseThread;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionBackend;
 class SQLTransactionCallback;
-class SQLTransactionClient;
 class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
 
-class Database final : public ThreadSafeRefCounted<Database> {
+class Database : public ThreadSafeRefCounted<Database> {
 public:
-    virtual ~Database();
+    ~Database();
 
-    virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    ExceptionOr<void> openAndVerifyVersion(bool setVersionInNewDatabase);
     void close();
 
     void interrupt();
@@ -63,7 +62,7 @@ public:
     bool opened() const { return m_opened; }
     bool isNew() const { return m_new; }
 
-    unsigned long long maximumSize() const;
+    unsigned long long maximumSize();
 
     void scheduleTransactionStep(SQLTransaction&);
     void inProgressTransactionCompleted();
@@ -73,8 +72,10 @@ public:
     bool hasPendingCreationEvent() const { return m_hasPendingCreationEvent; }
     void setHasPendingCreationEvent(bool value) { m_hasPendingCreationEvent = value; }
 
-    SQLTransactionClient* transactionClient() const;
-    SQLTransactionCoordinator* transactionCoordinator() const;
+    void didCommitWriteTransaction();
+    bool didExceedQuota();
+
+    SQLTransactionCoordinator* transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;
@@ -85,7 +86,7 @@ public:
     // Internal engine support
     String stringIdentifier() const;
     String displayName() const;
-    unsigned long estimatedSize() const;
+    unsigned estimatedSize() const;
     String fileName() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
@@ -99,16 +100,16 @@ public:
     bool hadDeletes();
     void resetAuthorizer();
 
-    DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
-
-    ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext.get(); }
+    DatabaseContext& databaseContext() { return m_databaseContext; }
+    DatabaseThread& databaseThread();
+    ScriptExecutionContext& scriptExecutionContext() { return m_scriptExecutionContext; }
     void logErrorMessage(const String& message);
 
     Vector<String> tableNames();
 
-    virtual SecurityOrigin* securityOrigin() const;
+    SecurityOrigin& securityOrigin();
 
-    virtual void markAsDeletedAndClose();
+    void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
     void scheduleTransactionCallback(SQLTransaction*);
@@ -116,14 +117,14 @@ public:
     void incrementalVacuumIfNeeded();
 
     // Called from DatabaseTask
-    bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    ExceptionOr<void> performOpenAndVerify(bool shouldSetVersionInNewDatabase);
     Vector<String> performGetTableNames();
 
     // Called from DatabaseTask and DatabaseThread
     void performClose();
 
 private:
-    Database(RefPtr<DatabaseContext>&&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
+    Database(DatabaseContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize);
 
     void closeDatabase();
 
@@ -131,7 +132,7 @@ private:
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
     void setExpectedVersion(const String&);
     const String& expectedVersion() const { return m_expectedVersion; }
-    String getCachedVersion()const;
+    String getCachedVersion() const;
     void setCachedVersion(const String&);
     bool getActualVersionForTransaction(String& version);
 
@@ -143,36 +144,35 @@ private:
     String databaseDebugName() const;
 #endif
 
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
-    RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
-    RefPtr<DatabaseContext> m_databaseContext;
+    Ref<ScriptExecutionContext> m_scriptExecutionContext;
+    Ref<SecurityOrigin> m_contextThreadSecurityOrigin;
+    Ref<SecurityOrigin> m_databaseThreadSecurityOrigin;
+    Ref<DatabaseContext> m_databaseContext;
 
-    bool m_deleted;
+    bool m_deleted { false };
     bool m_hasPendingCreationEvent { false };
 
     String m_name;
     String m_expectedVersion;
     String m_displayName;
-    unsigned long m_estimatedSize;
+    unsigned m_estimatedSize;
     String m_filename;
 
     DatabaseGuid m_guid;
-    bool m_opened;
-    bool m_new;
+    bool m_opened { false };
+    bool m_new { false };
 
     SQLiteDatabase m_sqliteDatabase;
 
-    RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
+    Ref<DatabaseAuthorizer> m_databaseAuthorizer;
 
-    Deque<RefPtr<SQLTransaction>> m_transactionQueue;
+    Deque<Ref<SQLTransaction>> m_transactionQueue;
     Lock m_transactionInProgressMutex;
-    bool m_transactionInProgress;
-    bool m_isTransactionQueueEnabled;
+    bool m_transactionInProgress { false };
+    bool m_isTransactionQueueEnabled { true };
 
     friend class ChangeVersionWrapper;
     friend class DatabaseManager;
-    friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class SQLTransaction;
     friend class SQLTransactionBackend;
 };

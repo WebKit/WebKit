@@ -54,7 +54,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
-#include <WebCore/DatabaseManager.h>
+#include <WebCore/DatabaseTracker.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
@@ -677,10 +677,12 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     ASSERT(webFrame);
     
     SecurityOrigin* origin = frame->document()->securityOrigin();
+    if (!origin)
+        return;
 
-    DatabaseManager& dbManager = DatabaseManager::singleton();
-    uint64_t currentQuota = dbManager.quotaForOrigin(origin);
-    uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
+    auto& tracker = DatabaseTracker::singleton();
+    auto currentQuota = tracker.quota(*origin);
+    auto currentOriginUsage = tracker.usage(*origin);
     uint64_t newQuota = 0;
     RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(WebCore::SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier()));
     newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, securityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
@@ -691,7 +693,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     }
 
-    dbManager.setQuota(origin, newQuota);
+    tracker.setQuota(*origin, newQuota);
 }
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)
