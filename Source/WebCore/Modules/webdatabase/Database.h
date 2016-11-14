@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "DatabaseBasicTypes.h"
 #include "ExceptionOr.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Deque.h>
@@ -49,6 +48,8 @@ class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
+
+using DatabaseGUID = int;
 
 class Database : public ThreadSafeRefCounted<Database> {
 public:
@@ -158,7 +159,7 @@ private:
     unsigned m_estimatedSize;
     String m_filename;
 
-    DatabaseGuid m_guid;
+    DatabaseGUID m_guid;
     bool m_opened { false };
     bool m_new { false };
 

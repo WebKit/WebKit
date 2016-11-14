@@ -36,8 +36,6 @@ class WebGLExtension;
 class WebGLSharedObject;
 class WebGLRenderingContextBase;
 
-typedef int ExceptionCode;
-
 class WebGLContextGroup final : public RefCounted<WebGLContextGroup> {
 public:
     static Ref<WebGLContextGroup> create();

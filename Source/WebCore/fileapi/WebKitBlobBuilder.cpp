@@ -33,7 +33,6 @@
 
 #include "Blob.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "File.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"

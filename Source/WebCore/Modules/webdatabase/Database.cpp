@@ -159,15 +159,14 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
 static StaticLock guidMutex;
 
-typedef HashMap<DatabaseGuid, String> GuidVersionMap;
-static GuidVersionMap& guidToVersionMap()
+static HashMap<DatabaseGUID, String>& guidToVersionMap()
 {
-    static NeverDestroyed<GuidVersionMap> map;
+    static NeverDestroyed<HashMap<DatabaseGUID, String>> map;
     return map;
 }
 
 // NOTE: Caller must lock guidMutex().
-static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
+static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion)
 {
     // Note: It is not safe to put an empty string into the guidToVersionMap() map.
     // That's because the map is cross-thread, but empty strings are per-thread.
@@ -175,31 +174,23 @@ static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
     // thread, but we need a string we can keep in a cross-thread data structure.
     // FIXME: This is a quite-awkward restriction to have to program with.
 
-    // Map null string to empty string (see comment above).
+    // Map empty string to null string (see comment above).
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<DatabaseGuid, std::unique_ptr<HashSet<Database*>>> GuidDatabaseMap;
-
-static GuidDatabaseMap& guidToDatabaseMap()
+static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap()
 {
-    static NeverDestroyed<GuidDatabaseMap> map;
+    static NeverDestroyed<HashMap<DatabaseGUID, HashSet<Database*>>> map;
     return map;
 }
 
-static DatabaseGuid guidForOriginAndName(const String& origin, const String& name)
+static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name)
 {
-    String stringID = origin + "/" + name;
-
-    static NeverDestroyed<HashMap<String, int>> map;
-    DatabaseGuid guid = map.get().get(stringID);
-    if (!guid) {
-        static int currentNewGUID = 1;
-        guid = currentNewGUID++;
-        map.get().set(stringID, guid);
-    }
-
-    return guid;
+    static NeverDestroyed<HashMap<String, DatabaseGUID>> map;
+    return map.get().ensure(makeString(origin, '/', name), [] {
+        static DatabaseGUID lastUsedGUID;
+        return ++lastUsedGUID;
+    }).iterator->value;
 }
 
 Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize)
@@ -219,8 +210,8 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
 
         m_guid = guidForOriginAndName(securityOrigin().toString(), name);
         guidToDatabaseMap().ensure(m_guid, [] {
-            return std::make_unique<HashSet<Database*>>();
-        }).iterator->value->add(this);
+            return HashSet<Database*>();
+        }).iterator->value.add(this);
     }
 
     m_databaseContext->databaseThread();
@@ -371,7 +362,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
         auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
-            // Map null string to empty string (see updateGuidVersionMap()).
+            // Map null string to empty string (see updateGUIDVersionMap()).
             currentVersion = entry->value.isNull() ? emptyString() : entry->value.isolatedCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
         } else {
@@ -414,7 +405,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                 }
                 currentVersion = m_expectedVersion;
             }
-            updateGuidVersionMap(m_guid, currentVersion);
+            updateGUIDVersionMap(m_guid, currentVersion);
             transaction.commit();
         }
     }
@@ -460,10 +451,9 @@ void Database::closeDatabase()
 
         auto it = guidToDatabaseMap().find(m_guid);
         ASSERT(it != guidToDatabaseMap().end());
-        ASSERT(it->value);
-        ASSERT(it->value->contains(this));
-        it->value->remove(this);
-        if (it->value->isEmpty()) {
+        ASSERT(it->value.contains(this));
+        it->value.remove(this);
+        if (it->value.isEmpty()) {
             guidToDatabaseMap().remove(it);
             guidToVersionMap().remove(m_guid);
         }
@@ -522,10 +512,9 @@ String Database::getCachedVersion() const
 
 void Database::setCachedVersion(const String& actualVersion)
 {
-    // Update the in memory database version map.
     std::lock_guard<StaticLock> locker(guidMutex);
 
-    updateGuidVersionMap(m_guid, actualVersion);
+    updateGUIDVersionMap(m_guid, actualVersion);
 }
 
 bool Database::getActualVersionForTransaction(String &actualVersion)

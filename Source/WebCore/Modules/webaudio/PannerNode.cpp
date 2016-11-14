@@ -23,17 +23,15 @@
  */
 
 #include "config.h"
+#include "PannerNode.h"
 
 #if ENABLE(WEB_AUDIO)
-
-#include "PannerNode.h"
 
 #include "AudioBufferSourceNode.h"
 #include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include "ExceptionCode.h"
 #include "HRTFPanner.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/MathExtras.h>

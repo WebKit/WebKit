@@ -23,6 +23,7 @@
 #include "SVGColor.h"
 
 #include "CSSParser.h"
+#include "ExceptionCode.h"
 #include "RGBColor.h"
 #include "SVGException.h"
 

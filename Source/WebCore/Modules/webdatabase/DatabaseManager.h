@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "ExceptionOr.h"
 #include <wtf/Assertions.h>

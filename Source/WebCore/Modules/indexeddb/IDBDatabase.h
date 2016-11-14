@@ -29,7 +29,6 @@
 
 #include "Dictionary.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"

@@ -33,7 +33,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "Logging.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"

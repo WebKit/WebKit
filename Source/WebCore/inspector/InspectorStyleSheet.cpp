@@ -39,6 +39,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
+#include "ExceptionCode.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

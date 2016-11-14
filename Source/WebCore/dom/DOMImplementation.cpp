@@ -29,7 +29,6 @@
 #include "ContentType.h"
 #include "DocumentType.h"
 #include "Element.h"
-#include "ExceptionCode.h"
 #include "FTPDirectoryDocument.h"
 #include "Frame.h"
 #include "FrameLoader.h"

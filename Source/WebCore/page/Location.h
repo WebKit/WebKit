@@ -39,8 +39,6 @@ class DOMWindow;
 class Frame;
 class URL;
 
-typedef int ExceptionCode;
-
 class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
 public:
     static Ref<Location> create(Frame* frame) { return adoptRef(*new Location(frame)); }

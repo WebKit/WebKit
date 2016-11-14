@@ -28,8 +28,6 @@
 
 #include "BiquadFilterNode.h"
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 BiquadFilterNode::BiquadFilterNode(AudioContext& context, float sampleRate)

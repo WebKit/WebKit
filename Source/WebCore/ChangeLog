@@ -1,3 +1,185 @@
+2016-11-13  Darin Adler  <darin@apple.com>
+
+        Remove many includes of ExceptionCode.h
+        https://bugs.webkit.org/show_bug.cgi?id=164706
+
+        Reviewed by Alex Christensen.
+
+        * Modules/encryptedmedia/CDMPrivateClearKey.cpp: Removed include of ExceptionCode.h.
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp: Ditto.
+        * Modules/fetch/FetchBodyOwner.cpp: Ditto.
+
+        * Modules/indexeddb/IDBDatabase.cpp: Added include of ExceptionCode.h.
+
+        * Modules/indexeddb/IDBDatabase.h: Removed include of ExceptionCode.h.
+        * Modules/indexeddb/IDBDatabaseException.cpp: Ditto.
+
+        * Modules/indexeddb/IDBIndex.cpp: Added include of ExceptionCode.h.
+        * Modules/indexeddb/IDBObjectStore.cpp: Ditto.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp: Removed include of ExceptionCode.h.
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp: Ditto.
+        * Modules/mediastream/MediaDevicesRequest.cpp: Ditto.
+        * Modules/mediastream/MediaStream.cpp: Ditto.
+        * Modules/mediastream/MediaStreamTrack.cpp: Ditto.
+        * Modules/mediastream/RTCDTMFSender.cpp: Ditto.
+        * Modules/mediastream/RTCDataChannel.cpp: Ditto.
+        * Modules/mediastream/RTCPeerConnection.cpp: Ditto.
+
+        * Modules/notifications/Notification.h: Removed definition of ExceptionCode.
+        * Modules/streams/ReadableStreamSource.h: Ditto.
+        * Modules/webaudio/BiquadFilterNode.cpp: Ditto.
+
+        * Modules/webaudio/PannerNode.cpp: Removed inclde of ExceptionCode.h.
+        * Modules/webaudio/WaveShaperNode.cpp: Ditto.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::guidForOriginAndName): Reimplemented using HashMap::ensure.
+        * Modules/webdatabase/Database.h: Renamed DatabaseGuid to DatabaseGUID and defined
+        it here instead of a in DatabaseBasicTypes.h; removed that include.
+
+        * Modules/webdatabase/DatabaseBasicTypes.h: Removed.
+
+        * Modules/webdatabase/DatabaseManager.h: Removed include of DatabaseBasicTypes.h.
+        * Modules/webdatabase/DatabaseTask.h: Ditto.
+
+        * Modules/webdatabase/SQLTransactionBackend.cpp: Removed include of ExceptionCode.h.
+
+        * Modules/webdatabase/SQLTransactionBackend.h: Removed include of DatabaseBasicTypes.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed DatabaseBasicTypes.h, also let Xcode
+        edit the file.
+
+        * bindings/js/ScriptModuleLoader.cpp: Removed include of ExceptionCode.h.
+        * bindings/js/SerializedScriptValue.cpp: Ditto.
+        * bindings/js/StructuredClone.cpp: Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck): Removed unnecessary include of ExceptionCode.h.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Updated.
+
+        * css/CSSMediaRule.cpp: Removed include of ExceptionCode.h.
+        * css/CSSSupportsRule.cpp: Ditto.
+        * dom/ClientRectList.cpp: Ditto.
+
+        * dom/DOMCoreException.cpp: Added include of ExceptionCode.h.
+
+        * dom/DOMImplementation.cpp: Removed include of ExceptionCode.h.
+        * dom/ExceptionBase.h: Ditto.
+
+        * dom/Node.cpp: Added include of ExceptionCode.h.
+
+        * dom/NodeIterator.cpp: Removed include of ExceptionCode.h.
+        (WebCore::NodeIterator::NodePointer::NodePointer): Marked this inline.
+        (WebCore::NodeIterator::NodePointer::clear): Ditto.
+        (WebCore::NodeIterator::NodePointer::moveToNext): Ditto.
+        (WebCore::NodeIterator::NodePointer::moveToPrevious): Ditto.
+        (WebCore::NodeIterator::NodeIterator): Ditto.
+        (WebCore::NodeIterator::create): Moved this here from the header.
+        Now the constructor is inlined instead of this function.
+        (WebCore::NodeIterator::detach): Deleted. Moved to header.
+        * dom/NodeIterator.h: Removed definition of ExceptionCode, fixed indentation
+        of this file and made a few changes as mentioned above.
+
+        * dom/ProcessingInstruction.cpp: Removed include of ExceptionCode.h.
+
+        * dom/Text.cpp: Added include of ExceptionCode.h.
+
+        * dom/TreeWalker.cpp: Removed include of ExceptionCode.h.
+        * editing/FrameSelection.cpp: Ditto.
+        * fileapi/WebKitBlobBuilder.cpp: Ditto.
+        * history/CachedFrame.cpp: Ditto.
+        * html/HTMLDocument.cpp: Ditto.
+        * html/HTMLMeterElement.cpp: Ditto.
+        * html/HTMLObjectElement.cpp: Ditto.
+        * html/HTMLOptionElement.cpp: Ditto.
+
+        * html/HTMLOptionsCollection.cpp: Removed include of ExceptionCode.h.
+        (WebCore::HTMLOptionsCollection::add): Changed argument to const& to avoid a
+        little bit of reference count churn.
+        * html/HTMLOptionsCollection.h: Updated for above.
+
+        * html/HTMLProgressElement.cpp: Removed include of ExceptionCode.h.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add): Changed argument to const& to avoid a
+        little bit of reference count churn.
+        * html/HTMLSelectElement.h: Updated for above.
+
+        * html/HTMLTextAreaElement.cpp: Removed include of ExceptionCode.h.
+        * html/canvas/CanvasPattern.cpp: Ditto.
+
+        * html/canvas/WebGLContextGroup.h: Removed definition of ExceptionCode.
+
+        * html/track/AudioTrack.h: Removed include of ExceptionCode.h.
+        * html/track/TextTrack.h: Ditto.
+
+        * html/track/VTTCue.cpp: Added include of ExceptionCode.h.
+        * html/track/VTTRegion.cpp: Ditto.
+
+        * html/track/VideoTrack.h: Removed include of ExceptionCode.h.
+        * inspector/DOMEditor.cpp: Ditto.
+
+        * inspector/InspectorDatabaseAgent.cpp: Removed include of ExceptionCode.h.
+        Tweaked the code in the file a bit, marking more things final and making them
+        private. ALso simplified a couple of the functions a bit.
+        (WebCore::InspectorDatabaseAgent::didOpenDatabase):
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+
+        * inspector/InspectorIndexedDBAgent.cpp: Removed include of ExceptionCode.h.
+
+        * inspector/InspectorStyleSheet.cpp: Added include of ExceptionCode.h.
+
+        * page/FocusController.cpp: Removed include of ExceptionCode.h.
+
+        * page/Location.h: Removed definition of ExceptionCode.
+
+        * page/Page.cpp: Removed include of ExceptionCode.h.
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm: Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm: Ditto.
+
+        * storage/StorageArea.h: Removed definition of ExceptionCode.
+
+        * svg/SVGCircleElement.cpp: Removed include of ExceptionCode.h.
+
+        * svg/SVGColor.cpp: Added include of ExceptionCode.h.
+        * svg/SVGPaint.cpp: Ditto.
+
+        * svg/SVGStyleElement.cpp: Removed include of ExceptionCode.h.
+
+        * svg/properties/SVGListProperty.h: Added include of ExceptionCode.h.
+
+        * workers/Worker.cpp: Removed include of ExceptionCode.h.
+        * workers/WorkerMessagingProxy.cpp: Ditto.
+
+        * xml/XMLSerializer.cpp: Removed unneeded includes.
+        (WebCore::XMLSerializer::serializeToString): Use nullptr.
+        * xml/XMLSerializer.h: Removed definition of ExceptionCode, fixed indentation
+        of this file, and made a couple tweaks.
+
 2016-11-14  Youenn Fablet  <youenn@apple.com>
 
         MediaStreamPrivate::create should take vectors of Ref

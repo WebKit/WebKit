@@ -26,7 +26,6 @@
 #include "DOMJITIDLConvert.h"
 #include "DOMJITIDLType.h"
 #include "DOMJITIDLTypeFilter.h"
-#include "ExceptionCode.h"
 #include "JSByteString.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"

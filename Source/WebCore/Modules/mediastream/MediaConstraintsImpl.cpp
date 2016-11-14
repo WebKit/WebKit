@@ -35,10 +35,6 @@
 
 #include "MediaConstraintsImpl.h"
 
-#include "ArrayValue.h"
-#include "ExceptionCode.h"
-#include "Logging.h"
-
 namespace WebCore {
 
 Ref<MediaConstraintsImpl> MediaConstraintsImpl::create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)

@@ -34,7 +34,7 @@ namespace WebCore {
 class Frame;
 class SecurityOrigin;
 class StorageSyncManager;
-typedef int ExceptionCode;
+
 enum StorageType { LocalStorage, SessionStorage };
 
 class StorageArea : public RefCounted<StorageArea> {

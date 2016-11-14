@@ -31,10 +31,9 @@
  */
 
 #include "config.h"
+#include "RTCIceCandidate.h"
 
 #if ENABLE(WEB_RTC)
-
-#include "RTCIceCandidate.h"
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"

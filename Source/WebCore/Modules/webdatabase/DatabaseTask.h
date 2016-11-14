@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "DatabaseBasicTypes.h"
 #include "ExceptionOr.h"
 #include "SQLTransactionBackend.h"
 #include <wtf/Condition.h>

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SVGCircleElement.h"
 
-#include "ExceptionCode.h"
 #include "FloatPoint.h"
 #include "RenderSVGEllipse.h"
 #include "RenderSVGPath.h"

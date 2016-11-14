@@ -43,7 +43,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"

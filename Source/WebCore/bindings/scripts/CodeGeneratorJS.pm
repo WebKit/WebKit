@@ -4388,7 +4388,6 @@ sub GenerateParametersCheck
         $quotedFunctionName = "nullptr";
     }
 
-    $implIncludes{"ExceptionCode.h"} = 1;
     $implIncludes{"JSDOMBinding.h"} = 1;
 
     my $argumentIndex = 0;

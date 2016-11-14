@@ -38,6 +38,7 @@
 #include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"
 #include "Logging.h"

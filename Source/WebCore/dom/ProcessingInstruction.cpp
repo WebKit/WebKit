@@ -28,14 +28,13 @@
 #include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "XSLStyleSheet.h"
-#include "XMLDocumentParser.h" // for parseAttributes()
 #include "MediaList.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "XMLDocumentParser.h"
+#include "XSLStyleSheet.h"
 
 namespace WebCore {
 

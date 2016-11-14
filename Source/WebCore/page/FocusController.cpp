@@ -37,7 +37,6 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"

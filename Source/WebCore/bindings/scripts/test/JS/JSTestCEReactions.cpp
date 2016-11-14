@@ -22,7 +22,6 @@
 #include "JSTestCEReactions.h"
 
 #include "CustomElementReactionQueue.h"
-#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"

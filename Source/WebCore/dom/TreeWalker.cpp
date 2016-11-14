@@ -25,10 +25,8 @@
 #include "config.h"
 #include "TreeWalker.h"
 
-#include "ExceptionCode.h"
 #include "ContainerNode.h"
 #include "NodeTraversal.h"
-
 #include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {

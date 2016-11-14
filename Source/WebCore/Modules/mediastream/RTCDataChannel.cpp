@@ -32,7 +32,6 @@
 #include "Dictionary.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCPeerConnectionHandler.h"

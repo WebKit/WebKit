@@ -31,7 +31,6 @@
 #include "CDM.h"
 #include "CDMSession.h"
 #include "ContentType.h"
-#include "ExceptionCode.h"
 #include "MediaPlayer.h"
 
 #if PLATFORM(IOS)

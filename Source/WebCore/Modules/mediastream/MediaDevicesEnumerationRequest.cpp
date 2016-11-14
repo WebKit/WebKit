@@ -31,8 +31,6 @@
 
 #include "CaptureDevice.h"
 #include "Document.h"
-#include "ExceptionCode.h"
-#include "Frame.h"
 #include "MainFrame.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"

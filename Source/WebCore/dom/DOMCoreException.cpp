@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DOMCoreException.h"
 
+#include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 
 namespace WebCore {

@@ -41,7 +41,6 @@
 #include "EmptyClients.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "ExtensionStyleSheets.h"
 #include "FileSystem.h"
 #include "FocusController.h"

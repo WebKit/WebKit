@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
     virtual ~ReadableStreamSource() { }

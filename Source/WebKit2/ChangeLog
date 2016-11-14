@@ -1,5 +1,14 @@
 2016-11-13  Darin Adler  <darin@apple.com>
 
+        Remove many includes of ExceptionCode.h
+        https://bugs.webkit.org/show_bug.cgi?id=164706
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp: Removed include of ExceptionCode.h.
+
+2016-11-13  Darin Adler  <darin@apple.com>
+
         Fix exception handling in SQL database code, streamline and update code
         https://bugs.webkit.org/show_bug.cgi?id=164685
 

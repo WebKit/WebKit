@@ -28,7 +28,6 @@
 
 #include "StorageAreaMap.h"
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>

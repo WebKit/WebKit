@@ -218,7 +218,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
     return lastSelectedListIndex();
 }
 
-ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element, Optional<HTMLElementOrInt> before)
+ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element, const Optional<HTMLElementOrInt>& before)
 {
     HTMLElement* beforeElement = nullptr;
     if (before) {

@@ -27,7 +27,6 @@
 #include "ScriptModuleLoader.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
 #include <runtime/JSInternalPromiseDeferred.h>

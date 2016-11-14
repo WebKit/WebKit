@@ -31,15 +31,13 @@
  */
 
 #include "config.h"
+#include "RTCPeerConnection.h"
 
 #if ENABLE(WEB_RTC)
-
-#include "RTCPeerConnection.h"
 
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "MediaStream.h"
 #include "MediaStreamTrack.h"

@@ -31,7 +31,6 @@
 #include "CDM.h"
 #include "CDMSessionClearKey.h"
 #include "ContentType.h"
-#include "ExceptionCode.h"
 #include "MediaPlayer.h"
 
 namespace WebCore {

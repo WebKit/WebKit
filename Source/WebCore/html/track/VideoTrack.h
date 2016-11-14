@@ -28,10 +28,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ExceptionCode.h"
 #include "TrackBase.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

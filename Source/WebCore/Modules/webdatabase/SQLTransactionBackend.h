@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
 #include <memory>
 #include <wtf/Deque.h>

@@ -25,7 +25,6 @@
 
 #include "CSSStyleSheet.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "SVGNames.h"
 #include <wtf/StdLibExtras.h>
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"

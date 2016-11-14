@@ -33,7 +33,6 @@
 #include "Dictionary.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "JSOverconstrainedError.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaSourceSettings.h"

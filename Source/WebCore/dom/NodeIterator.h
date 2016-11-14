@@ -27,49 +27,43 @@
 #include "NodeFilter.h"
 #include "ScriptWrappable.h"
 #include "Traversal.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
+class NodeIterator : public ScriptWrappable, public RefCounted<NodeIterator>, public NodeIteratorBase {
+public:
+    static Ref<NodeIterator> create(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
+    WEBCORE_EXPORT ~NodeIterator();
 
-    class NodeIterator : public ScriptWrappable, public RefCounted<NodeIterator>, public NodeIteratorBase {
-    public:
-        static Ref<NodeIterator> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
-        {
-            return adoptRef(*new NodeIterator(rootNode, whatToShow, WTFMove(filter)));
-        }
-        WEBCORE_EXPORT ~NodeIterator();
+    WEBCORE_EXPORT RefPtr<Node> nextNode();
+    WEBCORE_EXPORT RefPtr<Node> previousNode();
+    void detach() { } // This is now a no-op as per the DOM specification.
 
-        WEBCORE_EXPORT RefPtr<Node> nextNode();
-        WEBCORE_EXPORT RefPtr<Node> previousNode();
-        WEBCORE_EXPORT void detach();
+    Node* referenceNode() const { return m_referenceNode.node.get(); }
+    bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
 
-        Node* referenceNode() const { return m_referenceNode.node.get(); }
-        bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
+    // This function is called before any node is removed from the document tree.
+    void nodeWillBeRemoved(Node&);
 
-        // This function is called before any node is removed from the document tree.
-        void nodeWillBeRemoved(Node&);
+private:
+    NodeIterator(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
 
-    private:
-        NodeIterator(Node&, unsigned long whatToShow, RefPtr<NodeFilter>&&);
+    struct NodePointer {
+        RefPtr<Node> node;
+        bool isPointerBeforeNode { true };
 
-        struct NodePointer {
-            RefPtr<Node> node;
-            bool isPointerBeforeNode { true };
+        NodePointer() = default;
+        NodePointer(Node&, bool);
 
-            NodePointer() = default;
-            NodePointer(Node&, bool);
-
-            void clear();
-            bool moveToNext(Node& root);
-            bool moveToPrevious(Node& root);
-        };
-
-        void updateForNodeRemoval(Node& nodeToBeRemoved, NodePointer&) const;
-
-        NodePointer m_referenceNode;
-        NodePointer m_candidateNode;
+        void clear();
+        bool moveToNext(Node& root);
+        bool moveToPrevious(Node& root);
     };
+
+    void updateForNodeRemoval(Node& nodeToBeRemoved, NodePointer&) const;
+
+    NodePointer m_referenceNode;
+    NodePointer m_candidateNode;
+};
 
 } // namespace WebCore

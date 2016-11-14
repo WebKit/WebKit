@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrackPrivate.h"
-#include "ExceptionCode.h"
 #include "PlatformExportMacros.h"
 #include "TrackBase.h"
 #include <wtf/text/WTFString.h>

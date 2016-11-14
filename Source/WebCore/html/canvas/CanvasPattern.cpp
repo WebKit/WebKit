@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CanvasPattern.h"
 
-#include "ExceptionCode.h"
 #include "Image.h"
 #include "Pattern.h"
 #include <wtf/text/WTFString.h>

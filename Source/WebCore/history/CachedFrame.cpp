@@ -32,7 +32,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"

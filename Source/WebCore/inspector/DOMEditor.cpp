@@ -34,7 +34,6 @@
 #include "DOMPatchSupport.h"
 #include "Document.h"
 #include "Element.h"
-#include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 #include "InspectorHistory.h"
 #include "Node.h"

@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ExceptionCode.h"
 #include "TextTrackCue.h"
 #include "TrackBase.h"
 #include "VTTCue.h"

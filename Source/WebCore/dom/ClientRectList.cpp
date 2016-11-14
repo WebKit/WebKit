@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ClientRectList.h"
 
-#include "ExceptionCode.h"
 #include "ClientRect.h"
 
 namespace WebCore {
@@ -55,11 +54,9 @@ unsigned ClientRectList::length() const
 ClientRect* ClientRectList::item(unsigned index)
 {
     if (index >= m_list.size()) {
-        // FIXME: this should throw an exception.
-        // ec = INDEX_SIZE_ERR;
+        // FIXME: Should this throw an INDEX_SIZE_ERR exception?
         return nullptr;
     }
-
     return m_list[index].ptr();
 }
 

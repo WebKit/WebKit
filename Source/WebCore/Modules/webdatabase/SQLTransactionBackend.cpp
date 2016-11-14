@@ -34,7 +34,6 @@
 #include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
-#include "ExceptionCode.h"
 #include "Logging.h"
 #include "OriginLock.h"
 #include "SQLError.h"

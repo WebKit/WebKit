@@ -20,16 +20,13 @@
 #include "config.h"
 #include "XMLSerializer.h"
 
-#include "Document.h"
-#include "ExceptionCode.h"
 #include "markup.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 String XMLSerializer::serializeToString(Node& node)
 {
-    return createMarkup(node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
+    return createMarkup(node, IncludeNode, nullptr, DoNotResolveURLs, nullptr, XMLFragmentSerialization);
 }
 
 } // namespace WebCore

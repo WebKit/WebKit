@@ -25,7 +25,6 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "JSBlob.h"

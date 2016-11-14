@@ -23,6 +23,7 @@
 #include "Text.h"
 
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
 #include "RenderText.h"

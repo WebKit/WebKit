@@ -27,10 +27,11 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INDEXED_DATABASE)
 #include "IDBDatabaseException.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
+#include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 
 namespace WebCore {

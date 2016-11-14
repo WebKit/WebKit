@@ -19,13 +19,13 @@
  */
 
 #include "config.h"
-#if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
+
+#if ENABLE(METER_ELEMENT)
 
 #include "Attribute.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "FormDataList.h"
 #include "HTMLDivElement.h"
 #include "HTMLFormElement.h"

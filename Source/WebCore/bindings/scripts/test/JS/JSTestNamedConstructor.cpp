@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestNamedConstructor.h"
 
-#include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"

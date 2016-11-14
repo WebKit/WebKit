@@ -58,7 +58,6 @@
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "ElementChildIterator.h"
-#include "ExceptionCode.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"

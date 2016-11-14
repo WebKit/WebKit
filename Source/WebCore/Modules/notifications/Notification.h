@@ -47,8 +47,6 @@ class Document;
 class NotificationCenter;
 class NotificationPermissionCallback;
 
-typedef int ExceptionCode;
-
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:

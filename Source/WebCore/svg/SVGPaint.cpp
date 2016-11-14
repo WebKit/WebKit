@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGPaint.h"
 
+#include "ExceptionCode.h"
 #include "SVGException.h"
 #include "SVGURIReference.h"
 #include <wtf/text/WTFString.h>

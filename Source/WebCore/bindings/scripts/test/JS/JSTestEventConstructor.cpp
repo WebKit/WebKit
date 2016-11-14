@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestEventConstructor.h"
 
-#include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include <runtime/Error.h>

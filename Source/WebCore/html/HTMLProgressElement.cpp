@@ -23,7 +23,6 @@
 
 #include "ElementIterator.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"

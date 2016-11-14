@@ -23,13 +23,11 @@
  */
 
 #include "config.h"
+#include "WaveShaperNode.h"
 
 #if ENABLE(WEB_AUDIO)
 
-#include "WaveShaperNode.h"
-
 #include "AudioContext.h"
-#include "ExceptionCode.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {

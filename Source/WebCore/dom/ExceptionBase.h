@@ -28,13 +28,13 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct ExceptionCodeDescription;
+
+using ExceptionCode = int;
 
 class ExceptionBase : public RefCounted<ExceptionBase> {
 public:

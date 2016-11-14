@@ -26,25 +26,23 @@
 #include "NodeIterator.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "NodeTraversal.h"
-
 #include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {
 
-NodeIterator::NodePointer::NodePointer(Node& node, bool isPointerBeforeNode)
+inline NodeIterator::NodePointer::NodePointer(Node& node, bool isPointerBeforeNode)
     : node(&node)
     , isPointerBeforeNode(isPointerBeforeNode)
 {
 }
 
-void NodeIterator::NodePointer::clear()
+inline void NodeIterator::NodePointer::clear()
 {
     node = nullptr;
 }
 
-bool NodeIterator::NodePointer::moveToNext(Node& root)
+inline bool NodeIterator::NodePointer::moveToNext(Node& root)
 {
     if (!node)
         return false;
@@ -56,7 +54,7 @@ bool NodeIterator::NodePointer::moveToNext(Node& root)
     return node;
 }
 
-bool NodeIterator::NodePointer::moveToPrevious(Node& root)
+inline bool NodeIterator::NodePointer::moveToPrevious(Node& root)
 {
     if (!node)
         return false;
@@ -72,11 +70,16 @@ bool NodeIterator::NodePointer::moveToPrevious(Node& root)
     return node;
 }
 
-NodeIterator::NodeIterator(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+inline NodeIterator::NodeIterator(Node& rootNode, unsigned whatToShow, RefPtr<NodeFilter>&& filter)
     : NodeIteratorBase(rootNode, whatToShow, WTFMove(filter))
-    , m_referenceNode(root(), true)
+    , m_referenceNode(rootNode, true)
 {
     root().document().attachNodeIterator(this);
+}
+
+Ref<NodeIterator> NodeIterator::create(Node& rootNode, unsigned whatToShow, RefPtr<NodeFilter>&& filter)
+{
+    return adoptRef(*new NodeIterator(rootNode, whatToShow, WTFMove(filter)));
 }
 
 NodeIterator::~NodeIterator()
@@ -126,11 +129,6 @@ RefPtr<Node> NodeIterator::previousNode()
 
     m_candidateNode.clear();
     return result;
-}
-
-void NodeIterator::detach()
-{
-    // This is now a no-op as per the DOM specification.
 }
 
 void NodeIterator::nodeWillBeRemoved(Node& removedNode)
@@ -204,6 +202,5 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
         }
     }
 }
-
 
 } // namespace WebCore

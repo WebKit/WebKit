@@ -37,6 +37,7 @@
 #include "ClientRect.h"
 #include "DOMTokenList.h"
 #include "ElementChildIterator.h"
+#include "ExceptionCode.h"
 #include "HTMLDivElement.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
