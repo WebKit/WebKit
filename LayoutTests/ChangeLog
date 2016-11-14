@@ -1,5 +1,21 @@
 2016-11-14  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r83521): Fix malformed <canvas> tag in fast/canvas/DrawImageSinglePixelStretch.html
+
+        Unreviewed.
+
+        Before: <canvas id="c"</canvas>
+        Parsed: <canvas id="c" <="" canvas="" width="200" height="50"></canvas>
+
+        After:  <canvas id="c"></canvas>
+        Parsed: <canvas id="c" width="200" height="50"></canvas>
+
+        * fast/canvas/DrawImageSinglePixelStretch.html: Close <canvas>
+        tag.  This does not affect test results, but the HTML5 parser
+        was covering for this mistake.
+
+2016-11-14  David Kilzer  <ddkilzer@apple.com>
+
         Bug 164702: WebContent crash due to checked unsigned overflow in WebCore: WebCore::RenderLayerCompositor::requiresCompositingLayer const + 1104
         <https://webkit.org/b/164702>
         <rdar://problem/29236368>
