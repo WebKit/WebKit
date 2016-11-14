@@ -1,3 +1,14 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Refresh RTCDataChannel abstract infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=164680
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/RTCPeerConnection-datachannel-expected.txt:
+        * fast/mediastream/RTCPeerConnection-datachannel.html:
+        * platform/mac/TestExpectations:
+
 2016-11-14  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r83521): Fix malformed <canvas> tag in fast/canvas/DrawImageSinglePixelStretch.html

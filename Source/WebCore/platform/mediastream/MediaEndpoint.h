@@ -39,12 +39,15 @@
 
 namespace WebCore {
 
-struct IceCandidate;
 class MediaEndpoint;
 class MediaEndpointClient;
 class MediaEndpointSessionConfiguration;
-struct MediaPayload;
+class RTCDataChannelHandler;
 class RealtimeMediaSource;
+
+struct IceCandidate;
+struct MediaPayload;
+struct RTCDataChannelInit;
 
 typedef std::unique_ptr<MediaEndpoint> (*CreateMediaEndpoint)(MediaEndpointClient&);
 typedef Vector<MediaPayload> MediaPayloadVector;
@@ -78,6 +81,8 @@ public:
     virtual Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) = 0;
     virtual void replaceSendSource(RealtimeMediaSource&, const String& mid) = 0;
     virtual void replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid) = 0;
+
+    virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
     virtual void stop() = 0;
 

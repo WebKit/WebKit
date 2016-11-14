@@ -53,21 +53,7 @@ class RTCSessionDescriptionRequest;
 class RTCStatsRequest;
 class RTCVoidRequest;
 
-struct RTCDataChannelInit {
-public:
-    RTCDataChannelInit()
-        : ordered(true)
-        , maxRetransmitTime(-1)
-        , maxRetransmits(-1)
-        , negotiated(false)
-        , id(-1) { }
-    bool ordered;
-    int maxRetransmitTime;
-    int maxRetransmits;
-    String protocol;
-    bool negotiated;
-    int id;
-};
+struct RTCDataChannelInit;
 
 typedef std::unique_ptr<RTCPeerConnectionHandler> (*CreatePeerConnectionHandler)(RTCPeerConnectionHandlerClient*);
 

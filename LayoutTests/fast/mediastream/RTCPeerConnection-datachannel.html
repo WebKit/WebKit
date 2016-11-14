@@ -99,6 +99,11 @@
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;
+
+            setTimeout(function() {
+                testFailed("Test timed out");
+                finishJSTest();
+            }, 2000);
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

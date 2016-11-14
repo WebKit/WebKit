@@ -111,6 +111,8 @@ private:
     void doneGatheringCandidates(const String& mid) override;
     void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) override;
 
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+
     std::unique_ptr<MediaEndpoint> m_mediaEndpoint;
 
     Function<void ()> m_initialDeferredTask;

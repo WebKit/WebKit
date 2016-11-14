@@ -374,12 +374,17 @@ void RTCPeerConnection::privateGetStats(MediaStreamTrack* selector, PeerConnecti
     m_backend->getStats(selector, WTFMove(promise));
 }
 
-ExceptionOr<RefPtr<RTCDataChannel>> RTCPeerConnection::createDataChannel(const String&, const Dictionary&)
+ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
 {
     if (m_signalingState == SignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
-    return nullptr;
+    // FIXME: Check options
+    auto channelHandler = m_backend->createDataChannelHandler(label, options);
+    if (!channelHandler)
+        return Exception { NOT_SUPPORTED_ERR };
+
+    return RTCDataChannel::create(context, WTFMove(channelHandler), WTFMove(label), WTFMove(options));
 }
 
 void RTCPeerConnection::close()

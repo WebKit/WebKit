@@ -34,6 +34,7 @@
 #include "MediaEndpoint.h"
 
 #include "MediaPayload.h"
+#include "RTCDataChannelHandler.h"
 #include "RealtimeMediaSource.h"
 
 namespace WebCore {
@@ -42,43 +43,40 @@ class EmptyRealtimeMediaSource final : public RealtimeMediaSource {
 public:
     static Ref<EmptyRealtimeMediaSource> create() { return adoptRef(*new EmptyRealtimeMediaSource()); }
 
+private:
+    EmptyRealtimeMediaSource() : RealtimeMediaSource(emptyString(), RealtimeMediaSource::None, emptyString()) { }
+
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return nullptr; }
     const RealtimeMediaSourceSettings& settings() const final { return m_sourceSettings; }
-
-private:
-    EmptyRealtimeMediaSource()
-        : RealtimeMediaSource(emptyString(), RealtimeMediaSource::None, emptyString())
-        { }
 
     RealtimeMediaSourceSettings m_sourceSettings;
 };
 
-class EmptyMediaEndpoint : public MediaEndpoint {
-public:
-    EmptyMediaEndpoint(MediaEndpointClient&) { }
+class EmptyMediaEndpoint final : public MediaEndpoint {
+private:
+    void setConfiguration(MediaEndpointConfiguration&&) final { }
 
-    void setConfiguration(MediaEndpointConfiguration&&) override { }
+    void generateDtlsInfo() final { }
+    MediaPayloadVector getDefaultAudioPayloads() final { return MediaPayloadVector(); }
+    MediaPayloadVector getDefaultVideoPayloads() final { return MediaPayloadVector(); }
+    MediaPayloadVector filterPayloads(const MediaPayloadVector&, const MediaPayloadVector&) final { return MediaPayloadVector(); }
 
-    void generateDtlsInfo() override { }
-    MediaPayloadVector getDefaultAudioPayloads() override { return MediaPayloadVector(); }
-    MediaPayloadVector getDefaultVideoPayloads() override { return MediaPayloadVector(); }
-    MediaPayloadVector filterPayloads(const MediaPayloadVector&, const MediaPayloadVector&) override { return MediaPayloadVector(); }
+    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool) final { return UpdateResult::Failed; }
+    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool) final { return UpdateResult::Failed; }
 
-    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool) override { return UpdateResult::Failed; }
-    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool) override { return UpdateResult::Failed; }
+    void addRemoteCandidate(const IceCandidate&, const String&, const String&, const String&) final { }
 
-    void addRemoteCandidate(const IceCandidate&, const String&, const String&, const String&) override { }
+    Ref<RealtimeMediaSource> createMutedRemoteSource(const String&, RealtimeMediaSource::Type) final { return EmptyRealtimeMediaSource::create(); }
+    void replaceSendSource(RealtimeMediaSource&, const String&) final { }
+    void replaceMutedRemoteSourceMid(const String&, const String&) final { };
 
-    Ref<RealtimeMediaSource> createMutedRemoteSource(const String&, RealtimeMediaSource::Type) override { return EmptyRealtimeMediaSource::create(); }
-    void replaceSendSource(RealtimeMediaSource&, const String&) override { }
-    void replaceMutedRemoteSourceMid(const String&, const String&) override { };
-
-    void stop() override { }
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final { return nullptr; }
+    void stop() final { }
 };
 
-static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient& client)
+static std::unique_ptr<MediaEndpoint> createMediaEndpoint(MediaEndpointClient&)
 {
-    return std::make_unique<EmptyMediaEndpoint>(client);
+    return std::make_unique<EmptyMediaEndpoint>();
 }
 
 CreateMediaEndpoint MediaEndpoint::create = createMediaEndpoint;

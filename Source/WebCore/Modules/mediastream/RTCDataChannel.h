@@ -26,8 +26,10 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Event.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
@@ -41,22 +43,20 @@ namespace WebCore {
 
 class Blob;
 class Dictionary;
-class RTCDataChannelHandler;
 class RTCPeerConnectionHandler;
 
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public EventTargetWithInlineData, public RTCDataChannelHandlerClient {
 public:
-    static Ref<RTCDataChannel> create(ScriptExecutionContext*, std::unique_ptr<RTCDataChannelHandler>&&);
-    static ExceptionOr<Ref<RTCDataChannel>> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, const String& label, const Dictionary& options);
-    ~RTCDataChannel();
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
-    String label() const;
-    bool ordered() const;
-    unsigned short maxRetransmitTime() const;
-    unsigned short maxRetransmits() const;
-    String protocol() const;
-    bool negotiated() const;
-    unsigned short id() const;
+    bool ordered() const { return m_options.ordered; }
+    unsigned short maxRetransmitTime() const { return m_options.maxRetransmitTime; }
+    unsigned short maxRetransmits() const { return m_options.maxRetransmits; }
+    String protocol() const { return m_options.protocol; }
+    bool negotiated() const { return m_options.negotiated; };
+    unsigned short id() const { return m_options.id; };
+
+    String label() const { return m_label; }
     const AtomicString& readyState() const;
     unsigned bufferedAmount() const;
 
@@ -76,7 +76,7 @@ public:
     using RefCounted::deref;
 
 private:
-    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&);
+    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();
@@ -93,6 +93,8 @@ private:
     void didReceiveStringData(const String&) final;
     void didReceiveRawData(const char*, size_t) final;
     void didDetectError() final;
+    void protect() final { ref(); }
+    void unprotect() final { deref(); }
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
 
@@ -105,6 +107,9 @@ private:
 
     Timer m_scheduledEventTimer;
     Vector<Ref<Event>> m_scheduledEvents;
+
+    String m_label;
+    RTCDataChannelInit m_options;
 };
 
 } // namespace WebCore

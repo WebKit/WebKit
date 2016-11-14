@@ -705,6 +705,11 @@ Ref<RTCRtpReceiver> MediaEndpointPeerConnection::createReceiver(const String& tr
     return RTCRtpReceiver::create(WTFMove(remoteTrack));
 }
 
+std::unique_ptr<RTCDataChannelHandler> MediaEndpointPeerConnection::createDataChannelHandler(const String& label, const RTCDataChannelInit& options)
+{
+    return m_mediaEndpoint->createDataChannelHandler(label, options);
+}
+
 void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise)
 {
     RTCRtpTransceiver* transceiver = matchTransceiver(m_peerConnection.getTransceivers(), [&sender] (RTCRtpTransceiver& current) {

@@ -54,83 +54,20 @@ static const AtomicString& arraybufferKeyword()
     return arraybuffer;
 }
 
-ExceptionOr<Ref<RTCDataChannel>> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, const String& label, const Dictionary& options)
-{
-    RTCDataChannelInit initData;
-    String maxRetransmitsStr;
-    String maxRetransmitTimeStr;
-    options.get("ordered", initData.ordered);
-    options.get("negotiated", initData.negotiated);
-    options.get("id", initData.id);
-    options.get("maxRetransmits", maxRetransmitsStr);
-    options.get("maxRetransmitTime", maxRetransmitTimeStr);
-    options.get("protocol", initData.protocol);
-
-    bool maxRetransmitsConversion;
-    bool maxRetransmitTimeConversion;
-    initData.maxRetransmits = maxRetransmitsStr.toUIntStrict(&maxRetransmitsConversion);
-    initData.maxRetransmitTime = maxRetransmitTimeStr.toUIntStrict(&maxRetransmitTimeConversion);
-    if (maxRetransmitsConversion && maxRetransmitTimeConversion)
-        return Exception { SYNTAX_ERR };
-
-    auto handler = peerConnectionHandler->createDataChannel(label, initData);
-    if (!handler)
-        return Exception { NOT_SUPPORTED_ERR };
-
-    return adoptRef(*new RTCDataChannel(*context, WTFMove(handler)));
-}
-
-Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler>&& handler)
+Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
 {
     ASSERT(handler);
-    return adoptRef(*new RTCDataChannel(*context, WTFMove(handler)));
+    return adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
 }
 
-RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler)
+RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
     : m_scriptExecutionContext(&context)
     , m_handler(WTFMove(handler))
     , m_scheduledEventTimer(*this, &RTCDataChannel::scheduledEventTimerFired)
+    , m_label(WTFMove(label))
+    , m_options(WTFMove(options))
 {
     m_handler->setClient(this);
-}
-
-RTCDataChannel::~RTCDataChannel()
-{
-}
-
-String RTCDataChannel::label() const
-{
-    return m_handler->label();
-}
-
-bool RTCDataChannel::ordered() const
-{
-    return m_handler->ordered();
-}
-
-unsigned short RTCDataChannel::maxRetransmitTime() const
-{
-    return m_handler->maxRetransmitTime();
-}
-
-unsigned short RTCDataChannel::maxRetransmits() const
-{
-    return m_handler->maxRetransmits();
-}
-
-String RTCDataChannel::protocol() const
-{
-    return m_handler->protocol();
-}
-
-bool RTCDataChannel::negotiated() const
-{
-    return m_handler->negotiated();
-}
-
-unsigned short RTCDataChannel::id() const
-{
-    return m_handler->id();
 }
 
 const AtomicString& RTCDataChannel::readyState() const
@@ -157,7 +94,7 @@ const AtomicString& RTCDataChannel::readyState() const
 
 unsigned RTCDataChannel::bufferedAmount() const
 {
-    return m_handler->bufferedAmount();
+    return 0;
 }
 
 const AtomicString& RTCDataChannel::binaryType() const

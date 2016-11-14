@@ -120,6 +120,8 @@ private:
         String mid;
     };
 
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+
     void prepareSession(OwrSession*, PeerMediaDescription*);
     void prepareMediaSession(OwrMediaSession*, PeerMediaDescription*, bool isInitiator);
 

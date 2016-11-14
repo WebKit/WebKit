@@ -41,15 +41,6 @@ public:
 
     void setClient(RTCDataChannelHandlerClient*) override;
 
-    String label() override { return m_label; }
-    bool ordered() override { return m_ordered; }
-    unsigned short maxRetransmitTime() override { return m_maxRetransmitTime; }
-    unsigned short maxRetransmits() override { return m_maxRetransmits; }
-    String protocol() override { return m_protocol; }
-    bool negotiated() override { return m_negotiated; }
-    unsigned short id() override { return m_id; }
-    unsigned long bufferedAmount() override { return 0; }
-
     bool sendStringData(const String&) override;
     bool sendRawData(const char*, size_t) override;
     void close() override;
@@ -59,11 +50,6 @@ private:
 
     String m_label;
     String m_protocol;
-    unsigned short m_maxRetransmitTime;
-    unsigned short m_maxRetransmits;
-    unsigned short m_id;
-    bool m_ordered;
-    bool m_negotiated;
 };
 
 } // namespace WebCore

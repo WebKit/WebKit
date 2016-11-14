@@ -68,6 +68,8 @@ public:
 private:
     void updateConfigurationMids(const MediaEndpointSessionConfiguration&);
 
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+
     void dispatchFakeIceCandidates();
     void iceCandidateTimerFired();
 

@@ -38,6 +38,7 @@
 #include "Dictionary.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
+#include "RTCDataChannel.h"
 #include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
 #include "ScriptWrappable.h"
@@ -49,7 +50,6 @@ namespace WebCore {
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCConfiguration;
-class RTCDataChannel;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
@@ -60,9 +60,10 @@ public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     ~RTCPeerConnection();
 
+    using AnswerOptions = RTCAnswerOptions;
+    using DataChannelInit = RTCDataChannelInit;
     using OfferAnswerOptions = RTCOfferAnswerOptions;
     using OfferOptions = RTCOfferOptions;
-    using AnswerOptions = RTCAnswerOptions;
 
     ExceptionOr<void> initializeWith(Document&, const Dictionary&);
 
@@ -111,7 +112,7 @@ public:
 
     void privateGetStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
 
-    ExceptionOr<RefPtr<RTCDataChannel>> createDataChannel(const String& label, const Dictionary& dataChannelDict);
+    ExceptionOr<Ref<RTCDataChannel>> createDataChannel(ScriptExecutionContext&, String&&, RTCDataChannelInit&&);
 
     void close();
 

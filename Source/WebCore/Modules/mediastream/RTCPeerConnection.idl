@@ -41,6 +41,15 @@ dictionary RTCOfferOptions : RTCOfferAnswerOptions {
 dictionary RTCAnswerOptions : RTCOfferAnswerOptions {
 };
 
+dictionary RTCDataChannelInit {
+    boolean ordered = true;
+    unsigned short maxRetransmitTime;
+    unsigned short maxRetransmits;
+    USVString protocol = "";
+    boolean negotiated = false;
+    unsigned short id;
+};
+
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
@@ -125,7 +134,7 @@ dictionary RTCAnswerOptions : RTCOfferAnswerOptions {
     [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate candidate);
     [PrivateIdentifier] Promise<RTCStatsReport> privateGetStats(MediaStreamTrack? selector);
 
-    [MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional Dictionary options);
+    [CallWith=ScriptExecutionContext, MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional RTCDataChannelInit options);
 
     void close();
 

@@ -34,6 +34,7 @@
 
 #include "JSDOMPromise.h"
 #include "PeerConnectionStates.h"
+#include "RTCDataChannel.h"
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCConfiguration;
+class RTCDataChannelHandler;
 class RTCIceCandidate;
 class RTCPeerConnection;
 class RTCRtpReceiver;
@@ -76,6 +78,8 @@ public:
     void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
     void setRemoteDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
     void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&);
+
+    virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
     void stop();
 

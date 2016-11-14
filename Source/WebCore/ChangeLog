@@ -1,3 +1,60 @@
+2016-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Refresh RTCDataChannel abstract infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=164680
+
+        Reviewed by Darin Adler.
+
+        No real changes, except that a mock data channel is now returned for layout test.
+        Covered by activated and rebased test.
+
+        Adding support for mock data channel.
+        Updating data channel creation by using dictionary binding infrastructure.
+        Storing of options directly in RTCDataChannel to reduce the use of the data channel handler.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createDataChannelHandler):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::RTCDataChannel::bufferedAmount):
+        (WebCore::RTCDataChannel::~RTCDataChannel): Deleted.
+        (WebCore::RTCDataChannel::label): Deleted.
+        (WebCore::RTCDataChannel::ordered): Deleted.
+        (WebCore::RTCDataChannel::maxRetransmitTime): Deleted.
+        (WebCore::RTCDataChannel::maxRetransmits): Deleted.
+        (WebCore::RTCDataChannel::protocol): Deleted.
+        (WebCore::RTCDataChannel::negotiated): Deleted.
+        (WebCore::RTCDataChannel::id): Deleted.
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        (WebCore::RTCDataChannelEvent::create):
+        (WebCore::RTCDataChannelEvent::RTCDataChannelEvent):
+        (WebCore::RTCDataChannelEvent::~RTCDataChannelEvent): Deleted.
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createDataChannel):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * platform/mediastream/MediaEndpoint.cpp:
+        (WebCore::EmptyMediaEndpoint::EmptyMediaEndpoint): Deleted.
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/RTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        (WebCore::RTCDataChannelInit::RTCDataChannelInit): Deleted.
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::createDataChannelHandler):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::createDataChannelHandler):
+        * platform/mock/MockMediaEndpoint.h:
+        * platform/mock/RTCDataChannelHandlerMock.cpp:
+        (WebCore::RTCDataChannelHandlerMock::RTCDataChannelHandlerMock):
+        * platform/mock/RTCDataChannelHandlerMock.h:
+
 2016-11-14  David Kilzer  <ddkilzer@apple.com>
 
         Bug 164702: WebContent crash due to checked unsigned overflow in WebCore: WebCore::RenderLayerCompositor::requiresCompositingLayer const + 1104

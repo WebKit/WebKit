@@ -37,6 +37,7 @@
 #include "MediaPayload.h"
 #include "MockRealtimeAudioSource.h"
 #include "MockRealtimeVideoSource.h"
+#include "RTCDataChannelHandlerMock.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/MainThread.h>
 
@@ -61,6 +62,11 @@ MockMediaEndpoint::MockMediaEndpoint(MediaEndpointClient& client)
 MockMediaEndpoint::~MockMediaEndpoint()
 {
     stop();
+}
+
+std::unique_ptr<RTCDataChannelHandler> MockMediaEndpoint::createDataChannelHandler(const String& label, const RTCDataChannelInit& options)
+{
+    return std::make_unique<RTCDataChannelHandlerMock>(label, options);
 }
 
 void MockMediaEndpoint::generateDtlsInfo()
