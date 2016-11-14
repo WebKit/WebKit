@@ -314,7 +314,12 @@
     (shared-preferences-read "org.cups.PrintingPrefs"))
 
 ;; Text Services Manager
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+(with-filter (iokit-registry-entry-class "IOHIDEventDriver")
+    (allow iokit-set-properties (iokit-property "CapsLockDelayOverride")))
+#else
 (allow iokit-set-properties (iokit-property "CapsLockDelayOverride"))
+#endif
 
 ;; Image Capture
 (define (webkit-imagecapture)

@@ -1,5 +1,16 @@
 2016-11-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Mac][iOS][WK2] Tighten permissions to change CapsLock delay
+        https://bugs.webkit.org/show_bug.cgi?id=164725
+        <rdar://problem/28970910>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in: Limit access
+        to the IOKit connection that actually needs it.
+
+2016-11-14  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed sandbox fix after r208702
 
         Correct version check to avoid breaking users in Safari Technology Preview
