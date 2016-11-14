@@ -1,3 +1,14 @@
+2016-11-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (204441): newsplex.com map does not load
+        https://bugs.webkit.org/show_bug.cgi?id=164705
+        <rdar://problem/28753438>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/getElementsByTagName-HTMLElement-prefix-expected.txt: Added.
+        * fast/dom/getElementsByTagName-HTMLElement-prefix.html: Added.
+
 2016-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add a way to get the UI-side scrolling tree as text via UIScriptController

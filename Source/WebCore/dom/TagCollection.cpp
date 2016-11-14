@@ -28,25 +28,6 @@
 
 namespace WebCore {
 
-static inline AtomicString makeQualifiedName(const String& prefix, const String& localName)
-{
-    if (LIKELY(prefix.isNull()))
-        return localName;
-    return prefix + ':' + localName;
-}
-
-static inline void splitQualifiedName(const String& qualifiedName, AtomicString& prefix, AtomicString& localName)
-{
-    size_t index = qualifiedName.find(':');
-    if (UNLIKELY(index == notFound))
-        localName = qualifiedName;
-    else {
-        prefix = qualifiedName.substring(0, index);
-        localName = qualifiedName.substring(index + 1);
-    }
-    ASSERT(makeQualifiedName(prefix, localName) == qualifiedName);
-}
-
 TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     : CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<ByTag>::traversalType>(rootNode, ByTag)
     , m_namespaceURI(namespaceURI)
@@ -62,28 +43,27 @@ TagCollectionNS::~TagCollectionNS()
 
 TagCollection::TagCollection(ContainerNode& rootNode, const AtomicString& qualifiedName)
     : CachedHTMLCollection<TagCollection, CollectionTypeTraits<ByTag>::traversalType>(rootNode, ByTag)
+    , m_qualifiedName(qualifiedName)
 {
     ASSERT(qualifiedName != starAtom);
-    splitQualifiedName(qualifiedName, m_prefix, m_localName);
 }
 
 TagCollection::~TagCollection()
 {
-    ownerNode().nodeLists()->removeCachedCollection(this, makeQualifiedName(m_prefix, m_localName));
+    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomicString& qualifiedName)
     : CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<ByHTMLTag>::traversalType>(rootNode, ByHTMLTag)
+    , m_qualifiedName(qualifiedName)
+    , m_loweredQualifiedName(qualifiedName.convertToASCIILowercase())
 {
     ASSERT(qualifiedName != starAtom);
-    splitQualifiedName(qualifiedName, m_prefix, m_localName);
-    m_loweredPrefix = m_prefix.convertToASCIILowercase();
-    m_loweredLocalName = m_localName.convertToASCIILowercase();
 }
 
 HTMLTagCollection::~HTMLTagCollection()
 {
-    ownerNode().nodeLists()->removeCachedCollection(this, makeQualifiedName(m_prefix, m_localName));
+    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 } // namespace WebCore

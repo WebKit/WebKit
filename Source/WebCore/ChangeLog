@@ -1,3 +1,41 @@
+2016-11-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (204441): newsplex.com map does not load
+        https://bugs.webkit.org/show_bug.cgi?id=164705
+        <rdar://problem/28753438>
+
+        Reviewed by Darin Adler.
+
+        Update getElementsByTagName(qualifiedName) implementation to match more closely
+        the specification at:
+        - https://dom.spec.whatwg.org/#dom-document-getelementsbytagname
+        - https://dom.spec.whatwg.org/#concept-getelementsbytagname
+        - https://dom.spec.whatwg.org/#concept-element-qualified-name
+
+        In particular, we no longer split the input qualifiedName into a prefix and a
+        localName in order to compare those to element.prefix() / element.localName().
+        Instead, we keep the input qualifiedName as is and compare it to the element's
+        qualifiedName. This matters for HTML elements inside an HTML document that have
+        a semicolon in their localname (e.g. 'wx:map'). For this example, the element's
+        localName and its qualified name are both 'wx:map'. Calling
+        getElementsByTagName('wx:map') should return it. However, if you split the input
+        qualifiedName into a prefix and a localName, you end up checking:
+        'wx' == null && 'map' == 'wx:map'
+        which does not match.
+
+        Test: fast/dom/getElementsByTagName-HTMLElement-prefix.html
+
+        * dom/TagCollection.cpp:
+        (WebCore::TagCollection::TagCollection):
+        (WebCore::TagCollection::~TagCollection):
+        (WebCore::HTMLTagCollection::HTMLTagCollection):
+        (WebCore::HTMLTagCollection::~HTMLTagCollection):
+        (WebCore::makeQualifiedName): Deleted.
+        (WebCore::splitQualifiedName): Deleted.
+        * dom/TagCollection.h:
+        (WebCore::TagCollection::elementMatches):
+        (WebCore::HTMLTagCollection::elementMatches):
+
 2016-11-13  Darin Adler  <darin@apple.com>
 
         Remove ExceptionCodePlaceholder

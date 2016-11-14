@@ -1,0 +1,18 @@
+Tests that getElementsByTagName() works properly for elements that have a semicolon in their tag name, inside an HTML document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testElement.prefix is null
+PASS testElement.localName is "wx:map"
+PASS testElement.tagName is "WX:MAP"
+collection = document.getElementsByTagName("wx:map")
+PASS collection.length is 1
+PASS collection[0] is testElement
+collection = document.getElementsByTagName("WX:MAP")
+PASS collection.length is 1
+PASS collection[0] is testElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
