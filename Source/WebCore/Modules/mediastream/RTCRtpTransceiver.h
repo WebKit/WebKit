@@ -47,7 +47,7 @@ public:
     // This enum is mirrored in RTCPeerConnection.h
     enum class Direction { Sendrecv, Sendonly, Recvonly, Inactive };
 
-    static Ref<RTCRtpTransceiver> create(RefPtr<RTCRtpSender>&&, RefPtr<RTCRtpReceiver>&&);
+    static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver) { return adoptRef(*new RTCRtpTransceiver(WTFMove(sender), WTFMove(receiver))); }
     virtual ~RTCRtpTransceiver() { }
 
     bool hasSendingDirection() const;
@@ -64,8 +64,8 @@ public:
     const String& mid() const { return m_mid; }
     void setMid(const String& mid) { m_mid = mid; }
 
-    RTCRtpSender* sender() const { return m_sender.get(); }
-    RTCRtpReceiver* receiver() const { return m_receiver.get(); }
+    RTCRtpSender& sender() { return m_sender.get(); }
+    RTCRtpReceiver& receiver() { return m_receiver.get(); }
 
     bool stopped() const { return m_stopped; }
     void stop() { m_stopped = true; }
@@ -73,39 +73,39 @@ public:
     // FIXME: Temporary solution to keep track of ICE states for this transceiver. Later, each
     // sender and receiver will have up to two DTLS transports, which in turn will have an ICE
     // transport each.
-    RTCIceTransport& iceTransport() const { return *m_iceTransport; }
+    RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
 
     static String getNextMid();
 
 private:
-    RTCRtpTransceiver(RefPtr<RTCRtpSender>&&, RefPtr<RTCRtpReceiver>&&);
+    RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&);
 
     String m_provisionalMid;
     String m_mid;
 
     Direction m_direction;
 
-    RefPtr<RTCRtpSender> m_sender;
-    RefPtr<RTCRtpReceiver> m_receiver;
+    Ref<RTCRtpSender> m_sender;
+    Ref<RTCRtpReceiver> m_receiver;
 
     bool m_stopped { false };
 
-    RefPtr<RTCIceTransport> m_iceTransport;
+    Ref<RTCIceTransport> m_iceTransport;
 };
 
 class RtpTransceiverSet {
 public:
     const Vector<RefPtr<RTCRtpTransceiver>>& list() const { return m_transceivers; }
-    void append(RefPtr<RTCRtpTransceiver>&&);
+    void append(Ref<RTCRtpTransceiver>&&);
 
-    const Vector<RefPtr<RTCRtpSender>>& getSenders() const { return m_senders; }
-    const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_receivers; }
+    const Vector<std::reference_wrapper<RTCRtpSender>>& senders() const { return m_senders; }
+    const Vector<std::reference_wrapper<RTCRtpReceiver>>& receivers() const { return m_receivers; }
 
 private:
     Vector<RefPtr<RTCRtpTransceiver>> m_transceivers;
 
-    Vector<RefPtr<RTCRtpSender>> m_senders;
-    Vector<RefPtr<RTCRtpReceiver>> m_receivers;
+    Vector<std::reference_wrapper<RTCRtpSender>> m_senders;
+    Vector<std::reference_wrapper<RTCRtpReceiver>> m_receivers;
 };
 
 } // namespace WebCore

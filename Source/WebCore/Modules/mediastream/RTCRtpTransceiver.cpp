@@ -49,21 +49,16 @@ STRING_FUNCTION(sendonly)
 STRING_FUNCTION(recvonly)
 STRING_FUNCTION(inactive)
 
-Ref<RTCRtpTransceiver> RTCRtpTransceiver::create(RefPtr<RTCRtpSender>&& sender, RefPtr<RTCRtpReceiver>&& receiver)
-{
-    return adoptRef(*new RTCRtpTransceiver(WTFMove(sender), WTFMove(receiver)));
-}
-
 String RTCRtpTransceiver::getNextMid()
 {
     static unsigned mid = 0;
     return String::number(++mid);
 }
 
-RTCRtpTransceiver::RTCRtpTransceiver(RefPtr<RTCRtpSender>&& sender, RefPtr<RTCRtpReceiver>&& receiver)
+RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver)
     : m_direction(Direction::Sendrecv)
-    , m_sender(sender)
-    , m_receiver(receiver)
+    , m_sender(WTFMove(sender))
+    , m_receiver(WTFMove(receiver))
     , m_iceTransport(RTCIceTransport::create())
 {
 }
@@ -102,7 +97,7 @@ void RTCRtpTransceiver::disableSendingDirection()
         m_direction = Direction::Inactive;
 }
 
-void RtpTransceiverSet::append(RefPtr<RTCRtpTransceiver>&& transceiver)
+void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
 {
     m_senders.append(transceiver->sender());
     m_receivers.append(transceiver->receiver());

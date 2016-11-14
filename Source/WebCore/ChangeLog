@@ -1,3 +1,40 @@
+2016-11-14  Youenn Fablet  <youennf@gmail.com>
+
+        RTCRtpTransceiver should have Ref of sender and receiver
+        https://bugs.webkit.org/show_bug.cgi?id=164665
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        Making RTCRptTransceiver have Ref<RTCRtpSender> and Ref<RTCRtpReceiver>.
+        Transforming transceiver set list of senders and receivers as vectors of references to reduce count churning.
+        Also making RTCRptTransceiver have a Ref<RTCIceTransport> instead of a RefPtr.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        (WebCore::MediaEndpointPeerConnection::createAnswerTask):
+        (WebCore::createSourceMap):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::createReceiver):
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::close):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::RTCRtpTransceiver):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::create):
+        (WebCore::RTCRtpTransceiver::sender):
+        (WebCore::RTCRtpTransceiver::receiver):
+        (WebCore::RTCRtpTransceiver::iceTransport):
+        (WebCore::RtpTransceiverSet::senders):
+        (WebCore::RtpTransceiverSet::receivers):
+
 2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix various --minimal build issue

@@ -66,8 +66,8 @@ public:
 
     ExceptionOr<void> initializeWith(Document&, const Dictionary&);
 
-    const Vector<RefPtr<RTCRtpSender>>& getSenders() const { return m_transceiverSet->getSenders(); }
-    const Vector<RefPtr<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->getReceivers(); }
+    const Vector<std::reference_wrapper<RTCRtpSender>>& getSenders() const { return m_transceiverSet->senders(); }
+    const Vector<std::reference_wrapper<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->receivers(); }
     const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const { return m_transceiverSet->list(); }
 
     // Part of legacy MediaStream-based API (mostly implemented as JS built-ins)
@@ -126,7 +126,7 @@ public:
     WEBCORE_EXPORT void emulatePlatformEvent(const String& action);
 
     // API used by PeerConnectionBackend and relatives
-    void addTransceiver(RefPtr<RTCRtpTransceiver>&&);
+    void addTransceiver(Ref<RTCRtpTransceiver>&&);
     void setSignalingState(PeerConnectionStates::SignalingState);
     void updateIceGatheringState(PeerConnectionStates::IceGatheringState);
     void updateIceConnectionState(PeerConnectionStates::IceConnectionState);

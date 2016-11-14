@@ -68,7 +68,7 @@ public:
 
     Vector<RefPtr<MediaStream>> getRemoteStreams() const override;
 
-    RefPtr<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
+    Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
 
     bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
