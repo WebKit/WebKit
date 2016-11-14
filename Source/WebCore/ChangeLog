@@ -1,3 +1,14 @@
+2016-11-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support the font-synthesis property
+        https://bugs.webkit.org/show_bug.cgi?id=164728
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontSynthesis):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-12  Sam Weinig  <sam@webkit.org>
 
         [SVG] Moving more special casing of SVG out of the bindings - SVGNumber/SVGPoint/SVGRect/SVGLength/SVGTransform/SVGMatrix

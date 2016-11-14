@@ -787,6 +787,35 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
     return list;
 }
 
+static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
+{
+    // none | [ weight || style ]
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    
+    RefPtr<CSSValue> weight;
+    RefPtr<CSSValue> style;
+    
+    // FIXME: We allow weight and style to occur multiple times because the
+    // old parser did, and layout tests specifically check for it. It seems
+    // wrong though.
+    do {
+        if (range.peek().id() == CSSValueWeight)
+            weight = consumeIdent(range);
+        else if (range.peek().id() == CSSValueStyle)
+            style = consumeIdent(range);
+        else
+            return nullptr;
+    } while (!range.atEnd());
+    
+    auto list = CSSValueList::createSpaceSeparated();
+    if (weight)
+        list->append(weight.releaseNonNull());
+    if (style)
+        list->append(style.releaseNonNull());
+    return WTFMove(list);
+}
+
 static RefPtr<CSSValue> consumeLetterSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNormal)
@@ -3348,6 +3377,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontFamily(m_range);
     case CSSPropertyFontWeight:
         return consumeFontWeight(m_range);
+    case CSSPropertyFontSynthesis:
+        return consumeFontSynthesis(m_range);
     case CSSPropertyLetterSpacing:
         return consumeLetterSpacing(m_range, m_context.mode);
     case CSSPropertyWordSpacing:
