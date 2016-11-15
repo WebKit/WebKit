@@ -1,3 +1,10 @@
+2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed buildfix after r208720.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::storeFence): Stub function copied from MacroAssemblerARMv7.h.
+
 2016-11-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] do not reference AwaitExpression Promises in async function Promise chain
