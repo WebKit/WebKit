@@ -4102,6 +4102,7 @@ void SpeculativeJIT::compile(Node* node)
         // Rare data is only used to access the allocator & structure
         // We can avoid using an additional GPR this way
         GPRReg rareDataGPR = structureGPR;
+        GPRReg inlineCapacityGPR = rareDataGPR;
 
         MacroAssembler::JumpList slowPath;
 
@@ -4113,6 +4114,11 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, allocatorGPR));
         emitAllocateJSObject(resultGPR, nullptr, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
+        
+        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
+        m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), inlineCapacityGPR);
+        m_jit.emitInitializeInlineStorage(resultGPR, inlineCapacityGPR);
+        m_jit.mutatorFence();
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR, node->inlineCapacity()));
         
@@ -4137,6 +4143,8 @@ void SpeculativeJIT::compile(Node* node)
 
         m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);
         emitAllocateJSObject(resultGPR, allocatorPtr, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
+        m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
+        m_jit.mutatorFence();
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, structure));
         
@@ -5963,10 +5971,12 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     m_jit.store64(scratchGPR, MacroAssembler::BaseIndex(storageGPR, scratch2GPR, MacroAssembler::TimesEight));
     m_jit.branchTest32(MacroAssembler::NonZero, scratch2GPR).linkTo(loop, &m_jit);
     done.link(&m_jit);
-            
+    
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
-            
+    
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
+    
+    m_jit.mutatorFence();
     
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,

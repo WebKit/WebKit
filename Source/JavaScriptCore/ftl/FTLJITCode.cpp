@@ -46,6 +46,7 @@ JITCode::~JITCode()
         CommaPrinter comma;
         dataLog(comma, m_b3Code);
         dataLog(comma, m_arityCheckEntrypoint);
+        dataLog("\n");
     }
 }
 

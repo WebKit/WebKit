@@ -100,8 +100,32 @@ public:
     bool isProxy() const;
     bool inherits(const ClassInfo*) const;
     bool isAPIValueWrapper() const;
+    
+    // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
+    // a full-blown WTF::Lock. Note that this lock is currently used in JSArray and that lock's
+    // ordering with the Structure lock is that the Structure lock must be acquired first.
+    void lockInternalLock();
+    void unlockInternalLock();
+    
+    class InternalLocker {
+    public:
+        InternalLocker(JSCell* cell)
+            : m_cell(cell)
+        {
+            m_cell->lockInternalLock();
+        }
+        
+        ~InternalLocker()
+        {
+            m_cell->unlockInternalLock();
+        }
+        
+    private:
+        JSCell* m_cell;
+    };
 
     JSType type() const;
+    IndexingType indexingTypeAndMisc() const;
     IndexingType indexingType() const;
     StructureID structureID() const { return m_structureID; }
     Structure* structure() const;
@@ -167,6 +191,16 @@ public:
     CellState cellState() const { return m_cellState; }
     
     void setCellState(CellState data) const { const_cast<JSCell*>(this)->m_cellState = data; }
+    
+    bool atomicCompareExchangeCellStateWeakRelaxed(CellState oldState, CellState newState)
+    {
+        return WTF::atomicCompareExchangeWeakRelaxed(&m_cellState, oldState, newState);
+    }
+
+    CellState atomicCompareExchangeCellStateStrong(CellState oldState, CellState newState)
+    {
+        return WTF::atomicCompareExchangeStrong(&m_cellState, oldState, newState);
+    }
 
     static ptrdiff_t structureIDOffset()
     {
@@ -183,9 +217,12 @@ public:
         return OBJECT_OFFSETOF(JSCell, m_type);
     }
 
-    static ptrdiff_t indexingTypeOffset()
+    // DO NOT store to this field. Always use a CAS loop, since some bits are flipped using CAS
+    // from other threads due to the internal lock. One exception: you don't need the CAS if the
+    // object has not escaped yet.
+    static ptrdiff_t indexingTypeAndMiscOffset()
     {
-        return OBJECT_OFFSETOF(JSCell, m_indexingType);
+        return OBJECT_OFFSETOF(JSCell, m_indexingTypeAndMisc);
     }
 
     static ptrdiff_t cellStateOffset()
@@ -228,7 +265,7 @@ private:
     friend class LLIntOffsetsExtractor;
 
     StructureID m_structureID;
-    IndexingType m_indexingType;
+    IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
     JSType m_type;
     TypeInfo::InlineTypeFlags m_flags;
     CellState m_cellState;

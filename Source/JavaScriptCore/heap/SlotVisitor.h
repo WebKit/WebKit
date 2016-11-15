@@ -29,6 +29,7 @@
 #include "HandleTypes.h"
 #include "MarkStack.h"
 #include "OpaqueRootSet.h"
+#include <wtf/MonotonicTime.h>
 
 namespace JSC {
 
@@ -57,9 +58,11 @@ public:
     SlotVisitor(Heap&);
     ~SlotVisitor();
 
-    MarkStackArray& markStack() { return m_stack; }
-    const MarkStackArray& markStack() const { return m_stack; }
-
+    MarkStackArray& collectorMarkStack() { return m_collectorStack; }
+    MarkStackArray& mutatorMarkStack() { return m_mutatorStack; }
+    const MarkStackArray& collectorMarkStack() const { return m_collectorStack; }
+    const MarkStackArray& mutatorMarkStack() const { return m_mutatorStack; }
+    
     VM& vm();
     const VM& vm() const;
     Heap* heap() const;
@@ -84,24 +87,23 @@ public:
     JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
     JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
     TriState containsOpaqueRootTriState(void*) const;
-    int opaqueRootCount();
 
-    bool isEmpty() { return m_stack.isEmpty(); }
+    bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
 
     void didStartMarking();
     void reset();
-    void clearMarkStack();
+    void clearMarkStacks();
 
     size_t bytesVisited() const { return m_bytesVisited; }
-    size_t bytesCopied() const { return m_bytesCopied; }
     size_t visitCount() const { return m_visitCount; }
 
     void donate();
-    void drain();
-    void donateAndDrain();
+    void drain(MonotonicTime timeout = MonotonicTime::infinity());
+    void donateAndDrain(MonotonicTime timeout = MonotonicTime::infinity());
     
     enum SharedDrainMode { SlaveDrain, MasterDrain };
-    void drainFromShared(SharedDrainMode);
+    enum class SharedDrainResult { Done, TimedOut };
+    SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity());
 
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
@@ -124,6 +126,8 @@ public:
     
     HeapVersion markingVersion() const { return m_markingVersion; }
 
+    void mergeOpaqueRootsIfNecessary();
+
 private:
     friend class ParallelModeEnabler;
     
@@ -141,21 +145,23 @@ private:
     template<typename ContainerType>
     void appendToMarkStack(ContainerType&, JSCell*);
     
+    void appendToMutatorMarkStack(const JSCell*);
+    
     void noteLiveAuxiliaryCell(HeapCell*);
     
     JS_EXPORT_PRIVATE void mergeOpaqueRoots();
-    void mergeOpaqueRootsIfNecessary();
     void mergeOpaqueRootsIfProfitable();
 
     void visitChildren(const JSCell*);
     
     void donateKnownParallel();
+    void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
 
-    MarkStackArray m_stack;
+    MarkStackArray m_collectorStack;
+    MarkStackArray m_mutatorStack;
     OpaqueRootSet m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
     
     size_t m_bytesVisited;
-    size_t m_bytesCopied;
     size_t m_visitCount;
     bool m_isInParallelMode;
     
@@ -165,7 +171,7 @@ private:
 
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
-    CellState m_oldCellState;
+    bool m_isVisitingMutatorStack { false };
 
 public:
 #if !ASSERT_DISABLED

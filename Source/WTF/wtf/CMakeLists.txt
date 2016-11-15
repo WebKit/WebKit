@@ -56,6 +56,7 @@ set(WTF_HEADERS
     IteratorRange.h
     ListHashSet.h
     Lock.h
+    LockAlgorithm.h
     Locker.h
     MD5.h
     MainThread.h

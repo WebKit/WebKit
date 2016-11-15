@@ -1505,6 +1505,7 @@ _llint_op_get_by_val:
 .opGetByValOutOfBounds:
     loadpFromInstruction(4, t0)
     storeb 1, ArrayProfile::m_outOfBounds[t0]
+    jmp .opGetByValSlow
 
 .opGetByValNotIndexedStorage:
     # First lets check if we even have a typed array. This lets us do some boilerplate up front.

@@ -53,7 +53,7 @@ void InlineAccess::dumpCacheSizesAndCrash(VM& vm)
         CCallHelpers jit(&vm);
 
         GPRReg scratchGPR = value;
-        jit.load8(CCallHelpers::Address(base, JSCell::indexingTypeOffset()), value);
+        jit.load8(CCallHelpers::Address(base, JSCell::indexingTypeAndMiscOffset()), value);
         jit.and32(CCallHelpers::TrustedImm32(IsArray | IndexingShapeMask), value);
         jit.patchableBranch32(
             CCallHelpers::NotEqual, value, CCallHelpers::TrustedImm32(IsArray | ContiguousShape));
@@ -158,7 +158,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
 bool InlineAccess::generateSelfPropertyAccess(VM& vm, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
     CCallHelpers jit(&vm);
-
+    
     GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
     JSValueRegs value = stubInfo.valueRegs();
 
@@ -173,7 +173,7 @@ bool InlineAccess::generateSelfPropertyAccess(VM& vm, StructureStubInfo& stubInf
         jit.loadPtr(CCallHelpers::Address(base, JSObject::butterflyOffset()), value.payloadGPR());
         storage = value.payloadGPR();
     }
-
+    
     jit.loadValue(
         MacroAssembler::Address(storage, offsetRelativeToBase(offset)), value);
 
@@ -265,7 +265,7 @@ bool InlineAccess::generateArrayLength(VM& vm, StructureStubInfo& stubInfo, JSAr
     JSValueRegs value = stubInfo.valueRegs();
     GPRReg scratch = getScratchRegister(stubInfo);
 
-    jit.load8(CCallHelpers::Address(base, JSCell::indexingTypeOffset()), scratch);
+    jit.load8(CCallHelpers::Address(base, JSCell::indexingTypeAndMiscOffset()), scratch);
     jit.and32(CCallHelpers::TrustedImm32(IsArray | IndexingShapeMask), scratch);
     auto branchToSlowPath = jit.patchableBranch32(
         CCallHelpers::NotEqual, scratch, CCallHelpers::TrustedImm32(array->indexingType()));

@@ -610,16 +610,34 @@ CompilationKey Plan::key()
     return CompilationKey(codeBlock->alternative(), mode);
 }
 
-void Plan::rememberCodeBlocks()
+void Plan::markCodeBlocks(SlotVisitor& slotVisitor)
 {
+    if (!isKnownToBeLiveDuringGC())
+        return;
+    
     // Compilation writes lots of values to a CodeBlock without performing
     // an explicit barrier. So, we need to be pessimistic and assume that
     // all our CodeBlocks must be visited during GC.
 
-    Heap::heap(codeBlock)->writeBarrier(codeBlock);
-    Heap::heap(codeBlock)->writeBarrier(codeBlock->alternative());
+    slotVisitor.appendUnbarrieredReadOnlyPointer(codeBlock);
+    slotVisitor.appendUnbarrieredReadOnlyPointer(codeBlock->alternative());
     if (profiledDFGCodeBlock)
-        Heap::heap(profiledDFGCodeBlock)->writeBarrier(profiledDFGCodeBlock);
+        slotVisitor.appendUnbarrieredReadOnlyPointer(profiledDFGCodeBlock);
+}
+
+void Plan::rememberCodeBlocks(VM& vm)
+{
+    if (!isKnownToBeLiveDuringGC())
+        return;
+    
+    // Compilation writes lots of values to a CodeBlock without performing
+    // an explicit barrier. So, we need to be pessimistic and assume that
+    // all our CodeBlocks must be visited during GC.
+
+    vm.heap.writeBarrier(codeBlock);
+    vm.heap.writeBarrier(codeBlock->alternative());
+    if (profiledDFGCodeBlock)
+        vm.heap.writeBarrier(profiledDFGCodeBlock);
 }
 
 void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)

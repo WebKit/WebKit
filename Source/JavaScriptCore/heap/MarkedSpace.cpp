@@ -412,7 +412,6 @@ void MarkedSpace::prepareForMarking()
 
 void MarkedSpace::resumeAllocating()
 {
-    ASSERT(isIterating());
     forEachAllocator(
         [&] (MarkedAllocator& allocator) -> IterationStatus {
             allocator.resumeAllocating();

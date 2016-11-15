@@ -40,14 +40,8 @@ enum class CellState : uint8_t {
     // The object is in eden. During GC, this means that the object has not been marked yet.
     NewWhite = 1,
 
-    // The object is grey - i.e. it will be scanned - and this is the first time in this GC that we are
-    // going to scan it. If this is an eden GC, this also means that the object is in eden.
-    NewGrey = 2,
-
-    // The object is grey - i.e. it will be scanned - but it either belongs to old gen (if this is eden
-    // GC) or it is grey a second time in this current GC (because a concurrent store barrier requested
-    // re-greying).
-    OldGrey = 3
+    // The object is grey - i.e. it will be scanned.
+    Grey = 2,
 };
 
 static const unsigned blackThreshold = 0; // x <= blackThreshold means x is AnthraciteOrBlack.

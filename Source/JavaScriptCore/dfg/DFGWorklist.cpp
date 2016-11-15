@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DFGWorklist.h"
 
-#if ENABLE(DFG_JIT)
-
 #include "CodeBlock.h"
 #include "DFGLongLivedState.h"
 #include "DFGSafepoint.h"
@@ -37,6 +35,8 @@
 #include <mutex>
 
 namespace JSC { namespace DFG {
+
+#if ENABLE(DFG_JIT)
 
 class Worklist::ThreadBody : public AutomaticThread {
 public:
@@ -349,6 +349,17 @@ void Worklist::completeAllPlansForVM(VM& vm)
     completeAllReadyPlansForVM(vm);
 }
 
+void Worklist::markCodeBlocks(VM& vm, SlotVisitor& slotVisitor)
+{
+    LockHolder locker(*m_lock);
+    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
+        Plan* plan = iter->value.get();
+        if (plan->vm != &vm)
+            continue;
+        plan->markCodeBlocks(slotVisitor);
+    }
+}
+
 void Worklist::rememberCodeBlocks(VM& vm)
 {
     LockHolder locker(*m_lock);
@@ -356,7 +367,7 @@ void Worklist::rememberCodeBlocks(VM& vm)
         Plan* plan = iter->value.get();
         if (plan->vm != &vm)
             continue;
-        plan->rememberCodeBlocks();
+        plan->rememberCodeBlocks(vm);
     }
 }
 
@@ -553,6 +564,14 @@ void completeAllPlansForVM(VM& vm)
     }
 }
 
+void markCodeBlocks(VM& vm, SlotVisitor& slotVisitor)
+{
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i))
+            worklist->markCodeBlocks(vm, slotVisitor);
+    }
+}
+
 void rememberCodeBlocks(VM& vm)
 {
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
@@ -561,7 +580,22 @@ void rememberCodeBlocks(VM& vm)
     }
 }
 
-} } // namespace JSC::DFG
+#else // ENABLE(DFG_JIT)
+
+void completeAllPlansForVM(VM&)
+{
+}
+
+void markCodeBlocks(VM&, SlotVisitor&)
+{
+}
+
+void rememberCodeBlocks(VM&)
+{
+}
 
 #endif // ENABLE(DFG_JIT)
+
+} } // namespace JSC::DFG
+
 

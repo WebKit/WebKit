@@ -183,17 +183,19 @@ public:
     JS_EXPORT_PRIVATE bool isSealed(VM&);
     JS_EXPORT_PRIVATE bool isFrozen(VM&);
     bool isStructureExtensible() const { return !didPreventExtensions(); }
-    bool putWillGrowOutOfLineStorage();
-    size_t suggestedNewOutOfLineStorageCapacity(); 
 
     JS_EXPORT_PRIVATE Structure* flattenDictionaryStructure(VM&, JSObject*);
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    // These should be used with caution.  
-    JS_EXPORT_PRIVATE PropertyOffset addPropertyWithoutTransition(VM&, PropertyName, unsigned attributes);
-    PropertyOffset removePropertyWithoutTransition(VM&, PropertyName);
+    // Versions that take a func will call it after making the change but while still holding
+    // the lock. The callback is not called if there is no change being made, like if you call
+    // removePropertyWithoutTransition() and the property is not found.
+    template<typename Func>
+    PropertyOffset addPropertyWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&);
+    template<typename Func>
+    PropertyOffset removePropertyWithoutTransition(VM&, PropertyName, const Func&);
     void setPrototypeWithoutTransition(VM& vm, JSValue prototype) { m_prototype.set(vm, this, prototype); }
         
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
@@ -229,8 +231,8 @@ public:
     TypeInfo typeInfo() const { ASSERT(structure()->classInfo() == info()); return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
 
-    IndexingType indexingType() const { return m_blob.indexingType() & AllArrayTypes; }
-    IndexingType indexingTypeIncludingHistory() const { return m_blob.indexingType(); }
+    IndexingType indexingType() const { return m_blob.indexingTypeIncludingHistory() & AllArrayTypes; }
+    IndexingType indexingTypeIncludingHistory() const { return m_blob.indexingTypeIncludingHistory(); }
         
     bool mayInterceptIndexedAccesses() const
     {
@@ -433,9 +435,9 @@ public:
         return OBJECT_OFFSETOF(Structure, m_classInfo);
     }
         
-    static ptrdiff_t indexingTypeOffset()
+    static ptrdiff_t indexingTypeIncludingHistoryOffset()
     {
-        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingTypeOffset();
+        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingTypeIncludingHistoryOffset();
     }
     
     static ptrdiff_t propertyTableUnsafeOffset()
@@ -579,6 +581,8 @@ public:
     
     static void dumpContextHeader(PrintStream&);
     
+    ConcurrentJITLock& lock() { return m_lock; }
+    
     DECLARE_EXPORT_INFO;
 
 private:
@@ -633,44 +637,45 @@ private:
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
 
+    template<typename Func>
+    PropertyOffset add(VM&, PropertyName, unsigned attributes, const Func&);
     PropertyOffset add(VM&, PropertyName, unsigned attributes);
+    template<typename Func>
+    PropertyOffset remove(PropertyName, const Func&);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(const GCSafeConcurrentJITLocker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
 
-    WriteBarrier<PropertyTable>& propertyTable();
+    // This may grab the lock, or not. Do not call when holding the Structure's lock.
+    PropertyTable* ensurePropertyTableIfNotEmpty(VM& vm)
+    {
+        if (PropertyTable* result = m_propertyTableUnsafe.get())
+            return result;
+        if (!previousID())
+            return nullptr;
+        return materializePropertyTable(vm);
+    }
+    
+    // This may grab the lock, or not. Do not call when holding the Structure's lock.
+    PropertyTable* ensurePropertyTable(VM& vm)
+    {
+        if (PropertyTable* result = m_propertyTableUnsafe.get())
+            return result;
+        return materializePropertyTable(vm);
+    }
+    
+    PropertyTable* propertyTableOrNull() const
+    {
+        return m_propertyTableUnsafe.get();
+    }
+    
+    // This will grab the lock. Do not call when holding the Structure's lock.
+    JS_EXPORT_PRIVATE PropertyTable* materializePropertyTable(VM&, bool setPropertyTable = true);
+    
+    void setPropertyTable(VM& vm, PropertyTable* table);
+    
     PropertyTable* takePropertyTableOrCloneIfPinned(VM&);
-    PropertyTable* copyPropertyTable(VM&);
     PropertyTable* copyPropertyTableForPinning(VM&);
-    JS_EXPORT_PRIVATE void materializePropertyMap(VM&);
-    ALWAYS_INLINE void materializePropertyMapIfNecessary(VM& vm, DeferGC&)
-    {
-        ASSERT(!isCompilationThread());
-        ASSERT(structure()->classInfo() == info());
-        ASSERT(checkOffsetConsistency());
-        if (!propertyTable() && previousID())
-            materializePropertyMap(vm);
-    }
-    ALWAYS_INLINE void materializePropertyMapIfNecessary(VM& vm, PropertyTable*& table)
-    {
-        ASSERT(!isCompilationThread());
-        ASSERT(structure()->classInfo() == info());
-        ASSERT(checkOffsetConsistency());
-        table = propertyTable().get();
-        if (!table && previousID()) {
-            DeferGC deferGC(vm.heap);
-            materializePropertyMap(vm);
-            table = propertyTable().get();
-        }
-    }
-    void materializePropertyMapIfNecessaryForPinning(VM& vm, DeferGC&)
-    {
-        ASSERT(structure()->classInfo() == info());
-        checkOffsetConsistency();
-        if (!propertyTable())
-            materializePropertyMap(vm);
-    }
 
     void setPreviousID(VM& vm, Structure* structure)
     {
@@ -697,8 +702,8 @@ private:
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain) const;
     bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
         
-    void pin();
-    void pinForCaching();
+    JS_EXPORT_PRIVATE void pin(VM&, PropertyTable*);
+    void pinForCaching(VM&, PropertyTable*);
     
     bool isRareData(JSCell* cell) const
     {
@@ -710,7 +715,7 @@ private:
         ASSERT(hasRareData());
         return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
-        
+
     bool checkOffsetConsistency() const;
 
     JS_EXPORT_PRIVATE void allocateRareData(VM&);
@@ -740,7 +745,7 @@ private:
 
     StructureTransitionTable m_transitionTable;
 
-    // Should be accessed through propertyTable(). During GC, it may be set to 0 by another thread.
+    // Should be accessed through ensurePropertyTable(). During GC, it may be set to 0 by another thread.
     // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
     WriteBarrier<PropertyTable> m_propertyTableUnsafe;
 

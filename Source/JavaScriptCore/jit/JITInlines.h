@@ -996,7 +996,7 @@ inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID inde
         store32(indexingType, arrayProfile->addressOfLastSeenStructureID());
     }
 
-    load8(Address(cell, JSCell::indexingTypeOffset()), indexingType);
+    load8(Address(cell, JSCell::indexingTypeAndMiscOffset()), indexingType);
 }
 
 inline void JIT::emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex)

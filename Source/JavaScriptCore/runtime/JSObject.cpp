@@ -112,17 +112,28 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     
     // Mark the properties.
     visitor.appendValuesHidden(butterfly->propertyStorage() - storageSize, storageSize);
-    
-    // Mark the array if appropriate.
-    switch (this->indexingType()) {
+
+    IndexingType oldType = structure->indexingType();
+    switch (oldType) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
-        visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        // This lock is here to protect Contiguous->ArrayStorage transitions, but we could make that
+        // race work if we needed to.
+        JSCell::InternalLocker locker(this);
+        IndexingType newType = this->indexingType();
+        butterfly = this->butterfly();
+        switch (newType) {
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+            visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
+            break;
+        default: // ALL_ARRAY_STORAGE_INDEXING_TYPES
+            visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
+            if (butterfly->arrayStorage()->m_sparseMap)
+                visitor.append(&butterfly->arrayStorage()->m_sparseMap);
+            break;
+        }
         break;
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-        visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
-        if (butterfly->arrayStorage()->m_sparseMap)
-            visitor.append(&butterfly->arrayStorage()->m_sparseMap);
-        break;
+    }
     default:
         break;
     }
@@ -146,10 +157,34 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     JSCell::visitChildren(thisObject, visitor);
 
-    Butterfly* butterfly = thisObject->m_butterfly.get();
-    if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, thisObject->structure(visitor.vm()));
-
+    // We want to defend against multiple possible races with the mutator:
+    // - Mutator could install a bigger butterfly and then install a structure that claims more
+    //   properties. This trivially works.
+    // - Mutator could mutate the dictionary structure. Hence, we hold the structure lock for
+    //   dictionary structures.
+    // - The butterfly could shrink, but this could only happen if the object was a dictionary.
+    //   Usually, this means that we would get the dictionary structure and acquire a lock. That
+    //   trivially works. But we could load the structure before the object became a dictionary
+    //   and then load the butterfly that was shrunk. We protect against this case by checking
+    //   the structure a second time before scanning the butterfly. This means that the butterfly
+    //   is at worst the butterfly that the mutator had installed just prior to flipping the
+    //   sturcture. So if the structure we see is a non-dictionary then the butterfly cannot yet
+    //   have been shrunk.
+    VM& vm = visitor.vm();
+    Structure* structure = thisObject->structure(vm);
+    bool wasDictionary = structure->isDictionary();
+    if (wasDictionary) {
+        structure->lock().lock();
+    } else
+        WTF::loadLoadFence();
+    if (Butterfly* butterfly = thisObject->m_butterfly.get()) {
+        WTF::loadLoadFence();
+        if (thisObject->structureID() == structure->id())
+            thisObject->visitButterfly(visitor, butterfly, structure);
+    }
+    if (wasDictionary)
+        structure->lock().unlock();
+    
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
@@ -204,15 +239,25 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     JSCell::visitChildren(thisObject, visitor);
 
-    Structure* structure = thisObject->structure(visitor.vm());
-    Butterfly* butterfly = thisObject->butterfly();
-    if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, structure);
+    VM& vm = visitor.vm();
+    Structure* structure = thisObject->structure(vm);
+    bool wasDictionary = structure->isDictionary();
+    if (wasDictionary)
+        structure->lock().lock();
+    else
+        WTF::loadLoadFence();
+    if (Butterfly* butterfly = thisObject->butterfly()) {
+        WTF::loadLoadFence();
+        if (structure->id() == thisObject->structureID())
+            thisObject->visitButterfly(visitor, butterfly, structure);
+    }
 
     size_t storageSize = structure->inlineSize();
     if (storageSize)
         visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
-
+    if (wasDictionary)
+        structure->lock().unlock();
+    
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
@@ -666,7 +711,8 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
     newButterfly->arrayStorage()->m_indexBias = 0;
     newButterfly->arrayStorage()->setVectorLength(0);
     newButterfly->arrayStorage()->m_sparseMap.set(vm, this, map);
-    setButterflyWithoutChangingStructure(vm, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
     
     return newButterfly->arrayStorage();
 }
@@ -731,7 +777,10 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
     DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateUndecided);
-    setStructureAndButterfly(vm, newStructure, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newButterfly;
 }
 
@@ -742,7 +791,10 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousInt32()[i].setWithoutWriteBarrier(JSValue());
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateInt32);
-    setStructureAndButterfly(vm, newStructure, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newButterfly->contiguousInt32();
 }
 
@@ -753,7 +805,10 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble()[i] = PNaN;
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateDouble);
-    setStructureAndButterfly(vm, newStructure, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newButterfly->contiguousDouble();
 }
 
@@ -764,7 +819,10 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous()[i].setWithoutWriteBarrier(JSValue());
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateContiguous);
-    setStructureAndButterfly(vm, newStructure, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newButterfly->contiguous();
 }
 
@@ -797,7 +855,10 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
     Butterfly* newButterfly = createArrayStorageButterfly(vm, this, structure, length, vectorLength, m_butterfly.get());
     ArrayStorage* result = newButterfly->arrayStorage();
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure, structure->suggestedArrayStorageTransition());
-    setStructureAndButterfly(vm, newStructure, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return result;
 }
 
@@ -880,7 +941,10 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
         storage->m_vector[i].setWithoutWriteBarrier(JSValue());
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    setStructureAndButterfly(vm, newStructure, storage->butterfly());
+    WTF::storeStoreFence();
+    setButterfly(vm, storage->butterfly());
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return storage;
 }
 
@@ -935,7 +999,10 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
+    WTF::storeStoreFence();
+    setButterfly(vm, newStorage->butterfly());
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newStorage;
 }
 
@@ -981,7 +1048,10 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
+    WTF::storeStoreFence();
+    setButterfly(vm, newStorage->butterfly());
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newStorage;
 }
 
@@ -1006,7 +1076,23 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
+
+    // This has a crazy race with the garbage collector. When changing the butterfly and structure,
+    // the mutator always sets the structure last. The collector will always read the structure
+    // first. We probably have to follow that convention here as well. This means that the collector
+    // will sometimes see the new butterfly (the one with ArrayStorage) with the only structure (the
+    // one that says that the butterfly is Contiguous). When scanning Contiguous, the collector will
+    // mark word at addresses greater than or equal to the butterfly pointer, up to the publicLength
+    // in the butterfly. But an ArrayStorage has some non-pointer header data at low positive
+    // offsets from the butterfly - so when this race happens, the collector will surely crash
+    // because it will fail to decode two consecutive int32s as if it was a JSValue.
+    //
+    // Fortunately, we have the JSCell lock for this purpose!
+    
+    InternalLocker locker(this);
+    setButterfly(vm, newStorage->butterfly());
+    WTF::storeStoreFence();
+    setStructure(vm, newStructure);
     return newStorage;
 }
 
@@ -1468,7 +1554,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
         PropertyOffset offset;
         if (structure->isUncacheableDictionary())
-            offset = structure->removePropertyWithoutTransition(vm, propertyName);
+            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const ConcurrentJITLocker&, PropertyOffset) { });
         else
             thisObject->setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
 
@@ -2019,7 +2105,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
 
     SparseArrayValueMap* map = m_butterfly.get()->arrayStorage()->m_sparseMap.get();
     RELEASE_ASSERT(map);
-
+    
     // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
     SparseArrayValueMap::AddResult result = map->add(this, index);
     SparseArrayEntry* entryInMap = &result.iterator->value;
@@ -2725,7 +2811,8 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
         for (unsigned i = vectorLength; i < newVectorLength; ++i)
             newButterfly->arrayStorage()->m_vector[i].clear();
         newButterfly->arrayStorage()->setVectorLength(newVectorLength);
-        setButterflyWithoutChangingStructure(vm, newButterfly);
+        WTF::storeStoreFence();
+        setButterfly(vm, newButterfly);
         return true;
     }
     
@@ -2742,7 +2829,8 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
         newButterfly->arrayStorage()->m_vector[i].clear();
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
     newButterfly->arrayStorage()->m_indexBias = newIndexBias;
-    setButterflyWithoutChangingStructure(vm, newButterfly);
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
     return true;
 }
 
@@ -2762,6 +2850,7 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     
     unsigned availableOldLength =
         Butterfly::availableContiguousVectorLength(propertyCapacity, oldVectorLength);
+    Butterfly* newButterfly = nullptr;
     if (availableOldLength >= length) {
         // This is the case where someone else selected a vector length that caused internal
         // fragmentation. If we did our jobs right, this would never happen. But I bet we will mess
@@ -2776,17 +2865,24 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
             newVectorLength * sizeof(EncodedJSValue));
         if (!butterfly)
             return false;
-        m_butterfly.set(vm, this, butterfly);
+        newButterfly = butterfly;
     }
-
-    butterfly->setVectorLength(newVectorLength);
 
     if (hasDouble(indexingType())) {
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
-            butterfly->contiguousDouble()[i] = PNaN;
+            butterfly->indexingPayload<double>()[i] = PNaN;
     } else {
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
-            butterfly->contiguous()[i].clear();
+            butterfly->indexingPayload<WriteBarrier<Unknown>>()[i].clear();
+    }
+
+    if (newButterfly) {
+        butterfly->setVectorLength(newVectorLength);
+        WTF::storeStoreFence();
+        m_butterfly.set(vm, this, newButterfly);
+    } else {
+        WTF::storeStoreFence();
+        butterfly->setVectorLength(newVectorLength);
     }
 
     return true;
@@ -2802,12 +2898,13 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
 
     DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = m_butterfly.get()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(length));
-    m_butterfly.set(vm, this, newButterfly);
     newButterfly->setVectorLength(length);
     newButterfly->setPublicLength(length);
+    WTF::storeStoreFence();
+    m_butterfly.set(vm, this, newButterfly);
 }
 
-Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize)
+Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
@@ -3092,15 +3189,34 @@ void JSObject::convertToDictionary(VM& vm)
         vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
 }
 
-void JSObject::shiftButterflyAfterFlattening(VM& vm, size_t outOfLineCapacityBefore, size_t outOfLineCapacityAfter)
+void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJITLocker&, VM& vm, Structure* structure, size_t outOfLineCapacityAfter)
 {
-    Butterfly* butterfly = this->butterfly();
-    size_t preCapacity = this->butterflyPreCapacity();
-    void* currentBase = butterfly->base(preCapacity, outOfLineCapacityAfter);
-    void* newBase = butterfly->base(preCapacity, outOfLineCapacityBefore);
+    // This could interleave visitChildren because some old structure could have been a non
+    // dictionary structure. We have to be crazy careful. But, we are guaranteed to be holding
+    // the structure's lock right now, and that helps a bit.
+    
+    Butterfly* oldButterfly = this->butterfly();
+    size_t preCapacity;
+    size_t indexingPayloadSizeInBytes;
+    bool hasIndexingHeader = this->hasIndexingHeader();
+    if (UNLIKELY(hasIndexingHeader)) {
+        preCapacity = oldButterfly->indexingHeader()->preCapacity(structure);
+        indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
+    } else {
+        preCapacity = 0;
+        indexingPayloadSizeInBytes = 0;
+    }
 
-    memmove(newBase, currentBase, this->butterflyTotalSize());
-    setButterflyWithoutChangingStructure(vm, Butterfly::fromBase(newBase, preCapacity, outOfLineCapacityAfter));
+    Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, preCapacity, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes);
+
+    // No need to copy the precapacity.
+    void* currentBase = oldButterfly->base(0, outOfLineCapacityAfter);
+    void* newBase = newButterfly->base(0, outOfLineCapacityAfter);
+
+    memcpy(newBase, currentBase, Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
+    
+    WTF::storeStoreFence();
+    setButterfly(vm, newButterfly);
 }
 
 uint32_t JSObject::getEnumerableLength(ExecState* exec, JSObject* object)

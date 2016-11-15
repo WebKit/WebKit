@@ -75,10 +75,12 @@ function runBenchmark()
     
     let before = currentTime();
     
-    let benchmark = new Benchmark(verbose);
+    let benchmark = new AirBenchmark(verbose);
     
-    for (let iteration = 0; iteration < numIterations; ++iteration)
+    for (let iteration = 0; iteration < numIterations; ++iteration) {
+        print("iteration " + iteration);
         benchmark.runIteration();
+    }
     
     let after = currentTime();
     return after - before;

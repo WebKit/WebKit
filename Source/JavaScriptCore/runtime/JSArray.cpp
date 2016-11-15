@@ -390,7 +390,9 @@ bool JSArray::unshiftCountSlowCase(VM& vm, DeferGC&, bool addToFront, unsigned c
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
     newButterfly->arrayStorage()->m_indexBias = newIndexBias;
     
-    setButterflyWithoutChangingStructure(vm, newButterfly);
+    WTF::storeStoreFence();
+    
+    setButterfly(vm, newButterfly);
 
     return true;
 }
@@ -1063,13 +1065,15 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
     // Need to have GC deferred around the unshiftCountSlowCase(), since that leaves the butterfly in
     // a weird state: some parts of it will be left uninitialized, which we will fill in here.
     DeferGC deferGC(vm.heap);
+    JSCell::InternalLocker locker(this);
     
     if (moveFront && storage->m_indexBias >= count) {
         Butterfly* newButterfly = storage->butterfly()->unshift(structure(), count);
         storage = newButterfly->arrayStorage();
         storage->m_indexBias -= count;
         storage->setVectorLength(vectorLength + count);
-        setButterflyWithoutChangingStructure(vm, newButterfly);
+        WTF::storeStoreFence();
+        setButterfly(vm, newButterfly);
     } else if (!moveFront && vectorLength - length >= count)
         storage = storage->butterfly()->arrayStorage();
     else if (unshiftCountSlowCase(vm, deferGC, moveFront, count))
@@ -1090,6 +1094,7 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
 
     for (unsigned i = 0; i < count; i++)
         vector[i + startIndex].clear();
+    
     return true;
 }
 

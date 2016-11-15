@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
-
 #include "DFGPlan.h"
 #include "DFGThreadData.h"
 #include <wtf/AutomaticThread.h>
@@ -41,6 +39,8 @@ namespace JSC {
 class SlotVisitor;
 
 namespace DFG {
+
+#if ENABLE(DFG_JIT)
 
 class Worklist : public RefCounted<Worklist> {
 public:
@@ -57,6 +57,7 @@ public:
     // worklist->completeAllReadyPlansForVM(vm);
     void completeAllPlansForVM(VM&);
 
+    void markCodeBlocks(VM&, SlotVisitor&);
     void rememberCodeBlocks(VM&);
 
     void waitUntilAllPlansForVMAreReady(VM&);
@@ -163,9 +164,11 @@ inline Worklist& existingWorklistForIndex(unsigned index)
     return *result;
 }
 
+#endif // ENABLE(DFG_JIT)
+
 void completeAllPlansForVM(VM&);
+void markCodeBlocks(VM&, SlotVisitor&);
 void rememberCodeBlocks(VM&);
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)

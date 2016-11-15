@@ -75,9 +75,7 @@ static void validate(JSCell* cell)
 #endif
 
 SlotVisitor::SlotVisitor(Heap& heap)
-    : m_stack()
-    , m_bytesVisited(0)
-    , m_bytesCopied(0)
+    : m_bytesVisited(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_markingVersion(MarkedSpace::initialVersion)
@@ -91,7 +89,7 @@ SlotVisitor::SlotVisitor(Heap& heap)
 
 SlotVisitor::~SlotVisitor()
 {
-    clearMarkStack();
+    clearMarkStacks();
 }
 
 void SlotVisitor::didStartMarking()
@@ -109,16 +107,17 @@ void SlotVisitor::didStartMarking()
 
 void SlotVisitor::reset()
 {
+    RELEASE_ASSERT(!m_opaqueRoots.size());
     m_bytesVisited = 0;
-    m_bytesCopied = 0;
     m_visitCount = 0;
     m_heapSnapshotBuilder = nullptr;
-    ASSERT(!m_currentCell);
+    RELEASE_ASSERT(!m_currentCell);
 }
 
-void SlotVisitor::clearMarkStack()
+void SlotVisitor::clearMarkStacks()
 {
-    m_stack.clear();
+    m_collectorStack.clear();
+    m_mutatorStack.clear();
 }
 
 void SlotVisitor::append(ConservativeRoots& conservativeRoots)
@@ -148,7 +147,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
             return;
         }
         
-        jsCell->setCellState(CellState::NewGrey);
+        jsCell->setCellState(CellState::Grey);
 
         appendToMarkStack(jsCell);
         return;
@@ -210,7 +209,7 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
     // Indicate that the object is grey and that:
     // In case of concurrent GC: it's the first time it is grey in this GC cycle.
     // In case of eden collection: it's a new object that became grey rather than an old remembered object.
-    cell->setCellState(CellState::NewGrey);
+    cell->setCellState(CellState::Grey);
     
     appendToMarkStack(container, cell);
 }
@@ -228,16 +227,19 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 {
     ASSERT(Heap::isMarkedConcurrently(cell));
     ASSERT(!cell->isZapped());
-    ASSERT(cell->cellState() == CellState::NewGrey || cell->cellState() == CellState::OldGrey);
+    ASSERT(cell->cellState() == CellState::Grey);
     
     container.noteMarked();
     
-    // FIXME: These "just work" because the GC resets these fields before doing anything else. But
-    // that won't be the case when we do concurrent GC.
     m_visitCount++;
     m_bytesVisited += container.cellSize();
     
-    m_stack.append(cell);
+    m_collectorStack.append(cell);
+}
+
+void SlotVisitor::appendToMutatorMarkStack(const JSCell* cell)
+{
+    m_mutatorStack.append(cell);
 }
 
 void SlotVisitor::markAuxiliary(const void* base)
@@ -294,12 +296,17 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     SetCurrentCellScope currentCellScope(*this, cell);
     
-    m_oldCellState = cell->cellState();
+    if (false) {
+        dataLog("Visiting ", RawPointer(cell));
+        if (m_isVisitingMutatorStack)
+            dataLog(" (mutator)");
+        dataLog("\n");
+    }
     
-    // There is no race here - the cell state cannot change right now. Grey objects can only be
-    // visited by one marking thread. Neither the barrier nor marking will change the state of an
-    // object that is already grey.
-    ASSERT(m_oldCellState == CellState::OldGrey || m_oldCellState == CellState::NewGrey);
+    // Funny story: it's possible for the object to be black already, if we barrier the object at
+    // about the same time that it's marked. That's fine. It's a gnarly and super-rare race. It's
+    // not clear to me that it would be correct or profitable to bail here if the object is already
+    // black.
     
     cell->setCellState(CellState::AnthraciteOrBlack);
     
@@ -326,23 +333,23 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     }
     
     if (UNLIKELY(m_heapSnapshotBuilder)) {
-        if (m_oldCellState == CellState::NewGrey)
+        if (!m_isVisitingMutatorStack)
             m_heapSnapshotBuilder->appendNode(const_cast<JSCell*>(cell));
     }
 }
 
-void SlotVisitor::donateKnownParallel()
+void SlotVisitor::donateKnownParallel(MarkStackArray& from, MarkStackArray& to)
 {
     // NOTE: Because we re-try often, we can afford to be conservative, and
     // assume that donating is not profitable.
 
     // Avoid locking when a thread reaches a dead end in the object graph.
-    if (m_stack.size() < 2)
+    if (from.size() < 2)
         return;
 
     // If there's already some shared work queued up, be conservative and assume
     // that donating more is not profitable.
-    if (m_heap.m_sharedMarkStack.size())
+    if (to.size())
         return;
 
     // If we're contending on the lock, be conservative and assume that another
@@ -352,26 +359,43 @@ void SlotVisitor::donateKnownParallel()
         return;
 
     // Otherwise, assume that a thread will go idle soon, and donate.
-    m_stack.donateSomeCellsTo(m_heap.m_sharedMarkStack);
+    from.donateSomeCellsTo(to);
 
     m_heap.m_markingConditionVariable.notifyAll();
 }
 
-void SlotVisitor::drain()
+void SlotVisitor::donateKnownParallel()
+{
+    donateKnownParallel(m_collectorStack, *m_heap.m_sharedCollectorMarkStack);
+    donateKnownParallel(m_mutatorStack, *m_heap.m_sharedMutatorMarkStack);
+}
+
+void SlotVisitor::drain(MonotonicTime timeout)
 {
     ASSERT(m_isInParallelMode);
    
-    while (!m_stack.isEmpty()) {
-        m_stack.refill();
-        for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_stack.canRemoveLast() && countdown--;)
-            visitChildren(m_stack.removeLast());
+    while ((!m_collectorStack.isEmpty() || !m_mutatorStack.isEmpty()) && !hasElapsed(timeout)) {
+        if (!m_collectorStack.isEmpty()) {
+            m_collectorStack.refill();
+            m_isVisitingMutatorStack = false;
+            for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_collectorStack.canRemoveLast() && countdown--;)
+                visitChildren(m_collectorStack.removeLast());
+        } else if (!m_mutatorStack.isEmpty()) {
+            m_mutatorStack.refill();
+            // We know for sure that we are visiting objects because of the barrier, not because of
+            // marking. Marking will visit an object exactly once. The barrier will visit it
+            // possibly many times, and always after it was already marked.
+            m_isVisitingMutatorStack = true;
+            for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_mutatorStack.canRemoveLast() && countdown--;)
+                visitChildren(m_mutatorStack.removeLast());
+        }
         donateKnownParallel();
     }
     
     mergeOpaqueRootsIfNecessary();
 }
 
-void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
+SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout)
 {
     ASSERT(m_isInParallelMode);
     
@@ -392,48 +416,60 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 // Wait until either termination is reached, or until there is some work
                 // for us to do.
                 while (true) {
+                    if (hasElapsed(timeout))
+                        return SharedDrainResult::TimedOut;
+                    
                     // Did we reach termination?
                     if (!m_heap.m_numberOfActiveParallelMarkers
-                        && m_heap.m_sharedMarkStack.isEmpty()) {
+                        && m_heap.m_sharedCollectorMarkStack->isEmpty()
+                        && m_heap.m_sharedMutatorMarkStack->isEmpty()) {
                         // Let any sleeping slaves know it's time for them to return;
                         m_heap.m_markingConditionVariable.notifyAll();
-                        return;
+                        return SharedDrainResult::Done;
                     }
                     
                     // Is there work to be done?
-                    if (!m_heap.m_sharedMarkStack.isEmpty())
+                    if (!m_heap.m_sharedCollectorMarkStack->isEmpty()
+                        || !m_heap.m_sharedMutatorMarkStack->isEmpty())
                         break;
                     
                     // Otherwise wait.
-                    m_heap.m_markingConditionVariable.wait(lock);
+                    m_heap.m_markingConditionVariable.waitUntil(lock, timeout);
                 }
             } else {
                 ASSERT(sharedDrainMode == SlaveDrain);
+
+                if (hasElapsed(timeout))
+                    return SharedDrainResult::TimedOut;
                 
                 // Did we detect termination? If so, let the master know.
                 if (!m_heap.m_numberOfActiveParallelMarkers
-                    && m_heap.m_sharedMarkStack.isEmpty())
+                    && m_heap.m_sharedCollectorMarkStack->isEmpty()
+                    && m_heap.m_sharedMutatorMarkStack->isEmpty())
                     m_heap.m_markingConditionVariable.notifyAll();
 
-                m_heap.m_markingConditionVariable.wait(
-                    lock,
+                m_heap.m_markingConditionVariable.waitUntil(
+                    lock, timeout,
                     [this] {
-                        return !m_heap.m_sharedMarkStack.isEmpty()
+                        return !m_heap.m_sharedCollectorMarkStack->isEmpty()
+                            || !m_heap.m_sharedMutatorMarkStack->isEmpty()
                             || m_heap.m_parallelMarkersShouldExit;
                     });
                 
                 // Is the current phase done? If so, return from this function.
                 if (m_heap.m_parallelMarkersShouldExit)
-                    return;
+                    return SharedDrainResult::Done;
             }
 
-            m_stack.stealSomeCellsFrom(
-                m_heap.m_sharedMarkStack, m_heap.m_numberOfWaitingParallelMarkers);
+            m_collectorStack.stealSomeCellsFrom(
+                *m_heap.m_sharedCollectorMarkStack, m_heap.m_numberOfWaitingParallelMarkers);
+            m_mutatorStack.stealSomeCellsFrom(
+                *m_heap.m_sharedMutatorMarkStack, m_heap.m_numberOfWaitingParallelMarkers);
             m_heap.m_numberOfActiveParallelMarkers++;
             m_heap.m_numberOfWaitingParallelMarkers--;
         }
         
-        drain();
+        drain(timeout);
     }
 }
 
@@ -453,7 +489,6 @@ void SlotVisitor::addOpaqueRoot(void* root)
 bool SlotVisitor::containsOpaqueRoot(void* root) const
 {
     ASSERT(!m_isInParallelMode);
-    ASSERT(m_opaqueRoots.isEmpty());
     return m_heap.m_opaqueRoots.contains(root);
 }
 
@@ -465,13 +500,6 @@ TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
     if (m_heap.m_opaqueRoots.contains(root))
         return TrueTriState;
     return MixedTriState;
-}
-
-int SlotVisitor::opaqueRootCount()
-{
-    ASSERT(!m_isInParallelMode);
-    ASSERT(m_opaqueRoots.isEmpty());
-    return m_heap.m_opaqueRoots.size();
 }
 
 void SlotVisitor::mergeOpaqueRootsIfNecessary()
@@ -497,15 +525,14 @@ void SlotVisitor::donate()
     donateKnownParallel();
 }
 
-void SlotVisitor::donateAndDrain()
+void SlotVisitor::donateAndDrain(MonotonicTime timeout)
 {
     donate();
-    drain();
+    drain(timeout);
 }
 
 void SlotVisitor::mergeOpaqueRoots()
 {
-    ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.
     {
         std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
         for (auto* root : m_opaqueRoots)
@@ -526,10 +553,9 @@ void SlotVisitor::finalizeUnconditionalFinalizers()
         m_heap.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
 }
 
-void SlotVisitor::dump(PrintStream&) const
+void SlotVisitor::dump(PrintStream& out) const
 {
-    for (const JSCell* cell : markStack())
-        dataLog(*cell, "\n");
+    out.print("Collector: [", pointerListDump(collectorMarkStack()), "], Mutator: [", pointerListDump(mutatorMarkStack()), "]");
 }
 
 } // namespace JSC

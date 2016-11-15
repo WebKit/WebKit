@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 
 inline JSCell::JSCell(VM&, Structure* structure)
     : m_structureID(structure->id())
-    , m_indexingType(structure->indexingType())
+    , m_indexingTypeAndMisc(structure->indexingTypeIncludingHistory())
     , m_type(structure->typeInfo().type())
     , m_flags(structure->typeInfo().inlineTypeFlags())
     , m_cellState(CellState::NewWhite)
@@ -57,6 +57,10 @@ inline JSCell::JSCell(VM&, Structure* structure)
 
 inline void JSCell::finishCreation(VM& vm)
 {
+    // This object is ready to be escaped so the concurrent GC may see it at any time. We have
+    // to make sure that none of our stores sink below here.
+    if (isX86() || UNLIKELY(vm.heap.mutatorShouldBeFenced()))
+        WTF::storeStoreFence();
 #if ENABLE(GC_VALIDATION)
     ASSERT(vm.isInitializingObject());
     vm.setInitializingObjectClass(0);
@@ -74,7 +78,7 @@ inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCe
     if (structure) {
 #endif
         m_structureID = structure->id();
-        m_indexingType = structure->indexingType();
+        m_indexingTypeAndMisc = structure->indexingTypeIncludingHistory();
         m_type = structure->typeInfo().type();
         m_flags = structure->typeInfo().inlineTypeFlags();
 #if ENABLE(GC_VALIDATION)
@@ -91,9 +95,14 @@ inline JSType JSCell::type() const
     return m_type;
 }
 
+inline IndexingType JSCell::indexingTypeAndMisc() const
+{
+    return m_indexingTypeAndMisc;
+}
+
 inline IndexingType JSCell::indexingType() const
 {
-    return m_indexingType;
+    return indexingTypeAndMisc() & AllArrayTypes;
 }
 
 inline Structure* JSCell::structure() const
@@ -195,17 +204,26 @@ inline bool JSCell::isAPIValueWrapper() const
     return m_type == APIValueWrapperType;
 }
 
-inline void JSCell::setStructure(VM& vm, Structure* structure)
+ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
 {
     ASSERT(structure->classInfo() == this->structure()->classInfo());
     ASSERT(!this->structure()
         || this->structure()->transitionWatchpointSetHasBeenInvalidated()
         || Heap::heap(this)->structureIDTable().get(structure->id()) == structure);
-    vm.heap.writeBarrier(this, structure);
     m_structureID = structure->id();
     m_flags = structure->typeInfo().inlineTypeFlags();
     m_type = structure->typeInfo().type();
-    m_indexingType = structure->indexingType();
+    IndexingType newIndexingType = structure->indexingTypeIncludingHistory();
+    if (m_indexingTypeAndMisc != newIndexingType) {
+        ASSERT(!(newIndexingType & ~AllArrayTypesAndHistory));
+        for (;;) {
+            IndexingType oldValue = m_indexingTypeAndMisc;
+            IndexingType newValue = (oldValue & ~AllArrayTypesAndHistory) | structure->indexingTypeIncludingHistory();
+            if (WTF::atomicCompareExchangeWeakRelaxed(&m_indexingTypeAndMisc, oldValue, newValue))
+                break;
+        }
+    }
+    vm.heap.writeBarrier(this, structure);
 }
 
 inline const MethodTable* JSCell::methodTable() const
@@ -284,11 +302,26 @@ inline void JSCell::callDestructor(VM& vm)
     if (isZapped())
         return;
     ASSERT(structureID());
-    if (inlineTypeFlags() & StructureIsImmortal)
-        structure(vm)->classInfo()->methodTable.destroy(this);
-    else
+    if (inlineTypeFlags() & StructureIsImmortal) {
+        Structure* structure = this->structure(vm);
+        const ClassInfo* classInfo = structure->classInfo();
+        MethodTable::DestroyFunctionPtr destroy = classInfo->methodTable.destroy;
+        destroy(this);
+    } else
         jsCast<JSDestructibleObject*>(this)->classInfo()->methodTable.destroy(this);
     zap();
+}
+
+inline void JSCell::lockInternalLock()
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    IndexingTypeLockAlgorithm::lock(*lock);
+}
+
+inline void JSCell::unlockInternalLock()
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    IndexingTypeLockAlgorithm::unlock(*lock);
 }
 
 } // namespace JSC

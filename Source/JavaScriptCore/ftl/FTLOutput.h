@@ -177,6 +177,7 @@ public:
     LValue doubleToUInt(LValue);
 
     LValue signExt32To64(LValue);
+    LValue signExt32ToPtr(LValue);
     LValue zeroExt(LValue, LType);
     LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
     LValue intToDouble(LValue);
@@ -189,7 +190,7 @@ public:
 
     LValue load(TypedPointer, LType);
     void store(LValue, TypedPointer);
-    B3::FenceValue* fence();
+    B3::FenceValue* fence(const AbstractHeap* read, const AbstractHeap* write);
 
     LValue load8SignExt32(TypedPointer);
     LValue load8ZeroExt32(TypedPointer);

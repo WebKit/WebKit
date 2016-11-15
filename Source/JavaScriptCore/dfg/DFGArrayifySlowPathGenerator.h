@@ -124,7 +124,8 @@ protected:
             // bytecode operation corresponding to this arrayification being reexecuted.
             // That's fine, since arrayification is not user-visible.
             jit->m_jit.load8(
-                MacroAssembler::Address(m_baseGPR, JSCell::indexingTypeOffset()), m_structureGPR);
+                MacroAssembler::Address(m_baseGPR, JSCell::indexingTypeAndMiscOffset()),
+                m_structureGPR);
             m_badIndexingTypeJump.fill(
                 jit, jit->jumpSlowForUnwantedArrayMode(m_structureGPR, m_arrayMode));
         }

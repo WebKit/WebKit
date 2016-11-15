@@ -401,7 +401,7 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
         jit.abortWithReason(AHStructureIDIsValid);
         correctStructure.link(&jit);
 
-        Jump correctIndexingType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::indexingTypeOffset()), TrustedImm32(structurePtr->indexingType()));
+        Jump correctIndexingType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()), TrustedImm32(structurePtr->indexingTypeIncludingHistory()));
         jit.abortWithReason(AHIndexingTypeIsValid);
         correctIndexingType.link(&jit);
 
@@ -415,7 +415,7 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
     }
 #else
     // Do a 32-bit wide store to initialize the cell's fields.
-    jit.store32(TrustedImm32(structurePtr->objectInitializationBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeOffset()));
+    jit.store32(TrustedImm32(structurePtr->objectInitializationBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
     jit.storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
 #endif
 }

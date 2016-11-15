@@ -119,7 +119,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 
                 m_jit.load32(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
                 m_jit.store32(scratch1, arrayProfile->addressOfLastSeenStructureID());
-                m_jit.load8(AssemblyHelpers::Address(value, JSCell::indexingTypeOffset()), scratch1);
+                m_jit.load8(AssemblyHelpers::Address(value, JSCell::indexingTypeAndMiscOffset()), scratch1);
                 m_jit.move(AssemblyHelpers::TrustedImm32(1), scratch2);
                 m_jit.lshift32(scratch1, scratch2);
                 m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));

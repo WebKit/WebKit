@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,8 +93,7 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
 
-    PropertyTable* propertyTable;
-    materializePropertyMapIfNecessary(vm, propertyTable);
+    PropertyTable* propertyTable = ensurePropertyTableIfNotEmpty(vm);
     if (!propertyTable)
         return invalidOffset;
 
@@ -219,31 +218,6 @@ inline bool Structure::isValid(ExecState* exec, StructureChain* cachedPrototypeC
     return isValid(exec->lexicalGlobalObject(), cachedPrototypeChain);
 }
 
-inline bool Structure::putWillGrowOutOfLineStorage()
-{
-    checkOffsetConsistency();
-
-    ASSERT(outOfLineCapacity() >= outOfLineSize());
-
-    if (!propertyTable()) {
-        unsigned currentSize = numberOfOutOfLineSlotsForLastOffset(m_offset);
-        ASSERT(outOfLineCapacity() >= currentSize);
-        return currentSize == outOfLineCapacity();
-    }
-
-    ASSERT(totalStorageCapacity() >= propertyTable()->propertyStorageSize());
-    if (propertyTable()->hasDeletedOffset())
-        return false;
-
-    ASSERT(totalStorageCapacity() >= propertyTable()->size());
-    return propertyTable()->size() == totalStorageCapacity();
-}
-
-ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
-{
-    return m_propertyTableUnsafe;
-}
-
 inline void Structure::didReplaceProperty(PropertyOffset offset)
 {
     if (LIKELY(!hasRareData()))
@@ -271,7 +245,7 @@ inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset
 
 ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
 {
-    PropertyTable* propertyTable = m_propertyTableUnsafe.get();
+    PropertyTable* propertyTable = propertyTableOrNull();
 
     if (!propertyTable) {
         ASSERT(!isPinnedPropertyTable());
@@ -292,16 +266,16 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
     return true;
 }
 
+inline void Structure::checkConsistency()
+{
+    checkOffsetConsistency();
+}
+
 inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
 {
     if (!currentCapacity)
         return initialOutOfLineCapacity;
     return currentCapacity * outOfLineGrowthFactor;
-}
-
-inline size_t Structure::suggestedNewOutOfLineStorageCapacity()
-{
-    return nextOutOfLineStorageCapacity(outOfLineCapacity());
 }
 
 inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString* value, PropertySlot toStringTagSymbolSlot)
@@ -311,4 +285,85 @@ inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString*
     rareData()->setObjectToStringValue(exec, vm, this, value, toStringTagSymbolSlot);
 }
 
+template<typename Func>
+inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
+{
+    PropertyTable* table = ensurePropertyTable(vm);
+
+    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    
+    setPropertyTable(vm, table);
+    
+    ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
+
+    checkConsistency();
+    if (attributes & DontEnum || propertyName.isSymbol())
+        setIsQuickPropertyAccessAllowedForEnumeration(false);
+
+    auto rep = propertyName.uid();
+
+    PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
+    
+    table->add(PropertyMapEntry(rep, newOffset, attributes), m_offset, PropertyTable::PropertyOffsetMayChange);
+    
+    checkConsistency();
+
+    func(locker, newOffset);
+    return newOffset;
+}
+
+template<typename Func>
+inline PropertyOffset Structure::remove(PropertyName propertyName, const Func& func)
+{
+    ConcurrentJITLocker locker(m_lock);
+    
+    checkConsistency();
+
+    auto rep = propertyName.uid();
+    
+    // We ONLY remove from uncacheable dictionaries, which will have a pinned property table.
+    // The only way for them not to have a table is if they are empty.
+    PropertyTable* table = propertyTableOrNull();
+
+    if (!table)
+        return invalidOffset;
+
+    PropertyTable::find_iterator position = table->find(rep);
+    if (!position.first)
+        return invalidOffset;
+    
+    PropertyOffset offset = position.first->offset;
+
+    table->remove(position);
+    table->addDeletedOffset(offset);
+
+    checkConsistency();
+
+    func(locker, offset);
+    return offset;
+}
+
+template<typename Func>
+inline PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
+{
+    pin(vm, ensurePropertyTable(vm));
+    
+    return add(vm, propertyName, attributes, func);
+}
+
+template<typename Func>
+inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyName propertyName, const Func& func)
+{
+    ASSERT(isUncacheableDictionary());
+    ASSERT(isPinnedPropertyTable());
+    ASSERT(propertyTableOrNull());
+    
+    return remove(propertyName, func);
+}
+
+inline void Structure::setPropertyTable(VM& vm, PropertyTable* table)
+{
+    m_propertyTableUnsafe.setMayBeNull(vm, this, table);
+}
+    
 } // namespace JSC

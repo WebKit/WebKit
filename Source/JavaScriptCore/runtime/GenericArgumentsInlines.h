@@ -66,11 +66,13 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     Type* thisObject = jsCast<Type*>(object);
     
     if (thisObject->canAccessIndexQuickly(index)) {
-        slot.setValue(thisObject, None, thisObject->getIndexQuickly(index));
+        JSValue result = thisObject->getIndexQuickly(index);
+        slot.setValue(thisObject, None, result);
         return true;
     }
     
-    return Base::getOwnPropertySlotByIndex(object, exec, index, slot);
+    bool result = Base::getOwnPropertySlotByIndex(object, exec, index, slot);
+    return result;
 }
 
 template<typename Type>
@@ -129,7 +131,7 @@ bool GenericArguments<Type>::putByIndex(JSCell* cell, ExecState* exec, unsigned 
 {
     Type* thisObject = jsCast<Type*>(cell);
     VM& vm = exec->vm();
-
+    
     if (thisObject->canAccessIndexQuickly(index)) {
         thisObject->setIndexQuickly(vm, index, value);
         return true;

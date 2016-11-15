@@ -29,6 +29,9 @@
 #include "Condition.h"
 #include "Lock.h"
 #include "PrintStream.h"
+#include <cfloat>
+#include <cmath>
+#include <wtf/DataLog.h>
 
 namespace WTF {
 
@@ -126,6 +129,17 @@ void sleep(const TimeWithDynamicClockType& time)
     Condition fakeCondition;
     LockHolder fakeLocker(fakeLock);
     fakeCondition.waitUntil(fakeLock, time);
+}
+
+bool hasElapsed(const TimeWithDynamicClockType& time)
+{
+    // Avoid doing now().
+    if (!(time > time.withSameClockAndRawSeconds(0)))
+        return true;
+    if (std::isinf(time.secondsSinceEpoch().value()))
+        return false;
+    
+    return time <= time.nowWithSameClock();
 }
 
 } // namespace WTF

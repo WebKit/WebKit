@@ -106,6 +106,36 @@ struct Atomic {
     ALWAYS_INLINE T exchangeXor(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_xor(operand, order); }
     
     ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst) { return value.exchange(newValue, order); }
+    
+    template<typename Func>
+    ALWAYS_INLINE bool tryTransactionRelaxed(const Func& func)
+    {
+        T oldValue = load(std::memory_order_relaxed);
+        T newValue = oldValue;
+        func(newValue);
+        return compareExchangeWeakRelaxed(oldValue, newValue);
+    }
+
+    template<typename Func>
+    ALWAYS_INLINE void transactionRelaxed(const Func& func)
+    {
+        while (!tryTransationRelaxed(func)) { }
+    }
+
+    template<typename Func>
+    ALWAYS_INLINE bool tryTransaction(const Func& func)
+    {
+        T oldValue = load(std::memory_order_relaxed);
+        T newValue = oldValue;
+        func(newValue);
+        return compareExchangeWeak(oldValue, newValue);
+    }
+
+    template<typename Func>
+    ALWAYS_INLINE void transaction(const Func& func)
+    {
+        while (!tryTransaction(func)) { }
+    }
 
     std::atomic<T> value;
 };

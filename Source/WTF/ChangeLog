@@ -1,3 +1,71 @@
+2016-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be optionally concurrent and disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=164454
+
+        Reviewed by Geoffrey Garen.
+        
+        The reason why I went to such great pains to make WTF::Lock fit in two bits is that I
+        knew that I would eventually need to stuff one into some miscellaneous bits of the
+        JSCell header. That time has come, because the concurrent GC has numerous race
+        conditions in visitChildren that can be trivially fixed if each object just has an
+        internal lock. Some cell types might use it to simply protect their entire visitChildren
+        function and anything that mutates the fields it touches, while other cell types might
+        use it as a "lock of last resort" to handle corner cases of an otherwise wait-free or
+        lock-free algorithm. Right now, it's used to protect certain transformations involving
+        indexing storage.
+        
+        To make this happen, I factored the WTF::Lock algorithm into a LockAlgorithm struct that
+        is templatized on lock type (uint8_t for WTF::Lock), the isHeldBit value (1 for
+        WTF::Lock), and the hasParkedBit value (2 for WTF::Lock). This could have been done as
+        a templatized Lock class that basically contains Atomic<LockType>. You could then make
+        any field into a lock by bitwise_casting it to TemplateLock<field type, bit1, bit2>. But
+        this felt too dirty, so instead, LockAlgorithm has static methods that take
+        Atomic<LockType>& as their first argument. I think that this makes it more natural to
+        project a LockAlgorithm onto an existing Atomic<> field. Sadly, some places have to cast
+        their non-Atomic<> field to Atomic<> in order for this to work. Like so many other things
+        we do, this just shows that the C++ style of labeling fields that are subject to atomic
+        ops as atomic is counterproductive. Maybe some day I'll change LockAlgorithm to use our
+        other Atomics API, which does not require Atomic<>.
+        
+        WTF::Lock now uses LockAlgorithm. The slow paths are still outlined. I don't feel too
+        bad about the LockAlgorithm.h header being included in so many places because we change
+        that algorithm so infrequently.
+        
+        Also, I added a hasElapsed(time) function. This function makes it so much more natural
+        to write timeslicing code, which the concurrent GC has to do a lot of.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ListDump.h:
+        * wtf/Lock.cpp:
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        (WTF::LockBase::unlockFairlySlow):
+        (WTF::LockBase::unlockSlowImpl): Deleted.
+        * wtf/Lock.h:
+        (WTF::LockBase::lock):
+        (WTF::LockBase::tryLock):
+        (WTF::LockBase::unlock):
+        (WTF::LockBase::unlockFairly):
+        (WTF::LockBase::isHeld):
+        (): Deleted.
+        * wtf/LockAlgorithm.h: Added.
+        (WTF::LockAlgorithm::lockFastAssumingZero):
+        (WTF::LockAlgorithm::lockFast):
+        (WTF::LockAlgorithm::lock):
+        (WTF::LockAlgorithm::tryLock):
+        (WTF::LockAlgorithm::unlockFastAssumingZero):
+        (WTF::LockAlgorithm::unlockFast):
+        (WTF::LockAlgorithm::unlock):
+        (WTF::LockAlgorithm::unlockFairly):
+        (WTF::LockAlgorithm::isLocked):
+        (WTF::LockAlgorithm::lockSlow):
+        (WTF::LockAlgorithm::unlockSlow):
+        * wtf/TimeWithDynamicClockType.cpp:
+        (WTF::hasElapsed):
+        * wtf/TimeWithDynamicClockType.h:
+
 2016-11-14  JF Bastien  <jfbastien@apple.com>
 
         Expected: add missing `inline`

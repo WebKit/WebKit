@@ -134,8 +134,12 @@ private:
 
 WTF_EXPORT_PRIVATE void sleep(const TimeWithDynamicClockType&);
 
+WTF_EXPORT_PRIVATE bool hasElapsed(const TimeWithDynamicClockType&);
+
 } // namespace WTF
 
 using WTF::TimeWithDynamicClockType;
+using WTF::hasElapsed;
+using WTF::sleep;
 
 #endif // WTF_TimeWithDynamicClockType_h

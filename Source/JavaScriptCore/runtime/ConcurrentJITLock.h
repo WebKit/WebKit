@@ -94,15 +94,7 @@ public:
     }
 
 private:
-#if ENABLE(CONCURRENT_JIT)
     DeferGC m_deferGC;
-#else
-    struct NoDefer {
-        NoDefer(Heap& heap) : m_heap(heap) { }
-        Heap& m_heap;
-    };
-    NoDefer m_deferGC;
-#endif
 };
 
 class ConcurrentJITLocker : public ConcurrentJITLockerBase {

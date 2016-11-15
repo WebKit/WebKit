@@ -178,6 +178,15 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(EvalCode == 1);
     STATIC_ASSERT(FunctionCode == 2);
     STATIC_ASSERT(ModuleCode == 3);
+    
+    STATIC_ASSERT(IsArray == 0x01);
+    STATIC_ASSERT(IndexingShapeMask == 0x0E);
+    STATIC_ASSERT(NoIndexingShape == 0x00);
+    STATIC_ASSERT(Int32Shape == 0x04);
+    STATIC_ASSERT(DoubleShape == 0x06);
+    STATIC_ASSERT(ContiguousShape == 0x08);
+    STATIC_ASSERT(ArrayStorageShape == 0x0A);
+    STATIC_ASSERT(SlowPutArrayStorageShape == 0x0C);
 
     ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));
     static_assert(PutByIdPrimaryTypeMask == 0x6, "LLInt assumes PutByIdPrimaryTypeMask is == 0x6");

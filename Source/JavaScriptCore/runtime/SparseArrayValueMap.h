@@ -49,6 +49,7 @@ struct SparseArrayEntry : public WriteBarrier<Unknown> {
     unsigned attributes;
 };
 
+// FIXME: This needs to have a lock in it.
 class SparseArrayValueMap final : public JSCell {
 public:
     typedef JSCell Base;

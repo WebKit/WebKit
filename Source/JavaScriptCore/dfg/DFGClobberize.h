@@ -889,6 +889,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case PutStructure:
+        read(JSObject_butterfly); // This is a store-store fence.
         write(JSCell_structureID);
         write(JSCell_typeInfoType);
         write(JSCell_typeInfoFlags);

@@ -64,7 +64,7 @@ public:
         
         if (!Options::useOSREntryToFTL())
             level = FTL::CanCompile;
-
+        
         m_graph.ensureNaturalLoops();
         NaturalLoops& naturalLoops = *m_graph.m_naturalLoops;
         HashMap<const NaturalLoop*, unsigned> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);

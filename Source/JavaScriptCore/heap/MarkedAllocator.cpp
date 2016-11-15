@@ -137,7 +137,6 @@ void* MarkedAllocator::allocateIn(MarkedBlock::Handle* block)
 void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
 {
     ASSERT(block);
-    ASSERT(!block->hasAnyNewlyAllocated());
     ASSERT(!block->isFreeListed());
     
     FreeList freeList = block->sweep(MarkedBlock::Handle::SweepToFreeList);

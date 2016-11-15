@@ -2788,7 +2788,7 @@ private:
     void compilePutStructure()
     {
         m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
-
+        
         Structure* oldStructure = m_node->transition()->previous;
         Structure* newStructure = m_node->transition()->next;
         ASSERT_UNUSED(oldStructure, oldStructure->indexingType() == newStructure->indexingType());
@@ -3947,6 +3947,8 @@ private:
                 fastObject, m_heaps.JSEnvironmentRecord_variables[i]);
         }
         
+        mutatorFence();
+        
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
         
@@ -4005,6 +4007,8 @@ private:
         m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
         m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
+        
+        mutatorFence();
         
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
@@ -4140,6 +4144,8 @@ private:
             m_out.appendTo(end, lastNext);
         }
         
+        mutatorFence();
+        
         setJSValue(result);
     }
     
@@ -4193,6 +4199,7 @@ private:
             m_out.branch(m_out.equal(currentOffset, m_out.constInt32(0)), unsure(continuation), unsure(loopStart));
 
             m_out.appendTo(continuation, lastNext);
+            mutatorFence();
             setJSValue(array);
             return;
         }
@@ -4227,6 +4234,7 @@ private:
     void compileNewObject()
     {
         setJSValue(allocateObject(m_node->structure()));
+        mutatorFence();
     }
     
     void compileNewArray()
@@ -4279,6 +4287,7 @@ private:
             }
             
             setJSValue(arrayValues.array);
+            mutatorFence();
             return;
         }
         
@@ -4387,6 +4396,7 @@ private:
                 }
             }
 
+            mutatorFence();
             setJSValue(result);
             return;
         }
@@ -4428,7 +4438,7 @@ private:
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue indexingShape = m_out.load8ZeroExt32(argument, m_heaps.JSCell_indexingType);
+            LValue indexingShape = m_out.load8ZeroExt32(argument, m_heaps.JSCell_indexingTypeAndMisc);
             indexingShape = m_out.bitAnd(indexingShape, m_out.constInt32(IndexingShapeMask));
             LValue isOKIndexingType = m_out.belowOrEqual(
                 m_out.sub(indexingShape, m_out.constInt32(Int32Shape)),
@@ -4497,6 +4507,7 @@ private:
 
             m_out.appendTo(continuation, lastNext);
             result = m_out.phi(Int64, fastResult, slowResult);
+            mutatorFence();
         } else
             result = vmCall(Int64, m_out.operation(operationSpreadGeneric), m_callFrame, argument);
 
@@ -4529,6 +4540,7 @@ private:
                     m_heaps.forIndexingType(m_node->indexingType())->at(index));
             }
             
+            mutatorFence();
             setJSValue(arrayValues.array);
             return;
         }
@@ -4553,6 +4565,7 @@ private:
                     publicLength,
                     globalObject->arrayStructureForIndexingTypeDuringAllocation(
                         m_node->indexingType())).array);
+            mutatorFence();
             return;
         }
         
@@ -4620,6 +4633,7 @@ private:
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
             m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
             
+            mutatorFence();
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.jump(continuation);
 
@@ -4862,6 +4876,7 @@ private:
             result, m_heaps.JSString_flags);
         m_out.store32(length, result, m_heaps.JSString_length);
         
+        mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(result);
         m_out.jump(continuation);
         
@@ -5240,6 +5255,7 @@ private:
                 else
                     storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
             } else {
+                DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition);
                 m_graph.m_plan.transitions.addLazily(
                     codeBlock(), m_node->origin.semantic.codeOriginOwner(),
                     variant.oldStructureForTransition(), variant.newStructure());
@@ -5247,7 +5263,11 @@ private:
                 storage = storageForTransition(
                     base, variant.offset(),
                     variant.oldStructureForTransition(), variant.newStructure());
-
+            }
+            
+            storeProperty(value, storage, data.identifierNumber, variant.offset());
+            
+            if (variant.kind() == PutByIdVariant::Transition) {
                 ASSERT(variant.oldStructureForTransition()->indexingType() == variant.newStructure()->indexingType());
                 ASSERT(variant.oldStructureForTransition()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
                 ASSERT(variant.oldStructureForTransition()->typeInfo().type() == variant.newStructure()->typeInfo().type());
@@ -5255,7 +5275,6 @@ private:
                     weakStructureID(variant.newStructure()), base, m_heaps.JSCell_structureID);
             }
             
-            storeProperty(value, storage, data.identifierNumber, variant.offset());
             m_out.jump(continuation);
         }
         
@@ -8114,6 +8133,12 @@ private:
                         structure->outOfLineCapacity() * sizeof(JSValue) + sizeof(IndexingHeader)));
                 
                 ValueFromBlock haveButterfly = m_out.anchor(fastButterflyValue);
+                
+                splatWords(
+                    fastButterflyValue,
+                    m_out.constInt32(-structure->outOfLineCapacity() - 1),
+                    m_out.constInt32(-1),
+                    m_out.int64Zero, m_heaps.properties.atAnyNumber());
 
                 m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
                 
@@ -8268,7 +8293,8 @@ private:
                 object = allocateObject(structure);
                 butterfly = nullptr; // Don't have one, don't need one.
             }
-            
+
+            BitVector setInlineOffsets;
             for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
                 for (unsigned i = data.m_properties.size(); i--;) {
                     PromotedLocationDescriptor descriptor = data.m_properties[i];
@@ -8277,10 +8303,19 @@ private:
                     if (m_graph.identifiers()[descriptor.info()] != entry.key)
                         continue;
                     
-                    LValue base = isInlineOffset(entry.offset) ? object : butterfly;
+                    LValue base;
+                    if (isInlineOffset(entry.offset)) {
+                        setInlineOffsets.set(entry.offset);
+                        base = object;
+                    } else
+                        base = butterfly;
                     storeProperty(values[i], base, descriptor.info(), entry.offset);
                     break;
                 }
+            }
+            for (unsigned i = structure->inlineCapacity(); i--;) {
+                if (!setInlineOffsets.get(i))
+                    m_out.store64(m_out.int64Zero, m_out.address(m_heaps.properties.atAnyNumber(), object, offsetRelativeToBase(i)));
             }
             
             results.append(m_out.anchor(object));
@@ -8292,6 +8327,7 @@ private:
         
         m_out.appendTo(outerContinuation, outerLastNext);
         setJSValue(m_out.phi(pointerType(), results));
+        mutatorFence();
     }
 
     void compileMaterializeCreateActivation()
@@ -8367,6 +8403,7 @@ private:
             }
         }
 
+        mutatorFence();
         setJSValue(activation);
     }
 
@@ -8945,7 +8982,8 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(initLoop);
         
         ValueFromBlock originalIndex = m_out.anchor(end);
-        ValueFromBlock originalPointer = m_out.anchor(base);
+        ValueFromBlock originalPointer = m_out.anchor(
+            m_out.add(base, m_out.shl(m_out.signExt32ToPtr(begin), m_out.constInt32(3))));
         m_out.branch(m_out.notEqual(end, begin), unsure(initLoop), unsure(initDone));
         
         m_out.appendTo(initLoop, initDone);
@@ -8974,7 +9012,13 @@ private:
         }
         
         LValue result = allocatePropertyStorageWithSizeImpl(initialOutOfLineCapacity);
-        m_out.storePtr(result, object, m_heaps.JSObject_butterfly);
+
+        splatWords(
+            result,
+            m_out.constInt32(-initialOutOfLineCapacity - 1), m_out.constInt32(-1),
+            m_out.int64Zero, m_heaps.properties.atAnyNumber());
+        
+        setButterfly(result, object);
         return result;
     }
     
@@ -9002,7 +9046,12 @@ private:
             m_out.storePtr(loaded, m_out.address(m_heaps.properties.atAnyNumber(), result, offset));
         }
         
-        m_out.storePtr(result, m_out.address(object, m_heaps.JSObject_butterfly));
+        splatWords(
+            result,
+            m_out.constInt32(-newSize - 1), m_out.constInt32(-oldSize - 1),
+            m_out.int64Zero, m_heaps.properties.atAnyNumber());
+        
+        setButterfly(result, object);
         
         return result;
     }
@@ -9872,6 +9921,12 @@ private:
         LValue allocator, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
+        splatWords(
+            result,
+            m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8),
+            m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + structure->inlineCapacity()),
+            m_out.int64Zero,
+            m_heaps.properties.atAnyNumber());
         m_out.storePtr(butterfly, result, m_heaps.JSObject_butterfly);
         return result;
     }
@@ -11954,7 +12009,7 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
-            LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingType);
+            LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc);
             
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
@@ -12447,7 +12502,7 @@ private:
                 return LazySlowPath::createGenerator(
                     [=] (CCallHelpers& jit, LazySlowPath::GenerationParams& params) {
                         if (isFenced) {
-                            CCallHelpers::Jump noFence = jit.jumpIfBarrierStoreLoadFenceNotNeeded();
+                            CCallHelpers::Jump noFence = jit.jumpIfMutatorFenceNotNeeded();
                             jit.memoryFence();
                             params.doneJumps.append(jit.barrierBranchWithoutFence(baseGPR));
                             noFence.link(&jit);
@@ -12506,6 +12561,64 @@ private:
         
         m_out.jump(continuation);
 
+        m_out.appendTo(continuation, lastNext);
+    }
+    
+    void mutatorFence()
+    {
+        if (isX86()) {
+            m_out.fence(&m_heaps.root, nullptr);
+            return;
+        }
+        
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        m_out.branch(
+            m_out.load8ZeroExt32(m_out.absolute(vm().heap.addressOfMutatorShouldBeFenced())),
+            rarely(slowPath), usually(continuation));
+        
+        m_out.appendTo(slowPath);
+        
+        m_out.fence(&m_heaps.root, nullptr);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+    }
+    
+    void setButterfly(LValue butterfly, LValue object)
+    {
+        if (isX86()) {
+            m_out.fence(&m_heaps.root, nullptr);
+            m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
+            m_out.fence(&m_heaps.root, nullptr);
+            return;
+        }
+        
+        LBasicBlock fastPath = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(fastPath);
+        
+        m_out.branch(
+            m_out.load8ZeroExt32(m_out.absolute(vm().heap.addressOfMutatorShouldBeFenced())),
+            rarely(slowPath), usually(fastPath));
+
+        m_out.appendTo(fastPath);
+        
+        m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath);
+        
+        m_out.fence(&m_heaps.root, nullptr);
+        m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
+        m_out.fence(&m_heaps.root, nullptr);
+        m_out.jump(continuation);
+        
         m_out.appendTo(continuation, lastNext);
     }
 

@@ -367,6 +367,11 @@ LValue Output::signExt32To64(LValue value)
     return m_block->appendNew<B3::Value>(m_proc, B3::SExt32, origin(), value);
 }
 
+LValue Output::signExt32ToPtr(LValue value)
+{
+    return signExt32To64(value);
+}
+
 LValue Output::zeroExt(LValue value, LType type)
 {
     if (value->type() == type)
@@ -446,9 +451,12 @@ void Output::store(LValue value, TypedPointer pointer)
     m_heaps->decorateMemory(pointer.heap(), store);
 }
 
-FenceValue* Output::fence()
+FenceValue* Output::fence(const AbstractHeap* read, const AbstractHeap* write)
 {
-    return m_block->appendNew<FenceValue>(m_proc, origin());
+    FenceValue* result = m_block->appendNew<FenceValue>(m_proc, origin());
+    m_heaps->decorateFenceRead(read, result);
+    m_heaps->decorateFenceWrite(write, result);
+    return result;
 }
 
 void Output::store32As8(LValue value, TypedPointer pointer)

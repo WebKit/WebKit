@@ -1,3 +1,437 @@
+2016-11-14  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be optionally concurrent and disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=164454
+
+        Reviewed by Geoffrey Garen.
+        
+        This started out as a patch to have the GC scan the stack at the end, and then the
+        outage happened and I decided to pick a more aggresive target: give the GC a concurrent
+        mode that can be enabled at runtime, and whose only effect is that it turns on the
+        ResumeTheWorldScope. This gives our GC a really intuitive workflow: by default, the GC
+        thread is running solo with the world stopped and the parallel markers converged and
+        waiting. We have a parallel work scope to enable the parallel markers and now we have a
+        ResumeTheWorldScope that will optionally resume the world and then stop it again.
+        
+        It's easy to make a concurrent GC that always instantly crashes. I can't promise that
+        this one won't do that when you run it. I set a specific goal: I wanted to do >10
+        concurrent GCs in debug mode with generations, optimizing JITs, and parallel marking
+        disabled.
+        
+        To reach this milestone, I needed to do a bunch of stuff:
+        
+        - The mutator needs a separate mark stack for the barrier, since it will mutate this
+          stack concurrently to the collector's slot visitors.
+        
+        - The use of CellState to indicate whether an object is being scanned the first time or
+          a subsequent time was racy. It fails spectacularly when a barrier is fired at the same
+          time as visitChildren is running or if the barrier runs at the same time as the GC
+          marks the same object. So, I split SlotVisitor's mark stacks. It's now the case that
+          you know why you're being scanned by looking at which stack you came off of.
+        
+        - All of root marking must be in the collector fixpoint. I renamed markRoots to
+          markToFixpoint. They say concurrency is hard, but the collector looks more intuitive
+          this way. We never gained anything from forcing people to make a choice between
+          scanning something in the fixpoint versus outside of it. Because root scanning is
+          cheap, we can afford to do it repeatedly, which means all root scanning can now do
+          constraint-based marking (like: I'll mark you if that thing is marked).
+        
+        - JSObject::visitChildren's scanning of the butterfly raced with property additions,
+          indexed storage transitions and resizing, and a bunch of miscellaneous dirty butterfly
+          reshaping functions - like the one that flattens a dictionary and some sneaky
+          ArrayStorage transformations. Many of these can be fixed by using store-store fences
+          in the mutator and load-load fences in the collector. I've adopted the rule that the
+          collector must always see either a butterfly and structure that match or a newer
+          butterfly with an older structure, where their age is just one transition apart. This
+          can be achieved with fences. For the cases where it breaks down, I added a lock to
+          every JSCell. This is a full-fledged WTF lock that we sneak into two available bits in
+          the indexingType. See the WTF ChangeLog for details.
+          
+          The mutator fencing rules are as follows:
+          
+          - Store-store fence before and after setting the butterfly.
+          - Store-store fence before setting structure if you had changed the shape of the
+            butterfly.
+          - Store-store fence after initializing all fields in an allocation.
+        
+        - A dictionary Structure can change in strange ways while the GC is trying to scan it.
+          So, JSObject::visitChildren will now grab the object's structure's lock if the
+          object's structure is a dictionary. Dictionary structures are 1:1 with their object,
+          so this does not reduce GC parallelism (super unlikely that the GC will simultaneously
+          scan an object from two threads).
+        
+        - The GC can blow away a Structure's property table at any time. As a small consolation,
+          it's now holding the Structure's lock when it does so. But there was tons of code in
+          Structure that uses DeferGC to prevent the GC from blowing away the property table.
+          This doesn't work with concurrent GC, since DeferGC only means that the GC won't run
+          its safepoint (i.e. stop-the-world code) in the DeferGC region. It will still do
+          marking and it was the Structure::visitChildren that would delete the table. It turns
+          out that Structure's reliance on the property table not being deleted was the product
+          of code rot. We already had functions that would materialize the table on demand. We
+          were simply making the mistake of saying:
+          
+              structure->materializePropertyMap();
+              ...
+              structure->propertyTable()->things
+          
+          Instead of saying:
+          
+              PropertyTable* table = structure->ensurePropertyTable();
+              ...
+              table->things
+          
+          Switching the code to use the latter idiom allowed me to simplify the code a lot while
+          fixing the race.
+        
+        - The LLInt's get_by_val handling was broken because the indexing shape constants were
+          wrong. Once I started putting more things into the IndexingType, that started causing
+          crashes for me. So I fixed LLInt. That turned out to be a lot of work, since that code
+          had rotted in subtle ways.
+        
+        This is a speed-up in SunSpider, probably because of the LLInt fix. This is neutral on
+        Octane and Kraken. It's a smaller slow-down on LongSpider, but I think we can ignore
+        that (we don't view LongSpider as an official benchmark). By default, the concurrent GC
+        is disabled: in all of the places where it would have resumed the world to run marking
+        concurrently to the mutator, it will just skip the resume step. When you enable
+        concurrent GC (--useConcurrentGC=true), it can sometimes run Octane/splay to completion.
+        It seems to perform quite well: on my machine, it improves both splay-throughput and
+        splay-latency. It's probably unstable for other programs.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine isOldExternalObject:]):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::storeFence):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::dumpCacheSizesAndCrash):
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::InlineAccess::generateArrayLength):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::offsetOfInlineCapacity):
+        (JSC::ObjectAllocationProfile::ObjectAllocationProfile):
+        (JSC::ObjectAllocationProfile::initialize):
+        (JSC::ObjectAllocationProfile::inlineCapacity):
+        (JSC::ObjectAllocationProfile::clear):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::markCodeBlocks):
+        (JSC::DFG::Plan::rememberCodeBlocks):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::markCodeBlocks):
+        (JSC::DFG::Worklist::rememberCodeBlocks):
+        (JSC::DFG::markCodeBlocks):
+        (JSC::DFG::completeAllPlansForVM):
+        (JSC::DFG::rememberCodeBlocks):
+        * dfg/DFGWorklist.h:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        (JSC::FTL::AbstractHeapRepository::computeRangesAndDecorateInstructions):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::splatWords):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayType):
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        (JSC::FTL::DFG::LowerDFGToB3::mutatorFence):
+        (JSC::FTL::DFG::LowerDFGToB3::setButterfly):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::signExt32ToPtr):
+        (JSC::FTL::Output::fence):
+        * ftl/FTLOutput.h:
+        * heap/CellState.h:
+        * heap/GCSegmentedArray.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::ResumeTheWorldScope::ResumeTheWorldScope):
+        (JSC::Heap::ResumeTheWorldScope::~ResumeTheWorldScope):
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::harvestWeakReferences):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::visitConservativeRoots):
+        (JSC::Heap::visitCompilerWorklistWeakReferences):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::endMarking):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::collectInThread):
+        (JSC::Heap::stopTheWorld):
+        (JSC::Heap::resumeTheWorld):
+        (JSC::Heap::setGCDidJIT):
+        (JSC::Heap::setNeedFinalize):
+        (JSC::Heap::setMutatorWaiting):
+        (JSC::Heap::clearMutatorWaiting):
+        (JSC::Heap::finalize):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::writeBarrierSlowPath):
+        (JSC::Heap::canCollect):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        (JSC::Heap::notifyIsSafeToCollect):
+        (JSC::Heap::markRoots): Deleted.
+        (JSC::Heap::visitExternalRememberedSet): Deleted.
+        (JSC::Heap::visitSmallStrings): Deleted.
+        (JSC::Heap::visitProtectedObjects): Deleted.
+        (JSC::Heap::visitArgumentBuffers): Deleted.
+        (JSC::Heap::visitException): Deleted.
+        (JSC::Heap::visitStrongHandles): Deleted.
+        (JSC::Heap::visitHandleStack): Deleted.
+        (JSC::Heap::visitSamplingProfiler): Deleted.
+        (JSC::Heap::visitTypeProfiler): Deleted.
+        (JSC::Heap::visitShadowChicken): Deleted.
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines): Deleted.
+        (JSC::Heap::visitWeakHandles): Deleted.
+        (JSC::Heap::flushOldStructureIDTables): Deleted.
+        (JSC::Heap::stopAllocation): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::collectorSlotVisitor):
+        (JSC::Heap::mutatorMarkStack):
+        (JSC::Heap::mutatorShouldBeFenced):
+        (JSC::Heap::addressOfMutatorShouldBeFenced):
+        (JSC::Heap::slotVisitor): Deleted.
+        (JSC::Heap::notifyIsSafeToCollect): Deleted.
+        (JSC::Heap::barrierShouldBeFenced): Deleted.
+        (JSC::Heap::addressOfBarrierShouldBeFenced): Deleted.
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::transferTo):
+        * heap/MarkStack.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateIn):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::sweep):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectMarksMode):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::SetNewlyAllocatedFunctor::SetNewlyAllocatedFunctor): Deleted.
+        (JSC::SetNewlyAllocatedFunctor::operator()): Deleted.
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::resumeAllocating):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::~SlotVisitor):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::clearMarkStacks):
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::appendToMutatorMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::donateAndDrain):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::SlotVisitor::dump):
+        (JSC::SlotVisitor::clearMarkStack): Deleted.
+        (JSC::SlotVisitor::opaqueRootCount): Deleted.
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::collectorMarkStack):
+        (JSC::SlotVisitor::mutatorMarkStack):
+        (JSC::SlotVisitor::isEmpty):
+        (JSC::SlotVisitor::bytesVisited):
+        (JSC::SlotVisitor::markStack): Deleted.
+        (JSC::SlotVisitor::bytesCopied): Deleted.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::reportExternalMemoryVisited):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        (JSC::AssemblyHelpers::barrierStoreLoadFence):
+        (JSC::AssemblyHelpers::mutatorFence):
+        (JSC::AssemblyHelpers::storeButterfly):
+        (JSC::AssemblyHelpers::jumpIfMutatorFenceNotNeeded):
+        (JSC::AssemblyHelpers::emitInitializeInlineStorage):
+        (JSC::AssemblyHelpers::emitInitializeOutOfLineStorage):
+        (JSC::AssemblyHelpers::jumpIfBarrierStoreLoadFenceNotNeeded): Deleted.
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emit_op_put_to_arguments):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        * runtime/ConcurrentJITLock.h:
+        (JSC::GCSafeConcurrentJITLocker::NoDefer::NoDefer): Deleted.
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertySlotByIndex):
+        (JSC::GenericArguments<Type>::putByIndex):
+        * runtime/IndexingType.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSCell.h:
+        (JSC::JSCell::InternalLocker::InternalLocker):
+        (JSC::JSCell::InternalLocker::~InternalLocker):
+        (JSC::JSCell::atomicCompareExchangeCellStateWeakRelaxed):
+        (JSC::JSCell::atomicCompareExchangeCellStateStrong):
+        (JSC::JSCell::indexingTypeAndMiscOffset):
+        (JSC::JSCell::indexingTypeOffset): Deleted.
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+        (JSC::JSCell::indexingTypeAndMisc):
+        (JSC::JSCell::indexingType):
+        (JSC::JSCell::setStructure):
+        (JSC::JSCell::callDestructor):
+        (JSC::JSCell::lockInternalLock):
+        (JSC::JSCell::unlockInternalLock):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSFinalObject::visitChildren):
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::allocateMoreOutOfLineStorage):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        (JSC::JSObject::growOutOfLineStorage): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::setStructureAndButterfly): Deleted.
+        (JSC::JSObject::setButterflyWithoutChangingStructure): Deleted.
+        (JSC::JSObject::putDirectInternal): Deleted.
+        (JSC::JSObject::putDirectWithoutTransition): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Options.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinForCaching):
+        (JSC::Structure::willStoreValueSlow):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::materializePropertyMap): Deleted.
+        (JSC::Structure::addPropertyWithoutTransition): Deleted.
+        (JSC::Structure::removePropertyWithoutTransition): Deleted.
+        (JSC::Structure::copyPropertyTable): Deleted.
+        (JSC::Structure::createPropertyMap): Deleted.
+        (JSC::PropertyTable::checkConsistency): Deleted.
+        (JSC::Structure::checkConsistency): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+        (JSC::StructureIDBlob::indexingTypeIncludingHistory):
+        (JSC::StructureIDBlob::setIndexingTypeIncludingHistory):
+        (JSC::StructureIDBlob::indexingTypeIncludingHistoryOffset):
+        (JSC::StructureIDBlob::indexingType): Deleted.
+        (JSC::StructureIDBlob::setIndexingType): Deleted.
+        (JSC::StructureIDBlob::indexingTypeOffset): Deleted.
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        (JSC::Structure::checkOffsetConsistency):
+        (JSC::Structure::checkConsistency):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::setPropertyTable):
+        (JSC::Structure::putWillGrowOutOfLineStorage): Deleted.
+        (JSC::Structure::propertyTable): Deleted.
+        (JSC::Structure::suggestedNewOutOfLineStorageCapacity): Deleted.
+
 2016-11-14  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm select

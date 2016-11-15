@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SpeculatedType.h"
+#include <wtf/LockAlgorithm.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -52,21 +53,25 @@ typedef uint8_t IndexingType;
 static const IndexingType IsArray                  = 0x01;
 
 // The shape of the indexed property storage.
-static const IndexingType IndexingShapeMask        = 0x0E;
-static const IndexingType NoIndexingShape          = 0x00;
-static const IndexingType UndecidedShape           = 0x02; // Only useful for arrays.
-static const IndexingType Int32Shape               = 0x04;
-static const IndexingType DoubleShape              = 0x06;
-static const IndexingType ContiguousShape          = 0x08;
-static const IndexingType ArrayStorageShape        = 0x0A;
-static const IndexingType SlowPutArrayStorageShape = 0x0C;
+static const IndexingType IndexingShapeMask               = 0x0E;
+static const IndexingType NoIndexingShape                 = 0x00;
+static const IndexingType UndecidedShape                  = 0x02; // Only useful for arrays.
+static const IndexingType Int32Shape                      = 0x04;
+static const IndexingType DoubleShape                     = 0x06;
+static const IndexingType ContiguousShape                 = 0x08;
+static const IndexingType ArrayStorageShape               = 0x0A;
+static const IndexingType SlowPutArrayStorageShape        = 0x0C;
 
-static const IndexingType IndexingShapeShift       = 1;
-static const IndexingType NumberOfIndexingShapes   = 7;
+static const IndexingType IndexingShapeShift              = 1;
+static const IndexingType NumberOfIndexingShapes          = 7;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
-static const IndexingType MayHaveIndexedAccessors  = 0x10;
+static const IndexingType MayHaveIndexedAccessors         = 0x10;
+
+// The IndexingType field of JSCells is stolen for locks.
+static const IndexingType IndexingTypeLockIsHeld          = 0x20;
+static const IndexingType IndexingTypeLockHasParked       = 0x40;
 
 // List of acceptable array types.
 static const IndexingType NonArray                        = 0x0;
@@ -176,5 +181,7 @@ static const IndexingType AllArrayTypes            = IndexingShapeMask | IsArray
 
 // Mask of all possible types including the history.
 static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
+
+typedef LockAlgorithm<IndexingType, IndexingTypeLockIsHeld, IndexingTypeLockHasParked> IndexingTypeLockAlgorithm;
 
 } // namespace JSC

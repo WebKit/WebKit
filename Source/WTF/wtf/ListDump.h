@@ -177,10 +177,11 @@ ListDumpInContext<T, U> listDumpInContext(
 } // namespace WTF
 
 using WTF::listDump;
-using WTF::sortedListDump;
-using WTF::mapDump;
-using WTF::sortedMapDump;
 using WTF::listDumpInContext;
+using WTF::mapDump;
+using WTF::pointerListDump;
+using WTF::sortedListDump;
+using WTF::sortedMapDump;
 
 #endif // ListDump_h
 

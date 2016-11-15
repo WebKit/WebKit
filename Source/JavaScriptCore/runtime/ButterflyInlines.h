@@ -74,6 +74,7 @@ inline Butterfly* Butterfly::create(VM& vm, JSCell* intendedOwner, size_t preCap
         indexingPayloadSizeInBytes);
     if (hasIndexingHeader)
         *result->indexingHeader() = indexingHeader;
+    memset(result->propertyStorage() - propertyCapacity, 0, propertyCapacity * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -105,6 +106,10 @@ inline Butterfly* Butterfly::createOrGrowPropertyStorage(
         result->propertyStorage() - oldPropertyCapacity,
         oldButterfly->propertyStorage() - oldPropertyCapacity,
         totalSize(0, oldPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes));
+    memset(
+        result->propertyStorage() - newPropertyCapacity,
+        0,
+        (newPropertyCapacity - oldPropertyCapacity) * sizeof(EncodedJSValue));
     return result;
 }
 

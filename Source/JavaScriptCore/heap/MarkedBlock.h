@@ -190,30 +190,32 @@ public:
     private:
         Handle(Heap&, void*);
         
-        template<DestructionMode>
+        enum SweepDestructionMode { BlockHasNoDestructors, BlockHasDestructors, BlockHasDestructorsAndCollectorIsRunning };
+        
+        template<SweepDestructionMode>
         FreeList sweepHelperSelectScribbleMode(SweepMode = SweepOnly);
             
         enum ScribbleMode { DontScribble, Scribble };
             
-        template<DestructionMode, ScribbleMode>
+        template<SweepDestructionMode, ScribbleMode>
         FreeList sweepHelperSelectEmptyMode(SweepMode = SweepOnly);
             
         enum EmptyMode { IsEmpty, NotEmpty };
         
-        template<EmptyMode, DestructionMode, ScribbleMode>
+        template<EmptyMode, SweepDestructionMode, ScribbleMode>
         FreeList sweepHelperSelectHasNewlyAllocated(SweepMode = SweepOnly);
         
         enum NewlyAllocatedMode { HasNewlyAllocated, DoesNotHaveNewlyAllocated };
         
-        template<EmptyMode, DestructionMode, ScribbleMode, NewlyAllocatedMode>
+        template<EmptyMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode>
         FreeList sweepHelperSelectSweepMode(SweepMode = SweepOnly);
         
-        template<EmptyMode, SweepMode, DestructionMode, ScribbleMode, NewlyAllocatedMode>
+        template<EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode>
         FreeList sweepHelperSelectMarksMode();
         
         enum MarksMode { MarksStale, MarksNotStale };
         
-        template<EmptyMode, SweepMode, DestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode>
+        template<EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode>
         FreeList specializedSweep();
             
         template<typename Func>

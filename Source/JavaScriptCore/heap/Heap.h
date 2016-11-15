@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ArrayBuffer.h"
+#include "CellState.h"
 #include "CollectionScope.h"
 #include "GCIncomingRefCountedSet.h"
 #include "HandleSet.h"
@@ -35,7 +36,6 @@
 #include "MarkedSpace.h"
 #include "MutatorState.h"
 #include "Options.h"
-#include "SlotVisitor.h"
 #include "StructureIDTable.h"
 #include "TinyBloomFilter.h"
 #include "UnconditionalFinalizer.h"
@@ -70,7 +70,9 @@ class JITStubRoutineSet;
 class JSCell;
 class JSValue;
 class LLIntOffsetsExtractor;
+class MarkStackArray;
 class MarkedArgumentBuffer;
+class SlotVisitor;
 class StopIfNecessaryTimer;
 class VM;
 
@@ -129,7 +131,8 @@ public:
     MarkedSpace& objectSpace() { return m_objectSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
 
-    const SlotVisitor& slotVisitor() const { return m_slotVisitor; }
+    SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
+    MarkStackArray& mutatorMarkStack() { return *m_mutatorMarkStack; }
 
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
@@ -168,7 +171,7 @@ public:
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
     void addExecutable(ExecutableBase*);
 
-    void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
+    void notifyIsSafeToCollect();
     bool isSafeToCollect() const { return m_isSafeToCollect; }
 
     JS_EXPORT_PRIVATE bool isHeapSnapshotting() const;
@@ -203,11 +206,11 @@ public:
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
     void reportExtraMemoryAllocated(size_t);
-    JS_EXPORT_PRIVATE void reportExtraMemoryVisited(CellState oldState, size_t);
+    JS_EXPORT_PRIVATE void reportExtraMemoryVisited(size_t);
 
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
-    JS_EXPORT_PRIVATE void reportExternalMemoryVisited(CellState oldState, size_t);
+    JS_EXPORT_PRIVATE void reportExternalMemoryVisited(size_t);
     size_t externalMemorySize() { return m_externalMemorySize; }
 #endif
 
@@ -283,8 +286,8 @@ public:
     void didAllocateBlock(size_t capacity);
     void didFreeBlock(size_t capacity);
     
-    bool barrierShouldBeFenced() const { return m_barrierShouldBeFenced; }
-    const bool* addressOfBarrierShouldBeFenced() const { return &m_barrierShouldBeFenced; }
+    bool mutatorShouldBeFenced() const { return m_mutatorShouldBeFenced; }
+    const bool* addressOfMutatorShouldBeFenced() const { return &m_mutatorShouldBeFenced; }
     
     unsigned barrierThreshold() const { return m_barrierThreshold; }
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
@@ -391,6 +394,9 @@ private:
     void stopTheWorld();
     void resumeTheWorld();
     
+    class ResumeTheWorldScope;
+    friend class ResumeTheWorldScope;
+    
     void stopTheMutator();
     void resumeTheMutator();
     
@@ -412,7 +418,7 @@ private:
     void setNeedFinalize();
     void waitWhileNeedFinalize();
     
-    unsigned setMutatorWaiting();
+    void setMutatorWaiting();
     void clearMutatorWaiting();
     void notifyThreadStopping(const LockHolder&);
     
@@ -422,31 +428,18 @@ private:
     
     void suspendCompilerThreads();
     void willStartCollection(Optional<CollectionScope>);
-    void flushOldStructureIDTables();
     void flushWriteBarrierBuffer();
-    void stopAllocation();
     void prepareForMarking();
     
-    void markRoots(double gcStartTime);
+    void markToFixpoint(double gcStartTime);
     void gatherStackRoots(ConservativeRoots&);
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void beginMarking();
-    void visitExternalRememberedSet();
-    void visitSmallStrings();
     void visitConservativeRoots(ConservativeRoots&);
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
-    void visitProtectedObjects(HeapRootVisitor&);
-    void visitArgumentBuffers(HeapRootVisitor&);
-    void visitException(HeapRootVisitor&);
-    void visitStrongHandles(HeapRootVisitor&);
-    void visitHandleStack(HeapRootVisitor&);
-    void visitSamplingProfiler();
-    void visitTypeProfiler();
-    void visitShadowChicken();
-    void traceCodeBlocksAndJITStubRoutines();
-    void visitWeakHandles(HeapRootVisitor&);
+    void markToFixpoint(HeapRootVisitor&);
     void updateObjectCounts(double gcStartTime);
     void endMarking();
 
@@ -518,7 +511,8 @@ private:
 
     MachineThreads m_machineThreads;
     
-    SlotVisitor m_slotVisitor;
+    std::unique_ptr<SlotVisitor> m_collectorSlotVisitor;
+    std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
 
     // We pool the slot visitors used by parallel marking threads. It's useful to be able to
     // enumerate over them, and it's useful to have them cache some small amount of memory from
@@ -537,7 +531,7 @@ private:
     bool m_isSafeToCollect;
 
     WriteBarrierBuffer m_writeBarrierBuffer;
-    bool m_barrierShouldBeFenced { Options::forceFencedBarrier() };
+    bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
     VM* m_vm;
@@ -572,7 +566,8 @@ private:
 
     Lock m_markingMutex;
     Condition m_markingConditionVariable;
-    MarkStackArray m_sharedMarkStack;
+    std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
+    std::unique_ptr<MarkStackArray> m_sharedMutatorMarkStack;
     unsigned m_numberOfActiveParallelMarkers { 0 };
     unsigned m_numberOfWaitingParallelMarkers { 0 };
     bool m_parallelMarkersShouldExit { false };
@@ -600,6 +595,7 @@ private:
     static const unsigned mutatorWaitingBit = 1u << 5u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_collectorBelievesThatTheWorldIsStopped { false };
+    MonotonicTime m_stopTime;
     
     Deque<Optional<CollectionScope>> m_requests;
     Ticket m_lastServedTicket { 0 };

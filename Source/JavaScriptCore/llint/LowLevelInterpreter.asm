@@ -333,14 +333,14 @@ else
 end
 
 # Constant for reasoning about butterflies.
-const IsArray                  = 1
-const IndexingShapeMask        = 30
-const NoIndexingShape          = 0
-const Int32Shape               = 20
-const DoubleShape              = 22
-const ContiguousShape          = 26
-const ArrayStorageShape        = 28
-const SlowPutArrayStorageShape = 30
+const IsArray                  = 0x01
+const IndexingShapeMask        = 0x0E
+const NoIndexingShape          = 0x00
+const Int32Shape               = 0x04
+const DoubleShape              = 0x06
+const ContiguousShape          = 0x08
+const ArrayStorageShape        = 0x0A
+const SlowPutArrayStorageShape = 0x0C
 
 # Type constants.
 const StringType = 6
@@ -887,7 +887,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
     const indexingType = cellAndIndexingType 
     loadi JSCell::m_structureID[cell], scratch
     storei scratch, ArrayProfile::m_lastSeenStructureID[profile]
-    loadb JSCell::m_indexingType[cell], indexingType
+    loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
 macro skipIfIsRememberedOrInEden(cell, slowPath)

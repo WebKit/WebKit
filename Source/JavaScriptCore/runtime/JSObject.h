@@ -747,11 +747,10 @@ public:
     bool staticPropertiesReified() { return structure()->staticPropertiesReified(); }
     void reifyAllStaticProperties(ExecState*);
 
-    JS_EXPORT_PRIVATE Butterfly* growOutOfLineStorage(VM&, size_t oldSize, size_t newSize);
-    void setButterflyWithoutChangingStructure(VM&, Butterfly*);
+    JS_EXPORT_PRIVATE Butterfly* allocateMoreOutOfLineStorage(VM&, size_t oldSize, size_t newSize);
         
+    void setButterfly(VM&, Butterfly*); // Always change the butterfly before changing the structure!
     void setStructure(VM&, Structure*);
-    void setStructureAndButterfly(VM&, Structure*, Butterfly*);
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
 
@@ -759,7 +758,7 @@ public:
     {
         structure(vm)->flattenDictionaryStructure(vm, this);
     }
-    void shiftButterflyAfterFlattening(VM&, size_t outOfLineCapacityBefore, size_t outOfLineCapacityAfter);
+    void shiftButterflyAfterFlattening(const GCSafeConcurrentJITLocker&, VM&, Structure* structure, size_t outOfLineCapacityAfter);
 
     JSGlobalObject* globalObject() const
     {
@@ -990,9 +989,9 @@ private:
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     bool getNonIndexPropertySlot(ExecState*, PropertyName, PropertySlot&);
-    bool getOwnNonIndexPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
+    bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
-    void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure&);
+    void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure*);
 
     JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(PropertyName) const;
@@ -1113,6 +1112,7 @@ private:
     explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSObject(vm, structure, butterfly)
     {
+        memset(inlineStorage(), 0, structure->inlineCapacity() * sizeof(EncodedJSValue));
     }
 };
 
@@ -1205,14 +1205,6 @@ inline bool JSObject::isWithScope() const
     return type() == WithScopeType;
 }
 
-inline void JSObject::setStructureAndButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
-{
-    ASSERT(structure);
-    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !structure->hasIndexingHeader(this)));
-    m_butterfly.set(vm, this, butterfly);
-    setStructure(vm, structure);
-}
-
 inline void JSObject::setStructure(VM& vm, Structure* structure)
 {
     ASSERT(structure);
@@ -1220,7 +1212,7 @@ inline void JSObject::setStructure(VM& vm, Structure* structure)
     JSCell::setStructure(vm, structure);
 }
 
-inline void JSObject::setButterflyWithoutChangingStructure(VM& vm, Butterfly* butterfly)
+inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 {
     m_butterfly.set(vm, this, butterfly);
 }
@@ -1273,16 +1265,16 @@ inline JSValue JSObject::getPrototype(VM& vm, ExecState* exec)
 
 // It is safe to call this method with a PropertyName that is actually an index,
 // but if so will always return false (doesn't search index storage).
-ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* structure, PropertyName propertyName, PropertySlot& slot)
 {
     unsigned attributes;
-    PropertyOffset offset = structure.get(vm, propertyName, attributes);
+    PropertyOffset offset = structure->get(vm, propertyName, attributes);
     if (!isValidOffset(offset)) {
         if (!TypeInfo::hasStaticPropertyTable(inlineTypeFlags()))
             return false;
         return getOwnStaticPropertySlot(vm, propertyName, slot);
     }
-
+    
     // getPropertySlot relies on this method never returning index properties!
     ASSERT(!parseIndex(propertyName));
 
@@ -1307,9 +1299,9 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure& struc
     return true;
 }
 
-ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JSValue customGetterSetter, unsigned attributes, Structure& structure)
+ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JSValue customGetterSetter, unsigned attributes, Structure* structure)
 {
-    if (structure.isUncacheableDictionary()) {
+    if (structure->isUncacheableDictionary()) {
         slot.setCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
         return;
     }
@@ -1325,7 +1317,7 @@ ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JS
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
-    Structure& structure = *object->structure(vm);
+    Structure* structure = object->structure(vm);
     if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
         return true;
     if (Optional<uint32_t> index = parseIndex(propertyName))
@@ -1353,10 +1345,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
             return object->getNonIndexPropertySlot(exec, propertyName, slot);
         }
         ASSERT(object->type() != ProxyObjectType);
-        Structure& structure = *structureIDTable.get(object->structureID());
+        Structure* structure = structureIDTable.get(object->structureID());
         if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
-        JSValue prototype = structure.storedPrototype();
+        JSValue prototype = structure->storedPrototype();
         if (!prototype.isObject())
             break;
         object = asObject(prototype);
@@ -1383,132 +1375,6 @@ inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
         return slot.getValue(exec, propertyName);
 
     return jsUndefined();
-}
-
-template<JSObject::PutMode mode>
-ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
-{
-    ASSERT(value);
-    ASSERT(value.isGetterSetter() == !!(attributes & Accessor));
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    ASSERT(!parseIndex(propertyName));
-
-    Structure* structure = this->structure(vm);
-    if (structure->isDictionary()) {
-        ASSERT(!structure->hasInferredTypes());
-        
-        unsigned currentAttributes;
-        PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
-        if (offset != invalidOffset) {
-            if ((mode == PutModePut) && currentAttributes & ReadOnly)
-                return false;
-
-            putDirect(vm, offset, value);
-            structure->didReplaceProperty(offset);
-            slot.setExistingProperty(this, offset);
-
-            if ((attributes & Accessor) != (currentAttributes & Accessor) || (attributes & CustomAccessor) != (currentAttributes & CustomAccessor)) {
-                ASSERT(!(attributes & ReadOnly));
-                setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
-            }
-            return true;
-        }
-
-        if ((mode == PutModePut) && !isStructureExtensible())
-            return false;
-
-        DeferGC deferGC(vm.heap);
-        Butterfly* newButterfly = butterfly();
-        if (this->structure()->putWillGrowOutOfLineStorage())
-            newButterfly = growOutOfLineStorage(vm, this->structure()->outOfLineCapacity(), this->structure()->suggestedNewOutOfLineStorageCapacity());
-        offset = this->structure()->addPropertyWithoutTransition(vm, propertyName, attributes);
-        setStructureAndButterfly(vm, this->structure(), newButterfly);
-
-        validateOffset(offset);
-        ASSERT(this->structure()->isValidOffset(offset));
-        putDirect(vm, offset, value);
-        slot.setNewProperty(this, offset);
-        if (attributes & ReadOnly)
-            this->structure()->setContainsReadOnlyProperties();
-        return true;
-    }
-
-    PropertyOffset offset;
-    size_t currentCapacity = this->structure()->outOfLineCapacity();
-    Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(
-        structure, propertyName, attributes, offset);
-    if (newStructure) {
-        newStructure->willStoreValueForExistingTransition(
-            vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
-        
-        DeferGC deferGC(vm.heap);
-        Butterfly* newButterfly = butterfly();
-        if (currentCapacity != newStructure->outOfLineCapacity()) {
-            ASSERT(newStructure != this->structure());
-            newButterfly = growOutOfLineStorage(vm, currentCapacity, newStructure->outOfLineCapacity());
-        }
-
-        validateOffset(offset);
-        ASSERT(newStructure->isValidOffset(offset));
-        setStructureAndButterfly(vm, newStructure, newButterfly);
-        putDirect(vm, offset, value);
-        slot.setNewProperty(this, offset);
-        return true;
-    }
-
-    unsigned currentAttributes;
-    bool hasInferredType;
-    offset = structure->get(vm, propertyName, currentAttributes, hasInferredType);
-    if (offset != invalidOffset) {
-        if ((mode == PutModePut) && currentAttributes & ReadOnly)
-            return false;
-
-        structure->didReplaceProperty(offset);
-        if (UNLIKELY(hasInferredType)) {
-            structure->willStoreValueForReplace(
-                vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
-        }
-
-        slot.setExistingProperty(this, offset);
-        putDirect(vm, offset, value);
-
-        if ((attributes & Accessor) != (currentAttributes & Accessor) || (attributes & CustomAccessor) != (currentAttributes & CustomAccessor)) {
-            ASSERT(!(attributes & ReadOnly));
-            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
-        }
-        return true;
-    }
-
-    if ((mode == PutModePut) && !isStructureExtensible())
-        return false;
-
-    // We want the structure transition watchpoint to fire after this object has switched
-    // structure. This allows adaptive watchpoints to observe if the new structure is the one
-    // we want.
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
-    
-    newStructure = Structure::addNewPropertyTransition(
-        vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
-    newStructure->willStoreValueForNewTransition(
-        vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
-    
-    validateOffset(offset);
-    ASSERT(newStructure->isValidOffset(offset));
-    DeferGC deferGC(vm.heap);
-    size_t oldCapacity = structure->outOfLineCapacity();
-    size_t newCapacity = newStructure->outOfLineCapacity();
-    ASSERT(oldCapacity <= newCapacity);
-    if (oldCapacity == newCapacity)
-        setStructure(vm, newStructure);
-    else {
-        Butterfly* newButterfly = growOutOfLineStorage(vm, oldCapacity, newCapacity);
-        setStructureAndButterfly(vm, newStructure, newButterfly);
-    }
-    putDirect(vm, offset, value);
-    slot.setNewProperty(this, offset);
-    if (attributes & ReadOnly)
-        newStructure->setContainsReadOnlyProperties();
-    return true;
 }
 
 inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1547,24 +1413,6 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
     return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
-}
-
-inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
-{
-    DeferGC deferGC(vm.heap);
-    ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
-    ASSERT(!value.isCustomGetterSetter());
-    Butterfly* newButterfly = m_butterfly.get();
-    if (structure()->putWillGrowOutOfLineStorage())
-        newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
-    Structure* structure = this->structure();
-    PropertyOffset offset = structure->addPropertyWithoutTransition(vm, propertyName, attributes);
-    if (attributes & ReadOnly)
-        structure->setContainsReadOnlyProperties();
-    bool shouldOptimize = false;
-    structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
-    setStructureAndButterfly(vm, structure, newButterfly);
-    putDirect(vm, offset, value);
 }
 
 ALWAYS_INLINE JSObject* Register::object() const
