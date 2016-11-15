@@ -1,3 +1,15 @@
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: URL Breakpoints that resolve in multiple workers should only appear in the UI once
+        https://bugs.webkit.org/show_bug.cgi?id=164334
+        <rdar://problem/29073523>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint):
+        Don't add a duplicate BreakpointTreeElements for the same Breakpoint.
+
 2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker debugging should pause all targets and view call frames in all targets

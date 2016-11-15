@@ -378,9 +378,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _addBreakpoint(breakpoint)
     {
-        var sourceCode = breakpoint.sourceCodeLocation.displaySourceCode;
+        let sourceCode = breakpoint.sourceCodeLocation.displaySourceCode;
         if (!sourceCode)
             return null;
+
+        if (this._breakpointsContentTreeOutline.findTreeElement(breakpoint))
+            return;
 
         let parentTreeElement = this._addTreeElementForSourceCodeToTreeOutline(sourceCode, this._breakpointsContentTreeOutline);
 
@@ -391,7 +394,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (breakpoint.disabled)
             breakpoint.resolved = true;
 
-        var breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint);
+        let breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint);
         parentTreeElement.insertChild(breakpointTreeElement, insertionIndexForObjectInListSortedByFunction(breakpointTreeElement, parentTreeElement.children, this._compareDebuggerTreeElements));
         if (parentTreeElement.children.length === 1)
             parentTreeElement.expand();
