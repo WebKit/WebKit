@@ -1,3 +1,11 @@
+2016-11-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip fast/forms/search-cancel-button-change-input.html on ios-simulator since the test relies upon mouse events.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         [mac-wk1 debug] ASSERTION FAILED: thisObject->m_propertyTableUnsafe

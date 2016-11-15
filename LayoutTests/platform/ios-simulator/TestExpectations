@@ -294,6 +294,7 @@ fast/events/mouse-force-up.html [ Skip ]
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
 
 # Mouse events are not supported on iOS
+fast/forms/search-cancel-button-change-input.html [ Skip ]
 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
 fast/scrolling/overflow-scroll-past-max.html [ Skip ]
 pageoverlay/overlay-small-frame-mouse-events.html [ Skip ]
