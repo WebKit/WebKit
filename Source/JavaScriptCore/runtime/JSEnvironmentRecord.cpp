@@ -49,7 +49,7 @@ void JSEnvironmentRecord::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builde
     JSEnvironmentRecord* thisObject = jsCast<JSEnvironmentRecord*>(cell);
     Base::heapSnapshot(cell, builder);
 
-    ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
+    ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
     SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
     for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
         SymbolTableEntry::Fast entry = it->value;

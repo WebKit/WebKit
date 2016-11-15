@@ -987,7 +987,7 @@ void Heap::deleteUnmarkedCompiledCode()
 void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
-    ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
+    ASSERT(!Options::useConcurrentJS() || !isCompilationThread());
     if (!Heap::isMarkedConcurrently(cell)) {
         // During a full collection a store into an unmarked object that had surivived past
         // collections will manifest as a store to an unmarked black object. If the object gets

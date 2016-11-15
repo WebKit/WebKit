@@ -41,7 +41,7 @@ void FrequentExitSite::dump(PrintStream& out) const
 ExitProfile::ExitProfile() { }
 ExitProfile::~ExitProfile() { }
 
-bool ExitProfile::add(const ConcurrentJITLocker&, CodeBlock* owner, const FrequentExitSite& site)
+bool ExitProfile::add(const ConcurrentJSLocker&, CodeBlock* owner, const FrequentExitSite& site)
 {
     ASSERT(site.jitType() != ExitFromAnything);
 
@@ -85,7 +85,7 @@ Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
     return result;
 }
 
-bool ExitProfile::hasExitSite(const ConcurrentJITLocker&, const FrequentExitSite& site) const
+bool ExitProfile::hasExitSite(const ConcurrentJSLocker&, const FrequentExitSite& site) const
 {
     if (!m_frequentExitSites)
         return false;
@@ -100,7 +100,7 @@ bool ExitProfile::hasExitSite(const ConcurrentJITLocker&, const FrequentExitSite
 QueryableExitProfile::QueryableExitProfile() { }
 QueryableExitProfile::~QueryableExitProfile() { }
 
-void QueryableExitProfile::initialize(const ConcurrentJITLocker&, const ExitProfile& profile)
+void QueryableExitProfile::initialize(const ConcurrentJSLocker&, const ExitProfile& profile)
 {
     if (!profile.m_frequentExitSites)
         return;

@@ -62,7 +62,7 @@ bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 }
 
 #if ENABLE(DFG_JIT)
-bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
+bool GetByIdStatus::hasExitSite(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
@@ -109,7 +109,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
-    ConcurrentJITLocker locker(profiledBlock->m_lock);
+    ConcurrentJSLocker locker(profiledBlock->m_lock);
 
     GetByIdStatus result;
 
@@ -132,7 +132,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 }
 
 #if ENABLE(DFG_JIT)
-GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
     GetByIdStatus result = GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         locker, profiledBlock, stubInfo, uid,
@@ -146,7 +146,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locke
 
 #if ENABLE(JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
-    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
+    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
 {
     if (!stubInfo || !stubInfo->everConsidered)
@@ -298,14 +298,14 @@ GetByIdStatus GetByIdStatus::computeFor(
     if (dfgBlock) {
         CallLinkStatus::ExitSiteData exitSiteData;
         {
-            ConcurrentJITLocker locker(profiledBlock->m_lock);
+            ConcurrentJSLocker locker(profiledBlock->m_lock);
             exitSiteData = CallLinkStatus::computeExitSiteData(
                 locker, profiledBlock, codeOrigin.bytecodeIndex);
         }
         
         GetByIdStatus result;
         {
-            ConcurrentJITLocker locker(dfgBlock->m_lock);
+            ConcurrentJSLocker locker(dfgBlock->m_lock);
             result = computeForStubInfoWithoutExitSiteFeedback(
                 locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
         }
@@ -314,7 +314,7 @@ GetByIdStatus GetByIdStatus::computeFor(
             return result;
     
         {
-            ConcurrentJITLocker locker(profiledBlock->m_lock);
+            ConcurrentJSLocker locker(profiledBlock->m_lock);
             if (hasExitSite(locker, profiledBlock, codeOrigin.bytecodeIndex))
                 return GetByIdStatus(TakesSlowPath, true);
         }

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "JSObject.h"
 #include "JSSymbolTableObject.h"
 #include "SymbolTable.h"
@@ -97,7 +97,7 @@ protected:
     }
     
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
-    ConcurrentJITLock m_lock;
+    ConcurrentJSLock m_lock;
 };
 
 } // namespace JSC

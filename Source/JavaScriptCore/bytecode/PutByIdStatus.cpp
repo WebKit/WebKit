@@ -54,7 +54,7 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 }
 
 #if ENABLE(DFG_JIT)
-bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
+bool PutByIdStatus::hasExitSite(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
@@ -110,7 +110,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
-    ConcurrentJITLocker locker(profiledBlock->m_lock);
+    ConcurrentJSLocker locker(profiledBlock->m_lock);
     
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
@@ -134,7 +134,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 }
 
 #if ENABLE(JIT)
-PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locker, CodeBlock* baselineBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* baselineBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
     return computeForStubInfo(
         locker, baselineBlock, stubInfo, uid,
@@ -142,7 +142,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locke
 }
 
 PutByIdStatus PutByIdStatus::computeForStubInfo(
-    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
+    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     if (!stubInfo || !stubInfo->everConsidered)
@@ -266,7 +266,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
     if (dfgBlock) {
         CallLinkStatus::ExitSiteData exitSiteData;
         {
-            ConcurrentJITLocker locker(baselineBlock->m_lock);
+            ConcurrentJSLocker locker(baselineBlock->m_lock);
             if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex))
                 return PutByIdStatus(TakesSlowPath);
             exitSiteData = CallLinkStatus::computeExitSiteData(
@@ -275,7 +275,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
             
         PutByIdStatus result;
         {
-            ConcurrentJITLocker locker(dfgBlock->m_lock);
+            ConcurrentJSLocker locker(dfgBlock->m_lock);
             result = computeForStubInfo(
                 locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
         }

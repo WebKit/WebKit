@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "ExecutableAllocator.h"
 #include "MatchResult.h"
 #include "RegExpKey.h"
@@ -142,7 +142,7 @@ private:
     unsigned m_rtMatchCallCount;
     unsigned m_rtMatchFoundCount;
 #endif
-    ConcurrentJITLock m_lock;
+    ConcurrentJSLock m_lock;
 
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;

@@ -34,7 +34,7 @@ template <typename T>
 inline void WriteBarrierBase<T>::set(VM& vm, const JSCell* owner, T* value)
 {
     ASSERT(value);
-    ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
+    ASSERT(!Options::useConcurrentJS() || !isCompilationThread());
     validateCell(value);
     setEarlyValue(vm, owner, value);
 }
@@ -56,7 +56,7 @@ inline void WriteBarrierBase<T>::setEarlyValue(VM& vm, const JSCell* owner, T* v
 
 inline void WriteBarrierBase<Unknown>::set(VM& vm, const JSCell* owner, JSValue value)
 {
-    ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
+    ASSERT(!Options::useConcurrentJS() || !isCompilationThread());
     m_value = JSValue::encode(value);
     vm.heap.writeBarrier(owner, value);
 }

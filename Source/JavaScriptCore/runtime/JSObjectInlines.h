@@ -167,7 +167,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
     structure->addPropertyWithoutTransition(
         vm, propertyName, attributes,
-        [&] (const GCSafeConcurrentJITLocker&, PropertyOffset offset) {
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset) {
             if (structure->outOfLineCapacity() != oldOutOfLineCapacity) {
                 butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, structure->outOfLineCapacity());
                 WTF::storeStoreFence();
@@ -266,7 +266,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
         offset = structure->addPropertyWithoutTransition(
             vm, propertyName, attributes,
-            [&] (const GCSafeConcurrentJITLocker&, PropertyOffset offset) {
+            [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset) {
                 Butterfly* butterfly = this->butterfly();
                 if (structure->outOfLineCapacity() != oldOutOfLineCapacity) {
                     butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, structure->outOfLineCapacity());

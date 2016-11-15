@@ -679,7 +679,7 @@ void CodeBlock::beginDumpProfiling(PrintStream& out, bool& hasPrintedProfiling)
 
 void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     ++it;
     CString description = it->u.profile->briefDescription(locker);
@@ -691,7 +691,7 @@ void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, boo
 
 void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     ++it;
     if (!it->u.arrayProfile)
@@ -1964,7 +1964,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = jsDynamicCast<UnlinkedModuleProgramCodeBlock*>(unlinkedCodeBlock)) {
         SymbolTable* clonedSymbolTable = jsCast<ModuleProgramExecutable*>(ownerExecutable)->moduleEnvironmentSymbolTable();
         if (m_vm->typeProfiler()) {
-            ConcurrentJITLocker locker(clonedSymbolTable->m_lock);
+            ConcurrentJSLocker locker(clonedSymbolTable->m_lock);
             clonedSymbolTable->prepareForTypeProfiling(locker);
         }
         replaceConstant(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset(), clonedSymbolTable);
@@ -2219,7 +2219,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     int symbolTableIndex = pc[5].u.operand;
                     SymbolTable* symbolTable = jsCast<SymbolTable*>(getConstant(symbolTableIndex));
                     const Identifier& ident = identifier(pc[2].u.operand);
-                    ConcurrentJITLocker locker(symbolTable->m_lock);
+                    ConcurrentJSLocker locker(symbolTable->m_lock);
                     auto iter = symbolTable->find(locker, ident.impl());
                     ASSERT(iter != symbolTable->end(locker));
                     iter->value.prepareToWatch();
@@ -2275,7 +2275,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
                 UniquedStringImpl* impl = (op.type == ModuleVar) ? op.importedName.get() : ident.impl();
                 if (symbolTable) {
-                    ConcurrentJITLocker locker(symbolTable->m_lock);
+                    ConcurrentJSLocker locker(symbolTable->m_lock);
                     // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
                     symbolTable->prepareForTypeProfiling(locker);
                     globalVariableID = symbolTable->uniqueIDForVariable(locker, impl, vm);
@@ -2289,7 +2289,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 int symbolTableIndex = pc[2].u.operand;
                 SymbolTable* symbolTable = jsCast<SymbolTable*>(getConstant(symbolTableIndex));
                 const Identifier& ident = identifier(pc[4].u.operand);
-                ConcurrentJITLocker locker(symbolTable->m_lock);
+                ConcurrentJSLocker locker(symbolTable->m_lock);
                 // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
                 globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), vm);
                 globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), vm);
@@ -2457,7 +2457,7 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
         if (!constant.isEmpty()) {
             if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(constant)) {
                 if (hasTypeProfiler) {
-                    ConcurrentJITLocker locker(symbolTable->m_lock);
+                    ConcurrentJSLocker locker(symbolTable->m_lock);
                     symbolTable->prepareForTypeProfiling(locker);
                 }
 
@@ -2973,7 +2973,7 @@ void CodeBlock::UnconditionalFinalizer::finalizeUnconditionally()
 #endif
 }
 
-void CodeBlock::getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result)
+void CodeBlock::getStubInfoMap(const ConcurrentJSLocker&, StubInfoMap& result)
 {
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType()))
@@ -2985,11 +2985,11 @@ void CodeBlock::getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result)
 
 void CodeBlock::getStubInfoMap(StubInfoMap& result)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     getStubInfoMap(locker, result);
 }
 
-void CodeBlock::getCallLinkInfoMap(const ConcurrentJITLocker&, CallLinkInfoMap& result)
+void CodeBlock::getCallLinkInfoMap(const ConcurrentJSLocker&, CallLinkInfoMap& result)
 {
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType()))
@@ -3001,11 +3001,11 @@ void CodeBlock::getCallLinkInfoMap(const ConcurrentJITLocker&, CallLinkInfoMap& 
 
 void CodeBlock::getCallLinkInfoMap(CallLinkInfoMap& result)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     getCallLinkInfoMap(locker, result);
 }
 
-void CodeBlock::getByValInfoMap(const ConcurrentJITLocker&, ByValInfoMap& result)
+void CodeBlock::getByValInfoMap(const ConcurrentJSLocker&, ByValInfoMap& result)
 {
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
@@ -3019,14 +3019,14 @@ void CodeBlock::getByValInfoMap(const ConcurrentJITLocker&, ByValInfoMap& result
 
 void CodeBlock::getByValInfoMap(ByValInfoMap& result)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     getByValInfoMap(locker, result);
 }
 
 #if ENABLE(JIT)
 StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return m_stubInfos.add(accessType);
 }
 
@@ -3061,13 +3061,13 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 
 ByValInfo* CodeBlock::addByValInfo()
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return m_byValInfos.add();
 }
 
 CallLinkInfo* CodeBlock::addCallLinkInfo()
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return m_callLinkInfos.add();
 }
 
@@ -3083,7 +3083,7 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
 void CodeBlock::resetJITData()
 {
     RELEASE_ASSERT(!JITCode::isJIT(jitType()));
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     // We can clear these because no other thread will have references to any stub infos, call
     // link infos, or by val infos if we don't have JIT code. Attempts to query these data
@@ -3313,7 +3313,7 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
 
     m_rareCaseProfiles.shrinkToFit();
     
@@ -3975,7 +3975,7 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 }
 #endif
 
-ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset)
+ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset)
 {
     for (unsigned i = 0; i < m_arrayProfiles.size(); ++i) {
         if (m_arrayProfiles[i].bytecodeOffset() == bytecodeOffset)
@@ -3986,11 +3986,11 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJITLocker&, unsigned by
 
 ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return getArrayProfile(locker, bytecodeOffset);
 }
 
-ArrayProfile* CodeBlock::addArrayProfile(const ConcurrentJITLocker&, unsigned bytecodeOffset)
+ArrayProfile* CodeBlock::addArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset)
 {
     m_arrayProfiles.append(ArrayProfile(bytecodeOffset));
     return &m_arrayProfiles.last();
@@ -3998,11 +3998,11 @@ ArrayProfile* CodeBlock::addArrayProfile(const ConcurrentJITLocker&, unsigned by
 
 ArrayProfile* CodeBlock::addArrayProfile(unsigned bytecodeOffset)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return addArrayProfile(locker, bytecodeOffset);
 }
 
-ArrayProfile* CodeBlock::getOrAddArrayProfile(const ConcurrentJITLocker& locker, unsigned bytecodeOffset)
+ArrayProfile* CodeBlock::getOrAddArrayProfile(const ConcurrentJSLocker& locker, unsigned bytecodeOffset)
 {
     ArrayProfile* result = getArrayProfile(locker, bytecodeOffset);
     if (result)
@@ -4012,7 +4012,7 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(const ConcurrentJITLocker& locker,
 
 ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return getOrAddArrayProfile(locker, bytecodeOffset);
 }
 
@@ -4042,7 +4042,7 @@ const Identifier& CodeBlock::identifier(int index) const
 
 void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
@@ -4074,7 +4074,7 @@ void CodeBlock::updateAllValueProfilePredictions()
 
 void CodeBlock::updateAllArrayPredictions()
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     for (unsigned i = m_arrayProfiles.size(); i--;)
         m_arrayProfiles[i].computeUpdatedPrediction(locker, this);
@@ -4284,7 +4284,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
         if (m_constantRegisters[i].get().isEmpty())
             continue;
         if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(m_constantRegisters[i].get())) {
-            ConcurrentJITLocker locker(symbolTable->m_lock);
+            ConcurrentJSLocker locker(symbolTable->m_lock);
             auto end = symbolTable->end(locker);
             for (auto ptr = symbolTable->begin(locker); ptr != end; ++ptr) {
                 if (ptr->value.varOffset() == VarOffset(virtualRegister)) {
@@ -4636,7 +4636,7 @@ BytecodeLivenessAnalysis& CodeBlock::livenessAnalysisSlow()
 {
     std::unique_ptr<BytecodeLivenessAnalysis> analysis = std::make_unique<BytecodeLivenessAnalysis>(this);
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         if (!m_livenessAnalysis)
             m_livenessAnalysis = WTFMove(analysis);
         return *m_livenessAnalysis;

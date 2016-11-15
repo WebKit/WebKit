@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ClassInfo.h"
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "IndexingType.h"
 #include "InferredTypeTable.h"
 #include "JSCJSValue.h"
@@ -581,7 +581,7 @@ public:
     
     static void dumpContextHeader(PrintStream&);
     
-    ConcurrentJITLock& lock() { return m_lock; }
+    ConcurrentJSLock& lock() { return m_lock; }
     
     DECLARE_EXPORT_INFO;
 
@@ -760,7 +760,7 @@ private:
 
     uint8_t m_inlineCapacity;
     
-    ConcurrentJITLock m_lock;
+    ConcurrentJSLock m_lock;
     
     uint32_t m_bitField;
 };

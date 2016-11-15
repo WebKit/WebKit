@@ -627,7 +627,7 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
     }
     ASSERT((offset == invalidOffset) == slot.isUnset());
 
-    ConcurrentJITLocker locker(codeBlock->m_lock);
+    ConcurrentJSLocker locker(codeBlock->m_lock);
 
     if (slot.isUnset()) {
         pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_unset);
@@ -675,7 +675,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             if (structure->propertyAccessesAreCacheable()) {
                 vm.heap.writeBarrier(codeBlock);
                 
-                ConcurrentJITLocker locker(codeBlock->m_lock);
+                ConcurrentJSLocker locker(codeBlock->m_lock);
 
                 pc[4].u.structureID = structure->id();
                 pc[5].u.operand = slot.cachedOffset();
@@ -748,7 +748,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             vm.heap.writeBarrier(codeBlock);
             
             if (slot.type() == PutPropertySlot::NewProperty) {
-                GCSafeConcurrentJITLocker locker(codeBlock->m_lock, vm.heap);
+                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
             
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
@@ -1335,7 +1335,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
         CodeBlock* callerCodeBlock = exec->codeBlock();
 
-        ConcurrentJITLocker locker(callerCodeBlock->m_lock);
+        ConcurrentJSLocker locker(callerCodeBlock->m_lock);
         
         if (callLinkInfo->isOnList())
             callLinkInfo->remove();

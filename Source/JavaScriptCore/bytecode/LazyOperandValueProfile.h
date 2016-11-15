@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include <wtf/HashMap.h>
@@ -152,10 +152,10 @@ public:
     CompressedLazyOperandValueProfileHolder();
     ~CompressedLazyOperandValueProfileHolder();
     
-    void computeUpdatedPredictions(const ConcurrentJITLocker&);
+    void computeUpdatedPredictions(const ConcurrentJSLocker&);
     
     LazyOperandValueProfile* add(
-        const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key);
+        const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key);
     
 private:
     friend class LazyOperandValueProfileParser;
@@ -169,13 +169,13 @@ public:
     ~LazyOperandValueProfileParser();
     
     void initialize(
-        const ConcurrentJITLocker&, CompressedLazyOperandValueProfileHolder& holder);
+        const ConcurrentJSLocker&, CompressedLazyOperandValueProfileHolder& holder);
     
     LazyOperandValueProfile* getIfPresent(
         const LazyOperandValueProfileKey& key) const;
     
     SpeculatedType prediction(
-        const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key) const;
+        const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key) const;
 private:
     HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };

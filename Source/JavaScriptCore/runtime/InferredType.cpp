@@ -366,7 +366,7 @@ InferredType::~InferredType()
 {
 }
 
-bool InferredType::canWatch(const ConcurrentJITLocker& locker, const Descriptor& expected)
+bool InferredType::canWatch(const ConcurrentJSLocker& locker, const Descriptor& expected)
 {
     if (expected.kind() == Top)
         return false;
@@ -376,11 +376,11 @@ bool InferredType::canWatch(const ConcurrentJITLocker& locker, const Descriptor&
 
 bool InferredType::canWatch(const Descriptor& expected)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return canWatch(locker, expected);
 }
 
-void InferredType::addWatchpoint(const ConcurrentJITLocker& locker, Watchpoint* watchpoint)
+void InferredType::addWatchpoint(const ConcurrentJSLocker& locker, Watchpoint* watchpoint)
 {
     RELEASE_ASSERT(descriptor(locker).kind() != Top);
 
@@ -389,7 +389,7 @@ void InferredType::addWatchpoint(const ConcurrentJITLocker& locker, Watchpoint* 
 
 void InferredType::addWatchpoint(Watchpoint* watchpoint)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     addWatchpoint(locker, watchpoint);
 }
 
@@ -404,7 +404,7 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
     Descriptor myType;
     bool result;
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
         myType = Descriptor::forValue(value);
 
@@ -427,7 +427,7 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
 {
     Descriptor oldType;
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
         if (!set(locker, vm, Top))
             return;
@@ -437,11 +437,11 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
     m_watchpointSet.fireAll(vm, detail);
 }
 
-bool InferredType::set(const ConcurrentJITLocker& locker, VM& vm, Descriptor newDescriptor)
+bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newDescriptor)
 {
     // We will trigger write barriers while holding our lock. Currently, write barriers don't GC, but that
     // could change. If it does, we don't want to deadlock. Note that we could have used
-    // GCSafeConcurrentJITLocker in the caller, but the caller is on a fast path so maybe that wouldn't be
+    // GCSafeConcurrentJSLocker in the caller, but the caller is on a fast path so maybe that wouldn't be
     // a good idea.
     DeferGCForAWhile deferGC(vm.heap);
     
@@ -506,7 +506,7 @@ void InferredType::removeStructure()
     Descriptor oldDescriptor;
     Descriptor newDescriptor;
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         oldDescriptor = descriptor(locker);
         newDescriptor = oldDescriptor;
         newDescriptor.removeStructure();

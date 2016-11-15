@@ -59,7 +59,7 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
     case LazyOperand: {
         LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, VirtualRegister(u.lazyOperand.operand));
         
-        ConcurrentJITLocker locker(u.lazyOperand.codeBlock->m_lock);
+        ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =
             u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
         jit.storeValue(regs, profile->specFailBucket(0));

@@ -54,7 +54,7 @@ void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredTypeTable* inferredTypeTable = jsCast<InferredTypeTable*>(cell);
 
-    ConcurrentJITLocker locker(inferredTypeTable->m_lock);
+    ConcurrentJSLocker locker(inferredTypeTable->m_lock);
     
     for (auto& entry : inferredTypeTable->m_table) {
         if (!entry.value)
@@ -66,7 +66,7 @@ void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     }
 }
 
-InferredType* InferredTypeTable::get(const ConcurrentJITLocker&, UniquedStringImpl* uid)
+InferredType* InferredTypeTable::get(const ConcurrentJSLocker&, UniquedStringImpl* uid)
 {
     auto iter = m_table.find(uid);
     if (iter == m_table.end() || !iter->value)
@@ -83,7 +83,7 @@ InferredType* InferredTypeTable::get(const ConcurrentJITLocker&, UniquedStringIm
 
 InferredType* InferredTypeTable::get(UniquedStringImpl* uid)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     return get(locker, uid);
 }
 
@@ -111,7 +111,7 @@ bool InferredTypeTable::willStoreValue(
 
     TableType::AddResult result;
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         result = m_table.add(propertyName.uid(), WriteBarrier<InferredType>());
     }
     if (result.isNewEntry) {
@@ -143,7 +143,7 @@ void InferredTypeTable::makeTop(VM& vm, PropertyName propertyName, StoredPropert
 
     TableType::AddResult result;
     {
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         result = m_table.add(propertyName.uid(), WriteBarrier<InferredType>());
     }
     if (!result.iterator->value)

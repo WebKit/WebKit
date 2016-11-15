@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "RuntimeType.h"
 #include "StructureSet.h"
 #include <wtf/HashSet.h>
@@ -97,9 +97,9 @@ public:
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
     bool doesTypeConformTo(RuntimeTypeMask test) const;
     RuntimeTypeMask seenTypes() const { return m_seenTypes; }
-    StructureSet structureSet(const ConcurrentJITLocker&) const { return m_structureSet; }
+    StructureSet structureSet(const ConcurrentJSLocker&) const { return m_structureSet; }
 
-    ConcurrentJITLock m_lock;
+    ConcurrentJSLock m_lock;
 private:
     bool m_isOverflown;
     RuntimeTypeMask m_seenTypes;

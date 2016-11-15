@@ -233,7 +233,7 @@ typedef const char* optionString;
     v(bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(bool, logExecutableAllocation, false, Normal, nullptr) \
     \
-    v(bool, useConcurrentJIT, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
+    v(bool, useConcurrentJS, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1, Normal, nullptr) \
     v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1, Normal, nullptr) \
     v(int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
@@ -431,7 +431,7 @@ enum OptionEquivalence {
     v(enablePolymorphicCallInlining, usePolymorphicCallInlining, SameOption) \
     v(enableMovHintRemoval, useMovHintRemoval, SameOption) \
     v(enableObjectAllocationSinking, useObjectAllocationSinking, SameOption) \
-    v(enableConcurrentJIT, useConcurrentJIT, SameOption) \
+    v(enableConcurrentJS, useConcurrentJS, SameOption) \
     v(enableProfiler, useProfiler, SameOption) \
     v(enableArchitectureSpecificOptimizations, useArchitectureSpecificOptimizations, SameOption) \
     v(enablePolyvariantCallInlining, usePolyvariantCallInlining, SameOption) \

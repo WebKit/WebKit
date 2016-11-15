@@ -262,7 +262,7 @@ RegExp* RegExp::create(VM& vm, const String& patternString, RegExpFlags flags)
 
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->stackLimit());
     if (m_constructionError) {
@@ -304,7 +304,7 @@ int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ov
 bool RegExp::matchConcurrently(
     VM& vm, const String& s, unsigned startOffset, int& position, Vector<int>& ovector)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
 
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -315,7 +315,7 @@ bool RegExp::matchConcurrently(
 
 void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->stackLimit());
     if (m_constructionError) {
@@ -356,7 +356,7 @@ MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
 
 bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
 
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -367,7 +367,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
 
 void RegExp::deleteCode()
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     if (!hasCode())
         return;

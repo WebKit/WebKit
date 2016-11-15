@@ -55,13 +55,13 @@ public:
 
     DECLARE_INFO;
 
-    ConcurrentJITLock& lock() { return m_lock; }
+    ConcurrentJSLock& lock() { return m_lock; }
 
     bool isEmpty() const { return m_table.isEmpty(); }
 
     // Get the current inferred type. Returns nullptr for both Top and Bottom. Null means Bottom if the
     // owning Structure doesn't know about the property.
-    InferredType* get(const ConcurrentJITLocker&, UniquedStringImpl*);
+    InferredType* get(const ConcurrentJSLocker&, UniquedStringImpl*);
     InferredType* get(UniquedStringImpl*);
     InferredType* get(PropertyName);
 
@@ -103,7 +103,7 @@ private:
 
     // We only grab this lock when we're doing modifications on the main thread, or reads on the compiler
     // thread. The compiler thread is not allowed to do modifications.
-    ConcurrentJITLock m_lock;
+    ConcurrentJSLock m_lock;
 };
 
 } // namespace JSC

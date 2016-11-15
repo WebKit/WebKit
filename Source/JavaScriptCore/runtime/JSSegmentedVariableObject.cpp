@@ -36,7 +36,7 @@ namespace JSC {
 
 ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     for (unsigned i = m_variables.size(); i--;) {
         if (&m_variables[i] != variableAddress)
@@ -49,7 +49,7 @@ ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
 
 ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesToAdd, JSValue initialValue)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     size_t oldSize = m_variables.size();
     m_variables.grow(oldSize + numberOfVariablesToAdd);
@@ -75,7 +75,7 @@ void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& 
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
     Base::heapSnapshot(cell, builder);
 
-    ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
+    ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
     SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
     for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
         SymbolTableEntry::Fast entry = it->value;

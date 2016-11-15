@@ -33,7 +33,7 @@ namespace JSC {
 CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }
 CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() { }
 
-void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJITLocker& locker)
+void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJSLocker& locker)
 {
     if (!m_data)
         return;
@@ -43,7 +43,7 @@ void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const Co
 }
 
 LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(
-    const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key)
+    const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key)
 {
     if (!m_data)
         m_data = std::make_unique<LazyOperandValueProfile::List>();
@@ -62,7 +62,7 @@ LazyOperandValueProfileParser::LazyOperandValueProfileParser() { }
 LazyOperandValueProfileParser::~LazyOperandValueProfileParser() { }
 
 void LazyOperandValueProfileParser::initialize(
-    const ConcurrentJITLocker&, CompressedLazyOperandValueProfileHolder& holder)
+    const ConcurrentJSLocker&, CompressedLazyOperandValueProfileHolder& holder)
 {
     ASSERT(m_map.isEmpty());
     
@@ -87,7 +87,7 @@ LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(
 }
 
 SpeculatedType LazyOperandValueProfileParser::prediction(
-    const ConcurrentJITLocker& locker, const LazyOperandValueProfileKey& key) const
+    const ConcurrentJSLocker& locker, const LazyOperandValueProfileKey& key) const
 {
     LazyOperandValueProfile* profile = getIfPresent(key);
     if (!profile)

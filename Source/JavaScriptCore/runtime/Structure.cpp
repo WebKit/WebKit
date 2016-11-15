@@ -337,7 +337,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     // Must hold the lock on this structure, since we will be modifying this structure's
     // property map. We don't want getConcurrently() to see the property map in a half-baked
     // state.
-    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
     if (setPropertyTable)
         this->setPropertyTable(vm, table);
 
@@ -380,7 +380,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
 
 Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
-    ConcurrentJITLocker locker(structure->m_lock);
+    ConcurrentJSLocker locker(structure->m_lock);
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
 }
 
@@ -478,7 +478,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
 
     checkOffset(transition->m_offset, transition->inlineCapacity());
     {
-        ConcurrentJITLocker locker(structure->m_lock);
+        ConcurrentJSLocker locker(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -597,7 +597,7 @@ PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm)
     if (result) {
         if (isPinnedPropertyTable())
             return result->copy(vm, result->size() + 1);
-        ConcurrentJITLocker locker(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         setPropertyTable(vm, nullptr);
         return result;
     }
@@ -668,7 +668,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     if (structure->isDictionary())
         transition->pin(vm, transition->ensurePropertyTable(vm));
     else {
-        ConcurrentJITLocker locker(structure->m_lock);
+        ConcurrentJSLocker locker(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }
 
@@ -719,7 +719,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     checkOffsetConsistency();
     ASSERT(isDictionary());
     
-    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
 
     size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
     if (isUncacheableDictionary()) {
@@ -803,7 +803,7 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     
     if (!hasRareData())
         allocateRareData(vm);
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     StructureRareData* rareData = this->rareData();
     if (!rareData->m_replacementWatchpointSets) {
         rareData->m_replacementWatchpointSets =
@@ -943,12 +943,12 @@ Vector<PropertyMapEntry> Structure::getPropertiesConcurrently()
 
 PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes)
 {
-    return add(vm, propertyName, attributes, [] (const GCSafeConcurrentJITLocker&, PropertyOffset) { });
+    return add(vm, propertyName, attributes, [] (const GCSafeConcurrentJSLocker&, PropertyOffset) { });
 }
 
 PropertyOffset Structure::remove(PropertyName propertyName)
 {
-    return remove(propertyName, [] (const ConcurrentJITLocker&, PropertyOffset) { });
+    return remove(propertyName, [] (const ConcurrentJSLocker&, PropertyOffset) { });
 }
 
 void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -1023,7 +1023,7 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     JSCell::visitChildren(thisObject, visitor);
     
-    ConcurrentJITLocker locker(thisObject->m_lock);
+    ConcurrentJSLocker locker(thisObject->m_lock);
     
     visitor.append(&thisObject->m_globalObject);
     if (!thisObject->isObject())

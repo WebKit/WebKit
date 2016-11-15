@@ -49,7 +49,7 @@ public:
         
         ASSERT(codeBlock()->numParameters() >= 1);
         {
-            ConcurrentJITLocker locker(profiledBlock()->m_lock);
+            ConcurrentJSLocker locker(profiledBlock()->m_lock);
             
             for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
                 ValueProfile* profile = profiledBlock()->valueProfileForArgument(arg);

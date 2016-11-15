@@ -233,7 +233,7 @@ inline void Structure::didReplaceProperty(PropertyOffset offset)
 
 inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     if (!hasRareData())
         return nullptr;
     WTF::loadLoadFence();
@@ -290,7 +290,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 {
     PropertyTable* table = ensurePropertyTable(vm);
 
-    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
     
     setPropertyTable(vm, table);
     
@@ -315,7 +315,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 template<typename Func>
 inline PropertyOffset Structure::remove(PropertyName propertyName, const Func& func)
 {
-    ConcurrentJITLocker locker(m_lock);
+    ConcurrentJSLocker locker(m_lock);
     
     checkConsistency();
 

@@ -44,7 +44,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
 
     {
-        ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
+        ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->value.getAttributes() & DontEnum && !mode.includeDontEnumProperties())

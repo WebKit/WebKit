@@ -29,7 +29,7 @@
 #pragma once
 
 #include "CallData.h"
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
 #include "ExceptionEventLocation.h"
@@ -557,7 +557,7 @@ public:
     RefPtr<TypedArrayController> m_typedArrayController;
     RegExpCache* m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
-    ConcurrentJITLock m_regExpAllocatorLock;
+    ConcurrentJSLock m_regExpAllocatorLock;
 
     std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
     ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }

@@ -27,7 +27,7 @@
 
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "ExitingJITType.h"
 #include "GetByIdVariant.h"
 
@@ -75,7 +75,7 @@ public:
     static GetByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
 
 #if ENABLE(DFG_JIT)
-    static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
+    static GetByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
 #endif
 
     State state() const { return m_state; }
@@ -102,11 +102,11 @@ public:
     
 private:
 #if ENABLE(DFG_JIT)
-    static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
+    static bool hasExitSite(const ConcurrentJSLocker&, CodeBlock*, unsigned bytecodeIndex);
 #endif
 #if ENABLE(JIT)
     static GetByIdStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJITLocker&, CodeBlock* profiledBlock, StructureStubInfo*,
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*,
         UniquedStringImpl* uid, CallLinkStatus::ExitSiteData);
 #endif
     static GetByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, UniquedStringImpl* uid);

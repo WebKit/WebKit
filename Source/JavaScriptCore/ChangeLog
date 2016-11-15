@@ -1,3 +1,246 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename CONCURRENT_JIT/ConcurrentJIT to CONCURRENT_JS/ConcurrentJS
+        https://bugs.webkit.org/show_bug.cgi?id=164791
+
+        Reviewed by Geoffrey Garen.
+        
+        Just renaming.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::observedArrayModes):
+        (JSC::ArrayProfile::mayInterceptIndexedAccesses):
+        (JSC::ArrayProfile::mayStoreToHole):
+        (JSC::ArrayProfile::outOfBounds):
+        (JSC::ArrayProfile::usesOriginalArrayStructures):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::getStubInfoMap):
+        (JSC::CodeBlock::getCallLinkInfoMap):
+        (JSC::CodeBlock::getByValInfoMap):
+        (JSC::CodeBlock::addStubInfo):
+        (JSC::CodeBlock::addByValInfo):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::addArrayProfile):
+        (JSC::CodeBlock::getOrAddArrayProfile):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::nameForRegister):
+        (JSC::CodeBlock::livenessAnalysisSlow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::hasExitSite):
+        (JSC::CodeBlock::livenessAnalysis):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        (JSC::DFG::ExitProfile::hasExitSite):
+        (JSC::DFG::QueryableExitProfile::initialize):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::ExitProfile::hasExitSite):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::hasExitSite):
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        (JSC::CompressedLazyOperandValueProfileHolder::add):
+        (JSC::LazyOperandValueProfileParser::initialize):
+        (JSC::LazyOperandValueProfileParser::prediction):
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::hasExitSite):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::briefDescription):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withSpeculationFromProfile):
+        (JSC::DFG::ArrayMode::withProfile):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITInlines.h:
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITOperations.cpp:
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        * jit/Repatch.cpp:
+        (JSC::repatchGetByID):
+        (JSC::repatchPutByID):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/ConcurrentJITLock.h: Removed.
+        * runtime/ConcurrentJSLock.h: Copied from Source/JavaScriptCore/runtime/ConcurrentJITLock.h.
+        (JSC::ConcurrentJSLockerBase::ConcurrentJSLockerBase):
+        (JSC::ConcurrentJSLockerBase::~ConcurrentJSLockerBase):
+        (JSC::GCSafeConcurrentJSLocker::GCSafeConcurrentJSLocker):
+        (JSC::GCSafeConcurrentJSLocker::~GCSafeConcurrentJSLocker):
+        (JSC::ConcurrentJSLocker::ConcurrentJSLocker):
+        (JSC::ConcurrentJITLockerBase::ConcurrentJITLockerBase): Deleted.
+        (JSC::ConcurrentJITLockerBase::~ConcurrentJITLockerBase): Deleted.
+        (JSC::ConcurrentJITLockerBase::unlockEarly): Deleted.
+        (JSC::GCSafeConcurrentJITLocker::GCSafeConcurrentJITLocker): Deleted.
+        (JSC::GCSafeConcurrentJITLocker::~GCSafeConcurrentJITLocker): Deleted.
+        (JSC::ConcurrentJITLocker::ConcurrentJITLocker): Deleted.
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::canWatch):
+        (JSC::InferredType::addWatchpoint):
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        * runtime/InferredType.h:
+        * runtime/InferredTypeTable.cpp:
+        (JSC::InferredTypeTable::visitChildren):
+        (JSC::InferredTypeTable::get):
+        (JSC::InferredTypeTable::willStoreValue):
+        (JSC::InferredTypeTable::makeTop):
+        * runtime/InferredTypeTable.h:
+        * runtime/JSEnvironmentRecord.cpp:
+        (JSC::JSEnvironmentRecord::heapSnapshot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        (JSC::JSSegmentedVariableObject::heapSnapshot):
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::deleteCode):
+        * runtime/RegExp.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildren):
+        (JSC::SymbolTable::localToEntry):
+        (JSC::SymbolTable::entryFor):
+        (JSC::SymbolTable::prepareForTypeProfiling):
+        (JSC::SymbolTable::uniqueIDForVariable):
+        (JSC::SymbolTable::uniqueIDForOffset):
+        (JSC::SymbolTable::globalTypeSetForOffset):
+        (JSC::SymbolTable::globalTypeSetForVariable):
+        * runtime/SymbolTable.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::invalidateCache):
+        * runtime/TypeSet.h:
+        (JSC::TypeSet::structureSet):
+        * runtime/VM.h:
+        * runtime/WriteBarrierInlines.h:
+        (JSC::WriteBarrierBase<T>::set):
+        (JSC::WriteBarrierBase<Unknown>::set):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::byteCompile):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and untested Page.setTouchEmulationEnabled command

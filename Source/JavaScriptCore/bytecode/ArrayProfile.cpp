@@ -94,7 +94,7 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print(comma, "Float64ArrayMode");
 }
 
-void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)
+void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
 {
     if (!m_lastSeenStructureID)
         return;
@@ -104,7 +104,7 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, C
     m_lastSeenStructureID = 0;
 }
 
-void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
+void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
 {
     m_observedArrayModes |= arrayModeFromStructure(lastSeenStructure);
     
@@ -122,13 +122,13 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBloc
         m_usesOriginalArrayStructures = false;
 }
 
-CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)
+CString ArrayProfile::briefDescription(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
 {
     computeUpdatedPrediction(locker, codeBlock);
     return briefDescriptionWithoutUpdating(locker);
 }
 
-CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJITLocker&)
+CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJSLocker&)
 {
     StringPrintStream out;
     

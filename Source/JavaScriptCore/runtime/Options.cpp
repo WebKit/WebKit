@@ -317,8 +317,8 @@ static void recomputeDependentOptions()
 #if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;
 #endif
-#if !ENABLE(CONCURRENT_JIT)
-    Options::useConcurrentJIT() = false;
+#if !ENABLE(CONCURRENT_JS)
+    Options::useConcurrentJS() = false;
 #endif
 #if !ENABLE(DFG_JIT)
     Options::useDFGJIT() = false;
@@ -370,7 +370,7 @@ static void recomputeDependentOptions()
         Options::thresholdForFTLOptimizeAfterWarmUp() = 20;
         Options::thresholdForFTLOptimizeSoon() = 20;
         Options::maximumEvalCacheableSourceLength() = 150000;
-        Options::useConcurrentJIT() = false;
+        Options::useConcurrentJS() = false;
     }
     if (Options::useMaximalFlushInsertionPhase()) {
         Options::useOSREntryToDFG() = false;

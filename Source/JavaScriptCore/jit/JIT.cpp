@@ -525,7 +525,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         before = monotonicallyIncreasingTimeMS();
     
     {
-        ConcurrentJITLocker locker(m_codeBlock->m_lock);
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
         m_instructions = m_codeBlock->instructions().clone();
     }
 

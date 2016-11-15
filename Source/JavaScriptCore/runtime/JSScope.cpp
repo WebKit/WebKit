@@ -59,7 +59,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
 
         SymbolTable* symbolTable = lexicalEnvironment->symbolTable();
         {
-            ConcurrentJITLocker locker(symbolTable->m_lock);
+            ConcurrentJSLocker locker(symbolTable->m_lock);
             auto iter = symbolTable->find(locker, ident.impl());
             if (iter != symbolTable->end(locker)) {
                 SymbolTableEntry& entry = iter->value;
@@ -83,7 +83,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
                 JSModuleRecord* importedRecord = resolution.moduleRecord;
                 JSModuleEnvironment* importedEnvironment = importedRecord->moduleEnvironment();
                 SymbolTable* symbolTable = importedEnvironment->symbolTable();
-                ConcurrentJITLocker locker(symbolTable->m_lock);
+                ConcurrentJSLocker locker(symbolTable->m_lock);
                 auto iter = symbolTable->find(locker, resolution.localName.impl());
                 ASSERT(iter != symbolTable->end(locker));
                 SymbolTableEntry& entry = iter->value;
@@ -101,7 +101,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
     if (scope->isGlobalLexicalEnvironment()) {
         JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
         SymbolTable* symbolTable = globalLexicalEnvironment->symbolTable();
-        ConcurrentJITLocker locker(symbolTable->m_lock);
+        ConcurrentJSLocker locker(symbolTable->m_lock);
         auto iter = symbolTable->find(locker, ident.impl());
         if (iter != symbolTable->end(locker)) {
             SymbolTableEntry& entry = iter->value;
@@ -134,7 +134,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(scope);
         {
             SymbolTable* symbolTable = globalObject->symbolTable();
-            ConcurrentJITLocker locker(symbolTable->m_lock);
+            ConcurrentJSLocker locker(symbolTable->m_lock);
             auto iter = symbolTable->find(locker, ident.impl());
             if (iter != symbolTable->end(locker)) {
                 SymbolTableEntry& entry = iter->value;
@@ -277,7 +277,7 @@ void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, VariableEnvironmen
 
         SymbolTable* symbolTable = jsCast<JSSymbolTableObject*>(scope)->symbolTable();
         ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScope);
-        ConcurrentJITLocker locker(symbolTable->m_lock);
+        ConcurrentJSLocker locker(symbolTable->m_lock);
         for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
             result.add(iter->key);
     }

@@ -32,32 +32,32 @@
 
 namespace JSC {
 
-#if ENABLE(CONCURRENT_JIT)
-typedef Lock ConcurrentJITLock;
-typedef LockHolder ConcurrentJITLockerImpl;
+#if ENABLE(CONCURRENT_JS)
+typedef Lock ConcurrentJSLock;
+typedef LockHolder ConcurrentJSLockerImpl;
 #else
-typedef NoLock ConcurrentJITLock;
-typedef NoLockLocker ConcurrentJITLockerImpl;
+typedef NoLock ConcurrentJSLock;
+typedef NoLockLocker ConcurrentJSLockerImpl;
 #endif
 
-class ConcurrentJITLockerBase {
-    WTF_MAKE_NONCOPYABLE(ConcurrentJITLockerBase);
+class ConcurrentJSLockerBase {
+    WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
-    explicit ConcurrentJITLockerBase(ConcurrentJITLock& lockable)
+    explicit ConcurrentJSLockerBase(ConcurrentJSLock& lockable)
         : m_locker(&lockable)
     {
     }
-    explicit ConcurrentJITLockerBase(ConcurrentJITLock* lockable)
+    explicit ConcurrentJSLockerBase(ConcurrentJSLock* lockable)
         : m_locker(lockable)
     {
     }
 
-    explicit ConcurrentJITLockerBase(NoLockingNecessaryTag)
+    explicit ConcurrentJSLockerBase(NoLockingNecessaryTag)
         : m_locker(NoLockingNecessary)
     {
     }
 
-    ~ConcurrentJITLockerBase()
+    ~ConcurrentJSLockerBase()
     {
     }
     
@@ -67,24 +67,24 @@ public:
     }
 
 private:
-    ConcurrentJITLockerImpl m_locker;
+    ConcurrentJSLockerImpl m_locker;
 };
 
-class GCSafeConcurrentJITLocker : public ConcurrentJITLockerBase {
+class GCSafeConcurrentJSLocker : public ConcurrentJSLockerBase {
 public:
-    GCSafeConcurrentJITLocker(ConcurrentJITLock& lockable, Heap& heap)
-        : ConcurrentJITLockerBase(lockable)
+    GCSafeConcurrentJSLocker(ConcurrentJSLock& lockable, Heap& heap)
+        : ConcurrentJSLockerBase(lockable)
         , m_deferGC(heap)
     {
     }
 
-    GCSafeConcurrentJITLocker(ConcurrentJITLock* lockable, Heap& heap)
-        : ConcurrentJITLockerBase(lockable)
+    GCSafeConcurrentJSLocker(ConcurrentJSLock* lockable, Heap& heap)
+        : ConcurrentJSLockerBase(lockable)
         , m_deferGC(heap)
     {
     }
 
-    ~GCSafeConcurrentJITLocker()
+    ~GCSafeConcurrentJSLocker()
     {
         // We have to unlock early due to the destruction order of base
         // vs. derived classes. If we didn't, then we would destroy the 
@@ -97,35 +97,35 @@ private:
     DeferGC m_deferGC;
 };
 
-class ConcurrentJITLocker : public ConcurrentJITLockerBase {
+class ConcurrentJSLocker : public ConcurrentJSLockerBase {
 public:
-    ConcurrentJITLocker(ConcurrentJITLock& lockable)
-        : ConcurrentJITLockerBase(lockable)
-#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+    ConcurrentJSLocker(ConcurrentJSLock& lockable)
+        : ConcurrentJSLockerBase(lockable)
+#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
         , m_disallowGC(InPlace)
 #endif
     {
     }
 
-    ConcurrentJITLocker(ConcurrentJITLock* lockable)
-        : ConcurrentJITLockerBase(lockable)
-#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+    ConcurrentJSLocker(ConcurrentJSLock* lockable)
+        : ConcurrentJSLockerBase(lockable)
+#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
         , m_disallowGC(InPlace)
 #endif
     {
     }
 
-    ConcurrentJITLocker(NoLockingNecessaryTag)
-        : ConcurrentJITLockerBase(NoLockingNecessary)
-#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+    ConcurrentJSLocker(NoLockingNecessaryTag)
+        : ConcurrentJSLockerBase(NoLockingNecessary)
+#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
         , m_disallowGC(Nullopt)
 #endif
     {
     }
     
-    ConcurrentJITLocker(int) = delete;
+    ConcurrentJSLocker(int) = delete;
 
-#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
 private:
     Optional<DisallowGC> m_disallowGC;
 #endif

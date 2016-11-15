@@ -29,7 +29,7 @@
 #include "CallVariant.h"
 #include "CodeOrigin.h"
 #include "CodeSpecializationKind.h"
-#include "ConcurrentJITLock.h"
+#include "ConcurrentJSLock.h"
 #include "ExitingJITType.h"
 #include "Intrinsic.h"
 #include "JSCJSValue.h"
@@ -70,14 +70,14 @@ public:
         bool takesSlowPath { false };
         bool badFunction { false };
     };
-    static ExitSiteData computeExitSiteData(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
+    static ExitSiteData computeExitSiteData(const ConcurrentJSLocker&, CodeBlock*, unsigned bytecodeIndex);
     
 #if ENABLE(JIT)
     // Computes the status assuming that we never took slow path and never previously
     // exited.
-    static CallLinkStatus computeFor(const ConcurrentJITLocker&, CodeBlock*, CallLinkInfo&);
+    static CallLinkStatus computeFor(const ConcurrentJSLocker&, CodeBlock*, CallLinkInfo&);
     static CallLinkStatus computeFor(
-        const ConcurrentJITLocker&, CodeBlock*, CallLinkInfo&, ExitSiteData);
+        const ConcurrentJSLocker&, CodeBlock*, CallLinkInfo&, ExitSiteData);
 #endif
     
     typedef HashMap<CodeOrigin, CallLinkStatus, CodeOriginApproximateHash> ContextMap;
@@ -118,10 +118,10 @@ public:
 private:
     void makeClosureCall();
     
-    static CallLinkStatus computeFromLLInt(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
+    static CallLinkStatus computeFromLLInt(const ConcurrentJSLocker&, CodeBlock*, unsigned bytecodeIndex);
 #if ENABLE(JIT)
     static CallLinkStatus computeFromCallLinkInfo(
-        const ConcurrentJITLocker&, CallLinkInfo&);
+        const ConcurrentJSLocker&, CallLinkInfo&);
 #endif
     
     CallVariantList m_variants;

@@ -229,7 +229,7 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
         return;
     }
     
-    if (!Options::useConcurrentJIT()) {
+    if (!Options::useConcurrentJS()) {
         Plan::compileNow(codeBlock);
         return;
     }
@@ -284,7 +284,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock)
     }
     
     if (isPlanned) {
-        RELEASE_ASSERT(Options::useConcurrentJIT());
+        RELEASE_ASSERT(Options::useConcurrentJS());
         // This is expensive, but probably good enough.
         completeAllForVM(*codeBlock->vm());
     }

@@ -214,7 +214,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         if (validationEnabled()) {
             // Validate to make sure every slot in the scope has one value.
-            ConcurrentJITLocker locker(table->m_lock);
+            ConcurrentJSLocker locker(table->m_lock);
             for (auto iter = table->begin(locker), end = table->end(locker); iter != end; ++iter) {
                 bool found = false;
                 for (unsigned i = materialization->properties().size(); i--;) {
