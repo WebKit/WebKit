@@ -54,7 +54,7 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     void reset();
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void layerTreeDidChange();
     void renderLayerDestroyed(const RenderLayer&);
     void pseudoElementDestroyed(PseudoElement&);

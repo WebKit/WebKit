@@ -1,3 +1,43 @@
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Misc Inspector backend cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=164768
+
+        Reviewed by Brian Burg.
+
+        * inspector/DOMPatchSupport.cpp:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::frontendLoaded):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::ClearObjectStoreListener::create): Deleted.
+        (WebCore::ClearObjectStoreListener::~ClearObjectStoreListener): Deleted.
+        (WebCore::ClearObjectStoreListener::ClearObjectStoreListener): Deleted.
+        (WebCore::ClearObjectStore::create): Deleted.
+        (WebCore::ClearObjectStore::ClearObjectStore): Deleted.
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorNetworkAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/PageRuntimeAgent.h:
+
 2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL] Migrate construction functions from pointers to references

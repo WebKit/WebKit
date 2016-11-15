@@ -35,10 +35,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
-namespace Inspector {
-class InspectorArray;
-}
-
 namespace WebCore {
 
 class Database;

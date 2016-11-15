@@ -56,7 +56,6 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorNetworkAgent.h"
 #include "InspectorOverlay.h"
-#include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "MIMETypeRegistry.h"
 #include "MainFrame.h"

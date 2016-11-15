@@ -35,8 +35,6 @@
 #include "MainFrame.h"
 #include "NetworkStateNotifier.h"
 #include "Page.h"
-#include "ResourceResponse.h"
-#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 

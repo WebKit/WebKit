@@ -32,7 +32,6 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
-#include "IntSize.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -40,7 +39,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-class InspectorArray;
 class InspectorObject;
 }
 
@@ -50,7 +48,6 @@ class CachedResource;
 class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
-class Frontend;
 class InspectorClient;
 class InspectorOverlay;
 class MainFrame;
@@ -58,7 +55,6 @@ class URL;
 class Page;
 class RenderObject;
 class SharedBuffer;
-class TextResourceDecoder;
 
 typedef String ErrorString;
 
@@ -84,7 +80,6 @@ public:
     static void resourceContent(ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
 
-    static PassRefPtr<SharedBuffer> resourceData(Frame*, const URL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const URL&);
     static Inspector::Protocol::Page::ResourceType resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
@@ -116,7 +111,7 @@ public:
     void handleJavaScriptDialog(ErrorString&, bool accept, const String* promptText) override;
     void archive(ErrorString&, String* data) override;
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     void domContentEventFired();
     void loadEventFired();

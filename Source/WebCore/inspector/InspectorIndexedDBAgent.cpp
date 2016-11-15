@@ -30,10 +30,9 @@
  */
 
 #include "config.h"
+#include "InspectorIndexedDBAgent.h"
 
 #if ENABLE(INDEXED_DATABASE)
-
-#include "InspectorIndexedDBAgent.h"
 
 #include "DOMStringList.h"
 #include "DOMWindow.h"
@@ -339,9 +338,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRan
     return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), lowerOpen, upperOpen);
 }
 
-class DataLoader;
-
-class OpenCursorCallback : public EventListener {
+class OpenCursorCallback final : public EventListener {
 public:
     static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
     {
@@ -433,7 +430,7 @@ private:
     unsigned m_pageSize;
 };
 
-class DataLoader : public ExecutableWithDatabase {
+class DataLoader final : public ExecutableWithDatabase {
 public:
     static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
     {
@@ -635,7 +632,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String
     dataLoader->start(idbFactory, document->securityOrigin(), databaseName);
 }
 
-class ClearObjectStoreListener : public EventListener {
+class ClearObjectStoreListener final : public EventListener {
     WTF_MAKE_NONCOPYABLE(ClearObjectStoreListener);
 public:
     static Ref<ClearObjectStoreListener> create(Ref<ClearObjectStoreCallback> requestCallback)
@@ -671,7 +668,7 @@ private:
     Ref<ClearObjectStoreCallback> m_requestCallback;
 };
 
-class ClearObjectStore : public ExecutableWithDatabase {
+class ClearObjectStore final : public ExecutableWithDatabase {
 public:
     static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
     {

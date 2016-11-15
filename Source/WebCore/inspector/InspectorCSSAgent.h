@@ -94,7 +94,7 @@ public:
     void regionOversetChanged(WebKitNamedFlow*, int documentNodeId);
     void reset();
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void documentDetached(Document&);
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);

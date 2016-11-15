@@ -39,7 +39,6 @@
 #include "FontCache.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"

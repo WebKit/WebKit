@@ -114,7 +114,7 @@ private:
     bool handleEvent(SQLTransaction*, SQLError* error) final
     {
         reportTransactionFailed(m_requestCallback.copyRef(), error);
-        return true;  
+        return true;
     }
 
     Ref<ExecuteSQLCallback> m_requestCallback;

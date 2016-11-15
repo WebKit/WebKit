@@ -44,7 +44,6 @@
 #include "Node.h"
 #include "XMLDocument.h"
 #include "XMLDocumentParser.h"
-
 #include <wtf/Deque.h>
 #include <wtf/HashTraits.h>
 #include <wtf/RefPtr.h>

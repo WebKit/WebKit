@@ -72,7 +72,7 @@ public:
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void willRecalculateStyle();
     void didRecalculateStyle();
     void willSendRequest(unsigned long identifier, DocumentLoader&, ResourceRequest&, const ResourceResponse& redirectResponse);

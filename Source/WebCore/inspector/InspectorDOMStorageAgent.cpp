@@ -40,7 +40,6 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
-#include "PageGroup.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "Storage.h"
@@ -49,7 +48,6 @@
 #include "VoidCallback.h"
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/Vector.h>
 
 using namespace Inspector;
 

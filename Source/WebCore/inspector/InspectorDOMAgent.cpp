@@ -90,6 +90,7 @@
 #include "StyleSheetList.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
+#include "Timer.h"
 #include "XPathResult.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -1676,7 +1677,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                 break;
             }
 
-            disabled = !axObject->isEnabled(); 
+            disabled = !axObject->isEnabled();
             exists = true;
             
             supportsExpanded = axObject->supportsExpanded();

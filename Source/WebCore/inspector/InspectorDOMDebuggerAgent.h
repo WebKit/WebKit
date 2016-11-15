@@ -66,7 +66,7 @@ public:
     void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
     void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void willInsertDOMNode(Node& parent);
     void didInvalidateStyleAttr(Node&);
     void didInsertDOMNode(Node&);

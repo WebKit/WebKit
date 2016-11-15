@@ -45,7 +45,7 @@
 #include "ReplaySession.h"
 #include "ReplaySessionSegment.h"
 #include "SerializationMethods.h"
-#include "WebReplayInputs.h" // For EncodingTraits<InputQueue>.
+#include "WebReplayInputs.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

@@ -41,7 +41,6 @@ namespace WebCore {
 class DocumentLoader;
 class Event;
 class Frame;
-class InspectorPageAgent;
 class Page;
 class ReplaySession;
 class ReplaySessionSegment;
@@ -66,7 +65,7 @@ public:
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void frameNavigated(Frame&);
     void frameDetached(Frame&);
     void willDispatchEvent(const Event&, Frame*);

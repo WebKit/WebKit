@@ -36,7 +36,6 @@
 
 namespace Inspector {
 class DOMStorageFrontendDispatcher;
-class InspectorArray;
 }
 
 namespace WebCore {
@@ -69,7 +68,7 @@ public:
     String storageId(Storage*);
     RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
 
-    // Called from InspectorInstrumentation
+    // InspectorInstrumentation
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
 private:

@@ -39,10 +39,6 @@ namespace JSC {
 class ExecState;
 }
 
-namespace Inspector {
-class InjectedScriptManager;
-}
-
 namespace WebCore {
 
 class InspectorPageAgent;
@@ -62,7 +58,7 @@ public:
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
 
-    // InspectorInstrumentation callbacks.
+    // InspectorInstrumentation
     void didCreateMainWorldContext(Frame&);
 
 private:

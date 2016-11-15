@@ -41,7 +41,6 @@ namespace WebCore {
 class Frame;
 class InspectorPageAgent;
 class Page;
-class ResourceResponse;
 
 typedef String ErrorString;
 
