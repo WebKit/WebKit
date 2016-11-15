@@ -1,3 +1,17 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r208711-r208722): ASSERTION FAILED: hasInlineStorage()
+        https://bugs.webkit.org/show_bug.cgi?id=164775
+
+        Reviewed by Mark Lam and Keith Miller.
+        
+        We were calling inlineStorage() which asserts that inline storage is not empty. But we
+        were calling it in a context where it could be empty and that's fine. So, we now call
+        inlineStorageUnsafe().
+
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::JSFinalObject):
+
 2016-11-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed buildfix after r208720.
