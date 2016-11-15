@@ -43,6 +43,10 @@
   cmd: runDefault
 - path: stress/async-await-reserved-word.js
   cmd: runDefault
+- path: stress/async-await-long-loop.js
+  cmd: runNoCJIT "--gcMaxHeapSize=2000000"
+- path: stress/async-await-throw-loop.js
+  cmd: runNoCJIT "--gcMaxHeapSize=2000000"
 
 # FTLJIT
 - path: stress/async-function-create-optimized.js

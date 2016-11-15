@@ -562,6 +562,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         ASSERT(!isConstructor());
         ASSERT(constructorKind() == ConstructorKind::None);
         m_generatorRegister = addVar();
+        m_promiseCapabilityRegister = addVar();
 
         if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
             // FIXME: Emit to_this only when AsyncFunctionBody uses it.
@@ -574,6 +575,23 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
 
         emitNewObject(m_generatorRegister);
+
+        // let promiseCapability be @newPromiseCapability(@Promise)
+        auto varNewPromiseCapability = variable(propertyNames().builtinNames().newPromiseCapabilityPrivateName());
+        RefPtr<RegisterID> scope = newTemporary();
+        moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), varNewPromiseCapability));
+        RefPtr<RegisterID> newPromiseCapability = emitGetFromScope(newTemporary(), scope.get(), varNewPromiseCapability, ThrowIfNotFound);
+
+        CallArguments args(*this, nullptr, 1);
+        emitLoad(args.thisRegister(), jsUndefined());
+
+        auto varPromiseConstructor = variable(propertyNames().builtinNames().PromisePrivateName());
+        moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), varPromiseConstructor));
+        emitGetFromScope(args.argumentRegister(0), scope.get(), varPromiseConstructor, ThrowIfNotFound);
+
+        // JSTextPosition(int _line, int _offset, int _lineStartOffset)
+        JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
+        emitCall(promiseCapabilityRegister(), newPromiseCapability.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
         break;
     }
 
@@ -674,21 +692,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         RefPtr<Label> catchHere = emitLabel(newLabel().get());
         popTryAndEmitCatch(tryFormalParametersData, exception.get(), thrownValue.get(), catchHere.get(), HandlerType::Catch);
 
-        // return @Promise.@reject(thrownValue);
-        Variable promiseVar = variable(m_vm->propertyNames->builtinNames().PromisePrivateName());
-        RefPtr<RegisterID> scope = emitResolveScope(newTemporary(), promiseVar);
-        RefPtr<RegisterID> promiseConstructor = emitGetFromScope(newTemporary(), scope.get(), promiseVar, ResolveMode::ThrowIfNotFound);
-        RefPtr<RegisterID> promiseReject = emitGetById(newTemporary(), promiseConstructor.get(), m_vm->propertyNames->builtinNames().rejectPrivateName());
+        // return promiseCapability.@reject(thrownValue)
+        RefPtr<RegisterID> reject = emitGetById(newTemporary(), promiseCapabilityRegister(), m_vm->propertyNames->builtinNames().rejectPrivateName());
 
         CallArguments args(*this, nullptr, 1);
-
-        emitMove(args.thisRegister(), promiseConstructor.get());
+        emitLoad(args.thisRegister(), jsUndefined());
         emitMove(args.argumentRegister(0), thrownValue.get());
 
         JSTextPosition divot(functionNode->firstLine(), functionNode->startOffset(), functionNode->lineStartOffset());
 
-        RefPtr<RegisterID> result = emitCall(newTemporary(), promiseReject.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
-        emitReturn(result.get());
+        RefPtr<RegisterID> result = emitCall(newTemporary(), reject.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+        emitReturn(emitGetById(newTemporary(), promiseCapabilityRegister(), m_vm->propertyNames->builtinNames().promisePrivateName()));
 
         emitLabel(didNotThrow.get());
     }

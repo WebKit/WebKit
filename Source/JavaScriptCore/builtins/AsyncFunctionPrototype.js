@@ -24,7 +24,7 @@
  */
 
 @globalPrivate
-function asyncFunctionResume(generator, sentValue, resumeMode)
+function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode)
 {
     "use strict";
     let state = generator.@generatorState;
@@ -38,14 +38,18 @@ function asyncFunctionResume(generator, sentValue, resumeMode)
         value = generator.@generatorNext.@call(generator.@generatorThis, generator, state, sentValue, resumeMode, generator.@generatorFrame);
         if (generator.@generatorState === @GeneratorStateExecuting) {
             generator.@generatorState = @GeneratorStateCompleted;
-            return @Promise.@resolve(value);
+            promiseCapability.@resolve(value);
+            return promiseCapability.@promise;
         }
     } catch (error) {
         generator.@generatorState = @GeneratorStateCompleted;
-        return @Promise.@reject(error);
+        promiseCapability.@reject(error);
+        return promiseCapability.@promise;
     }
 
-    return @Promise.@resolve(value).@then(
-        function(value) { return @asyncFunctionResume(generator, value, @GeneratorResumeModeNormal); },
-        function(error) { return @asyncFunctionResume(generator, error, @GeneratorResumeModeThrow); });
+    @Promise.@resolve(value).@then(
+        function(value) { @asyncFunctionResume(generator, promiseCapability, value, @GeneratorResumeModeNormal); },
+        function(error) { @asyncFunctionResume(generator, promiseCapability, error, @GeneratorResumeModeThrow); });
+
+    return promiseCapability.@promise;
 }

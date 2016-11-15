@@ -1,3 +1,19 @@
+2016-11-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] do not reference AwaitExpression Promises in async function Promise chain
+        https://bugs.webkit.org/show_bug.cgi?id=164753
+
+        Reviewed by Yusuke Suzuki.
+
+        * asyncFunctionTests.yaml:
+        * stress/async-await-long-loop.js: Added.
+        (shouldBe):
+        (async.longLoop):
+        * stress/async-await-throw-loop.js: Added.
+        (shouldBe):
+        (async.thrower):
+        (async.throwLoop):
+
 2016-11-14  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm select

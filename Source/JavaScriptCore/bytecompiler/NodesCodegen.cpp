@@ -3466,26 +3466,24 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         ASSERT(startOffset() >= lineStartOffset());
         generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
 
-        // load @asyncFunctionResume, and call.
-        RefPtr<RegisterID> startAsyncFunction = generator.newTemporary();
+        // load and call @asyncFunctionResume
         auto var = generator.variable(generator.propertyNames().builtinNames().asyncFunctionResumePrivateName());
-
         RefPtr<RegisterID> scope = generator.newTemporary();
         generator.moveToDestinationIfNeeded(scope.get(), generator.emitResolveScope(scope.get(), var));
-        generator.emitGetFromScope(startAsyncFunction.get(), scope.get(), var, ThrowIfNotFound);
+        RefPtr<RegisterID> asyncFunctionResume = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
 
-        // return @asyncFunctionResume.@call(this, @generator, @undefined, GeneratorResumeMode::NormalMode)
-        CallArguments args(generator, nullptr, 3);
+        CallArguments args(generator, nullptr, 4);
         unsigned argumentCount = 0;
         generator.emitLoad(args.thisRegister(), jsUndefined());
         generator.emitMove(args.argumentRegister(argumentCount++), generator.generatorRegister());
+        generator.emitMove(args.argumentRegister(argumentCount++), generator.promiseCapabilityRegister());
         generator.emitLoad(args.argumentRegister(argumentCount++), jsUndefined());
         generator.emitLoad(args.argumentRegister(argumentCount++), jsNumber(static_cast<int32_t>(JSGeneratorFunction::GeneratorResumeMode::NormalMode)));
         // JSTextPosition(int _line, int _offset, int _lineStartOffset)
         JSTextPosition divot(firstLine(), startOffset(), lineStartOffset());
 
         RefPtr<RegisterID> result = generator.newTemporary();
-        generator.emitCallInTailPosition(result.get(), startAsyncFunction.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+        generator.emitCallInTailPosition(result.get(), asyncFunctionResume.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
         generator.emitReturn(result.get());
         break;
     }

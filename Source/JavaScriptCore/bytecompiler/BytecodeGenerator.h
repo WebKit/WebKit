@@ -315,6 +315,8 @@ namespace JSC {
 
         RegisterID* generatorRegister() { return m_generatorRegister; }
 
+        RegisterID* promiseCapabilityRegister() { return m_promiseCapabilityRegister; }
+
         // Returns the next available temporary register. Registers returned by
         // newTemporary require a modified form of reference counting: any
         // register with a refcount of 0 is considered "available", meaning that
@@ -931,6 +933,7 @@ namespace JSC {
         RegisterID* m_isDerivedConstuctor { nullptr };
         RegisterID* m_linkTimeConstantRegisters[LinkTimeConstantCount];
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
+        RegisterID* m_promiseCapabilityRegister { nullptr };
 
         SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;

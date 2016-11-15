@@ -1,3 +1,31 @@
+2016-11-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] do not reference AwaitExpression Promises in async function Promise chain
+        https://bugs.webkit.org/show_bug.cgi?id=164753
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, long-running async functions which contained many AwaitExpressions
+        would allocate and retain references to intermediate Promise objects for each `await`,
+        resulting in a memory leak.
+
+        To mitigate this leak, a reference to the original Promise (and its resolve and reject
+        functions) associated with the async function are kept, and passed to each call to
+        @asyncFunctionResume, while intermediate Promises are discarded. This is done by adding
+        a new Register to the BytecodeGenerator to hold the PromiseCapability object associated
+        with an async function wrapper. The capability is used to reject the Promise if an
+        exception is thrown during parameter initialization, and is used to store the resulting
+        value once the async function has terminated.
+
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::promiseCapabilityRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+
 2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker debugging should pause all targets and view call frames in all targets
