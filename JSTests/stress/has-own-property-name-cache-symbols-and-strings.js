@@ -8,13 +8,13 @@ noInline(assert);
 let objs = [];
 let keyPool = [];
 let symbolPool = [];
-const numKeys = 500;
+const numKeys = 300;
 for (let i = 0; i < numKeys; ++i) {
     keyPool.push(i + "foo");
     symbolPool.push(Symbol("Foo"));
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 2000; i++) {
     let num = (Math.random() * numKeys) | 0;
     let o = {};
     for (let i = 0; i < num; ++i) {

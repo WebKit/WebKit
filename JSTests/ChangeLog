@@ -1,3 +1,12 @@
+2016-11-15  Saam Barati  <sbarati@apple.com>
+
+        Debug JSC test timeout: stress/has-own-property-name-cache-symbols-and-strings.js.ftl-no-cjit-small-pool
+        https://bugs.webkit.org/show_bug.cgi?id=163012
+
+        Unreviewed. This patch makes a test run for less time because it's timing out on the bots.
+
+        * stress/has-own-property-name-cache-symbols-and-strings.js:
+
 2016-11-15  Mark Lam  <mark.lam@apple.com>
 
         The jsc shell's setImpureGetterDelegate() should ensure that the set value is an ImpureGetter.
