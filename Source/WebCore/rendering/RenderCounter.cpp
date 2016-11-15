@@ -308,7 +308,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
     RefPtr<CounterNode> newPreviousSibling;
     RefPtr<CounterNode> newNode = CounterNode::create(renderer, isReset, value);
     if (findPlaceForCounter(renderer, identifier, isReset, newParent, newPreviousSibling))
-        newParent->insertAfter(newNode.get(), newPreviousSibling.get(), identifier);
+        newParent->insertAfter(*newNode, newPreviousSibling.get(), identifier);
     CounterMap* nodeMap;
     if (renderer.hasCounterNodeMap())
         nodeMap = counterMaps().get(&renderer);
@@ -337,7 +337,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
             continue;
         if (stayWithin == parentOrPseudoHostElement(*currentRenderer) && currentCounter->hasResetType())
             break;
-        newNode->insertAfter(currentCounter, newNode->lastChild(), identifier);
+        newNode->insertAfter(*currentCounter, newNode->lastChild(), identifier);
     }
     return newNode.get();
 }
@@ -430,12 +430,12 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomicString& identifier, 
     CounterNode* previous;
     for (RefPtr<CounterNode> child = node->lastDescendant(); child && child != node; child = previous) {
         previous = child->previousInPreOrder();
-        child->parent()->removeChild(child.get());
+        child->parent()->removeChild(*child);
         ASSERT(counterMaps().get(&child->owner())->get(identifier) == child);
         counterMaps().get(&child->owner())->remove(identifier);
     }
     if (CounterNode* parent = node->parent())
-        parent->removeChild(node);
+        parent->removeChild(*node);
 }
 
 void RenderCounter::destroyCounterNodes(RenderElement& owner)
@@ -521,9 +521,9 @@ static void updateCounters(RenderElement& renderer)
         if (newParent == parent && newPreviousSibling == node->previousSibling())
             continue;
         if (parent)
-            parent->removeChild(node.get());
+            parent->removeChild(*node);
         if (newParent)
-            newParent->insertAfter(node.get(), newPreviousSibling.get(), it->key);
+            newParent->insertAfter(*node, newPreviousSibling.get(), it->key);
     }
 }
 

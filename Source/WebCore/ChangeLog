@@ -1,3 +1,21 @@
+2016-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        CounterNode::insertAfter and ::removeChild should take references.
+        https://bugs.webkit.org/show_bug.cgi?id=164780
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        * rendering/CounterNode.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::updateCounters):
+
 2016-11-15  Antti Koivisto  <antti@apple.com>
 
         slot doesn't work as a flex container
