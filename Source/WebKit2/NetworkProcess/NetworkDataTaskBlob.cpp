@@ -143,7 +143,7 @@ void NetworkDataTaskBlob::resume()
         // Parse the "Range" header we care about.
         String range = m_firstRequest.httpHeaderField(HTTPHeaderName::Range);
         if (!range.isEmpty() && !parseRange(range, m_rangeOffset, m_rangeEnd, m_rangeSuffixLength)) {
-            didReceiveResponse(Error::RangeError);
+            dispatchDidReceiveResponse(Error::RangeError);
             return;
         }
 
@@ -185,7 +185,7 @@ void NetworkDataTaskBlob::getSizeForNext()
     // Do we finish validating and counting size for all items?
     if (m_sizeItemCount >= m_blobData->items().size()) {
         seek();
-        didReceiveResponse();
+        dispatchDidReceiveResponse();
         return;
     }
 
@@ -265,9 +265,9 @@ void NetworkDataTaskBlob::seek()
         m_totalRemainingSize -= m_rangeOffset;
 }
 
-void NetworkDataTaskBlob::didReceiveResponse(Error errorCode)
+void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
 {
-    LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse(%u)", this, static_cast<unsigned>(errorCode));
+    LOG(NetworkSession, "%p - NetworkDataTaskBlob::dispatchDidReceiveResponse(%u)", this, static_cast<unsigned>(errorCode));
 
     Ref<NetworkDataTaskBlob> protectedThis(*this);
     ResourceResponse response(m_firstRequest.url(), errorCode != Error::NoError ? "text/plain" : m_blobData->contentType(), errorCode != Error::NoError ? 0 : m_totalRemainingSize, String());
@@ -301,7 +301,7 @@ void NetworkDataTaskBlob::didReceiveResponse(Error errorCode)
         break;
     }
 
-    m_client->didReceiveResponseNetworkSession(WTFMove(response), [this, protectedThis = WTFMove(protectedThis), errorCode](PolicyAction policyAction) {
+    didReceiveResponse(WTFMove(response), [this, protectedThis = WTFMove(protectedThis), errorCode](PolicyAction policyAction) {
         LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse completionHandler (%u)", this, static_cast<unsigned>(policyAction));
 
         if (m_state == State::Canceling || m_state == State::Completed) {

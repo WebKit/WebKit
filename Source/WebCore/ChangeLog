@@ -1,3 +1,52 @@
+2016-11-15  Daniel Bates  <dabates@apple.com>
+
+        Disallow loads using HTTP 0.9 at the ResourceHandle/NetworkDataTask level
+        https://bugs.webkit.org/show_bug.cgi?id=164662
+        <rdar://problem/29268514>
+
+        Reviewed by Reviewed by Alex Christensen and Brady Eidson.
+
+        Currently we disallow non-default HTTP 0.9 loads at the ResourceLoader level and disallow
+        subresource loads using HTTP 0.9 on a default port when the embedding page loads using a
+        different HTTP version. However loads can still be initiated from other loaders (e.g. FrameLoader)
+        with regards to the first issue. The latter issue does not afford much protection and
+        increases code complexity. Instead we should simplify our policy and move our code to the
+        lowest networking abstraction level, ResourceHandle/NetworkDataTask, so that we disallow
+        all non-default port loads using HTTP 0.9 regardless of the loader used.
+
+        Tests: http/tests/security/http-0.9/image-default-port-allowed.html
+               http/tests/security/http-0.9/xhr-blocked.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Remove logic to cancel an HTTP 0.9 load from here.
+        We will cancel the HTTP 0.9 load at the ResourceHandle/NetworkDataTask level.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse): Ditto.
+        * platform/URL.h: Export stringCenterEllipsizedToLength() so that we can use it in WebKit2.
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess): Modified to call ResourceHandle::didReceiveResponse().
+        (WebCore::BlobResourceHandle::notifyResponseOnError): Ditto.
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::didReceiveResponse): Added. Fail the load if it is using HTTP 0.9.
+        Otherwise notify the client that we received a response.
+        (WebCore::ResourceHandle::platformContinueSynchronousDidReceiveResponse): Added. Perform any
+        additional platform-specific logic after notifying the resource handle client of the received
+        response. Only the libsoup backend overwrites this member function to do something meaningful.
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse): Modified to
+        call ResourceHandle::didReceiveResponse().
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Ditto.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]): Ditto.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::nextMultipartResponsePartCallback): Ditto.
+        (WebCore::sendRequestCallback): Ditto.
+        (WebCore::ResourceHandle::platformContinueSynchronousDidReceiveResponse): Added. Turns around and
+        calls continueAfterDidReceiveResponse().
+
 2016-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [MultiCol] Render tree should be all clean by the end of FrameView::layout().

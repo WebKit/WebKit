@@ -155,16 +155,6 @@ void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& er
         m_client->didCompleteWithError(error);
 }
 
-void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
-{
-    if (m_client)
-        m_client->didReceiveResponseNetworkSession(WTFMove(response), WTFMove(completionHandler));
-    else {
-        ASSERT_NOT_REACHED();
-        completionHandler(WebCore::PolicyAction::PolicyIgnore);
-    }
-}
-
 void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
 {
     if (m_client)

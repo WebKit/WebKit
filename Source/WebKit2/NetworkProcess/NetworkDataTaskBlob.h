@@ -83,7 +83,7 @@ private:
 
     void clearStream();
     void getSizeForNext();
-    void didReceiveResponse(Error = Error::NoError);
+    void dispatchDidReceiveResponse(Error = Error::NoError);
     void seek();
     void consumeData(const char* data, int bytesRead);
     void read();

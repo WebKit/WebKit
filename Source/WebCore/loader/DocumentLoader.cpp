@@ -731,17 +731,6 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     }
 #endif
 
-    if (m_response.isHttpVersion0_9()) {
-        // Non-HTTP responses are interpreted as HTTP/0.9 which may allow exfiltration of data
-        // from non-HTTP services. Therefore cancel if the request was to a non-default port.
-        if (url.port() && !isDefaultPortForProtocol(url.port().value(), url.protocol())) {
-            String message = "Stopped document load from '" + url.string() + "' because it is using HTTP/0.9 on a non-default port.";
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
-            stopLoading();
-            return;
-        }
-    }
-
     frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {
         continueAfterContentPolicy(policy);
     });

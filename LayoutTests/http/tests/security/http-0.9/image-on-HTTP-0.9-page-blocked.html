@@ -5,6 +5,7 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
+    testRunner.dumpResourceLoadCallbacks();
     if (window.internals)
         internals.registerDefaultPortForProtocol(8000, "http");
 }

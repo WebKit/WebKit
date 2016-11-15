@@ -548,6 +548,15 @@ fast/preloader/document-write-2.html [ Pass Failure ]
 ########################################
 ### START OF (4) Features that are not supported in WebKit2 and likely never will be
 
+# Internals.registerDefaultPortForProtocol() does not affect NetworkProcess. We should
+# look to remove it and write these test to make use of an HTTP server running on port 80.
+http/tests/security/http-0.9/default-port-plugin-blocked.html
+http/tests/security/http-0.9/default-port-script-blocked.html
+http/tests/security/http-0.9/image-default-port-allowed.html
+http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed-ref-test.html
+http/tests/security/http-0.9/image-on-HTTP-0.9-default-port-page-allowed.html
+http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked.html
+
 # WebKitTestRunner doesn't have appleScriptController
 platform/mac/fast/AppleScript/001.html
 platform/mac/fast/AppleScript/array.html

@@ -1,3 +1,39 @@
+2016-11-15  Daniel Bates  <dabates@apple.com>
+
+        Disallow loads using HTTP 0.9 at the ResourceHandle/NetworkDataTask level
+        https://bugs.webkit.org/show_bug.cgi?id=164662
+        <rdar://problem/29268514>
+
+        Reviewed by Alex Christensen and Brady Eidson.
+
+        Make changes to NetworkDataTask similar to the changes made to ResourceHandle so as to
+        disallow non-default port HTTP 0.9 loads when using the ENABLE(NETWORK_SESSION) networking
+        code path in WebKit2.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse): Added. Fail the load if it is using HTTP 0.9.
+        Otherwise notify the client that we received a response.
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::resume): Substitute dispatchDidReceiveResponse() for didReceiveResponse()
+        as the latter has been renamed to the former.
+        (WebKit::NetworkDataTaskBlob::getSizeForNext): Ditto.
+        (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse): Renamed from didReceiveResponse().
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::didReceiveResponse): Deleted.
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didSendRequest): Substitute dispatchDidReceiveResponse() for didReceiveResponse()
+        as the latter has been renamed to the former.
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse): Renamed from didReceiveResponse(). Also
+        remove the local variable response and inline its value into the call to ResourceHandle::didReceiveResponse()
+        as this variable is used exactly once in this function and its name does not describe its purpose any more
+        than its value.
+        (WebKit::NetworkDataTaskSoup::didRequestNextPart): Substitute dispatchDidReceiveResponse() for didReceiveResponse()
+        as the latter has been renamed to the former.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2016-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Move SecurityOrigin::createFromDatabaseIdentifier to SecurityOriginData

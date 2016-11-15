@@ -575,10 +575,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".
 
-    if (usesAsyncCallbacks())
-        client()->didReceiveResponseAsync(this, WTFMove(response));
-    else
-        client()->didReceiveResponse(this, WTFMove(response));
+    didReceiveResponse(WTFMove(response));
 }
 
 void BlobResourceHandle::notifyResponseOnError()
@@ -601,10 +598,7 @@ void BlobResourceHandle::notifyResponseOnError()
         break;
     }
 
-    if (usesAsyncCallbacks())
-        client()->didReceiveResponseAsync(this, WTFMove(response));
-    else
-        client()->didReceiveResponse(this, WTFMove(response));
+    didReceiveResponse(WTFMove(response));
 }
 
 void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)

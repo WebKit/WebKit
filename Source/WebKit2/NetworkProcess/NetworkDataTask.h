@@ -82,6 +82,8 @@ public:
     virtual void resume() = 0;
     virtual void invalidateAndCancel() = 0;
 
+    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
+
     enum class State {
         Running,
         Suspended,

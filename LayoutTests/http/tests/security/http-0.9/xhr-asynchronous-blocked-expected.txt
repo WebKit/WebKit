@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: Cancelled resource load from 'http://127.0.0.1:8000/security/http-0.9/resources/nph-fail.pl' because it is using HTTP/0.9 and the document was loaded with a different HTTP version.
 ALERT: PASS
 

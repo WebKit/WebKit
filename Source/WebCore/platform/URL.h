@@ -98,7 +98,7 @@ public:
 
     const String& string() const { return m_string; }
 
-    String stringCenterEllipsizedToLength(unsigned length = 1024) const;
+    WEBCORE_EXPORT String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
     WEBCORE_EXPORT StringView protocol() const;
     WEBCORE_EXPORT String host() const;

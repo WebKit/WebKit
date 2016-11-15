@@ -1,3 +1,41 @@
+2016-11-15  Daniel Bates  <dabates@apple.com>
+
+        Disallow loads using HTTP 0.9 at the ResourceHandle/NetworkDataTask level
+        https://bugs.webkit.org/show_bug.cgi?id=164662
+        <rdar://problem/29268514>
+
+        Reviewed by Reviewed by Alex Christensen and Brady Eidson.
+
+        Add a test to ensure that we block a synchronous XHR load using HTTP 0.9.
+        Renamed test image-default-port-blocked.html to image-default-port-allowed.html
+        as we now allow a subresource load using HTTP 0.9 on a default port regardless
+        of the HTTP version the embedding page used.
+
+        Update test expectations as DRT/WTR do not emit a localized description for the
+        error associated with a load failure. Note that a message is emitted to
+        Web Inspector console.
+
+        * http/tests/security/http-0.9/iframe-blocked-expected.txt:
+        * http/tests/security/http-0.9/iframe-blocked.html: Dump frame load callbacks
+        to see that load was cancelled as there is no other unique visible indication
+        of success.
+        * http/tests/security/http-0.9/image-blocked-expected.txt: Update expected result.
+        * http/tests/security/http-0.9/image-default-port-allowed-expected.txt: Renamed from LayoutTests/http/tests/security/http-0.9/image-default-port-blocked-expected.txt.
+        * http/tests/security/http-0.9/image-default-port-allowed.html: Renamed from LayoutTests/http/tests/security/http-0.9/image-default-port-blocked.html.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked-expected.txt: Update expected result.
+        * http/tests/security/http-0.9/image-on-HTTP-0.9-page-blocked.html: Ditto.
+        * http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation-expected.txt: Ditto.
+        * http/tests/security/http-0.9/worker-connect-src-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/worker-importScripts-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/xhr-asynchronous-blocked-expected.txt: Ditto.
+        * http/tests/security/http-0.9/xhr-blocked-expected.txt: Added.
+        * http/tests/security/http-0.9/xhr-blocked.html: Added.
+        * platform/wk2/TestExpectations: Skip the HTTP-0.9 tests in WebKit2 that use internals.registerDefaultPortForProtocol().
+        The function internals.registerDefaultPortForProtocol only updates the default-port-to-protocol map in the WebContent
+        process. However network loads in WebKit2 occur in the NetworkProcess. Further investigation is needed to determine
+        the best way to support testing with default ports. Ideally, we would run an HTTP server on port 80 for testing and
+        remove the need for internals.registerDefaultPortForProtocol().
+
 2016-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [MultiCol] Render tree should be all clean by the end of FrameView::layout().

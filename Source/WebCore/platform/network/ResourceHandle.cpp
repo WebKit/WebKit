@@ -150,6 +150,26 @@ void ResourceHandle::clearClient()
     d->m_client = nullptr;
 }
 
+void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
+{
+    if (response.isHttpVersion0_9()) {
+        auto url = response.url();
+        Optional<uint16_t> port = url.port();
+        if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
+            cancel();
+            String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";
+            d->m_client->didFail(this, { String(), 0, url, message });
+            return;
+        }
+    }
+    if (d->m_usesAsyncCallbacks)
+        d->m_client->didReceiveResponseAsync(this, WTFMove(response));
+    else {
+        d->m_client->didReceiveResponse(this, WTFMove(response));
+        platformContinueSynchronousDidReceiveResponse();
+    }
+}
+
 #if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP)
 // ResourceHandle never uses async client calls on these platforms yet.
 void ResourceHandle::continueWillSendRequest(ResourceRequest&&)
@@ -168,6 +188,13 @@ void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool)
     notImplemented();
 }
 #endif
+#endif
+
+#if !USE(SOUP)
+void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
+{
+    // Do nothing.
+}
 #endif
 
 ResourceRequest& ResourceHandle::firstRequest()

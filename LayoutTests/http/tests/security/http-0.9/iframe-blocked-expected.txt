@@ -1,4 +1,8 @@
-CONSOLE MESSAGE: Stopped document load from 'http://127.0.0.1:8000/security/http-0.9/resources/nph-fail.pl' because it is using HTTP/0.9 on a non-default port.
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFailProvisionalLoadWithError
+main frame - didFinishLoadForFrame
 
 
 --------

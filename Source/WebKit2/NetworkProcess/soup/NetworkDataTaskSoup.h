@@ -62,7 +62,7 @@ private:
     void clearRequest();
     static void sendRequestCallback(SoupRequest*, GAsyncResult*, NetworkDataTaskSoup*);
     void didSendRequest(GRefPtr<GInputStream>&&);
-    void didReceiveResponse();
+    void dispatchDidReceiveResponse();
 
     static void tlsErrorsChangedCallback(SoupMessage*, GParamSpec*, NetworkDataTaskSoup*);
     void tlsErrorsChanged();

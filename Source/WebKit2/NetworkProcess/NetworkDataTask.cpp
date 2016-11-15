@@ -31,6 +31,8 @@
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkSession.h"
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(COCOA)
@@ -90,6 +92,21 @@ void NetworkDataTask::scheduleFailure(FailureType type)
     ASSERT(type != NoFailure);
     m_scheduledFailureType = type;
     m_failureTimer.startOneShot(0);
+}
+
+void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+{
+    ASSERT(m_client);
+    if (response.isHttpVersion0_9()) {
+        auto url = response.url();
+        Optional<uint16_t> port = url.port();
+        if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
+            cancel();
+            m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9." });
+            return;
+        }
+    }
+    m_client->didReceiveResponseNetworkSession(WTFMove(response), WTFMove(completionHandler));
 }
 
 void NetworkDataTask::failureTimerFired()
