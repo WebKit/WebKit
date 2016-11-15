@@ -1,3 +1,18 @@
+2016-11-15  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r208606?): LayoutTest fast/mediastream/enumerating-crash.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=164715
+
+        Reviewed by Jon Lee.
+
+        No new tests, fixes a crash in an existing test.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::document): Return nullptr when the script execution context has
+          been cleared.
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::document): Deleted.
+
 2016-11-15  Alejandro G. Castro  <alex@igalia.com>
 
         WebRTC: update MediaStream-MediaElement-srcObject.html test and unskip it

@@ -123,7 +123,11 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
 
 void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequest& request)
 {
-    auto pendingRequests = m_blockedRequests.take(request.document());
+    Document* document = request.document();
+    if (!document)
+        return;
+
+    auto pendingRequests = m_blockedRequests.take(document);
     for (auto& pendingRequest : pendingRequests) {
         if (&request != pendingRequest.get())
             continue;

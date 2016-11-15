@@ -238,6 +238,14 @@ void UserMediaRequest::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
+Document* UserMediaRequest::document() const
+{
+    if (!m_scriptExecutionContext)
+        return nullptr;
+
+    return downcast<Document>(m_scriptExecutionContext);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
