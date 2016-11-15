@@ -1,3 +1,21 @@
+2016-11-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208691. rdar://problem/29250304
+
+    2016-11-14  David Kilzer  <ddkilzer@apple.com>
+
+            Bug 164702: WebContent crash due to checked unsigned overflow in WebCore: WebCore::RenderLayerCompositor::requiresCompositingLayer const + 1104
+            <https://webkit.org/b/164702>
+            <rdar://problem/29236368>
+
+            Reviewed by Darin Adler.
+
+            * inspector/layers/layers-compositing-reasons-expected.txt:
+            Update results.
+            * inspector/layers/layers-compositing-reasons.html: Update to
+            reproduce the crash.  This does not reproduce the original crash
+            stack, but does exercise the same crashing code.
+
 2016-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land test expectations for rdar://problem/29169239.

@@ -1,4 +1,4 @@
-
+ 
 === Enable the LayerTree agent ===
 
 PASS
@@ -15,4 +15,5 @@ PASS
 
 PASS: <div id="opacity-container"> is composited due to having an opacity style and a composited child.
 PASS: <div id="child"> is composited due to having "backface-visibility: hidden" and a 3D transform.
+PASS: <canvas id="canvas"> is composited due to having a 3D transform.
 
