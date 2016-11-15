@@ -1,3 +1,18 @@
+2016-11-14  JF Bastien  <jfbastien@apple.com>
+
+        Expected: add missing `inline`
+        https://bugs.webkit.org/show_bug.cgi?id=164735
+
+        Reviewed by Yusuke Suzuki.
+
+        Free functions and full template specializations need to be
+        `inline`, or in a .cpp file, otherwise each .o creates a duplicate
+        symbol which makes the linker very sad.
+
+        * wtf/Expected.h:
+        (WTF::ExpectedDetail::Throw):
+        (WTF::makeExpected):
+
 2016-11-14  Mark Lam  <mark.lam@apple.com>
 
         Build fix after r208690.

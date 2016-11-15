@@ -70,7 +70,7 @@ constexpr UnexpectTag Unexpect { };
 namespace ExpectedDetail {
 
 // Invoked where std::Expected would instead throw.
-NO_RETURN_DUE_TO_CRASH void Throw() { RELEASE_ASSERT_NOT_REACHED(); }
+inline NO_RETURN_DUE_TO_CRASH void Throw() { RELEASE_ASSERT_NOT_REACHED(); }
 
 static constexpr enum class ValueTagType { } ValueTag { };
 static constexpr enum class ErrorTagType { } ErrorTag { };
@@ -414,7 +414,7 @@ template <class T, class E> constexpr Expected<T, std::decay_t<E>> makeExpectedF
 template <class T, class E, class U> constexpr Expected<T, E> makeExpectedFromError(U&& u) { return Expected<T, E>(makeUnexpected(E { std::forward<U>(u) } )); }
 // template <class F, class E = WTF::NulloptTag> constexpr Expected<typename std::result_of<F>::type, E> makeExpected_from_call(F f);
 
-Expected<void, WTF::NulloptTag> makeExpected() { return Expected<void, WTF::NulloptTag>(); }
+inline Expected<void, WTF::NulloptTag> makeExpected() { return Expected<void, WTF::NulloptTag>(); }
 
 } // namespace WTF
 
