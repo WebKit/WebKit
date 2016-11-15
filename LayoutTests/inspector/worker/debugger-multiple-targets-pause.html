@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-pause-location.js"></script>
+<script>
+let worker1, worker2;
+let testVariable = "main thread";
+
+function triggerStartWorkers() {
+    worker1 = new Worker("resources/worker-debugger-thread-1.js");
+    worker2 = new Worker("resources/worker-debugger-thread-2.js");
+}
+
+function triggerWork() {
+    worker1.postMessage("doWork");
+    worker2.postMessage("doWork");
+    setTimeout(workOnMainThread, 250);
+}
+
+function workOnMainThread() {
+    TestPage.dispatchEventToFrontend("MainThreadDidWork");
+    Date.now();
+}
+
+function test()
+{
+    let mainTarget = WebInspector.mainTarget;
+    let workerTarget1;
+    let workerTarget2;
+
+    function areAllTargetsPaused() {
+        for (let target of WebInspector.targets) {
+            let targetData = WebInspector.debuggerManager.dataForTarget(target);
+            if (!targetData.paused)
+                return false;
+        }
+        return true;
+    }
+
+    function areAllTargetsUnpaused() {
+        for (let target of WebInspector.targets) {
+            let targetData = WebInspector.debuggerManager.dataForTarget(target);
+            if (targetData.paused)
+                return false;
+        }
+        return true;
+    }
+
+    function dumpCallFrames() {
+        InspectorTest.log("");
+        for (let target of WebInspector.targets) {
+            InspectorTest.log(`TARGET: ${target.displayName}`);
+            let targetData = WebInspector.debuggerManager.dataForTarget(target);
+            let callFrames = targetData.callFrames;
+            for (let i = 0; i < callFrames.length; ++i) {
+                let callFrame = callFrames[i];
+                let active = callFrame === WebInspector.debuggerManager.activeCallFrame;
+                InspectorTest.log(` ${active ? "*" : " "} CALL FRAME #${i + 1}: ${callFrame.functionName}`);
+            }
+        }
+    }
+
+    let okayToReceiveMainThreadEvent = false;
+    InspectorTest.singleFireEventListener("MainThreadDidWork", (event) => {
+        if (!okayToReceiveMainThreadEvent) {
+            InspectorTest.fail("Main Thread's work fired before it could pause. Failing early.");
+            InspectorTest.completeTest();
+        }
+    });
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Debugger.Threads");
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Threads.CreateThreads",
+        description: "Spawn multiple targets.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerStartWorkers()`);
+            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                InspectorTest.pass("Created Worker 1");
+                workerTarget1 = event.data.target;
+                WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                    InspectorTest.pass("Created Worker 2");
+                    workerTarget2 = event.data.target;
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Threads.Pause",
+        description: "Should be able to pause in multiple targets.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerWork()`);
+
+            let receivedCallFramesDidChange = false;
+            let receivedPauseBeforeCallFramesDidChange = false;
+            let otherTargetsPausing = false;
+
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                receivedPauseBeforeCallFramesDidChange = !receivedCallFramesDidChange;
+                otherTargetsPausing = WebInspector.debuggerManager.dataForTarget(mainTarget).pausing && WebInspector.debuggerManager.dataForTarget(workerTarget2).pausing;
+            });
+
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                receivedCallFramesDidChange = true;
+                if (!areAllTargetsPaused())
+                    return;
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+
+                let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+                InspectorTest.assert(activeCallFrame.target === workerTarget1);
+
+                InspectorTest.expectThat(receivedPauseBeforeCallFramesDidChange, "Paused event should happen before CallFramesDidChange event.");
+                InspectorTest.expectThat(otherTargetsPausing, "In Paused event all other Targets should be pausing.");
+                InspectorTest.expectEqual(activeCallFrame.target.displayName, "worker-debugger-thread-1.js", "Worker 1 should be the first to pause.");
+                InspectorTest.pass("All Targets should eventually pause.");
+                dumpCallFrames();
+                resolve();
+            });
+        }
+    });
+
+    function addEvaluateTestCase({name, targetResolver, expected}) {
+        suite.addTestCase({
+            name, description: "Should be able to evaluate in different threads while paused.",
+            test(resolve, reject) {
+                let target = targetResolver();
+                let targetData = WebInspector.debuggerManager.dataForTarget(target);
+                WebInspector.debuggerManager.activeCallFrame = targetData.callFrames[0];
+                WebInspector.runtimeManager.evaluateInInspectedWindow("testVariable", {objectGroup: "test", includeCommandLineAPI: true}, (remoteObject) => {
+                    InspectorTest.expectEqual(remoteObject.description, expected, `Evaluated result in ${target.displayName} should be ${JSON.stringify(expected)}.`)
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addEvaluateTestCase({
+        name: "Worker.Debugger.Threads.Paused.Worker1Evaluate",
+        targetResolver: () => workerTarget1,
+        expected: "worker thread 1",
+    });
+
+    addEvaluateTestCase({
+        name: "Worker.Debugger.Threads.Paused.Worker2Evaluate",
+        targetResolver: () => workerTarget2,
+        expected: "worker thread 2",
+    });
+
+    addEvaluateTestCase({
+        name: "Worker.Debugger.Threads.Paused.MainEvaluate",
+        targetResolver: () => mainTarget,
+        expected: "main thread",
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Threads.Paused.Worker1.StepOut",
+        description: "Should be able to step in individual threads and not affect the others.",
+        test(resolve, reject) {
+            let targetData = WebInspector.debuggerManager.dataForTarget(workerTarget1);
+            WebInspector.debuggerManager.activeCallFrame = targetData.callFrames[0];
+            WebInspector.debuggerManager.stepOut();
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                InspectorTest.expectEqual(event.data.target, workerTarget1, "Should receive CallFramesDidChange for Worker 1.");
+                dumpCallFrames();
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Threads.Paused.Worker2.ResumeThread",
+        description: "Should be able to resume an individual thread and not affect the others.",
+        test(resolve, reject) {
+            let targetData = WebInspector.debuggerManager.dataForTarget(workerTarget2);
+            WebInspector.debuggerManager.continueUntilNextRunLoop(workerTarget2);
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                InspectorTest.expectEqual(event.data.target, workerTarget2, "Should Receive CallFramesDidChange for Worker 2.");
+                InspectorTest.expectThat(targetData.pausing, "Worker 2 should be pausing.");
+                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                    InspectorTest.expectEqual(event.data.target, workerTarget2, "Should Receive CallFramesDidChange for Worker 2.");
+                    InspectorTest.expectThat(targetData.paused, "Worker 2 should be paused.");
+                    dumpCallFrames();
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.Threads.Complete",
+        description: "Resume all threads for the test to complete.",
+        test(resolve, reject) {
+            okayToReceiveMainThreadEvent = true;
+            WebInspector.debuggerManager.resume();
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, () => {
+                InspectorTest.pass("Received Resume event.");
+                InspectorTest.expectThat(areAllTargetsUnpaused(), "All Targets should be unpaused.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure we can pause in multiple targets and evaluate in each.</p>
+</body>
+</html>

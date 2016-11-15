@@ -84,7 +84,6 @@ private:
     // Inspector::InspectorDebuggerAgent::Listener implementation.
     void debuggerWasEnabled() override;
     void debuggerWasDisabled() override;
-    void didPause() override;
     void disable();
 
     void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, Inspector::InspectorObject& description);
@@ -103,7 +102,6 @@ private:
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_xhrBreakpoints;
-    bool m_pauseInNextEventListener { false };
     bool m_pauseOnAllXHRsEnabled { false };
 };
 

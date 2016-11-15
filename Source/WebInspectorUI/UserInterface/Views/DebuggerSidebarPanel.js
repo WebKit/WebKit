@@ -36,7 +36,6 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         WebInspector.Target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceAdded, this);
 
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, this._debuggerCallFramesDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
@@ -44,11 +43,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptsCleared, this._scriptsCleared, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, this._debuggerCallFramesDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.WaitingToPause, this._debuggerWaitingToPause, this);
 
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
+
+        WebInspector.targetManager.addEventListener(WebInspector.TargetManager.Event.TargetAdded, this._targetAdded, this);
+        WebInspector.targetManager.addEventListener(WebInspector.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
         this._timelineRecordingWarningElement = document.createElement("div");
         this._timelineRecordingWarningElement.classList.add("warning-banner");
@@ -146,6 +149,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         let breakpointsSection = new WebInspector.DetailsSection("breakpoints", WebInspector.UIString("Breakpoints"), [breakpointsGroup]);
         this.contentView.element.appendChild(breakpointsSection.element);
 
+        this._breakpointSectionElement = breakpointsSection.element;
+
         this._breakpointsContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._breakpointsContentTreeOutline.ondelete = this._breakpointTreeOutlineDeleteTreeElement.bind(this);
         this._breakpointsContentTreeOutline.oncontextmenu = this._breakpointTreeOutlineContextMenuTreeElement.bind(this);
@@ -167,15 +172,30 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._scriptsSection = new WebInspector.DetailsSection("scripts", WebInspector.UIString("Sources"), [scriptsGroup]);
         this.contentView.element.appendChild(this._scriptsSection.element);
 
-        this._callStackContentTreeOutline = this.createContentTreeOutline(true, true);
-        this._callStackContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        const dontHideByDefault = true;
+        const suppressFiltering = true;
+        this._callStackTreeOutline = this.createContentTreeOutline(dontHideByDefault, suppressFiltering);
+        this._callStackTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+
+        this._singleThreadCallStackTreeOutline = this.createContentTreeOutline(dontHideByDefault, suppressFiltering);
+        this._singleThreadCallStackTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+
+        let mainTargetTreeElement = new WebInspector.ThreadTreeElement(WebInspector.mainTarget);
+        this._callStackTreeOutline.appendChild(mainTargetTreeElement);
+
+        this._multipleThreadsCallStackRow = new WebInspector.DetailsSectionRow;
+        this._multipleThreadsCallStackRow.element.appendChild(this._callStackTreeOutline.element);
+
+        this._singleThreadCallStackRow = new WebInspector.DetailsSectionRow;
+        this._singleThreadCallStackRow.element.appendChild(this._singleThreadCallStackTreeOutline.element);
+
+        this._callStackGroup = new WebInspector.DetailsSectionGroup([this._singleThreadCallStackRow]);
+        this._callStackSection = new WebInspector.DetailsSection("call-stack", WebInspector.UIString("Call Stack"), [this._callStackGroup]);
+
+        this._showingSingleThreadCallStack = true;
+
         this._activeCallFrameTreeElement = null;
-
-        this._callStackRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Call Frames"));
-        this._callStackRow.showEmptyMessage();
-
-        let callStackGroup = new WebInspector.DetailsSectionGroup([this._callStackRow]);
-        this._callStackSection = new WebInspector.DetailsSection("call-stack", WebInspector.UIString("Call Stack"), [callStackGroup]);
+        this._singleThreadActiveCallFrameTreeElement = null;
 
         this._pauseReasonTreeOutline = null;
 
@@ -321,6 +341,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _debuggerDidPause(event)
     {
         this.contentView.element.insertBefore(this._callStackSection.element, this.contentView.element.firstChild);
+
         if (this._updatePauseReason())
             this.contentView.element.insertBefore(this._pauseReasonSection.element, this.contentView.element.firstChild);
 
@@ -336,6 +357,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _debuggerDidResume(event)
     {
         this._callStackSection.element.remove();
+
         this._pauseReasonSection.element.remove();
 
         this._debuggerPauseResumeButtonItem.enabled = true;
@@ -576,6 +598,99 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._removeDebuggerTreeElement(breakpointTreeElement);
     }
 
+    _updateSingleThreadCallStacks()
+    {
+        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.mainTarget);
+        let callFrames = targetData.callFrames;
+
+        this._singleThreadCallStackTreeOutline.removeChildren();
+
+        if (!callFrames.length) {
+            this._singleThreadCallStackTreeOutline.appendChild(new WebInspector.IdleTreeElement);
+            return;
+        }
+
+        let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        let activeCallFrameTreeElement = null;
+
+        for (let callFrame of callFrames) {
+            let callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrame);
+            if (callFrame === activeCallFrame)
+                activeCallFrameTreeElement = callFrameTreeElement;
+            this._singleThreadCallStackTreeOutline.appendChild(callFrameTreeElement);
+        }
+
+        if (activeCallFrameTreeElement) {
+            activeCallFrameTreeElement.isActiveCallFrame = true;
+            if (this._showingSingleThreadCallStack)
+                activeCallFrameTreeElement.select(true, true);
+        }
+    }
+
+    _selectActiveCallFrameTreeElement(treeOutline)
+    {
+        let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        if (activeCallFrame) {
+            let activeCallFrameTreeElement = treeOutline.findTreeElement(activeCallFrame);
+            if (activeCallFrameTreeElement)
+                activeCallFrameTreeElement.select(true, true);
+        }
+    }
+
+    _showSingleThreadCallStacks()
+    {
+        console.assert(!this._showingSingleThreadCallStack);
+        console.assert(WebInspector.targets.size === 1);
+
+        this._showingSingleThreadCallStack = true;
+
+        this._callStackGroup.rows = [this._singleThreadCallStackRow];
+
+        this._selectActiveCallFrameTreeElement(this._singleThreadCallStackTreeOutline);
+    }
+
+    _showMultipleThreadCallStacks()
+    {
+        console.assert(this._showingSingleThreadCallStack);
+        console.assert(WebInspector.targets.size > 1);
+
+        this._showingSingleThreadCallStack = false;
+
+        this._callStackGroup.rows = [this._multipleThreadsCallStackRow];
+
+        this._selectActiveCallFrameTreeElement(this._callStackTreeOutline);
+    }
+
+    _findThreadTreeElementForTarget(target)
+    {
+        for (let child of this._callStackTreeOutline.children) {
+            if (child.target === target)
+                return child;
+        }
+
+        return null;
+    }
+
+    _targetAdded(event)
+    {
+        let target = event.data.target;
+        let treeElement = new WebInspector.ThreadTreeElement(target);
+        this._callStackTreeOutline.appendChild(treeElement);
+
+        if (this._showingSingleThreadCallStack)
+            this._showMultipleThreadCallStacks();
+    }
+
+    _targetRemoved(event)
+    {
+        let target = event.data.target;
+        let treeElement = this._findThreadTreeElementForTarget(target);
+        this._callStackTreeOutline.removeChild(treeElement);
+
+        if (WebInspector.targets.size === 1)
+            this._showSingleThreadCallStacks();
+    }
+
     _handleDebuggerObjectDisplayLocationDidChange(event)
     {
         var debuggerObject = event.target;
@@ -617,59 +732,37 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         parentTreeElement.treeOutline.removeChild(parentTreeElement);
     }
 
-    _debuggerCallFramesDidChange()
+    _debuggerCallFramesDidChange(event)
     {
-        this._callStackContentTreeOutline.removeChildren();
-        this._activeCallFrameTreeElement = null;
+        let target = event.data.target;
+        let treeElement = this._findThreadTreeElementForTarget(target);
+        treeElement.refresh();
 
-        if (!WebInspector.debuggerManager.activeCallFrame) {
-            this._callStackRow.showEmptyMessage();
-            return;
-        }
-
-        let target = WebInspector.debuggerManager.activeCallFrame.target;
-        let targetData = WebInspector.debuggerManager.dataForTarget(target);
-        let callFrames = targetData.callFrames;
-        if (!callFrames || !callFrames.length) {
-            this._callStackRow.showEmptyMessage();
-            return;
-        }
-
-        this._callStackRow.hideEmptyMessage();
-        this._callStackRow.element.appendChild(this._callStackContentTreeOutline.element);
-
-        let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
-        for (let callFrame of callFrames) {
-            let callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrame);
-            if (callFrame === activeCallFrame)
-                this._activeCallFrameTreeElement = callFrameTreeElement;
-            this._callStackContentTreeOutline.appendChild(callFrameTreeElement);
-        }
-
-        if (this._activeCallFrameTreeElement) {
-            this._activeCallFrameTreeElement.select(true, true);
-            this._activeCallFrameTreeElement.isActiveCallFrame = true;
-        }
+        if (target === WebInspector.mainTarget)
+            this._updateSingleThreadCallStacks();
     }
 
     _debuggerActiveCallFrameDidChange()
     {
+        if (this._activeCallFrameTreeElement) {
+            this._activeCallFrameTreeElement.isActiveCallFrame = false;
+            this._activeCallFrameTreeElement = null;
+        }
+        if (this._singleThreadActiveCallFrameTreeElement) {
+            this._singleThreadActiveCallFrameTreeElement.isActiveCallFrame = false;
+            this._singleThreadActiveCallFrameTreeElement = null;
+        }
+
         if (!WebInspector.debuggerManager.activeCallFrame)
             return;
 
-        let target = WebInspector.debuggerManager.activeCallFrame.target;
-        let targetData = WebInspector.debuggerManager.dataForTarget(target);
-        let callFrames = targetData.callFrames;
-        if (!callFrames)
-            return;
-
-        if (this._activeCallFrameTreeElement)
-            this._activeCallFrameTreeElement.isActiveCallFrame = false;
-
-        this._activeCallFrameTreeElement = this._callStackContentTreeOutline.findTreeElement(WebInspector.debuggerManager.activeCallFrame);
-
+        this._activeCallFrameTreeElement = this._callStackTreeOutline.findTreeElement(WebInspector.debuggerManager.activeCallFrame);
         if (this._activeCallFrameTreeElement)
             this._activeCallFrameTreeElement.isActiveCallFrame = true;
+
+        this._singleThreadActiveCallFrameTreeElement = this._singleThreadCallStackTreeOutline.findTreeElement(WebInspector.debuggerManager.activeCallFrame);
+        if (this._singleThreadActiveCallFrameTreeElement)
+            this._singleThreadActiveCallFrameTreeElement.isActiveCallFrame = true;
     }
 
     _breakpointsBeneathTreeElement(treeElement)

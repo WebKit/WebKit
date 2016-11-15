@@ -1,3 +1,161 @@
+2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Worker debugging should pause all targets and view call frames in all targets
+        https://bugs.webkit.org/show_bug.cgi?id=164305
+        <rdar://problem/29056192>
+
+        Reviewed by Timothy Hatcher.
+
+        This implements a policy where, when one Target ("Thread") pauses
+        the frontend triggers a pause in all other Targets. The intended
+        user experience is "all threads pause" whenever the frontend shows
+        the debugger paused UI.
+
+        DebuggerManager has a few straight forward changes:
+
+            - The paused state reflects if any target is paused.
+            - The Paused Event is fired when going from !paused -> paused.
+              This means when the first target pauses.
+            - The Resumed Event is fired when going from paused -> !paused.
+              This means only after all targets have resumed.
+            - The CallFrameDidChange Event now includes the Target that updated.
+
+        When a Target first pauses the frontend then immediately pauses all
+        other Targets. This puts them into a "pausing" state (we display as
+        Idle) and they will pause as soon as they start executing JavaScript.
+
+        When a Target steps the "paused" state isn't changing. So this is
+        just a CallFramesDidChange update.
+
+        When clicking Resume we resume all targets. This is will be the normal,
+        expected way users resume execution. Note that one of the threads may
+        then hit a breakpoint and re-pause all threads.
+
+        Sometimes when multiple threads are paused you may want to run an
+        individual thread to completion but keep other threads paused. There
+        is a context menu on the ThreadTreeElement to resume just that
+        single thread. It will continue and pause for its next run loop.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/Thread.svg: Added.
+        * UserInterface/Images/gtk/Thread.svg: Added.
+        * UserInterface/Main.html:
+        New strings and files.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded):
+        Place the TargetManager first since other managers may want to listen
+        for TargetAdded / TargetRemoved events.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.get paused):
+        This is now a computed state.
+
+        (WebInspector.DebuggerManager.prototype.pause):
+        (WebInspector.DebuggerManager.prototype.resume):
+        Affect all targets.
+
+        (WebInspector.DebuggerManager.prototype.stepOver):
+        (WebInspector.DebuggerManager.prototype.stepInto):
+        (WebInspector.DebuggerManager.prototype.stepOut):
+        (WebInspector.DebuggerManager.prototype.reset):
+        Update to use the paused computed property.
+
+        (WebInspector.DebuggerManager.prototype.continueUntilNextRunLoop):
+        Issue the new Debugger.continueUntilNextRunLoop command
+        on a given target.
+
+        (WebInspector.DebuggerManager.prototype.initializeTarget):
+        When a new Target is created and we were already paused,
+        then start that Worker in a paused state.
+
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        Recover from bad cases where the backend informs the frontend about
+        internal JavaScript that it shouldn't know about. Legacy backend do
+        this but also there are corner cases we need to handle.
+        Dispatch events appropriately now that multiple targets may be paused.
+
+        (WebInspector.DebuggerManager.prototype._didResumeInternal):
+        Dispatch events appropriately now that multiple targets may be paused.
+
+        (WebInspector.DebuggerManager.prototype._targetRemoved):
+        Remove debugger data for targets that go away to avoid leaks.
+
+        * UserInterface/Models/DebuggerData.js:
+        (WebInspector.DebuggerData):
+        (WebInspector.DebuggerData.prototype.get paused):
+        (WebInspector.DebuggerData.prototype.get pausing):
+        Move some more per-Target state into DebuggerData.
+
+        (WebInspector.DebuggerData.prototype.pauseIfNeeded):
+        (WebInspector.DebuggerData.prototype.resumeIfNeeded):
+        (WebInspector.DebuggerData.prototype.continueUntilNextRunLoop):
+        These should only be called by DebuggerManager. They correctly
+        update the state of the DebuggerData for this Target, and also
+        issue the underlying command to the target.
+
+        (WebInspector.DebuggerData.prototype.updateForPause):
+        (WebInspector.DebuggerData.prototype.updateForResume):
+        Handle a special case where continueUntilNextRunLoop triggers
+        an invisible "pause" on the backend that we should mirror.
+
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.MainTarget):
+        (WebInspector.MainTarget.prototype.get displayName):
+        (WebInspector.MainTarget.prototype.initialize):
+        Better display names.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidResume):
+        (WebInspector.DebuggerSidebarPanel.prototype._updateSingleThreadCallStacks):
+        (WebInspector.DebuggerSidebarPanel.prototype._selectActiveCallFrameTreeElement):
+        (WebInspector.DebuggerSidebarPanel.prototype._showSingleThreadCallStacks):
+        (WebInspector.DebuggerSidebarPanel.prototype._showMultipleThreadCallStacks):
+        (WebInspector.DebuggerSidebarPanel.prototype._findThreadTreeElementForTarget):
+        (WebInspector.DebuggerSidebarPanel.prototype._targetAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._targetRemoved):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerCallFramesDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+        The DebuggerSidebar still has a single "Call Stacks" section, but maintains
+        two TreeOutlines and only shows one at a time. The Single Thread view shows
+        a flat list of the call frames for the Main Target when it is the only target.
+        The Multiple Threads view shows a list of Threads and their call frames.
+        We always keep both up to date, because we may need to swap between them
+        purely as Targets are added / removed. There is a bit of extra logic to
+        ensure we select elements properly based only on the visible tree outline.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        When evaluating in a particular target, "runAfterPendingDispatches"
+        must wait for all other commands in that particular target to have
+        completed. So use the target specific version.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+        Gracefully handle a few more TreeElements without a represented object.
+
+        * UserInterface/Views/IdleTreeElement.css: Added.
+        (.details-section.call-stack .idle .icon):
+        * UserInterface/Views/IdleTreeElement.js: Added.
+        (WebInspector.IdleTreeElement):
+        Very basic tree element to encapsulate an Idle call frame with an
+        empty represented object.
+
+        * UserInterface/Views/ThreadTreeElement.css: Added.
+        (.details-section.call-stack .thread .icon):
+        * UserInterface/Views/ThreadTreeElement.js: Added.
+        (WebInspector.ThreadTreeElement):
+        (WebInspector.ThreadTreeElement.prototype.get target):
+        (WebInspector.ThreadTreeElement.prototype.refresh):
+        (WebInspector.ThreadTreeElement.prototype.onattach):
+        (WebInspector.ThreadTreeElement.prototype.oncontextmenu):
+        ThreadTreeElement has no represented object, but makes it easy
+        to refresh a list of CallFrameTreeElements for a given target.
+
 2016-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Disable Warning Filter in Debugger Tab By Default

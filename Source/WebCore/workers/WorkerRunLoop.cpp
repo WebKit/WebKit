@@ -192,7 +192,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
         break;
 
     case MessageQueueTimeout:
-        if (!context->isClosing())
+        if (!context->isClosing() && !isNested())
             m_sharedTimer->fire();
 #if USE(CF)
         if (nextCFRunLoopTimerFireDate <= CFAbsoluteTimeGetCurrent())

@@ -33,20 +33,26 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
 
         this._target = target;
 
-        this._callFrames = [];
+        this._paused = false;
+        this._pausing = false;
         this._pauseReason = null;
         this._pauseData = null;
+        this._callFrames = [];
 
         this._scriptIdMap = new Map;
         this._scriptContentIdentifierMap = new Map;
+
+        this._makePausingAfterNextResume = false;
     }
 
     // Public
 
     get target() { return this._target; }
-    get callFrames() { return this._callFrames; }
+    get paused() { return this._paused; }
+    get pausing() { return this._pausing; }
     get pauseReason() { return this._pauseReason; }
     get pauseData() { return this._pauseData; }
+    get callFrames() { return this._callFrames; }
 
     get scripts()
     {
@@ -84,17 +90,62 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
         }
     }
 
+    pauseIfNeeded()
+    {
+        if (this._paused || this._pausing)
+            return Promise.resolve();
+
+        this._pausing = true;
+
+        return this._target.DebuggerAgent.pause();
+    }
+
+    resumeIfNeeded()
+    {
+        if (!this._paused && !this._pausing)
+            return Promise.resolve();
+
+        this._pausing = false;
+
+        return this._target.DebuggerAgent.resume();
+    }
+
+    continueUntilNextRunLoop()
+    {
+        if (!this._paused || this._pausing)
+            return Promise.resolve();
+
+        // The backend will automatically start pausing
+        // after resuming, so we need to match that here.
+        this._makePausingAfterNextResume = true;
+
+        return this._target.DebuggerAgent.continueUntilNextRunLoop();
+    }
+
     updateForPause(callFrames, pauseReason, pauseData)
     {
-        this._callFrames = callFrames;
+        this._paused = true;
+        this._pausing = false;
         this._pauseReason = pauseReason;
         this._pauseData = pauseData;
+        this._callFrames = callFrames;
+
+        // We paused, no need for auto-pausing.
+        this._makePausingAfterNextResume = false;
     }
 
     updateForResume()
     {
-        this._callFrames = [];
+        this._paused = false;
+        this._pausing = false;
         this._pauseReason = null;
         this._pauseData = null;
+        this._callFrames = [];
+
+        // We resumed, but may be auto-pausing.
+        if (this._makePausingAfterNextResume) {
+            this._makePausingAfterNextResume = false;
+            this._pausing = true;
+        }
     }
 };

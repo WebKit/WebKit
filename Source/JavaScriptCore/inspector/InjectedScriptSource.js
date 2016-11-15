@@ -688,7 +688,7 @@ InjectedScript.prototype = {
             isArrayLike = injectedScript._subtype(object) === "array" && isFinite(object.length) && object.length > 0;
         } catch(e) {}
 
-        for (var o = object; this._isDefined(o); o = o.__proto__) {
+        for (var o = object; this._isDefined(o); o = Object.getPrototypeOf(o)) {
             var isOwnProperty = o === object;
 
             if (isArrayLike && isOwnProperty)

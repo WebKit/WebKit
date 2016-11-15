@@ -1,0 +1,14 @@
+Debugger.continueUntilNextRunLoop
+
+
+== Running test suite: Debugger.continueUntilNextRunLoop
+-- Running test case: Debugger.Unpaused.continueUntilNextRunLoop
+PASS: Should produce an error if not paused.
+Can only perform operation while paused.
+
+-- Running test case: Debugger.Unpaused.continueUntilNextRunLoop
+PASS: Received First Pause Event.
+PASS: Should be paused in pause1.
+PASS: Received Second Pause Event.
+PASS: Should be paused in pause2.
+

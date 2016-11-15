@@ -247,9 +247,8 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);
 
-        auto cookie = InspectorInstrumentation::willHandleEvent(context, event);
+        InspectorInstrumentation::willHandleEvent(context, event);
         registeredListener->callback().handleEvent(context, &event);
-        InspectorInstrumentation::didHandleEvent(cookie);
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(false);

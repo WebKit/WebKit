@@ -85,6 +85,8 @@ namespace WebCore {
         // This should only be called when the context is closed or loop has been terminated.
         void runCleanupTasks(WorkerGlobalScope*);
 
+        bool isNested() const { return m_nestedCount > 1; }
+
         MessageQueue<Task> m_messageQueue;
         std::unique_ptr<WorkerSharedTimer> m_sharedTimer;
         int m_nestedCount;

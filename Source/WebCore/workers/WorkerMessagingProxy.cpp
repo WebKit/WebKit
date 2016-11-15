@@ -44,6 +44,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -168,7 +169,7 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
 
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
-    m_scriptExecutionContext->postTask([this, message = message.isolatedCopy()] (ScriptExecutionContext&) {
+    RunLoop::main().dispatch([this, message = message.isolatedCopy()] {
         m_inspectorProxy->sendMessageFromWorkerToFrontend(message);
     });
 }

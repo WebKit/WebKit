@@ -99,16 +99,22 @@ WebInspector.MainTarget = class MainTarget extends WebInspector.Target
 {
     constructor(connection)
     {
-        super("", "", WebInspector.Target.Type.Main, InspectorBackend.mainConnection);
+        super("main", "", WebInspector.Target.Type.Main, InspectorBackend.mainConnection);
     }
 
     // Protected (Target)
 
     get displayName()
     {
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.Web)
-            return WebInspector.UIString("Main Frame");
-        return WebInspector.UIString("Main Context");
+        switch (WebInspector.debuggableType) {
+        case WebInspector.DebuggableType.Web:
+            return WebInspector.UIString("Page");
+        case WebInspector.DebuggableType.JavaScript:
+            return WebInspector.UIString("JavaScript Context");
+        default:
+            console.error("Unexpected debuggable type: ", WebInspector.debuggableType);
+            return WebInspector.UIString("Main");
+        }
     }
 
     get mainResource()
@@ -119,7 +125,8 @@ WebInspector.MainTarget = class MainTarget extends WebInspector.Target
 
     initialize()
     {
-        this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, true, null);
+        let displayName = WebInspector.debuggableType === WebInspector.DebuggableType.Web ? WebInspector.UIString("Main Frame") : this.displayName;
+        this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
     }
 }
 

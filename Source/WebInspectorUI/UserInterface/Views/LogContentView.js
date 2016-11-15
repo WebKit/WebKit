@@ -158,7 +158,8 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
         // Some results don't populate until further backend dispatches occur (like the DOM tree).
         // We want to remove focusable children after those pending dispatches too.
-        InspectorBackend.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
+        let target = messageView.message ? messageView.message.target : WebInspector.runtimeManager.activeExecutionContext.target;
+        target.connection.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
 
         if (type && type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
             console.assert(messageView.message instanceof WebInspector.ConsoleMessage);

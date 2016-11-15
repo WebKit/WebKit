@@ -85,11 +85,6 @@ void InspectorDOMDebuggerAgent::debuggerWasDisabled()
     disable();
 }
 
-void InspectorDOMDebuggerAgent::didPause()
-{
-    m_pauseInNextEventListener = false;
-}
-
 void InspectorDOMDebuggerAgent::disable()
 {
     m_instrumentingAgents.setInspectorDOMDebuggerAgent(nullptr);
@@ -348,15 +343,14 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
 void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous)
 {
     String fullEventName = (isDOMEvent ? listenerEventCategoryType : instrumentationEventCategoryType) + eventName;
-    if (m_pauseInNextEventListener)
-        m_pauseInNextEventListener = false;
-    else {
-        if (!m_eventListenerBreakpoints.contains(fullEventName))
-            return;
-    }
+
+    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventListenerBreakpoints.contains(fullEventName);
+    if (!shouldPause)
+        return;
 
     Ref<InspectorObject> eventData = InspectorObject::create();
-    eventData->setString("eventName", fullEventName);
+    eventData->setString(ASCIILiteral("eventName"), fullEventName);
+
     if (synchronous)
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
     else
@@ -409,7 +403,6 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
 void InspectorDOMDebuggerAgent::clear()
 {
     m_domBreakpoints.clear();
-    m_pauseInNextEventListener = false;
 }
 
 } // namespace WebCore

@@ -177,11 +177,15 @@
             "description": "Removes JavaScript breakpoint."
         },
         {
+            "name": "continueUntilNextRunLoop",
+            "description": "Continues execution until the current evaluation completes. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
             "name": "continueToLocation",
+            "description": "Continues execution until specific location is reached. This will trigger either a Debugger.paused or Debugger.resumed event.",
             "parameters": [
                 { "name": "location", "$ref": "Location", "description": "Location to continue to." }
-            ],
-            "description": "Continues execution until specific location is reached. This will trigger either a Debugger.paused or Debugger.resumed event."
+            ]
         },
         {
             "name": "stepOver",

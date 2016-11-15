@@ -16,6 +16,7 @@ PAUSE AT triggerDebuggerStatement:3:5
       5    
 
 
+
 -- Running test case: Worker.Debugger.Pause.Breakpoint
 PASS: Paused
 PASS: Should be paused in a Worker CallFrame.
@@ -28,6 +29,7 @@ PAUSE AT triggerBreakpoint:9:5
       9        let gamma = 3;
      10    }
      11    
+
 
 
 -- Running test case: Worker.Debugger.Pause.Exception
@@ -43,6 +45,7 @@ PAUSE AT triggerException:14:9
      15    
      16    function triggerAssertion() {
 
+
 Uncaught exception in test page: TypeError: undefined is not an object (evaluating '[].x.x') [worker-debugger-pause.js:14]
 
 -- Running test case: Worker.Debugger.Pause.Assert
@@ -57,5 +60,6 @@ PAUSE AT triggerAssertion:18:19
      18    }
      19    
      20    onmessage = function(event) {
+
 
 

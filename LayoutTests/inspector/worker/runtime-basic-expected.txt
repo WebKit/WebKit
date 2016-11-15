@@ -3,13 +3,13 @@ Test for RuntimeAgent in a Worker.
 
 == Running test suite: Worker.Runtime.basic
 -- Running test case: Main.Runtime.evaluate
-Target - Main Frame - passphrase - page-passphrase
+Target - Page - passphrase - page-passphrase
 
 -- Running test case: Worker.Runtime.evaluate
 Target - worker-1.js - passphrase - worker-passphrase
 
 -- Running test case: Main.Runtime.RemoteObjectAndPropertyDescriptor.
-Target - Main Frame - location and href - Location: inspector/worker/runtime-basic.html
+Target - Page - location and href - Location: inspector/worker/runtime-basic.html
 
 -- Running test case: Worker.Runtime.RemoteObjectAndPropertyDescriptor.
 Target - worker-1.js - location and href - WorkerLocation: inspector/worker/resources/worker-1.js

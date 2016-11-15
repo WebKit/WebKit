@@ -31,6 +31,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`worker.postMessage("triggerDebuggerStatement")`);
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.log(""); // This evaluation will pause the MainThread.
                 InspectorTest.pass("Paused");
                 InspectorTest.expectEqual(WebInspector.debuggerManager.activeCallFrame.target, workerTarget, "Should be paused in a Worker CallFrame.");
                 InspectorTest.expectEqual(workerDebuggerData.pauseReason, WebInspector.DebuggerManager.PauseReason.DebuggerStatement, "Pause reason should be a debugger statement.");
@@ -49,6 +50,7 @@ function test()
             WebInspector.debuggerManager.addBreakpoint(breakpoint);
             InspectorTest.evaluateInPage(`worker.postMessage("triggerBreakpoint")`);
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.log(""); // This evaluation will pause the MainThread.
                 InspectorTest.pass("Paused");
                 InspectorTest.expectEqual(WebInspector.debuggerManager.activeCallFrame.target, workerTarget, "Should be paused in a Worker CallFrame.");
                 InspectorTest.expectEqual(workerDebuggerData.pauseReason, WebInspector.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
@@ -64,6 +66,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`worker.postMessage("triggerException")`);
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.log(""); // This evaluation will pause the MainThread.
                 InspectorTest.pass("Paused");
                 InspectorTest.expectEqual(WebInspector.debuggerManager.activeCallFrame.target, workerTarget, "Should be paused in a Worker CallFrame.");
                 InspectorTest.expectEqual(workerDebuggerData.pauseReason, WebInspector.DebuggerManager.PauseReason.Exception, "Pause reason should be an exception.");
@@ -79,6 +82,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`worker.postMessage("triggerAssertion")`);
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.log(""); // This evaluation will pause the MainThread.
                 InspectorTest.pass("Paused");
                 InspectorTest.expectEqual(WebInspector.debuggerManager.activeCallFrame.target, workerTarget, "Should be paused in a Worker CallFrame.");
                 InspectorTest.expectEqual(workerDebuggerData.pauseReason, WebInspector.DebuggerManager.PauseReason.Assertion, "Pause reason should be an exception.");

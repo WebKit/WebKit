@@ -1,3 +1,48 @@
+2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Worker debugging should pause all targets and view call frames in all targets
+        https://bugs.webkit.org/show_bug.cgi?id=164305
+        <rdar://problem/29056192>
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector/debugger/continueUntilNextRunLoop
+               inspector/worker/debugger-multiple-targets-pause
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        Switch from postTask (callOnMainThread) to RunLoop::main().dispatch so
+        that a paused Worker can send Inspector protocol messages responses
+        back through the Main Page's InspectorWorkerAgent even if the Page
+        itself is paused and MainThread callbacks are paused.
+
+        * workers/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::isNested):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        When running a nested WorkerRunLoop, running inspector debugger
+        commands, we should not fire timers on the Worker. Timers would
+        then be happening out of order and would not be debuggable.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::clear):
+        (WebCore::InspectorDOMDebuggerAgent::didPause): Deleted.
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl): Deleted.
+        (WebCore::InspectorInstrumentation::cancelPauseOnNativeEvent): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willHandleEvent):
+        (WebCore::InspectorInstrumentation::didHandleEvent): Deleted.
+        Remove unnecessary code where WebCore is trying to keep track
+        of pause on next statement but that state is already more
+        accurately provided by InspectorDebuggerAgent.
+
 2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Teach WebGLRenderingContextBase about new texture internal formats

@@ -130,8 +130,7 @@ public:
     static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static InspectorInstrumentationCookie willDispatchEvent(Document&, const Event&, bool hasEventListeners);
     static void didDispatchEvent(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willHandleEvent(ScriptExecutionContext*, const Event&);
-    static void didHandleEvent(const InspectorInstrumentationCookie&);
+    static void willHandleEvent(ScriptExecutionContext*, const Event&);
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
@@ -303,8 +302,7 @@ private:
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
-    static InspectorInstrumentationCookie willHandleEventImpl(InstrumentingAgents&, const Event&);
-    static void didHandleEventImpl(const InspectorInstrumentationCookie&);
+    static void willHandleEventImpl(InstrumentingAgents&, const Event&);
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
@@ -442,7 +440,6 @@ private:
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
     static void pauseOnNativeEventIfNeeded(InstrumentingAgents&, bool isDOMEvent, const String& eventName, bool synchronous);
-    static void cancelPauseOnNativeEvent(InstrumentingAgents&);
 
     WEBCORE_EXPORT static int s_frontendCounter;
 };
@@ -702,19 +699,11 @@ inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrument
         didDispatchEventImpl(cookie);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willHandleEvent(ScriptExecutionContext* context, const Event& event)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willHandleEventImpl(*instrumentingAgents, event);
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didHandleEvent(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext* context, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didHandleEventImpl(cookie);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        return willHandleEventImpl(*instrumentingAgents, event);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWindow(Frame* frame, const Event& event, DOMWindow& window)

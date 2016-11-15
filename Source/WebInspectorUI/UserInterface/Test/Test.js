@@ -53,6 +53,7 @@ WebInspector.loaded = function()
     WebInspector.mainTarget = new WebInspector.MainTarget;
 
     // Instantiate controllers used by tests.
+    this.targetManager = new WebInspector.TargetManager;
     this.frameResourceManager = new WebInspector.FrameResourceManager;
     this.storageManager = new WebInspector.StorageManager;
     this.domTreeManager = new WebInspector.DOMTreeManager;
@@ -65,7 +66,6 @@ WebInspector.loaded = function()
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
-    this.targetManager = new WebInspector.TargetManager;
     this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
 

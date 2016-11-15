@@ -1,3 +1,47 @@
+2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Worker debugging should pause all targets and view call frames in all targets
+        https://bugs.webkit.org/show_bug.cgi?id=164305
+        <rdar://problem/29056192>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._propertyDescriptors):
+        Accessing __proto__ does a ToThis(...) conversion on the receiver.
+        In the case of GlobalObjects (such as WorkerGlobalScope when paused)
+        this would return undefined and throw an exception. We can use
+        Object.getPrototypeOf to avoid that conversion and possible error.
+
+        * inspector/protocol/Debugger.json:
+        Provide a new way to effectively `resume` + `pause` immediately.
+        This must be implemented on the backend to correctly synchronize
+        the resuming and pausing.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::continueUntilNextRunLoop):
+        Treat this as `resume` and `pause`. Resume now, and trigger
+        a pause if the VM becomes idle and we didn't pause before then
+        (such as hitting a breakpoint after we resumed).
+
+        (Inspector::InspectorDebuggerAgent::pause):
+        (Inspector::InspectorDebuggerAgent::resume):
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        Clean up and correct pause on next statement logic.
+
+        (Inspector::InspectorDebuggerAgent::registerIdleHandler):
+        (Inspector::InspectorDebuggerAgent::willStepAndMayBecomeIdle):
+        (Inspector::InspectorDebuggerAgent::didBecomeIdle):
+        (Inspector::InspectorDebuggerAgent::didBecomeIdleAfterStepping): Deleted.
+        The idle handler may now also trigger a pause in the case
+        where continueUntilNextRunLoop resumed and wants to pause.
+
+        (Inspector::InspectorDebuggerAgent::didPause):
+        Eliminate the useless didPause. The DOMDebugger was keeping track
+        of its own state that was worse then the state in DebuggerAgent.
+
 2016-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix cloop.

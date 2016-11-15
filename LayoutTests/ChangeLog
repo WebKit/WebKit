@@ -1,3 +1,32 @@
+2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Worker debugging should pause all targets and view call frames in all targets
+        https://bugs.webkit.org/show_bug.cgi?id=164305
+        <rdar://problem/29056192>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/continueUntilNextRunLoop-expected.txt: Added.
+        * inspector/debugger/continueUntilNextRunLoop.html: Added.
+        New test for new Debugger.continueUntilNextRunLoop protocol method.
+
+        * inspector/worker/debugger-multiple-targets-pause-expected.txt: Added.
+        * inspector/worker/debugger-multiple-targets-pause.html: Added.
+        * inspector/worker/resources/worker-debugger-thread-1.js: Added.
+        * inspector/worker/resources/worker-debugger-thread-2.js: Added.
+        This tests uses a 250ms timeout because we have to have the worker thread
+        evaluate some work and trigger a pause on other threads before their work
+        starts. On debug builds, shorter times, like 100ms, would not be enough.
+
+        * inspector/worker/debugger-pause-expected.txt:
+        * inspector/worker/debugger-pause.html:
+        Now that all threads pause, the first InspectorTest.log evaluates JavaScript on
+        the page and causes a pause. So make the first log empty to keep the test unchanged.
+
+        * inspector/worker/runtime-basic-expected.txt:
+        * inspector/unit-tests/target-manager-expected.txt:
+        Updated display name of the mainTarget.
+
 2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Teach WebGLRenderingContextBase about new texture internal formats
