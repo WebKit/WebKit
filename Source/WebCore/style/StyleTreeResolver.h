@@ -94,6 +94,8 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
+    const RenderStyle* parentBoxStyle() const;
+
     Document& m_document;
     std::unique_ptr<RenderStyle> m_documentElementStyle;
 

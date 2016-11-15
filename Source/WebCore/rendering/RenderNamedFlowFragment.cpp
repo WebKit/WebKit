@@ -352,7 +352,7 @@ std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(Rende
     ASSERT(!renderer.isAnonymous());
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
-    auto renderObjectRegionStyle = renderer.element()->styleResolver().styleForElement(*renderer.element(), &parentStyle, MatchAllRules, this).renderStyle;
+    auto renderObjectRegionStyle = renderer.element()->styleResolver().styleForElement(*renderer.element(), &parentStyle, nullptr, MatchAllRules, this).renderStyle;
 
     return renderObjectRegionStyle;
 }

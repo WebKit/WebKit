@@ -1,3 +1,54 @@
+2016-11-15  Antti Koivisto  <antti@apple.com>
+
+        slot doesn't work as a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=160740
+        <rdar://problem/28605080>
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/shadow-dom/css-scoping-slot-flex.html
+
+        The style adjustment for flex children needs to be based on their parent box style rather
+        than the composed tree parent. This can be different when display:contents is involved.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::documentElementUserAgentStyle):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::styleForElement):
+
+            Optionally provide parent box style so we can do adjustments based on it when computing style for rendering.
+
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::equivalentBlockDisplay):
+
+            Avoid boolean parameters.
+
+        (WebCore::StyleResolver::adjustRenderStyle):
+
+            Do the display:contents adjustment first and treat 'content' like 'none' later'. We never want to override
+            'contents' with adjustments.
+            Use parent box style for flex/grid adjustments instead of the DOM parent style.
+
+        * css/StyleResolver.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+
+            Call with parent box style.
+
+        (WebCore::Style::TreeResolver::parentBoxStyle):
+
+            Find the parent box style if any.
+
+        * style/StyleTreeResolver.h:
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::overrideComputedStyle):
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Misc Inspector backend cleanup

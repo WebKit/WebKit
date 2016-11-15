@@ -264,7 +264,7 @@ StyleResolver::StyleResolver(Document& document)
         m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
 
     if (root) {
-        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().setIsComputingRootStyleFont(true);
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -386,7 +386,7 @@ static inline bool isAtShadowBoundary(const Element& element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_isDeleted);
 
@@ -437,7 +437,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     applyMatchedProperties(collector.matchedResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *state.parentStyle(), &element);
+    adjustRenderStyle(*state.style(), *state.parentStyle(), parentBoxStyle, &element);
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -487,7 +487,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
 
     cascade.applyDeferredProperties(*this, &result);
 
-    adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr);
+    adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr, nullptr);
 
     // Add all the animating properties to the keyframe.
     unsigned propertyCount = keyframe->properties().propertyCount();
@@ -637,7 +637,7 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     applyMatchedProperties(collector.matchedResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *m_state.parentStyle(), nullptr);
+    adjustRenderStyle(*state.style(), *m_state.parentStyle(), nullptr, nullptr);
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -722,9 +722,9 @@ static void addIntrinsicMargins(RenderStyle& style)
     }
 }
 
-static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool strictParsing)
+static EDisplay equivalentBlockDisplay(const RenderStyle& style, const Document& document)
 {
-    switch (display) {
+    switch (auto display = style.display()) {
     case BLOCK:
     case TABLE:
     case BOX:
@@ -737,7 +737,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
 
     case LIST_ITEM:
         // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk, but only in quirks mode.
-        if (!strictParsing && isFloating)
+        if (document.inQuirksMode() && style.isFloating())
             return BLOCK;
         return display;
     case INLINE_TABLE:
@@ -763,8 +763,10 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case TABLE_COLUMN:
     case TABLE_CELL:
     case TABLE_CAPTION:
-    case CONTENTS:
         return BLOCK;
+    case CONTENTS:
+        ASSERT_NOT_REACHED();
+        return CONTENTS;
     case NONE:
         ASSERT_NOT_REACHED();
         return NONE;
@@ -800,19 +802,24 @@ void StyleResolver::adjustStyleForInterCharacterRuby()
         style->setWritingMode(LeftToRightWritingMode);
 }
 
-void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const Element* element)
+void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
 {
+    // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
+    // We don't have it when resolving computed style for display:none subtree. Use parent style for adjustments in that case.
+    if (!parentBoxStyle)
+        parentBoxStyle = &parentStyle;
+
     // Cache our original display.
     style.setOriginalDisplay(style.display());
 
-    if (style.display() != NONE) {
-        if (style.display() == CONTENTS) {
-            // FIXME: Enable for all elements.
-            bool elementSupportsDisplayContents = false;
-            elementSupportsDisplayContents = is<HTMLSlotElement>(element);
-            if (!elementSupportsDisplayContents)
-                style.setDisplay(INLINE);
-        }
+    if (style.display() == CONTENTS) {
+        // FIXME: Enable for all elements.
+        bool elementSupportsDisplayContents = is<HTMLSlotElement>(element);
+        if (!elementSupportsDisplayContents)
+            style.setDisplay(INLINE);
+    }
+
+    if (style.display() != NONE && style.display() != CONTENTS) {
         if (element) {
             // If we have a <td> that specifies a float property, in quirks mode we just drop the float
             // property.
@@ -866,7 +873,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style.hasOutOfFlowPosition() || style.isFloating() || (element && element->document().documentElement() == element))
-            style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
+            style.setDisplay(equivalentBlockDisplay(style, document()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
@@ -894,14 +901,16 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
             style.setWritingMode(TopToBottomWritingMode);
 
-        if (parentStyle.isDisplayFlexibleOrGridBox()) {
+        // https://www.w3.org/TR/css-display/#transformations
+        // "A parent with a grid or flex display value blockifies the box’s display type."
+        if (parentBoxStyle->isDisplayFlexibleOrGridBox()) {
             style.setFloating(NoFloat);
-            style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
+            style.setDisplay(equivalentBlockDisplay(style, document()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == StaticPosition && !parentStyle.isDisplayFlexibleOrGridBox())
+    if (style.position() == StaticPosition && !parentBoxStyle->isDisplayFlexibleOrGridBox())
         style.setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents

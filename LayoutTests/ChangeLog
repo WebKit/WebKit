@@ -1,3 +1,15 @@
+2016-11-15  Antti Koivisto  <antti@apple.com>
+
+        slot doesn't work as a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=160740
+        <rdar://problem/28605080>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-slot-flex-expected.html: Added.
+        * fast/shadow-dom/css-scoping-slot-flex.html: Added.
+        * fast/shadow-dom/slot-crash-expected.txt:
+
 2016-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Need to update implicit/default values for aria-valuemin, aria-valuenow, and aria-valuemax

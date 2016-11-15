@@ -66,7 +66,7 @@ std::unique_ptr<RenderStyle> MediaQueryMatcher::documentElementUserAgentStyle() 
     if (!documentElement)
         return nullptr;
 
-    return m_document->styleScope().resolver().styleForElement(*documentElement, m_document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
+    return m_document->styleScope().resolver().styleForElement(*documentElement, m_document->renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
 }
 
 bool MediaQueryMatcher::evaluate(const MediaQuerySet& media)

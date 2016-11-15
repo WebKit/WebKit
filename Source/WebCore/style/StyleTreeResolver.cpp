@@ -149,7 +149,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, con
     if (auto style = scope().sharingResolver.resolve(element, *m_update))
         return style;
 
-    auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
+    auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, parentBoxStyle(), MatchAllRules, nullptr, &scope().selectorFilter);
 
     if (elementStyle.relations)
         commitRelations(WTFMove(elementStyle.relations), *m_update);
@@ -237,6 +237,20 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
         update.change = Force;
 
     return update;
+}
+
+const RenderStyle* TreeResolver::parentBoxStyle() const
+{
+    // 'display: contents' doesn't generate boxes.
+    for (unsigned i = m_parentStack.size(); i; --i) {
+        auto& parent = m_parentStack[i - 1];
+        if (parent.style.display() == NONE)
+            return nullptr;
+        if (parent.style.display() != CONTENTS)
+            return &parent.style;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, RenderElement* rendererToUpdate, Document& document)
