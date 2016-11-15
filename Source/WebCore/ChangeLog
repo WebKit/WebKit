@@ -1,3 +1,18 @@
+2016-11-15  Alejandro G. Castro  <alex@igalia.com>
+
+        WebRTC: update MediaStream-MediaElement-srcObject.html test and unskip it
+        https://bugs.webkit.org/show_bug.cgi?id=159343
+
+        Reviewed by Philippe Normand.
+
+        Test updated.
+
+        We can not initialize the srcObject attribute when creating the mediaplayer
+        or we would be removing the srcObject we are going to use.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+
 2016-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Move SecurityOrigin::createFromDatabaseIdentifier to SecurityOriginData

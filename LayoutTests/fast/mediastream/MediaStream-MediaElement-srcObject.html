@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
     </head>
     <body>
         <p id="description"></p>
@@ -44,7 +45,7 @@
                 testNullStreamObject(stream, audio);
             }
 
-            shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:false}, gotStream, error);");
+            shouldNotThrow("getUserMedia('allow', {audio:true}, gotStream)");
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

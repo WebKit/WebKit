@@ -1,3 +1,19 @@
+2016-11-15  Alejandro G. Castro  <alex@igalia.com>
+
+        WebRTC: update MediaStream-MediaElement-srcObject.html test and unskip it
+        https://bugs.webkit.org/show_bug.cgi?id=159343
+
+        Reviewed by Philippe Normand.
+
+        Update the test to use the getUserMedia API and unskip it.
+
+        * fast/mediastream/MediaStream-MediaElement-srcObject-expected.txt:
+        Update the result of using the getUserMedia API.
+        * fast/mediastream/MediaStream-MediaElement-srcObject.html: Use
+        the getUserMedia API from the helper.
+        * platform/gtk/TestExpectations: Unskip the test.
+        * platform/mac/TestExpectations: Unskip the test.
+
 2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker debugging should pause all targets and view call frames in all targets
