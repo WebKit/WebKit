@@ -1,3 +1,11 @@
+2016-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build after r208710.
+
+        Inline functions should not be marked as WEBCORE_EXPORT.
+
+        * dom/QualifiedName.h:
+
 2016-11-15  Brent Fulgham  <bfulgham@apple.com>
 
         strncpy may leave unterminated string in WebCore::URL::init

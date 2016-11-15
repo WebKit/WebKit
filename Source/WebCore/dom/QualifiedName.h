@@ -91,7 +91,7 @@ public:
     // Uppercased localName, cached for efficiency
     const AtomicString& localNameUpper() const;
 
-    WEBCORE_EXPORT String toString() const;
+    String toString() const;
 
     QualifiedNameImpl* impl() const { return m_impl.get(); }
 #if ENABLE(JIT)
