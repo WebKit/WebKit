@@ -1,3 +1,14 @@
+2016-11-15  Mark Lam  <mark.lam@apple.com>
+
+        The jsc shell's setImpureGetterDelegate() should ensure that the set value is an ImpureGetter.
+        https://bugs.webkit.org/show_bug.cgi?id=164781
+        <rdar://problem/28418590>
+
+        Reviewed by Geoffrey Garen and Michael Saboff.
+
+        * jsc.cpp:
+        (functionSetImpureGetterDelegate):
+
 2016-11-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Allow using macro assembler scratches in FTL CheckDOM

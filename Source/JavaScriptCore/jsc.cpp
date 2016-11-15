@@ -1750,15 +1750,22 @@ EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* exec)
 {
-    JSLockHolder lock(exec);
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue base = exec->argument(0);
     if (!base.isObject())
         return JSValue::encode(jsUndefined());
     JSValue delegate = exec->argument(1);
     if (!delegate.isObject())
         return JSValue::encode(jsUndefined());
-    ImpureGetter* impureGetter = jsCast<ImpureGetter*>(asObject(base.asCell()));
-    impureGetter->setDelegate(exec->vm(), asObject(delegate.asCell()));
+    ImpureGetter* impureGetter = jsDynamicCast<ImpureGetter*>(asObject(base.asCell()));
+    if (UNLIKELY(!impureGetter)) {
+        throwTypeError(exec, scope, ASCIILiteral("argument is not an ImpureGetter"));
+        return encodedJSValue();
+    }
+    impureGetter->setDelegate(vm, asObject(delegate.asCell()));
     return JSValue::encode(jsUndefined());
 }
 
