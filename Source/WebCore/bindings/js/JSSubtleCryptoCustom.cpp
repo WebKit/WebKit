@@ -490,7 +490,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     case CryptoAlgorithmIdentifier::HMAC:
         break;
     default:
-        promise->reject(TypeError, ASCIILiteral("The operation is not supported"));
+        promise->reject(NOT_SUPPORTED_ERR, ASCIILiteral("The operation is not supported"));
         return;
     }
 

@@ -1,3 +1,10 @@
+2016-11-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, quick fix for r208751
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+
 2016-11-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build after r208710.
