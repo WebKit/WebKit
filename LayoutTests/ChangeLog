@@ -1,3 +1,18 @@
+2016-11-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        js-test-pre.js::shouldReject doesn't need _rejectCallback and _resolveCallback
+        https://bugs.webkit.org/show_bug.cgi?id=164758
+
+        Reviewed by Youenn Fablet.
+
+        Since the function returns a promise, it doesn't need _rejectCallback and _resolveCallback.
+
+        * crypto/subtle/generate-key-malformed-parameters.html:
+        * crypto/subtle/rsa-generate-key-malformed-parameters.html:
+        * crypto/workers/subtle/resources/rsa-generate-key.js:
+        * crypto/workers/subtle/rsa-generate-key-expected.txt:
+        * resources/js-test-pre.js:
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: inspector/worker/debugger-pause.html fails on WebKit1

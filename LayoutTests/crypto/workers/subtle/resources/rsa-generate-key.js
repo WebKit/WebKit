@@ -7,19 +7,11 @@ jsTestIsAsync = true;
 var extractable = true;
 var publicExponent = new Uint8Array([0x01, 0x00, 0x01]);
 
-var count = 0;
-function finishTest()
-{
-    count = count + 1;
-    if (count == 2)
-        finishJSTest();
-}
-
 shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign"])');
-shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"])', finishTest);
-
-debug("Generating a key...");
-crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: 'sha-1'}, extractable, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]).then(function(result) {
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"])').then(function() {
+    debug("Generating a key...");
+    return crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: 'sha-1'}, extractable, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]);
+}).then(function(result) {
     keyPair = result;
     shouldBe("keyPair.toString()", "'[object CryptoKeyPair]'");
     shouldBe("keyPair.publicKey.type", "'public'");
@@ -37,5 +29,5 @@ crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent
     shouldBe("keyPair.privateKey.algorithm.hash.name", "'SHA-1'");
     shouldBe("keyPair.privateKey.usages", "['decrypt', 'unwrapKey']");
 
-    finishTest();
+    finishJSTest();
 });

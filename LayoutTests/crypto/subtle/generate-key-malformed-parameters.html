@@ -59,7 +59,7 @@ shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extracta
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, ["foo"])');
 // Syntax error.
 shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, [ ])');
-shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01])}, extractable, [ ])', finishJSTest);
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01])}, extractable, [ ])').then(finishJSTest);
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

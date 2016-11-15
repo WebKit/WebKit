@@ -633,7 +633,7 @@ function shouldThrow(_a, _e, _message)
         testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
 
-function shouldReject(_a, _rejectCallback, _resolveCallback, _message)
+function shouldReject(_a, _message)
 {
     var _exception;
     var _av;
@@ -646,12 +646,8 @@ function shouldReject(_a, _rejectCallback, _resolveCallback, _message)
 
      return _av.then(function(result) {
         testFailed((_message ? _message : _a) + " should reject promise. Resolved with " + result + ".");
-        if (typeof _resolveCallback == "function")
-            _resolveCallback();
     }, function(error) {
         testPassed((_message ? _message : _a) + " rejected promise  with " + error + ".");
-        if (typeof _rejectCallback == "function")
-            _rejectCallback();
     });
 }
 
