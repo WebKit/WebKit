@@ -7083,7 +7083,6 @@ bool CSSParser::parseFontWeight(bool important)
 
 bool CSSParser::parseFontSynthesis(bool important)
 {
-    // none | [ weight || style ]
     CSSParserValue* value = m_valueList->current();
     if (value && value->id == CSSValueNone) {
         addProperty(CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
@@ -7091,29 +7090,30 @@ bool CSSParser::parseFontSynthesis(bool important)
         return true;
     }
 
-    bool encounteredWeight = false;
-    bool encounteredStyle = false;
-    while (value) {
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
+    do {
         switch (value->id) {
         case CSSValueWeight:
-            encounteredWeight = true;
+        case CSSValueStyle: {
+            auto singleValue = CSSValuePool::singleton().createIdentifierValue(value->id);
+            if (list->hasValue(singleValue.ptr()))
+                return false;
+            list->append(WTFMove(singleValue));
             break;
-        case CSSValueStyle:
-            encounteredStyle = true;
-            break;
+        }
         default:
             return false;
         }
-        value = m_valueList->next();
-    }
-
-    auto list = CSSValueList::createSpaceSeparated();
-    if (encounteredWeight)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
-    if (encounteredStyle)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
-    addProperty(CSSPropertyFontSynthesis, WTFMove(list), important);
+    } while ((value = m_valueList->next()));
+    
+    if (!list->length())
+        return false;
+    
+    addProperty(CSSPropertyFontSynthesis, list.releaseNonNull(), important);
+    m_valueList->next();
     return true;
+
 }
 
 bool CSSParser::parseFontFaceSrcURI(CSSValueList& valueList)
@@ -10411,19 +10411,36 @@ bool CSSParser::parseTextDecorationSkip(bool important)
     // The text-decoration-skip property has syntax "none | [ objects || spaces || ink || edges || box-decoration ]".
     // However, only 'none' and 'ink' are implemented yet, so we will parse syntax "none | ink" for now.
     CSSParserValue* value = m_valueList->current();
+    if (value && value->id == CSSValueNone) {
+        addProperty(CSSPropertyWebkitTextDecorationSkip, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        m_valueList->next();
+        return true;
+    }
+    
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
     do {
         switch (value->id) {
-        case CSSValueNone:
         case CSSValueAuto:
         case CSSValueInk:
-        case CSSValueObjects:
-            addProperty(CSSPropertyWebkitTextDecorationSkip, CSSValuePool::singleton().createIdentifierValue(value->id), important);
-            return true;
-        default:
+        case CSSValueObjects: {
+            auto singleValue = CSSValuePool::singleton().createIdentifierValue(value->id);
+            if (list->hasValue(singleValue.ptr()))
+                return false;
+            list->append(WTFMove(singleValue));
             break;
         }
+        default:
+            return false;
+        }
     } while ((value = m_valueList->next()));
-    return false;
+    
+    if (!list->length())
+        return false;
+    
+    addProperty(CSSPropertyWebkitTextDecorationSkip, list.releaseNonNull(), important);
+    m_valueList->next();
+    return true;
 }
 
 bool CSSParser::parseTextUnderlinePosition(bool important)

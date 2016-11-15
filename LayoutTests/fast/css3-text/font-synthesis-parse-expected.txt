@@ -16,19 +16,11 @@ PASS declaration.getPropertyValue('font-synthesis') is "style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('font-synthesis') is "style"
-PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style"
-PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
 PASS declaration.getPropertyValue('font-synthesis') is "weight style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('font-synthesis') is "weight style"
-PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
-PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('font-synthesis') is "weight style"
+PASS declaration.getPropertyValue('font-synthesis') is "style weight"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0

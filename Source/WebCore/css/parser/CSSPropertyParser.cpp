@@ -790,30 +790,23 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
 static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
 {
     // none | [ weight || style ]
-    if (range.peek().id() == CSSValueNone)
+    CSSValueID id = range.peek().id();
+    if (id == CSSValueNone)
         return consumeIdent(range);
     
-    RefPtr<CSSValue> weight;
-    RefPtr<CSSValue> style;
-    
-    // FIXME: We allow weight and style to occur multiple times because the
-    // old parser did, and layout tests specifically check for it. It seems
-    // wrong though.
-    do {
-        if (range.peek().id() == CSSValueWeight)
-            weight = consumeIdent(range);
-        else if (range.peek().id() == CSSValueStyle)
-            style = consumeIdent(range);
-        else
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    while (true) {
+        auto ident = consumeIdent<CSSValueWeight, CSSValueStyle>(range);
+        if (!ident)
+            break;
+        if (list->hasValue(ident.get()))
             return nullptr;
-    } while (!range.atEnd());
+        list->append(ident.releaseNonNull());
+    }
     
-    auto list = CSSValueList::createSpaceSeparated();
-    if (weight)
-        list->append(weight.releaseNonNull());
-    if (style)
-        list->append(style.releaseNonNull());
-    return WTFMove(list);
+    if (!list->length())
+        return nullptr;
+    return list;
 }
 
 static RefPtr<CSSValue> consumeLetterSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -1406,6 +1399,27 @@ static RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     while (true) {
         RefPtr<CSSPrimitiveValue> ident = consumeIdent<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough>(range);
+        if (!ident)
+            break;
+        if (list->hasValue(ident.get()))
+            return nullptr;
+        list->append(ident.releaseNonNull());
+    }
+
+    if (!list->length())
+        return nullptr;
+    return list;
+}
+
+static RefPtr<CSSValue> consumeTextDecorationSkip(CSSParserTokenRange& range)
+{
+    CSSValueID id = range.peek().id();
+    if (id == CSSValueNone)
+        return consumeIdent(range);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    while (true) {
+        auto ident = consumeIdent<CSSValueAuto, CSSValueInk, CSSValueObjects>(range);
         if (!ident)
             break;
         if (list->hasValue(ident.get()))
@@ -3509,6 +3523,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumePositiveInteger(m_range);
     case CSSPropertyWebkitTextDecorationColor:
         return consumeColor(m_range, m_context.mode);
+    case CSSPropertyWebkitTextDecorationSkip:
+        return consumeTextDecorationSkip(m_range);
     case CSSPropertyWebkitTextStrokeWidth:
         return consumeTextStrokeWidth(m_range, m_context.mode);
     case CSSPropertyWebkitTextFillColor:

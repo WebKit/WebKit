@@ -67,7 +67,7 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "1");
-      shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight style");
+      shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "style weight");
       computedStyle = window.getComputedStyle(target, null);
       shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
       stylesheet.deleteRule(0);
@@ -87,17 +87,11 @@
     stylesheet.insertRule("#p { font-synthesis: weight }", 0);
     testWeight(stylesheet, target);
 
-    stylesheet.insertRule("#p { font-synthesis: style style }", 0);
-    testStyle(stylesheet, target);
-
     stylesheet.insertRule("#p { font-synthesis: style }", 0);
     testStyle(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: weight style }", 0);
     testWeightAndStyle(stylesheet, target);
-
-    stylesheet.insertRule("#p { font-synthesis: style weight weight}", 0);
-    testStyleAndWeight(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: style weight }", 0);
     testStyleAndWeight(stylesheet, target);

@@ -1,3 +1,15 @@
+2016-11-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix font-synthesis and text-decoration-skip parsing
+        https://bugs.webkit.org/show_bug.cgi?id=164736
+
+        Reviewed by Dean Jackson.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html:
+        * fast/css3-text/font-synthesis-parse-expected.txt:
+        * fast/css3-text/font-synthesis-parse.html:
+
 2016-11-15  Daniel Bates  <dabates@apple.com>
 
         Disallow loads using HTTP 0.9 at the ResourceHandle/NetworkDataTask level

@@ -86,40 +86,40 @@
     testInkIsValid(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink ink ink ink ink; }", 0);
-    testInkIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage; }", 0);
     testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink; }", 0);
-    testInkIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage; }", 0);
-    testInkIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink garbage; }", 0);
-    testInkIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage ink; }", 0);
-    testInkIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects; }", 0);
     testObjectsIsValid(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects objects objects objects objects; }", 0);
-    testObjectsIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage objects; }", 0);
-    testObjectsIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects garbage; }", 0);
-    testObjectsIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage objects garbage; }", 0);
-    testObjectsIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects garbage objects; }", 0);
-    testObjectsIsValid(stylesheet, target);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: none; }", 0);
     testNoneIsValid(stylesheet, target);

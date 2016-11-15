@@ -750,7 +750,7 @@ inline TextDecorationSkip StyleBuilderConverter::convertTextDecorationSkip(Style
     if (is<CSSPrimitiveValue>(value))
         return valueToDecorationSkip(downcast<CSSPrimitiveValue>(value));
 
-    TextDecorationSkip skip = RenderStyle::initialTextDecorationSkip();
+    TextDecorationSkip skip = TextDecorationSkipNone;
     for (auto& currentValue : downcast<CSSValueList>(value))
         skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get()));
     return skip;
