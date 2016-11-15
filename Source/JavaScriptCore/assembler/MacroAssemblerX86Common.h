@@ -2934,7 +2934,7 @@ private:
         return s_sse2CheckState == HasSSE2;
     }
     
-    static SSE2CheckState s_sse2CheckState;
+    JS_EXPORTDATA static SSE2CheckState s_sse2CheckState;
 
 #endif // OS(MAC_OS_X)
 #elif !defined(NDEBUG) // CPU(X86)
