@@ -1320,7 +1320,7 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getUnlinkedProgramCodeBlock(
-        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, 
+        vm(), executable, executable->source(), strictMode, 
         debuggerMode, error);
 
     if (hasDebugger())
@@ -1346,7 +1346,7 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createLocalEvalCodeBlock(CallFrame* callF
 
     // We don't bother with CodeCache here because local eval uses a specialized EvalCodeCache.
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(
-        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, JSParserScriptMode::Classic, debuggerMode, error, evalContextType, variablesUnderTDZ);
+        vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, debuggerMode, error, evalContextType, variablesUnderTDZ);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
@@ -1370,7 +1370,7 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createGlobalEvalCodeBlock(CallFrame* call
     EvalContextType evalContextType = executable->executableInfo().evalContextType();
     
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedGlobalEvalCodeBlock(
-        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType);
+        vm, executable, executable->source(), strictMode, debuggerMode, error, evalContextType);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
@@ -1391,7 +1391,7 @@ UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(Cal
     ParserError error;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedModuleProgramCodeBlock(
-        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
+        vm, executable, executable->source(), debuggerMode, error);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());

@@ -1,3 +1,32 @@
+2016-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        CodeCache should stop pretending to cache builtins
+        https://bugs.webkit.org/show_bug.cgi?id=164750
+
+        Reviewed by Saam Barati.
+
+        We were passing JSParserBuiltinMode to all CodeCache functions, but the
+        passed-in value was always NotBuiltin.
+
+        Let's stop passing it.
+
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeFlags::SourceCodeFlags):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalEvalCodeBlock):
+        (JSC::CodeCache::getUnlinkedModuleProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlock):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createLocalEvalCodeBlock):
+        (JSC::JSGlobalObject::createGlobalEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r208711-r208722): ASSERTION FAILED: hasInlineStorage()

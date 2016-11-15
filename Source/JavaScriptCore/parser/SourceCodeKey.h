@@ -38,14 +38,13 @@ class SourceCodeFlags {
 public:
     SourceCodeFlags() = default;
 
-    SourceCodeFlags(SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeFlags(SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_flags(
-            (static_cast<unsigned>(scriptMode) << 8) |
-            (static_cast<unsigned>(isArrowFunctionContext) << 7) |
-            (static_cast<unsigned>(evalContextType) << 6) |
-            (static_cast<unsigned>(derivedContextType) << 4) |
-            (static_cast<unsigned>(codeType) << 2) |
-            (static_cast<unsigned>(builtinMode) << 1) |
+            (static_cast<unsigned>(scriptMode) << 5) |
+            (static_cast<unsigned>(isArrowFunctionContext) << 4) |
+            (static_cast<unsigned>(evalContextType) << 3) |
+            (static_cast<unsigned>(derivedContextType) << 2) |
+            (static_cast<unsigned>(codeType) << 1) |
             (static_cast<unsigned>(strictMode))
         )
     {
@@ -66,10 +65,10 @@ public:
     {
     }
 
-    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_sourceCode(sourceCode)
         , m_name(name)
-        , m_flags(codeType, builtinMode, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext)
+        , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext)
         , m_hash(sourceCode.hash())
     {
     }
