@@ -575,8 +575,6 @@ void WebGLRenderingContextBase::setupFlags()
         m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
-    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions().isEnabled("GL_CHROMIUM_strict_attribs");
-    m_isResourceSafe = m_context->getExtensions().isEnabled("GL_CHROMIUM_resource_safe");
     if (m_isGLES2Compliant) {
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_OES_texture_npot");
         m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_OES_packed_depth_stencil");
@@ -1091,11 +1089,9 @@ void WebGLRenderingContextBase::bufferData(GC3Denum target, long long size, GC3D
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "size == 0");
         return;
     }
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferData(static_cast<GC3Dsizeiptr>(size))) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
-            return;
-        }
+    if (!buffer->associateBufferData(static_cast<GC3Dsizeiptr>(size))) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
+        return;
     }
 
     m_context->moveErrorsToSyntheticErrorList();
@@ -1119,11 +1115,9 @@ void WebGLRenderingContextBase::bufferData(GC3Denum target, Optional<BufferDataS
         return;
 
     WTF::visit([&](auto& data) {
-        if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
-            if (!buffer->associateBufferData(data.get())) {
-                this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
-                return;
-            }
+        if (!buffer->associateBufferData(data.get())) {
+            this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
+            return;
         }
 
         m_context->moveErrorsToSyntheticErrorList();
@@ -1150,11 +1144,9 @@ void WebGLRenderingContextBase::bufferSubData(GC3Denum target, long long offset,
         return;
 
     WTF::visit([&](auto& data) {
-        if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
-            if (!buffer->associateBufferSubData(static_cast<GC3Dintptr>(offset), data.get())) {
-                this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset out of range");
-                return;
-            }
+        if (!buffer->associateBufferSubData(static_cast<GC3Dintptr>(offset), data.get())) {
+            this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset out of range");
+            return;
         }
 
         m_context->moveErrorsToSyntheticErrorList();
@@ -1355,45 +1347,41 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "copyTexSubImage2D", reason);
         return;
     }
     clearIfComposited();
-    if (isResourceSafe())
-        m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    else {
-        GC3Dint clippedX, clippedY;
-        GC3Dsizei clippedWidth, clippedHeight;
-        if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
-            GC3Denum format;
-            GC3Denum type;
-            if (!GraphicsContext3D::possibleFormatAndTypeForInternalFormat(tex->getInternalFormat(target, level), format, type)) {
-                synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "copyTexSubImage2D", "Texture has unknown internal format");
+
+    GC3Dint clippedX, clippedY;
+    GC3Dsizei clippedWidth, clippedHeight;
+    if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+        GC3Denum format;
+        GC3Denum type;
+        if (!GraphicsContext3D::possibleFormatAndTypeForInternalFormat(tex->getInternalFormat(target, level), format, type)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "copyTexSubImage2D", "Texture has unknown internal format");
+            return;
+        }
+        std::unique_ptr<unsigned char[]> zero;
+        if (width && height) {
+            unsigned size;
+            GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, 0);
+            if (error != GraphicsContext3D::NO_ERROR) {
+                synthesizeGLError(error, "copyTexSubImage2D", "bad dimensions");
                 return;
             }
-            std::unique_ptr<unsigned char[]> zero;
-            if (width && height) {
-                unsigned int size;
-                GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, 0);
-                if (error != GraphicsContext3D::NO_ERROR) {
-                    synthesizeGLError(error, "copyTexSubImage2D", "bad dimensions");
-                    return;
-                }
-                zero = std::make_unique<unsigned char[]>(size);
-                if (!zero) {
-                    synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "out of memory");
-                    return;
-                }
-                memset(zero.get(), 0, size);
+            zero = std::make_unique<unsigned char[]>(size);
+            if (!zero) {
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "out of memory");
+                return;
             }
-            m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
-            if (clippedWidth > 0 && clippedHeight > 0)
-                m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y,
-                                             clippedX, clippedY, clippedWidth, clippedHeight);
-        } else
-            m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    }
+            memset(zero.get(), 0, size);
+        }
+        m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
+        if (clippedWidth > 0 && clippedHeight > 0)
+            m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y, clippedX, clippedY, clippedWidth, clippedHeight);
+    } else
+        m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 }
 
 RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
@@ -1818,29 +1806,22 @@ bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GC3
         return false;
     }
 
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        // Ensure we have a valid rendering state
-        Checked<GC3Dint, RecordOverflow> checkedFirst(first);
-        Checked<GC3Dint, RecordOverflow> checkedCount(count);
-        Checked<GC3Dint, RecordOverflow> checkedSum = checkedFirst + checkedCount;
-        Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
-        if (checkedSum.hasOverflowed() || checkedPrimitiveCount.hasOverflowed() || !validateVertexAttributes(checkedSum.unsafeGet(), checkedPrimitiveCount.unsafeGet())) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
-            return false;
-        }
-        if (!validateSimulatedVertexAttrib0(checkedSum.unsafeGet() - 1)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
-            return false;
-        }
-    } else {
-        if (!validateVertexAttributes(0)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attribs not setup correctly");
-            return false;
-        }
+    // Ensure we have a valid rendering state.
+    Checked<GC3Dint, RecordOverflow> checkedFirst(first);
+    Checked<GC3Dint, RecordOverflow> checkedCount(count);
+    Checked<GC3Dint, RecordOverflow> checkedSum = checkedFirst + checkedCount;
+    Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
+    if (checkedSum.hasOverflowed() || checkedPrimitiveCount.hasOverflowed() || !validateVertexAttributes(checkedSum.unsafeGet(), checkedPrimitiveCount.unsafeGet())) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+        return false;
+    }
+    if (!validateSimulatedVertexAttrib0(checkedSum.unsafeGet() - 1)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
+        return false;
     }
 
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, functionName, reason);
         return false;
     }
@@ -1889,44 +1870,36 @@ bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, G
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no ELEMENT_ARRAY_BUFFER bound");
         return false;
     }
+
+    // Ensure we have a valid rendering state.
+    if (!validateElementArraySize(count, type, static_cast<GC3Dintptr>(offset))) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "request out of bounds for current ELEMENT_ARRAY_BUFFER");
+        return false;
+    }
+    if (!count)
+        return false;
     
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        // Ensure we have a valid rendering state
-        if (!validateElementArraySize(count, type, static_cast<GC3Dintptr>(offset))) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "request out of bounds for current ELEMENT_ARRAY_BUFFER");
-            return false;
-        }
-        if (!count)
-            return false;
-        
-        Checked<GC3Dint, RecordOverflow> checkedCount(count);
-        Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
-        if (checkedCount.hasOverflowed() || checkedPrimitiveCount.hasOverflowed()) {
+    Checked<GC3Dint, RecordOverflow> checkedCount(count);
+    Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
+    if (checkedCount.hasOverflowed() || checkedPrimitiveCount.hasOverflowed()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+        return false;
+    }
+    
+    if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+        if (!validateIndexArrayPrecise(checkedCount.unsafeGet(), type, static_cast<GC3Dintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
             return false;
         }
-        
-        if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
-            if (!validateIndexArrayPrecise(checkedCount.unsafeGet(), type, static_cast<GC3Dintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
-                synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
-                return false;
-            }
-        }
+    }
 
-        if (!validateSimulatedVertexAttrib0(numElements)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
-            return false;
-        }
-
-    } else {
-        if (!validateVertexAttributes(0)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attribs not setup correctly");
-            return false;
-        }
+    if (!validateSimulatedVertexAttrib0(numElements)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
+        return false;
     }
     
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, functionName, reason);
         return false;
     }
@@ -3014,7 +2987,7 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
     GC3Denum internalFormat = 0;
     if (m_framebufferBinding) {
         const char* reason = "framebuffer incomplete";
-        if (!m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+        if (!m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
             synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "readPixels", reason);
             return;
         }
@@ -3283,18 +3256,8 @@ void WebGLRenderingContextBase::texImage2DBase(GC3Denum target, GC3Dint level, G
     ASSERT(tex);
     ASSERT(validateNPOTTextureLevel(width, height, level, "texImage2D"));
     if (!pixels) {
-        // Note: Chromium's OpenGL implementation clears textures and isResourceSafe() is therefore true.
-        // For other implementations, if they are using ANGLE_depth_texture, ANGLE depth textures
-        // can not be cleared with texImage2D and must be cleared by binding to an fbo and calling
-        // clear.
-        if (isResourceSafe())
-            m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, nullptr);
-        else {
-            bool succeed = m_context->texImage2DResourceSafe(target, level, internalFormat, width, height,
-                                                             border, format, type, m_unpackAlignment);
-            if (!succeed)
-                return;
-        }
+        if (!m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border, format, type, m_unpackAlignment))
+            return;
     } else {
         ASSERT(validateSettableTexInternalFormat("texImage2D", internalFormat));
         m_context->moveErrorsToSyntheticErrorList();
@@ -3978,26 +3941,24 @@ void WebGLRenderingContextBase::copyTexImage2D(GC3Denum target, GC3Dint level, G
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "copyTexImage2D", reason);
         return;
     }
     clearIfComposited();
-    if (isResourceSafe())
+
+    GC3Dint clippedX, clippedY;
+    GC3Dsizei clippedWidth, clippedHeight;
+    if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+        m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border,
+            internalFormat, GraphicsContext3D::UNSIGNED_BYTE, m_unpackAlignment);
+        if (clippedWidth > 0 && clippedHeight > 0) {
+            m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
+                clippedX, clippedY, clippedWidth, clippedHeight);
+        }
+    } else
         m_context->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
-    else {
-        GC3Dint clippedX, clippedY;
-        GC3Dsizei clippedWidth, clippedHeight;
-        if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
-            m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border,
-                internalFormat, GraphicsContext3D::UNSIGNED_BYTE, m_unpackAlignment);
-            if (clippedWidth > 0 && clippedHeight > 0) {
-                m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
-                    clippedX, clippedY, clippedWidth, clippedHeight);
-            }
-        } else
-            m_context->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
-    }
+
     // FIXME: if the framebuffer is not complete, none of the below should be executed.
     tex->setLevelInfo(target, level, internalFormat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
 }

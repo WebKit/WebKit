@@ -78,7 +78,7 @@ public:
     // Return false if the framebuffer is incomplete; otherwise initialize
     // the buffers if they haven't been initialized and
     // needToInitializeAttachments is true.
-    bool onAccess(GraphicsContext3D*, bool needToInitializeAttachments, const char** reason);
+    bool onAccess(GraphicsContext3D*, const char** reason);
 
     // Software version of glCheckFramebufferStatus(), except that when
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for

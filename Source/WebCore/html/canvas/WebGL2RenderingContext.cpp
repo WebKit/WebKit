@@ -198,11 +198,9 @@ void WebGL2RenderingContext::copyBufferSubData(GC3Denum readTarget, GC3Denum wri
         return;
     }
 
-    if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet())) {
-            this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "offset out of range");
-            return;
-        }
+    if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset.unsafeGet(), checkedWriteOffset.unsafeGet(), checkedSize.unsafeGet())) {
+        this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyBufferSubData", "offset out of range");
+        return;
     }
 
     m_context->moveErrorsToSyntheticErrorList();
@@ -440,7 +438,7 @@ void WebGL2RenderingContext::clear(GC3Dbitfield mask)
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }
@@ -914,10 +912,8 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     }
     if (equalIgnoringASCIICase(name, "WEBGL_depth_texture")
         && WebGLDepthTexture::supported(*graphicsContext3D())) {
-        if (!m_webglDepthTexture) {
-            m_context->getExtensions().ensureEnabled("GL_CHROMIUM_depth_texture");
+        if (!m_webglDepthTexture)
             m_webglDepthTexture = std::make_unique<WebGLDepthTexture>(*this);
-        }
         return m_webglDepthTexture.get();
     }
     if (equalIgnoringASCIICase(name, "WEBGL_debug_renderer_info")) {

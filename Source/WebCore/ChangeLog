@@ -1,3 +1,48 @@
+2016-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL] Remove unused Chromium-specific OpenGL extensions
+        https://bugs.webkit.org/show_bug.cgi?id=164782
+
+        Reviewed by Dean Jackson.
+
+        No new tests because there is no behavior change.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::copyBufferSubData):
+        (WebCore::WebGL2RenderingContext::clear):
+        (WebCore::WebGL2RenderingContext::getExtension):
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        (WebCore::WebGLCompressedTextureS3TC::supported):
+        * html/canvas/WebGLDepthTexture.cpp:
+        (WebCore::WebGLDepthTexture::supported):
+        * html/canvas/WebGLDrawBuffers.cpp:
+        (WebCore::WebGLDrawBuffers::satisfiesWebGLRequirements):
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::onAccess):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::clear):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::setupFlags):
+        (WebCore::WebGLRenderingContextBase::bufferData):
+        (WebCore::WebGLRenderingContextBase::bufferSubData):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateDrawArrays):
+        (WebCore::WebGLRenderingContextBase::validateDrawElements):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::texImage2DBase):
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::isGLES2NPOTStrict):
+        (WebCore::WebGLRenderingContextBase::isErrorGeneratedOnOutOfBoundsAccesses): Deleted.
+        (WebCore::WebGLRenderingContextBase::isResourceSafe): Deleted.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::isResourceSafe): Deleted.
+
 2016-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         Correct handling of changing input type

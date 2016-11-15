@@ -50,8 +50,7 @@ WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
 bool WebGLDepthTexture::supported(GraphicsContext3D& context)
 {
     Extensions3D& extensions = context.getExtensions();
-    return extensions.supports("GL_CHROMIUM_depth_texture")
-        || extensions.supports("GL_OES_depth_texture")
+    return extensions.supports("GL_OES_depth_texture")
         || extensions.supports("GL_ARB_depth_texture");
 }
 

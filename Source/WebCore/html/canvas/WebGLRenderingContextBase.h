@@ -371,10 +371,6 @@ protected:
     bool isGLES2Compliant() { return m_isGLES2Compliant; }
     // Query if the GL implementation is NPOT strict.
     bool isGLES2NPOTStrict() { return m_isGLES2NPOTStrict; }
-    // Query if the GL implementation generates errors on out-of-bounds buffer accesses.
-    bool isErrorGeneratedOnOutOfBoundsAccesses() { return m_isErrorGeneratedOnOutOfBoundsAccesses; }
-    // Query if the GL implementation initializes textures/renderbuffers to 0.
-    bool isResourceSafe() { return m_isResourceSafe; }
     // Query if depth_stencil buffer is supported.
     bool isDepthStencilSupported() { return m_isDepthStencilSupported; }
 
@@ -536,8 +532,6 @@ protected:
 
     bool m_isGLES2Compliant;
     bool m_isGLES2NPOTStrict;
-    bool m_isErrorGeneratedOnOutOfBoundsAccesses;
-    bool m_isResourceSafe;
     bool m_isDepthStencilSupported;
     bool m_isRobustnessEXTSupported;
 

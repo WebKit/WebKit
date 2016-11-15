@@ -210,10 +210,8 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     }
     if (equalIgnoringASCIICase(name, "WEBGL_depth_texture")
         && WebGLDepthTexture::supported(*graphicsContext3D())) {
-        if (!m_webglDepthTexture) {
-            m_context->getExtensions().ensureEnabled("GL_CHROMIUM_depth_texture");
+        if (!m_webglDepthTexture)
             m_webglDepthTexture = std::make_unique<WebGLDepthTexture>(*this);
-        }
         return m_webglDepthTexture.get();
     }
     if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers") && supportsDrawBuffers()) {
@@ -456,7 +454,7 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }

@@ -103,9 +103,8 @@ bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase& web
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, fbo);
 
     const unsigned char buffer[4] = { 0, 0, 0, 0 }; // textures are required to be initialized for other ports.
-    bool supportsDepth = (context->getExtensions().supports("GL_CHROMIUM_depth_texture")
-        || context->getExtensions().supports("GL_OES_depth_texture")
-        || context->getExtensions().supports("GL_ARB_depth_texture"));
+    bool supportsDepth = context->getExtensions().supports("GL_OES_depth_texture")
+        || context->getExtensions().supports("GL_ARB_depth_texture");
     bool supportsDepthStencil = (context->getExtensions().supports("GL_EXT_packed_depth_stencil")
         || context->getExtensions().supports("GL_OES_packed_depth_stencil"));
     Platform3DObject depthStencil = 0;

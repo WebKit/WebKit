@@ -147,7 +147,7 @@ bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, G
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
     std::unique_ptr<unsigned char[]> zero;
-    if (!isResourceSafe() && width > 0 && height > 0) {
+    if (width > 0 && height > 0) {
         unsigned int size;
         GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, 0);
         if (error != GraphicsContext3D::NO_ERROR) {

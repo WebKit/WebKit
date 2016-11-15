@@ -1306,7 +1306,6 @@ private:
 #endif
 
     int m_currentWidth, m_currentHeight;
-    bool isResourceSafe();
 
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;

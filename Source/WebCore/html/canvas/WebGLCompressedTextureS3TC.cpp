@@ -56,9 +56,7 @@ bool WebGLCompressedTextureS3TC::supported(WebGLRenderingContextBase& context)
 {
     auto& extensions = context.graphicsContext3D()->getExtensions();
     return extensions.supports("GL_EXT_texture_compression_s3tc")
-        || (extensions.supports("GL_EXT_texture_compression_dxt1")
-            && extensions.supports("GL_CHROMIUM_texture_compression_dxt3")
-            && extensions.supports("GL_CHROMIUM_texture_compression_dxt5"));
+        || extensions.supports("GL_EXT_texture_compression_dxt1");
 }
 
 } // namespace WebCore

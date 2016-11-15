@@ -156,11 +156,6 @@ void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExten
     }
 }
 
-bool GraphicsContext3D::isResourceSafe()
-{
-    return false;
-}
-
 void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
 {
     int rowBytes = m_currentWidth * 4;

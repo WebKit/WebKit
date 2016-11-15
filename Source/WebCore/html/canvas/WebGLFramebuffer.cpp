@@ -479,13 +479,11 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
     return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
 }
 
-bool WebGLFramebuffer::onAccess(GraphicsContext3D* context3d, bool needToInitializeAttachments, const char** reason)
+bool WebGLFramebuffer::onAccess(GraphicsContext3D* context3d, const char** reason)
 {
     if (checkStatus(reason) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
         return false;
-    if (needToInitializeAttachments)
-        return initializeAttachments(context3d, reason);
-    return true;
+    return initializeAttachments(context3d, reason);
 }
 
 bool WebGLFramebuffer::hasStencilBuffer() const
