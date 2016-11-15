@@ -67,7 +67,22 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement(*this);
 
-    return element.get();
+    return WTFMove(element);
+}
+
+Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
+{
+    if (auto element = tryToConstructCustomElement(document, name.localName())) {
+        if (name.prefix() != nullAtom)
+            element->setPrefix(name.prefix());
+        return element.releaseNonNull();
+    }
+
+    auto element = HTMLUnknownElement::create(name, document);
+    element->setIsCustomElementUpgradeCandidate();
+    element->setIsFailedCustomElement(*this);
+
+    return WTFMove(element);
 }
 
 RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomicString& localName)
@@ -110,10 +125,8 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
         return nullptr;
     }
 
-    MarkedArgumentBuffer args;
-    args.append(jsStringWithCache(&state, localName));
-
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(&document, constructType, constructData);
+    MarkedArgumentBuffer args;
     JSValue newElement = construct(&state, constructor, constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, &document);
     RETURN_IF_EXCEPTION(scope, nullptr);

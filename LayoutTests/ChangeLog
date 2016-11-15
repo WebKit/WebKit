@@ -1,3 +1,17 @@
+2016-11-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.createElementNS doesn't construct a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=164700
+
+        Reviewed by Darin Adler.
+
+        Added W3C style testharness.js tests for createElementNS and DOMImplementation's createDocument.
+
+        * fast/custom-elements/DOMImplementation-createDocument-expected.txt: Added.
+        * fast/custom-elements/DOMImplementation-createDocument.html: Added.
+        * fast/custom-elements/document-createElementNS-expected.txt: Added.
+        * fast/custom-elements/document-createElementNS.html: Added.
+
 2016-11-14  Dean Jackson  <dino@apple.com>
 
         Handle filter() image type in new CSS Parser

@@ -114,6 +114,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& na
 
     RefPtr<Element> documentElement;
     if (!qualifiedName.isEmpty()) {
+        ASSERT(!document->domWindow()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
         auto result = document->createElementNS(namespaceURI, qualifiedName);
         if (result.hasException())
             return result.releaseException();

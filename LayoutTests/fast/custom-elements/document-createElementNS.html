@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: document.createElementNS must create an element with synchronous custom elements flag set</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="document.createElementNS must create an element with synchronous custom elements flag set">
+<link rel="help" content="https://dom.spec.whatwg.org/#dom-document-createelementns">
+<link rel="help" content="https://dom.spec.whatwg.org/#concept-create-element">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+const xhtmlNamespaceURI = 'http://www.w3.org/1999/xhtml';
+
+test_with_window((contentWindow, contentDocument) => {
+    let constructorArguments;
+    class MyCustomElement extends contentWindow.HTMLElement {
+        constructor() {
+            constructorArguments = Array.from(arguments);
+            super();
+        }
+    }
+    contentWindow.customElements.define('my-custom-element', MyCustomElement);
+    const instance = contentDocument.createElement('my-custom-element');
+    assert_true(instance instanceof MyCustomElement);
+    assert_array_equals(constructorArguments, []);
+}, 'document.createElement invoke a custom element constructor with no arguments');
+
+test_with_window((contentWindow, contentDocument) => {
+    class MyCustomElement extends contentWindow.HTMLElement {};
+
+    const upgradeCandidate = contentDocument.createElementNS(xhtmlNamespaceURI, 'my-custom-element');
+    assert_true(upgradeCandidate instanceof contentWindow.HTMLElement);
+    assert_false(upgradeCandidate instanceof MyCustomElement);
+
+    contentWindow.customElements.define('my-custom-element', MyCustomElement);
+    const instance = contentDocument.createElementNS(xhtmlNamespaceURI, 'my-custom-element');
+    assert_true(instance instanceof MyCustomElement);
+    assert_equals(instance.localName, 'my-custom-element');
+    assert_equals(instance.namespaceURI, xhtmlNamespaceURI);
+}, 'document.createElementNS must create an instance of custom elements');
+
+test_with_window((contentWindow, contentDocument) => {
+    class MyCustomElement extends contentWindow.HTMLElement {};
+    contentWindow.customElements.define('element-with-prefix', MyCustomElement);
+
+    const instance = contentDocument.createElementNS(xhtmlNamespaceURI, 'foo:element-with-prefix');
+    assert_true(instance instanceof MyCustomElement);
+    assert_equals(instance.localName, 'element-with-prefix');
+    assert_equals(instance.namespaceURI, xhtmlNamespaceURI);
+    assert_equals(instance.prefix, 'foo');
+}, 'document.createElementNS must set the prefix after constructing a custom element');
+
+test_with_window((contentWindow, contentDocument) => {
+    let innerElement;
+    let innerElementPrefix;
+    let outerElement;
+    let outerElementPrefix;
+    class MyCustomElement extends contentWindow.HTMLElement {
+        constructor(isInnerCall) {
+            if (isInnerCall) {
+                innerElement = super();
+                innerElementPrefix = innerElement.prefix;
+                return innerElement;
+            }
+            outerElement = super();
+            outerElementPrefix = outerElement.prefix;
+            return new MyCustomElement(true);
+        }
+    }
+    contentWindow.customElements.define('custom-element', MyCustomElement);
+
+    const instance = contentDocument.createElementNS(xhtmlNamespaceURI, 'foo:custom-element');
+    assert_true(instance instanceof MyCustomElement);
+    assert_equals(instance.localName, 'custom-element');
+    assert_equals(instance.namespaceURI, xhtmlNamespaceURI);
+    assert_equals(instance.prefix, 'foo');
+    assert_equals(instance, innerElement, 'document.createElementNS must create an element with the synchronous custom elements flag set');
+    assert_equals(innerElementPrefix, null, 'HTML constructor must not set prefix');
+    assert_equals(outerElementPrefix, null, 'HTML constructor must not set prefix');
+}, 'document.createElementNS must use the element returned by the constructor');
+
+</script>
+</body>
+</html>

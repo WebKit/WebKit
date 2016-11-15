@@ -59,6 +59,7 @@ public:
     }
 
     Ref<Element> constructElementWithFallback(Document&, const AtomicString&);
+    Ref<Element> constructElementWithFallback(Document&, const QualifiedName&);
 
     void upgradeElement(Element&);
 
