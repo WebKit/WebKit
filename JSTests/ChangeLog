@@ -1,3 +1,15 @@
+2016-11-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Allow using macro assembler scratches in FTL CheckDOM
+        https://bugs.webkit.org/show_bug.cgi?id=164727
+
+        Reviewed by Filip Pizlo.
+
+        * stress/check-dom-with-signature.js: Added.
+        (shouldBe):
+        (calling):
+        (i.array.forEach):
+
 2016-11-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] do not reference AwaitExpression Promises in async function Promise chain

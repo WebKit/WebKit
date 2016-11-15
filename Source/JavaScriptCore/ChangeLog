@@ -1,3 +1,31 @@
+2016-11-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Allow using macro assembler scratches in FTL CheckDOM
+        https://bugs.webkit.org/show_bug.cgi?id=164727
+
+        Reviewed by Filip Pizlo.
+
+        While CallDOMGetter can use macro assembler scratch registers, we previiously
+        assumed that CheckDOM code generator does not use macro assembler scratch registers.
+        It is currently true in x86 environment. But it is not true in the other environments.
+
+        We should not limit DOMJIT::Patchpoint's functionality in such a way. We should allow
+        arbitrary macro assembler operations inside the DOMJIT::Patchpoint. This patch allows
+        CheckDOM to use macro assembler scratch registers.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        * jsc.cpp:
+        (WTF::DOMJITFunctionObject::DOMJITFunctionObject):
+        (WTF::DOMJITFunctionObject::createStructure):
+        (WTF::DOMJITFunctionObject::create):
+        (WTF::DOMJITFunctionObject::unsafeFunction):
+        (WTF::DOMJITFunctionObject::safeFunction):
+        (WTF::DOMJITFunctionObject::checkDOMJITNode):
+        (WTF::DOMJITFunctionObject::finishCreation):
+        (GlobalObject::finishCreation):
+        (functionCreateDOMJITFunctionObject):
+
 2016-11-14  Geoffrey Garen  <ggaren@apple.com>
 
         CodeCache should stop pretending to cache builtins

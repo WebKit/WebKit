@@ -791,16 +791,89 @@ private:
     bool m_enableException { false };
 };
 
-const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, CREATE_METHOD_TABLE(Element) };
-const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, CREATE_METHOD_TABLE(Masquerader) };
-const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, CREATE_METHOD_TABLE(Root) };
-const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(ImpureGetter) };
-const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(CustomGetter) };
-const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, 0, CREATE_METHOD_TABLE(DOMJITNode) };
-const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(DOMJITGetter) };
-const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, 0, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeArray) };
-const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, 0, CREATE_METHOD_TABLE(SimpleObject) };
+class DOMJITFunctionObject : public DOMJITNode {
+public:
+    DOMJITFunctionObject(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    DECLARE_INFO;
+    typedef DOMJITNode Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
+    }
+
+    static DOMJITFunctionObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        DOMJITFunctionObject* object = new (NotNull, allocateCell<DOMJITFunctionObject>(vm.heap, sizeof(DOMJITFunctionObject))) DOMJITFunctionObject(vm, structure);
+        object->finishCreation(vm, globalObject);
+        return object;
+    }
+
+    static EncodedJSValue JIT_OPERATION unsafeFunction(ExecState* exec, DOMJITNode* node)
+    {
+        NativeCallFrameTracer tracer(&exec->vm(), exec);
+        return JSValue::encode(jsNumber(node->value()));
+    }
+
+    static EncodedJSValue JSC_HOST_CALL safeFunction(ExecState* exec)
+    {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(exec->thisValue());
+        if (!thisObject)
+            return throwVMTypeError(exec, scope);
+        return JSValue::encode(jsNumber(thisObject->value()));
+    }
+
+    static Ref<DOMJIT::Patchpoint> checkDOMJITNode()
+    {
+        static const double value = 42.0;
+        Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
+        patchpoint->numFPScratchRegisters = 1;
+        patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+            CCallHelpers::JumpList failureCases;
+            // May use scratch registers.
+            jit.loadDouble(CCallHelpers::TrustedImmPtr(&value), params.fpScratch(0));
+            failureCases.append(jit.branch8(
+                CCallHelpers::NotEqual,
+                CCallHelpers::Address(params[0].gpr(), JSCell::typeInfoTypeOffset()),
+                CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
+            return failureCases;
+        });
+        return patchpoint;
+    }
+
+private:
+    void finishCreation(VM&, JSGlobalObject*);
+};
+
+static const DOMJIT::Signature DOMJITFunctionObjectSignature((uintptr_t)DOMJITFunctionObject::unsafeFunction, DOMJITFunctionObject::checkDOMJITNode, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+
+void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, &DOMJITFunctionObjectSignature, ReadOnly);
+}
+
+
+const ClassInfo Element::s_info = { "Element", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Masquerader) };
+const ClassInfo Root::s_info = { "Root", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Root) };
+const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
+const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
+const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
+const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
 static bool test262AsyncPassed { false };
 static bool test262AsyncTest { false };
 
@@ -830,6 +903,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITNodeObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterComplexObject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
@@ -1125,6 +1199,7 @@ protected:
         addFunction(vm, "createDOMJITNodeObject", functionCreateDOMJITNodeObject, 0);
         addFunction(vm, "createDOMJITGetterObject", functionCreateDOMJITGetterObject, 0);
         addFunction(vm, "createDOMJITGetterComplexObject", functionCreateDOMJITGetterComplexObject, 0);
+        addFunction(vm, "createDOMJITFunctionObject", functionCreateDOMJITFunctionObject, 0);
         addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
         addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
@@ -1662,6 +1737,14 @@ EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterComplexObject(ExecState* 
     JSLockHolder lock(exec);
     Structure* structure = DOMJITGetterComplex::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
     DOMJITGetterComplex* result = DOMJITGetterComplex::create(exec->vm(), exec->lexicalGlobalObject(), structure);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Structure* structure = DOMJITFunctionObject::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
+    DOMJITFunctionObject* result = DOMJITFunctionObject::create(exec->vm(), exec->lexicalGlobalObject(), structure);
     return JSValue::encode(result);
 }
 

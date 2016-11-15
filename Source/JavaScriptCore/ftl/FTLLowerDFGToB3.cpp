@@ -9334,21 +9334,26 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(cell);
-        patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
-        patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
 
-        State* state = &m_ftlState;
-        Node* node = m_node;
         NodeOrigin origin = m_origin;
         unsigned osrExitArgumentOffset = patchpoint->numChildren();
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(jsValueValue(cell), m_node->child1().node());
         patchpoint->appendColdAnys(buildExitArguments(exitDescriptor, origin.forExit, jsValueValue(cell)));
+
+        patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
+        patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+        State* state = &m_ftlState;
+        Node* node = m_node;
         JSValue child1Constant = m_state.forNode(m_node->child1()).value();
 
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
                 Vector<GPRReg> gpScratch;
                 Vector<FPRReg> fpScratch;
                 Vector<DOMJIT::Value> regs;
