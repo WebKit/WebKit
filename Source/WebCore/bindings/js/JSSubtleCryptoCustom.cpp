@@ -472,7 +472,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key) {
-        promise->reject<JSValue>(createTypeError(&state, ASCIILiteral("Invalid CryptoKey")));
+        promise->reject(TypeError, ASCIILiteral("Invalid CryptoKey"));
         return;
     }
 
@@ -490,12 +490,12 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     case CryptoAlgorithmIdentifier::HMAC:
         break;
     default:
-        promise->reject<JSValue>(createDOMException(&state, NOT_SUPPORTED_ERR, ASCIILiteral("The operation is not supported")));
+        promise->reject(TypeError, ASCIILiteral("The operation is not supported"));
         return;
     }
 
     if (!key->extractable()) {
-        promise->reject<JSValue>(createDOMException(&state, INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable")));
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable"));
         return;
     }
 
