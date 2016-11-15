@@ -1,5 +1,17 @@
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        [mac-wk1 debug] ASSERTION FAILED: thisObject->m_propertyTableUnsafe
+        https://bugs.webkit.org/show_bug.cgi?id=162986
+
+        Reviewed by Saam Barati.
+        
+        This assertion is wrong for concurrent GC anyway, so this removes it.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         Rename CONCURRENT_JIT/ConcurrentJIT to CONCURRENT_JS/ConcurrentJS
         https://bugs.webkit.org/show_bug.cgi?id=164791
 

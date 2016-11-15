@@ -272,8 +272,6 @@ webkit.org/b/162591 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-refle
 
 webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
 
-webkit.org/b/162986 inspector/formatting/formatting-javascript.html [ Pass Crash ]
-
 webkit.org/b/161360 [ Release ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Pass Failure ]
 
 webkit.org/b/163598 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html [ Pass Failure ]

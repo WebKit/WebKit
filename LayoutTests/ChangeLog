@@ -1,3 +1,14 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        [mac-wk1 debug] ASSERTION FAILED: thisObject->m_propertyTableUnsafe
+        https://bugs.webkit.org/show_bug.cgi?id=162986
+
+        Reviewed by Saam Barati.
+        
+        This test should not crash anymore.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-11-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         js-test-pre.js::shouldReject doesn't need _rejectCallback and _resolveCallback

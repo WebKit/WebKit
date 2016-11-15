@@ -1035,7 +1035,8 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_previousOrRareData);
 
     if (thisObject->isPinnedPropertyTable()) {
-        ASSERT(thisObject->m_propertyTableUnsafe);
+        // NOTE: This can interleave in pin(), in which case it may see a null property table.
+        // That's fine, because then the barrier will fire and we will scan this again.
         visitor.append(&thisObject->m_propertyTableUnsafe);
     } else if (visitor.isBuildingHeapSnapshot())
         visitor.append(&thisObject->m_propertyTableUnsafe);
