@@ -31,6 +31,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -43,14 +44,14 @@ static uint64_t generateStorageAreaID()
     return ++storageAreaID;
 }
 
-Ref<StorageAreaImpl> StorageAreaImpl::create(PassRefPtr<StorageAreaMap> storageAreaMap)
+Ref<StorageAreaImpl> StorageAreaImpl::create(Ref<StorageAreaMap>&& storageAreaMap)
 {
-    return adoptRef(*new StorageAreaImpl(storageAreaMap));
+    return adoptRef(*new StorageAreaImpl(WTFMove(storageAreaMap)));
 }
 
-StorageAreaImpl::StorageAreaImpl(PassRefPtr<StorageAreaMap> storageAreaMap)
+StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
     : m_storageAreaID(generateStorageAreaID())
-    , m_storageAreaMap(storageAreaMap)
+    , m_storageAreaMap(WTFMove(storageAreaMap))
 {
 }
 
@@ -126,9 +127,9 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     ASSERT_NOT_REACHED();
 }
 
-WebCore::SecurityOrigin& StorageAreaImpl::securityOrigin()
+WebCore::SecurityOriginData StorageAreaImpl::securityOrigin() const
 {
-    return m_storageAreaMap->securityOrigin();
+    return WebCore::SecurityOriginData::fromSecurityOrigin(m_storageAreaMap->securityOrigin());
 }
 
 } // namespace WebKit

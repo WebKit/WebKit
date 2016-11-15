@@ -36,6 +36,7 @@ class SecurityOrigin;
 class StorageSyncManager;
 
 enum StorageType { LocalStorage, SessionStorage };
+struct SecurityOriginData;
 
 class StorageArea : public RefCounted<StorageArea> {
 public:
@@ -58,7 +59,7 @@ public:
     virtual void decrementAccessCount() { }
     virtual void closeDatabaseIfIdle() { }
 
-    virtual SecurityOrigin& securityOrigin() = 0;
+    virtual SecurityOriginData securityOrigin() const = 0;
 };
 
 } // namespace WebCore

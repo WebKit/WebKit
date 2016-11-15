@@ -28,6 +28,7 @@
 #include <WebCore/MediaConstraintsImpl.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
@@ -181,8 +182,8 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
             return;
         }
 
-        auto userMediaOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(userMediaDocumentOriginIdentifier));
-        auto topLevelOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(topLevelDocumentOriginIdentifier));
+        auto userMediaOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier)->securityOrigin());
+        auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier)->securityOrigin());
         auto request = createRequest(userMediaID, audioDeviceUIDs, videoDeviceUIDs);
 
         if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get())) {
@@ -212,8 +213,8 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
     auto request = UserMediaPermissionCheckProxy::create(*this, userMediaID);
     m_pendingDeviceRequests.add(userMediaID, request.ptr());
 
-    auto userMediaOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(userMediaDocumentOriginIdentifier));
-    auto topLevelOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(topLevelDocumentOriginIdentifier));
+    auto userMediaOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier).valueOr(SecurityOriginData()).securityOrigin());
+    auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier).valueOr(SecurityOriginData()).securityOrigin());
 
     if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get())) {
         m_pendingDeviceRequests.take(userMediaID);

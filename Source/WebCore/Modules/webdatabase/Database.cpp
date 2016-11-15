@@ -208,7 +208,7 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
     {
         std::lock_guard<StaticLock> locker(guidMutex);
 
-        m_guid = guidForOriginAndName(securityOrigin().toString(), name);
+        m_guid = guidForOriginAndName(securityOrigin().securityOrigin()->toString(), name);
         guidToDatabaseMap().ensure(m_guid, [] {
             return HashSet<Database*>();
         }).iterator->value.add(this);
@@ -766,13 +766,13 @@ Vector<String> Database::tableNames()
     return result;
 }
 
-SecurityOrigin& Database::securityOrigin()
+SecurityOriginData Database::securityOrigin()
 {
     if (m_scriptExecutionContext->isContextThread())
-        return m_contextThreadSecurityOrigin.get();
+        return SecurityOriginData::fromSecurityOrigin(m_contextThreadSecurityOrigin.get());
     auto& thread = databaseThread();
     if (currentThread() == thread.getThreadID())
-        return m_databaseThreadSecurityOrigin.get();
+        return SecurityOriginData::fromSecurityOrigin(m_databaseThreadSecurityOrigin.get());
     RELEASE_ASSERT_NOT_REACHED();
 }
 

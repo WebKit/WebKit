@@ -161,8 +161,10 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedS
     for (const auto& originIdentifier : originIdentifiersToDelete) {
         removeDatabaseWithOriginIdentifier(originIdentifier);
 
-        // FIXME: Move createFromDatabaseIdentifier to SecurityOriginData.
-        deletedDatabaseOrigins.uncheckedAppend(SecurityOriginData::fromSecurityOrigin(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier)));
+        if (auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier))
+            deletedDatabaseOrigins.uncheckedAppend(*origin);
+        else
+            ASSERT_NOT_REACHED();
     }
 
     return deletedDatabaseOrigins;
@@ -173,8 +175,12 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
     Vector<SecurityOriginData> origins;
     origins.reserveInitialCapacity(m_origins.size());
 
-    for (const String& origin : m_origins)
-        origins.uncheckedAppend(SecurityOriginData::fromSecurityOrigin(SecurityOrigin::createFromDatabaseIdentifier(origin)));
+    for (const String& originIdentifier : m_origins) {
+        if (auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier))
+            origins.uncheckedAppend(*origin);
+        else
+            ASSERT_NOT_REACHED();
+    }
 
     return origins;
 }

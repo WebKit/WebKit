@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/SecurityOriginHash.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageArea.h>
 #include <WebCore/StorageNamespace.h>
 #include <wtf/HashMap.h>
@@ -48,7 +48,7 @@ public:
     // we're just deleting the underlying db file. If an item is added immediately
     // after file deletion, we want the same StorageArea to eventually trigger
     // a sync and for StorageAreaSync to recreate the backing db file.
-    void clearOriginForDeletion(WebCore::SecurityOrigin*);
+    void clearOriginForDeletion(const WebCore::SecurityOriginData&);
     void clearAllOriginsForDeletion();
     void sync();
     void closeIdleLocalStorageDatabases();
@@ -56,10 +56,10 @@ public:
 private:
     StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota);
 
-    RefPtr<WebCore::StorageArea> storageArea(RefPtr<WebCore::SecurityOrigin>&&) override;
+    RefPtr<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     RefPtr<StorageNamespace> copy(WebCore::Page* newPage) override;
 
-    typedef HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;
+    typedef HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;
 
     WebCore::StorageType m_storageType;

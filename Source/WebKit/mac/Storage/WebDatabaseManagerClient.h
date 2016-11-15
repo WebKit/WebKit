@@ -30,11 +30,11 @@ public:
     static WebDatabaseManagerClient* sharedWebDatabaseManagerClient();
     
     virtual ~WebDatabaseManagerClient();
-    void dispatchDidModifyOrigin(WebCore::SecurityOrigin&) final;
-    void dispatchDidModifyDatabase(WebCore::SecurityOrigin&, const WTF::String& databaseIdentifier) final;
+    void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&) final;
+    void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WTF::String& databaseIdentifier) final;
 
 #if PLATFORM(IOS)
-    void dispatchDidAddNewOrigin(WebCore::SecurityOrigin&) final;
+    void dispatchDidAddNewOrigin() final;
     void dispatchDidDeleteDatabase() final;
     void dispatchDidDeleteDatabaseOrigin() final;
     void newDatabaseOriginWasAdded();

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageArea.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
@@ -41,7 +42,7 @@ class StorageAreaSync;
 
 class StorageAreaImpl : public WebCore::StorageArea {
 public:
-    static Ref<StorageAreaImpl> create(WebCore::StorageType, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
+    static Ref<StorageAreaImpl> create(WebCore::StorageType, const WebCore::SecurityOriginData&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
     virtual ~StorageAreaImpl();
 
     unsigned length() override;
@@ -61,7 +62,7 @@ public:
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
 
-    WebCore::SecurityOrigin& securityOrigin() override { return *m_securityOrigin.get(); }
+    WebCore::SecurityOriginData securityOrigin() const override { return m_securityOrigin; }
 
     Ref<StorageAreaImpl> copy();
     void close();
@@ -75,7 +76,7 @@ public:
     void sync();
 
 private:
-    StorageAreaImpl(WebCore::StorageType, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
+    StorageAreaImpl(WebCore::StorageType, const WebCore::SecurityOriginData&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
     explicit StorageAreaImpl(const StorageAreaImpl&);
 
     void blockUntilImportComplete() const;
@@ -84,7 +85,7 @@ private:
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, WebCore::Frame* sourceFrame);
 
     WebCore::StorageType m_storageType;
-    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
+    WebCore::SecurityOriginData m_securityOrigin;
     RefPtr<WebCore::StorageMap> m_storageMap;
 
     RefPtr<StorageAreaSync> m_storageAreaSync;

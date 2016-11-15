@@ -344,17 +344,26 @@ void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const 
     }
 }
 
-void StorageTracker::origins(Vector<RefPtr<SecurityOrigin>>& result)
+Vector<SecurityOriginData> StorageTracker::origins()
 {
     ASSERT(m_isActive);
     
     if (!m_isActive)
-        return;
+        return { };
 
     LockHolder locker(m_originSetMutex);
 
-    for (OriginSet::const_iterator it = m_originSet.begin(), end = m_originSet.end(); it != end; ++it)
-        result.append(SecurityOrigin::createFromDatabaseIdentifier(*it));
+    Vector<SecurityOriginData> result;
+    result.reserveInitialCapacity(m_originSet.size());
+    for (auto& identifier : m_originSet) {
+        auto origin = SecurityOriginData::fromDatabaseIdentifier(identifier);
+        if (!origin) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        result.uncheckedAppend(origin.value());
+    }
+    return result;
 }
 
 void StorageTracker::deleteAllOrigins()
@@ -451,10 +460,15 @@ void StorageTracker::syncDeleteAllOrigins()
 
 void StorageTracker::deleteOriginWithIdentifier(const String& originIdentifier)
 {
-    deleteOrigin(&SecurityOrigin::createFromDatabaseIdentifier(originIdentifier).get());
+    auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
+    if (!origin) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    deleteOrigin(origin.value());
 }
 
-void StorageTracker::deleteOrigin(SecurityOrigin* origin)
+void StorageTracker::deleteOrigin(const SecurityOriginData& origin)
 {    
     ASSERT(m_isActive);
     ASSERT(isMainThread());
@@ -471,7 +485,7 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
     // StorageTracker db deletion.
     WebStorageNamespaceProvider::clearLocalStorageForOrigin(origin);
 
-    String originId = SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier();
+    String originId = origin.databaseIdentifier();
     
     {
         LockHolder locker(m_originSetMutex);

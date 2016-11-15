@@ -34,7 +34,7 @@ namespace WebKit {
 
 void WebsiteData::Entry::encode(IPC::Encoder& encoder) const
 {
-    encoder << WebCore::SecurityOriginData::fromSecurityOrigin(*origin);
+    encoder << origin;
     encoder.encodeEnum(type);
     encoder << size;
 }
@@ -51,7 +51,7 @@ bool WebsiteData::Entry::decode(IPC::Decoder& decoder, WebsiteData::Entry& resul
     if (!decoder.decode(result.size))
         return false;
 
-    result.origin = securityOriginData.securityOrigin();
+    result.origin = securityOriginData;
     return true;
 }
 

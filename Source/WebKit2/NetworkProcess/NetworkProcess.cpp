@@ -311,7 +311,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetc
 {
 #if ENABLE(NETWORK_CACHE)
     if (NetworkCache::singleton().isEnabled()) {
-        HashMap<RefPtr<SecurityOrigin>, uint64_t> originsAndSizes;
+        HashMap<SecurityOriginData, uint64_t> originsAndSizes;
         NetworkCache::singleton().traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
             if (!traversalEntry) {
                 Vector<WebsiteData::Entry> entries;
@@ -326,7 +326,8 @@ static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetc
                 return;
             }
 
-            auto result = originsAndSizes.add(SecurityOrigin::create(traversalEntry->entry.response().url()), 0);
+            auto url = traversalEntry->entry.response().url();
+            auto result = originsAndSizes.add({url.protocol().toString(), url.host(), url.port()}, 0);
 
             if (fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes))
                 result.iterator->value += traversalEntry->entry.sourceStorageRecord().header.size() + traversalEntry->recordInfo.bodySize;

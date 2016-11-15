@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebStorageNamespaceImpl_h
-#define WebStorageNamespaceImpl_h
+#pragma once
 
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
 #include <WebCore/StorageNamespace.h>
@@ -54,7 +54,7 @@ public:
 private:
     explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
-    RefPtr<WebCore::StorageArea> storageArea(RefPtr<WebCore::SecurityOrigin>&&) override;
+    RefPtr<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     RefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) override;
 
     const WebCore::StorageType m_storageType;
@@ -65,9 +65,7 @@ private:
 
     const unsigned m_quotaInBytes;
 
-    HashMap<RefPtr<WebCore::SecurityOrigin>, StorageAreaMap*> m_storageAreaMaps;
+    HashMap<WebCore::SecurityOriginData, StorageAreaMap*> m_storageAreaMaps;
 };
 
 } // namespace WebKit
-
-#endif // WebStorageNamespaceImpl_h

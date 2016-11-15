@@ -109,7 +109,7 @@ private:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
+    Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins();
 #endif
 
     // For execution on work queue thread only

@@ -28,6 +28,7 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebStorageManagerPrivate.h"
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -48,9 +49,9 @@ WebStorageTrackerClient::~WebStorageTrackerClient()
 {
 }
 
-void WebStorageTrackerClient::dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin> origin)
+void WebStorageTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
 {
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.get()]);
+    RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebStorageDidModifyOriginNotification 
                                                         object:webSecurityOrigin.get()];
@@ -58,15 +59,20 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>
 
 void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdentifier)
 {
-    auto origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 
+    if (!origin) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
     if (isMainThread()) {
-        dispatchDidModifyOrigin(WTFMove(origin));
+        dispatchDidModifyOrigin(origin->securityOrigin().ptr());
         return;
     }
 
-    callOnMainThread([origin = WTFMove(origin)]() mutable {
-        WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(WTFMove(origin));
+    callOnMainThread([origin = origin->securityOrigin()->isolatedCopy()]() mutable {
+        WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(origin.ptr());
     });
 }
 

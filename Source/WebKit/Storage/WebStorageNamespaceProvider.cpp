@@ -72,7 +72,7 @@ void WebStorageNamespaceProvider::clearLocalStorageForAllOrigins()
     }
 }
 
-void WebStorageNamespaceProvider::clearLocalStorageForOrigin(SecurityOrigin* origin)
+void WebStorageNamespaceProvider::clearLocalStorageForOrigin(const SecurityOriginData& origin)
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())

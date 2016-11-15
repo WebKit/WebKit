@@ -34,11 +34,12 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "StorageEvent.h"
 
 namespace WebCore {
 
-void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData& securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
@@ -48,14 +49,14 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
 
     // Send events only to our page.
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
+        if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin.securityOrigin().ptr()))
             frames.append(frame);
     }
 
     dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData& securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
@@ -66,7 +67,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     // Send events to every page.
     for (auto& pageInGroup : page->group().pages()) {
         for (Frame* frame = &pageInGroup->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
+            if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin.securityOrigin().ptr()))
                 frames.append(frame);
         }
     }
@@ -74,9 +75,9 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
 {
-    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, SessionStorage, securityOrigin);
+    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, SessionStorage, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->sessionStorage();
@@ -85,10 +86,10 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
     }
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
 {
     for (auto& page : pageGroup.pages())
-        InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, LocalStorage, securityOrigin);
+        InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, LocalStorage, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->localStorage();

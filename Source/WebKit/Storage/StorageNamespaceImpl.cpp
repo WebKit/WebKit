@@ -101,16 +101,16 @@ RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
     return newNamespace;
 }
 
-RefPtr<StorageArea> StorageNamespaceImpl::storageArea(RefPtr<SecurityOrigin>&& origin)
+RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& origin)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
 
     RefPtr<StorageAreaImpl> storageArea;
-    if ((storageArea = m_storageAreaMap.get(origin.get())))
+    if ((storageArea = m_storageAreaMap.get(origin)))
         return storageArea;
 
-    storageArea = StorageAreaImpl::create(m_storageType, origin.get(), m_syncManager.get(), m_quota);
+    storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager.get(), m_quota);
     m_storageAreaMap.set(origin, storageArea.get());
     return storageArea;
 }
@@ -138,7 +138,7 @@ void StorageNamespaceImpl::close()
     m_isShutdown = true;
 }
 
-void StorageNamespaceImpl::clearOriginForDeletion(SecurityOrigin* origin)
+void StorageNamespaceImpl::clearOriginForDeletion(const SecurityOriginData& origin)
 {
     ASSERT(isMainThread());
 

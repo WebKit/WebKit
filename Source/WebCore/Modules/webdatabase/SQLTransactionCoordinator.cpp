@@ -43,7 +43,7 @@ namespace WebCore {
 
 static String getDatabaseIdentifier(SQLTransaction& transaction)
 {
-    return SecurityOriginData::fromSecurityOrigin(transaction.database().securityOrigin()).databaseIdentifier();
+    return transaction.database().securityOrigin().databaseIdentifier();
 }
 
 SQLTransactionCoordinator::SQLTransactionCoordinator()

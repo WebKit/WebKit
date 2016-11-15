@@ -268,17 +268,17 @@ void DatabaseProcess::accessToTemporaryFileComplete(const String& path)
         extension->revoke();
 }
 
-Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins()
+Vector<WebCore::SecurityOriginData> DatabaseProcess::indexedDatabaseOrigins()
 {
     if (m_indexedDatabaseDirectory.isEmpty())
         return { };
 
-    Vector<RefPtr<WebCore::SecurityOrigin>> securityOrigins;
+    Vector<WebCore::SecurityOriginData> securityOrigins;
     for (auto& originPath : listDirectory(m_indexedDatabaseDirectory, "*")) {
         String databaseIdentifier = pathGetFileName(originPath);
 
-        if (auto securityOrigin = SecurityOrigin::maybeCreateFromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.append(WTFMove(securityOrigin));
+        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
+            securityOrigins.append(WTFMove(*securityOrigin));
     }
 
     return securityOrigins;

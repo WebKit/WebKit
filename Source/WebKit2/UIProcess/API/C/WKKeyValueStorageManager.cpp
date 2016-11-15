@@ -97,7 +97,7 @@ void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerR
         for (const auto& originDetails : storageDetails) {
             HashMap<String, RefPtr<API::Object>> detailsMap;
 
-            RefPtr<API::Object> origin = API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier));
+            RefPtr<API::Object> origin = API::SecurityOrigin::create(WebCore::SecurityOriginData::fromDatabaseIdentifier(originDetails.originIdentifier)->securityOrigin());
 
             detailsMap.set(toImpl(WKKeyValueStorageManagerGetOriginKey())->string(), origin);
             if (originDetails.creationTime)

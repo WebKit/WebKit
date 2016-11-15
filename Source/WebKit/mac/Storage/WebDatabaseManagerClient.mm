@@ -95,7 +95,7 @@ WebDatabaseManagerClient::~WebDatabaseManagerClient()
 
 class DidModifyOriginData {
 public:
-    static void dispatchToMainThread(WebDatabaseManagerClient& client, SecurityOrigin& origin)
+    static void dispatchToMainThread(WebDatabaseManagerClient& client, const SecurityOriginData& origin)
     {
         auto context = std::make_unique<DidModifyOriginData>(client, origin);
         callOnMainThread([context = WTFMove(context)] {
@@ -103,7 +103,7 @@ public:
         });
     }
 
-    DidModifyOriginData(WebDatabaseManagerClient& client, SecurityOrigin& origin)
+    DidModifyOriginData(WebDatabaseManagerClient& client, const SecurityOriginData& origin)
         : client(client)
         , origin(origin.isolatedCopy())
     {
@@ -111,54 +111,54 @@ public:
 
 private:
     WebDatabaseManagerClient& client;
-    Ref<SecurityOrigin> origin;
+    SecurityOriginData origin;
 };
 
-void WebDatabaseManagerClient::dispatchDidModifyOrigin(SecurityOrigin& origin)
+void WebDatabaseManagerClient::dispatchDidModifyOrigin(const SecurityOriginData& origin)
 {
     if (!isMainThread()) {
         DidModifyOriginData::dispatchToMainThread(*this, origin);
         return;
     }
 
-    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
+    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification object:webSecurityOrigin.get()];
 }
 
-void WebDatabaseManagerClient::dispatchDidModifyDatabase(SecurityOrigin& origin, const String& databaseIdentifier)
+void WebDatabaseManagerClient::dispatchDidModifyDatabase(const SecurityOriginData& origin, const String& databaseIdentifier)
 {
     if (!isMainThread()) {
         DidModifyOriginData::dispatchToMainThread(*this, origin);
         return;
     }
 
-    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
+    auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
     auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification object:webSecurityOrigin.get() userInfo:userInfo.get()];
 }
 
 #if PLATFORM(IOS)
 
-void WebDatabaseManagerClient::dispatchDidAddNewOrigin(SecurityOrigin&)
+void WebDatabaseManagerClient::dispatchDidAddNewOrigin()
 {    
     m_isHandlingNewDatabaseOriginNotification = true;
     // Send a notification to all apps that a new origin has been added, so other apps with opened database can refresh their origin maps.
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseOriginWasAddedNotification, 0, 0, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseOriginWasAddedNotification, nullptr, nullptr, true);
 }
 
 void WebDatabaseManagerClient::dispatchDidDeleteDatabase()
 {
     m_isHandlingDeleteDatabaseNotification = true;
     // Send a notification to all apps that a database has been deleted, so other apps with the deleted database open will close it properly.
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseWasDeletedNotification, 0, 0, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseWasDeletedNotification, nullptr, nullptr, true);
 }
 
 void WebDatabaseManagerClient::dispatchDidDeleteDatabaseOrigin()
 {
     m_isHandlingDeleteDatabaseOriginNotification = true;
     // Send a notification to all apps that an origin has been deleted, so other apps can update their origin maps.
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseOriginWasDeletedNotification, 0, 0, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WebDatabaseOriginWasDeletedNotification, nullptr, nullptr, true);
 }
 
 void WebDatabaseManagerClient::newDatabaseOriginWasAdded()

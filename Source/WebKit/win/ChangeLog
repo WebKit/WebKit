@@ -1,3 +1,21 @@
+2016-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Move SecurityOrigin::createFromDatabaseIdentifier to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164720
+
+        Reviewed by Brady Eidson.
+
+        * WebDatabaseManager.cpp:
+        (DidModifyOriginData::dispatchToMainThread):
+        (DidModifyOriginData::DidModifyOriginData):
+        (WebDatabaseManager::dispatchDidModifyOrigin):
+        (WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebDatabaseManager.h:
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+
 2016-11-13  Darin Adler  <darin@apple.com>
 
         Fix exception handling in SQL database code, streamline and update code

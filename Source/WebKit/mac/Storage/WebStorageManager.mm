@@ -31,6 +31,7 @@
 #import "WebStorageTrackerClient.h"
 #import <WebCore/PageGroup.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 #import <pthread.h>
 
 using namespace WebCore;
@@ -64,14 +65,12 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (NSArray *)origins
 {
-    Vector<RefPtr<SecurityOrigin>> coreOrigins;
-
-    WebKit::StorageTracker::tracker().origins(coreOrigins);
+    auto coreOrigins = WebKit::StorageTracker::tracker().origins();
 
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
 
-    for (size_t i = 0; i < coreOrigins.size(); ++i) {
-        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigins[i].get()];
+    for (auto& origin : coreOrigins) {
+        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()];
         [webOrigins addObject:webOrigin];
         [webOrigin release];
     }
@@ -91,7 +90,7 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (void)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    WebKit::StorageTracker::tracker().deleteOrigin([origin _core]);
+    WebKit::StorageTracker::tracker().deleteOrigin(SecurityOriginData::fromSecurityOrigin(*[origin _core]));
 }
 
 - (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin

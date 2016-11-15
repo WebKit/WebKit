@@ -48,6 +48,7 @@ class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
+struct SecurityOriginData;
 
 using DatabaseGUID = int;
 
@@ -108,7 +109,7 @@ public:
 
     Vector<String> tableNames();
 
-    SecurityOrigin& securityOrigin();
+    SecurityOriginData securityOrigin();
 
     void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }

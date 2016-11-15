@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteData_h
-#define WebsiteData_h
+#pragma once
 
-#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -42,7 +41,7 @@ enum class WebsiteDataType;
 
 struct WebsiteData {
     struct Entry {
-        RefPtr<WebCore::SecurityOrigin> origin;
+        WebCore::SecurityOriginData origin;
         WebsiteDataType type;
         uint64_t size;
 
@@ -62,5 +61,3 @@ struct WebsiteData {
 };
 
 }
-
-#endif // WebsiteData_h

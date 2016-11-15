@@ -101,11 +101,11 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         bool canAccessStorage(Frame*) override { return false; }
         StorageType storageType() const override { return LocalStorage; }
         size_t memoryBytesUsedByCache() override { return 0; }
-        SecurityOrigin& securityOrigin() override { return SecurityOrigin::createUnique(); }
+        SecurityOriginData securityOrigin() const override { return { }; }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
-        RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&) override { return adoptRef(new EmptyStorageArea); }
+        RefPtr<StorageArea> storageArea(const SecurityOriginData&) override { return adoptRef(new EmptyStorageArea); }
         RefPtr<StorageNamespace> copy(Page*) override { return adoptRef(new EmptyStorageNamespace); }
     };
 

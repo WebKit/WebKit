@@ -42,6 +42,7 @@ class DatabaseDetails;
 class DatabaseTaskSynchronizer;
 class DatabaseThread;
 class SecurityOrigin;
+struct SecurityOriginData;
 
 class DatabaseContext final : public ThreadSafeRefCounted<DatabaseContext>, private ActiveDOMObject {
 public:
@@ -60,7 +61,7 @@ public:
     void databaseExceededQuota(const String& name, DatabaseDetails);
 
     using ActiveDOMObject::scriptExecutionContext;
-    SecurityOrigin* securityOrigin() const;
+    SecurityOriginData securityOrigin() const;
 
     bool isContextThread() const;
 

@@ -31,13 +31,13 @@
 namespace WebCore {
 
 class Page;
-class SecurityOrigin;
 class StorageArea;
+struct SecurityOriginData;
 
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     virtual ~StorageNamespace() { }
-    virtual RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&) = 0;
+    virtual RefPtr<StorageArea> storageArea(const SecurityOriginData&) = 0;
     virtual RefPtr<StorageNamespace> copy(Page* newPage) = 0;
 };
 

@@ -39,6 +39,7 @@
 #include "SchemeRegistry.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -210,9 +211,9 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
     ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
 }
 
-SecurityOrigin* DatabaseContext::securityOrigin() const
+SecurityOriginData DatabaseContext::securityOrigin() const
 {
-    return m_scriptExecutionContext->securityOrigin();
+    return SecurityOriginData::fromSecurityOrigin(*m_scriptExecutionContext->securityOrigin());
 }
 
 bool DatabaseContext::isContextThread() const

@@ -87,6 +87,7 @@
 #include "Screen.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include "SecurityPolicy.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -839,7 +840,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
     if (!page)
         return nullptr;
 
-    auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    auto storageArea = page->sessionStorage()->storageArea(SecurityOriginData::fromSecurityOrigin(*document->securityOrigin()));
     if (!storageArea->canAccessStorage(m_frame))
         return Exception { SECURITY_ERR };
 

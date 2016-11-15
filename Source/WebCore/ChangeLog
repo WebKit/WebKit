@@ -1,3 +1,98 @@
+2016-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Move SecurityOrigin::createFromDatabaseIdentifier to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164720
+
+        Reviewed by Brady Eidson.
+
+        This is adding to r208558 where we moved databaseIdentifier to SecurityOriginData so we
+        don't have to use SecurityOrigin in the DatabaseProcess.  This is a step towards only using 
+        SecurityOrigin (and the SchemeRegistry) in the WebProcess. SecurityOriginData is for other 
+        processes and IPC. There should be no change in behaviour.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::securityOrigin):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::securityOrigin):
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::tryToOpenDatabaseBackend):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseManagerClient.h:
+        (WebCore::DatabaseManagerClient::dispatchDidAddNewOrigin):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasAdequateQuotaForOrigin):
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::retryCanEstablishDatabase):
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::maximumSize):
+        (WebCore::DatabaseTracker::originPath):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesNoLock):
+        (WebCore::DatabaseTracker::databaseNames):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::originLockFor):
+        (WebCore::DatabaseTracker::deleteOriginLockFor):
+        (WebCore::DatabaseTracker::usage):
+        (WebCore::DatabaseTracker::quotaNoLock):
+        (WebCore::DatabaseTracker::quota):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteDatabasesModifiedSince):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::isDeletingDatabaseOrOriginFor):
+        (WebCore::DatabaseTracker::recordCreatingDatabase):
+        (WebCore::DatabaseTracker::doneCreatingDatabase):
+        (WebCore::DatabaseTracker::creatingDatabase):
+        (WebCore::DatabaseTracker::canDeleteDatabase):
+        (WebCore::DatabaseTracker::recordDeletingDatabase):
+        (WebCore::DatabaseTracker::doneDeletingDatabase):
+        (WebCore::DatabaseTracker::isDeletingDatabase):
+        (WebCore::DatabaseTracker::canDeleteOrigin):
+        (WebCore::DatabaseTracker::isDeletingOrigin):
+        (WebCore::DatabaseTracker::recordDeletingOrigin):
+        (WebCore::DatabaseTracker::doneDeletingOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/SQLTransactionCoordinator.cpp:
+        (WebCore::getDatabaseIdentifier):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * loader/EmptyClients.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::maybeCreateFromDatabaseIdentifier): Deleted.
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier): Deleted.
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::fromDatabaseIdentifier):
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::SecurityOriginData):
+        * storage/StorageArea.h:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames):
+        * storage/StorageEventDispatcher.h:
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+
 2016-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker debugging should pause all targets and view call frames in all targets

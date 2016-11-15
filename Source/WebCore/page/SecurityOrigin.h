@@ -52,12 +52,6 @@ public:
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
     static Ref<SecurityOrigin> createUnique();
 
-    WEBCORE_EXPORT static Ref<SecurityOrigin> createFromDatabaseIdentifier(const String&);
-    // Alternate form of createFromDatabaseIdentifier that returns a nullptr on failure, instead of an empty origin.
-    // FIXME: Many users of createFromDatabaseIdentifier seem to expect maybeCreateFromDatabaseIdentifier behavior,
-    // but they aren't getting it so they might be buggy.
-    WEBCORE_EXPORT static RefPtr<SecurityOrigin> maybeCreateFromDatabaseIdentifier(const String&);
-
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, Optional<uint16_t> port);
 

@@ -38,6 +38,7 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -176,7 +177,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(DatabaseCon
         return openResult.releaseException();
 
     // FIXME: What guarantees backendContext.securityOrigin() is non-null?
-    DatabaseTracker::singleton().setDatabaseDetails(*backendContext.securityOrigin(), name, displayName, estimatedSize);
+    DatabaseTracker::singleton().setDatabaseDetails(backendContext.securityOrigin(), name, displayName, estimatedSize);
     return WTFMove(database);
 }
 
@@ -243,7 +244,7 @@ String DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, const String
                 return String();
         }
     }
-    return DatabaseTracker::singleton().fullPathForDatabase(origin, name, createIfDoesNotExist);
+    return DatabaseTracker::singleton().fullPathForDatabase(SecurityOriginData::fromSecurityOrigin(origin), name, createIfDoesNotExist);
 }
 
 DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin& origin)
@@ -258,7 +259,7 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
         }
     }
 
-    return DatabaseTracker::singleton().detailsForNameAndOrigin(name, origin);
+    return DatabaseTracker::singleton().detailsForNameAndOrigin(name, SecurityOriginData::fromSecurityOrigin(origin));
 }
 
 void DatabaseManager::logErrorMessage(ScriptExecutionContext& context, const String& message)

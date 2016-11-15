@@ -218,7 +218,7 @@ void WKBundleClearAllDatabases(WKBundleRef)
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
     // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
-    DatabaseTracker::singleton().setQuota(SecurityOrigin::createFromDatabaseIdentifier("file__0"), quota);
+    DatabaseTracker::singleton().setQuota(*SecurityOriginData::fromDatabaseIdentifier("file__0"), quota);
 }
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)

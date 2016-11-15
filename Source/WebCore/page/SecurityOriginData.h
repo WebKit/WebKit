@@ -34,6 +34,12 @@ class SecurityOrigin;
 
 struct SecurityOriginData {
     SecurityOriginData() = default;
+    SecurityOriginData(const String& protocol, const String& host, Optional<uint16_t> port)
+        : protocol(protocol)
+        , host(host)
+        , port(port)
+    {
+    }
     SecurityOriginData(WTF::HashTableDeletedValueType)
         : protocol(WTF::HashTableDeletedValue)
     {
@@ -56,6 +62,7 @@ struct SecurityOriginData {
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.
     WEBCORE_EXPORT String databaseIdentifier() const;
+    WEBCORE_EXPORT static Optional<SecurityOriginData> fromDatabaseIdentifier(const String&);
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);

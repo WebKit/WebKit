@@ -42,8 +42,6 @@
 
 namespace WebCore {
 
-const int MaxAllowedPort = std::numeric_limits<uint16_t>::max();
-
 static bool schemeRequiresHost(const URL& url)
 {
     // We expect URLs with these schemes to have authority components. If the
@@ -486,52 +484,6 @@ bool originsMatch(const SecurityOrigin* origin1, const SecurityOrigin* origin2)
 Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
     return SecurityOrigin::create(URL(URL(), originString));
-}
-
-static const char separatorCharacter = '_';
-
-RefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(const String& databaseIdentifier)
-{
-    // Make sure there's a first separator
-    size_t separator1 = databaseIdentifier.find(separatorCharacter);
-    if (separator1 == notFound)
-        return nullptr;
-
-    // Make sure there's a second separator
-    size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
-    if (separator2 == notFound)
-        return nullptr;
-
-    // Ensure there were at least 2 separator characters. Some hostnames on intranets have
-    // underscores in them, so we'll assume that any additional underscores are part of the host.
-    if (separator1 == separator2)
-        return nullptr;
-
-    // Make sure the port section is a valid port number or doesn't exist
-    bool portOkay;
-    int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
-    bool portAbsent = (separator2 == databaseIdentifier.length() - 1);
-    if (!(portOkay || portAbsent))
-        return nullptr;
-
-    if (port < 0 || port > MaxAllowedPort)
-        return nullptr;
-
-    // Split out the 3 sections of data
-    String protocol = databaseIdentifier.substring(0, separator1);
-    String host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
-    
-    host = decodeURLEscapeSequences(host);
-    auto origin = create(URL(URL(), protocol + "://" + host + "/"));
-    origin->m_port = port;
-    return WTFMove(origin);
-}
-
-Ref<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
-{
-    if (RefPtr<SecurityOrigin> origin = maybeCreateFromDatabaseIdentifier(databaseIdentifier))
-        return origin.releaseNonNull();
-    return create(URL());
 }
 
 Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, Optional<uint16_t> port)

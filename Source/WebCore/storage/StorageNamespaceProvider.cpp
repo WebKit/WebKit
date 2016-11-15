@@ -27,6 +27,7 @@
 #include "StorageNamespaceProvider.h"
 
 #include "Document.h"
+#include "SecurityOriginData.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 
@@ -62,7 +63,7 @@ RefPtr<StorageArea> StorageNamespaceProvider::localStorageArea(Document& documen
 {
     auto& storageNamespace = document.securityOrigin()->canAccessLocalStorage(document.topOrigin()) ? localStorageNamespace() : transientLocalStorageNamespace(*document.topOrigin());
 
-    return storageNamespace.storageArea(document.securityOrigin());
+    return storageNamespace.storageArea(SecurityOriginData::fromSecurityOrigin(*document.securityOrigin()));
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace()

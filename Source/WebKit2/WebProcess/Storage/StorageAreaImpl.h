@@ -41,13 +41,13 @@ class StorageAreaMap;
 
 class StorageAreaImpl final : public WebCore::StorageArea {
 public:
-    static Ref<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
+    static Ref<StorageAreaImpl> create(Ref<StorageAreaMap>&&);
     virtual ~StorageAreaImpl();
 
     uint64_t storageAreaID() const { return m_storageAreaID; }
 
 private:
-    StorageAreaImpl(PassRefPtr<StorageAreaMap>);
+    StorageAreaImpl(Ref<StorageAreaMap>&&);
 
     // WebCore::StorageArea.
     unsigned length() override;
@@ -63,10 +63,10 @@ private:
     void incrementAccessCount() override;
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
-    WebCore::SecurityOrigin& securityOrigin() override;
+    WebCore::SecurityOriginData securityOrigin() const override;
 
     uint64_t m_storageAreaID;
-    RefPtr<StorageAreaMap> m_storageAreaMap;
+    Ref<StorageAreaMap> m_storageAreaMap;
 };
 
 } // namespace WebKit

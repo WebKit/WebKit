@@ -56,7 +56,7 @@ void EwkDatabaseManager::getDatabaseOrigins(Ewk_Database_Manager_Get_Database_Or
     Vector<RefPtr<API::Object>> securityOrigins;
     securityOrigins.reserveInitialCapacity(origins.size());
     for (auto& originIdentifier : origins)
-        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(originIdentifier));
+        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(originIdentifier.securityOrigin().get()));
 
     arrayCallback->performCallbackWithReturnValue(API::Array::create(WTFMove(securityOrigins)).ptr());
 }

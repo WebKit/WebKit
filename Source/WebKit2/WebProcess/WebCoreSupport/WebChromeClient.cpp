@@ -680,11 +680,12 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     if (!origin)
         return;
 
+    auto originData = SecurityOriginData::fromSecurityOrigin(*origin);
     auto& tracker = DatabaseTracker::singleton();
-    auto currentQuota = tracker.quota(*origin);
-    auto currentOriginUsage = tracker.usage(*origin);
+    auto currentQuota = tracker.quota(originData);
+    auto currentOriginUsage = tracker.usage(originData);
     uint64_t newQuota = 0;
-    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(WebCore::SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier()));
+    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(WebCore::SecurityOriginData::fromDatabaseIdentifier(WebCore::SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier())->securityOrigin());
     newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, securityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
 
     if (!newQuota) {
@@ -693,7 +694,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     }
 
-    tracker.setQuota(*origin, newQuota);
+    tracker.setQuota(originData, newQuota);
 }
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)

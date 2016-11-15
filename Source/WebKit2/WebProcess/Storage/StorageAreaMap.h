@@ -59,7 +59,7 @@ public:
     void clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea);
     bool contains(const String& key);
 
-    WebCore::SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
+    const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
 
 private:
     StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);

@@ -1,3 +1,60 @@
+2016-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Move SecurityOrigin::createFromDatabaseIdentifier to SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=164720
+
+        Reviewed by Brady Eidson.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::indexedDatabaseOrigins):
+        * DatabaseProcess/DatabaseProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCreateFromDatabaseIdentifier):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::Entry::encode):
+        (WebKit::WebsiteData::Entry::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+        (WebKit::LocalStorageDatabaseTracker::origins):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::reachedApplicationCacheOriginQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::mediaKeyOrigins):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetDatabaseQuota):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins):
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::create):
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::securityOrigin):
+        * WebProcess/Storage/StorageAreaImpl.h:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        * WebProcess/Storage/StorageAreaMap.h:
+        (WebKit::StorageAreaMap::securityOrigin):
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::didDestroyStorageAreaMap):
+        (WebKit::StorageNamespaceImpl::storageArea):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+
 2016-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac][iOS][WK2] Tighten permissions to change CapsLock delay

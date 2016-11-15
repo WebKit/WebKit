@@ -42,11 +42,11 @@ using namespace WebCore;
 
 + (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::maybeCreateFromDatabaseIdentifier(databaseIdentifier);
+    auto origin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier);
     if (!origin)
         return nil;
 
-    return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.get()] autorelease];
+    return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin->securityOrigin().ptr()] autorelease];
 }
 
 - (id)initWithURL:(NSURL *)url
@@ -169,17 +169,17 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage(*reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseTracker::singleton().usage(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)));
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota(*reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseTracker::singleton().quota(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)));
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota(*reinterpret_cast<SecurityOrigin*>(_private), quota);
+    DatabaseTracker::singleton().setQuota(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)), quota);
 }
 
 @end

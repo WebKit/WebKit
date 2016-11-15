@@ -34,7 +34,7 @@ public:
     
     virtual ~WebStorageTrackerClient();
     void dispatchDidModifyOrigin(const String& originIdentifier) override;
-    virtual void dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>);
+    virtual void dispatchDidModifyOrigin(SecurityOrigin*);
 
 private:
     WebStorageTrackerClient();
