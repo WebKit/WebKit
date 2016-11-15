@@ -433,6 +433,29 @@ bool ArgumentCoder<IntSize>::decode(Decoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
+
+void ArgumentCoder<LayoutSize>::encode(Encoder& encoder, const LayoutSize& layoutSize)
+{
+    SimpleArgumentCoder<LayoutSize>::encode(encoder, layoutSize);
+}
+
+bool ArgumentCoder<LayoutSize>::decode(Decoder& decoder, LayoutSize& layoutSize)
+{
+    return SimpleArgumentCoder<LayoutSize>::decode(decoder, layoutSize);
+}
+
+
+void ArgumentCoder<LayoutPoint>::encode(Encoder& encoder, const LayoutPoint& layoutPoint)
+{
+    SimpleArgumentCoder<LayoutPoint>::encode(encoder, layoutPoint);
+}
+
+bool ArgumentCoder<LayoutPoint>::decode(Decoder& decoder, LayoutPoint& layoutPoint)
+{
+    return SimpleArgumentCoder<LayoutPoint>::decode(decoder, layoutPoint);
+}
+
+
 static void pathEncodeApplierFunction(Encoder& encoder, const PathElement& element)
 {
     encoder.encodeEnum(element.type);

@@ -87,6 +87,8 @@ public:
         m_width *= widthScale;
         m_height *= heightScale;
     }
+
+    LayoutSize constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
     
     LayoutSize expandedTo(const LayoutSize& other) const
     {

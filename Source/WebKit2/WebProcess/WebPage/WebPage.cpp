@@ -3256,11 +3256,20 @@ void WebPage::setDataDetectionResults(NSArray *detectionResults)
 #if PLATFORM(COCOA)
 void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 {
-    layerTransaction.setContentsSize(corePage()->mainFrame().view()->contentsSize());
-    layerTransaction.setScrollOrigin(corePage()->mainFrame().view()->scrollOrigin());
+    FrameView* frameView = corePage()->mainFrame().view();
+    if (!frameView)
+        return;
+
+    layerTransaction.setContentsSize(frameView->contentsSize());
+    layerTransaction.setScrollOrigin(frameView->scrollOrigin());
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
+
+    layerTransaction.setBaseLayoutViewportSize(frameView->baseLayoutViewportSize());
+    layerTransaction.setMinStableLayoutViewportOrigin(frameView->minStableLayoutViewportOrigin());
+    layerTransaction.setMaxStableLayoutViewportOrigin(frameView->maxStableLayoutViewportOrigin());
+
 #if PLATFORM(IOS)
     layerTransaction.setScaleWasSetByUIProcess(scaleWasSetByUIProcess());
     layerTransaction.setMinimumScaleFactor(m_viewportConfiguration.minimumScale());
@@ -3271,8 +3280,9 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setViewportMetaTagCameFromImageDocument(m_viewportConfiguration.viewportArguments().type == ViewportArguments::ImageDocument);
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
 #endif
+
 #if PLATFORM(MAC)
-    layerTransaction.setScrollPosition(corePage()->mainFrame().view()->scrollPosition());
+    layerTransaction.setScrollPosition(frameView->scrollPosition());
 #endif
 }
 

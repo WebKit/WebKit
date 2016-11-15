@@ -32,6 +32,7 @@
 #import "DataReference.h"
 #import "EditingRange.h"
 #import "InteractionInformationAtPosition.h"
+#import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "PrintInfo.h"
@@ -49,6 +50,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextStream.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 
@@ -217,7 +219,8 @@ static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRe
     return exposedRectEdge;
 }
 
-WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, double displayedContentScale, UnobscuredRectConstraint constraint) const
+// FIXME: rename this when visual viewports are the default.
+WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, const FloatRect& currentCustomFixedPositionRect, double displayedContentScale, UnobscuredRectConstraint constraint, bool visualViewportEnabled) const
 {
     FloatRect constrainedUnobscuredRect = unobscuredContentRect;
     FloatRect documentRect = m_pageClient.documentRect();
@@ -238,6 +241,21 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
         constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
         constrainedUnobscuredRect.setWidth(adjustedUnexposedMaxEdge(documentRect.maxX(), constrainedUnobscuredRect.maxX(), factor) - constrainedUnobscuredRect.x());
         constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
+    }
+    
+    if (visualViewportEnabled) {
+        FloatRect layoutViewportRect = currentCustomFixedPositionRect;
+        
+        // The layout viewport is never smaller than m_baseLayoutViewportSize, and never be smaller than the constrainedUnobscuredRect.
+        FloatSize constrainedSize = m_baseLayoutViewportSize;
+        layoutViewportRect.setSize(constrainedSize.expandedTo(constrainedUnobscuredRect.size()));
+
+        LayoutPoint layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(constrainedUnobscuredRect), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
+        layoutViewportRect.setLocation(layoutViewportOrigin);
+
+        if (layoutViewportRect != currentCustomFixedPositionRect)
+            LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeCustomFixedPositionRect: new layout viewport  " << layoutViewportRect);
+        return layoutViewportRect;
     }
     
     return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), LayoutSize(documentRect.size()), displayedContentScale, false, StickToViewportBounds);
@@ -375,6 +393,19 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         m_hasDeferredStartAssistingNode = false;
         m_deferredNodeAssistanceArguments = nullptr;
     }
+}
+
+bool WebPageProxy::updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
+{
+    bool changed = m_baseLayoutViewportSize != layerTreeTransaction.baseLayoutViewportSize()
+        || m_minStableLayoutViewportOrigin != layerTreeTransaction.minStableLayoutViewportOrigin()
+        || m_maxStableLayoutViewportOrigin != layerTreeTransaction.maxStableLayoutViewportOrigin();
+
+    m_baseLayoutViewportSize = layerTreeTransaction.baseLayoutViewportSize();
+    m_minStableLayoutViewportOrigin = layerTreeTransaction.minStableLayoutViewportOrigin();
+    m_maxStableLayoutViewportOrigin = layerTreeTransaction.maxStableLayoutViewportOrigin();
+    
+    return changed;
 }
 
 void WebPageProxy::layerTreeCommitComplete()

@@ -95,6 +95,8 @@ public:
         m_height *= scaleY;
     }
 
+    WEBCORE_EXPORT FloatSize constrainedBetween(const FloatSize& min, const FloatSize& max) const;
+
     FloatSize expandedTo(const FloatSize& other) const
     {
         return FloatSize(m_width > other.m_width ? m_width : other.m_width,

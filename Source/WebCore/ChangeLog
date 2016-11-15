@@ -1,3 +1,56 @@
+2016-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Implement support for visual viewports
+        https://bugs.webkit.org/show_bug.cgi?id=164765
+
+        Reviewed by Tim Horton.
+
+        Adopt the visual viewport scrolling model in iOS WK2.
+
+        This is more complex than the Mac implementation for two primary reasons. First,
+        WKWebView needs to to able to control the rectangle used for fixed position layout
+        to get the correct behavior when zooming all the way out, and because iOS displays
+        pages scaled down, exposing document overflow such that the layout viewport rectangle
+        has to get larger than the initial containing block size (which does not happen on Mac).
+
+        This is achieved by pushing a "layoutViewportOverrideRect" down onto FrameView, in
+        a similar way to the customFixedPositionRect that's used now. We share that name
+        for now in code that is agnostic to its use (e.g. VisibleContentRectUpdateInfo).
+
+        I tried so hard to write tests, but ran into various problems (webkit.org/b/164762,
+        webkit.org/b/164764). Will add tests via webkit.org/b/164764.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::fixedScrollableAreaBoundsInflatedForScrolling): layoutViewportOrigin()
+        was removed.
+        (WebCore::FrameView::setBaseLayoutViewportOrigin): Rename with "base" to make it clearer that
+        it can be overridden.
+        (WebCore::FrameView::setLayoutViewportOverrideRect):
+        (WebCore::FrameView::baseLayoutViewportSize): Renamed.
+        (WebCore::FrameView::updateLayoutViewport): Logging.
+        (WebCore::FrameView::layoutViewportRect):
+        (WebCore::FrameView::scrollPositionForFixedPosition):
+        (WebCore::FrameView::unscaledMaximumScrollPosition): During page transitions on iOS, it
+        was possible for unscaledDocumentRect to be empty, but visibleSize() to be non-empty, leading
+        to odd negative max scroll offsets, so clamp to 0,0.
+        (WebCore::FrameView::setLayoutViewportOrigin): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState): scrollPositionForFixedPosition() already does the
+        visualViewportEnabled() check.
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::constrainedBetween): Added for consistency with the other geometry types.
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/LayoutSize.cpp:
+        (WebCore::LayoutSize::constrainedBetween): Ditto.
+        * platform/graphics/LayoutSize.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::clientLogicalWidthForFixedPosition): If we have an override layout viewport, its size might be different
+        from the RenderView's size (the initial containing block), so we need to use the layoutViewportRect here.
+        (WebCore::RenderView::clientLogicalHeightForFixedPosition):
+
 2016-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL] Remove unused Chromium-specific OpenGL extensions

@@ -527,6 +527,11 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << m_contentsSize;
     encoder << m_scrollOrigin;
+
+    encoder << m_baseLayoutViewportSize;
+    encoder << m_minStableLayoutViewportOrigin;
+    encoder << m_maxStableLayoutViewportOrigin;
+
 #if PLATFORM(MAC)
     encoder << m_scrollPosition;
 #endif
@@ -602,6 +607,15 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_scrollOrigin))
         return false;
 
+    if (!decoder.decode(result.m_baseLayoutViewportSize))
+        return false;
+
+    if (!decoder.decode(result.m_minStableLayoutViewportOrigin))
+        return false;
+
+    if (!decoder.decode(result.m_maxStableLayoutViewportOrigin))
+        return false;
+    
 #if PLATFORM(MAC)
     if (!decoder.decode(result.m_scrollPosition))
         return false;
@@ -843,6 +857,12 @@ CString RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("contentsSize", m_contentsSize);
     if (m_scrollOrigin != IntPoint::zero())
         ts.dumpProperty("scrollOrigin", m_scrollOrigin);
+
+    ts.dumpProperty("baseLayoutViewportSize", FloatSize(m_baseLayoutViewportSize));
+
+    if (m_minStableLayoutViewportOrigin != LayoutPoint::zero())
+        ts.dumpProperty("minStableLayoutViewportOrigin", FloatPoint(m_minStableLayoutViewportOrigin));
+    ts.dumpProperty("maxStableLayoutViewportOrigin", FloatPoint(m_maxStableLayoutViewportOrigin));
 
     if (m_pageScaleFactor != 1)
         ts.dumpProperty("pageScaleFactor", m_pageScaleFactor);

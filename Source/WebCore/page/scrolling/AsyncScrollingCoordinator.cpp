@@ -352,7 +352,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     WTF::switchOn(layoutViewportOriginOrOverrideRect,
         [&frameView](Optional<FloatPoint> origin) {
             if (origin)
-                frameView.setLayoutViewportOrigin(LayoutPoint(origin.value()), FrameView::TriggerLayoutOrNot::No);
+                frameView.setBaseLayoutViewportOrigin(LayoutPoint(origin.value()), FrameView::TriggerLayoutOrNot::No);
         }, [&frameView](Optional<FloatRect> overrideRect) {
 #if PLATFORM(IOS)
             if (overrideRect)
@@ -383,7 +383,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
 
     ASSERT(frameView.scrollPosition() == roundedIntPoint(scrollPosition));
-    LayoutPoint scrollPositionForFixed = visualViewportEnabled() ? frameView.layoutViewportOrigin() : frameView.scrollPositionForFixedPosition();
+    LayoutPoint scrollPositionForFixed = frameView.scrollPositionForFixedPosition();
     float topContentInset = frameView.topContentInset();
 
     FloatPoint positionForInsetClipLayer;

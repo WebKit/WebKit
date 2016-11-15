@@ -1,3 +1,22 @@
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Implement support for visual viewports
+        https://bugs.webkit.org/show_bug.cgi?id=164765
+
+        Reviewed by Tim Horton.
+
+        Adopt the visual viewport scrolling model in iOS WK2.
+        
+        These tests don't correctly test iOS WK2's async scrolling behavior (webkit.org/b/164779)
+        so rebaseline.
+
+        * platform/ios-simulator-wk2/fast/visual-viewport/nonzoomed-rects-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/rtl-nonzoomed-rects-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/rtl-zoomed-rects-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/zoomed-fixed-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/zoomed-fixed-scroll-down-then-up-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/zoomed-rects-expected.txt: Added.
+
 2016-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         Correct handling of changing input type

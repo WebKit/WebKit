@@ -1,3 +1,62 @@
+2016-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Implement support for visual viewports
+        https://bugs.webkit.org/show_bug.cgi?id=164765
+
+        Reviewed by Tim Horton.
+
+        Adopt the visual viewport scrolling model in iOS WK2.
+
+        Pass the parameters used for computing the layout viewport up to WK2 via RemoteLayerTreeTransaction.
+        These are stored on WebPageProxy. When they change, _didCommitLayerTree triggers a -_updateVisibleContentRects.
+        
+        WebPageProxy::computeCustomFixedPositionRect() is the function that computes the "override" layout viewport.
+        It starts with the baseLayoutViewportSize from the web process (which is based on the initial containing block
+        size), then ensures that it's no smaller than the unobscured content rect, since it makes no sense for the
+        layout viewport to be smaller than the visual viewport. The static FrameView::computeLayoutViewportOrigin()
+        is then use to "push" the layout viewport around as the visual viewport changes.
+
+        * Shared/VisibleContentRectUpdateInfo.h:
+        * Shared/WebCoreArgumentCoders.cpp: Encode LayoutSize and LayoutPoint.
+        (IPC::ArgumentCoder<LayoutSize>::encode):
+        (IPC::ArgumentCoder<LayoutSize>::decode):
+        (IPC::ArgumentCoder<LayoutPoint>::encode):
+        (IPC::ArgumentCoder<LayoutPoint>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::baseLayoutViewportSize):
+        (WebKit::RemoteLayerTreeTransaction::setBaseLayoutViewportSize):
+        (WebKit::RemoteLayerTreeTransaction::minStableLayoutViewportOrigin):
+        (WebKit::RemoteLayerTreeTransaction::setMinStableLayoutViewportOrigin):
+        (WebKit::RemoteLayerTreeTransaction::maxStableLayoutViewportOrigin):
+        (WebKit::RemoteLayerTreeTransaction::setMaxStableLayoutViewportOrigin):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        (WebKit::RemoteScrollingCoordinatorProxy::visualViewportEnabled): Accessor.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::customFixedPositionRect):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::customFixedPositionRect):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView _didCommitLayerTree:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect): When visual viewports are enabled, compute
+        the layout viewport rect, taking the baseLayoutViewportSize and the current unobscured rect into account.
+        (WebKit::WebPageProxy::updateLayoutViewportParameters):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebPage/WebPage.cpp: Encode in the transaction the layout viewport parameters (with minor refactor).
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects): This is where the web process receives the new override layout viewport
+        from the web process (with some logging).
+
 2016-11-15  Jon Lee  <jonlee@apple.com>
 
         Remove HasMediaCaptureDevice

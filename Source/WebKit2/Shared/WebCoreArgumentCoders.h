@@ -54,6 +54,8 @@ class IntPoint;
 class IntRect;
 class IntSize;
 class KeyframeValueList;
+class LayoutSize;
+class LayoutPoint;
 class LinearTimingFunction;
 class Notification;
 class Path;
@@ -234,6 +236,16 @@ template<> struct ArgumentCoder<WebCore::IntRect> {
 template<> struct ArgumentCoder<WebCore::IntSize> {
     static void encode(Encoder&, const WebCore::IntSize&);
     static bool decode(Decoder&, WebCore::IntSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::LayoutSize> {
+    static void encode(Encoder&, const WebCore::LayoutSize&);
+    static bool decode(Decoder&, WebCore::LayoutSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::LayoutPoint> {
+    static void encode(Encoder&, const WebCore::LayoutPoint&);
+    static bool decode(Decoder&, WebCore::LayoutPoint&);
 };
 
 template<> struct ArgumentCoder<WebCore::Path> {

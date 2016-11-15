@@ -41,6 +41,14 @@ FloatSize::FloatSize(const IntSize& size)
 {
 }
 
+FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& max) const
+{
+    return {
+        std::max(min.width(), std::min(max.width(), m_width)),
+        std::max(min.height(), std::min(max.height(), m_height))
+    };
+}
+
 float FloatSize::diagonalLength() const
 {
     return sqrtf(diagonalLengthSquared());
