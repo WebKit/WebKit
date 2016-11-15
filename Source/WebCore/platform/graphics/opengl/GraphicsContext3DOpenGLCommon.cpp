@@ -139,20 +139,20 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
 
 void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExtension)
 {
-    Extensions3D* extensions = getExtensions();
+    Extensions3D& extensions = getExtensions();
     if (m_attrs.stencil) {
-        if (extensions->supports(packedDepthStencilExtension)) {
-            extensions->ensureEnabled(packedDepthStencilExtension);
+        if (extensions.supports(packedDepthStencilExtension)) {
+            extensions.ensureEnabled(packedDepthStencilExtension);
             // Force depth if stencil is true.
             m_attrs.depth = true;
         } else
             m_attrs.stencil = false;
     }
     if (m_attrs.antialias) {
-        if (!extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
+        if (!extensions.supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
             m_attrs.antialias = false;
         else
-            extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
+            extensions.ensureEnabled("GL_ANGLE_framebuffer_multisample");
     }
 }
 
@@ -1889,17 +1889,17 @@ void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denu
 
 void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
-    getExtensions()->drawArraysInstanced(mode, first, count, primcount);
+    getExtensions().drawArraysInstanced(mode, first, count, primcount);
 }
 
 void GraphicsContext3D::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
 {
-    getExtensions()->drawElementsInstanced(mode, count, type, offset, primcount);
+    getExtensions().drawElementsInstanced(mode, count, type, offset, primcount);
 }
 
 void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
-    getExtensions()->vertexAttribDivisor(index, divisor);
+    getExtensions().vertexAttribDivisor(index, divisor);
 }
 
 }

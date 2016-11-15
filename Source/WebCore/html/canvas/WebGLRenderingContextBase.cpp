@@ -430,9 +430,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         return nullptr;
     }
 
-    Extensions3D* extensions = context->getExtensions();
-    if (extensions->supports("GL_EXT_debug_marker"))
-        extensions->pushGroupMarkerEXT("WebGLRenderingContext");
+    Extensions3D& extensions = context->getExtensions();
+    if (extensions.supports("GL_EXT_debug_marker"))
+        extensions.pushGroupMarkerEXT("WebGLRenderingContext");
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
@@ -575,16 +575,16 @@ void WebGLRenderingContextBase::setupFlags()
         m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
-    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->isEnabled("GL_CHROMIUM_strict_attribs");
-    m_isResourceSafe = m_context->getExtensions()->isEnabled("GL_CHROMIUM_resource_safe");
+    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions().isEnabled("GL_CHROMIUM_strict_attribs");
+    m_isResourceSafe = m_context->getExtensions().isEnabled("GL_CHROMIUM_resource_safe");
     if (m_isGLES2Compliant) {
-        m_isGLES2NPOTStrict = !m_context->getExtensions()->isEnabled("GL_OES_texture_npot");
-        m_isDepthStencilSupported = m_context->getExtensions()->isEnabled("GL_OES_packed_depth_stencil");
+        m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_OES_texture_npot");
+        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_OES_packed_depth_stencil");
     } else {
-        m_isGLES2NPOTStrict = !m_context->getExtensions()->isEnabled("GL_ARB_texture_non_power_of_two");
-        m_isDepthStencilSupported = m_context->getExtensions()->isEnabled("GL_EXT_packed_depth_stencil");
+        m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_ARB_texture_non_power_of_two");
+        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil");
     }
-    m_isRobustnessEXTSupported = m_context->getExtensions()->isEnabled("GL_EXT_robustness");
+    m_isRobustnessEXTSupported = m_context->getExtensions().isEnabled("GL_EXT_robustness");
 }
 
 void WebGLRenderingContextBase::addCompressedTextureFormat(GC3Denum format)
@@ -894,7 +894,7 @@ bool WebGLRenderingContextBase::checkObjectToBeBound(const char* functionName, W
     if (isContextLostOrPending())
         return false;
     if (object) {
-        if (!object->validate(contextGroup(), this)) {
+        if (!object->validate(contextGroup(), *this)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "object not from this context");
             return false;
         }
@@ -1400,7 +1400,7 @@ RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    auto buffer = WebGLBuffer::create(this);
+    auto buffer = WebGLBuffer::create(*this);
     addSharedObject(buffer.ptr());
     return WTFMove(buffer);
 }
@@ -1409,7 +1409,7 @@ RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    auto buffer = WebGLFramebuffer::create(this);
+    auto buffer = WebGLFramebuffer::create(*this);
     addContextObject(buffer.ptr());
     return WTFMove(buffer);
 }
@@ -1418,7 +1418,7 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
 {
     if (isContextLostOrPending())
         return nullptr;
-    auto texture = WebGLTexture::create(this);
+    auto texture = WebGLTexture::create(*this);
     addSharedObject(texture.ptr());
     return WTFMove(texture);
 }
@@ -1427,7 +1427,7 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
 {
     if (isContextLostOrPending())
         return nullptr;
-    auto program = WebGLProgram::create(this);
+    auto program = WebGLProgram::create(*this);
     addSharedObject(program.ptr());
     return WTFMove(program);
 }
@@ -1436,7 +1436,7 @@ RefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    auto buffer = WebGLRenderbuffer::create(this);
+    auto buffer = WebGLRenderbuffer::create(*this);
     addSharedObject(buffer.ptr());
     return WTFMove(buffer);
 }
@@ -1450,7 +1450,7 @@ RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type)
         return nullptr;
     }
 
-    auto shader = WebGLShader::create(this, type);
+    auto shader = WebGLShader::create(*this, type);
     addSharedObject(shader.ptr());
     return WTFMove(shader);
 }
@@ -1466,7 +1466,7 @@ bool WebGLRenderingContextBase::deleteObject(WebGLObject* object)
 {
     if (isContextLostOrPending() || !object)
         return false;
-    if (!object->validate(contextGroup(), this)) {
+    if (!object->validate(contextGroup(), *this)) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "delete", "object does not belong to this context");
         return false;
     }
@@ -1788,7 +1788,7 @@ bool WebGLRenderingContextBase::validateWebGLObject(const char* functionName, We
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no object or object deleted");
         return false;
     }
-    if (!object->validate(contextGroup(), this)) {
+    if (!object->validate(contextGroup(), *this)) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "object does not belong to this context");
         return false;
     }
@@ -2036,7 +2036,7 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GC3Denum target, GC3Denu
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "framebufferRenderbuffer", "invalid target");
         return;
     }
-    if (buffer && !buffer->validate(contextGroup(), this)) {
+    if (buffer && !buffer->validate(contextGroup(), *this)) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferRenderbuffer", "no buffer or buffer not from this context");
         return;
     }
@@ -2068,7 +2068,7 @@ void WebGLRenderingContextBase::framebufferTexture2D(GC3Denum target, GC3Denum a
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "framebufferTexture2D", "level not 0");
         return;
     }
-    if (texture && !texture->validate(contextGroup(), this)) {
+    if (texture && !texture->validate(contextGroup(), *this)) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferTexture2D", "no texture or texture not from this context");
         return;
     }
@@ -2547,7 +2547,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
     case GraphicsContext3D::FLOAT: {
         GC3Dfloat value[16] = {0};
         if (m_isRobustnessEXTSupported)
-            m_context->getExtensions()->getnUniformfvEXT(objectOrZero(program), location, 16 * sizeof(GC3Dfloat), value);
+            m_context->getExtensions().getnUniformfvEXT(objectOrZero(program), location, 16 * sizeof(GC3Dfloat), value);
         else
             m_context->getUniformfv(objectOrZero(program), location, value);
         if (length == 1)
@@ -2557,7 +2557,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
     case GraphicsContext3D::INT: {
         GC3Dint value[4] = {0};
         if (m_isRobustnessEXTSupported)
-            m_context->getExtensions()->getnUniformivEXT(objectOrZero(program), location, 4 * sizeof(GC3Dint), value);
+            m_context->getExtensions().getnUniformivEXT(objectOrZero(program), location, 4 * sizeof(GC3Dint), value);
         else
             m_context->getUniformiv(objectOrZero(program), location, value);
         if (length == 1)
@@ -2567,7 +2567,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
     case GraphicsContext3D::BOOL: {
         GC3Dint value[4] = {0};
         if (m_isRobustnessEXTSupported)
-            m_context->getExtensions()->getnUniformivEXT(objectOrZero(program), location, 4 * sizeof(GC3Dint), value);
+            m_context->getExtensions().getnUniformivEXT(objectOrZero(program), location, 4 * sizeof(GC3Dint), value);
         else
             m_context->getUniformiv(objectOrZero(program), location, value);
         if (length > 1) {
@@ -3150,7 +3150,7 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
     void* data = pixels.baseAddress();
 
     if (m_isRobustnessEXTSupported)
-        m_context->getExtensions()->readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);
+        m_context->getExtensions().readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);
     else
         m_context->readPixels(x, y, width, height, format, type, data);
 }
@@ -4660,7 +4660,7 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
         // Inform the embedder that a lost context was received. In response, the embedder might
         // decide to take action such as asking the user for permission to use WebGL again.
         if (Frame* frame = canvas().document().frame())
-            frame->loader().client().didLoseWebGLContext(m_context->getExtensions()->getGraphicsResetStatusARB());
+            frame->loader().client().didLoseWebGLContext(m_context->getExtensions().getGraphicsResetStatusARB());
     }
 
     detachAndRemoveAllObjects();
@@ -5648,7 +5648,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!m_restoreAllowed)
         return;
 
-    int contextLostReason = m_context->getExtensions()->getGraphicsResetStatusARB();
+    int contextLostReason = m_context->getExtensions().getGraphicsResetStatusARB();
 
     switch (contextLostReason) {
     case GraphicsContext3D::NO_ERROR:
@@ -5867,7 +5867,7 @@ bool WebGLRenderingContextBase::supportsDrawBuffers()
 {
     if (!m_drawBuffersWebGLRequirementsChecked) {
         m_drawBuffersWebGLRequirementsChecked = true;
-        m_drawBuffersSupported = WebGLDrawBuffers::supported(this);
+        m_drawBuffersSupported = WebGLDrawBuffers::supported(*this);
     }
     return m_drawBuffersSupported;
 }

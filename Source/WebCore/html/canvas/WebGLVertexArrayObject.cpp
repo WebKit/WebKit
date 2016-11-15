@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase* ctx, VAOType type)
+Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase& ctx, VAOType type)
 {
     return adoptRef(*new WebGLVertexArrayObject(ctx, type));
 }
@@ -43,7 +43,7 @@ WebGLVertexArrayObject::~WebGLVertexArrayObject()
     deleteObject(0);
 }
 
-WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase* ctx, VAOType type)
+WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& ctx, VAOType type)
     : WebGLVertexArrayObjectBase(ctx, type)
 {
     switch (m_type) {

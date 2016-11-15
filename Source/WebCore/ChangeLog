@@ -1,3 +1,208 @@
+2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL] Migrate construction functions from pointers to references
+        https://bugs.webkit.org/show_bug.cgi?id=164749
+
+        Reviewed by Zalan Bujtas.
+
+        Mechanical find/replace.
+
+        No new tests because there is no behavior change.
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::ANGLEInstancedArrays):
+        (WebCore::ANGLEInstancedArrays::supported):
+        (WebCore::ANGLEInstancedArrays::drawArraysInstancedANGLE):
+        (WebCore::ANGLEInstancedArrays::drawElementsInstancedANGLE):
+        (WebCore::ANGLEInstancedArrays::vertexAttribDivisorANGLE):
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/EXTBlendMinMax.cpp:
+        (WebCore::EXTBlendMinMax::EXTBlendMinMax):
+        * html/canvas/EXTBlendMinMax.h:
+        * html/canvas/EXTFragDepth.cpp:
+        (WebCore::EXTFragDepth::EXTFragDepth):
+        * html/canvas/EXTFragDepth.h:
+        * html/canvas/EXTShaderTextureLOD.cpp:
+        (WebCore::EXTShaderTextureLOD::EXTShaderTextureLOD):
+        * html/canvas/EXTShaderTextureLOD.h:
+        * html/canvas/EXTTextureFilterAnisotropic.cpp:
+        (WebCore::EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic):
+        * html/canvas/EXTTextureFilterAnisotropic.h:
+        * html/canvas/EXTsRGB.cpp:
+        (WebCore::EXTsRGB::EXTsRGB):
+        * html/canvas/EXTsRGB.h:
+        * html/canvas/OESElementIndexUint.cpp:
+        (WebCore::OESElementIndexUint::OESElementIndexUint):
+        * html/canvas/OESElementIndexUint.h:
+        * html/canvas/OESStandardDerivatives.cpp:
+        (WebCore::OESStandardDerivatives::OESStandardDerivatives):
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESTextureFloat.cpp:
+        (WebCore::OESTextureFloat::OESTextureFloat):
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureFloatLinear.cpp:
+        (WebCore::OESTextureFloatLinear::OESTextureFloatLinear):
+        * html/canvas/OESTextureFloatLinear.h:
+        * html/canvas/OESTextureHalfFloat.cpp:
+        (WebCore::OESTextureHalfFloat::OESTextureHalfFloat):
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/OESTextureHalfFloatLinear.cpp:
+        (WebCore::OESTextureHalfFloatLinear::OESTextureHalfFloatLinear):
+        * html/canvas/OESTextureHalfFloatLinear.h:
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::OESVertexArrayObject):
+        (WebCore::OESVertexArrayObject::createVertexArrayOES):
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::isVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGL2RenderingContext::initializeShaderExtensions):
+        (WebCore::WebGL2RenderingContext::drawBuffers):
+        (WebCore::WebGL2RenderingContext::createVertexArray):
+        (WebCore::WebGL2RenderingContext::isVertexArray):
+        (WebCore::WebGL2RenderingContext::bindVertexArray):
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::create):
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        (WebCore::WebGLCompressedTextureATC::WebGLCompressedTextureATC):
+        (WebCore::WebGLCompressedTextureATC::supported):
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        (WebCore::WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC):
+        (WebCore::WebGLCompressedTexturePVRTC::supported):
+        * html/canvas/WebGLCompressedTexturePVRTC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        (WebCore::WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC):
+        (WebCore::WebGLCompressedTextureS3TC::supported):
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLContextObject.cpp:
+        (WebCore::WebGLContextObject::WebGLContextObject):
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLDebugRendererInfo.cpp:
+        (WebCore::WebGLDebugRendererInfo::WebGLDebugRendererInfo):
+        * html/canvas/WebGLDebugRendererInfo.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::WebGLDebugShaders):
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDepthTexture.cpp:
+        (WebCore::WebGLDepthTexture::WebGLDepthTexture):
+        (WebCore::WebGLDepthTexture::supported):
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLDrawBuffers.cpp:
+        (WebCore::WebGLDrawBuffers::WebGLDrawBuffers):
+        (WebCore::WebGLDrawBuffers::supported):
+        (WebCore::WebGLDrawBuffers::drawBuffersWEBGL):
+        (WebCore::WebGLDrawBuffers::satisfiesWebGLRequirements):
+        * html/canvas/WebGLDrawBuffers.h:
+        * html/canvas/WebGLExtension.cpp:
+        (WebCore::WebGLExtension::WebGLExtension):
+        * html/canvas/WebGLExtension.h:
+        (WebCore::WebGLExtension::ref):
+        (WebCore::WebGLExtension::deref):
+        (WebCore::WebGLExtension::context):
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::create):
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLLoseContext.cpp:
+        (WebCore::WebGLLoseContext::WebGLLoseContext):
+        (WebCore::WebGLLoseContext::loseContext):
+        (WebCore::WebGLLoseContext::restoreContext):
+        * html/canvas/WebGLLoseContext.h:
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::WebGLObject):
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::create):
+        (WebCore::WebGLProgram::WebGLProgram):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLQuery.cpp:
+        (WebCore::WebGLQuery::create):
+        (WebCore::WebGLQuery::WebGLQuery):
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::create):
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::setupFlags):
+        (WebCore::WebGLRenderingContextBase::checkObjectToBeBound):
+        (WebCore::WebGLRenderingContextBase::createBuffer):
+        (WebCore::WebGLRenderingContextBase::createFramebuffer):
+        (WebCore::WebGLRenderingContextBase::createTexture):
+        (WebCore::WebGLRenderingContextBase::createProgram):
+        (WebCore::WebGLRenderingContextBase::createRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::createShader):
+        (WebCore::WebGLRenderingContextBase::deleteObject):
+        (WebCore::WebGLRenderingContextBase::validateWebGLObject):
+        (WebCore::WebGLRenderingContextBase::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::supportsDrawBuffers):
+        * html/canvas/WebGLSampler.cpp:
+        (WebCore::WebGLSampler::create):
+        (WebCore::WebGLSampler::WebGLSampler):
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::create):
+        (WebCore::WebGLShader::WebGLShader):
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLSharedObject.cpp:
+        (WebCore::WebGLSharedObject::WebGLSharedObject):
+        * html/canvas/WebGLSharedObject.h:
+        * html/canvas/WebGLSync.cpp:
+        (WebCore::WebGLSync::create):
+        (WebCore::WebGLSync::WebGLSync):
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::create):
+        (WebCore::WebGLTexture::WebGLTexture):
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        (WebCore::WebGLTransformFeedback::create):
+        (WebCore::WebGLTransformFeedback::WebGLTransformFeedback):
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::create):
+        (WebCore::WebGLVertexArrayObject::WebGLVertexArrayObject):
+        * html/canvas/WebGLVertexArrayObject.h:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase):
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::create):
+        (WebCore::WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::convertFormat):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        (WebCore::GraphicsContext3D::drawArraysInstanced):
+        (WebCore::GraphicsContext3D::drawElementsInstanced):
+        (WebCore::GraphicsContext3D::vertexAttribDivisor):
+
 2016-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Need to update implicit/default values for aria-valuemin, aria-valuenow, and aria-valuemax

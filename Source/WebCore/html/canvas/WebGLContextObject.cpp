@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-WebGLContextObject::WebGLContextObject(WebGLRenderingContextBase* context)
+WebGLContextObject::WebGLContextObject(WebGLRenderingContextBase& context)
     : WebGLObject(context)
-    , m_context(context)
+    , m_context(&context)
 {
 }
 

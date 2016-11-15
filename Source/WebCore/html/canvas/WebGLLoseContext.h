@@ -33,7 +33,7 @@ class WebGLRenderingContextBase;
 
 class WebGLLoseContext final : public WebGLExtension {
 public:
-    explicit WebGLLoseContext(WebGLRenderingContextBase*);
+    explicit WebGLLoseContext(WebGLRenderingContextBase&);
     virtual ~WebGLLoseContext();
 
     ExtensionName getName() const override;

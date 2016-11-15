@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase* context)
+WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT);
 }
 
 WebGLCompressedTextureS3TC::~WebGLCompressedTextureS3TC()
@@ -52,13 +52,13 @@ WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
     return WebGLCompressedTextureS3TCName;
 }
 
-bool WebGLCompressedTextureS3TC::supported(WebGLRenderingContextBase* context)
+bool WebGLCompressedTextureS3TC::supported(WebGLRenderingContextBase& context)
 {
-    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return extensions->supports("GL_EXT_texture_compression_s3tc")
-        || (extensions->supports("GL_EXT_texture_compression_dxt1")
-            && extensions->supports("GL_CHROMIUM_texture_compression_dxt3")
-            && extensions->supports("GL_CHROMIUM_texture_compression_dxt5"));
+    auto& extensions = context.graphicsContext3D()->getExtensions();
+    return extensions.supports("GL_EXT_texture_compression_s3tc")
+        || (extensions.supports("GL_EXT_texture_compression_dxt1")
+            && extensions.supports("GL_CHROMIUM_texture_compression_dxt3")
+            && extensions.supports("GL_CHROMIUM_texture_compression_dxt5"));
 }
 
 } // namespace WebCore

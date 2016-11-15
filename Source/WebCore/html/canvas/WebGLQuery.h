@@ -33,10 +33,10 @@ class WebGLQuery final : public WebGLSharedObject {
 public:
     virtual ~WebGLQuery();
 
-    static Ref<WebGLQuery> create(WebGLRenderingContextBase*);
+    static Ref<WebGLQuery> create(WebGLRenderingContextBase&);
 
 protected:
-    WebGLQuery(WebGLRenderingContextBase*);
+    WebGLQuery(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

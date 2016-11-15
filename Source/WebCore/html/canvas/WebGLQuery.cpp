@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLQuery(ctx));
 }
@@ -43,7 +43,7 @@ WebGLQuery::~WebGLQuery()
     deleteObject(0);
 }
 
-WebGLQuery::WebGLQuery(WebGLRenderingContextBase* ctx)
+WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
     // FIXME: Call createQuery from GraphicsContext3D.

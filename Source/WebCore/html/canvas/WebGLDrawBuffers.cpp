@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase* context)
+WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
 }
@@ -46,51 +46,50 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
     return WebGLExtension::WebGLDrawBuffersName;
 }
 
-bool WebGLDrawBuffers::supported(WebGLRenderingContextBase* context)
+bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {
-    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return extensions->supports("GL_EXT_draw_buffers")
+    return context.graphicsContext3D()->getExtensions().supports("GL_EXT_draw_buffers")
         && satisfiesWebGLRequirements(context);
 }
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GC3Denum>& buffers)
 {
-    if (m_context->isContextLost())
+    if (m_context.isContextLost())
         return;
     GC3Dsizei n = buffers.size();
     const GC3Denum* bufs = buffers.data();
-    if (!m_context->m_framebufferBinding) {
+    if (!m_context.m_framebufferBinding) {
         if (n != 1) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than one buffer");
+            m_context.synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than one buffer");
             return;
         }
         if (bufs[0] != GraphicsContext3D::BACK && bufs[0] != GraphicsContext3D::NONE) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "BACK or NONE");
+            m_context.synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "BACK or NONE");
             return;
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
         GC3Denum value = (bufs[0] == GraphicsContext3D::BACK) ? GraphicsContext3D::COLOR_ATTACHMENT0 : GraphicsContext3D::NONE;
-        m_context->graphicsContext3D()->getExtensions()->drawBuffersEXT(1, &value);
-        m_context->setBackDrawBuffer(bufs[0]);
+        m_context.graphicsContext3D()->getExtensions().drawBuffersEXT(1, &value);
+        m_context.setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > m_context->getMaxDrawBuffers()) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
+        if (n > m_context.getMaxDrawBuffers()) {
+            m_context.synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
             return;
         }
         for (GC3Dsizei i = 0; i < n; ++i) {
             if (bufs[i] != GraphicsContext3D::NONE && bufs[i] != static_cast<GC3Denum>(Extensions3D::COLOR_ATTACHMENT0_EXT + i)) {
-                m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
+                m_context.synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
                 return;
             }
         }
-        m_context->m_framebufferBinding->drawBuffers(buffers);
+        m_context.m_framebufferBinding->drawBuffers(buffers);
     }
 }
 
 // static
-bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase* webglContext)
+bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase& webglContext)
 {
-    GraphicsContext3D* context = webglContext->graphicsContext3D();
+    GraphicsContext3D* context = webglContext.graphicsContext3D();
 
     // This is called after we make sure GL_EXT_draw_buffers is supported.
     GC3Dint maxDrawBuffers = 0;
@@ -104,11 +103,11 @@ bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase* web
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, fbo);
 
     const unsigned char buffer[4] = { 0, 0, 0, 0 }; // textures are required to be initialized for other ports.
-    bool supportsDepth = (context->getExtensions()->supports("GL_CHROMIUM_depth_texture")
-        || context->getExtensions()->supports("GL_OES_depth_texture")
-        || context->getExtensions()->supports("GL_ARB_depth_texture"));
-    bool supportsDepthStencil = (context->getExtensions()->supports("GL_EXT_packed_depth_stencil")
-        || context->getExtensions()->supports("GL_OES_packed_depth_stencil"));
+    bool supportsDepth = (context->getExtensions().supports("GL_CHROMIUM_depth_texture")
+        || context->getExtensions().supports("GL_OES_depth_texture")
+        || context->getExtensions().supports("GL_ARB_depth_texture"));
+    bool supportsDepthStencil = (context->getExtensions().supports("GL_EXT_packed_depth_stencil")
+        || context->getExtensions().supports("GL_OES_packed_depth_stencil"));
     Platform3DObject depthStencil = 0;
     if (supportsDepthStencil) {
         depthStencil = context->createTexture();
@@ -155,9 +154,9 @@ bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase* web
         }
     }
 
-    webglContext->restoreCurrentFramebuffer();
+    webglContext.restoreCurrentFramebuffer();
     context->deleteFramebuffer(fbo);
-    webglContext->restoreCurrentTexture2D();
+    webglContext.restoreCurrentTexture2D();
     if (supportsDepth)
         context->deleteTexture(depth);
     if (supportsDepthStencil)

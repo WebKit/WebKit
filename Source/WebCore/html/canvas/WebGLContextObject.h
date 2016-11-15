@@ -40,15 +40,15 @@ public:
 
     WebGLRenderingContextBase* context() const { return m_context; }
 
-    bool validate(const WebGLContextGroup*, const WebGLRenderingContextBase* context) const override
+    bool validate(const WebGLContextGroup*, const WebGLRenderingContextBase& context) const override
     {
-        return context == m_context;
+        return &context == m_context;
     }
 
     void detachContext();
 
 protected:
-    WebGLContextObject(WebGLRenderingContextBase*);
+    WebGLContextObject(WebGLRenderingContextBase&);
 
     bool hasGroupOrContext() const override
     {

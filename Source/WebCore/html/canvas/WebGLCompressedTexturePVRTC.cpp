@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase* context)
+WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG);
-    context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG);
+    context.addCompressedTextureFormat(Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG);
 }
 
 WebGLCompressedTexturePVRTC::~WebGLCompressedTexturePVRTC()
@@ -52,10 +52,9 @@ WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
     return WebGLCompressedTexturePVRTCName;
 }
 
-bool WebGLCompressedTexturePVRTC::supported(WebGLRenderingContextBase* context)
+bool WebGLCompressedTexturePVRTC::supported(WebGLRenderingContextBase& context)
 {
-    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return extensions->supports("GL_IMG_texture_compression_pvrtc");
+    return context.graphicsContext3D()->getExtensions().supports("GL_IMG_texture_compression_pvrtc");
 }
 
 } // namespace WebCore

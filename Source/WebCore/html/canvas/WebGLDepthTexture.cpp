@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase* context)
+WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
 }
@@ -47,12 +47,12 @@ WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
     return WebGLDepthTextureName;
 }
 
-bool WebGLDepthTexture::supported(GraphicsContext3D* context)
+bool WebGLDepthTexture::supported(GraphicsContext3D& context)
 {
-    Extensions3D* extensions = context->getExtensions();
-    return extensions->supports("GL_CHROMIUM_depth_texture")
-        || extensions->supports("GL_OES_depth_texture")
-        || extensions->supports("GL_ARB_depth_texture");
+    Extensions3D& extensions = context.getExtensions();
+    return extensions.supports("GL_CHROMIUM_depth_texture")
+        || extensions.supports("GL_OES_depth_texture")
+        || extensions.supports("GL_ARB_depth_texture");
 }
 
 } // namespace WebCore

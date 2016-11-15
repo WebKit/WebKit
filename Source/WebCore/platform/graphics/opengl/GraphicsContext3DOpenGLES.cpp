@@ -90,7 +90,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     // We don't allow the logic where stencil is required and depth is not.
     // See GraphicsContext3D::validateAttributes.
-    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions()->supports("GL_OES_packed_depth_stencil");
+    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions().supports("GL_OES_packed_depth_stencil");
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;

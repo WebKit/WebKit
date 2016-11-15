@@ -84,7 +84,7 @@ public:
     void setVertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-    WebGLVertexArrayObjectBase(WebGLRenderingContextBase*, VAOType);
+    WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, VAOType);
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) = 0;
     
     VAOType m_type;

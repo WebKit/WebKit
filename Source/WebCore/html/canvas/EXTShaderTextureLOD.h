@@ -31,7 +31,7 @@ namespace WebCore {
 
 class EXTShaderTextureLOD final : public WebGLExtension {
 public:
-    explicit EXTShaderTextureLOD(WebGLRenderingContextBase*);
+    explicit EXTShaderTextureLOD(WebGLRenderingContextBase&);
     virtual ~EXTShaderTextureLOD();
 
     ExtensionName getName() const override;

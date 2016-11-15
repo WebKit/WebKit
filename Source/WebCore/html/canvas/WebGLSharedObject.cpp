@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-WebGLSharedObject::WebGLSharedObject(WebGLRenderingContextBase* context)
-    : WebGLObject(context),
-      m_contextGroup(context->contextGroup())
+WebGLSharedObject::WebGLSharedObject(WebGLRenderingContextBase& context)
+    : WebGLObject(context)
+    , m_contextGroup(context.contextGroup())
 {
 }
 

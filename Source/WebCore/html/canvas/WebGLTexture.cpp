@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLTexture(ctx));
 }
 
-WebGLTexture::WebGLTexture(WebGLRenderingContextBase* ctx)
+WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
     , m_minFilter(GraphicsContext3D::NEAREST_MIPMAP_LINEAR)
@@ -54,7 +54,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase* ctx)
     , m_isFloatType(false)
     , m_isHalfFloatType(false)
 {
-    setObject(ctx->graphicsContext3D()->createTexture());
+    setObject(ctx.graphicsContext3D()->createTexture());
 }
 
 WebGLTexture::~WebGLTexture()

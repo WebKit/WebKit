@@ -73,7 +73,7 @@ void GraphicsContext3D::releaseShaderCompiler()
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
     // NVIDIA drivers have a bug where calling readPixels in BGRA can return the wrong values for the alpha channel when the alpha is off for the context.
-    if (!m_attrs.alpha && getExtensions()->isNVIDIA()) {
+    if (!m_attrs.alpha && getExtensions().isNVIDIA()) {
         ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #if USE(ACCELERATE)
         vImage_Buffer src;
@@ -121,9 +121,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         // We don't allow the logic where stencil is required and depth is not.
         // See GraphicsContext3D::validateAttributes.
 
-        Extensions3D* extensions = getExtensions();
+        Extensions3D& extensions = getExtensions();
         // Use a 24 bit depth buffer where we know we have it.
-        if (extensions->supports("GL_EXT_packed_depth_stencil"))
+        if (extensions.supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
 #if PLATFORM(IOS)
@@ -304,12 +304,12 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
 #endif
     case MAX_TEXTURE_SIZE:
         ::glGetIntegerv(MAX_TEXTURE_SIZE, value);
-        if (getExtensions()->requiresRestrictedMaximumTextureSize())
+        if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(4096, *value);
         break;
     case MAX_CUBE_MAP_TEXTURE_SIZE:
         ::glGetIntegerv(MAX_CUBE_MAP_TEXTURE_SIZE, value);
-        if (getExtensions()->requiresRestrictedMaximumTextureSize())
+        if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(1024, *value);
         break;
     default:
@@ -407,11 +407,11 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 #endif
 }
 
-Extensions3D* GraphicsContext3D::getExtensions()
+Extensions3D& GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
         m_extensions = std::make_unique<Extensions3DOpenGL>(this, isGLES2Compliant());
-    return m_extensions.get();
+    return *m_extensions;
 }
 
 void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)

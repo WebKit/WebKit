@@ -33,10 +33,10 @@ class WebGLSync final : public WebGLSharedObject {
 public:
     virtual ~WebGLSync();
 
-    static Ref<WebGLSync> create(WebGLRenderingContextBase*);
+    static Ref<WebGLSync> create(WebGLRenderingContextBase&);
 
 protected:
-    WebGLSync(WebGLRenderingContextBase*);
+    WebGLSync(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

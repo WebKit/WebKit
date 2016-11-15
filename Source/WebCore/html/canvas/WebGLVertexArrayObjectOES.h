@@ -33,10 +33,10 @@ namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {
 public:
-    static Ref<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase*, VAOType);
+    static Ref<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase&, VAOType);
     virtual ~WebGLVertexArrayObjectOES();
 private:
-    WebGLVertexArrayObjectOES(WebGLRenderingContextBase*, VAOType);
+    WebGLVertexArrayObjectOES(WebGLRenderingContextBase&, VAOType);
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 };
 

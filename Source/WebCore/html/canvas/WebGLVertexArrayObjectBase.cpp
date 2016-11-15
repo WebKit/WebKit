@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase* ctx, VAOType type)
+WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase& ctx, VAOType type)
     : WebGLContextObject(ctx)
     , m_type(type)
     , m_hasEverBeenBound(false)
     , m_boundElementArrayBuffer(0)
 {
-    m_vertexAttribState.resize(ctx->getMaxVertexAttribs());
+    m_vertexAttribState.resize(ctx.getMaxVertexAttribs());
 }
 
 void WebGLVertexArrayObjectBase::setElementArrayBuffer(PassRefPtr<WebGLBuffer> buffer)

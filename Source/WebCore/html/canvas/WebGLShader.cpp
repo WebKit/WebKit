@@ -34,18 +34,18 @@
 
 namespace WebCore {
 
-Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase* ctx, GC3Denum type)
+Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& ctx, GC3Denum type)
 {
     return adoptRef(*new WebGLShader(ctx, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContextBase* ctx, GC3Denum type)
+WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GC3Denum type)
     : WebGLSharedObject(ctx)
     , m_type(type)
     , m_source(emptyString())
     , m_isValid(false)
 {
-    setObject(ctx->graphicsContext3D()->createShader(type));
+    setObject(ctx.graphicsContext3D()->createShader(type));
 }
 
 WebGLShader::~WebGLShader()

@@ -148,7 +148,7 @@ bool GraphicsContext3DPrivate::prepareBuffer() const
         glBindFramebuffer(Extensions3D::DRAW_FRAMEBUFFER, m_context->m_fbo);
 
         // Use NEAREST as no scale is performed during the blit.
-        m_context->getExtensions()->blitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
+        m_context->getExtensions().blitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
 
         if (enableScissorTest)
             m_context->enable(GraphicsContext3D::SCISSOR_TEST);

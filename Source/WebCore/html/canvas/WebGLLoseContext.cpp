@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebGLLoseContext::WebGLLoseContext(WebGLRenderingContextBase* context)
+WebGLLoseContext::WebGLLoseContext(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
 }
@@ -49,12 +49,12 @@ WebGLExtension::ExtensionName WebGLLoseContext::getName() const
 
 void WebGLLoseContext::loseContext()
 {
-    m_context->forceLostContext(WebGLRenderingContextBase::SyntheticLostContext);
+    m_context.forceLostContext(WebGLRenderingContextBase::SyntheticLostContext);
 }
 
 void WebGLLoseContext::restoreContext()
 {
-    m_context->forceRestoreContext();
+    m_context.forceRestoreContext();
 }
 
 } // namespace WebCore

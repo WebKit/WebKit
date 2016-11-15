@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase* context)
+ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
 }
@@ -48,14 +48,13 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
     return ANGLEInstancedArraysName;
 }
 
-bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase* context)
+bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase& context)
 {
 #if PLATFORM(COCOA)
     UNUSED_PARAM(context);
     return true;
 #elif PLATFORM(GTK)
-    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return extensions->supports("GL_ANGLE_instanced_arrays");
+    return context.graphicsContext3D()->getExtensions().supports("GL_ANGLE_instanced_arrays");
 #else
     UNUSED_PARAM(context);
     return false;
@@ -64,23 +63,23 @@ bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase* context)
 
 void ANGLEInstancedArrays::drawArraysInstancedANGLE(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
-    if (m_context->isContextLost())
+    if (m_context.isContextLost())
         return;
-    m_context->drawArraysInstanced(mode, first, count, primcount);
+    m_context.drawArraysInstanced(mode, first, count, primcount);
 }
 
 void ANGLEInstancedArrays::drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
-    if (m_context->isContextLost())
+    if (m_context.isContextLost())
         return;
-    m_context->drawElementsInstanced(mode, count, type, offset, primcount);
+    m_context.drawElementsInstanced(mode, count, type, offset, primcount);
 }
 
 void ANGLEInstancedArrays::vertexAttribDivisorANGLE(GC3Duint index, GC3Duint divisor)
 {
-    if (m_context->isContextLost())
+    if (m_context.isContextLost())
         return;
-    m_context->vertexAttribDivisor(index, divisor);
+    m_context.vertexAttribDivisor(index, divisor);
 }
 
 } // namespace WebCore

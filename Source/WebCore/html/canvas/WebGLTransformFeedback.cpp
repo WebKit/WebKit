@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLTransformFeedback(ctx));
 }
@@ -43,7 +43,7 @@ WebGLTransformFeedback::~WebGLTransformFeedback()
     deleteObject(0);
 }
 
-WebGLTransformFeedback::WebGLTransformFeedback(WebGLRenderingContextBase* ctx)
+WebGLTransformFeedback::WebGLTransformFeedback(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
     // FIXME: Call createTransformFeedback from GraphicsContext3D.

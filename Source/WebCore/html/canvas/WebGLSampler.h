@@ -33,10 +33,10 @@ class WebGLSampler final : public WebGLSharedObject {
 public:
     virtual ~WebGLSampler();
 
-    static Ref<WebGLSampler> create(WebGLRenderingContextBase*);
+    static Ref<WebGLSampler> create(WebGLRenderingContextBase&);
 
 protected:
-    WebGLSampler(WebGLRenderingContextBase*);
+    WebGLSampler(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

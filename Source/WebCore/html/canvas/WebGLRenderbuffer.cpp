@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLRenderbuffer(ctx));
 }
@@ -44,7 +44,7 @@ WebGLRenderbuffer::~WebGLRenderbuffer()
     deleteObject(0);
 }
 
-WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase* ctx)
+WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
     , m_internalFormat(GraphicsContext3D::RGBA4)
     , m_initialized(false)
@@ -53,7 +53,7 @@ WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase* ctx)
     , m_isValid(true)
     , m_hasEverBeenBound(false)
 {
-    setObject(ctx->graphicsContext3D()->createRenderbuffer());
+    setObject(ctx.graphicsContext3D()->createRenderbuffer());
 }
 
 void WebGLRenderbuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)

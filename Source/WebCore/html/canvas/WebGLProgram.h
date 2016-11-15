@@ -35,7 +35,7 @@ class WebGLProgram final : public WebGLSharedObject {
 public:
     virtual ~WebGLProgram();
 
-    static Ref<WebGLProgram> create(WebGLRenderingContextBase*);
+    static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
 
     unsigned numActiveAttribLocations();
     GC3Dint getActiveAttribLocation(GC3Duint index);
@@ -58,7 +58,7 @@ public:
     bool detachShader(WebGLShader*);
 
 protected:
-    WebGLProgram(WebGLRenderingContextBase*);
+    WebGLProgram(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

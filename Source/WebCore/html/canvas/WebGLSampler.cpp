@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLSampler(ctx));
 }
@@ -43,7 +43,7 @@ WebGLSampler::~WebGLSampler()
     deleteObject(0);
 }
 
-WebGLSampler::WebGLSampler(WebGLRenderingContextBase* ctx)
+WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
     // FIXME: Call createSampler from GraphicsContext3D.

@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLSync(ctx));
 }
@@ -43,7 +43,7 @@ WebGLSync::~WebGLSync()
     deleteObject(0);
 }
 
-WebGLSync::WebGLSync(WebGLRenderingContextBase* ctx)
+WebGLSync::WebGLSync(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
     // FIXME: Call fenceSync from GraphicsContext3D.

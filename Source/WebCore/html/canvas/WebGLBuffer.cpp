@@ -34,18 +34,18 @@
 
 namespace WebCore {
 
-Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLBuffer(ctx));
 }
 
-WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase* ctx)
+WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
     , m_byteLength(0)
     , m_nextAvailableCacheEntry(0)
 {
-    setObject(ctx->graphicsContext3D()->createBuffer());
+    setObject(ctx.graphicsContext3D()->createBuffer());
     clearCachedMaxIndices();
 }
 

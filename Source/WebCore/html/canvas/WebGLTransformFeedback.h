@@ -33,10 +33,10 @@ class WebGLTransformFeedback final : public WebGLSharedObject {
 public:
     virtual ~WebGLTransformFeedback();
 
-    static Ref<WebGLTransformFeedback> create(WebGLRenderingContextBase*);
+    static Ref<WebGLTransformFeedback> create(WebGLRenderingContextBase&);
 
 protected:
-    WebGLTransformFeedback(WebGLRenderingContextBase*);
+    WebGLTransformFeedback(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
