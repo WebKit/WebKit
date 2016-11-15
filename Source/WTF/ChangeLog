@@ -1,3 +1,15 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        The concurrent GC should have a timeslicing controller
+        https://bugs.webkit.org/show_bug.cgi?id=164783
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/LockAlgorithm.h: Added some comments.
+        * wtf/Seconds.h: Added support for modulo. It's necessary for timeslicing.
+        (WTF::Seconds::operator%):
+        (WTF::Seconds::operator%=):
+
 2016-11-11  Filip Pizlo  <fpizlo@apple.com>
 
         The GC should be optionally concurrent and disabled by default

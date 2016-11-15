@@ -187,6 +187,15 @@ typedef const char* optionString;
     v(bool, useConcurrentGC, false, Normal, nullptr) \
     v(bool, collectContinuously, false, Normal, nullptr) \
     v(bool, forceFencedBarrier, false, Normal, nullptr) \
+    v(unsigned, largeHeapSize, 32 * 1024 * 1024, Normal, nullptr) \
+    v(unsigned, smallHeapSize, 1 * 1024 * 1024, Normal, nullptr) \
+    v(double, smallHeapRAMFraction, 0.25, Normal, nullptr) \
+    v(double, smallHeapGrowthFactor, 2, Normal, nullptr) \
+    v(double, mediumHeapRAMFraction, 0.5, Normal, nullptr) \
+    v(double, mediumHeapGrowthFactor, 1.5, Normal, nullptr) \
+    v(double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
+    v(double, concurrentGCHeadroomRatio, 1.5, Normal, nullptr) \
+    v(double, concurrentGCPeriodMS, 2, Normal, nullptr) \
     v(bool, scribbleFreeCells, false, Normal, nullptr) \
     v(double, sizeClassProgression, 1.4, Normal, nullptr) \
     v(unsigned, largeAllocationCutoff, 100000, Normal, nullptr) \

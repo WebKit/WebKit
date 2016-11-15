@@ -1,3 +1,46 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        The concurrent GC should have a timeslicing controller
+        https://bugs.webkit.org/show_bug.cgi?id=164783
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds a simple control system for deciding when the collector should let the mutator run
+        and when it should stop the mutator. We definitely have to stop the mutator during certain
+        collector phases, but during marking - which takes the most time - we can go either way.
+        Normally we want to let the mutator run, but if the heap size starts to grow then we have to
+        stop the mutator just to make sure it doesn't get too far ahead of the collector. That could
+        lead to memory exhaustion, so it's better to just stop in that case.
+        
+        The controller tries to never stop the mutator for longer than short timeslices. It slices on
+        a 2ms period (configurable via Options). The amount of that period that the collector spends
+        with the mutator stopped is determined by the fraction of the collector's concurrent headroom
+        that has been allocated over. The headroom is currently configured at 50% of what was
+        allocated before the collector started.
+        
+        This moves a bunch of parameters into Options so that it's easier to play with different
+        configurations.
+        
+        I tried these different values for the period:
+        
+        1ms: 30% worse than 2ms on splay-latency.
+        2ms: best score on splay-latency: the tick time above the 99.5% percentile is <2ms.
+        3ms: 40% worse than 2ms on splay-latency.
+        4ms: 40% worse than 2ms on splay-latency.
+        
+        I also tried 100% headroom as an alternate to 50% and found it to be a worse.
+        
+        This patch is a 2x improvement on splay-latency with the default parameters and concurrent GC
+        enabled. Prior to this change, the GC didn't have a good bound on its pause times, which
+        would cause these problems. Concurrent GC is now 5.6x better on splay-latency than no
+        concurrent GC.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::ResumeTheWorldScope::ResumeTheWorldScope):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::collectInThread):
+        * runtime/Options.h:
+
 2016-11-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for CLoop after r208738

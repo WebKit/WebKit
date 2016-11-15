@@ -26,6 +26,8 @@
 #ifndef WTF_Seconds_h
 #define WTF_Seconds_h
 
+#include <wtf/MathExtras.h>
+
 namespace WTF {
 
 class MonotonicTime;
@@ -104,6 +106,21 @@ public:
         return value() / other.value();
     }
     
+    Seconds operator%(double scalar) const
+    {
+        return Seconds(fmod(value(), scalar));
+    }
+    
+    // This solves for r, where:
+    //
+    //     floor(this / other) + r / other = this / other
+    //
+    // Therefore, if this is Seconds then r is Seconds.
+    Seconds operator%(Seconds other) const
+    {
+        return Seconds(fmod(value(), other.value()));
+    }
+    
     Seconds& operator+=(Seconds other)
     {
         return *this = *this + other;
@@ -122,6 +139,16 @@ public:
     Seconds& operator/=(double scalar)
     {
         return *this = *this / scalar;
+    }
+    
+    Seconds& operator%=(double scalar)
+    {
+        return *this = *this % scalar;
+    }
+    
+    Seconds& operator%=(Seconds other)
+    {
+        return *this = *this % other;
     }
     
     WTF_EXPORT_PRIVATE WallTime operator+(WallTime) const;

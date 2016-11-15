@@ -33,7 +33,9 @@
 
 namespace WTF {
 
-// This is the algorithm used by WTF::Lock.
+// This is the algorithm used by WTF::Lock. You can use it to project one lock onto any atomic
+// field. The limit of one lock is due to the use of the field's address as a key to find the lock's
+// queue.
 
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit>
 class LockAlgorithm {

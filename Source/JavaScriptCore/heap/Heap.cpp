@@ -78,6 +78,16 @@ using namespace std;
 
 namespace JSC {
 
+namespace {
+
+double maxPauseMS(double thisPauseMS)
+{
+    static double maxPauseMS = std::max(thisPauseMS, maxPauseMS);
+    return maxPauseMS;
+}
+
+} // anonymous namespace
+
 class Heap::ResumeTheWorldScope {
 public:
     ResumeTheWorldScope(Heap& heap)
@@ -86,8 +96,10 @@ public:
         if (!Options::useConcurrentGC())
             return;
         
-        if (Options::logGC())
-            dataLog((MonotonicTime::now() - m_heap.m_stopTime).milliseconds(), " ms...]\n");
+        if (Options::logGC()) {
+            double thisPauseMS = (MonotonicTime::now() - m_heap.m_stopTime).milliseconds();
+            dataLog(thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), ")...]\n");
+        }
         
         m_heap.resumeTheWorld();
     }
@@ -109,24 +121,24 @@ private:
 
 namespace {
 
-static const size_t largeHeapSize = 32 * MB; // About 1.5X the average webpage.
-const size_t smallHeapSize = 1 * MB; // Matches the FastMalloc per-thread cache.
-
 size_t minHeapSize(HeapType heapType, size_t ramSize)
 {
-    if (heapType == LargeHeap)
-        return min(largeHeapSize, ramSize / 4);
-    return smallHeapSize;
+    if (heapType == LargeHeap) {
+        double result = min(
+            static_cast<double>(Options::largeHeapSize()),
+            ramSize * Options::smallHeapRAMFraction());
+        return static_cast<size_t>(result);
+    }
+    return Options::smallHeapSize();
 }
 
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 {
-    // Try to stay under 1/2 RAM size to leave room for the DOM, rendering, networking, etc.
-    if (heapSize < ramSize / 4)
-        return 2 * heapSize;
-    if (heapSize < ramSize / 2)
-        return 1.5 * heapSize;
-    return 1.25 * heapSize;
+    if (heapSize < ramSize * Options::smallHeapRAMFraction())
+        return Options::smallHeapGrowthFactor() * heapSize;
+    if (heapSize < ramSize * Options::mediumHeapRAMFraction())
+        return Options::mediumHeapGrowthFactor() * heapSize;
+    return Options::largeHeapGrowthFactor() * heapSize;
 }
 
 bool isValidSharedInstanceThreadState(VM* vm)
@@ -525,16 +537,53 @@ void Heap::markToFixpoint(double gcStartTime)
 
     m_collectorSlotVisitor->didStartMarking();
 
-    Seconds concurrentTime;
-    double stoppedOverConcurrentRatio = 0.1;
-    const double ratioStep = 1.3;
     MonotonicTime initialTime = MonotonicTime::now();
-    MonotonicTime topOfLoopTime = initialTime;
+    
+    const Seconds period = Seconds::fromMilliseconds(Options::concurrentGCPeriodMS());
+    
+    const double bytesAllocatedThisCycleAtTheBeginning = m_bytesAllocatedThisCycle;
+    const double bytesAllocatedThisCycleAtTheEnd = bytesAllocatedThisCycleAtTheBeginning * Options::concurrentGCHeadroomRatio();
+    
+    auto targetCollectorUtilization = [&] () -> double {
+        double headroomFullness =
+            (m_bytesAllocatedThisCycle - bytesAllocatedThisCycleAtTheBeginning) /
+            (bytesAllocatedThisCycleAtTheEnd - bytesAllocatedThisCycleAtTheBeginning);
+        
+        ASSERT(headroomFullness >= 0);
+        if (!(headroomFullness >= 0))
+            headroomFullness = 0;
+        ASSERT(headroomFullness <= 1);
+        if (!(headroomFullness <= 1))
+            headroomFullness = 1;
+        
+        return headroomFullness;
+    };
+    
+    auto elapsedInPeriod = [&] (MonotonicTime now) -> Seconds {
+        return (now - initialTime) % period;
+    };
+    
+    auto phase = [&] (MonotonicTime now) -> double {
+        return elapsedInPeriod(now) / period;
+    };
+    
+    auto shouldBeResumed = [&] (MonotonicTime now) -> bool {
+        return phase(now) > targetCollectorUtilization();
+    };
+    
+    auto timeToResume = [&] (MonotonicTime now) -> MonotonicTime {
+        ASSERT(!shouldBeResumed(now));
+        return now - elapsedInPeriod(now) + period * targetCollectorUtilization();
+    };
+    
+    auto timeToStop = [&] (MonotonicTime now) -> MonotonicTime {
+        ASSERT(shouldBeResumed(now));
+        return now - elapsedInPeriod(now) + period;
+    };
+    
     for (unsigned iteration = 1; ; ++iteration) {
         if (Options::logGC())
             dataLog("i#", iteration, " ");
-        MonotonicTime timeToResume = topOfLoopTime + concurrentTime * stoppedOverConcurrentRatio;
-        stoppedOverConcurrentRatio *= ratioStep;
         {
             TimingScope preConvergenceTimingScope(*this, "Heap::markToFixpoint conservative scan");
             ConservativeRoots conservativeRoots(*this);
@@ -615,24 +664,28 @@ void Heap::markToFixpoint(double gcStartTime)
             dataLog("Live Weak Handles:\n", *m_collectorSlotVisitor);
         
         if (Options::logGC())
-            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_collectorSlotVisitor->mutatorMarkStack().size(), " ");
-
+            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_collectorSlotVisitor->mutatorMarkStack().size(), " mu=", 1 - targetCollectorUtilization(), " ");
+        
         {
             TimingScope traceTimingScope(*this, "Heap::markToFixpoint tracing");
             ParallelModeEnabler enabler(*m_collectorSlotVisitor);
-            m_collectorSlotVisitor->donateAndDrain(timeToResume);
-            SlotVisitor::SharedDrainResult drainResult =
-                m_collectorSlotVisitor->drainFromShared(SlotVisitor::MasterDrain, timeToResume);
-            if (drainResult != SlotVisitor::SharedDrainResult::Done) {
-                ResumeTheWorldScope resumeTheWorldScope(*this);
-                m_collectorSlotVisitor->donateAndDrain();
-                m_collectorSlotVisitor->drainFromShared(SlotVisitor::MasterDrain);
+            for (;;) {
+                MonotonicTime now = MonotonicTime::now();
+                SlotVisitor::SharedDrainResult drainResult;
+                if (shouldBeResumed(now)) {
+                    ResumeTheWorldScope resumeTheWorldScope(*this);
+                    m_collectorSlotVisitor->donateAndDrain(timeToStop(now));
+                    drainResult = m_collectorSlotVisitor->drainFromShared(
+                        SlotVisitor::MasterDrain, timeToStop(now));
+                } else {
+                    m_collectorSlotVisitor->donateAndDrain(timeToResume(now));
+                    drainResult = m_collectorSlotVisitor->drainFromShared(
+                        SlotVisitor::MasterDrain, timeToResume(now));
+                }
+                if (drainResult == SlotVisitor::SharedDrainResult::Done)
+                    break;
             }
         }
-        
-        MonotonicTime timeOfStop = MonotonicTime::now();
-        concurrentTime = timeOfStop - timeToResume;
-        topOfLoopTime = timeOfStop;
     }
 
     {
@@ -1112,7 +1165,8 @@ void Heap::collectInThread()
     
     if (Options::logGC()) {
         MonotonicTime after = MonotonicTime::now();
-        dataLog((after - m_stopTime).milliseconds(), " ms, cycle ", (after - before).milliseconds(), " ms END]\n");
+        double thisPauseMS = (after - m_stopTime).milliseconds();
+        dataLog(thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (after - before).milliseconds(), " ms END]\n");
     }
     
     {
