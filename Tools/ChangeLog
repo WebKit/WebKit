@@ -1,3 +1,23 @@
+2016-11-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r208655. rdar://problem/29250302
+
+    2016-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            The main content heuristic should be robust when handling large media elements
+            https://bugs.webkit.org/show_bug.cgi?id=164676
+            <rdar://problem/29211503>
+
+            Reviewed by Eric Carlson.
+
+            Added a new test verifying that enormous video elements are handled gracefully when put through the main
+            content heuristic.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/enormous-video-with-sound.html: Added.
+
 2016-11-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r208340. rdar://problem/29092397

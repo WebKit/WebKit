@@ -410,6 +410,14 @@ TEST(VideoControlsManager, VideoControlsManagerVideoMutesOnPlaying)
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
 }
 
+TEST(VideoControlsManager, VideoControlsManagerPageWithEnormousVideo)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+
+    [webView loadTestPageNamed:@"enormous-video-with-sound"];
+    [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
