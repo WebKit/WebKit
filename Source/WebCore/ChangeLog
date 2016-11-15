@@ -1,3 +1,25 @@
+2016-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct handling of changing input type
+        https://bugs.webkit.org/show_bug.cgi?id=164759
+        <rdar://problem/29211174>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/search-cancel-button-change-input.html
+
+        It is possible for JavaScript to change the type property of an input field. WebKit
+        needs to gracefully handle this case.
+
+        Add a type traits specialization so we can properly downcast InputType elements.
+        Use this to only call search functions on actual search input types.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::onSearch): Only perform search functions if the
+        input type is actually a search field.
+        * html/InputType.h: Add type traits specialization for 'downcast' template.
+        * html/SearchInputType.h: Ditto.
+
 2016-11-15  Zalan Bujtas  <zalan@apple.com>
 
         CounterNode::insertAfter and ::removeChild should take references.
