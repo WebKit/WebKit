@@ -323,7 +323,6 @@ InspectorBackend.registerCommand("Page.searchInResources", [{"name": "text", "ty
 InspectorBackend.registerCommand("Page.setDocumentContent", [{"name": "frameId", "type": "string", "optional": false}, {"name": "html", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.getScriptExecutionStatus", [], ["result"]);
 InspectorBackend.registerCommand("Page.setScriptExecutionDisabled", [{"name": "value", "type": "boolean", "optional": false}], []);
-InspectorBackend.registerCommand("Page.setTouchEmulationEnabled", [{"name": "enabled", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Page.setEmulatedMedia", [{"name": "media", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.getCompositingBordersVisible", [], ["result"]);
 InspectorBackend.registerCommand("Page.setCompositingBordersVisible", [{"name": "visible", "type": "boolean", "optional": false}], []);

@@ -102,7 +102,6 @@ public:
     void setShowPaintRects(ErrorString&, bool show) override;
     void getScriptExecutionStatus(ErrorString&, Inspector::PageBackendDispatcherHandler::Result*) override;
     void setScriptExecutionDisabled(ErrorString&, bool) override;
-    void setTouchEmulationEnabled(ErrorString&, bool) override;
     void setEmulatedMedia(ErrorString&, const String&) override;
     void getCompositingBordersVisible(ErrorString&, bool* out_param) override;
     void setCompositingBordersVisible(ErrorString&, bool) override;
@@ -148,10 +147,6 @@ public:
     static DocumentLoader* assertDocumentLoader(ErrorString&, Frame*);
 
 private:
-#if ENABLE(TOUCH_EVENTS)
-    void updateTouchEventEmulationInPage(bool);
-#endif
-
     double timestamp();
 
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
