@@ -197,6 +197,27 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+    case OpType::Select: {
+        ExpressionType condition;
+        if (!popExpressionStack(condition))
+            return false;
+
+        ExpressionType zero;
+        if (!popExpressionStack(zero))
+            return false;
+
+        ExpressionType nonZero;
+        if (!popExpressionStack(nonZero))
+            return false;
+
+        ExpressionType result;
+        if (!m_context.addSelect(condition, nonZero, zero, result))
+            return false;
+
+        m_expressionStack.append(result);
+        return true;
+    }
+
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE) {
         uint32_t alignment;
         if (!parseVarUInt32(alignment))
@@ -433,7 +454,6 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
-    case OpType::Select:
     case OpType::Nop:
     case OpType::Drop:
     case OpType::TeeLocal:

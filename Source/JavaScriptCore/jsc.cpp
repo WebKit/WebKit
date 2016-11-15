@@ -2381,7 +2381,7 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 
     if (typeString == "i32") {
         RELEASE_ASSERT(value.isInt32());
-        return JSValue::decode(value.asInt32());
+        return JSValue::decode(static_cast<uint32_t>(value.asInt32()));
     }
 
     if (typeString == "f32")

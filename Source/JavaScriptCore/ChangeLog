@@ -1,3 +1,21 @@
+2016-11-14  Keith Miller  <keith_miller@apple.com>
+
+        Add Wasm select
+        https://bugs.webkit.org/show_bug.cgi?id=164743
+
+        Reviewed by Saam Barati.
+
+        Also, this patch fixes an issue with the jsc.cpp test harness where negative numbers would be sign extended
+        when they shouldn't be.
+
+        * jsc.cpp:
+        (box):
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addSelect):
+
 2016-11-11  Geoffrey Garen  <ggaren@apple.com>
 
         JSC should distinguish between local and global eval
