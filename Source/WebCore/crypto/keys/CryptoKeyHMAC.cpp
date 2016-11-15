@@ -114,6 +114,16 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
     return CryptoKeyHMAC::importRaw(lengthBits, hash, WTFMove(octetSequence), extractable, usages);
 }
 
+JsonWebKey CryptoKeyHMAC::exportJwk() const
+{
+    JsonWebKey result;
+    result.kty = "oct";
+    result.k = base64URLEncode(m_key);
+    result.key_ops = usages();
+    result.ext = extractable();
+    return result;
+}
+
 std::unique_ptr<KeyAlgorithm> CryptoKeyHMAC::buildAlgorithm() const
 {
     return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()),

@@ -1,3 +1,101 @@
+2016-11-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::exportKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164722
+        <rdar://problem/29251740>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::exportKey method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-exportKey.
+           It also refers to the latest Editor's Draft to a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-exportKey.
+        2. It implements exportKey operations of the following algorithms: AES-CBC, AES-KW,
+           HMAC, RSAES-PKCS1-V1_5, RSASSA-PKCS1-V1_5, and RSA-OAEP.
+        3. It also fixes the following bugs:
+           https://bugs.webkit.org/show_bug.cgi?id=156114,
+           <rdar://problem/21773066>.
+        Note: We currently only support Raw and Jwk key format.
+
+        Tests: crypto/subtle/aes-cbc-generate-export-key-jwk-length-128.html
+               crypto/subtle/aes-cbc-generate-export-key-jwk-length-192.html
+               crypto/subtle/aes-cbc-generate-export-key-jwk-length-256.html
+               crypto/subtle/aes-cbc-generate-export-key-raw.html
+               crypto/subtle/aes-export-key-malformed-parameters.html
+               crypto/subtle/aes-kw-generate-export-key-jwk-length-128.html
+               crypto/subtle/aes-kw-generate-export-key-jwk-length-192.html
+               crypto/subtle/aes-kw-generate-export-key-jwk-length-256.html
+               crypto/subtle/aes-kw-generate-export-raw-key.html
+               crypto/subtle/export-key-malformed-parameters.html
+               crypto/subtle/hmac-export-key-malformed-parameters.html
+               crypto/subtle/hmac-generate-export-key-jwk-sha1.html
+               crypto/subtle/hmac-generate-export-key-jwk-sha224.html
+               crypto/subtle/hmac-generate-export-key-jwk-sha256.html
+               crypto/subtle/hmac-generate-export-key-jwk-sha384.html
+               crypto/subtle/hmac-generate-export-key-jwk-sha512.html
+               crypto/subtle/hmac-generate-export-raw-key.html
+               crypto/subtle/hmac-import-key-malformed-parameters.html
+               crypto/subtle/rsa-export-key-malformed-parameters.html
+               crypto/subtle/rsa-oaep-generate-export-key-jwk-sha1.html
+               crypto/subtle/rsa-oaep-generate-export-key-jwk-sha224.html
+               crypto/subtle/rsa-oaep-generate-export-key-jwk-sha256.html
+               crypto/subtle/rsa-oaep-generate-export-key-jwk-sha384.html
+               crypto/subtle/rsa-oaep-generate-export-key-jwk-sha512.html
+               crypto/subtle/rsaes-pkcs1-v1_5-generate-export-key-jwk.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-jwk-sha1.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-jwk-sha224.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-jwk-sha256.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-jwk-sha384.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-jwk-sha512.html
+               crypto/workers/subtle/aes-generate-export-key-jwk.html
+               crypto/workers/subtle/aes-generate-export-key-raw.html
+               crypto/workers/subtle/hmac-generate-export-key-jwk.html
+               crypto/workers/subtle/hmac-generate-export-key-raw.html
+               crypto/workers/subtle/rsa-generate-export-key-jwk.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::toJSValueFromJsonWebKey):
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+        (WebCore::JSSubtleCrypto::exportKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::exportKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        (WebCore::CryptoAlgorithmAES_CBC::exportKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::importKey):
+        (WebCore::CryptoAlgorithmAES_KW::exportKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        (WebCore::CryptoAlgorithmHMAC::exportKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        (WebCore::CryptoAlgorithmRSA_OAEP::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::exportJwk):
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::exportJwk):
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::exportJwk):
+        * crypto/keys/CryptoKeyRSA.h:
+
 2016-11-15  Jon Lee  <jonlee@apple.com>
 
         Remove HasMediaCaptureDevice

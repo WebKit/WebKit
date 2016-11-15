@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+static const char* const ALG128 = "A128CBC";
+static const char* const ALG192 = "A192CBC";
+static const char* const ALG256 = "A256CBC";
+
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_CBC(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
@@ -94,11 +98,11 @@ void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&&
         auto checkAlgCallback = [](size_t length, const Optional<String>& alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
-                return !alg || alg.value() == "A128CBC";
+                return !alg || alg.value() == ALG128;
             case CryptoKeyAES::s_length192:
-                return !alg || alg.value() == "A192CBC";
+                return !alg || alg.value() == ALG192;
             case CryptoKeyAES::s_length256:
-                return !alg || alg.value() == "A256CBC";
+                return !alg || alg.value() == ALG256;
             }
             return false;
         };
@@ -115,6 +119,46 @@ void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&&
     }
 
     callback(*result);
+}
+
+void CryptoAlgorithmAES_CBC::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& aesKey = downcast<CryptoKeyAES>(*key);
+
+    if (aesKey.key().isEmpty()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    KeyData result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Raw:
+        result = Vector<uint8_t>(aesKey.key());
+        break;
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey jwk = aesKey.exportJwk();
+        switch (aesKey.key().size() * 8) {
+        case CryptoKeyAES::s_length128:
+            jwk.alg = String(ALG128);
+            break;
+        case CryptoKeyAES::s_length192:
+            jwk.alg = String(ALG192);
+            break;
+        case CryptoKeyAES::s_length256:
+            jwk.alg = String(ALG256);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        result = WTFMove(jwk);
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+
+    callback(format, WTFMove(result));
 }
 
 ExceptionOr<void> CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)

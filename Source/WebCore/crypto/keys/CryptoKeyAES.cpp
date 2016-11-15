@@ -104,6 +104,16 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
     return adoptRef(new CryptoKeyAES(algorithm, WTFMove(octetSequence), extractable, usages));
 }
 
+JsonWebKey CryptoKeyAES::exportJwk() const
+{
+    JsonWebKey result;
+    result.kty = "oct";
+    result.k = base64URLEncode(m_key);
+    result.key_ops = usages();
+    result.ext = extractable();
+    return result;
+}
+
 std::unique_ptr<KeyAlgorithm> CryptoKeyAES::buildAlgorithm() const
 {
     return std::make_unique<AesKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()), m_key.size() * 8);

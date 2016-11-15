@@ -1,0 +1,16 @@
+[Worker] Test exporting an AES key using AES-CBC algorithm in workers with raw format.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/aes-generate-export-key-raw.js
+[Worker] Generating a key...
+[Worker] Generating a key...
+PASS [Worker] crypto.subtle.exportKey("spki", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS [Worker] crypto.subtle.exportKey("pkcs8", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+[Worker] Exporting a key...
+PASS [Worker] key.byteLength is 16
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

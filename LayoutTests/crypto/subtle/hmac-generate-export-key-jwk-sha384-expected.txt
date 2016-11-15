@@ -1,0 +1,16 @@
+Test exporting a SHA-384 HMAC key with JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key...
+Exporting a key...
+PASS key.kty is 'oct'
+PASS key.key_ops is ['sign', 'verify']
+PASS key.alg is 'HS384'
+PASS key.ext is true
+PASS Base64URL.parse(key.k).byteLength is 128
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

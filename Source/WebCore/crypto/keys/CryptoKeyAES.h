@@ -74,6 +74,7 @@ public:
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::AES; }
 
     const Vector<uint8_t>& key() const { return m_key; }
+    JsonWebKey exportJwk() const;
 
 private:
     CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsageBitmap);

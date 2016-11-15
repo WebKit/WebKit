@@ -40,6 +40,12 @@
 
 namespace WebCore {
 
+static const char* const ALG1 = "RSA-OAEP";
+static const char* const ALG224 = "RSA-OAEP-224";
+static const char* const ALG256 = "RSA-OAEP-256";
+static const char* const ALG384 = "RSA-OAEP-384";
+static const char* const ALG512 = "RSA-OAEP-512";
+
 Ref<CryptoAlgorithm> CryptoAlgorithmRSA_OAEP::create()
 {
     return adoptRef(*new CryptoAlgorithmRSA_OAEP);
@@ -114,19 +120,19 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         bool isMatched = false;
         switch (rsaParameters.hashIdentifier) {
         case CryptoAlgorithmIdentifier::SHA_1:
-            isMatched = !key.alg || key.alg.value() == "RSA-OAEP";
+            isMatched = !key.alg || key.alg.value() == ALG1;
             break;
         case CryptoAlgorithmIdentifier::SHA_224:
-            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-224";
+            isMatched = !key.alg || key.alg.value() == ALG224;
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
-            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-256";
+            isMatched = !key.alg || key.alg.value() == ALG256;
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-384";
+            isMatched = !key.alg || key.alg.value() == ALG384;
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            isMatched = !key.alg || key.alg.value() == "RSA-OAEP-512";
+            isMatched = !key.alg || key.alg.value() == ALG512;
             break;
         default:
             break;
@@ -149,6 +155,49 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
     }
 
     callback(*result);
+}
+
+void CryptoAlgorithmRSA_OAEP::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& rsaKey = downcast<CryptoKeyRSA>(*key);
+
+    if (!rsaKey.keySizeInBits()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    KeyData result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey jwk = rsaKey.exportJwk();
+        switch (rsaKey.hashAlgorithmIdentifier()) {
+        case CryptoAlgorithmIdentifier::SHA_1:
+            jwk.alg = String(ALG1);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_224:
+            jwk.alg = String(ALG224);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_256:
+            jwk.alg = String(ALG256);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_384:
+            jwk.alg = String(ALG384);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_512:
+            jwk.alg = String(ALG512);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        result = WTFMove(jwk);
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+
+    callback(format, WTFMove(result));
 }
 
 ExceptionOr<void> CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)

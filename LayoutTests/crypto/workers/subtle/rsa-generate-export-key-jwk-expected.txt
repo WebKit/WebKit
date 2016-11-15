@@ -1,0 +1,27 @@
+[Worker] Test exporting a RSA key pair using RSA-OAEP algorithm in workers with JWK format.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/rsa-generate-export-key-jwk.js
+[Worker] Generating a key...
+[Worker] Exporting the public key...
+PASS [Worker] crypto.subtle.exportKey("raw", keyPair.publicKey) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS [Worker] publicKey.kty is 'RSA'
+PASS [Worker] publicKey.key_ops is ['encrypt', 'wrapKey']
+PASS [Worker] publicKey.alg is 'RSA-OAEP'
+PASS [Worker] publicKey.ext is true
+PASS [Worker] Base64URL.parse(publicKey.n).byteLength is 256
+PASS [Worker] bytesToHexString(Base64URL.parse(publicKey.e)) is '010001'
+[Worker] Exporting the private key...
+PASS [Worker] privateKey.kty is 'RSA'
+PASS [Worker] privateKey.key_ops is ['decrypt', 'unwrapKey']
+PASS [Worker] privateKey.alg is 'RSA-OAEP'
+PASS [Worker] privateKey.ext is true
+PASS [Worker] Base64URL.parse(privateKey.n).byteLength is 256
+PASS [Worker] bytesToHexString(Base64URL.parse(privateKey.e)) is '010001'
+PASS [Worker] privateKey.oth is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

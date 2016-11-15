@@ -103,6 +103,9 @@ public:
     static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
+    JsonWebKey exportJwk() const;
+
+    CryptoAlgorithmIdentifier hashAlgorithmIdentifier() const { return m_hash; }
 
 private:
     CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsageBitmap);

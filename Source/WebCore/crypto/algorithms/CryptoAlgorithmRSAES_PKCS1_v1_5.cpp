@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+static const char* const ALG = "RSA1_5";
+
 Ref<CryptoAlgorithm> CryptoAlgorithmRSAES_PKCS1_v1_5::create()
 {
     return adoptRef(*new CryptoAlgorithmRSAES_PKCS1_v1_5);
@@ -92,7 +94,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
             exceptionCallback(DataError);
             return;
         }
-        if (key.alg && key.alg.value() != "RSA1_5") {
+        if (key.alg && key.alg.value() != ALG) {
             exceptionCallback(DataError);
             return;
         }
@@ -109,6 +111,31 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
     }
 
     callback(*result);
+}
+
+void CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& rsaKey = downcast<CryptoKeyRSA>(*key);
+
+    if (!rsaKey.keySizeInBits()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    KeyData result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey jwk = rsaKey.exportJwk();
+        jwk.alg = String(ALG);
+        result = WTFMove(jwk);
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+
+    callback(format, WTFMove(result));
 }
 
 ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)

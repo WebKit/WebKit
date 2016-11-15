@@ -42,6 +42,11 @@ void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::u
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
+void CryptoAlgorithm::exportKey(SubtleCrypto::KeyFormat, RefPtr<WebCore::CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&& exceptionCallback)
+{
+    exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
 ExceptionOr<void> CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     return Exception { NOT_SUPPORTED_ERR };

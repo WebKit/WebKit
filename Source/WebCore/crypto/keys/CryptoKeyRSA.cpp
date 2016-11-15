@@ -108,6 +108,46 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     return CryptoKeyRSA::create(algorithm, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
 }
 
+JsonWebKey CryptoKeyRSA::exportJwk() const
+{
+    JsonWebKey result;
+    result.kty = "RSA";
+    result.key_ops = usages();
+    result.ext = extractable();
+
+    auto keyData = exportData();
+    const auto& rsaKeyData = downcast<CryptoKeyDataRSAComponents>(*keyData);
+    // public key
+    result.n = base64URLEncode(rsaKeyData.modulus());
+    result.e = base64URLEncode(rsaKeyData.exponent());
+    if (rsaKeyData.type() == CryptoKeyDataRSAComponents::Type::Public)
+        return result;
+
+    // private key
+    result.d = base64URLEncode(rsaKeyData.privateExponent());
+    if (!rsaKeyData.hasAdditionalPrivateKeyParameters())
+        return result;
+
+    result.p = base64URLEncode(rsaKeyData.firstPrimeInfo().primeFactor);
+    result.q = base64URLEncode(rsaKeyData.secondPrimeInfo().primeFactor);
+    result.dp = base64URLEncode(rsaKeyData.firstPrimeInfo().factorCRTExponent);
+    result.dq = base64URLEncode(rsaKeyData.secondPrimeInfo().factorCRTExponent);
+    result.qi = base64URLEncode(rsaKeyData.secondPrimeInfo().factorCRTCoefficient);
+    if (rsaKeyData.otherPrimeInfos().isEmpty())
+        return result;
+
+    Vector<RsaOtherPrimesInfo> oth;
+    for (auto info : rsaKeyData.otherPrimeInfos()) {
+        RsaOtherPrimesInfo otherInfo;
+        otherInfo.r = base64URLEncode(info.primeFactor);
+        otherInfo.d = base64URLEncode(info.factorCRTExponent);
+        otherInfo.t = base64URLEncode(info.factorCRTCoefficient);
+        oth.append(WTFMove(otherInfo));
+    }
+    result.oth = WTFMove(oth);
+    return result;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
