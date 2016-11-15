@@ -815,12 +815,6 @@ public:
         return object;
     }
 
-    static EncodedJSValue JIT_OPERATION unsafeFunction(ExecState* exec, DOMJITNode* node)
-    {
-        NativeCallFrameTracer tracer(&exec->vm(), exec);
-        return JSValue::encode(jsNumber(node->value()));
-    }
-
     static EncodedJSValue JSC_HOST_CALL safeFunction(ExecState* exec)
     {
         VM& vm = exec->vm();
@@ -830,6 +824,13 @@ public:
         if (!thisObject)
             return throwVMTypeError(exec, scope);
         return JSValue::encode(jsNumber(thisObject->value()));
+    }
+
+#if ENABLE(JIT)
+    static EncodedJSValue JIT_OPERATION unsafeFunction(ExecState* exec, DOMJITNode* node)
+    {
+        NativeCallFrameTracer tracer(&exec->vm(), exec);
+        return JSValue::encode(jsNumber(node->value()));
     }
 
     static Ref<DOMJIT::Patchpoint> checkDOMJITNode()
@@ -849,17 +850,24 @@ public:
         });
         return patchpoint;
     }
+#endif
 
 private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+#if ENABLE(JIT)
 static const DOMJIT::Signature DOMJITFunctionObjectSignature((uintptr_t)DOMJITFunctionObject::unsafeFunction, DOMJITFunctionObject::checkDOMJITNode, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+#endif
 
 void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
+#if ENABLE(JIT)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, &DOMJITFunctionObjectSignature, ReadOnly);
+#else
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, nullptr, ReadOnly);
+#endif
 }
 
 
