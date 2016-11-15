@@ -549,10 +549,8 @@ void Heap::markToFixpoint(double gcStartTime)
             (m_bytesAllocatedThisCycle - bytesAllocatedThisCycleAtTheBeginning) /
             (bytesAllocatedThisCycleAtTheEnd - bytesAllocatedThisCycleAtTheBeginning);
         
-        ASSERT(headroomFullness >= 0);
         if (!(headroomFullness >= 0))
             headroomFullness = 0;
-        ASSERT(headroomFullness <= 1);
         if (!(headroomFullness <= 1))
             headroomFullness = 1;
         

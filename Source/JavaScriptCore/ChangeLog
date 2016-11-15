@@ -1,5 +1,12 @@
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, remove bogus assertion.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint):
+
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         [mac-wk1 debug] ASSERTION FAILED: thisObject->m_propertyTableUnsafe
         https://bugs.webkit.org/show_bug.cgi?id=162986
 
