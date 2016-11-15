@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include "CallFrame.h"
 #include "DeferGC.h"
 #include "Handle.h"
