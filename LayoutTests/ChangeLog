@@ -1,3 +1,16 @@
+2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Teach WebGLRenderingContextBase about new texture internal formats
+        https://bugs.webkit.org/show_bug.cgi?id=164525
+
+        Reviewed by Dean Jackson.
+
+        Test texture types without drawing. Instead, attach a texture to a framebuffer and
+        use readPixels() to make sure the texture retains its data.
+
+        * fast/canvas/webgl/webgl2-texture-upload-enums-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-texture-upload-enums.html: Added.
+
 2016-11-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.createElementNS doesn't construct a custom element

@@ -1,3 +1,104 @@
+2016-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Teach WebGLRenderingContextBase about new texture internal formats
+        https://bugs.webkit.org/show_bug.cgi?id=164525
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/webgl/webgl2-texture-upload-enums.html
+
+        This patch migrates the existing WebGL calls texImage2D(), texSubImage2D(),
+        and readPixels() to understand the new WebGL 2 texture types. In WebGL1, the
+        format and the internalFormat were required to be the same, and we had this
+        assumption baked into many places in these functions. In WebGL 2, those two
+        values are often different, which means I had to fix all of these assumptions
+        in our code. Also, rather than have two completely separate parallel
+        implementations of these functions, a more forward-looking approach is to
+        have one implementation which has a few checks to isWebGL1() in strategic
+        places. (This way, bugs only have to be fixed in a single place). Therefore,
+        this patch deletes the WebGL 2 versions of these functions.
+
+        * html/canvas/WebGL2RenderingContext.cpp: These functions are moved to
+        WebGLRenderingContextBase.
+        (WebCore::WebGL2RenderingContext::isIntegerFormat):
+        (WebCore::WebGL2RenderingContext::copyTexImage2D): Deleted.
+        (WebCore::WebGL2RenderingContext::texSubImage2DBase): Deleted.
+        (WebCore::WebGL2RenderingContext::texSubImage2DImpl): Deleted.
+        (WebCore::WebGL2RenderingContext::texSubImage2D): Deleted.
+        (WebCore::WebGL2RenderingContext::validateTexFuncParameters): Deleted.
+        (WebCore::WebGL2RenderingContext::validateTexFuncFormatAndType): Deleted.
+        (WebCore::WebGL2RenderingContext::validateTexFuncData): Deleted.
+        * html/canvas/WebGL2RenderingContext.h: Moved function implementations to
+        WebGLRenderingContextBase.
+        * html/canvas/WebGLRenderingContext.cpp: Ditto.
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Deleted.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Deleted.
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl): Deleted.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Deleted.
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters): Deleted.
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType): Deleted.
+        (WebCore::WebGLRenderingContext::validateTexFuncData): Deleted.
+        * html/canvas/WebGLRenderingContext.h: Moved function implementations to
+        WebGLRenderingContextBase.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateSettableTexInternalFormat):
+        Teach about new depth texture formats.
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D): Rename
+        "internalformat" to "internalFormat". Teach about the distinction between
+        format and internalFormat. When pre-filling textures with 0s to work around
+        buggy drivers, we need a new way of knowing which format/type arguments to
+        pass to texSubImage2D() which are compatible with the texture's internal
+        format. The implementation of this function was added to GraphicsContext3D
+        and is called here.
+        (WebCore::WebGLRenderingContextBase::generateMipmap): Teach about the
+        distinction between format and internalFormat.
+        (WebCore::internalFormatTheme): This is used so readPixels() knows what
+        kind of format/type arguments are compatible with the texture's internal
+        format.
+        (WebCore::numberOfComponentsForFormat): Ditto.
+        (WebCore::numberOfComponentsForInternalFormat): Ditto.
+        (WebCore::WebGLRenderingContextBase::readPixels): Many more format/type
+        combinations are required in order to test the various new kinds of
+        textures.
+        (WebCore::WebGLRenderingContextBase::texImage2DBase): Rename internalformat
+        to internalFormat, and teach about the distinction between format and
+        internalFormat.
+        (WebCore::WebGLRenderingContextBase::validateTexFunc): Ditto.
+        (WebCore::WebGLRenderingContextBase::texImage2D): Ditto.
+        (WebCore::WebGLRenderingContextBase::texSubImage2DImpl): Moved from
+        WebGLRenderingContext.
+        (WebCore::WebGLRenderingContextBase::texSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateArrayBufferType): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncParameters): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncFormatAndType): Ditto.
+        This is the main function where the new internalFormats are dealt with.
+        The OpenGL ES spec lists a table of all the internalFormats and all their
+        compatible format/type values. This table is entered into this function to
+        check that the combinations are correct.
+        (WebCore::WebGLRenderingContextBase::texSubImage2DBase): Moved from
+        WebGLRenderingContext.
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateSettableTexFormat): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h: No longer overrides virtual
+        functions.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters): Because
+        this is inside GraphicsContext3D, it doesn't need any isWebGL1() checks.
+        Teach about new enums.
+        (WebCore::GraphicsContext3D::possibleFormatAndTypeForInternalFormat):
+        Ditto.
+        (WebCore::GraphicsContext3D::packImageData):
+        (WebCore::GraphicsContext3D::packPixels): It is possible to try to
+        copy data from a video into one of these new formats. Currently, we
+        implement this by swizzling on the CPU. Rather than implementing all the
+        swizzling functions in this patch (which would make this patch much
+        larger), simply bail in this case. We will implement this later.
+        (WebCore::GraphicsContext3D::getClearBitsByFormat): Update.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::hasAlpha): Ditto.
+        (WebCore::GraphicsContext3D::hasColor): Ditto.
+
 2016-11-14  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling when zoomed doesn't always use the correct layout viewport

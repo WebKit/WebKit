@@ -811,6 +811,8 @@ public:
                                      unsigned int* imageSizeInBytes,
                                      unsigned int* paddingInBytes);
 
+    static bool possibleFormatAndTypeForInternalFormat(GC3Denum internalFormat, GC3Denum& format, GC3Denum& type);
+
     // Extracts the contents of the given ImageData into the passed Vector,
     // packing the pixel data according to the given format and type,
     // and obeying the flipY and premultiplyAlpha flags. Returns true
@@ -884,45 +886,55 @@ public:
 
     ALWAYS_INLINE static bool hasAlpha(DataFormat format)
     {
-        return format == GraphicsContext3D::DataFormatA8
-            || format == GraphicsContext3D::DataFormatA16F
-            || format == GraphicsContext3D::DataFormatA32F
-            || format == GraphicsContext3D::DataFormatRA8
-            || format == GraphicsContext3D::DataFormatAR8
-            || format == GraphicsContext3D::DataFormatRA16F
-            || format == GraphicsContext3D::DataFormatRA32F
-            || format == GraphicsContext3D::DataFormatRGBA8
-            || format == GraphicsContext3D::DataFormatBGRA8
-            || format == GraphicsContext3D::DataFormatARGB8
-            || format == GraphicsContext3D::DataFormatABGR8
-            || format == GraphicsContext3D::DataFormatRGBA16F
-            || format == GraphicsContext3D::DataFormatRGBA32F
-            || format == GraphicsContext3D::DataFormatRGBA4444
-            || format == GraphicsContext3D::DataFormatRGBA5551;
+        switch (format) {
+        case GraphicsContext3D::DataFormatA8:
+        case GraphicsContext3D::DataFormatA16F:
+        case GraphicsContext3D::DataFormatA32F:
+        case GraphicsContext3D::DataFormatRA8:
+        case GraphicsContext3D::DataFormatAR8:
+        case GraphicsContext3D::DataFormatRA16F:
+        case GraphicsContext3D::DataFormatRA32F:
+        case GraphicsContext3D::DataFormatRGBA8:
+        case GraphicsContext3D::DataFormatBGRA8:
+        case GraphicsContext3D::DataFormatARGB8:
+        case GraphicsContext3D::DataFormatABGR8:
+        case GraphicsContext3D::DataFormatRGBA16F:
+        case GraphicsContext3D::DataFormatRGBA32F:
+        case GraphicsContext3D::DataFormatRGBA4444:
+        case GraphicsContext3D::DataFormatRGBA5551:
+            return true;
+        default:
+            return false;
+        }
     }
 
     ALWAYS_INLINE static bool hasColor(DataFormat format)
     {
-        return format == GraphicsContext3D::DataFormatRGBA8
-            || format == GraphicsContext3D::DataFormatRGBA16F
-            || format == GraphicsContext3D::DataFormatRGBA32F
-            || format == GraphicsContext3D::DataFormatRGB8
-            || format == GraphicsContext3D::DataFormatRGB16F
-            || format == GraphicsContext3D::DataFormatRGB32F
-            || format == GraphicsContext3D::DataFormatBGR8
-            || format == GraphicsContext3D::DataFormatBGRA8
-            || format == GraphicsContext3D::DataFormatARGB8
-            || format == GraphicsContext3D::DataFormatABGR8
-            || format == GraphicsContext3D::DataFormatRGBA5551
-            || format == GraphicsContext3D::DataFormatRGBA4444
-            || format == GraphicsContext3D::DataFormatRGB565
-            || format == GraphicsContext3D::DataFormatR8
-            || format == GraphicsContext3D::DataFormatR16F
-            || format == GraphicsContext3D::DataFormatR32F
-            || format == GraphicsContext3D::DataFormatRA8
-            || format == GraphicsContext3D::DataFormatRA16F
-            || format == GraphicsContext3D::DataFormatRA32F
-            || format == GraphicsContext3D::DataFormatAR8;
+        switch (format) {
+        case GraphicsContext3D::DataFormatRGBA8:
+        case GraphicsContext3D::DataFormatRGBA16F:
+        case GraphicsContext3D::DataFormatRGBA32F:
+        case GraphicsContext3D::DataFormatRGB8:
+        case GraphicsContext3D::DataFormatRGB16F:
+        case GraphicsContext3D::DataFormatRGB32F:
+        case GraphicsContext3D::DataFormatBGR8:
+        case GraphicsContext3D::DataFormatBGRA8:
+        case GraphicsContext3D::DataFormatARGB8:
+        case GraphicsContext3D::DataFormatABGR8:
+        case GraphicsContext3D::DataFormatRGBA5551:
+        case GraphicsContext3D::DataFormatRGBA4444:
+        case GraphicsContext3D::DataFormatRGB565:
+        case GraphicsContext3D::DataFormatR8:
+        case GraphicsContext3D::DataFormatR16F:
+        case GraphicsContext3D::DataFormatR32F:
+        case GraphicsContext3D::DataFormatRA8:
+        case GraphicsContext3D::DataFormatRA16F:
+        case GraphicsContext3D::DataFormatRA32F:
+        case GraphicsContext3D::DataFormatAR8:
+            return true;
+        default:
+            return false;
+        }
     }
 
     // Check if the format is one of the formats from the ImageData or DOM elements.
