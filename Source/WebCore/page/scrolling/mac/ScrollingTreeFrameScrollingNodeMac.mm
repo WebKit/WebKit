@@ -388,14 +388,14 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeCons
 {
     updateMainFramePinState(scrollPosition);
 
-    FloatRect layoutViewport;
     Optional<FloatPoint> layoutViewportOrigin;
     if (scrollingTree().visualViewportEnabled()) {
         FloatPoint visibleContentOrigin = scrollPosition;
         float counterScale = 1 / frameScaleFactor();
         visibleContentOrigin.scale(counterScale, counterScale);
-        layoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
-        layoutViewportOrigin = layoutViewport.location();
+        FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
+        setLayoutViewport(newLayoutViewport);
+        layoutViewportOrigin = newLayoutViewport.location();
     }
 
     if (shouldUpdateScrollLayerPositionSynchronously()) {
@@ -404,7 +404,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeCons
         return;
     }
 
-    setScrollLayerPosition(scrollPosition, layoutViewport);
+    setScrollLayerPosition(scrollPosition, layoutViewport());
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin);
 }
 
