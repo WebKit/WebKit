@@ -1,3 +1,19 @@
+2016-11-15  Brent Fulgham  <bfulgham@apple.com>
+
+        strncpy may leave unterminated string in WebCore::URL::init
+        https://bugs.webkit.org/show_bug.cgi?id=74473
+        <rdar://problem/10576626>
+
+        Reviewed by David Kilzer.
+
+        Reviving an old patch by David Kilzer! This should have been integrated years ago.
+
+        No new tests. No change in behavior.
+
+        * platform/URL.cpp:
+        (WebCore::URL::init): Make sure we always enter 'parse' with a
+        null-terminated string.
+
 2016-11-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Followup patch for r208737
