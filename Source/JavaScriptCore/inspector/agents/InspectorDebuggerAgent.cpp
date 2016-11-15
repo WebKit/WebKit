@@ -598,6 +598,8 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
     if (!m_javaScriptPauseScheduled)
         return;
 
+    m_javaScriptPauseScheduled = false;
+
     clearBreakDetails();
     m_scriptDebugServer.setPauseOnNextStatement(false);
     m_enablePauseWhenIdle = false;

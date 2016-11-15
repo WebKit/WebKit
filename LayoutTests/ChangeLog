@@ -1,3 +1,16 @@
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: inspector/worker/debugger-pause.html fails on WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=164787
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/worker/debugger-pause.html:
+        Make this test work for WebKit1 where the VM is shared between the
+        page and inspector page. We need to be able to stop the Inspector's
+        evaluation, so that we can evaluate and pause on the page, and then
+        come back to the inspector afterwards.
+
 2016-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Implement support for visual viewports
