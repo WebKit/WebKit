@@ -105,6 +105,8 @@ public:
     enum class SharedDrainResult { Done, TimedOut };
     SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity());
 
+    SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
+
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
     

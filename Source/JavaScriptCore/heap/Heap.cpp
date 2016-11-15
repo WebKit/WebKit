@@ -669,21 +669,23 @@ void Heap::markToFixpoint(double gcStartTime)
         {
             TimingScope traceTimingScope(*this, "Heap::markToFixpoint tracing");
             ParallelModeEnabler enabler(*m_collectorSlotVisitor);
-            for (;;) {
-                MonotonicTime now = MonotonicTime::now();
-                SlotVisitor::SharedDrainResult drainResult;
-                if (shouldBeResumed(now)) {
-                    ResumeTheWorldScope resumeTheWorldScope(*this);
-                    m_collectorSlotVisitor->donateAndDrain(timeToStop(now));
-                    drainResult = m_collectorSlotVisitor->drainFromShared(
-                        SlotVisitor::MasterDrain, timeToStop(now));
-                } else {
-                    m_collectorSlotVisitor->donateAndDrain(timeToResume(now));
-                    drainResult = m_collectorSlotVisitor->drainFromShared(
-                        SlotVisitor::MasterDrain, timeToResume(now));
+            if (Options::useCollectorTimeslicing()) {
+                for (;;) {
+                    MonotonicTime now = MonotonicTime::now();
+                    SlotVisitor::SharedDrainResult drainResult;
+                    if (shouldBeResumed(now)) {
+                        ResumeTheWorldScope resumeTheWorldScope(*this);
+                        drainResult = m_collectorSlotVisitor->drainInParallel(timeToStop(now));
+                    } else
+                        drainResult = m_collectorSlotVisitor->drainInParallel(timeToResume(now));
+                    if (drainResult == SlotVisitor::SharedDrainResult::Done)
+                        break;
                 }
-                if (drainResult == SlotVisitor::SharedDrainResult::Done)
-                    break;
+            } else {
+                // Disabling collector timeslicing is meant to be used together with
+                // --collectContinuously=true to maximize the opportunity for harmful races.
+                ResumeTheWorldScope resumeTheWorldScope(*this);
+                m_collectorSlotVisitor->drainInParallel();
             }
         }
     }

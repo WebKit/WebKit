@@ -1,5 +1,33 @@
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be possible to disable concurrent GC timeslicing
+        https://bugs.webkit.org/show_bug.cgi?id=164788
+
+        Reviewed by Saam Barati.
+        
+        Collector timeslicing means that the collector will try to pause once every 2ms. This is
+        great because it throttles the mutator and prevents it from outpacing the collector. But
+        it reduces some of the efficacy of the collectContinuously=true configuration: while
+        it's great that collecting continuously means that the collector will also pause more
+        frequently and so it will test the pausing code, it also means that the collector will
+        spend less time running concurrently. The primary purpose of collectContinuously is to
+        maximize the amount of time that the collector is running concurrently to the mutator to
+        maximize the likelihood that a race will cause a detectable error.
+        
+        This adds an option to disable collector timeslicing (useCollectorTimeslicing=false).
+        The idea is that we will usually use this in conjunction with collectContinuously=true
+        to find race conditions during marking, but we can also use the two options
+        independently to focus our testing on other things.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::drainInParallel): We should have added this helper ages ago.
+        * heap/SlotVisitor.h:
+        * runtime/Options.h:
+
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         The concurrent GC should have a timeslicing controller
         https://bugs.webkit.org/show_bug.cgi?id=164783
 

@@ -194,6 +194,7 @@ typedef const char* optionString;
     v(double, mediumHeapRAMFraction, 0.5, Normal, nullptr) \
     v(double, mediumHeapGrowthFactor, 1.5, Normal, nullptr) \
     v(double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
+    v(bool, useCollectorTimeslicing, true, Normal, nullptr) \
     v(double, concurrentGCHeadroomRatio, 1.5, Normal, nullptr) \
     v(double, concurrentGCPeriodMS, 2, Normal, nullptr) \
     v(bool, scribbleFreeCells, false, Normal, nullptr) \

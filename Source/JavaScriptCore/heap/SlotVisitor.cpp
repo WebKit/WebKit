@@ -473,6 +473,12 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
     }
 }
 
+SlotVisitor::SharedDrainResult SlotVisitor::drainInParallel(MonotonicTime timeout)
+{
+    donateAndDrain(timeout);
+    return drainFromShared(MasterDrain, timeout);
+}
+
 void SlotVisitor::addOpaqueRoot(void* root)
 {
     if (Options::numberOfGCMarkers() == 1) {
