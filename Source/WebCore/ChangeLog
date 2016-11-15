@@ -1,3 +1,26 @@
+2016-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [MultiCol] Render tree should be all clean by the end of FrameView::layout().
+        https://bugs.webkit.org/show_bug.cgi?id=162833
+
+        Reviewed by Simon Fraser.
+
+        This is a temporary workaround until after we addressed render tree mutation during layout (webkit.org/b/163849).
+
+        Test: fast/inline/out-of-flow-quotation-text-with-multicolumn.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::populate):
+        (WebCore::RenderMultiColumnFlowThread::evacuateAndDestroy):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::attachQuote): Populating/evacuating the flow should not trigger quotation text changes.
+        (WebCore::RenderQuote::detachQuote):
+        * rendering/RenderView.h:
+        (WebCore::RenderTreeInternalMutationScope::RenderTreeInternalMutationScope):
+        (WebCore::RenderTreeInternalMutationScope::~RenderTreeInternalMutationScope):
+
 2016-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r208606?): LayoutTest fast/mediastream/enumerating-crash.html is a flaky crash

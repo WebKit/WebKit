@@ -1,3 +1,16 @@
+2016-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [MultiCol] Render tree should be all clean by the end of FrameView::layout().
+        https://bugs.webkit.org/show_bug.cgi?id=162833
+
+        Reviewed by Simon Fraser.
+
+        This patch actually fixes the renderering of the closing quotation mark. Currently, it is
+        not rendered at all.
+
+        * fast/inline/out-of-flow-quotation-text-with-multicolumn-expected.html: Added.
+        * fast/inline/out-of-flow-quotation-text-with-multicolumn.html: Added.
+
 2016-11-15  Alejandro G. Castro  <alex@igalia.com>
 
         WebRTC: update MediaStream-MediaElement-srcObject.html test and unskip it

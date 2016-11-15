@@ -201,6 +201,9 @@ public:
 
     void setRenderQuoteHead(RenderQuote* head) { m_renderQuoteHead = head; }
     RenderQuote* renderQuoteHead() const { return m_renderQuoteHead; }
+    
+    // FIXME: see class RenderTreeInternalMutation below.
+    bool renderTreeIsBeingMutatedInternally() const { return !!m_renderTreeInternalMutationCounter; }
 
     // FIXME: This is a work around because the current implementation of counters
     // requires walking the entire tree repeatedly and most pages don't actually use either
@@ -286,6 +289,17 @@ private:
         m_layoutState = WTFMove(m_layoutState->m_next);
     }
 
+    enum class RenderTreeInternalMutation { On, Off };
+    void setRenderTreeInternalMutation(RenderTreeInternalMutation state)
+    {
+        if (state == RenderTreeInternalMutation::On)
+            ++m_renderTreeInternalMutationCounter;
+        else {
+            ASSERT(m_renderTreeInternalMutationCounter);
+            --m_renderTreeInternalMutationCounter;
+        }
+    }
+
     // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
     // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
     // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
@@ -307,6 +321,7 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
+    friend class RenderTreeInternalMutationScope;
 
     bool isScrollableOrRubberbandableBox() const override;
 
@@ -358,6 +373,7 @@ private:
 
     RenderQuote* m_renderQuoteHead { nullptr };
     unsigned m_renderCounterCount { 0 };
+    unsigned m_renderTreeInternalMutationCounter { 0 };
 
     bool m_selectionWasCaret { false };
     bool m_hasSoftwareFilters { false };
@@ -449,6 +465,25 @@ public:
     ~LayoutStateDisabler()
     {
         m_view.enableLayoutState();
+    }
+
+private:
+    RenderView& m_view;
+};
+
+// FIXME: This is a temporary workaround to mute unintended activities triggered by render tree mutations.
+class RenderTreeInternalMutationScope {
+    WTF_MAKE_NONCOPYABLE(RenderTreeInternalMutationScope);
+public:
+    RenderTreeInternalMutationScope(RenderView& view)
+        : m_view(view)
+    {
+        m_view.setRenderTreeInternalMutation(RenderView::RenderTreeInternalMutation::On);
+    }
+
+    ~RenderTreeInternalMutationScope()
+    {
+        m_view.setRenderTreeInternalMutation(RenderView::RenderTreeInternalMutation::Off);
     }
 
 private:

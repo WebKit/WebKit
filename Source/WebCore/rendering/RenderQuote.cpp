@@ -389,6 +389,9 @@ String RenderQuote::computeText() const
 
 void RenderQuote::attachQuote()
 {
+    if (view().renderTreeIsBeingMutatedInternally())
+        return;
+
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
@@ -430,6 +433,9 @@ void RenderQuote::attachQuote()
 
 void RenderQuote::detachQuote()
 {
+    if (view().renderTreeIsBeingMutatedInternally())
+        return;
+
     ASSERT(!m_next || m_next->m_isAttached);
     ASSERT(!m_previous || m_previous->m_isAttached);
     if (!m_isAttached)
