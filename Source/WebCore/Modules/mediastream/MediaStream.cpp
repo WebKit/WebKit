@@ -312,7 +312,6 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
     if (!m_isActive)
         return state;
 
-    state |= HasMediaCaptureDevice;
     if (m_private->isProducingData())
         state |= HasActiveMediaCaptureDevice;
 

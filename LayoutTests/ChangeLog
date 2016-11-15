@@ -1,3 +1,14 @@
+2016-11-15  Jon Lee  <jonlee@apple.com>
+
+        Remove HasMediaCaptureDevice
+        https://bugs.webkit.org/show_bug.cgi?id=164767
+        <rdar://problem/29263696>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-page-muted-expected.txt: Remove check for HasMediaCaptureDevice.
+        * fast/mediastream/MediaStream-page-muted.html:
+
 2016-11-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix font-synthesis and text-decoration-skip parsing

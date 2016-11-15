@@ -24,7 +24,6 @@
                 muteChangedEvent = ev;
                 debug(`EVENT: ${muteChangedEvent.type}`);
                 shouldBe('muteChangedEvent.target.muted', (muteChangedEvent.type == "mute").toString());
-                shouldBe("window.internals.pageMediaState().includes('HasMediaCaptureDevice')", "true");
 
                 if (++eventCount == 2) {
                     debug("");

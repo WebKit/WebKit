@@ -3012,8 +3012,6 @@ String Internals::pageMediaState()
         string.append("HasAudioOrVideo,");
     if (state & MediaProducer::HasActiveMediaCaptureDevice)
         string.append("HasActiveMediaCaptureDevice,");
-    if (state & MediaProducer::HasMediaCaptureDevice)
-        string.append("HasMediaCaptureDevice,");
 
     if (string.isEmpty())
         string.append("IsNotPlaying");

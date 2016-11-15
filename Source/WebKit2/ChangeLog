@@ -1,3 +1,15 @@
+2016-11-15  Jon Lee  <jonlee@apple.com>
+
+        Remove HasMediaCaptureDevice
+        https://bugs.webkit.org/show_bug.cgi?id=164767
+        <rdar://problem/29263696>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/API/C/WKPage.cpp: Remove kWKMediaHasCaptureDevice.
+        (WKPageGetMediaState):
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2016-11-15  Daniel Bates  <dabates@apple.com>
 
         Disallow loads using HTTP 0.9 at the ResourceHandle/NetworkDataTask level

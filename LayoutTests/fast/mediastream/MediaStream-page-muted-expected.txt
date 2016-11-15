@@ -12,20 +12,16 @@ PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') b
 *** Muting capture devices
 EVENT: mute
 PASS muteChangedEvent.target.muted is true
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
 EVENT: mute
 PASS muteChangedEvent.target.muted is true
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
 
 PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') became false
 
 *** Unmuting capture devices
 EVENT: unmute
 PASS muteChangedEvent.target.muted is false
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
 EVENT: unmute
 PASS muteChangedEvent.target.muted is false
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
 
 PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') became true
 PASS successfullyParsed is true

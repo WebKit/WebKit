@@ -43,7 +43,6 @@ public:
         HasPlaybackTargetAvailabilityListener = 1 << 9,
         HasAudioOrVideo = 1 << 10,
         HasActiveMediaCaptureDevice = 1 << 11,
-        HasMediaCaptureDevice = 1 << 12,
     };
     typedef unsigned MediaStateFlags;
 
