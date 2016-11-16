@@ -117,6 +117,9 @@ unsigned UIScriptContext::registerCallback(JSValueRef taskCallback, CallbackType
     if (m_callbacks.contains(type))
         unregisterCallback(type);
 
+    if (JSValueIsUndefined(m_context.get(), taskCallback))
+        return 0;
+
     return prepareForAsyncTask(taskCallback, type);
 }
 

@@ -1,3 +1,24 @@
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        UIScriptController: setting a callback to undefined should unregister it
+        https://bugs.webkit.org/show_bug.cgi?id=164796
+
+        Reviewed by Dean Jackson.
+        
+        "Immediate" UI scripts (those that don't schedule any async tasks) should return
+        immediately, without the need to call uiScriptComplete(). However, this is broken if
+        an earlier UI script registered a callback (since no-one clears that callback after the
+        first script completes).
+
+        Make possible the workaround of setting the callback to undefined, which previously did
+        not clear the callback registration.
+
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::registerCallback):
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformClearAllCallbacks):
+
 2016-11-14  Mark Lam  <mark.lam@apple.com>
 
         Enhance run-jsc-stress-test script to allow optional test specific options to be added for all test run configurations.

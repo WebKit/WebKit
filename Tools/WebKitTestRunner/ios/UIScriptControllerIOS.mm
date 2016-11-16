@@ -498,6 +498,11 @@ void UIScriptController::platformSetDidEndScrollingCallback()
 void UIScriptController::platformClearAllCallbacks()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    
+    webView.didStartFormControlInteractionCallback = nil;
+    webView.didEndFormControlInteractionCallback = nil;
+    webView.didShowForcePressPreviewCallback = nil;
+    webView.didDismissForcePressPreviewCallback = nil;
     webView.didEndZoomingCallback = nil;
     webView.willBeginZoomingCallback = nil;
     webView.didHideKeyboardCallback = nil;

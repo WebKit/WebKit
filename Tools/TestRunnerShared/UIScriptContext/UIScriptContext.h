@@ -49,7 +49,8 @@ public:
 const unsigned firstNonPersistentCallbackID = 1000;
 
 typedef enum  {
-    CallbackTypeWillBeginZooming = 0,
+    CallbackTypeInvalid = 0,
+    CallbackTypeWillBeginZooming,
     CallbackTypeDidEndZooming,
     CallbackTypeDidShowKeyboard,
     CallbackTypeDidHideKeyboard,

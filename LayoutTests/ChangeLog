@@ -1,3 +1,13 @@
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        UIScriptController: setting a callback to undefined should unregister it
+        https://bugs.webkit.org/show_bug.cgi?id=164796
+
+        Reviewed by Dean Jackson.
+
+        * fast/harness/ui-side-script-unregister-callback-expected.txt: Added.
+        * fast/harness/ui-side-script-unregister-callback.html: Added.
+
 2016-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html as flaky.
