@@ -1,3 +1,17 @@
+2016-11-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add more assertions to ElementQueue diagnose a bug
+        https://bugs.webkit.org/show_bug.cgi?id=164814
+
+        Reviewed by Yusuke Suzuki.
+
+        Add more assertions to check the sanity of the element queue.
+        Also made them all release assertions so that we can catch them better.
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionStack::ElementQueue::add):
+        (WebCore::CustomElementReactionStack::ElementQueue::invokeAll):
+
 2016-11-15  Chris Dumez  <cdumez@apple.com>
 
         Simplify Element::stripScriptingAttributes()
