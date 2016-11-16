@@ -2757,3 +2757,5 @@ media/modern-media-controls/placard-support [ Skip ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
 
 webkit.org/b/164594 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Timeout ]
+
+webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
