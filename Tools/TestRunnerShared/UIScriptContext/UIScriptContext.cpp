@@ -172,12 +172,6 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
     String scriptResult(JSStringGetCharactersPtr(result), JSStringGetLength(result));
 
     m_delegate.uiScriptDidComplete(scriptResult, m_currentScriptCallbackID);
-    
-    // Unregister tasks associated with this callback
-    m_callbacks.removeIf([&](auto& keyAndValue) {
-        return keyAndValue.value.parentScriptCallbackID == m_currentScriptCallbackID;
-    });
-    
     m_currentScriptCallbackID = 0;
     if (result)
         JSStringRelease(result);

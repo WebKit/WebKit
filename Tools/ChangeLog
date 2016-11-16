@@ -1,3 +1,16 @@
+2016-11-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r208770.
+
+        The test added with this change is timing out on mac-wk1.
+
+        Reverted changeset:
+
+        "UIScriptController: script with no async tasks fails if an
+        earlier script registered a callback"
+        https://bugs.webkit.org/show_bug.cgi?id=164762
+        http://trac.webkit.org/changeset/208770
+
 2016-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebCore test is failing.
