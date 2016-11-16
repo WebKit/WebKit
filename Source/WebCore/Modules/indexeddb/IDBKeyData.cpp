@@ -386,6 +386,14 @@ void IDBKeyData::setArrayValue(const Vector<IDBKeyData>& value)
     m_isNull = false;
 }
 
+void IDBKeyData::setBinaryValue(const ThreadSafeDataBuffer& value)
+{
+    *this = IDBKeyData();
+    m_value = value;
+    m_type = KeyType::Binary;
+    m_isNull = false;
+}
+
 void IDBKeyData::setStringValue(const String& value)
 {
     *this = IDBKeyData();

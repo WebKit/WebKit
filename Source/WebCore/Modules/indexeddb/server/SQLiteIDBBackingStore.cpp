@@ -1183,6 +1183,8 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
         bool hasRecord;
         IDBError error;
         for (auto& indexKey : indexKeys) {
+            if (!indexKey.isValid())
+                continue;
             error = uncheckedHasIndexRecord(info, indexKey, hasRecord);
             if (!error.isNull())
                 return error;
@@ -1192,6 +1194,8 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
     }
 
     for (auto& indexKey : indexKeys) {
+        if (!indexKey.isValid())
+            continue;
         auto error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey);
         if (!error.isNull()) {
             LOG_ERROR("Unable to put index record for newly created index");

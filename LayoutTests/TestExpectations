@@ -848,9 +848,8 @@ storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 # It's unclear if we need to continue supporting this.
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
-# Completes with passing results, but too slowly for our test timeouts.
-imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Failure ]
+# In debug builds, runs too slowly for the test timeout.
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
 
 # SQLite backend tests that timeout
 storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]

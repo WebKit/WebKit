@@ -1,3 +1,39 @@
+2016-11-15  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Key collation during SQLite lookups is insanely slow.
+        https://bugs.webkit.org/show_bug.cgi?id=164754
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by *all* existing tests, and unskips a previously-too-slow test)
+
+        The new serialization format is straight forward enough to get back with minimal documentation
+        in a comment with the code itself being the rest of the documentation.
+        
+        It handles all current IDB key types and leaves room for future key types.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::setBinaryValue):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::binary):
+        
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::serializedTypeForKeyType):
+        (WebCore::writeLittleEndian):
+        (WebCore::readLittleEndian):
+        (WebCore::writeDouble):
+        (WebCore::readDouble):
+        (WebCore::encodeKey):
+        (WebCore::serializeIDBKeyData):
+        (WebCore::decodeKey):
+        (WebCore::deserializeIDBKeyData):
+        * Modules/indexeddb/server/IDBSerialization.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey): Verify that Type == Invalid 
+          keys don't get into the database. This was happening before and the previous serialization
+          supported it, but there's clearly no point in supporting it with the new serialization.
+
 2016-11-15  Brent Fulgham  <bfulgham@apple.com>
 
         Ensure sufficient buffer for worst-case URL encoding
