@@ -1,3 +1,158 @@
+2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Integrate ES6 Modules into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=148897
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * http/tests/misc/module-absolute-url-expected.txt: Added.
+        * http/tests/misc/module-absolute-url.html: Added.
+        * http/tests/misc/module-script-async-expected.txt: Added.
+        * http/tests/misc/module-script-async.html: Added.
+        * http/tests/misc/resources/module-absolute-url.js: Added.
+        * http/tests/misc/resources/module-absolute-url2.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-and-scripthash-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-and-scripthash.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-basic-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-basic-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-ignore-unsafeinline-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-ignore-unsafeinline.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-enforced-policy-and-not-in-report-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-multiple-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-multiple-policies.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-same-origin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-same-origin.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-enforced-policy-and-not-in-report-only.php: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Added.
+        * http/tests/security/contentSecurityPolicy/module-eval-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/module-eval-blocked-in-external-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/module-eval-blocked-in-external-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/module-eval-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/echo-module-script-src.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-module-test.js: Added.
+        (testPreescapedPolicy):
+        (testExperimentalPolicy):
+        (test):
+        (iframe.onload):
+        (testImpl):
+        (finishTesting):
+        * http/tests/security/module-correct-mime-types-expected.txt: Added.
+        * http/tests/security/module-correct-mime-types.html: Added.
+        * http/tests/security/module-crossorigin-error-event-information-expected.txt: Added.
+        * http/tests/security/module-crossorigin-error-event-information.html: Added.
+        * http/tests/security/module-crossorigin-loads-correctly-credentials-expected.txt: Added.
+        * http/tests/security/module-crossorigin-loads-correctly-credentials.html: Added.
+        * http/tests/security/module-crossorigin-loads-omit-expected.txt: Added.
+        * http/tests/security/module-crossorigin-loads-omit.html: Added.
+        * http/tests/security/module-crossorigin-loads-same-origin-expected.txt: Added.
+        * http/tests/security/module-crossorigin-loads-same-origin.html: Added.
+        * http/tests/security/module-crossorigin-onerror-information-expected.txt: Added.
+        * http/tests/security/module-crossorigin-onerror-information.html: Added.
+        * http/tests/security/module-incorrect-mime-types-expected.txt: Added.
+        * http/tests/security/module-incorrect-mime-types.html: Added.
+        * http/tests/security/module-no-mime-type-expected.txt: Added.
+        * http/tests/security/module-no-mime-type.html: Added.
+        * http/tests/security/resources/cors-script.php:
+        * http/tests/security/resources/module-local-script.js: Added.
+        * js/dom/modules/module-and-dom-content-loaded-expected.txt: Added.
+        * js/dom/modules/module-and-dom-content-loaded.html: Added.
+        * js/dom/modules/module-and-window-load-expected.txt: Added.
+        * js/dom/modules/module-and-window-load.html: Added.
+        * js/dom/modules/module-async-and-window-load-expected.txt: Added.
+        * js/dom/modules/module-async-and-window-load.html: Added.
+        * js/dom/modules/module-document-write-expected.txt: Added.
+        * js/dom/modules/module-document-write-src-expected.txt: Added.
+        * js/dom/modules/module-document-write-src.html: Added.
+        * js/dom/modules/module-document-write.html: Added.
+        * js/dom/modules/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror-expected.txt: Added.
+        * js/dom/modules/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.html: Added.
+        * js/dom/modules/module-execution-error-should-be-propagated-to-onerror-expected.txt: Added.
+        * js/dom/modules/module-execution-error-should-be-propagated-to-onerror.html: Added.
+        * js/dom/modules/module-execution-order-inline-expected.txt: Added.
+        * js/dom/modules/module-execution-order-inline.html: Added.
+        * js/dom/modules/module-execution-order-mixed-expected.txt: Added.
+        * js/dom/modules/module-execution-order-mixed-with-classic-scripts-expected.txt: Added.
+        * js/dom/modules/module-execution-order-mixed-with-classic-scripts.html: Added.
+        * js/dom/modules/module-execution-order-mixed.html: Added.
+        * js/dom/modules/module-incorrect-relative-specifier-expected.txt: Added.
+        * js/dom/modules/module-incorrect-relative-specifier.html: Added.
+        * js/dom/modules/module-incorrect-tag-expected.txt: Added.
+        * js/dom/modules/module-incorrect-tag.html: Added.
+        * js/dom/modules/module-inline-current-script-expected.txt: Added.
+        * js/dom/modules/module-inline-current-script.html: Added.
+        * js/dom/modules/module-inline-dynamic-expected.txt: Added.
+        * js/dom/modules/module-inline-dynamic.html: Added.
+        * js/dom/modules/module-inline-simple-expected.txt: Added.
+        * js/dom/modules/module-inline-simple.html: Added.
+        * js/dom/modules/module-load-event-expected.txt: Added.
+        * js/dom/modules/module-load-event-with-src-expected.txt: Added.
+        * js/dom/modules/module-load-event-with-src.html: Added.
+        * js/dom/modules/module-load-event.html: Added.
+        * js/dom/modules/module-load-same-module-from-different-entry-point-dynamic-expected.txt: Added.
+        * js/dom/modules/module-load-same-module-from-different-entry-point-dynamic.html: Added.
+        * js/dom/modules/module-load-same-module-from-different-entry-point-expected.txt: Added.
+        * js/dom/modules/module-load-same-module-from-different-entry-point.html: Added.
+        * js/dom/modules/module-not-found-error-event-expected.txt: Added.
+        * js/dom/modules/module-not-found-error-event-with-src-and-import-expected.txt: Added.
+        * js/dom/modules/module-not-found-error-event-with-src-and-import.html: Added.
+        * js/dom/modules/module-not-found-error-event-with-src-expected.txt: Added.
+        * js/dom/modules/module-not-found-error-event-with-src.html: Added.
+        * js/dom/modules/module-not-found-error-event.html: Added.
+        * js/dom/modules/module-src-current-script-expected.txt: Added.
+        * js/dom/modules/module-src-current-script.html: Added.
+        * js/dom/modules/module-src-dynamic-expected.txt: Added.
+        * js/dom/modules/module-src-dynamic.html: Added.
+        * js/dom/modules/module-src-simple-expected.txt: Added.
+        * js/dom/modules/module-src-simple.html: Added.
+        * js/dom/modules/module-type-case-insensitive-expected.txt: Added.
+        * js/dom/modules/module-type-case-insensitive.html: Added.
+        * js/dom/modules/module-will-fire-beforeload-expected.txt: Added.
+        * js/dom/modules/module-will-fire-beforeload.html: Added.
+        * js/dom/modules/script-tests/module-document-write-src.js: Added.
+        * js/dom/modules/script-tests/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror-throw.js: Added.
+        * js/dom/modules/script-tests/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-2.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-cappuccino.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-cocoa.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-matcha.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-2.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-cappuccino.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-cocoa.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-matcha.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts.js: Added.
+        * js/dom/modules/script-tests/module-execution-order-mixed.js: Added.
+        * js/dom/modules/script-tests/module-inline-dynamic.js: Added.
+        (export.default.Cocoa.prototype.taste):
+        (export.default.Cocoa):
+        * js/dom/modules/script-tests/module-inline-simple.js: Added.
+        (export.default.Cocoa.prototype.taste):
+        (export.default.Cocoa):
+        * js/dom/modules/script-tests/module-load-event-with-src.js: Added.
+        * js/dom/modules/script-tests/module-load-same-module-from-different-entry-point.js: Added.
+        * js/dom/modules/script-tests/module-not-found-error-event-with-src-and-import.js: Added.
+        * js/dom/modules/script-tests/module-src-current-script.js: Added.
+        * js/dom/modules/script-tests/module-src-dynamic-cocoa.js: Added.
+        (Cocoa.prototype.taste):
+        (Cocoa):
+        * js/dom/modules/script-tests/module-src-dynamic.js: Added.
+        * js/dom/modules/script-tests/module-src-simple-cocoa.js: Added.
+        (Cocoa.prototype.taste):
+        (Cocoa):
+        * js/dom/modules/script-tests/module-src-simple.js: Added.
+        * js/dom/modules/script-tests/module-will-fire-beforeload.js: Added.
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Preview other CSS @media in browser window (print)

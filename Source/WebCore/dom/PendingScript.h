@@ -58,7 +58,7 @@ public:
     bool needsLoading() const { return loadableScript(); }
 
     bool isLoaded() const;
-    bool wasErrored() const;
+    bool error() const;
 
     void notifyFinished(LoadableScript&) override;
 

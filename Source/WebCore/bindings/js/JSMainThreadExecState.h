@@ -93,25 +93,25 @@ public:
         task.run(exec);
     }
 
-    static JSC::JSInternalPromise* loadModule(JSC::ExecState* exec, const String& moduleName, JSC::JSValue initiator)
+    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const String& moduleName, JSC::JSValue initiator)
     {
-        JSMainThreadExecState currentState(exec);
-        return JSC::loadModule(exec, moduleName, initiator);
+        JSMainThreadExecState currentState(&state);
+        return *JSC::loadModule(&state, moduleName, initiator);
     }
 
-    static JSC::JSInternalPromise* loadModule(JSC::ExecState* exec, const JSC::SourceCode& sourceCode, JSC::JSValue initiator)
+    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const JSC::SourceCode& sourceCode, JSC::JSValue initiator)
     {
-        JSMainThreadExecState currentState(exec);
-        return JSC::loadModule(exec, sourceCode, initiator);
+        JSMainThreadExecState currentState(&state);
+        return *JSC::loadModule(&state, sourceCode, initiator);
     }
 
-    static JSC::JSValue linkAndEvaluateModule(JSC::ExecState* exec, const JSC::Identifier& moduleKey, JSC::JSValue initiator, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue linkAndEvaluateModule(JSC::ExecState& state, const JSC::Identifier& moduleKey, JSC::JSValue initiator, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSC::VM& vm = exec->vm();
+        JSC::VM& vm = state.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
     
-        JSMainThreadExecState currentState(exec);
-        JSC::JSValue returnValue = JSC::linkAndEvaluateModule(exec, moduleKey, initiator);
+        JSMainThreadExecState currentState(&state);
+        auto returnValue = JSC::linkAndEvaluateModule(&state, moduleKey, initiator);
         if (UNLIKELY(scope.exception())) {
             returnedException = scope.exception();
             scope.clearException();

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test module scripts run with correct mime types.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+let unscriptyMimeTypes = [
+    'application/ecmascript',
+    'application/javascript',
+    'application/x-ecmascript',
+    'application/x-javascript',
+    'text/ecmascript',
+    'text/javascript',
+    'text/javascript1.0',
+    'text/javascript1.1',
+    'text/javascript1.2',
+    'text/javascript1.3',
+    'text/javascript1.4',
+    'text/javascript1.5',
+    'text/jscript',
+    'text/livescript',
+    'text/x-ecmascript',
+    'text/x-javascript',
+];
+
+debug('Module is not executed yet.');
+
+let current = Promise.resolve();
+for (let mimeType of unscriptyMimeTypes) {
+    current = current.then(() => {
+        return new Promise((resolve, reject) => {
+            let script = document.createElement('script');
+            script.addEventListener('load', (ev) => resolve(ev), false);
+            script.type = 'module'
+            script.src = `./contentTypeOptions/resources/script-with-header.pl?mime=${mimeType}`;
+            document.body.appendChild(script);
+        });
+    });
+}
+
+current.then(done);
+
+function done()
+{
+    debug('Module scripts run with correct mime types.');
+    finishJSTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

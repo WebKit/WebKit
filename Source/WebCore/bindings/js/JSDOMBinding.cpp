@@ -156,6 +156,26 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
     reportException(exec, exception, cachedScript);
 }
 
+String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchScope& catchScope)
+{
+    if (auto* exceptionBase = toExceptionBase(exception))
+        return exceptionBase->toString();
+
+    // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
+    // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
+    String errorMessage;
+    if (auto* error = jsDynamicDowncast<ErrorInstance*>(exception))
+        errorMessage = error->sanitizedToString(&state);
+    else
+        errorMessage = exception.toWTFString(&state);
+
+    // We need to clear any new exception that may be thrown in the toString() call above.
+    // reportException() is not supposed to be making new exceptions.
+    catchScope.clearException();
+    vm.clearLastException();
+    return errorMessage;
+}
+
 void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* cachedScript, ExceptionDetails* exceptionDetails)
 {
     VM& vm = exec->vm();
@@ -186,24 +206,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
         exceptionSourceURL = callFrame->sourceURL();
     }
 
-    String errorMessage;
-    JSValue exceptionValue = exception->value();
-    if (ExceptionBase* exceptionBase = toExceptionBase(exceptionValue))
-        errorMessage = exceptionBase->toString();
-    else {
-        // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
-        // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-        if (ErrorInstance* error = jsDynamicDowncast<ErrorInstance*>(exceptionValue))
-            errorMessage = error->sanitizedToString(exec);
-        else
-            errorMessage = exceptionValue.toString(exec)->value(exec);
-
-        // We need to clear any new exception that may be thrown in the toString() call above.
-        // reportException() is not supposed to be making new exceptions.
-        scope.clearException();
-        vm.clearLastException();
-    }
-
+    String errorMessage = retrieveErrorMessage(*exec, vm, exception->value(), scope);
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
     scriptExecutionContext->reportException(errorMessage, lineNumber, columnNumber, exceptionSourceURL, exception, callStack->size() ? callStack : nullptr, cachedScript);
 

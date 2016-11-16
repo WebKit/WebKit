@@ -144,8 +144,12 @@ public:
         if (!shouldPreload())
             return nullptr;
 
-        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute, m_moduleScript);
         request->setCrossOriginMode(m_crossOriginMode);
+
+        // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
+        // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
+        // even for the module tags, we handle the "charset" attribute.
         request->setCharset(charset());
         return request;
     }
@@ -205,6 +209,10 @@ private:
             }
             break;
         case TagId::Script:
+            if (match(attributeName, typeAttr)) {
+                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module") ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
+                break;
+            }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
         case TagId::Link:
@@ -318,6 +326,7 @@ private:
     bool m_metaIsViewport;
     bool m_inputIsImage;
     float m_deviceScaleFactor;
+    PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
 };
 
 TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor)

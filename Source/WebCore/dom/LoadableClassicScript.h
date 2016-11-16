@@ -40,17 +40,17 @@ namespace WebCore {
 // destroyed in order to guarantee that the data buffer will not be purged.
 class LoadableClassicScript final : public LoadableScript, private CachedResourceClient {
 public:
-    ~LoadableClassicScript();
+    virtual ~LoadableClassicScript();
 
     static Ref<LoadableClassicScript> create(CachedResourceHandle<CachedScript>&&);
-    bool isLoaded() const override;
-    Optional<Error> wasErrored() const override;
-    bool wasCanceled() const override;
+    bool isLoaded() const final;
+    Optional<Error> error() const final;
+    bool wasCanceled() const final;
 
     CachedScript& cachedScript() { return *m_cachedScript; }
     bool isClassicScript() const final { return true; }
 
-    void execute(ScriptElement&) override;
+    void execute(ScriptElement&) final;
 
 private:
     LoadableClassicScript(CachedResourceHandle<CachedScript>&& cachedScript) : m_cachedScript(WTFMove(cachedScript)) { }

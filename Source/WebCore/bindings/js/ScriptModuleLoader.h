@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "CachedModuleScriptLoader.h"
+#include "CachedModuleScriptLoaderClient.h"
+#include "URL.h"
+#include "URLHash.h"
 #include <runtime/JSCJSValue.h>
 #include <wtf/Noncopyable.h>
 
@@ -40,11 +44,13 @@ class JSModuleLoader;
 namespace WebCore {
 
 class Document;
+class JSDOMGlobalObject;
 
-class ScriptModuleLoader {
+class ScriptModuleLoader final : private CachedModuleScriptLoaderClient {
     WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScriptModuleLoader(Document&);
+    ~ScriptModuleLoader();
 
     Document& document() { return m_document; }
 
@@ -53,7 +59,11 @@ public:
     JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue initiator);
 
 private:
+    void notifyFinished(CachedModuleScriptLoader&, RefPtr<DeferredPromise>) final;
+
     Document& m_document;
+    HashMap<URL, URL> m_requestURLToResponseURLMap;
+    HashSet<Ref<CachedModuleScriptLoader>> m_loaders;
 };
 
 } // namespace WebCore

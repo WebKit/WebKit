@@ -36,7 +36,7 @@ namespace WebCore {
 class CachedScriptSourceProvider : public JSC::SourceProvider, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CachedScriptSourceProvider> create(CachedScript* cachedScript) { return adoptRef(*new CachedScriptSourceProvider(cachedScript)); }
+    static Ref<CachedScriptSourceProvider> create(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType) { return adoptRef(*new CachedScriptSourceProvider(cachedScript, sourceType)); }
 
     virtual ~CachedScriptSourceProvider()
     {
@@ -47,8 +47,8 @@ public:
     StringView source() const override { return m_cachedScript->script(); }
 
 private:
-    CachedScriptSourceProvider(CachedScript* cachedScript)
-        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), JSC::SourceProviderSourceType::Program)
+    CachedScriptSourceProvider(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType)
+        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), sourceType)
         , m_cachedScript(cachedScript)
     {
         m_cachedScript->addClient(*this);
@@ -59,7 +59,7 @@ private:
 
 inline JSC::SourceCode makeSource(CachedScript* cachedScript)
 {
-    return JSC::SourceCode(CachedScriptSourceProvider::create(cachedScript));
+    return JSC::SourceCode(CachedScriptSourceProvider::create(cachedScript, JSC::SourceProviderSourceType::Program));
 }
 
 } // namespace WebCore

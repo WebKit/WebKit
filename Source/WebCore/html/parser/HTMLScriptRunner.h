@@ -72,7 +72,6 @@ private:
     void watchForLoad(PendingScript&);
     void stopWatchingForLoad(PendingScript&);
     bool isPendingScriptReady(const PendingScript&);
-    ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred) const;
 
     Document* m_document;
     HTMLScriptRunnerHost& m_host;

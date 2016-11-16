@@ -26,9 +26,18 @@
 #include "config.h"
 #include "ScriptModuleLoader.h"
 
+#include "CachedModuleScriptLoader.h"
+#include "CachedScript.h"
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
+#include "JSElement.h"
+#include "LoadableModuleScript.h"
+#include "MIMETypeRegistry.h"
+#include "ScriptController.h"
+#include "ScriptElement.h"
+#include "ScriptSourceCode.h"
+#include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/JSModuleRecord.h>
 #include <runtime/JSString.h>
@@ -41,63 +50,129 @@ ScriptModuleLoader::ScriptModuleLoader(Document& document)
 {
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
+ScriptModuleLoader::~ScriptModuleLoader()
 {
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
+    for (auto& loader : m_loaders)
+        const_cast<CachedModuleScriptLoader&>(loader.get()).clearClient();
+}
+
+
+static bool isRootModule(JSC::JSValue importerModuleKey)
+{
+    return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
+}
+
+JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
+    auto promise = DeferredPromise::create(globalObject, jsPromise);
 
     // We use a Symbol as a special purpose; It means this module is an inline module.
     // So there is no correct URL to retrieve the module source code. If the module name
     // value is a Symbol, it is used directly as a module key.
-    //
-    // FIXME: Using symbols for an inline module is a current implementation details of WebKit.
-    // Once the spec of this part is specified, we will recast these part.
-    if (moduleNameValue.isSymbol())
-        return deferred->resolve(exec, moduleNameValue);
+    if (moduleNameValue.isSymbol()) {
+        promise->resolve(asSymbol(moduleNameValue)->privateName());
+        return jsPromise.promise();
+    }
 
-    if (!moduleNameValue.isString())
-        return deferred->reject(exec, JSC::createTypeError(exec, "Module name is not Symbol or String."));
+    // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
 
-    String moduleName = asString(moduleNameValue)->value(exec);
+    if (!moduleNameValue.isString()) {
+        promise->reject(TypeError, ASCIILiteral("Module specifier is not Symbol or String."));
+        return jsPromise.promise();
+    }
 
-    // Now, we consider the given moduleName as the same to the `import "..."` in the module code.
-    // We use the completed URL as the unique module key.
-    URL completedUrl;
+    String specifier = asString(moduleNameValue)->value(exec);
 
-    if (importerModuleKey.isSymbol())
-        completedUrl = m_document.completeURL(moduleName);
-    else if (importerModuleKey.isUndefined())
-        completedUrl = m_document.completeURL(moduleName);
+    // 1. Apply the URL parser to specifier. If the result is not failure, return the result.
+    URL absoluteURL(URL(), specifier);
+    if (absoluteURL.isValid()) {
+        promise->resolve(absoluteURL.string());
+        return jsPromise.promise();
+    }
+
+    // 2. If specifier does not start with the character U+002F SOLIDUS (/), the two-character sequence U+002E FULL STOP, U+002F SOLIDUS (./),
+    //    or the three-character sequence U+002E FULL STOP, U+002E FULL STOP, U+002F SOLIDUS (../), return failure and abort these steps.
+    if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../")) {
+        promise->reject(TypeError, ASCIILiteral("Module specifier does not start with \"/\", \"./\", or \"../\"."));
+        return jsPromise.promise();
+    }
+
+    // 3. Return the result of applying the URL parser to specifier with script's base URL as the base URL.
+
+    URL completedURL;
+
+    if (isRootModule(importerModuleKey))
+        completedURL = m_document.completeURL(specifier);
     else if (importerModuleKey.isString()) {
-        URL importerModuleUrl(URL(), asString(importerModuleKey)->value(exec));
-        if (!importerModuleUrl.isValid())
-            return deferred->reject(exec, JSC::createTypeError(exec, "Importer module key is an invalid URL."));
-        completedUrl = m_document.completeURL(moduleName, importerModuleUrl);
-    } else
-        return deferred->reject(exec, JSC::createTypeError(exec, "Importer module key is not Symbol or String."));
+        URL importerModuleRequestURL(URL(), asString(importerModuleKey)->value(exec));
+        if (!importerModuleRequestURL.isValid()) {
+            promise->reject(TypeError, ASCIILiteral("Importer module key is an invalid URL."));
+            return jsPromise.promise();
+        }
 
-    if (!completedUrl.isValid())
-        return deferred->reject(exec, JSC::createTypeError(exec, "Module name constructs an invalid URL."));
+        URL importerModuleResponseURL = m_requestURLToResponseURLMap.get(importerModuleRequestURL);
+        if (!importerModuleResponseURL.isValid()) {
+            promise->reject(TypeError, ASCIILiteral("Importer module has an invalid response URL."));
+            return jsPromise.promise();
+        }
 
-    return deferred->resolve(exec, jsString(exec, completedUrl.string()));
+        completedURL = m_document.completeURL(specifier, importerModuleResponseURL);
+    } else {
+        promise->reject(TypeError, ASCIILiteral("Importer module key is not Symbol or String."));
+        return jsPromise.promise();
+    }
+
+    if (!completedURL.isValid()) {
+        promise->reject(TypeError, ASCIILiteral("Module name constructs an invalid URL."));
+        return jsPromise.promise();
+    }
+
+    promise->resolve(completedURL.string());
+    return jsPromise.promise();
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue initiator)
 {
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
+    auto deferred = DeferredPromise::create(globalObject, jsPromise);
+    if (moduleKeyValue.isSymbol()) {
+        deferred->reject(TypeError, ASCIILiteral("Symbol module key should be already fulfilled with the inlined resource."));
+        return jsPromise.promise();
+    }
 
-    if (moduleKeyValue.isSymbol())
-        return deferred->reject(exec, JSC::createTypeError(exec, "Symbol module key should be already fulfilled with the inlined resource."));
+    if (!moduleKeyValue.isString()) {
+        deferred->reject(TypeError, ASCIILiteral("Module key is not Symbol or String."));
+        return jsPromise.promise();
+    }
 
-    if (!moduleKeyValue.isString())
-        return deferred->reject(exec, JSC::createTypeError(exec, "Module key is not Symbol or String."));
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
 
-    URL completedUrl(URL(), asString(moduleKeyValue)->value(exec));
-    if (!completedUrl.isValid())
-        return deferred->reject(exec, JSC::createTypeError(exec, "Module key is an invalid URL."));
+    URL completedURL(URL(), asString(moduleKeyValue)->value(exec));
+    if (!completedURL.isValid()) {
+        deferred->reject(TypeError, ASCIILiteral("Module key is a valid URL."));
+        return jsPromise.promise();
+    }
 
-    // FIXME: Implement the module fetcher.
+    ASSERT_WITH_MESSAGE(JSC::jsDynamicCast<JSElement*>(initiator), "Initiator should be an JSElement");
+    auto* scriptElement = toScriptElementIfPossible(&JSC::jsCast<JSElement*>(initiator)->wrapped());
+    ASSERT_WITH_MESSAGE(scriptElement, "Initiator should be ScriptElement.");
 
-    return deferred->promise();
+    if (auto* frame = m_document.frame()) {
+        auto loader = CachedModuleScriptLoader::create(*this, deferred.get());
+        m_loaders.add(loader.copyRef());
+        if (!loader->load(*scriptElement, completedURL)) {
+            loader->clearClient();
+            m_loaders.remove(WTFMove(loader));
+
+            deferred->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());
+            return jsPromise.promise();
+        }
+    }
+
+    return jsPromise.promise();
 }
 
 JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
@@ -108,24 +183,71 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* 
     // FIXME: Currently, we only support JSModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.
     // https://whatwg.github.io/loader/#registry-prototype-provide
-    JSC::JSModuleRecord* moduleRecord = jsDynamicDowncast<JSC::JSModuleRecord*>(moduleRecordValue);
+    auto* moduleRecord = jsDynamicDowncast<JSC::JSModuleRecord*>(moduleRecordValue);
     if (!moduleRecord)
         return JSC::jsUndefined();
 
-    URL sourceUrl;
+    URL sourceURL;
     if (moduleKeyValue.isSymbol())
-        sourceUrl = m_document.url();
+        sourceURL = m_document.url();
     else if (moduleKeyValue.isString())
-        sourceUrl = URL(URL(), asString(moduleKeyValue)->value(exec));
+        sourceURL = URL(URL(), asString(moduleKeyValue)->value(exec));
     else
         return JSC::throwTypeError(exec, scope, ASCIILiteral("Module key is not Symbol or String."));
 
-    if (!sourceUrl.isValid())
+    if (!sourceURL.isValid())
         return JSC::throwTypeError(exec, scope, ASCIILiteral("Module key is an invalid URL."));
 
-    // FIXME: Implement evaluating module code.
-
+    if (auto* frame = m_document.frame())
+        return frame->script().evaluateModule(sourceURL, *moduleRecord);
     return JSC::jsUndefined();
+}
+
+void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr<DeferredPromise> promise)
+{
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
+
+    if (!m_loaders.remove(&loader))
+        return;
+    loader.clearClient();
+
+    auto& cachedScript = *loader.cachedScript();
+
+    bool failed = false;
+
+    if (cachedScript.resourceError().isAccessControl()) {
+        promise->reject(TypeError, ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
+        return;
+    }
+
+    if (cachedScript.errorOccurred())
+        failed = true;
+    else if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType())) {
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
+        // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
+        // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
+        promise->reject(TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
+        return;
+    }
+
+    auto* frame = m_document.frame();
+    if (!frame)
+        return;
+
+    if (failed) {
+        // Reject a promise to propagate the error back all the way through module promise chains to the script element.
+        promise->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());
+        return;
+    }
+
+    if (cachedScript.wasCanceled()) {
+        promise->reject(frame->script().moduleLoaderFetchingIsCanceledSymbol());
+        return;
+    }
+
+    m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
+    // FIXME: Let's wrap around ScriptSourceCode to propagate it directly through the module pipeline.
+    promise->resolve(ScriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module).source().toString());
 }
 
 }

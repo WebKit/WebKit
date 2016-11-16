@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test window.load is fired after module is executed.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+window.moduleIsExecuted = false;
+window.onload = function ()
+{
+    shouldBe(`moduleIsExecuted`, `true`);
+    finishJSTest();
+}
+</script>
+<script type="module" async>
+window.moduleIsExecuted = true;
+</script>
+</body>
+</html>

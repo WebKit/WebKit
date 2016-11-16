@@ -26,6 +26,8 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "ArrayValue.cpp"
+#include "CachedModuleScript.cpp"
+#include "CachedModuleScriptLoader.cpp"
 #include "CallbackFunction.cpp"
 #include "DOMWrapperWorld.cpp"
 #include "Dictionary.cpp"

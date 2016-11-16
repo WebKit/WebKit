@@ -1068,6 +1068,8 @@ set(WebCore_SOURCES
     bindings/generic/RuntimeEnabledFeatures.cpp
 
     bindings/js/ArrayValue.cpp
+    bindings/js/CachedModuleScript.cpp
+    bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CallbackFunction.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/Dictionary.cpp
@@ -1465,6 +1467,7 @@ set(WebCore_SOURCES
     dom/KeyboardEvent.cpp
     dom/LiveNodeList.cpp
     dom/LoadableClassicScript.cpp
+    dom/LoadableModuleScript.cpp
     dom/LoadableScript.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp

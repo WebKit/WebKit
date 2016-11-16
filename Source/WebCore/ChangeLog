@@ -1,3 +1,241 @@
+2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Integrate ES6 Modules into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=148897
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch introduces ES6 Modules into WebCore. We integrate JSC's JSModuleLoader into WebCore.
+        JSC constructs the module loader pipeline by the chains of the promises. To handle this,
+        the following components are added.
+
+            1. CachedModuleScript
+
+                CachedModuleScript wraps the promise based JSModuleLoader pipeline and offers
+                similar APIs to CachedScript. ScriptElement and PendingScript interact with
+                CachedModuleScript when the script tag is the module tag instead of CachedScript.
+                ScriptElement and PendingScript will receive the notification from
+                CachedModuleScript by implementing CachedModuleScriptClient.
+
+            2. ScriptModuleLoader
+
+                This is the module loader instantiated per document. It manages fetching and
+                offers the callbacks for the JSC's JSModuleLoader implementation. ScriptModuleLoader
+                will fetch the resource by creating CachedModuleScriptLoader per resource. ScriptModuleLoader
+                will receive the notification by implementing CachedModuleScriptLoaderClient. When the
+                resource is fetched, the module loader will drive the promise resolve/reject chain.
+
+            3. CachedModuleScriptLoader
+
+                This fetches the resource by using CachedScript. Using CachedScript means that it
+                automatically reports the resource to the inspector. CachedModuleScriptLoader notify to
+                ScriptModuleLoader when the resource is fetched.
+
+        One tricky point is that the fetch requests issued from one module-graph should share the same
+        nonce, crossorigin attributes etc.
+
+            Here, we wrote the module graph like `A -> B (A depends on B)`.
+
+            <script tag> -> A -> B -> C -> D
+
+        When fetching A, B, C, and D modules, we need to set the same nonce, crossorigin etc. configuration
+        derived from the original script tag. So per module-graph information should be shared throughout
+        the module loader pipeline. To do so, JSC's module loader implementation can take the value called
+        `initiator`. Since the loader will propagate & share this `initiator` throughout the pipeline,
+        we can transfer and share some metadata. Currently, we pass the JSWrapper of the script tag as the
+        initiator. Each fetch request is created by using this initiator script element.
+
+        More integration into the inspector should be done in the subsequent patch.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CachedModuleScript.cpp: Added.
+        CachedModuleScript offers similar interface to CachedScript to make ScriptElement things easier. It encapsulates the
+        detail of the JSC JSModuleLoader that this module loader is driven by the chain of the promises. CachedModuleScript's
+        callbacks are called from the promise's handlers configured in ScriptController::loadModuleScript.
+        (WebCore::CachedModuleScript::create):
+        (WebCore::CachedModuleScript::CachedModuleScript):
+        (WebCore::CachedModuleScript::load):
+        (WebCore::CachedModuleScript::notifyLoadCompleted):
+        (WebCore::CachedModuleScript::notifyLoadFailed):
+        (WebCore::CachedModuleScript::notifyLoadWasCanceled):
+        (WebCore::CachedModuleScript::notifyClientFinished):
+        (WebCore::CachedModuleScript::addClient):
+        (WebCore::CachedModuleScript::removeClient):
+        * bindings/js/CachedModuleScript.h: Added.
+        (WebCore::CachedModuleScript::moduleKey):
+        (WebCore::CachedModuleScript::error):
+        (WebCore::CachedModuleScript::wasCanceled):
+        (WebCore::CachedModuleScript::isLoaded):
+        (WebCore::CachedModuleScript::nonce):
+        (WebCore::CachedModuleScript::crossOriginMode):
+        Save nonce and crossorigin attributes when we start ScriptElement::prepareScript.
+        * bindings/js/CachedModuleScriptClient.h: Copied from Source/WebCore/dom/LoadableScript.h.
+        (WebCore::CachedModuleScriptClient::~CachedModuleScriptClient):
+        * bindings/js/CachedModuleScriptLoader.cpp: Added.
+        CachedModuleScriptLoader is responsible to fetching the resource for the module script. It uses propagated `initiator`
+        to create the request. This initiator is the JS wrapper of the script element issuing this fetching request. The name
+        `initiator` is derived from the request.setInitiator(). Once the resource is fetched, the fetcher will notify to the
+        client. Currently, ScriptModuleLoader implements this client interface.
+        (WebCore::CachedModuleScriptLoader::create):
+        (WebCore::CachedModuleScriptLoader::CachedModuleScriptLoader):
+        (WebCore::CachedModuleScriptLoader::~CachedModuleScriptLoader):
+        (WebCore::CachedModuleScriptLoader::load):
+        Create the request. We call ScriptElement::requestCachedScript to initiate a new fetching request. At that time,
+        nonce and crossorigin (and charset) attributes of this element are applied to the new request.
+        (WebCore::CachedModuleScriptLoader::notifyFinished):
+        * bindings/js/CachedModuleScriptLoader.h: Copied from Source/WebCore/bindings/js/ScriptModuleLoader.h.
+        * bindings/js/CachedModuleScriptLoaderClient.h: Copied from Source/WebCore/dom/LoadableScript.h.
+        (WebCore::CachedModuleScriptLoaderClient::~CachedModuleScriptLoaderClient):
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::create):
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        (WebCore::makeSource):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::retrieveErrorMessage):
+        (WebCore::reportException):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::loadModule):
+        (WebCore::JSMainThreadExecState::linkAndEvaluateModule):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::loadModuleScript):
+        This just performs loading and not executing the module graph. Once the module graph is loaded, it is notified to
+        the given CachedModuleScript.
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScript):
+        This executes the linking and evaluation of the already instantiated module graph. After loading the module graph,
+        we call this function for the module to evaluate it. This is called from ScriptElement::executeModuleScript.
+        (WebCore::ScriptController::evaluateModule):
+        Every time we evaluate the module, the ScriptModuleLoader::evaluate hook is called. So the loader calls this function
+        to actually evaluate the module.
+        (WebCore::jsValueToModuleKey):
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        The JSC's module loader is driven by the chain of the promise. So here, we convert this to CachedModuleScript /
+        CachedModuleScriptClient style and encapsulate the details. This encapsulation makes CachedModuleScript similar
+        to CachedScript and it makes things simple in the rest of WebCore. If the propagated error is already reported
+        to the inspector, we receive moduleLoaderAlreadyReportedErrorSymbol as the error value. So at that case, we
+        don't report it twice. If the rejection is caused due to the canceled fetching, moduleLoaderFetchingIsCanceledSymbol
+        appears as the error value. In that case, we will call CachedModuleScript::notifyLoadWasCanceled.
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::moduleLoaderAlreadyReportedErrorSymbol):
+        (WebCore::ScriptController::moduleLoaderFetchingIsCanceledSymbol):
+        * bindings/js/ScriptModuleLoader.cpp:
+        We use DeferredWrapper to resolve promises used for the module pipeline. Thus, once the active DOM objects are
+        suspended, the module loader propagation stops.
+        (WebCore::ScriptModuleLoader::~ScriptModuleLoader):
+        Clear the clients of the fetchers issued from this loader.
+        (WebCore::isRootModule):
+        (WebCore::ScriptModuleLoader::resolve):
+        Resolve the module specifier (that is written in `import from "XXX"`) to the unique module key. We use URL
+        string as module key. The edge case is that the module is inlined one. In that case, we don't have any URL
+        for that. Instead of URL, we use symbol at that time.
+        (WebCore::ScriptModuleLoader::fetch):
+        Start fetching for the requested module. It returns the promise that is resolved when the fetching is done.
+        The loader creates the fetcher, and the fetcher start loading the resource. Once the fetcher loads the resource,
+        it notify to the loader through CachedModuleScriptLoaderClient interface. Since we pass the original script
+        element as the `initiator` here, the fetcher can use this initiator to create the request. While the result of
+        CachedResource has 3 variations (loaded, canceled, error occurred), Promise only tells us whether it is resolved
+        or rejected. When CachedModuleScript gets the result from the promise chain, it needs to know which the result is.
+        To transfer the canceled information, we reject the promise with the special symbol `moduleLoaderAlreadyReportedErrorSymbol`.
+        This offers the way to distinguish the canceled error from the other errors.
+        (WebCore::ScriptModuleLoader::evaluate):
+        This is the hook function that is called when JSC's JSModuleLoader attempts to execute each module.
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        This function is called when the fetcher completes. We will resolve the promise with the result of the fetching.
+        The module loader pipeline is constructed as a chain of promises.
+        Rejecting a promise when some error occurs is important because the execution flow of
+        the promise chain is driven by "rejected" or "fulfilled" events.
+        If the promise is not rejected while error occurs, reject handler won't be executed
+        and all the subsequent promise chain will wait the result forever.
+        As a result, even if the error is already reported to the inspector elsewhere,
+        it should be propagated in the pipeline. For example, the error of loading
+        CachedResource is already reported to the inspector by the loader. But we still need
+        to reject the promise to propagate this error to the script element.
+        At that time, we don't want to report the same error twice. When we propagate the error
+        that is already reported to the inspector, we throw moduleLoaderAlreadyReportedErrorSymbol
+        symbol instead. By comparing the thrown error with this symbol, we can distinguish errors raised
+        when checking syntax of a module script from errors reported already.
+        In the reject handler of the promise, we only report a error that is not this symbol.
+        And mime type checking is done here since the module script always require this check.
+        * bindings/js/ScriptModuleLoader.h:
+        (WebCore::ScriptModuleLoader::document): Deleted.
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * dom/CurrentScriptIncrementer.h:
+        (WebCore::CurrentScriptIncrementer::CurrentScriptIncrementer):
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::error):
+        (WebCore::LoadableClassicScript::execute):
+        (WebCore::LoadableClassicScript::wasErrored): Deleted.
+        * dom/LoadableClassicScript.h:
+        * dom/LoadableModuleScript.cpp: Copied from Source/WebCore/dom/LoadableScript.h.
+        This is the derived class from LoadableScript. It is used for the script module graphs.
+        (WebCore::LoadableModuleScript::create):
+        (WebCore::LoadableModuleScript::LoadableModuleScript):
+        (WebCore::LoadableModuleScript::~LoadableModuleScript):
+        (WebCore::LoadableModuleScript::isLoaded):
+        (WebCore::LoadableModuleScript::error):
+        (WebCore::LoadableModuleScript::wasCanceled):
+        (WebCore::LoadableModuleScript::notifyFinished):
+        (WebCore::LoadableModuleScript::execute):
+        * dom/LoadableModuleScript.h: Copied from Source/WebCore/dom/LoadableScript.h.
+        (isType):
+        * dom/LoadableScript.h:
+        (WebCore::LoadableScript::isModuleScript):
+        (WebCore::LoadableScript::isModuleGraph): Deleted.
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::error):
+        (WebCore::PendingScript::wasErrored): Deleted.
+        * dom/PendingScript.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::determineScriptType):
+        (WebCore::ScriptElement::prepareScript):
+        prepareScript is aligned to whatwg spec: the last sequence to setup flags has one-on-one correspondence to
+        the spec now. And prepareScript recognizes the type="module" case and call the requestModuleScript to setup
+        the CachedModuleScript.
+        (WebCore::ScriptElement::requestClassicScript):
+        (WebCore::ScriptElement::requestModuleScript):
+        We use the nonce and crossorigin attributes at the time of preparing the script tag. To do so, we store the
+        above values in CachedModuleScript.
+        Since inlined module scripts does not have "src" attribute, it is also affected by Content Security Policy's
+        inline script rules.
+        (WebCore::ScriptElement::requestScriptWithCacheForModuleScript):
+        The module loader will construct the fetching request by calling this function. This should be here since we
+        would like to set this Element to the initiator of the request. And nonce and crossorigin attributes of this
+        script tag will be used.
+        (WebCore::ScriptElement::requestScriptWithCache):
+        (WebCore::ScriptElement::executeScript):
+        (WebCore::ScriptElement::executeModuleScript):
+        The entry point to execute the module graph. Since the module graph is beyond the multiple CachedScript code,
+        we have the different entry point from ScriptElement::executeScript.
+        (WebCore::ScriptElement::executeScriptAndDispatchEvent):
+        (WebCore::ScriptElement::executeScriptForScriptRunner):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::scriptType):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
+        importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
+        even for the module tags, we handle the "charset" attribute. We explicitly note about it in the preloader.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest):
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::PreloadRequest::PreloadRequest):
+        * html/parser/HTMLScriptRunner.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::notifyFinished):
+
 2016-11-15  Alejandro G. Castro  <alex@igalia.com>
 
         Warning added in r208542

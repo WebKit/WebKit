@@ -232,7 +232,9 @@ void XMLDocumentParser::notifyFinished(CachedResource& unusedResource)
     ASSERT_UNUSED(unusedResource, &unusedResource == m_pendingScript);
     ASSERT(m_pendingScript->accessCount() > 0);
 
-    ScriptSourceCode sourceCode(m_pendingScript.get());
+    // FIXME: Support ES6 modules in XML document.
+    // https://bugs.webkit.org/show_bug.cgi?id=161651
+    ScriptSourceCode sourceCode(m_pendingScript.get(), JSC::SourceProviderSourceType::Program);
     bool errorOccurred = m_pendingScript->errorOccurred();
     bool wasCanceled = m_pendingScript->wasCanceled();
 

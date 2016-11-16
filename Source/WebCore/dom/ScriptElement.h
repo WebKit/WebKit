@@ -37,6 +37,7 @@ class Element;
 class PendingScript;
 class ScriptElement;
 class ScriptSourceCode;
+class CachedModuleScript;
 
 class ScriptElement {
 public:
@@ -51,6 +52,7 @@ public:
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
     void executeScript(const ScriptSourceCode&);
+    void executeModuleScript(CachedModuleScript&);
 
     void executeScriptForScriptRunner(PendingScript&);
 
@@ -64,6 +66,12 @@ public:
     bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
+
+    CachedResourceHandle<CachedScript> requestScriptWithCacheForModuleScript(const URL&);
+
+    // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
+    enum class ScriptType { Classic, Module };
+    ScriptType scriptType() const { return m_isModuleScript ? ScriptType::Module : ScriptType::Classic; }
 
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
@@ -83,15 +91,14 @@ protected:
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
-    // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
-    enum class ScriptType { Classic, Module };
     Optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
     bool ignoresLoadRequest() const;
     bool isScriptForEventSupported() const;
 
-    CachedResourceHandle<CachedScript> requestScriptWithCache(const URL&, const String&);
+    CachedResourceHandle<CachedScript> requestScriptWithCache(const URL&, const String& nonceAttribute, const String& crossoriginAttribute);
 
     bool requestClassicScript(const String& sourceURL);
+    bool requestModuleScript(const TextPosition& scriptStartPosition);
 
     virtual String sourceAttributeValue() const = 0;
     virtual String charsetAttributeValue() const = 0;
@@ -114,6 +121,7 @@ private:
     bool m_willExecuteWhenDocumentFinishedParsing : 1;
     bool m_forceAsync : 1;
     bool m_willExecuteInOrder : 1;
+    bool m_isModuleScript : 1;
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
     RefPtr<LoadableScript> m_loadableScript;

@@ -33,12 +33,17 @@ namespace WebCore {
 class PreloadRequest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    enum class ModuleScript {
+        Yes,
+        No,
+    };
+    PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ModuleScript moduleScript)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute)
+        , m_moduleScript(moduleScript)
     {
     }
 
@@ -60,6 +65,7 @@ private:
     CachedResource::Type m_resourceType;
     String m_mediaAttribute;
     String m_crossOriginMode;
+    ModuleScript m_moduleScript;
 };
 
 typedef Vector<std::unique_ptr<PreloadRequest>> PreloadRequestStream;

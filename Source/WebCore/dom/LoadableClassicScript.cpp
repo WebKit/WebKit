@@ -51,7 +51,7 @@ bool LoadableClassicScript::isLoaded() const
     return m_cachedScript->isLoaded();
 }
 
-Optional<LoadableScript::Error> LoadableClassicScript::wasErrored() const
+Optional<LoadableScript::Error> LoadableClassicScript::error() const
 {
     if (m_error)
         return m_error;
@@ -101,8 +101,8 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
 
 void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
-    ASSERT(!wasErrored());
-    scriptElement.executeScript(ScriptSourceCode(m_cachedScript.get()));
+    ASSERT(!error());
+    scriptElement.executeScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program));
 }
 
 }

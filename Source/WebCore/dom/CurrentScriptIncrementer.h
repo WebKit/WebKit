@@ -43,7 +43,8 @@ public:
         if (!m_isHTMLScriptElement)
             return;
         auto& scriptElement = downcast<HTMLScriptElement>(element);
-        m_document.pushCurrentScript(scriptElement.isInShadowTree() ? nullptr : &scriptElement);
+        bool shouldPushNullForCurrentScript = scriptElement.isInShadowTree() || scriptElement.scriptType() == ScriptElement::ScriptType::Module;
+        m_document.pushCurrentScript(shouldPushNullForCurrentScript ? nullptr : &scriptElement);
     }
 
     ~CurrentScriptIncrementer()

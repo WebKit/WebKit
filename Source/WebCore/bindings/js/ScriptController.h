@@ -42,8 +42,10 @@ class ScriptValue;
 }
 
 namespace JSC {
-class JSGlobalObject;
 class ExecState;
+class JSGlobalObject;
+class JSInternalPromise;
+class JSModuleRecord;
 
 namespace Bindings {
 class Instance;
@@ -53,11 +55,12 @@ class RootObject;
 
 namespace WebCore {
 
+class CachedModuleScript;
 class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
-class ScriptSourceCode;
 class SecurityOrigin;
+class ScriptSourceCode;
 class Widget;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject>> RootObjectMap;
@@ -114,6 +117,17 @@ public:
     JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
     JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
 
+    void loadModuleScriptInWorld(CachedModuleScript&, const String& moduleName, DOMWrapperWorld&, Element&);
+    void loadModuleScript(CachedModuleScript&, const String& moduleName, Element&);
+    void loadModuleScriptInWorld(CachedModuleScript&, const ScriptSourceCode&, DOMWrapperWorld&, Element&);
+    void loadModuleScript(CachedModuleScript&, const ScriptSourceCode&, Element&);
+
+    JSC::JSValue linkAndEvaluateModuleScriptInWorld(CachedModuleScript& , DOMWrapperWorld&, Element&);
+    JSC::JSValue linkAndEvaluateModuleScript(CachedModuleScript&, Element&);
+
+    JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, DOMWrapperWorld&);
+    JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&);
+
     WTF::TextPosition eventHandlerPosition() const;
 
     void enableEval();
@@ -133,6 +147,9 @@ public:
     bool isPaused() const { return m_paused; }
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
+
+    const JSC::PrivateName& moduleLoaderAlreadyReportedErrorSymbol() const { return m_moduleLoaderAlreadyReportedErrorSymbol; }
+    const JSC::PrivateName& moduleLoaderFetchingIsCanceledSymbol() const { return m_moduleLoaderFetchingIsCanceledSymbol; }
 
     void clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache);
     void updateDocument();
@@ -166,6 +183,7 @@ public:
 
 private:
     WEBCORE_EXPORT JSDOMWindowShell* initScript(DOMWrapperWorld&);
+    void setupModuleScriptHandlers(CachedModuleScript&, JSC::JSInternalPromise&, DOMWrapperWorld&);
 
     void disconnectPlatformScriptObjects();
 
@@ -174,6 +192,8 @@ private:
     const String* m_sourceURL;
 
     bool m_paused;
+    JSC::PrivateName m_moduleLoaderAlreadyReportedErrorSymbol;
+    JSC::PrivateName m_moduleLoaderFetchingIsCanceledSymbol;
 
     // The root object used for objects bound outside the context of a plugin, such
     // as NPAPI plugins. The plugins using these objects prevent a page from being cached so they

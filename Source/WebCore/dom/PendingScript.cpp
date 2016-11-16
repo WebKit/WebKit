@@ -83,9 +83,9 @@ bool PendingScript::isLoaded() const
     return m_loadableScript && m_loadableScript->isLoaded();
 }
 
-bool PendingScript::wasErrored() const
+bool PendingScript::error() const
 {
-    return m_loadableScript && m_loadableScript->wasErrored();
+    return m_loadableScript && m_loadableScript->error();
 }
 
 void PendingScript::setClient(PendingScriptClient* client)
