@@ -149,6 +149,18 @@ private:
                 }
                 break;
             }
+
+            case UMod: {
+                if (isARM64()) {
+                    Value* divResult = m_insertionSet.insert<Value>(m_index, UDiv, m_origin, m_value->child(0), m_value->child(1));
+                    Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
+                    Value* result = m_insertionSet.insert<Value>(m_index, Sub, m_origin, m_value->child(0), multipliedBack);
+                    m_value->replaceWithIdentity(result);
+                    m_changed = true;
+                }
+                break;
+            }
+
             case Div: {
                 if (m_value->isChill())
                     makeDivisionChill(Div);

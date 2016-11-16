@@ -78,7 +78,10 @@ enum Opcode : int16_t {
     Sub,
     Mul,
     Div, // All bets are off as to what will happen when you execute this for -2^31/-1 and x/0.
+    UDiv,
     Mod, // All bets are off as to what will happen when you execute this for -2^31%-1 and x%0.
+    UMod,
+
 
     // Polymorphic negation. Note that we only need this for floating point, since integer negation
     // is exactly like Sub(0, x). But that's not true for floating point. Sub(0, 0) is 0, while

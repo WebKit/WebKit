@@ -298,7 +298,17 @@ Value* Value::divConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::uDivConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::modConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::uModConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
@@ -569,7 +579,9 @@ Effects Value::effects() const
     case Select:
         break;
     case Div:
+    case UDiv:
     case Mod:
+    case UMod:
         result.controlDependent = true;
         break;
     case Load8Z:
@@ -675,7 +687,9 @@ ValueKey Value::key() const
     case Sub:
     case Mul:
     case Div:
+    case UDiv:
     case Mod:
+    case UMod:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -753,7 +767,9 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case Sub:
     case Mul:
     case Div:
+    case UDiv:
     case Mod:
+    case UMod:
     case Neg:
     case BitAnd:
     case BitOr:

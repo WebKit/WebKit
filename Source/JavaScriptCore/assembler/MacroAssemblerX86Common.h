@@ -414,6 +414,18 @@ public:
         x86Div32(denominator);
     }
 
+    void x86UDiv32(RegisterID denominator)
+    {
+        m_assembler.divl_r(denominator);
+    }
+
+    void x86UDiv32(RegisterID eax, RegisterID edx, RegisterID denominator)
+    {
+        ASSERT_UNUSED(eax, eax == X86Registers::eax);
+        ASSERT_UNUSED(edx, edx == X86Registers::edx);
+        x86UDiv32(denominator);
+    }
+
     void neg32(RegisterID srcDest)
     {
         m_assembler.negl_r(srcDest);

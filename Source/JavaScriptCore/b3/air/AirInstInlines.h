@@ -240,7 +240,17 @@ inline bool isX86Div32Valid(const Inst& inst)
     return isX86DivHelperValid(inst);
 }
 
+inline bool isX86UDiv32Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
 inline bool isX86Div64Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
+inline bool isX86UDiv64Valid(const Inst& inst)
 {
     return isX86DivHelperValid(inst);
 }

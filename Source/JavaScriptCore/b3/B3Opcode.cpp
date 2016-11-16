@@ -122,8 +122,14 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Div:
         out.print("Div");
         return;
+    case UDiv:
+        out.print("UDiv");
+        return;
     case Mod:
         out.print("Mod");
+        return;
+    case UMod:
+        out.print("UMod");
         return;
     case Neg:
         out.print("Neg");

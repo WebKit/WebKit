@@ -1,3 +1,66 @@
+2016-11-15  Keith Miller  <keith_miller@apple.com>
+
+        B3 should support UDiv/UMod
+        https://bugs.webkit.org/show_bug.cgi?id=164811
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for UDiv and UMod in B3. Many of the magic number
+        cases have been ommited for now since they are unlikely to happen in wasm
+        code. Most wasm code we will see is generated via llvm, which has more
+        robust versions of what we would do anyway. Additionally, this patch
+        links the new opcodes up to the wasm parser.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::uDiv32):
+        (JSC::MacroAssemblerARM64::uDiv64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::x86UDiv32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::x86UDiv64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::divq_r):
+        * b3/B3Common.h:
+        (JSC::B3::chillUDiv):
+        (JSC::B3::chillUMod):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::uDivConstant):
+        (JSC::B3::Const32Value::uModConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::uDivConstant):
+        (JSC::B3::Const64Value::uModConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::lowerX86UDiv):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::uDivConstant):
+        (JSC::B3::Value::uModConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isX86UDiv32Valid):
+        (JSC::B3::Air::isX86UDiv64Valid):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testUDivArgsInt32):
+        (JSC::B3::testUDivArgsInt64):
+        (JSC::B3::testUModArgsInt32):
+        (JSC::B3::testUModArgsInt64):
+        (JSC::B3::run):
+        * wasm/wasm.json:
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Preview other CSS @media in browser window (print)

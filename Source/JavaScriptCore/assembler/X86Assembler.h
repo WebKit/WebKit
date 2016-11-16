@@ -1154,6 +1154,11 @@ public:
     }
 
 #if CPU(X86_64)
+    void divq_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_DIV, dst);
+    }
+
     void idivq_r(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_IDIV, dst);

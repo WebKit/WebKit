@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "JSExportMacros.h"
+#include <wtf/Optional.h>
 
 namespace JSC { namespace B3 {
 
@@ -123,6 +124,28 @@ static IntType chillMod(IntType numerator, IntType denominator)
     if (denominator == -1 && numerator == std::numeric_limits<IntType>::min())
         return 0;
     return numerator % denominator;
+}
+
+template<typename IntType>
+static IntType chillUDiv(IntType numerator, IntType denominator)
+{
+    typedef typename std::make_unsigned<IntType>::type UnsignedIntType;
+    UnsignedIntType unsignedNumerator = static_cast<UnsignedIntType>(numerator);
+    UnsignedIntType unsignedDenominator = static_cast<UnsignedIntType>(denominator);
+    if (!unsignedDenominator)
+        return 0;
+    return unsignedNumerator / unsignedDenominator;
+}
+
+template<typename IntType>
+static IntType chillUMod(IntType numerator, IntType denominator)
+{
+    typedef typename std::make_unsigned<IntType>::type UnsignedIntType;
+    UnsignedIntType unsignedNumerator = static_cast<UnsignedIntType>(numerator);
+    UnsignedIntType unsignedDenominator = static_cast<UnsignedIntType>(denominator);
+    if (!unsignedDenominator)
+        return 0;
+    return unsignedNumerator % unsignedDenominator;
 }
 
 } } // namespace JSC::B3

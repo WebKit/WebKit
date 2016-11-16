@@ -533,6 +533,16 @@ public:
         m_assembler.sdiv<64>(dest, dividend, divisor);
     }
 
+    void uDiv32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.udiv<32>(dest, dividend, divisor);
+    }
+
+    void uDiv64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.udiv<64>(dest, dividend, divisor);
+    }
+
     void neg32(RegisterID dest)
     {
         m_assembler.neg<32>(dest, dest);

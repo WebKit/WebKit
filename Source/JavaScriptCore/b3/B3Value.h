@@ -166,7 +166,9 @@ public:
     virtual Value* checkMulConstant(Procedure&, const Value* other) const;
     virtual Value* checkNegConstant(Procedure&) const;
     virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses Div<Chill> semantics for integers.
+    virtual Value* uDivConstant(Procedure&, const Value* other) const;
     virtual Value* modConstant(Procedure&, const Value* other) const; // This chooses Mod<Chill> semantics.
+    virtual Value* uModConstant(Procedure&, const Value* other) const;
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;
     virtual Value* bitXorConstant(Procedure&, const Value* other) const;
@@ -322,7 +324,9 @@ private:
         case Sub:
         case Mul:
         case Div:
+        case UDiv:
         case Mod:
+        case UMod:
         case BitAnd:
         case BitOr:
         case BitXor:

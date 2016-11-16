@@ -190,7 +190,9 @@ public:
             case Sub:
             case Mul:
             case Div:
+            case UDiv:
             case Mod:
+            case UMod:
             case BitAnd:
             case BitXor:
                 VALIDATE(!value->kind().traps(), ("At ", *value));

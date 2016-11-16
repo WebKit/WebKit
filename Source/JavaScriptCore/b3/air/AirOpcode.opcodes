@@ -251,7 +251,13 @@ arm64: MultiplyNeg64 U:G:64, U:G:64, ZD:G:64
 arm64: Div32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 
+arm64: UDiv32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
 arm64: Div64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: UDiv64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
 MulDouble U:F:64, U:F:64, D:F:64
@@ -297,7 +303,13 @@ x86_64: X86ConvertToQuadWord64 U:G:64, D:G:64
 x86: X86Div32 UZD:G:32, UZD:G:32, U:G:32
     Tmp*, Tmp*, Tmp
 
+x86: X86UDiv32 UZD:G:32, UZD:G:32, U:G:32
+    Tmp*, Tmp*, Tmp
+
 x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
+    Tmp*, Tmp*, Tmp
+
+x86_64: X86UDiv64 UZD:G:64, UZD:G:64, U:G:64
     Tmp*, Tmp*, Tmp
 
 Lea32 UA:G:32, D:G:32

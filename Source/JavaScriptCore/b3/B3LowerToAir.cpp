@@ -2095,17 +2095,29 @@ private:
         case Div: {
             if (m_value->isChill())
                 RELEASE_ASSERT(isARM64());
-#if CPU(X86) || CPU(X86_64)
-            if (isInt(m_value->type())) {
+            if (isInt(m_value->type()) && isX86()) {
                 lowerX86Div();
                 append(Move, Tmp(X86Registers::eax), tmp(m_value));
                 return;
             }
-#endif
             ASSERT(!isX86() || isFloat(m_value->type()));
 
             appendBinOp<Div32, Div64, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
             return;
+        }
+
+        case UDiv: {
+            if (isInt(m_value->type()) && isX86()) {
+                lowerX86UDiv();
+                append(Move, Tmp(X86Registers::eax), tmp(m_value));
+                return;
+            }
+
+            ASSERT(!isX86() && !isFloat(m_value->type()));
+
+            appendBinOp<UDiv32, UDiv64, Air::Oops, Air::Oops>(m_value->child(0), m_value->child(1));
+            return;
+
         }
 
         case Mod: {
@@ -2113,6 +2125,15 @@ private:
             RELEASE_ASSERT(!m_value->isChill());
 #if CPU(X86) || CPU(X86_64)
             lowerX86Div();
+            append(Move, Tmp(X86Registers::edx), tmp(m_value));
+#endif
+            return;
+        }
+
+        case UMod: {
+            RELEASE_ASSERT(isX86());
+#if CPU(X86) || CPU(X86_64)
+            lowerX86UDiv();
             append(Move, Tmp(X86Registers::edx), tmp(m_value));
 #endif
             return;
@@ -2774,9 +2795,9 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-#if CPU(X86) || CPU(X86_64)
     void lowerX86Div()
     {
+#if CPU(X86) || CPU(X86_64)
         Tmp eax = Tmp(X86Registers::eax);
         Tmp edx = Tmp(X86Registers::edx);
 
@@ -2799,8 +2820,26 @@ private:
         append(Move, tmp(m_value->child(0)), eax);
         append(convertToDoubleWord, eax, edx);
         append(div, eax, edx, tmp(m_value->child(1)));
-    }
+#else
+        UNREACHABLE_FOR_PLATFORM();
 #endif
+    }
+
+    void lowerX86UDiv()
+    {
+#if CPU(X86) || CPU(X86_64)
+        Tmp eax = Tmp(X86Registers::eax);
+        Tmp edx = Tmp(X86Registers::edx);
+
+        Air::Opcode div = m_value->type() == Int32 ? X86UDiv32 : X86UDiv64;
+
+        append(Move, tmp(m_value->child(0)), eax);
+        append(Xor64, edx, edx);
+        append(div, eax, edx, tmp(m_value->child(1)));
+#else
+        UNREACHABLE_FOR_PLATFORM();
+#endif
+    }
 
     IndexSet<Value> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
