@@ -3050,52 +3050,52 @@ RenderBlock* RenderBlock::firstLineBlock() const
     return firstLineBlock;
 }
 
-static const RenderStyle& styleForFirstLetter(RenderElement* firstLetterBlock, RenderObject* firstLetterContainer)
+static RenderStyle styleForFirstLetter(const RenderElement& firstLetterBlock, const RenderObject& firstLetterContainer)
 {
-    auto* pseudoStyle = firstLetterBlock->getMutableCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer->firstLineStyle());
-    
+    auto firstLetterStyle = RenderStyle::clone(*firstLetterBlock.getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer.firstLineStyle()));
+
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
-    if (pseudoStyle->initialLetterDrop() >= 1 && !pseudoStyle->isFloating())
-        pseudoStyle->setFloating(pseudoStyle->isLeftToRightDirection() ? LeftFloat : RightFloat);
+    if (firstLetterStyle.initialLetterDrop() >= 1 && !firstLetterStyle.isFloating())
+        firstLetterStyle.setFloating(firstLetterStyle.isLeftToRightDirection() ? LeftFloat : RightFloat);
 
     // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
-    RenderObject* paragraph = firstLetterContainer->isRenderBlockFlow() ? firstLetterContainer : firstLetterContainer->containingBlock();
-    if (pseudoStyle->initialLetterHeight() >= 1 && pseudoStyle->fontMetrics().hasCapHeight() && paragraph->style().fontMetrics().hasCapHeight()) {
+    auto* paragraph = firstLetterContainer.isRenderBlockFlow() ? &firstLetterContainer : firstLetterContainer.containingBlock();
+    if (firstLetterStyle.initialLetterHeight() >= 1 && firstLetterStyle.fontMetrics().hasCapHeight() && paragraph->style().fontMetrics().hasCapHeight()) {
         // FIXME: For ideographic baselines, we want to go from line edge to line edge. This is equivalent to (N-1)*line-height + the font height.
         // We don't yet support ideographic baselines.
         // For an N-line first-letter and for alphabetic baselines, the cap-height of the first letter needs to equal (N-1)*line-height of paragraph lines + cap-height of the paragraph
         // Mathematically we can't rely on font-size, since font().height() doesn't necessarily match. For reliability, the best approach is simply to
         // compare the final measured cap-heights of the two fonts in order to get to the closest possible value.
-        pseudoStyle->setLineBoxContain(LineBoxContainInitialLetter);
+        firstLetterStyle.setLineBoxContain(LineBoxContainInitialLetter);
         int lineHeight = paragraph->style().computedLineHeight();
         
         // Set the font to be one line too big and then ratchet back to get to a precise fit. We can't just set the desired font size based off font height metrics
         // because many fonts bake ascent into the font metrics. Therefore we have to look at actual measured cap height values in order to know when we have a good fit.
-        auto newFontDescription = pseudoStyle->fontDescription();
-        float capRatio = pseudoStyle->fontMetrics().floatCapHeight() / pseudoStyle->fontSize();
-        float startingFontSize = ((pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight()) / capRatio;
+        auto newFontDescription = firstLetterStyle.fontDescription();
+        float capRatio = firstLetterStyle.fontMetrics().floatCapHeight() / firstLetterStyle.fontSize();
+        float startingFontSize = ((firstLetterStyle.initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
         newFontDescription.setComputedSize(startingFontSize);
-        pseudoStyle->setFontDescription(newFontDescription);
-        pseudoStyle->fontCascade().update(pseudoStyle->fontCascade().fontSelector());
+        firstLetterStyle.setFontDescription(newFontDescription);
+        firstLetterStyle.fontCascade().update(firstLetterStyle.fontCascade().fontSelector());
         
-        int desiredCapHeight = (pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight();
-        int actualCapHeight = pseudoStyle->fontMetrics().capHeight();
+        int desiredCapHeight = (firstLetterStyle.initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight();
+        int actualCapHeight = firstLetterStyle.fontMetrics().capHeight();
         while (actualCapHeight > desiredCapHeight) {
-            auto newFontDescription = pseudoStyle->fontDescription();
+            auto newFontDescription = firstLetterStyle.fontDescription();
             newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
             newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
-            pseudoStyle->setFontDescription(newFontDescription);
-            pseudoStyle->fontCascade().update(pseudoStyle->fontCascade().fontSelector());
-            actualCapHeight = pseudoStyle->fontMetrics().capHeight();
+            firstLetterStyle.setFontDescription(newFontDescription);
+            firstLetterStyle.fontCascade().update(firstLetterStyle.fontCascade().fontSelector());
+            actualCapHeight = firstLetterStyle.fontMetrics().capHeight();
         }
     }
     
     // Force inline display (except for floating first-letters).
-    pseudoStyle->setDisplay(pseudoStyle->isFloating() ? BLOCK : INLINE);
+    firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? BLOCK : INLINE);
     // CSS2 says first-letter can't be positioned.
-    pseudoStyle->setPosition(StaticPosition);
-    return *pseudoStyle;
+    firstLetterStyle.setPosition(StaticPosition);
+    return firstLetterStyle;
 }
 
 // CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
@@ -3135,16 +3135,16 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
 {
     RenderElement* firstLetter = currentChild->parent();
     RenderElement* firstLetterContainer = firstLetter->parent();
-    auto& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    auto pseudoStyle = styleForFirstLetter(*firstLetterBlock, *firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
     if (Style::determineChange(firstLetter->style(), pseudoStyle) == Style::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle.display() == INLINE)
-            newFirstLetter = new RenderInline(document(), RenderStyle::clone(pseudoStyle));
+            newFirstLetter = new RenderInline(document(), WTFMove(pseudoStyle));
         else
-            newFirstLetter = new RenderBlockFlow(document(), RenderStyle::clone(pseudoStyle));
+            newFirstLetter = new RenderBlockFlow(document(), WTFMove(pseudoStyle));
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
@@ -3170,18 +3170,18 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
     } else
-        firstLetter->setStyle(RenderStyle::clone(pseudoStyle));
+        firstLetter->setStyle(WTFMove(pseudoStyle));
 }
 
 void RenderBlock::createFirstLetterRenderer(RenderElement* firstLetterBlock, RenderText* currentTextChild)
 {
     RenderElement* firstLetterContainer = currentTextChild->parent();
-    auto& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    auto pseudoStyle = styleForFirstLetter(*firstLetterBlock, *firstLetterContainer);
     RenderBoxModelObject* firstLetter = nullptr;
     if (pseudoStyle.display() == INLINE)
-        firstLetter = new RenderInline(document(), RenderStyle::clone(pseudoStyle));
+        firstLetter = new RenderInline(document(), WTFMove(pseudoStyle));
     else
-        firstLetter = new RenderBlockFlow(document(), RenderStyle::clone(pseudoStyle));
+        firstLetter = new RenderBlockFlow(document(), WTFMove(pseudoStyle));
     firstLetter->initializeStyle();
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 

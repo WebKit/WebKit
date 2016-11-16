@@ -1530,21 +1530,6 @@ const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const Re
     return nullptr;
 }
 
-RenderStyle* RenderElement::getMutableCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle)
-{
-    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
-        return nullptr;
-
-    RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
-    if (cachedStyle)
-        return cachedStyle;
-
-    std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
-    if (result)
-        return m_style.addCachedPseudoStyle(WTFMove(result));
-    return nullptr;
-}
-
 std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
 {
     if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))

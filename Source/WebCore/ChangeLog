@@ -1,3 +1,26 @@
+2016-11-16  Antti Koivisto  <antti@apple.com>
+
+        Remove getMutableCachedPseudoStyle
+        https://bugs.webkit.org/show_bug.cgi?id=164819
+
+        Reviewed by Zalan Bujtas.
+
+        It is only used by styleForFirstLetter.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter):
+
+            Clone the original style before mutations.
+
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+
+            Since we have a clone already just move it in place.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getMutableCachedPseudoStyle): Deleted.
+        * rendering/RenderElement.h:
+
 2016-11-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableByteStreamController close()
