@@ -1,3 +1,17 @@
+2016-11-16  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::durationChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::currentTimeChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::rateChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::beginScrubbing):
+        (WebCore::WebPlaybackSessionInterfaceMac::seekableRangesChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::ensureControlsManager):
+
 2016-11-16  Brady Eidson  <beidson@apple.com>
 
         Re-indent some old headers.
