@@ -92,6 +92,7 @@ private:
 };
 
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
+bool hasAttribute(const Vector<Attribute>&, const AtomicString& localName);
 
 inline HTMLToken::Type AtomicHTMLToken::type() const
 {
@@ -181,6 +182,15 @@ inline const Attribute* findAttribute(const Vector<Attribute>& attributes, const
     return nullptr;
 }
 
+inline bool hasAttribute(const Vector<Attribute>& attributes, const AtomicString& localName)
+{
+    for (auto& attribute : attributes) {
+        if (attribute.localName() == localName)
+            return true;
+    }
+    return false;
+}
+
 inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList& attributes)
 {
     unsigned size = attributes.size();
@@ -192,11 +202,11 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
         if (attribute.name.isEmpty())
             continue;
 
-        QualifiedName name(nullAtom, AtomicString(attribute.name), nullAtom);
+        AtomicString localName(attribute.name);
 
         // FIXME: This is N^2 for the number of attributes.
-        if (!findAttribute(m_attributes, name))
-            m_attributes.append(Attribute(name, AtomicString(attribute.value)));
+        if (!hasAttribute(m_attributes, localName))
+            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom, localName, nullAtom), AtomicString(attribute.value)));
     }
 }
 

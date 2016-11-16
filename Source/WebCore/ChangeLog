@@ -1,3 +1,23 @@
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Micro-optimize AtomicHTMLToken::initializeAttributes()
+        https://bugs.webkit.org/show_bug.cgi?id=164826
+
+        Reviewed by Sam Weinig.
+
+        Micro-optimize AtomicHTMLToken::initializeAttributes():
+        - Use uncheckedAppend() instead of append() since we reserve capacity
+          before the loop.
+        - Use a more efficient findAttribute() that only checks the local names
+          since this function only adds attributes that have to namespace or
+          prefix.
+
+        No new tests, no Web-exposed behavior change.
+
+        * html/parser/AtomicHTMLToken.h:
+        (WebCore::hasAttribute):
+        (WebCore::AtomicHTMLToken::initializeAttributes):
+
 2016-11-16  Beth Dakin  <bdakin@apple.com>
 
         Another build fix.
