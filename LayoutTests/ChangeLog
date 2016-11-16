@@ -1,5 +1,14 @@
 2016-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=161650
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-11-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip fast/forms/search-cancel-button-change-input.html on ios-simulator since the test relies upon mouse events.
 
         Unreviewed test gardening.
