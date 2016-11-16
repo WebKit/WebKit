@@ -47,15 +47,6 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSo
     return adoptRef(*new MediaStreamTrackPrivate(WTFMove(source), WTFMove(id)));
 }
 
-MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)
-    : m_source(other.m_source.copyRef())
-    , m_id(createCanonicalUUIDString())
-    , m_isEnabled(other.enabled())
-    , m_isEnded(other.ended())
-{
-    m_source->addObserver(this);
-}
-
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&& source, String&& id)
     : m_source(WTFMove(source))
     , m_id(WTFMove(id))
@@ -132,7 +123,12 @@ void MediaStreamTrackPrivate::endTrack()
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
 {
-    return adoptRef(*new MediaStreamTrackPrivate(*this));
+    auto clonedMediaStreamTrackPrivate = create(m_source.copyRef());
+    clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
+    clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
+    clonedMediaStreamTrackPrivate->m_constraints = this->m_constraints;
+
+    return clonedMediaStreamTrackPrivate;
 }
 
 RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const

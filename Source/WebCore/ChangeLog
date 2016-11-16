@@ -1,3 +1,20 @@
+2016-11-15  Alejandro G. Castro  <alex@igalia.com>
+
+        Warning added in r208542
+        https://bugs.webkit.org/show_bug.cgi?id=164636
+
+        Reviewed by Eric Carlson.
+
+        Deleted the copy constructor, we now explicitly copy the object in
+        the clone method.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp: Delete the
+        copy constructor.
+        (WebCore::MediaStreamTrackPrivate::clone): Copy the relevant
+        information for the clone operation in the API.
+        * platform/mediastream/MediaStreamTrackPrivate.h: Delete the copy
+        constructor.
+
 2016-11-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add more assertions to ElementQueue diagnose a bug

@@ -98,7 +98,6 @@ public:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
 private:
-    explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);
     MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&&, String&& id);
 
     // RealtimeMediaSourceObserver
