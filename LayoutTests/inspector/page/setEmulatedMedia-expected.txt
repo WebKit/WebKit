@@ -1,5 +1,18 @@
-CONSOLE MESSAGE: line 7: ReferenceError: Can't find variable: objectThatDoesNotExist
-CONSOLE MESSAGE: line 7: ReferenceError: Can't find variable: objectThatDoesNotExist
-Test that uncaught exception in MediaQueryListListener will be reported to the console. On success you should see two exceptions in the listener logged to the console (first time when the media type is overridden and second - when they are restored). Bug 105162.
+Tests for the Page.setEmulatedMedia command.
 
+
+== Running test suite: Page.setEmulatedMedia
+-- Running test case: Page.setEmulatedMedia.initial
+PASS: Page should not match print media.
+PASS: Body color should be blue.
+
+-- Running test case: Page.setEmulatedMedia.print
+PASS: MediaQueryList listesner fired.
+PASS: Page should now match print media.
+PASS: Body color should be green.
+
+-- Running test case: Page.setEmulatedMedia.reset
+PASS: MediaQueryList listesner fired.
+PASS: Page should now not match print media.
+PASS: Page should now match print media.
 

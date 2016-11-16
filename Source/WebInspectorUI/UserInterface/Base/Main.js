@@ -179,6 +179,10 @@ WebInspector.loaded = function()
     if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
         PageAgent.setShowPaintRects(true);
 
+    this.showPrintStylesSetting = new WebInspector.Setting("show-print-styles", false);
+    if (this.showPrintStylesSetting.value && window.PageAgent)
+        PageAgent.setEmulatedMedia("print");
+
     this._zoomFactorSetting = new WebInspector.Setting("zoom-factor", 1);
     this._setZoomFactor(this._zoomFactorSetting.value);
 

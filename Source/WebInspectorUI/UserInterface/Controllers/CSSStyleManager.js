@@ -253,6 +253,12 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         }
     }
 
+    mediaTypeChanged()
+    {
+        // Act the same as if media queries changed.
+        this.mediaQueryResultChanged();
+    }
+
     // Protected
 
     mediaQueryResultChanged()

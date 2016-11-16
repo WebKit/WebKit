@@ -216,10 +216,10 @@
         },
         {
             "name": "setEmulatedMedia",
+            "description": "Emulates the given media for CSS media queries.",
             "parameters": [
                 { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
-            ],
-            "description": "Emulates the given media for CSS media queries."
+            ]
         },
         {
             "name": "getCompositingBordersVisible",

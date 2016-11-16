@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: objectThatDoesNotExist
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: objectThatDoesNotExist
+Test that uncaught exception in MediaQueryListListener will be reported to the console. On success you should see two exceptions in the listener logged to the console (first time when the media type is overridden and second - when they are restored). Bug 105162.
+
+

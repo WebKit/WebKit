@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
 <svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <path d="m1 14.5 3-3h11l-3 3z"/>
- <path d="m1 9.5 3-3h11l-3 3z"/>
- <path d="m1 4.5 3-3h11l-3 3z"/>
+ <path fill="currentColor" d="m1 14.5 3-3h11l-3 3z"/>
+ <path fill="currentColor" d="m1 9.5 3-3h11l-3 3z"/>
+ <path fill="currentColor" d="m1 4.5 3-3h11l-3 3z"/>
  <path fill="#bebebe" d="m4.5569 2.0969-1.8062 1.8062h8.6925l1.8062-1.8062h-8.6925z"/>
 </svg>

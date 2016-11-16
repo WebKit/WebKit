@@ -1,3 +1,19 @@
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Preview other CSS @media in browser window (print)
+        https://bugs.webkit.org/show_bug.cgi?id=13530
+        <rdar://problem/5712928>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/page/media-query-list-listener-exception-expected.txt: Copied from LayoutTests/inspector/page/setEmulatedMedia-expected.txt.
+        * inspector/page/media-query-list-listener-exception.html: Copied from LayoutTests/inspector/page/setEmulatedMedia.html.
+        Rename this test which is about swallowing exceptions and happened to use inspector code.
+
+        * inspector/page/setEmulatedMedia-expected.txt:
+        * inspector/page/setEmulatedMedia.html:
+        Test for Page.setEmulatedMedia command.
+
 2016-11-15  Jon Lee  <jonlee@apple.com>
 
         Report active video and audio capture devices separately

@@ -1,3 +1,44 @@
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and untested Page.setTouchEmulationEnabled command
+        https://bugs.webkit.org/show_bug.cgi?id=164793
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Tooltips for new button.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        New global setting.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype.get navigationItems):
+        (WebInspector.DOMTreeContentView.prototype._showPrintStylesSettingChanged):
+        (WebInspector.DOMTreeContentView.prototype._togglePrintStylesSetting):
+        New navigation bar button to toggle print styles.
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.prototype.mediaTypeChanged):
+        After toggling styles we will need to refresh styles, so provide
+        a meaningful way to trigger refreshing styles from the frontend.
+
+        * UserInterface/Images/Printer.svg: Added.
+        * UserInterface/Images/gtk/Printer.svg: Added.
+        New Printer icon for enabling / disabling print styles.
+
+        * UserInterface/Images/gtk/Crosshair.svg:
+        * UserInterface/Images/gtk/LayerBorders.svg:
+        * UserInterface/Images/gtk/NavigationItemCurleyBraces.svg:
+        * UserInterface/Images/gtk/NavigationItemTypes.svg:
+        * UserInterface/Images/gtk/PaintFlashing.svg:
+        * UserInterface/Images/gtk/ShadowDOM.svg:
+        * UserInterface/Images/gtk/ToggleLeftSidebar.svg:
+        * UserInterface/Images/gtk/ToggleRightSidebar.svg:
+        * UserInterface/Images/gtk/UpDownArrows.svg:
+        Fix a number of existing GTK images to have activated styles.
+
 2016-11-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r208248): Web Inspector: Pressing Left Arrow breaks autocomplete

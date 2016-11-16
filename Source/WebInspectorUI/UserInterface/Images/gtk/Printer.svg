@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+ <path fill="currentColor" d="M 4 5 L 4 1 L 12 1 L 12 5 L 11 5 L 11 2 L 5 2 L 5 5 Z"/>
+ <path fill="currentColor" d="M 4 10 L 4 14 L 12 14 L 12 10 L 11 10 L 11 13 L 5 13 L 5 10 Z"/>
+ <path fill="currentColor" d="M 3 9 L 3 12 L 0.5 12 L 0.5 5.5 L 15.5 5.5 L 15.5 12 L 13 12 L 13 9 Z"/>
+</svg>
