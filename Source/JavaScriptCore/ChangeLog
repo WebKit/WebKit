@@ -1,3 +1,26 @@
+2016-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Slight Octane regression from concurrent GC's eager object zero-fill
+        https://bugs.webkit.org/show_bug.cgi?id=164823
+
+        Reviewed by Geoffrey Garen.
+        
+        During concurrent GC, we need to eagerly zero-fill objects we allocate prior to
+        executing the end-of-allocation fence. This causes some regressions. This is an attempt
+        to fix those regressions by making them conditional on whether the mutator is fenced.
+        
+        This is a slight speed-up on raytrace and boyer, and hopefully it will fix the
+        regression.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::splatWordsIfMutatorIsFenced):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::mutatorFence):
+        (JSC::FTL::DFG::LowerDFGToB3::setButterfly):
+
 2016-11-16  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope checking in JSGlobalObject.cpp.

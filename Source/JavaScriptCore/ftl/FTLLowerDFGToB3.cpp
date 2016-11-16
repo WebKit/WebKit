@@ -8134,7 +8134,7 @@ private:
                 
                 ValueFromBlock haveButterfly = m_out.anchor(fastButterflyValue);
                 
-                splatWords(
+                splatWordsIfMutatorIsFenced(
                     fastButterflyValue,
                     m_out.constInt32(-structure->outOfLineCapacity() - 1),
                     m_out.constInt32(-1),
@@ -8960,6 +8960,25 @@ private:
         splatWords(butterfly, begin, end, hole, heap->atAnyIndex());
     }
     
+    void splatWordsIfMutatorIsFenced(LValue base, LValue begin, LValue end, LValue value, const AbstractHeap& heap)
+    {
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        m_out.branch(
+            m_out.load8ZeroExt32(m_out.absolute(vm().heap.addressOfMutatorShouldBeFenced())),
+            rarely(slowPath), usually(continuation));
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        splatWords(base, begin, end, value, heap);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+    }
+    
     void splatWords(LValue base, LValue begin, LValue end, LValue value, const AbstractHeap& heap)
     {
         const uint64_t unrollingLimit = 10;
@@ -9013,7 +9032,7 @@ private:
         
         LValue result = allocatePropertyStorageWithSizeImpl(initialOutOfLineCapacity);
 
-        splatWords(
+        splatWordsIfMutatorIsFenced(
             result,
             m_out.constInt32(-initialOutOfLineCapacity - 1), m_out.constInt32(-1),
             m_out.int64Zero, m_heaps.properties.atAnyNumber());
@@ -9046,7 +9065,7 @@ private:
             m_out.storePtr(loaded, m_out.address(m_heaps.properties.atAnyNumber(), result, offset));
         }
         
-        splatWords(
+        splatWordsIfMutatorIsFenced(
             result,
             m_out.constInt32(-newSize - 1), m_out.constInt32(-oldSize - 1),
             m_out.int64Zero, m_heaps.properties.atAnyNumber());
@@ -9926,7 +9945,7 @@ private:
         LValue allocator, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
-        splatWords(
+        splatWordsIfMutatorIsFenced(
             result,
             m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8),
             m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + structure->inlineCapacity()),
@@ -12585,7 +12604,7 @@ private:
             m_out.load8ZeroExt32(m_out.absolute(vm().heap.addressOfMutatorShouldBeFenced())),
             rarely(slowPath), usually(continuation));
         
-        m_out.appendTo(slowPath);
+        m_out.appendTo(slowPath, continuation);
         
         m_out.fence(&m_heaps.root, nullptr);
         m_out.jump(continuation);
@@ -12612,12 +12631,12 @@ private:
             m_out.load8ZeroExt32(m_out.absolute(vm().heap.addressOfMutatorShouldBeFenced())),
             rarely(slowPath), usually(fastPath));
 
-        m_out.appendTo(fastPath);
+        m_out.appendTo(fastPath, slowPath);
         
         m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
         m_out.jump(continuation);
         
-        m_out.appendTo(slowPath);
+        m_out.appendTo(slowPath, continuation);
         
         m_out.fence(&m_heaps.root, nullptr);
         m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
