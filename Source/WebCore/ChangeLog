@@ -1,3 +1,17 @@
+2016-11-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS API test assertion after r208534
+        https://bugs.webkit.org/show_bug.cgi?id=164751
+
+        Reviewed by Geoffrey Garen.
+
+        This removes a firing assertion in the WebKit1.AudioSessionCategoryIOS API test on the iOS simulator.
+
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::setLowMemoryHandler):
+        This assertion is no longer valid because we are using m_installed to determine if m_lowMemoryHandler xor m_releaseMemoryBlock is set,
+        and we should be setting both right now on iOS and they are both useful in freeing memory. These should be united.
+
 2016-11-15  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Key collation during SQLite lookups is insanely slow.

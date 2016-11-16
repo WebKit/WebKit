@@ -69,7 +69,6 @@ public:
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
-        ASSERT(!m_installed);
         m_lowMemoryHandler = WTFMove(handler);
     }
 
