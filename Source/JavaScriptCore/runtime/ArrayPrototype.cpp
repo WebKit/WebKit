@@ -667,7 +667,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
         return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
     }
 
-    return JSValue::encode(fastJoin(*exec, thisObject, jsSeparator->view(exec).get(), length));
+    auto viewWithString = jsSeparator->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
+    return JSValue::encode(fastJoin(*exec, thisObject, viewWithString.view, length));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)

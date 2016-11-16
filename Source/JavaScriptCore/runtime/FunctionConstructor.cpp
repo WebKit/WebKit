@@ -123,13 +123,19 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         builder.append(prefix);
         builder.append(functionName.string());
         builder.append('(');
-        builder.append(args.at(0).toString(exec)->view(exec).get());
+        auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(*exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        builder.append(viewWithString.view);
         for (size_t i = 1; i < args.size() - 1; i++) {
             builder.appendLiteral(", ");
-            builder.append(args.at(i).toString(exec)->view(exec).get());
+            auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(*exec);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            builder.append(viewWithString.view);
         }
         builder.appendLiteral(") {\n");
-        builder.append(args.at(args.size() - 1).toString(exec)->view(exec).get());
+        viewWithString = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(*exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        builder.append(viewWithString.view);
         builder.appendLiteral("\n}}");
         program = builder.toString();
     }

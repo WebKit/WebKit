@@ -1,3 +1,48 @@
+2016-11-15  Mark Lam  <mark.lam@apple.com>
+
+        Remove JSString::SafeView and replace its uses with StringViewWithUnderlyingString.
+        https://bugs.webkit.org/show_bug.cgi?id=164777
+
+        Reviewed by Geoffrey Garen.
+
+        JSString::SafeView no longer achieves its intended goal to make it easier to
+        handle strings safely.  Its clients still need to do explicit exception checks in
+        order to be correct.  We'll remove it and replace its uses with
+        StringViewWithUnderlyingString instead which serves to gets the a StringView
+        (which is what we really wanted from SafeView) and keeps the backing String alive
+        while the view is in use.
+
+        Also added some missing exception checks.
+
+        * jsc.cpp:
+        (printInternal):
+        (functionDebug):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::toStringView):
+        (JSC::globalFuncParseFloat):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSString.h:
+        (JSC::JSString::SafeView::is8Bit): Deleted.
+        (JSC::JSString::SafeView::length): Deleted.
+        (JSC::JSString::SafeView::SafeView): Deleted.
+        (JSC::JSString::SafeView::get): Deleted.
+        (JSC::JSString::view): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncNormalize):
+
 2016-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, remove bogus assertion.

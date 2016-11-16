@@ -812,8 +812,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
     ASSERT(repeatCount >= 0);
     ASSERT(!repeatCountValue.isDouble() || repeatCountValue.asDouble() == repeatCount);
 
-    JSString::SafeView safeView = string->view(exec);
-    StringView view = safeView.get();
+    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    StringView view = viewWithString.view;
     ASSERT(view.length() == 1 && !scope.exception());
     UChar character = view[0];
     scope.release();
@@ -906,10 +906,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    JSString::SafeView string = thisValue.toString(exec)->view(exec);
+    auto viewWithString = thisValue.toString(exec)->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    StringView view = string.get();
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    StringView view = viewWithString.view;
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -931,11 +930,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    JSString* jsString = thisValue.toString(exec);
+    auto viewWithString = thisValue.toString(exec)->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSString::SafeView string = jsString->view(exec);
-    StringView view = string.get();
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    StringView view = viewWithString.view;
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -1035,7 +1032,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     if (thisJSString->length() < otherJSString->length() + pos)
         return JSValue::encode(jsNumber(-1));
 
-    size_t result = thisJSString->view(exec).get().find(otherJSString->view(exec).get(), pos);
+    auto thisViewWithString = thisJSString->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto otherViewWithString = otherJSString->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -2016,10 +2017,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    JSString::SafeView source = thisValue.toString(exec)->view(exec);
+    auto viewWithString = thisValue.toString(exec)->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    StringView view = source.get();
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    StringView view = viewWithString.view;
 
     UNormalizationMode form = UNORM_NFC;
     // Verify that the argument is provided and is not undefined.

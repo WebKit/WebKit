@@ -65,10 +65,9 @@ static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)
     JSString* string = value.toStringOrNull(exec);
     if (UNLIKELY(!string))
         return { };
-    JSString::SafeView view = string->view(exec);
-    StringView stringView = view.get();
+    auto viewWithString = string->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, { });
-    return callback(stringView);
+    return callback(viewWithString.view);
 }
 
 template<unsigned charactersCount>
@@ -718,7 +717,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->view(exec).get())));
+    auto viewWithString = exec->argument(0).toString(exec)->viewWithUnderlyingString(*exec);
+    return JSValue::encode(jsNumber(parseFloat(viewWithString.view)));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)

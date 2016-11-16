@@ -287,7 +287,9 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecStat
 
     if (thisObject->isNeutered())
         return throwVMTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-    return joinWithSeparator(separatorString->view(exec).get());
+    auto viewWithString = separatorString->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return joinWithSeparator(viewWithString.view);
 }
 
 template<typename ViewClass>

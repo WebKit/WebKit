@@ -150,8 +150,6 @@ public:
     AtomicString toAtomicString(ExecState*) const;
     RefPtr<AtomicStringImpl> toExistingAtomicString(ExecState*) const;
 
-    class SafeView;
-    SafeView view(ExecState*) const;
     StringViewWithUnderlyingString viewWithUnderlyingString(ExecState&) const;
 
     inline bool equal(ExecState*, JSString* other) const;
@@ -475,24 +473,6 @@ private:
     friend JSString* jsString(ExecState*, const String&, const String&, const String&);
 };
 
-class JSString::SafeView {
-public:
-    explicit SafeView(ExecState&, const JSString&);
-    StringView get() const;
-
-    bool is8Bit() const { return m_string->is8Bit(); }
-    unsigned length() const { return m_string->length(); }
-
-private:
-    ExecState& m_state;
-
-    // The following pointer is marked "volatile" to make the compiler leave it on the stack
-    // or in a register as long as this object is alive, even after the last use of the pointer.
-    // That's needed to prevent garbage collecting the string and possibly deleting the block
-    // with the characters in it, and then using the StringView after that.
-    const JSString* volatile m_string;
-};
-
 JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
 
 inline const StringImpl* JSString::tryGetValueImpl() const
@@ -757,22 +737,6 @@ ALWAYS_INLINE StringViewWithUnderlyingString JSString::viewWithUnderlyingString(
 inline bool JSString::isSubstring() const
 {
     return isRope() && static_cast<const JSRopeString*>(this)->isSubstring();
-}
-
-inline JSString::SafeView::SafeView(ExecState& state, const JSString& string)
-    : m_state(state)
-    , m_string(&string)
-{
-}
-
-inline StringView JSString::SafeView::get() const
-{
-    return m_string->unsafeView(m_state);
-}
-
-ALWAYS_INLINE JSString::SafeView JSString::view(ExecState* exec) const
-{
-    return SafeView(*exec, *this);
 }
 
 // --- JSValue inlines ----------------------------

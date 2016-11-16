@@ -98,7 +98,12 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 9. Return CompareStrings(collator, X, Y).
-    return JSValue::encode(collator->compareStrings(*state, x->view(state).get(), y->view(state).get()));
+    auto xViewWithString = x->viewWithUnderlyingString(*state);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto yViewWithString = y->viewWithUnderlyingString(*state);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
+    return JSValue::encode(collator->compareStrings(*state, xViewWithString.view, yViewWithString.view));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state)

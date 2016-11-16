@@ -761,10 +761,9 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 
     if (!exec->argumentCount())
         return throwVMError(exec, scope, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
-    JSString::SafeView source = exec->uncheckedArgument(0).toString(exec)->view(exec);
+    auto viewWithString = exec->uncheckedArgument(0).toString(exec)->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    StringView view = source.get();
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    StringView view = viewWithString.view;
 
     JSValue unfiltered;
     LocalScope localScope(vm);
