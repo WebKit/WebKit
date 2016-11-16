@@ -1,3 +1,17 @@
+2016-11-16  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope checking in JSGlobalObject.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164831
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        - Use a CatchScope here because we don't ever expect JSGlobalObject initialization
+          to fail with errors.
+        (JSC::JSGlobalObject::put):
+        - Fix exception check requirements.
+
 2016-11-16  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, ARM build fix.
