@@ -1,3 +1,21 @@
+2016-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert renaming useConcurrentJIT to useConcurrentJS.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/WriteBarrierInlines.h:
+        (JSC::WriteBarrierBase<T>::set):
+        (JSC::WriteBarrierBase<Unknown>::set):
+
 2016-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Debugging and other tools should not disable the code cache

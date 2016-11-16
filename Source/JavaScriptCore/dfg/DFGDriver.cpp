@@ -100,7 +100,7 @@ static CompilationResult compileImpl(
         new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
     
     plan->callback = callback;
-    if (Options::useConcurrentJS()) {
+    if (Options::useConcurrentJIT()) {
         Worklist& worklist = ensureGlobalWorklistFor(mode);
         if (logCompilationChanges(mode))
             dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", worklist.queueLength(), ".\n");
