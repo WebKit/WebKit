@@ -1,3 +1,19 @@
+2016-11-16  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r208672): Crash in com.apple.WebCore: WebCore::DatabaseContext::stopDatabases + 34
+        https://bugs.webkit.org/show_bug.cgi?id=164820
+
+        Reviewed by Sam Weinig.
+
+        Crash seen in existing regression tests; reliably reproducible in some test configurations.
+
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::contextDestroyed): Call through to base class before calling
+        stopDatabases, since that might cause this object to be deallocated.
+        (WebCore::DatabaseContext::stopDatabases): Be sure not to clear the possibly-last reference
+        to this database context until after all code that accesses data members, since it might
+        cause this object to be deallocated.
+
 2016-11-16  Beth Dakin  <bdakin@apple.com>
 
         Implement WebPlaybackControlsManager
