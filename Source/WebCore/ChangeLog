@@ -1,3 +1,20 @@
+2016-11-16  Brady Eidson  <beidson@apple.com>
+
+        Re-indent some old headers.
+
+        Rubberstamped by Alex Christensen 
+
+        No new tests (No behavior change).
+
+        (Also #pragma once a few of them)
+
+        * loader/DocumentLoader.h:
+        * loader/FrameLoaderClient.h:
+        * page/Frame.h:
+        * page/FrameTree.h:
+        * page/PageGroup.h:
+        * platform/Cursor.h:
+
 2016-11-16  Darin Adler  <darin@apple.com>
 
         REGRESSION (r208672): Crash in com.apple.WebCore: WebCore::DatabaseContext::stopDatabases + 34
