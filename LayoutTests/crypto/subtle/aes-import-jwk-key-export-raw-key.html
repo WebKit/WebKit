@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK AES-CBC key with legnth 128 and then export it in raw format");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "oct",
+    k: "KbXExKw7lIKkvDHi4ud3lg",
+    alg: "A128CBC",
+    key_ops: ["decrypt", "encrypt", "unwrapKey", "wrapKey"],
+    ext: true,
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(cryptoKey) {
+    debug("Exporting a key...");
+    return crypto.subtle.exportKey("raw", cryptoKey);
+}).then(function(result) {
+    exportedRawKey = new Uint8Array(result);
+
+    shouldBe("Base64URL.stringify(exportedRawKey)", "jwkKey.k");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

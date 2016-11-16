@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK HMAC key with SHA-1 and then export it in JWK format");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "oct",
+    k: "vgJ5AXWT3Fm2w_zZCRF4UVwo53rIhwqLm6b9Tq4m1c53dr94eqPlxt99yb9RCjCFDa2C56K448xe4V964xFucg",
+    alg: "HS1",
+    key_ops: ["sign", "verify"],
+    ext: true,
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]).then(function(cryptoKey) {
+    debug("Exporting a key...");
+    return crypto.subtle.exportKey("jwk", cryptoKey);
+}).then(function(result) {
+    exportedJwkKey = result;
+
+    shouldBe("exportedJwkKey.kty", "jwkKey.kty");
+    shouldBe("exportedJwkKey.k", "jwkKey.k");
+    shouldBe("exportedJwkKey.alg", "jwkKey.alg");
+    shouldBe("exportedJwkKey.key_ops", "jwkKey.key_ops");
+    shouldBe("exportedJwkKey.ext", "jwkKey.ext");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

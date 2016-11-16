@@ -117,6 +117,9 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
         return nullptr;
     }
     CCRSACryptorRef cryptor;
+    // FIXME: It is so weired that we recaculate the private exponent from first prime factor and second prime factor,
+    // given the fact that we have already had it. Also, the re-caculated private exponent may not match the given one.
+    // See <rdar://problem/15452324>.
     CCCryptorStatus status = CCRSACryptorCreateFromData(
         keyData.type() == CryptoKeyDataRSAComponents::Type::Public ? ccRSAKeyPublic : ccRSAKeyPrivate,
         (uint8_t*)keyData.modulus().data(), keyData.modulus().size(),

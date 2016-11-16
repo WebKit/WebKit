@@ -1,3 +1,22 @@
+2016-11-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add more tests for SubtleCrypto::importKey and SubtleCrypto::exportKey
+        https://bugs.webkit.org/show_bug.cgi?id=164815
+        <rdar://problem/29281660>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-import-jwk-key-export-jwk-key.html: Added.
+        * crypto/subtle/aes-import-jwk-key-export-raw-key.html: Added.
+        * crypto/subtle/aes-import-raw-key-export-jwk-key.html: Added.
+        * crypto/subtle/aes-import-raw-key-export-raw-key.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-export-jwk-key.html: Added.
+        * crypto/subtle/hmac-import-jwk-key-export-raw-key.html: Added.
+        * crypto/subtle/hmac-import-raw-key-export-jwk-key.html: Added.
+        * crypto/subtle/hmac-import-raw-key-export-raw-key.html: Added.
+        * crypto/subtle/rsa-import-jwk-key-export-jwk-key-private.html: Added.
+        * crypto/subtle/rsa-import-jwk-key-export-jwk-key-public.html: Added.
+
 2016-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Updating TestExpectations for two http/tests/security/module-crossorigin tests.
