@@ -1,3 +1,11 @@
+2016-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=163127
+
+        * platform/ios-simulator/TestExpectations:
+        Unskip passing tests.
+
 2016-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in LayoutTest.
