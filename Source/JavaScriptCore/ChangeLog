@@ -1,3 +1,12 @@
+2016-11-16  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, ARM build fix.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::lowerX86Div):
+        (JSC::B3::Air::LowerToAir::lowerX86UDiv):
+
 2016-11-15  Mark Lam  <mark.lam@apple.com>
 
         Make JSC test functions more robust.

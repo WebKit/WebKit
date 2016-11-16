@@ -2096,8 +2096,7 @@ private:
             if (m_value->isChill())
                 RELEASE_ASSERT(isARM64());
             if (isInt(m_value->type()) && isX86()) {
-                lowerX86Div();
-                append(Move, Tmp(X86Registers::eax), tmp(m_value));
+                lowerX86Div(Div);
                 return;
             }
             ASSERT(!isX86() || isFloat(m_value->type()));
@@ -2108,8 +2107,7 @@ private:
 
         case UDiv: {
             if (isInt(m_value->type()) && isX86()) {
-                lowerX86UDiv();
-                append(Move, Tmp(X86Registers::eax), tmp(m_value));
+                lowerX86UDiv(UDiv);
                 return;
             }
 
@@ -2123,19 +2121,13 @@ private:
         case Mod: {
             RELEASE_ASSERT(isX86());
             RELEASE_ASSERT(!m_value->isChill());
-#if CPU(X86) || CPU(X86_64)
-            lowerX86Div();
-            append(Move, Tmp(X86Registers::edx), tmp(m_value));
-#endif
+            lowerX86Div(Mod);
             return;
         }
 
         case UMod: {
             RELEASE_ASSERT(isX86());
-#if CPU(X86) || CPU(X86_64)
-            lowerX86UDiv();
-            append(Move, Tmp(X86Registers::edx), tmp(m_value));
-#endif
+            lowerX86UDiv(UMod);
             return;
         }
 
@@ -2795,7 +2787,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void lowerX86Div()
+    void lowerX86Div(B3::Opcode op)
     {
 #if CPU(X86) || CPU(X86_64)
         Tmp eax = Tmp(X86Registers::eax);
@@ -2816,16 +2808,22 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
-        
+
+        ASSERT(op == Div || op == Mod);
+        X86Registers::RegisterID result = op == Div ? X86Registers::eax : X86Registers::edx;
+
         append(Move, tmp(m_value->child(0)), eax);
         append(convertToDoubleWord, eax, edx);
         append(div, eax, edx, tmp(m_value->child(1)));
+        append(Move, Tmp(result), tmp(m_value));
+
 #else
+        UNUSED_PARAM(op);
         UNREACHABLE_FOR_PLATFORM();
 #endif
     }
 
-    void lowerX86UDiv()
+    void lowerX86UDiv(B3::Opcode op)
     {
 #if CPU(X86) || CPU(X86_64)
         Tmp eax = Tmp(X86Registers::eax);
@@ -2833,10 +2831,15 @@ private:
 
         Air::Opcode div = m_value->type() == Int32 ? X86UDiv32 : X86UDiv64;
 
+        ASSERT(op == UDiv || op == UMod);
+        X86Registers::RegisterID result = op == Div ? X86Registers::eax : X86Registers::edx;
+
         append(Move, tmp(m_value->child(0)), eax);
         append(Xor64, edx, edx);
         append(div, eax, edx, tmp(m_value->child(1)));
+        append(Move, Tmp(result), tmp(m_value));
 #else
+        UNUSED_PARAM(op);
         UNREACHABLE_FOR_PLATFORM();
 #endif
     }
