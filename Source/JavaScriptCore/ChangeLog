@@ -1,3 +1,16 @@
+2016-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r208811. It's not sound.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::mutatorFence):
+        (JSC::FTL::DFG::LowerDFGToB3::setButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::splatWordsIfMutatorIsFenced): Deleted.
+
 2016-11-16  Keith Miller  <keith_miller@apple.com>
 
         Wasm function parser should use template functions for each binary and unary opcode
