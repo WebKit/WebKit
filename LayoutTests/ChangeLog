@@ -1,3 +1,12 @@
+2016-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in LayoutTest.
+
+        Unreviewed follow-up comment.
+
+        * inspector/page/setEmulatedMedia-expected.txt:
+        * inspector/page/setEmulatedMedia.html:
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         js/dom/domjit-function-get-element-by-id-licm.html and js/dom/domjit-function-get-element-by-id-changed.html are flaky timeouts

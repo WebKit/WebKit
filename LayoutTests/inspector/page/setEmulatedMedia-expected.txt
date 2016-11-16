@@ -7,12 +7,12 @@ PASS: Page should not match print media.
 PASS: Body color should be blue.
 
 -- Running test case: Page.setEmulatedMedia.print
-PASS: MediaQueryList listesner fired.
+PASS: MediaQueryList listener fired.
 PASS: Page should now match print media.
 PASS: Body color should be green.
 
 -- Running test case: Page.setEmulatedMedia.reset
-PASS: MediaQueryList listesner fired.
+PASS: MediaQueryList listener fired.
 PASS: Page should now not match print media.
 PASS: Page should now match print media.
 
