@@ -1,3 +1,28 @@
+2016-11-16  Daniel Bates  <dabates@apple.com>
+
+        Make test sandbox-should-not-persist-on-navigation.html more representative of real-world scenario
+        https://bugs.webkit.org/show_bug.cgi?id=164752
+
+        Reviewed by Brent Fulgham.
+
+        Modify the test http-0.9/sandbox-should-not-persist-on-navigation.html so that it loads
+        a document on a default port using HTTP 0.9 to trigger the HTTP 0.9 sandbox as this
+        is more representative of a real-world scenario where we want a sandbox to be applied
+        and is the scenario that is currently covered by our HTTP 0.9 sandbox machinery.
+
+        Currently this test makes use of the pre r208549 behavior where the HTTP 0.9 sandbox
+        was applied to a document if one of its subresources loaded on a non-default port
+        using HTTP 0.9 in addition to the behavior where the sandbox is applied to a document
+        that loads on a default port using HTTP 0.9. Following r208549 we no longer apply the
+        sandbox to the document for the former case as this did not improve security much, if
+        any. The latter case is more representative of a real-world scenario where we want to
+        apply the sandbox policy and reflects our behavior following r208549.
+
+        * http/tests/security/http-0.9/resources/nph-sandbox-should-not-persist-on-navigation.pl: Added.
+        * http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation-expected.txt:
+        * http/tests/security/http-0.9/sandbox-should-not-persist-on-navigation.html:
+        * platform/wk2/TestExpectations: Skip the HTTP-0.9 tests in WebKit2 as it uses internals.registerDefaultPortForProtocol().
+
 2016-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208770.

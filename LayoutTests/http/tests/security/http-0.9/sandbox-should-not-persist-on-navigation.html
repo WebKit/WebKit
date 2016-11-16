@@ -6,15 +6,12 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
-}
-
-function runTest()
-{
-    window.location.href = "resources/sandbox-should-not-persist-on-navigation.html";
+    if (window.internals)
+        internals.registerDefaultPortForProtocol(8000, "http");
 }
 </script>
 </head>
 <body>
-<img src="resources/nph-image.pl" onload="runTest()" onerror="runTest()"> <!-- Apply sandbox -->
+<iframe src="resources/nph-sandbox-should-not-persist-on-navigation.pl"></iframe>
 </body>
 </html>
