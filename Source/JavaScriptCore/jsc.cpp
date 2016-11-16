@@ -1680,15 +1680,29 @@ EncodedJSValue JSC_HOST_CALL functionCreateSimpleObject(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionGetHiddenValue(ExecState* exec)
 {
-    JSLockHolder lock(exec);
-    SimpleObject* simpleObject = jsCast<SimpleObject*>(exec->argument(0).asCell());
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    SimpleObject* simpleObject = jsDynamicCast<SimpleObject*>(exec->argument(0));
+    if (UNLIKELY(!simpleObject)) {
+        throwTypeError(exec, scope, ASCIILiteral("Invalid use of getHiddenValue test function"));
+        return encodedJSValue();
+    }
     return JSValue::encode(simpleObject->hiddenValue());
 }
 
 EncodedJSValue JSC_HOST_CALL functionSetHiddenValue(ExecState* exec)
 {
-    JSLockHolder lock(exec);
-    SimpleObject* simpleObject = jsCast<SimpleObject*>(exec->argument(0).asCell());
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    SimpleObject* simpleObject = jsDynamicCast<SimpleObject*>(exec->argument(0));
+    if (UNLIKELY(!simpleObject)) {
+        throwTypeError(exec, scope, ASCIILiteral("Invalid use of setHiddenValue test function"));
+        return encodedJSValue();
+    }
     JSValue value = exec->argument(1);
     simpleObject->setHiddenValue(exec->vm(), value);
     return JSValue::encode(jsUndefined());

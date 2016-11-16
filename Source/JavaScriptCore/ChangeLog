@@ -1,3 +1,14 @@
+2016-11-15  Mark Lam  <mark.lam@apple.com>
+
+        Make JSC test functions more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=164807
+
+        Reviewed by Keith Miller.
+
+        * jsc.cpp:
+        (functionGetHiddenValue):
+        (functionSetHiddenValue):
+
 2016-11-15  Keith Miller  <keith_miller@apple.com>
 
         B3 should support UDiv/UMod
