@@ -53,7 +53,7 @@ void TextDocumentParser::insertFakePreElement()
     Vector<Attribute> attributes;
     attributes.append(Attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"));
     AtomicHTMLToken fakePre(HTMLToken::StartTag, preTag.localName(), WTFMove(attributes));
-    treeBuilder().constructTree(fakePre);
+    treeBuilder().constructTree(WTFMove(fakePre));
 
     // Normally we would skip the first \n after a <pre> element, but we don't
     // want to skip the first \n for text documents!

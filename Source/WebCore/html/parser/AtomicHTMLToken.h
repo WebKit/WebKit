@@ -33,7 +33,10 @@ namespace WebCore {
 class AtomicHTMLToken {
 public:
     explicit AtomicHTMLToken(HTMLToken&);
-    AtomicHTMLToken(HTMLToken::Type, const AtomicString& name, Vector<Attribute>&& = Vector<Attribute>()); // Only StartTag or EndTag.
+    AtomicHTMLToken(HTMLToken::Type, const AtomicString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
+
+    AtomicHTMLToken(const AtomicHTMLToken&) = delete;
+    AtomicHTMLToken(AtomicHTMLToken&&) = default;
 
     HTMLToken::Type type() const;
 
@@ -88,7 +91,7 @@ private:
     Vector<Attribute> m_attributes; // StartTag, EndTag.
 };
 
-Attribute* findAttribute(Vector<Attribute>&, const QualifiedName&);
+const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
 
 inline HTMLToken::Type AtomicHTMLToken::type() const
 {
@@ -169,7 +172,7 @@ inline String AtomicHTMLToken::systemIdentifier() const
     return StringImpl::create8BitIfPossible(m_doctypeData->systemIdentifier);
 }
 
-inline Attribute* findAttribute(Vector<Attribute>& attributes, const QualifiedName& name)
+inline const Attribute* findAttribute(const Vector<Attribute>& attributes, const QualifiedName& name)
 {
     for (auto& attribute : attributes) {
         if (attribute.name().matches(name))
