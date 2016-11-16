@@ -28,7 +28,6 @@
 import json
 import re
 
-
 class Wasm:
     def __init__(self, scriptName, jsonPath):
         wasmFile = open(jsonPath, "r")
@@ -86,3 +85,7 @@ def isUnary(op):
 
 def isBinary(op):
     return isNormal(op) and len(op["parameter"]) == 2
+
+
+def isSimple(op):
+    return "b3op" in op

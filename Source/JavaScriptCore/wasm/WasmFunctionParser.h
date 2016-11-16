@@ -65,6 +65,12 @@ private:
 
     bool WARN_UNUSED_RETURN popExpressionStack(ExpressionType& result);
 
+    template<OpType>
+    bool WARN_UNUSED_RETURN unaryCase();
+
+    template<OpType>
+    bool WARN_UNUSED_RETURN binaryCase();
+
     void setErrorMessage(String&& message) { m_context.setErrorMessage(WTFMove(message)); }
 
     Context& m_context;
@@ -163,39 +169,51 @@ bool FunctionParser<Context>::addReturn()
     return m_context.addReturn(returnValues);
 }
 
-#define CREATE_CASE(name, id, b3op) case name:
+template<typename Context>
+template<OpType op>
+bool FunctionParser<Context>::binaryCase()
+{
+    ExpressionType right;
+    if (!popExpressionStack(right))
+        return false;
+
+    ExpressionType left;
+    if (!popExpressionStack(left))
+        return false;
+
+    ExpressionType result;
+    if (!m_context.template addOp<op>(left, right, result))
+        return false;
+    m_expressionStack.append(result);
+    return true;
+}
+
+template<typename Context>
+template<OpType op>
+bool FunctionParser<Context>::unaryCase()
+{
+    ExpressionType value;
+    if (!popExpressionStack(value))
+        return false;
+
+    ExpressionType result;
+    if (!m_context.template addOp<op>(value, result))
+        return false;
+    m_expressionStack.append(result);
+    return true;
+}
 
 template<typename Context>
 bool FunctionParser<Context>::parseExpression(OpType op)
 {
     switch (op) {
-    FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
-        ExpressionType right;
-        if (!popExpressionStack(right))
-            return false;
+#define CREATE_CASE(name, id, b3op) case OpType::name: return binaryCase<OpType::name>();
+    FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
+#undef CREATE_CASE
 
-        ExpressionType left;
-        if (!popExpressionStack(left))
-            return false;
-
-        ExpressionType result;
-        if (!m_context.binaryOp(static_cast<BinaryOpType>(op), left, right, result))
-            return false;
-        m_expressionStack.append(result);
-        return true;
-    }
-
-    FOR_EACH_WASM_UNARY_OP(CREATE_CASE) {
-        ExpressionType value;
-        if (!popExpressionStack(value))
-            return false;
-
-        ExpressionType result;
-        if (!m_context.unaryOp(static_cast<UnaryOpType>(op), value, result))
-            return false;
-        m_expressionStack.append(result);
-        return true;
-    }
+#define CREATE_CASE(name, id, b3op) case OpType::name: return unaryCase<OpType::name>();
+    FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
+#undef CREATE_CASE
 
     case OpType::Select: {
         ExpressionType condition;
@@ -218,6 +236,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+#define CREATE_CASE(name, id, b3op) case OpType::name:
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE) {
         uint32_t alignment;
         if (!parseVarUInt32(alignment))
@@ -257,6 +276,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
         return m_context.store(static_cast<StoreOpType>(op), pointer, value, offset);
     }
+#undef CREATE_CASE
 
     case OpType::F32Const:
     case OpType::I32Const: {
@@ -454,14 +474,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
-    case OpType::Nop:
-    case OpType::Drop:
-    case OpType::TeeLocal:
-    case OpType::GetGlobal:
-    case OpType::SetGlobal:
-    case OpType::CallIndirect:
+    default: {
         // FIXME: Not yet implemented.
         return false;
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -539,8 +555,6 @@ bool FunctionParser<Context>::popExpressionStack(ExpressionType& result)
     setErrorMessage("Attempted to use a stack value when none existed");
     return false;
 }
-
-#undef CREATE_CASE
 
 } } // namespace JSC::Wasm
 

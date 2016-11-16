@@ -1,3 +1,33 @@
+2016-11-16  Keith Miller  <keith_miller@apple.com>
+
+        Wasm function parser should use template functions for each binary and unary opcode
+        https://bugs.webkit.org/show_bug.cgi?id=164835
+
+        Reviewed by Mark Lam.
+
+        This patch changes the wasm function parser to call into a template specialization
+        for each binary/unary opcode. This change makes it easier to have custom implementations
+        of various opcodes. It is also, in theory a speedup since it does not require switching
+        on the opcode twice.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * wasm/WasmB3IRGenerator.cpp:
+        (): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::binaryCase):
+        (JSC::Wasm::FunctionParser<Context>::unaryCase):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmValidate.cpp:
+        * wasm/generateWasm.py:
+        (isBinary):
+        (isSimple):
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py: Added.
+        (generateSimpleCode):
+        * wasm/generateWasmOpsHeader.py:
+        (opcodeMacroizer):
+        * wasm/generateWasmValidateInlinesHeader.py:
+
 2016-11-16  Mark Lam  <mark.lam@apple.com>
 
         ExceptionFuzz functions should use its client's ThrowScope.

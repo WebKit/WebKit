@@ -46,7 +46,7 @@ def cppMacro(wasmOpcode, value, b3Opcode):
 def opcodeMacroizer(filter):
     for op in wasm.opcodeIterator(filter):
         b3op = "Oops"
-        if "b3op" in op["opcode"]:
+        if isSimple(op["opcode"]):
             b3op = op["opcode"]["b3op"]
         yield cppMacro(op["name"], op["opcode"]["value"], b3op)
 
@@ -55,13 +55,13 @@ defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "speci
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and "b3op" in op)])
+defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and isSimple(op))])
 defines.append("\n\n#define FOR_EACH_WASM_UNARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and not ("b3op" in op))])
+defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and not (isSimple(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and "b3op" in op)])
+defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and isSimple(op))])
 defines.append("\n\n#define FOR_EACH_WASM_BINARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and not ("b3op" in op))])
+defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and not (isSimple(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 1))])
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)")

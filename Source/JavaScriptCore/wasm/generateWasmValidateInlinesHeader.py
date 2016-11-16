@@ -60,35 +60,38 @@ def toCpp(name):
 def unaryMacro(name):
     op = opcodes[name]
     return """
-    case UnaryOpType::""" + toCpp(name) + """: {
-        if (value != """ + cppType(op["parameter"][0]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(value));
-            return false;
-        }
+template<> bool Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType value, ExpressionType& result)
+{
+    if (value != """ + cppType(op["parameter"][0]) + """) {
+        m_errorMessage = makeString(\"""" + name + """ expects the value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(value));
+        return false;
+    }
 
-        result = """ + cppType(op["return"][0]) + """;
-        return true;
-    }"""
+    result = """ + cppType(op["return"][0]) + """;
+    return true;
+}
+"""
 
 
 def binaryMacro(name):
     op = opcodes[name]
     return """
-    case BinaryOpType::""" + toCpp(name) + """: {
-        if (left != """ + cppType(op["parameter"][0]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the left value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(left));
-            return false;
-        }
+template<> bool Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType left, ExpressionType right, ExpressionType& result)
+{
+    if (left != """ + cppType(op["parameter"][0]) + """) {
+        m_errorMessage = makeString(\"""" + name + """ expects the left value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(left));
+        return false;
+    }
 
-        if (right != """ + cppType(op["parameter"][1]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the right value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(right));
-            return false;
-        }
+    if (right != """ + cppType(op["parameter"][1]) + """) {
+        m_errorMessage = makeString(\"""" + name + """ expects the right value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(right));
+        return false;
+    }
 
-        result = """ + cppType(op["return"][0]) + """;
-        return true;
-    }"""
-
+    result = """ + cppType(op["return"][0]) + """;
+    return true;
+}
+"""
 
 def loadMacro(name):
     op = opcodes[name]
@@ -122,8 +125,8 @@ def storeMacro(name):
     }"""
 
 
-unaryCases = "".join([op for op in wasm.opcodeIterator(isUnary, unaryMacro)])
-binaryCases = "".join([op for op in wasm.opcodeIterator(isBinary, binaryMacro)])
+unarySpecializations = "".join([op for op in wasm.opcodeIterator(isUnary, unaryMacro)])
+binarySpecializations = "".join([op for op in wasm.opcodeIterator(isBinary, binaryMacro)])
 loadCases = "".join([op for op in wasm.opcodeIterator(lambda op: op["category"] == "memory" and len(op["return"]) == 1, loadMacro)])
 storeCases = "".join([op for op in wasm.opcodeIterator(lambda op: op["category"] == "memory" and len(op["return"]) == 0, storeMacro)])
 
@@ -136,19 +139,7 @@ contents = wasm.header + """
 
 namespace JSC { namespace Wasm {
 
-bool Validate::unaryOp(UnaryOpType op, ExpressionType value, ExpressionType& result)
-{
-    switch (op) {
-""" + unaryCases + """
-    }
-}
-
-bool Validate::binaryOp(BinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
-{
-    switch (op) {
-""" + binaryCases + """
-    }
-}
+""" + unarySpecializations + binarySpecializations + """
 
 bool Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t)
 {
