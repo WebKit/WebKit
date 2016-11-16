@@ -1,3 +1,32 @@
+2016-11-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r208248): Web Inspector: Pressing Left Arrow breaks autocomplete
+        https://bugs.webkit.org/show_bug.cgi?id=164391
+        <rdar://problem/29102408>
+
+        Reviewed by Matt Baker.
+
+        Unroll r208248.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.updateCompletions):
+        (WebInspector.CodeMirrorCompletionController.prototype.isCompletionChange):
+        (WebInspector.CodeMirrorCompletionController.prototype.hideCompletions):
+        (WebInspector.CodeMirrorCompletionController.prototype.close):
+        (WebInspector.CodeMirrorCompletionController.prototype.completionSuggestionsSelectedCompletion):
+        (WebInspector.CodeMirrorCompletionController.prototype._createCompletionHintMarker):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._commitCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._commitCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeLastChangeFromHistory):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.clearMarker):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._completeAtCurrentPosition):
+        (WebInspector.CodeMirrorCompletionController.prototype._generateJavaScriptCompletions):
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and untested Page.setTouchEmulationEnabled command
