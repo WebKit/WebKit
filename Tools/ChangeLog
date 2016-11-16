@@ -1,3 +1,19 @@
+2016-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        UIScriptController: script with no async tasks fails if an earlier script registered a callback
+        https://bugs.webkit.org/show_bug.cgi?id=164762
+
+        Reviewed by Wenson Hsieh.
+        
+        Make TestRunner::callUIScriptCallback() async in DumpRenderTree to match WebKitTestRunner behavior.
+        This fixes ui-side-script-with-callback.html in WK1, which failed because the second runUIScript()
+        would occur inside the completion callback from the first. This no longer happens.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::callUIScriptCallback):
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback):
+
 2016-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r208770.

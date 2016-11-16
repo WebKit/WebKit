@@ -51,6 +51,7 @@
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -2392,9 +2393,13 @@ void TestRunner::runUIScript(JSContextRef context, JSStringRef script, JSValueRe
 
 void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
-    JSContextRef context = mainFrameJSContext();
-    JSValueRef resultValue = JSValueMakeString(context, result);
-    callTestRunnerCallback(callbackID, 1, &resultValue);
+    JSRetainPtr<JSStringRef> protectedResult(result);
+    
+    RunLoop::main().dispatch([protectedThis = makeRef(*this), callbackID, protectedResult]() mutable {
+        JSContextRef context = protectedThis->mainFrameJSContext();
+        JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
+        protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);
+    });
 }
 
 void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)

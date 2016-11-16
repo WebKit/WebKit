@@ -56,8 +56,7 @@ http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
-fast/harness/ui-side-scripts.html [ Skip ]
-fast/harness/concurrent-ui-side-scripts.html [ Skip ]
+fast/harness/uiscriptcontroller [ Skip ]
 
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html

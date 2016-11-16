@@ -25,8 +25,7 @@ fast/text-autosizing [ Pass ]
 
 fast/attachment/attachment-subtitle-resize.html [ Pass ]
 
-fast/harness/ui-side-scripts.html [ Pass ]
-fast/harness/concurrent-ui-side-scripts.html [ Pass ]
+fast/harness/uiscriptcontroller [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

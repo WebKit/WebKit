@@ -1,3 +1,24 @@
+2016-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        UIScriptController: script with no async tasks fails if an earlier script registered a callback
+        https://bugs.webkit.org/show_bug.cgi?id=164762
+
+        Reviewed by Wenson Hsieh.
+        
+        Move the tests that use runUIScript into their own directory for easier TestExpectations management,
+        and fix TestExpectations to match.
+
+        * TestExpectations:
+        * fast/harness/uiscriptcontroller/concurrent-ui-side-scripts-expected.txt: Renamed from LayoutTests/fast/harness/concurrent-ui-side-scripts-expected.txt.
+        * fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html: Renamed from LayoutTests/fast/harness/concurrent-ui-side-scripts.html.
+        * fast/harness/uiscriptcontroller/ui-side-script-unregister-callback-expected.txt: Copied from LayoutTests/fast/harness/ui-side-script-unregister-callback-expected.txt.
+        * fast/harness/uiscriptcontroller/ui-side-script-unregister-callback.html: Copied from LayoutTests/fast/harness/ui-side-script-unregister-callback.html.
+        * fast/harness/uiscriptcontroller/ui-side-script-with-callback-expected.txt: Renamed from LayoutTests/fast/harness/ui-side-script-unregister-callback-expected.txt.
+        * fast/harness/uiscriptcontroller/ui-side-script-with-callback.html: Renamed from LayoutTests/fast/harness/ui-side-script-unregister-callback.html.
+        * fast/harness/uiscriptcontroller/ui-side-scripts-expected.txt: Renamed from LayoutTests/fast/harness/ui-side-scripts-expected.txt.
+        * fast/harness/uiscriptcontroller/ui-side-scripts.html: Renamed from LayoutTests/fast/harness/ui-side-scripts.html.
+        * platform/mac/TestExpectations:
+
 2016-11-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r207162): [debug] loader/stateobjects LayoutTests timing out
