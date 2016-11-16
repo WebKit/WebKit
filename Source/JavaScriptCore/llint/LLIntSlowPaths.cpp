@@ -108,7 +108,7 @@ namespace JSC { namespace LLInt {
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
-        doExceptionFuzzingIfEnabled(exec, "LLIntSlowPaths", pc);    \
+        doExceptionFuzzingIfEnabled(exec, throwScope, "LLIntSlowPaths", pc);    \
         if (UNLIKELY(throwScope.exception())) {         \
             pc = returnToThrow(exec);                   \
             LLINT_END_IMPL();                           \
@@ -169,7 +169,7 @@ namespace JSC { namespace LLInt {
 #define LLINT_CALL_CHECK_EXCEPTION(exec, execCallee) do {               \
         ExecState* __cce_exec = (exec);                                 \
         ExecState* __cce_execCallee = (execCallee);                     \
-        doExceptionFuzzingIfEnabled(__cce_exec, "LLIntSlowPaths/call", nullptr); \
+        doExceptionFuzzingIfEnabled(__cce_exec, throwScope, "LLIntSlowPaths/call", nullptr); \
         if (UNLIKELY(throwScope.exception()))                           \
             LLINT_CALL_END_IMPL(0, callToThrow(__cce_execCallee));      \
     } while (false)

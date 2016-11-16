@@ -1,3 +1,39 @@
+2016-11-16  Mark Lam  <mark.lam@apple.com>
+
+        ExceptionFuzz functions should use its client's ThrowScope.
+        https://bugs.webkit.org/show_bug.cgi?id=164834
+
+        Reviewed by Geoffrey Garen.
+
+        This is because ExceptionFuzz's purpose is to throw exceptions from its client at
+        exception check sites.  Using the client's ThrowScope solves 2 problems:
+
+        1. If ExceptionFuzz instantiates its own ThrowScope, the simulated throw will be
+           mis-attributed to ExceptionFuzz when it should be attributed to its client.
+
+        2. One way exception scope verification works is by having ThrowScopes assert
+           that there are no unchecked simulated exceptions when the ThrowScope is
+           instantiated.  However, ExceptionFuzz necessarily works by inserting
+           doExceptionFuzzingIfEnabled() in between a ThrowScope that simulated a throw
+           and an exception check.  If we declare a ThrowScope in ExceptionFuzz's code,
+           we will be instantiating the ThrowScope between the point where a simulated
+           throw occurs and where the needed exception check can occur.  Hence, having
+           ExceptionFuzz instantiate its own ThrowScope will fail exception scope
+           verification every time.
+
+        Changing ExceptionFuzz to use its client's ThrowScope resolves both problems.
+
+        Also fixed the THROW() macro in CommonSlowPaths.cpp to use the ThrowScope that
+        already exists in every slow path function instead of creating a new one.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionFuzz.h:
+        (JSC::doExceptionFuzzingIfEnabled):
+
 2016-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         Slight Octane regression from concurrent GC's eager object zero-fill

@@ -36,10 +36,9 @@ static unsigned s_numberOfExceptionFuzzChecks;
 unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 
 // Call this only if you know that exception fuzzing is enabled.
-void doExceptionFuzzing(ExecState* exec, const char* where, void* returnPC)
+void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, void* returnPC)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    VM& vm = scope.vm();
     ASSERT(Options::useExceptionFuzz());
 
     DeferGCForAWhile deferGC(vm.heap);

@@ -2271,9 +2271,11 @@ void JIT_OPERATION operationExceptionFuzz(ExecState* exec)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+    UNUSED_PARAM(scope);
 #if COMPILER(GCC_OR_CLANG)
     void* returnPC = __builtin_return_address(0);
-    doExceptionFuzzing(exec, "JITOperations", returnPC);
+    doExceptionFuzzing(exec, scope, "JITOperations", returnPC);
 #endif // COMPILER(GCC_OR_CLANG)
 }
 

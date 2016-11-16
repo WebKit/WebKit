@@ -96,14 +96,13 @@ namespace JSC {
 #define END_IMPL() RETURN_TWO(pc, exec)
 
 #define THROW(exceptionToThrow) do {                        \
-        auto scope = DECLARE_THROW_SCOPE(vm);               \
-        throwException(exec, scope, exceptionToThrow);      \
+        throwException(exec, throwScope, exceptionToThrow); \
         RETURN_TO_THROW(exec, pc);                          \
         END_IMPL();                                         \
     } while (false)
 
 #define CHECK_EXCEPTION() do {                    \
-        doExceptionFuzzingIfEnabled(exec, "CommonSlowPaths", pc);   \
+        doExceptionFuzzingIfEnabled(exec, throwScope, "CommonSlowPaths", pc);   \
         if (UNLIKELY(throwScope.exception())) {   \
             RETURN_TO_THROW(exec, pc);            \
             END_IMPL();                           \
