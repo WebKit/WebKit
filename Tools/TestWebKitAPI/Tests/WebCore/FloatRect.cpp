@@ -712,10 +712,17 @@ TEST(FloatRect, InfiniteRect)
 #if USE(CG)
     CGRect cgInfiniteRect = CGRectInfinite;
 
+#if PLATFORM(WIN)
+    EXPECT_FLOAT_EQ(-std::numeric_limits<float>::max() / 2, cgInfiniteRect.origin.x);
+    EXPECT_FLOAT_EQ(-std::numeric_limits<float>::max() / 2, cgInfiniteRect.origin.y);
+    EXPECT_FLOAT_EQ(std::numeric_limits<float>::max(), cgInfiniteRect.size.width);
+    EXPECT_FLOAT_EQ(std::numeric_limits<float>::max(), cgInfiniteRect.size.height);
+#else
     EXPECT_FLOAT_EQ(-std::numeric_limits<float>::max(), cgInfiniteRect.origin.x);
     EXPECT_FLOAT_EQ(-std::numeric_limits<float>::max(), cgInfiniteRect.origin.y);
     EXPECT_FLOAT_EQ(std::numeric_limits<float>::max(), cgInfiniteRect.origin.x + cgInfiniteRect.size.width);
     EXPECT_FLOAT_EQ(std::numeric_limits<float>::max(), cgInfiniteRect.origin.y + cgInfiniteRect.size.height);
+#endif
     // ASSERT_TRUE(infinite == cgInfiniteRect);
 #endif
 
