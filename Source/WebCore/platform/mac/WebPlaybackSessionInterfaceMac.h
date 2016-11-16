@@ -62,17 +62,22 @@ public:
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WEBCORE_EXPORT void setPlayBackControlsManager(WebPlaybackControlsManager *);
+    WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
+#endif
     WEBCORE_EXPORT void beginScrubbing();
     WEBCORE_EXPORT void endScrubbing();
-    WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
 
 private:
     WebPlaybackSessionInterfaceMac(WebPlaybackSessionModel&);
     WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager *m_playbackControlsManager  { nullptr };
 
     void updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying);
+#endif
+
 };
 
 }

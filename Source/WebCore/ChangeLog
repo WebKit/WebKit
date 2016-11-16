@@ -1,3 +1,44 @@
+2016-11-16  Beth Dakin  <bdakin@apple.com>
+
+        Implement WebPlaybackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=164789
+        -and corresponding-
+        rdar://problem/29275082
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager dealloc]):
+        (-[WebPlaybackControlsManager cancelThumbnailAndAudioAmplitudeSampleGeneration]):
+        (-[WebPlaybackControlsManager generateFunctionBarThumbnailsForTimes:size:completionHandler:]):
+        (-[WebPlaybackControlsManager generateFunctionBarAudioAmplitudeSamples:completionHandler:]):
+        (-[WebPlaybackControlsManager canBeginFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager beginFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager endFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager audioFunctionBarMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setAudioFunctionBarMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentAudioFunctionBarMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentAudioFunctionBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager legibleFunctionBarMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setLegibleFunctionBarMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentLegibleFunctionBarMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentLegibleFunctionBarMediaSelectionOption:]):
+        (mediaSelectionOptions):
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager webPlaybackSessionInterfaceMac]):
+        (-[WebPlaybackControlsManager setWebPlaybackSessionInterfaceMac:]):
+        (-[WebPlaybackControlsManager togglePlayback]):
+        (-[WebPlaybackControlsManager setPlaying:]):
+        (-[WebPlaybackControlsManager isPlaying]):
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::durationChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::currentTimeChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::rateChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::playBackControlsManager):
+
 2016-11-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add more tests for SubtleCrypto::importKey and SubtleCrypto::exportKey

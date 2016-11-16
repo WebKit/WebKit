@@ -26,34 +26,31 @@
 #ifndef WebPlaybackControlsManager_h
 #define WebPlaybackControlsManager_h
 
+#import <WebCore/AVKitSPI.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 namespace WebCore {
 class WebPlaybackSessionInterfaceMac;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#import <WebKitAdditions/WebPlaybackControlsControllerAdditions.h>
-#else
-#import <WebCore/AVKitSPI.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
-
-OBJC_CLASS AVValueTiming;
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 WEBCORE_EXPORT
-@interface WebPlaybackControlsManager : NSObject
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    <AVFunctionBarPlaybackControlsControlling>
-#endif
-{
+@interface WebPlaybackControlsManager : NSObject <AVFunctionBarPlaybackControlsControlling> {
     NSTimeInterval _contentDuration;
-
     RetainPtr<AVValueTiming> _timing;
     NSTimeInterval _seekToTime;
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
+    RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _audioFunctionBarMediaSelectionOptions;
+    RetainPtr<AVFunctionBarMediaSelectionOption> _currentAudioFunctionBarMediaSelectionOption;
+    RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
+    RetainPtr<AVFunctionBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
+
     float _rate;
     BOOL _playing;
     BOOL _canTogglePlayback;
@@ -65,18 +62,24 @@ WEBCORE_EXPORT
 @property (assign) WebCore::WebPlaybackSessionInterfaceMac* webPlaybackSessionInterfaceMac;
 @property (readwrite) NSTimeInterval contentDuration;
 @property (nonatomic, retain, readwrite) AVValueTiming *timing;
+@property (nonatomic) NSTimeInterval seekToTime;
 @property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
-@property (readwrite) BOOL hasEnabledAudio;
-@property (readwrite) BOOL hasEnabledVideo;
-@property (nonatomic) float rate;
+@property (nonatomic) BOOL hasEnabledAudio;
+@property (nonatomic) BOOL hasEnabledVideo;
 @property (getter=isPlaying) BOOL playing;
 @property BOOL canTogglePlayback;
 
+@property (nonatomic) float rate;
+
+- (AVFunctionBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption;
+- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
+- (AVFunctionBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption;
+- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
-
 @end
-#endif // USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 

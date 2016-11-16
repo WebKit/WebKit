@@ -64,6 +64,7 @@ WebPlaybackSessionInterfaceMac::~WebPlaybackSessionInterfaceMac()
 
 void WebPlaybackSessionInterfaceMac::durationChanged(double duration)
 {
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
 
     controlsManager.contentDuration = duration;
@@ -71,20 +72,25 @@ void WebPlaybackSessionInterfaceMac::durationChanged(double duration)
     // FIXME: We take this as an indication that playback is ready, but that is not necessarily true.
     controlsManager.hasEnabledAudio = YES;
     controlsManager.hasEnabledVideo = YES;
+#endif
 }
 
 void WebPlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double anchorTime)
 {
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     updatePlaybackControlsManagerTiming(currentTime, anchorTime, controlsManager.rate, controlsManager.playing);
+#endif
 }
 
 void WebPlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
 {
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
     [controlsManager setPlaying:isPlaying];
     updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
+#endif
 }
 
 void WebPlaybackSessionInterfaceMac::beginScrubbing()
@@ -140,13 +146,11 @@ void WebPlaybackSessionInterfaceMac::ensureControlsManager()
     playBackControlsManager();
 }
 
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
 WebPlaybackControlsManager *WebPlaybackSessionInterfaceMac::playBackControlsManager()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return m_playbackControlsManager;
-#else
-    return nil;
-#endif
 }
 
 void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControlsManager *manager)
@@ -190,6 +194,8 @@ void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double 
 
     manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
+
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 }
 

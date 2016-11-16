@@ -26,36 +26,32 @@
 #include "config.h"
 #include "WebPlaybackControlsManager.h"
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
-#if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
-#else
-
+#import "SoftLinking.h"
 #import "WebPlaybackSessionInterfaceMac.h"
+#import "WebPlaybackSessionModel.h"
+#import <wtf/text/WTFString.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
+SOFT_LINK_FRAMEWORK(AVKit)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 
 @implementation WebPlaybackControlsManager
 
-using namespace WebCore;
-
 @synthesize contentDuration=_contentDuration;
+@synthesize seekToTime=_seekToTime;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
-@synthesize playing=_playing;
 @synthesize canTogglePlayback=_canTogglePlayback;
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-@synthesize seekToTime=_seekToTime;
-#endif
 
-- (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+- (void)dealloc
 {
-    return _webPlaybackSessionInterfaceMac.get();
-}
-
-- (void)setWebPlaybackSessionInterfaceMac:(WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
-{
-    _webPlaybackSessionInterfaceMac = webPlaybackSessionInterfaceMac;
+    if (_webPlaybackSessionInterfaceMac)
+        _webPlaybackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
+    [super dealloc];
 }
 
 - (AVValueTiming *)timing
@@ -90,20 +86,175 @@ using namespace WebCore;
     _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->seekToTime(time);
 }
 
+- (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
+{
+}
+
+- (void)generateFunctionBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes size:(NSSize)size completionHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, NSError *error))completionHandler
+{
+    UNUSED_PARAM(thumbnailTimes);
+    UNUSED_PARAM(size);
+    completionHandler(@[ ], nil);
+}
+
+- (void)generateFunctionBarAudioAmplitudeSamples:(NSInteger)numberOfSamples completionHandler:(void (^)(NSArray<NSNumber *> *audioAmplitudeSamples,  NSError *error))completionHandler
+{
+    UNUSED_PARAM(numberOfSamples);
+    completionHandler(@[ ], nil);
+}
+
+-(BOOL)canBeginFunctionBarScrubbing
+{
+    // It's not ideal to return YES all the time here. The intent of the API is that we return NO when the
+    // media is being scrubbed via the on-screen scrubber. But we can only possibly get the right answer for
+    // media that uses the default controls.
+    return YES;
+}
+
+- (void)beginFunctionBarScrubbing
+{
+    _webPlaybackSessionInterfaceMac->beginScrubbing();
+}
+
+- (void)endFunctionBarScrubbing
+{
+    _webPlaybackSessionInterfaceMac->endScrubbing();
+}
+
+- (NSArray<AVFunctionBarMediaSelectionOption *> *)audioFunctionBarMediaSelectionOptions
+{
+    return _audioFunctionBarMediaSelectionOptions.get();
+}
+
+- (void)setAudioFunctionBarMediaSelectionOptions:(NSArray<AVFunctionBarMediaSelectionOption *> *)audioOptions
+{
+    _audioFunctionBarMediaSelectionOptions = audioOptions;
+}
+
+- (AVFunctionBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption
+{
+    return _currentAudioFunctionBarMediaSelectionOption.get();
+}
+
+- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)audioMediaSelectionOption
+{
+    if (audioMediaSelectionOption == _currentAudioFunctionBarMediaSelectionOption)
+        return;
+
+    _currentAudioFunctionBarMediaSelectionOption = audioMediaSelectionOption;
+
+    NSInteger index = NSNotFound;
+
+    if (audioMediaSelectionOption && _audioFunctionBarMediaSelectionOptions)
+        index = [_audioFunctionBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
+
+    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
+}
+
+- (NSArray<AVFunctionBarMediaSelectionOption *> *)legibleFunctionBarMediaSelectionOptions
+{
+    return _legibleFunctionBarMediaSelectionOptions.get();
+}
+
+- (void)setLegibleFunctionBarMediaSelectionOptions:(NSArray<AVFunctionBarMediaSelectionOption *> *)legibleOptions
+{
+    _legibleFunctionBarMediaSelectionOptions = legibleOptions;
+}
+
+- (AVFunctionBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption
+{
+    return _currentLegibleFunctionBarMediaSelectionOption.get();
+}
+
+- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)legibleMediaSelectionOption
+{
+    if (legibleMediaSelectionOption == _currentLegibleFunctionBarMediaSelectionOption)
+        return;
+
+    _currentLegibleFunctionBarMediaSelectionOption = legibleMediaSelectionOption;
+
+    NSInteger index = NSNotFound;
+
+    if (legibleMediaSelectionOption && _legibleFunctionBarMediaSelectionOptions)
+        index = [_legibleFunctionBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
+
+    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
+}
+
+static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
+{
+    RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
+    for (auto& name : options) {
+        if (RetainPtr<AVFunctionBarMediaSelectionOption> webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:name]))
+            [webOptions addObject:webOption.get()];
+    }
+    return webOptions;
+}
+
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(selectedIndex);
+    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    [self setAudioFunctionBarMediaSelectionOptions:webOptions.get()];
+    if (selectedIndex < [webOptions count])
+        [self setCurrentAudioFunctionBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(selectedIndex);
+    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    [self setLegibleFunctionBarMediaSelectionOptions:webOptions.get()];
+    if (selectedIndex < [webOptions count])
+        [self setCurrentLegibleFunctionBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
-@end
-#endif // USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+- (WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+{
+    return _webPlaybackSessionInterfaceMac.get();
+}
 
-#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+- (void)setWebPlaybackSessionInterfaceMac:(WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+{
+    if (_webPlaybackSessionInterfaceMac == webPlaybackSessionInterfaceMac)
+        return;
+
+    if (_webPlaybackSessionInterfaceMac)
+        _webPlaybackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
+
+    _webPlaybackSessionInterfaceMac = webPlaybackSessionInterfaceMac;
+
+    if (_webPlaybackSessionInterfaceMac)
+        _webPlaybackSessionInterfaceMac->setPlayBackControlsManager(self);
+}
+
+- (void)togglePlayback
+{
+    if (_webPlaybackSessionInterfaceMac && _webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
+        _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->togglePlayState();
+}
+
+- (void)setPlaying:(BOOL)playing
+{
+    if (!_webPlaybackSessionInterfaceMac || !_webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
+        return;
+
+    BOOL isCurrentlyPlaying = _playing;
+    if (!isCurrentlyPlaying && playing)
+        _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->play();
+    else if (isCurrentlyPlaying && !playing)
+        _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->pause();
+}
+
+- (BOOL)isPlaying
+{
+    if (_webPlaybackSessionInterfaceMac && _webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
+        return _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->isPlaying();
+
+    return NO;
+}
+
+#pragma clang diagnostic pop
+
+@end
+
+#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
