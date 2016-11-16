@@ -558,17 +558,25 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 
     destroyRenderTreeIfNeeded(oldChild);
 
-    if (nextChild)
+    if (nextChild) {
         nextChild->setPreviousSibling(previousChild);
-    if (previousChild)
-        previousChild->setNextSibling(nextChild);
-    if (m_firstChild == &oldChild)
-        m_firstChild = nextChild;
-    if (m_lastChild == &oldChild)
+        oldChild.setNextSibling(nullptr);
+    } else {
+        ASSERT(m_lastChild == &oldChild);
         m_lastChild = previousChild;
+    }
+    if (previousChild) {
+        previousChild->setNextSibling(nextChild);
+        oldChild.setPreviousSibling(nullptr);
+    } else {
+        ASSERT(m_firstChild == &oldChild);
+        m_firstChild = nextChild;
+    }
 
-    oldChild.setPreviousSibling(nullptr);
-    oldChild.setNextSibling(nullptr);
+    ASSERT(m_firstChild != &oldChild);
+    ASSERT(m_lastChild != &oldChild);
+    ASSERT(!oldChild.previousSibling());
+    ASSERT(!oldChild.nextSibling());
     oldChild.setParentNode(nullptr);
 
     document().adoptIfNeeded(&oldChild);

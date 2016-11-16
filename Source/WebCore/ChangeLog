@@ -1,5 +1,20 @@
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
+        Micro-optimize ContainerNode::removeBetween()
+        https://bugs.webkit.org/show_bug.cgi?id=164832
+
+        Reviewed by Sam Weinig.
+
+        Micro-optimize ContainerNode::removeBetween() by updating pointers only
+        when strictly needed and reducing branching.
+
+        No new tests, no Web-exposed behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeBetween):
+
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
         Micro-optimize AtomicHTMLToken::initializeAttributes()
         https://bugs.webkit.org/show_bug.cgi?id=164826
 
