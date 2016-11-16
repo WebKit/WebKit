@@ -68,6 +68,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         // Update watch expressions on navigations.
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        // Update watch expressions on active call frame changes.
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._activeCallFrameDidChange, this);
     }
 
     // Public
@@ -420,6 +423,11 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
     }
 
     _activeExecutionContextChanged()
+    {
+        this.needsLayout();
+    }
+
+    _activeCallFrameDidChange()
     {
         this.needsLayout();
     }

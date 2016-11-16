@@ -1,5 +1,96 @@
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: SourceCodeTextEditor should display execution lines for background threads
+        https://bugs.webkit.org/show_bug.cgi?id=164679
+        <rdar://problem/29233026>
+
+        Reviewed by Timothy Hatcher.
+
+        There may be multiple threads paused in the same content view. With
+        this change we should a thread indicator for each primary line a
+        thread is paused on. It uses the same inline line indicator that
+        inline errors/warnings (issues) use.
+
+        When there is a single thread (just the Page) we don't show thread
+        indicators. But as soon as there are multiple threads we start
+        managing and showing them. The line indicator contains the name of
+        the thread on the side.
+
+        Note that SourceCodeTextEditor maintains the thread indicators, but
+        it still always handles the ActiveCallFrame as it used to, pushing
+        values down into TextEditor. The ActiveCallFrame styles override
+        the thread line indicators (albeit with the same styles). The reason
+        these are still separate is that TextEditor has some special styles
+        regarding its gutter for the active execution line. Eventually we
+        may want to find a way to push this up into SourceCodeTextEditor.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string "%d Threads" when multiple threads are on the same line.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._activeCallFrameDidChange):
+        Update Watch Expressions when the active call frame changes.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget.inline):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget > .arrow):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .arrow):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget > .icon):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget > .text):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .text):
+        Share line indicator widget styles between issue widgets and thread widgets.
+
+        (.source-code.text-editor > .CodeMirror .thread-indicator):
+        (.source-code.text-editor > .CodeMirror .thread-widget):
+        (.source-code.text-editor > .CodeMirror .thread-widget.inline):
+        (.source-code.text-editor > .CodeMirror .thread-widget.inline > .arrow):
+        Colors for the thread-widget line-indicators.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        New event listeners handling for Target added / removed events.
+
+        (WebInspector.SourceCodeTextEditor.prototype._targetAdded):
+        (WebInspector.SourceCodeTextEditor.prototype._targetRemoved):
+        Update thread indicators as needed.
+
+        (WebInspector.SourceCodeTextEditor.prototype._looselyMatchesSourceCodeLocation):
+        More generic match based just on the URLs. Even if the exact script comes
+        from a different target, if they share the same URL that is fine.
+
+        (WebInspector.SourceCodeTextEditor.prototype._callFramesDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype._addThreadIndicatorForTarget):
+        (WebInspector.SourceCodeTextEditor.prototype._removeThreadIndicatorForTarget):
+        (WebInspector.SourceCodeTextEditor.prototype._threadIndicatorWidgetForLine):
+        (WebInspector.SourceCodeTextEditor.prototype._updateThreadIndicatorWidget):
+        (WebInspector.SourceCodeTextEditor.prototype._handleThreadIndicatorWidgetClick):
+        Manage thread line indicator widgets. There are 3 maps we maintain.
+
+          1. line -> [threads]
+              List of threads paused on a line, needed for the UI text.
+          2. line -> widget
+              Gets the widget on a line so we can modify and eventually remove it.
+          3. target -> line
+              If a target is removed, we need to know what line it had an indicator on.
+
+        (WebInspector.SourceCodeTextEditor.prototype._isWidgetToggleable):
+        Generalize for all of our different line indicator widgets.
+
+        (WebInspector.SourceCodeTextEditor.prototype._contentDidPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorUpdatedFormatting):        
+        (WebInspector.SourceCodeTextEditor.prototype._reinsertAllThreadIndicators):
+        When first populated, or reformatted, clear and reinsert all widgets.
+
+        (WebInspector.SourceCodeTextEditor.prototype._reinsertAllIssues):
+        (WebInspector.SourceCodeTextEditor.prototype._logCleared):
+        (WebInspector.SourceCodeTextEditor.prototype._clearIssueWidgets): Renamed.
+        Rename _clearWidgets to _clearIssueWidgets.
+
+2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused and untested Page.setTouchEmulationEnabled command
         https://bugs.webkit.org/show_bug.cgi?id=164793
 

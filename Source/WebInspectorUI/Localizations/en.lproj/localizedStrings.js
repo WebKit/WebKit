@@ -22,6 +22,7 @@ localizedStrings["%.3fms"] = "%.3fms";
 localizedStrings["%d Errors"] = "%d Errors";
 localizedStrings["%d Errors, %d Warnings"] = "%d Errors, %d Warnings";
 localizedStrings["%d More\u2026"] = "%d More\u2026";
+localizedStrings["%d Threads"] = "%d Threads";
 localizedStrings["%d Warnings"] = "%d Warnings";
 localizedStrings["%d \xd7 %d pixels"] = "%d \xd7 %d pixels";
 localizedStrings["%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)"] = "%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)";
