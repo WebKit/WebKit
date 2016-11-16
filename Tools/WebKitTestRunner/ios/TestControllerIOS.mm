@@ -28,6 +28,7 @@
 
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
+#import "TestRunnerWKWebView.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -83,6 +84,12 @@ void TestController::platformResetPreferencesToConsistentValues()
 void TestController::platformResetStateToConsistentValues()
 {
     cocoaResetStateToConsistentValues();
+
+    if (PlatformWebView* webView = mainWebView()) {
+        UIScrollView *scrollView = webView->platformView().scrollView;
+        [scrollView setZoomScale:1 animated:NO];
+        [scrollView setContentOffset:CGPointZero];
+    }
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

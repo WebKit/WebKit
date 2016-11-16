@@ -1,5 +1,18 @@
 2016-11-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Hard to write reliable UIScriptController scrollingTreeAsText tests
+        https://bugs.webkit.org/show_bug.cgi?id=164764
+
+        Reviewed by Wenson Hsieh.
+
+        Fix one cause of flakiness by resetting the WKWebView's UIScrollView scale
+        and scroll position between tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+2016-11-16  Simon Fraser  <simon.fraser@apple.com>
+
         UIScriptController: script with no async tasks fails if an earlier script registered a callback
         https://bugs.webkit.org/show_bug.cgi?id=164762
 
