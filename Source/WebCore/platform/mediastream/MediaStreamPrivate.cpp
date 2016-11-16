@@ -199,6 +199,24 @@ bool MediaStreamPrivate::hasAudio() const
     return false;
 }
 
+bool MediaStreamPrivate::hasLocalVideoSource() const
+{
+    for (auto& track : m_trackSet.values()) {
+        if (track->type() == RealtimeMediaSource::Type::Video && !track->remote())
+            return true;
+    }
+    return false;
+}
+
+bool MediaStreamPrivate::hasLocalAudioSource() const
+{
+    for (auto& track : m_trackSet.values()) {
+        if (track->type() == RealtimeMediaSource::Type::Audio && !track->remote())
+            return true;
+    }
+    return false;
+}
+
 bool MediaStreamPrivate::muted() const
 {
     for (auto& track : m_trackSet.values()) {

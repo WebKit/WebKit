@@ -1,3 +1,29 @@
+2016-11-15  Jon Lee  <jonlee@apple.com>
+
+        Report active video and audio capture devices separately
+        https://bugs.webkit.org/show_bug.cgi?id=164769
+
+        Reviewed by Eric Carlson.
+
+        For UI purposes, separate the notion of any active capture device to
+        an active audio and video capture device.
+
+        * page/MediaProducer.h: Replace HasActiveMediaCaptureDevice with
+        HasActiveAudioCaptureDevice and HasActiveVideoCaptureDevice.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaState): Update the logic for mediaState().
+        Since it is possible to arbitrarily add tracks from various sources,
+        check specifically for a local AV source (meaning a capture device) that
+        is producing data.
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::hasLocalVideoSource): Iterate over the tracks
+        and look for video sources that are not remote.
+        (WebCore::MediaStreamPrivate::hasLocalAudioSource): Ditto for audio.
+        * platform/mediastream/MediaStreamPrivate.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState): Update internals reporting.
+
 2016-11-15  Chris Dumez  <cdumez@apple.com>
 
         Avoid copying vector of attributes as much as possible in the HTML parser

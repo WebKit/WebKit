@@ -133,7 +133,8 @@ enum {
     kWKMediaIsNotPlaying = 0,
     kWKMediaIsPlayingAudio = 1 << 0,
     kWKMediaIsPlayingVideo = 1 << 1,
-    kWKMediaHasActiveCaptureDevice = 1 << 2,
+    kWKMediaHasActiveAudioCaptureDevice = 1 << 2,
+    kWKMediaHasActiveVideoCaptureDevice = 1 << 3,
 };
 typedef uint32_t WKMediaState;
 

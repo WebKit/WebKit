@@ -2748,8 +2748,10 @@ WKMediaState WKPageGetMediaState(WKPageRef page)
         state |= kWKMediaIsPlayingAudio;
     if (coreState & WebCore::MediaProducer::IsPlayingVideo)
         state |= kWKMediaIsPlayingVideo;
-    if (coreState & WebCore::MediaProducer::HasActiveMediaCaptureDevice)
-        state |= kWKMediaHasActiveCaptureDevice;
+    if (coreState & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        state |= kWKMediaHasActiveAudioCaptureDevice;
+    if (coreState & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+        state |= kWKMediaHasActiveVideoCaptureDevice;
 
     return state;
 }

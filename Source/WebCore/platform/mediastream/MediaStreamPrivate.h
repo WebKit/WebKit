@@ -101,6 +101,9 @@ public:
     bool hasAudio() const;
     bool muted() const;
 
+    bool hasLocalVideoSource() const;
+    bool hasLocalAudioSource() const;
+
     FloatSize intrinsicSize() const;
 
     WeakPtr<MediaStreamPrivate> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }

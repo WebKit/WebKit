@@ -6388,7 +6388,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
 
     activityStateDidChange(ActivityState::IsAudible);
 
-    playingMediaMask |= MediaProducer::HasActiveMediaCaptureDevice;
+    playingMediaMask |= MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingAudioDidChange(*this);
 #if PLATFORM(MAC)

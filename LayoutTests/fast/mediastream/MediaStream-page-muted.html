@@ -28,7 +28,7 @@
                 if (++eventCount == 2) {
                     debug("");
                     let shouldBeActive = muteChangedEvent.type == "mute" ? "false" : "true";
-                    shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice')", shouldBeActive, nextStep);
+                    shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveAudioCaptureDevice') && window.internals.pageMediaState().includes('HasActiveVideoCaptureDevice')", shouldBeActive, nextStep);
                 }
             }
             
@@ -53,7 +53,7 @@
                             tracks[i].onunmute = muteChanged;
                         }
 
-                        shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice')", "true", muteCaptureDevices);
+                        shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveAudioCaptureDevice') && window.internals.pageMediaState().includes('HasActiveVideoCaptureDevice')", "true", muteCaptureDevices);
                     })
                     .catch((err) => {
                         testFailed(`mediaDevices.getUserMedia() failed with ${err.name}`);

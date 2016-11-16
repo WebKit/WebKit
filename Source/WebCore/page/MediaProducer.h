@@ -42,7 +42,8 @@ public:
         IsPreviousTrackControlEnabled = 1 << 8,
         HasPlaybackTargetAvailabilityListener = 1 << 9,
         HasAudioOrVideo = 1 << 10,
-        HasActiveMediaCaptureDevice = 1 << 11,
+        HasActiveAudioCaptureDevice = 1 << 11,
+        HasActiveVideoCaptureDevice = 1 << 12,
     };
     typedef unsigned MediaStateFlags;
 

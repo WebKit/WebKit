@@ -1,3 +1,13 @@
+2016-11-15  Jon Lee  <jonlee@apple.com>
+
+        Report active video and audio capture devices separately
+        https://bugs.webkit.org/show_bug.cgi?id=164769
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-page-muted-expected.txt: Update test.
+        * fast/mediastream/MediaStream-page-muted.html:
+
 2016-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/regress-141098.html as flaky on ios-simulator.
