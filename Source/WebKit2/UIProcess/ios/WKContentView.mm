@@ -380,8 +380,6 @@ private:
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, _page->customFixedPositionRect(), zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect, scrollingCoordinator->visualViewportEnabled());
 
-    LOG_WITH_STREAM(VisibleRects, stream << "didUpdateVisibleRect: visibleRect:" << visibleRect << " unobscuredRect:" << unobscuredRect << " fixedPositionRectForLayout:" << fixedPositionRectForLayout << " stable: " << isStableState);
-
     VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleRect,
         unobscuredRect,
@@ -398,6 +396,8 @@ private:
         velocityData.verticalVelocity,
         velocityData.scaleChangeRate,
         downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
+
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
     _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
 

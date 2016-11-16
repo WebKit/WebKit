@@ -1,3 +1,33 @@
+2016-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add logging support to VisibleContentRectUpdateInfo
+        https://bugs.webkit.org/show_bug.cgi?id=164825
+
+        Reviewed by Zalan Bujtas.
+
+        Add TextStream output to VisibleContentRectUpdateInfo. Just piping it into a logging
+        stream does single-line output, so also make a convenience dump() function that will
+        product multiline output. Result look like:
+
+            (VisibleContentRectUpdateInfo
+              (lastLayerTreeTransactionID 54)
+              (exposedContentRect (523.44,1258.63) width=676.20 height=901.60)
+              (unobscuredContentRect (523.44,1293.41) width=676.20 height=866.82)
+              (unobscuredRectInScrollViewCoordinates (0,39.50) width=768 height=984.50)
+              (customFixedPositionRect (219.64,935) width=980 height=1225)
+              (obscuredInset width=0 height=39.50)
+              (scale 1.14)
+              (inStableState 0)
+              (timestamp 736446.61)
+              (verticalVelocity -11.36))
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::dump):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+
 2016-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Scroll view scrolling and zooming animations can keep running across page loads
