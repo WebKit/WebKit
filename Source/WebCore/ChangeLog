@@ -1,3 +1,19 @@
+2016-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r207162): [debug] loader/stateobjects LayoutTests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=163307
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/URLParser.cpp:
+        Removed some unnecessary and redundant assertions in iterators, which are inside inner loops.
+        (WebCore::URLParser::parsedDataView):
+        (WebCore::URLParser::parse):
+        Add a parsedDataView that just returns a UChar instead of a StringView for 1-length views.
+        This speeds up debug builds considerably, which spent most of the time parsing the path
+        making and destroying these 1-length StringViews.  It can't hurt release builds.
+        * platform/URLParser.h:
+
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
         Micro-optimize ContainerNode::removeBetween()

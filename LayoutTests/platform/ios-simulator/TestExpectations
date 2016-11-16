@@ -2726,11 +2726,6 @@ webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
 webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
-webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size-iframe.html [ Skip ]
-webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
-webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
-webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
-
 webkit.org/b/163755 imported/w3c/csswg-test/css-shapes-1 [ Skip ]
 
 # These font variation tests require a variation font which supports more than 2 axes.

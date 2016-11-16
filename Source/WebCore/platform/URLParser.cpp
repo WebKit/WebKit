@@ -107,7 +107,6 @@ ALWAYS_INLINE UChar32 CodePointIterator<LChar>::operator*() const
 template<>
 ALWAYS_INLINE auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
 {
-    ASSERT(!atEnd());
     m_begin++;
     return *this;
 }
@@ -124,7 +123,6 @@ ALWAYS_INLINE UChar32 CodePointIterator<UChar>::operator*() const
 template<>
 ALWAYS_INLINE auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
 {
-    ASSERT(!atEnd());
     unsigned i = 0;
     size_t length = m_end - m_begin;
     U16_FWD_1(m_begin, i, length);
@@ -1068,6 +1066,13 @@ ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
     return StringView(m_inputString).substring(start, length);
 }
 
+ALWAYS_INLINE UChar URLParser::parsedDataView(size_t position)
+{
+    if (UNLIKELY(m_didSeeSyntaxViolation))
+        return m_asciiBuffer[position];
+    return m_inputString[position];
+}
+
 template<typename CharacterType>
 ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<CharacterType>& iterator)
 {
@@ -1312,7 +1317,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 m_url.m_userStart = currentPosition(c);
                 authorityOrHostBegin = c;
             } else {
-                ASSERT(parsedDataView(currentPosition(c) - 1, 1) == "/");
+                ASSERT(parsedDataView(currentPosition(c) - 1) == '/');
                 m_url.m_userStart = currentPosition(c) - 1;
                 m_url.m_userEnd = m_url.m_userStart;
                 m_url.m_passwordEnd = m_url.m_userStart;
@@ -1600,7 +1605,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         appendWindowsDriveLetter(authorityOrHostBegin);
                     }
                     if (windowsQuirk || authorityOrHostBegin == c) {
-                        ASSERT(windowsQuirk || parsedDataView(currentPosition(c) - 1, 1) == "/");
+                        ASSERT(windowsQuirk || parsedDataView(currentPosition(c) - 1) == '/');
                         if (UNLIKELY(*c == '?')) {
                             syntaxViolation(c);
                             appendToASCIIBuffer("/?", 2);
@@ -1663,7 +1668,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 m_url.m_pathAfterLastSlash = currentPosition(c);
                 break;
             }
-            if (UNLIKELY(currentPosition(c) && parsedDataView(currentPosition(c) - 1, 1) == "/")) {
+            if (UNLIKELY(currentPosition(c) && parsedDataView(currentPosition(c) - 1) == '/')) {
                 if (UNLIKELY(isDoubleDotPathSegment(c))) {
                     syntaxViolation(c);
                     consumeDoubleDotPathSegment(c);
@@ -1784,7 +1789,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         LOG_FINAL_STATE("PathOrAuthority");
         ASSERT(m_url.m_userStart);
         ASSERT(m_url.m_userStart == currentPosition(c));
-        ASSERT(parsedDataView(currentPosition(c) - 1, 1) == "/");
+        ASSERT(parsedDataView(currentPosition(c) - 1) == '/');
         m_url.m_userStart--;
         m_url.m_userEnd = m_url.m_userStart;
         m_url.m_passwordEnd = m_url.m_userStart;
