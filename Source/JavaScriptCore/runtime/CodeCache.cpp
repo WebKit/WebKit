@@ -53,10 +53,13 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
 {
     DerivedContextType derivedContextType = executable->derivedContextType();
     bool isArrowFunctionContext = executable->isArrowFunctionContext();
-    SourceCodeKey key(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext);
+    SourceCodeKey key(
+        source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictMode, scriptMode, 
+        derivedContextType, evalContextType, isArrowFunctionContext, debuggerMode, 
+        vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No, 
+        vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
-    bool canCache = debuggerMode == DebuggerOff && !vm.typeProfiler() && !vm.controlFlowProfiler() && Options::useCodeCache();
-    if (cache && canCache) {
+    if (cache && Options::useCodeCache()) {
         UnlinkedCodeBlockType* unlinkedCodeBlock = jsCast<UnlinkedCodeBlockType*>(cache->cell.get());
         unsigned firstLine = source.firstLine() + unlinkedCodeBlock->firstLine();
         unsigned lineCount = unlinkedCodeBlock->lineCount();
@@ -72,7 +75,7 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
     VariableEnvironment variablesUnderTDZ;
     UnlinkedCodeBlockType* unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedCodeBlockType, ExecutableType>(vm, executable, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
 
-    if (unlinkedCodeBlock && canCache)
+    if (unlinkedCodeBlock && Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_sourceCode.age()));
 
     return unlinkedCodeBlock;
@@ -93,7 +96,7 @@ UnlinkedModuleProgramCodeBlock* CodeCache::getUnlinkedModuleProgramCodeBlock(VM&
     return getUnlinkedGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, JSParserStrictMode::Strict, JSParserScriptMode::Module, debuggerMode, error, EvalContextType::None);
 }
 
-UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& vm, const Identifier& name, const SourceCode& source, ParserError& error)
+UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& vm, const Identifier& name, const SourceCode& source, DebuggerMode debuggerMode, ParserError& error)
 {
     bool isArrowFunctionContext = false;
     SourceCodeKey key(
@@ -102,7 +105,10 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
         JSParserScriptMode::Classic,
         DerivedContextType::None,
         EvalContextType::None,
-        isArrowFunctionContext);
+        isArrowFunctionContext,
+        debuggerMode, 
+        vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No, 
+        vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
     if (cache && Options::useCodeCache()) {
         UnlinkedFunctionExecutable* executable = jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());

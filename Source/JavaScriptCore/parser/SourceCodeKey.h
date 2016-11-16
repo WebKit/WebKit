@@ -33,13 +33,21 @@
 namespace JSC {
 
 enum class SourceCodeType { EvalType, ProgramType, FunctionType, ModuleType };
+enum class TypeProfilerEnabled { No, Yes };
+enum class ControlFlowProfilerEnabled { No, Yes };
 
 class SourceCodeFlags {
 public:
     SourceCodeFlags() = default;
 
-    SourceCodeFlags(SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeFlags(
+        SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, 
+        DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
+        DebuggerMode debuggerMode, TypeProfilerEnabled typeProfilerEnabled, ControlFlowProfilerEnabled controlFlowProfilerEnabled)
         : m_flags(
+            (static_cast<unsigned>(debuggerMode) << 8) |
+            (static_cast<unsigned>(typeProfilerEnabled) << 7) |
+            (static_cast<unsigned>(controlFlowProfilerEnabled) << 6) |
             (static_cast<unsigned>(scriptMode) << 5) |
             (static_cast<unsigned>(isArrowFunctionContext) << 4) |
             (static_cast<unsigned>(evalContextType) << 3) |
@@ -55,6 +63,8 @@ public:
         return m_flags == rhs.m_flags;
     }
 
+    unsigned bits() { return m_flags; }
+
 private:
     unsigned m_flags { 0 };
 };
@@ -65,11 +75,14 @@ public:
     {
     }
 
-    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
-        : m_sourceCode(sourceCode)
-        , m_name(name)
-        , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext)
-        , m_hash(sourceCode.hash())
+    SourceCodeKey(
+        const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 
+        JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
+        DebuggerMode debuggerMode, TypeProfilerEnabled typeProfilerEnabled, ControlFlowProfilerEnabled controlFlowProfilerEnabled)
+            : m_sourceCode(sourceCode)
+            , m_name(name)
+            , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext, debuggerMode, typeProfilerEnabled, controlFlowProfilerEnabled)
+            , m_hash(sourceCode.hash() ^ m_flags.bits())
     {
     }
 

@@ -1,3 +1,29 @@
+2016-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Debugging and other tools should not disable the code cache
+        https://bugs.webkit.org/show_bug.cgi?id=164802
+
+        Reviewed by Mark Lam.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode): Updated for interface
+        change.
+
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeFlags::SourceCodeFlags):
+        (JSC::SourceCodeFlags::bits):
+        (JSC::SourceCodeKey::SourceCodeKey): Treat debugging and other tools
+        as part of our key so that we can cache code while using tools. Be sure
+        to include these bits in our hash function so you don't get storms of
+        collisions as you open and close the Web Inspector.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable): Treat tools as
+        a part of our key instead of as a reason to disable caching.
+
+        * runtime/CodeCache.h:
+
 2016-11-15  Mark Lam  <mark.lam@apple.com>
 
         Remove JSString::SafeView and replace its uses with StringViewWithUnderlyingString.
