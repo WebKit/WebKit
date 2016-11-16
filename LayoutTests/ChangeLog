@@ -1,5 +1,15 @@
 2016-11-15  Simon Fraser  <simon.fraser@apple.com>
 
+        UIScriptController: script with no async tasks fails if an earlier script registered a callback
+        https://bugs.webkit.org/show_bug.cgi?id=164762
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/harness/ui-side-script-with-callback-expected.txt: Added.
+        * fast/harness/ui-side-script-with-callback.html: Added.
+
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
         UIScriptController: setting a callback to undefined should unregister it
         https://bugs.webkit.org/show_bug.cgi?id=164796
 

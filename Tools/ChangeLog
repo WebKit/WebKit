@@ -1,5 +1,21 @@
 2016-11-15  Simon Fraser  <simon.fraser@apple.com>
 
+        UIScriptController: script with no async tasks fails if an earlier script registered a callback
+        https://bugs.webkit.org/show_bug.cgi?id=164762
+
+        Reviewed by Wenson Hsieh.
+        
+        UIScriptContext::runUIScript() considers a script to be "immediate" if that script doesn't
+        queue any async tasks. However, if an earlier UI script registered a callback, UIScriptContext::runUIScript()
+        would consider that an outstanding task.
+        
+        Fix by unregistering any callbacks associated with the current UI script when uiScriptComplete() is called.
+
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback):
+
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
         UIScriptController: setting a callback to undefined should unregister it
         https://bugs.webkit.org/show_bug.cgi?id=164796
 
