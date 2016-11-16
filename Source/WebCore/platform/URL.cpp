@@ -1676,7 +1676,11 @@ void URL::parse(const char* url, const String* originalString)
 
     // assemble it all, remembering the real ranges
 
-    Vector<char, 4096> buffer(fragmentEnd * 3 + 1);
+    // The magic number 10 comes from the worst-case addition of characters for password start,
+    // user info, and colon for port number, colon after scheme, plus inserting missing slashes
+    // after protocol, slash for empty path, and possible end-of-query '#' character. This
+    // yields a max of nine additional characters, plus a null.
+    Vector<char, 4096> buffer(fragmentEnd * 3 + 10);
 
     char* p = buffer.data();
     const char* strPtr = url;
