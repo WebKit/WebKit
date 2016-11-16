@@ -114,6 +114,7 @@ void WebPlaybackSessionInterfaceMac::endScrubbing()
     webPlaybackSessionModel()->endScrubbing();
 }
 
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 {
     RetainPtr<NSMutableArray> rangeArray = adoptNS([[NSMutableArray alloc] init]);
@@ -126,6 +127,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 
     return rangeArray;
 }
+#endif
 
 void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges)
 {
