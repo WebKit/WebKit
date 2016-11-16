@@ -307,7 +307,11 @@ GstContext* MediaPlayerPrivateGStreamerBase::requestGLContext(const gchar* conte
     if (!g_strcmp0(contextType, "gst.gl.app_context")) {
         GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
         GstStructure* structure = gst_context_writable_structure(appContext);
+#if GST_CHECK_VERSION(1, 11, 0)
+        gst_structure_set(structure, "context", GST_TYPE_GL_CONTEXT, player->gstGLContext(), nullptr);
+#else
         gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, player->gstGLContext(), nullptr);
+#endif
         return appContext;
     }
 
