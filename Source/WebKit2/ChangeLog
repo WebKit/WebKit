@@ -1,3 +1,19 @@
+2016-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Scroll view scrolling and zooming animations can keep running across page loads
+        https://bugs.webkit.org/show_bug.cgi?id=164810
+
+        Reviewed by Tim Horton.
+        
+        Scrolling and zooming animations can leak across page loads, which makes tests flakey,
+        and is unexpected by users.
+
+        Tested by scrollingcoordinator/ios/sync-layer-positions-after-scroll.html followed by
+        scrollingcoordinator/ios/ui-scrolling-tree.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+
 2016-11-15  Jon Lee  <jonlee@apple.com>
 
         Report active video and audio capture devices separately

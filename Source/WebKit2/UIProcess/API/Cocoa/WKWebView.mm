@@ -1204,6 +1204,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     _hasCommittedLoadForMainFrame = YES;
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
+
+    [_scrollView _stopScrollingAndZoomingAnimations];
 }
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
