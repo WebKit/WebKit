@@ -1036,3 +1036,6 @@ js/dom/modules/module-type-case-insensitive.html [ Skip ]
 js/dom/modules/module-will-fire-beforeload.html [ Skip ]
 webkit.org/b/164539 http/tests/security/module-crossorigin-error-event-information.html [ Skip ]
 webkit.org/b/164539 http/tests/security/module-crossorigin-onerror-information.html [ Skip ]
+
+webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
+webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]

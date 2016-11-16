@@ -1,3 +1,20 @@
+2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        js/dom/domjit-function-get-element-by-id-licm.html and js/dom/domjit-function-get-element-by-id-changed.html are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=164797
+
+        Reviewed by Saam Barati.
+
+        The performance of the both tests rely on PureGetById.
+        However, PureGetById is rolled out temporary[1], these tests become timed out.
+        This patch makes the both tests [ PASS TIMEOUT ] until PureGetById patch[1] is
+        relanded or impure object optimization patch[2] is landed.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=163305
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=164175
+
+        * TestExpectations:
+
 2016-11-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add more tests for SubtleCrypto::importKey and SubtleCrypto::exportKey
