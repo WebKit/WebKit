@@ -50,8 +50,16 @@ function close()
 {
     "use strict";
 
-    //FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController close() is not implemented");
+    if (!@isReadableByteStreamController(this))
+        throw @makeThisTypeError("ReadableByteStreamController", "close");
+
+    if (this.@closeRequested)
+        @throwTypeError("Close has already been requested");
+
+    if (this.@controlledReadableStream.@state !== @streamReadable)
+        @throwTypeError("ReadableStream is not readable");
+
+    @readableByteStreamControllerClose(this);
 }
 
 function byobRequest()

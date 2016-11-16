@@ -61,9 +61,91 @@ test(function() {
 
     assert_throws(new TypeError("Can only call ReadableByteStreamController.error on instances of ReadableByteStreamController"),
         function() { controller.error.apply(rs); });
-}, "Calling error() with a this object different from ReadableByteStreamController should fail");
+}, "Calling error() with a this object different from ReadableByteStreamController should throw a TypeError");
 
-const test2 = async_test("Calling read() on a reader associated to a controller that has been errored should be rejected");
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_throws(new TypeError("Can only call ReadableByteStreamController.close on instances of ReadableByteStreamController"),
+        function() { controller.close.apply(rs); });
+}, "Calling close() with a this object different from ReadableByteStreamController should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_throws(new TypeError("ReadableStream is not readable"),
+        function() {
+            controller.close();
+            controller.error();
+        });
+}, "Calling error() after calling close() should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_throws(new TypeError("ReadableStream is not readable"),
+        function() {
+            controller.error();
+            controller.error();
+        });
+}, "Calling error() after calling error() should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_throws(new TypeError("Close has already been requested"),
+        function() {
+            controller.close();
+            controller.close();
+        });
+}, "Calling close() after calling close() should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_throws(new TypeError("ReadableStream is not readable"),
+        function() {
+            controller.error();
+            controller.close();
+        });
+}, "Calling close() after calling error() should throw a TypeError");
+
+const test2 = async_test("Calling read() on a reader associated to a controller that has been errored should fail with provided error");
 test2.step(function() {
     let controller;
 

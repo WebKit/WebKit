@@ -1,3 +1,21 @@
+2016-11-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableByteStreamController close()
+        https://bugs.webkit.org/show_bug.cgi?id=164413
+
+        Reviewed by Darin Adler.
+
+        Implemented close() method of ReadableByteStreamController.
+
+        Updated test expectations for close() tests and added tests
+        to ensure errors are thrown in various cases defined by spec.
+
+        * Modules/streams/ReadableByteStreamController.js:
+        (close): Added.
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (readableByteStreamControllerClose): Added.
+        * bindings/js/WebCoreBuiltinNames.h: Added bytesFilled.
+
 2016-11-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][GL] build broken when using gst-plugins-bad from git

@@ -35,6 +35,7 @@ namespace WebCore {
     macro(appendFromJS) \
     macro(autoAllocateChunkSize) \
     macro(body) \
+    macro(bytesFilled) \
     macro(cancel) \
     macro(cloneForJS) \
     macro(closeRequested) \

@@ -1,14 +1,24 @@
 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
 PASS ReadableByteStreamController instances should have the correct list of properties 
-PASS Calling error() with a this object different from ReadableByteStreamController should fail 
-PASS Calling read() on a reader associated to a controller that has been errored should be rejected 
-FAIL Calling read() on a reader associated to a controller that has been closed should not be rejected ReadableByteStreamController close() is not implemented
+PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling error() after calling close() should throw a TypeError 
+PASS Calling error() after calling error() should throw a TypeError 
+PASS Calling close() after calling close() should throw a TypeError 
+PASS Calling close() after calling error() should throw a TypeError 
+PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
+PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
 PASS ReadableByteStreamController instances should have the correct list of properties 
-PASS Calling error() with a this object different from ReadableByteStreamController should fail 
-PASS Calling read() on a reader associated to a controller that has been errored should be rejected 
-FAIL Calling read() on a reader associated to a controller that has been closed should not be rejected ReadableByteStreamController close() is not implemented
+PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling error() after calling close() should throw a TypeError 
+PASS Calling error() after calling error() should throw a TypeError 
+PASS Calling close() after calling close() should throw a TypeError 
+PASS Calling close() after calling error() should throw a TypeError 
+PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
+PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 

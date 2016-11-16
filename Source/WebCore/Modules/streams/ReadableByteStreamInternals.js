@@ -95,6 +95,30 @@ function readableByteStreamControllerError(controller, e)
     @readableStreamError(controller.@controlledReadableStream, e);
 }
 
+function readableByteStreamControllerClose(controller)
+{
+    "use strict";
+
+    @assert(!controller.@closeRequested);
+    @assert(controller.@controlledReadableStream.@state === @streamReadable);
+
+    if (controller.@totalQueuedBytes > 0) {
+        controller.@closeRequested = true;
+        return;
+    }
+
+    if (controller.@pendingPullIntos.content.length > 0) {
+        const firstPendingPullInto = @dequeueValue(controller.@pendingPullIntos);
+        if (firstPendingPullInto.@bytesFilled > 0) {
+            const e = new @TypeError("Close requested while there remain pending bytes");
+            @readableByteStreamControllerError(controller, e);
+            throw e;
+        }
+    }
+
+    @readableStreamClose(controller.@controlledReadableStream);
+}
+
 function readableByteStreamControllerClearPendingPullIntos(controller)
 {
     "use strict";
