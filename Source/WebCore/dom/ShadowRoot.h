@@ -78,7 +78,6 @@ public:
     void didChangeDefaultSlot();
     void hostChildElementDidChange(const Element&);
     void hostChildElementDidChangeSlotAttribute(const AtomicString& oldValue, const AtomicString& newValue);
-    void innerSlotDidChange(const AtomicString&);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 

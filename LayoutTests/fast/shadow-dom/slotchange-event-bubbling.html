@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: slotchange event</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<link rel="help" href="https://dom.spec.whatwg.org/#signaling-slot-change">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+function create_slotchange_observer() {
+    let log = [];
+    const listener = function (event) {
+        log.push({node: this, event: event, eventType: event.type, eventTarget: event.target});
+    }
+    return {
+        observe: (node) => node.addEventListener('slotchange', listener),
+        takeLog: () => {
+            const currentLog = log;
+            log = [];
+            return currentLog;
+        }
+    };
+}
+
+function assert_slotchange_log(logEntry, node, target, description) {
+    assert_equals(logEntry.node, node, description);
+    assert_equals(logEntry.eventType, 'slotchange', description);
+    assert_equals(logEntry.eventTarget, target, description);
+}
+
+function test_slotchange_event_bubbles(mode, connected) {
+    promise_test(() => {
+        const host = document.createElement('div');
+        if (connected)
+            document.body.appendChild(host);
+
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<div><slot></slot></div>';
+        const container = shadowRoot.querySelector('div');
+        const slot = shadowRoot.querySelector('slot');
+
+        const observer = create_slotchange_observer();
+        observer.observe(slot);
+        observer.observe(container);
+        observer.observe(shadowRoot);
+        observer.observe(host);
+        observer.observe(document);
+        observer.observe(window);
+
+        shadowRoot.appendChild(container);
+        host.appendChild(document.createElement('span'));
+        host.appendChild(document.createElement('b'));
+
+        assert_array_equals(observer.takeLog(), [], 'slotchange event must not be fired synchronously');
+        return Promise.resolve().then(() => {
+            const log = observer.takeLog();
+
+            const events = new Set(log.map((entry) => entry.event));
+            assert_equals(events.size, 1, 'Mutating the assigned content of a slot must fire exactly one slotchange event');
+
+            assert_slotchange_log(log[0], slot, slot, 'slotchange event must be dispatched at the slot element first');
+            assert_slotchange_log(log[1], container, slot, 'slotchange event must bubble up to the parent node of the slot');
+            assert_slotchange_log(log[2], shadowRoot, slot, 'slotchange event must bubble up to the shadow root');
+            assert_equals(log.length, 3, 'slotchange must not bubble beyond the shadow root');
+        });
+    }, `slotchange event must bubble in a ${connected ? 'connected' : 'disconnected'} ${mode}-mode shadow tree`);
+}
+
+test_slotchange_event_bubbles('closed', false);
+test_slotchange_event_bubbles('closed', true);
+test_slotchange_event_bubbles('open', false);
+test_slotchange_event_bubbles('open', true);
+
+function test_single_slotchange_event_for_nested_slots(outerMode, innerMode, connected) {
+    promise_test(() => {
+        const outerHost = document.createElement('outer-host');
+        if (connected)
+            document.body.appendChild(outerHost);
+
+        const outerShadow = outerHost.attachShadow({'mode': outerMode});
+        outerShadow.innerHTML = '<div><inner-host><slot></slot></inner-host></div>';
+        const outerHostParent = outerShadow.querySelector('div');
+        const outerSlot = outerShadow.querySelector('slot');
+
+        const innerHost = outerShadow.querySelector('inner-host');
+        const innerShadow = innerHost.attachShadow({'mode': innerMode});
+        innerShadow.innerHTML = '<div><slot></slot></div>';
+        const innerSlotParent = innerShadow.querySelector('div');
+        const innerSlot = innerShadow.querySelector('slot');
+
+        const observer = create_slotchange_observer();
+        observer.observe(outerSlot);
+        observer.observe(innerHost);
+
+        observer.observe(window);
+        observer.observe(document);
+        observer.observe(outerHost);
+        observer.observe(outerShadow);
+        observer.observe(outerHostParent);
+        observer.observe(outerSlot);
+        observer.observe(innerHost);
+        observer.observe(innerShadow);
+        observer.observe(innerSlotParent);
+        observer.observe(innerSlot);
+
+        outerHost.textContent = ' ';
+
+        assert_array_equals(observer.takeLog(), [], 'slotchange event must not be fired synchronously');
+        return Promise.resolve().then(() => {
+            const log = observer.takeLog();
+
+            const events = new Set(log.map((entry) => entry.event));
+            assert_equals(events.size, 1, 'Mutating the assigned content of a slot must fire exactly one slotchange event');
+
+            assert_slotchange_log(log[0], outerSlot, outerSlot, 'slotchange event must be dispatched at the slot element first');
+            assert_slotchange_log(log[1], innerSlot, outerSlot, 'slotchange event must bubble up from a slot element to its assigned slot');
+            assert_slotchange_log(log[2], innerSlotParent, outerSlot, 'slotchange event must bubble up to the parent node of a slot');
+            assert_slotchange_log(log[3], innerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
+            assert_slotchange_log(log[4], innerHost, outerSlot,
+                'slotchange event must bubble up to the shadow host if the host is a descendent of the tree in which the event was fired');
+            assert_slotchange_log(log[5], outerHostParent, outerSlot,
+                'slotchange event must bubble up to the parent of an inner shadow host');
+            assert_slotchange_log(log[6], outerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
+            assert_equals(log.length, 7, 'slotchange must not bubble beyond the shadow root in which the event was fired');
+        });
+    }, `A single slotchange event must bubble from a ${connected ? 'connected' : 'disconnected'} ${innerMode}-mode shadow tree to`
+        + `a slot in its parent ${outerMode}-mode shadow tree`);
+}
+
+test_single_slotchange_event_for_nested_slots('closed', 'closed', false);
+test_single_slotchange_event_for_nested_slots('closed', 'closed', true);
+test_single_slotchange_event_for_nested_slots('closed', 'open', false);
+test_single_slotchange_event_for_nested_slots('closed', 'open', true);
+
+test_single_slotchange_event_for_nested_slots('open', 'closed', false);
+test_single_slotchange_event_for_nested_slots('open', 'closed', true);
+test_single_slotchange_event_for_nested_slots('open', 'open', false);
+test_single_slotchange_event_for_nested_slots('open', 'open', true);
+
+function test_slotchange_event_fired_without_listener_on_slot(mode, connected) {
+    promise_test(() => {
+        const host = document.createElement('div');
+        if (connected)
+            document.body.appendChild(host);
+
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<div><slot></slot></div>';
+        const container = shadowRoot.querySelector('div');
+        const slot = shadowRoot.querySelector('slot');
+
+        const observer = create_slotchange_observer();
+        observer.observe(container);
+        observer.observe(shadowRoot);
+        observer.observe(host);
+        observer.observe(document);
+        observer.observe(window);
+
+        shadowRoot.appendChild(container);
+        host.appendChild(document.createElement('span'));
+        host.appendChild(document.createElement('b'));
+
+        assert_array_equals(observer.takeLog(), [], 'slotchange event must not be fired synchronously');
+        return Promise.resolve().then(() => {
+            const log = observer.takeLog();
+
+            const events = new Set(log.map((entry) => entry.event));
+            assert_equals(events.size, 1, 'Mutating the assigned content of a slot must fire exactly one slotchange event');
+
+            assert_slotchange_log(log[0], container, slot, 'slotchange event must bubble up to the parent node of the slot');
+            assert_slotchange_log(log[1], shadowRoot, slot, 'slotchange event must bubble up to the shadow root');
+            assert_equals(log.length, 2, 'slotchange must not bubble beyond the shadow root');
+        });
+    }, `slotchange event must be fired in a ${connected ? 'connected' : 'disconnected'} ${mode}-mode shadow tree`
+        + ` even when the slot element itself lacks a event listener.`);
+}
+
+test_slotchange_event_fired_without_listener_on_slot('closed', false);
+test_slotchange_event_fired_without_listener_on_slot('closed', true);
+test_slotchange_event_fired_without_listener_on_slot('open', false);
+test_slotchange_event_fired_without_listener_on_slot('open', true);
+
+</script>
+</body>
+</html>

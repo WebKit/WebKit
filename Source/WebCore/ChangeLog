@@ -1,3 +1,39 @@
+2016-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange event should bubble and dispatched once
+        https://bugs.webkit.org/show_bug.cgi?id=164770
+
+        Reviewed by Antti Koivisto.
+
+        Updated our implementation of slotchange event to match the latest specification after:
+        https://github.com/w3c/webcomponents/issues/571
+        https://dom.spec.whatwg.org/#signal-a-slot-change
+        The new behavior matches that of Google Chrome Canary.
+
+        In the latest specification, we no longer dispatch a separate event on ancestor slots.
+        Instead, we fire a single slotchange event to which a new node is assigned or from which
+        an existing assigned node is removed. This patch mostly removes the code that existed to
+        locate ancestor slot elements, and makes the event bubble up by changing a single line in
+        HTMLSlotElement::dispatchSlotChangeEvent.
+
+        Test: fast/shadow-dom/slotchange-event-bubbling.html
+
+        * dom/ShadowRoot.h:
+        * dom/SlotAssignment.cpp:
+        (WebCore::recursivelyFireSlotChangeEvent): Deleted.
+        (WebCore::SlotAssignment::didChangeSlot): Removed ChangeType from the arguments since we
+        no longer notify the ancestor slot elements.
+        (WebCore::SlotAssignment::hostChildElementDidChange):
+        * dom/SlotAssignment.h:
+        (WebCore::ShadowRoot::didRemoveAllChildrenOfShadowHost):
+        (WebCore::ShadowRoot::didChangeDefaultSlot):
+        (WebCore::ShadowRoot::hostChildElementDidChangeSlotAttribute):
+        (WebCore::ShadowRoot::innerSlotDidChange): Deleted.
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsSlotAssignment::hostChildElementDidChange):
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::dispatchSlotChangeEvent): Make slotchange event bubble.
+
 2016-11-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r207162): [debug] loader/stateobjects LayoutTests timing out
