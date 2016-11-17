@@ -386,7 +386,9 @@ public:
 
     ExceptionOr<void> checkSetPrefix(const AtomicString& prefix);
 
-    WEBCORE_EXPORT bool isDescendantOf(const Node*) const;
+    WEBCORE_EXPORT bool isDescendantOf(const Node&) const;
+    WEBCORE_EXPORT bool isDescendantOf(const Node* other) const { return other && isDescendantOf(*other); }
+
     bool isDescendantOrShadowDescendantOf(const Node*) const;
     WEBCORE_EXPORT bool contains(const Node*) const;
     bool containsIncludingShadowDOM(const Node*) const;

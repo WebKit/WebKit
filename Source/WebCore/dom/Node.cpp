@@ -912,15 +912,15 @@ ExceptionOr<void> Node::checkSetPrefix(const AtomicString& prefix)
     return { };
 }
 
-bool Node::isDescendantOf(const Node* other) const
+bool Node::isDescendantOf(const Node& other) const
 {
     // Return true if other is an ancestor of this, otherwise false
-    if (!other || !other->hasChildNodes() || inDocument() != other->inDocument())
+    if (!other.hasChildNodes() || inDocument() != other.inDocument())
         return false;
-    if (other->isDocumentNode())
-        return &document() == other && !isDocumentNode() && inDocument();
-    for (const ContainerNode* n = parentNode(); n; n = n->parentNode()) {
-        if (n == other)
+    if (other.isDocumentNode())
+        return &document() == &other && !isDocumentNode() && inDocument();
+    for (const auto* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == &other)
             return true;
     }
     return false;
@@ -930,19 +930,19 @@ bool Node::isDescendantOrShadowDescendantOf(const Node* other) const
 {
     if (!other) 
         return false;
-    if (isDescendantOf(other))
+    if (isDescendantOf(*other))
         return true;
     const Node* shadowAncestorNode = deprecatedShadowAncestorNode();
     if (!shadowAncestorNode)
         return false;
-    return shadowAncestorNode == other || shadowAncestorNode->isDescendantOf(other);
+    return shadowAncestorNode == other || shadowAncestorNode->isDescendantOf(*other);
 }
 
 bool Node::contains(const Node* node) const
 {
     if (!node)
         return false;
-    return this == node || node->isDescendantOf(this);
+    return this == node || node->isDescendantOf(*this);
 }
 
 bool Node::containsIncludingShadowDOM(const Node* node) const

@@ -120,7 +120,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // If there's nothing inside topBlockquote to move, we're finished.
-    if (!startNode->isDescendantOf(topBlockquote)) {
+    if (!startNode->isDescendantOf(*topBlockquote)) {
         setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInOrBeforeNode(startNode)), endingSelection().isDirectional()));
         return;
     }

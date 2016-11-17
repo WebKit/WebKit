@@ -1,3 +1,74 @@
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Add Node::isDescendantOf() overload that takes in a reference
+        https://bugs.webkit.org/show_bug.cgi?id=164854
+
+        Reviewed by Ryosuke Niwa.
+
+        Add Node::isDescendantOf() overload that takes in a reference as a lot
+        of call sites have a reference or a pointer they know is not null.
+
+        No new tests, no Web-exposed behavior change.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        * dom/Document.cpp:
+        (WebCore::isNodeInSubtree):
+        (WebCore::Document::removeFullScreenElementOfSubtree):
+        (WebCore::Document::setAnimatingFullScreen):
+        * dom/Node.cpp:
+        (WebCore::Node::isDescendantOf):
+        (WebCore::Node::isDescendantOrShadowDescendantOf):
+        (WebCore::Node::contains):
+        * dom/Node.h:
+        (WebCore::Node::isDescendantOf):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::updateForNodeRemoval):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeFastPathForIdSelector):
+        (WebCore::filterRootById):
+        * dom/TypedElementDescendantIterator.h:
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::beginAt):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::from):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::beginAt):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::from):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::textDirectionForSelection):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrBefore):
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrAfter):
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        (WebCore::selectionForParagraphIteration):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+        * html/CachedHTMLCollection.h:
+        (WebCore::traversalType>::namedItem):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestContextualWordOrLinkFromMouseEvent):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+
 2016-11-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix build on macOS Sierra when WEB_PLAYBACK_CONTROLS_MANAGER is enabled

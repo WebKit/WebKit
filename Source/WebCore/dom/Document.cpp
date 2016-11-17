@@ -3534,9 +3534,9 @@ void Document::pageMutedStateDidChange()
 static bool isNodeInSubtree(Node& node, Node& container, bool amongChildrenOnly)
 {
     if (amongChildrenOnly)
-        return node.isDescendantOf(&container);
+        return node.isDescendantOf(container);
     else
-        return &node == &container || node.isDescendantOf(&container);
+        return &node == &container || node.isDescendantOf(container);
 }
 
 void Document::removeFocusedNodeOfSubtree(Node& node, bool amongChildrenOnly)
@@ -5963,9 +5963,9 @@ void Document::removeFullScreenElementOfSubtree(Node& node, bool amongChildrenOn
     
     bool elementInSubtree = false;
     if (amongChildrenOnly)
-        elementInSubtree = m_fullScreenElement->isDescendantOf(&node);
+        elementInSubtree = m_fullScreenElement->isDescendantOf(node);
     else
-        elementInSubtree = (m_fullScreenElement == &node) || m_fullScreenElement->isDescendantOf(&node);
+        elementInSubtree = (m_fullScreenElement == &node) || m_fullScreenElement->isDescendantOf(node);
     
     if (elementInSubtree)
         fullScreenElementRemoved();
@@ -5982,7 +5982,7 @@ void Document::setAnimatingFullScreen(bool flag)
         return;
     m_isAnimatingFullScreen = flag;
 
-    if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(this)) {
+    if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(*this)) {
         m_fullScreenElement->invalidateStyleForSubtree();
         scheduleForcedStyleRecalc();
     }

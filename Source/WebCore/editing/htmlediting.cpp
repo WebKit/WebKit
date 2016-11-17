@@ -299,10 +299,10 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
         candidate = positionAfterNode(shadowAncestor);
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(highestRoot))
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
         candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(candidate.deprecatedNode()) : nextVisuallyDistinctCandidate(candidate);
 
-    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(highestRoot))
+    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(*highestRoot))
         return { };
 
     return candidate;
@@ -327,10 +327,10 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
         candidate = firstPositionInOrBeforeNode(shadowAncestor);
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(highestRoot))
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
         candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(candidate.deprecatedNode()) : previousVisuallyDistinctCandidate(candidate);
     
-    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(highestRoot))
+    if (candidate.deprecatedNode() && candidate.deprecatedNode() != highestRoot && !candidate.deprecatedNode()->isDescendantOf(*highestRoot))
         return { };
     
     return candidate;
@@ -1060,7 +1060,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // that we'll want modify is the last one inside the table, not the table itself
     // (a table is itself a paragraph).
     if (auto* table = isFirstPositionAfterTable(endOfSelection)) {
-        if (startOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(table))
+        if (startOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
             newSelection = VisibleSelection(startOfSelection, endOfSelection.previous(CannotCrossEditingBoundary));
     }
     
@@ -1069,7 +1069,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // we'll want to modify is the first one inside the table, not the paragraph
     // containing the table itself.
     if (auto* table = isLastPositionBeforeTable(startOfSelection)) {
-        if (endOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(table))
+        if (endOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
             newSelection = VisibleSelection(startOfSelection.next(CannotCrossEditingBoundary), endOfSelection);
     }
     

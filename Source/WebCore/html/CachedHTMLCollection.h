@@ -146,7 +146,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
             return nullptr;
 
         if (candidate && collection().elementMatches(*candidate)) {
-            if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == &root : candidate->isDescendantOf(&root))
+            if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == &root : candidate->isDescendantOf(root))
                 return candidate;
         }
     }

@@ -1301,7 +1301,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             auto clonedNode = node->cloneNode(true);
             insertNodeAfter(clonedNode.ptr(), lastNode);
             lastNode = WTFMove(clonedNode);
-            if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(node.get()))
+            if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(*node))
                 break;
         }
     }

@@ -911,11 +911,12 @@ bool AccessibilityObject::press()
     
     // Prefer the actionElement instead of this node, if the actionElement is inside this node.
     Element* pressElement = this->element();
-    if (!pressElement || actionElem->isDescendantOf(pressElement))
+    if (!pressElement || actionElem->isDescendantOf(*pressElement))
         pressElement = actionElem;
     
+    ASSERT(pressElement);
     // Prefer the hit test element, if it is inside the target element.
-    if (hitTestElement && hitTestElement->isDescendantOf(pressElement))
+    if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
         pressElement = hitTestElement;
     
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);

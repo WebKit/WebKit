@@ -537,7 +537,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     unsigned currentAssociatedElementsAfterIndex = m_associatedElementsAfterIndex;
     ++m_associatedElementsAfterIndex;
 
-    if (!associatedHTMLElement.isDescendantOf(this))
+    if (!associatedHTMLElement.isDescendantOf(*this))
         return currentAssociatedElementsAfterIndex;
 
     // Check for the special case where this element is the very last thing in

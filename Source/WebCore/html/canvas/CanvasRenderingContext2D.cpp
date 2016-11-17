@@ -2051,7 +2051,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
 {
     GraphicsContext* context = drawingContext();
 
-    if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(&canvas()) || !context)
+    if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(canvas()) || !context)
         return;
 
     context->drawFocusRing(path, 1, 1, RenderTheme::focusRingColor());

@@ -410,7 +410,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         if (!n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag)) {
             next = NodeTraversal::nextSkippingChildren(*n);
             // Don't skip over pastEnd.
-            if (pastEnd && pastEnd->isDescendantOf(n))
+            if (pastEnd && pastEnd->isDescendantOf(*n))
                 next = pastEnd;
         } else {
             // Add the node to the markup if we're not skipping the descendants
@@ -452,7 +452,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                     if (!parent->renderer())
                         continue;
                     // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
-                    ASSERT(startNode->isDescendantOf(parent));
+                    ASSERT(startNode->isDescendantOf(*parent));
                     if (shouldEmit)
                         wrapWithNode(*parent);
                     lastClosed = parent;

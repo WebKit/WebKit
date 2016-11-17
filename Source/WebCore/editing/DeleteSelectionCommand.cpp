@@ -519,7 +519,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
             if (comparePositions(firstPositionInOrBeforeNode(node.get()), m_downstreamEnd) >= 0) {
                 // NodeTraversal::nextSkippingChildren just blew past the end position, so stop deleting
                 node = nullptr;
-            } else if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(node.get())) {
+            } else if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(*node)) {
                 RefPtr<Node> nextNode = NodeTraversal::nextSkippingChildren(*node);
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
@@ -702,7 +702,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     if (m_endTableRow && m_endTableRow->inDocument() && m_endTableRow != m_startTableRow)
         if (isTableRowEmpty(m_endTableRow.get())) {
             // Don't remove m_endTableRow if it's where we're putting the ending selection.
-            if (!m_endingPosition.deprecatedNode()->isDescendantOf(m_endTableRow.get())) {
+            if (!m_endingPosition.deprecatedNode()->isDescendantOf(*m_endTableRow)) {
                 // FIXME: We probably shouldn't remove m_endTableRow unless it's fully selected, even if it is empty.
                 // We'll need to start adjusting the selection endpoints during deletion to know whether or not m_endTableRow
                 // was fully selected here.
@@ -820,9 +820,10 @@ void DeleteSelectionCommand::doApply()
         // Don't need a placeholder when deleting a selection that starts just before a table
         // and ends inside it (we do need placeholders to hold open empty cells, but that's
         // handled elsewhere).
-        if (Node* table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart()))
-            if (m_selectionToDelete.end().deprecatedNode()->isDescendantOf(table))
+        if (auto* table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart())) {
+            if (m_selectionToDelete.end().deprecatedNode()->isDescendantOf(*table))
                 m_needPlaceholder = false;
+        }
     }
         
     

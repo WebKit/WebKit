@@ -143,10 +143,10 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
 
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    if (!removedNode.isDescendantOf(&root()))
+    if (!removedNode.isDescendantOf(root()))
         return;
     bool willRemoveReferenceNode = &removedNode == referenceNode.node;
-    bool willRemoveReferenceNodeAncestor = referenceNode.node && referenceNode.node->isDescendantOf(&removedNode);
+    bool willRemoveReferenceNodeAncestor = referenceNode.node && referenceNode.node->isDescendantOf(removedNode);
     if (!willRemoveReferenceNode && !willRemoveReferenceNodeAncestor)
         return;
 
@@ -155,7 +155,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
         if (node) {
             // Move out from under the node being removed if the new reference
             // node is a descendant of the node being removed.
-            while (node && node->isDescendantOf(&removedNode))
+            while (node && node->isDescendantOf(removedNode))
                 node = NodeTraversal::next(*node, &root());
             if (node)
                 referenceNode.node = node;
@@ -183,7 +183,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && node->isDescendantOf(&removedNode))
+                while (node && node->isDescendantOf(removedNode))
                     node = NodeTraversal::previous(*node);
             }
             if (node)
@@ -194,7 +194,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && node->isDescendantOf(&removedNode))
+                while (node && node->isDescendantOf(removedNode))
                     node = NodeTraversal::previous(*node);
             }
             if (node)

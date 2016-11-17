@@ -472,7 +472,7 @@ void TextIterator::advance()
                 bool pastEnd = NodeTraversal::next(*m_node) == m_pastEndNode;
                 Node* parentNode = m_node->parentOrShadowHostNode();
                 while (!next && parentNode) {
-                    if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
+                    if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(*parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     m_node = parentNode;
