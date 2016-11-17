@@ -1,3 +1,27 @@
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Use more references for Document::removeFocusedNodeOfSubtree()
+        https://bugs.webkit.org/show_bug.cgi?id=164839
+
+        Reviewed by Andreas Kling.
+
+        Use more references for Document::removeFocusedNodeOfSubtree().
+
+        No new tests, no Web-exposed behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::isNodeInSubtree):
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::removeFocusNavigationNodeOfSubtree):
+        (WebCore::Document::removeFullScreenElementOfSubtree):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+
 2016-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         Clear track client when removing a track

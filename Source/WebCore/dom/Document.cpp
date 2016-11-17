@@ -3531,27 +3531,24 @@ void Document::pageMutedStateDidChange()
         audioProducer->pageMutedStateDidChange();
 }
 
-static bool isNodeInSubtree(Node* node, Node* container, bool amongChildrenOnly)
+static bool isNodeInSubtree(Node& node, Node& container, bool amongChildrenOnly)
 {
-    bool nodeInSubtree = false;
     if (amongChildrenOnly)
-        nodeInSubtree = node->isDescendantOf(container);
+        return node.isDescendantOf(&container);
     else
-        nodeInSubtree = (node == container) || node->isDescendantOf(container);
-    
-    return nodeInSubtree;
+        return &node == &container || node.isDescendantOf(&container);
 }
 
-void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
+void Document::removeFocusedNodeOfSubtree(Node& node, bool amongChildrenOnly)
 {
     if (!m_focusedElement || pageCacheState() != NotInPageCache) // If the document is in the page cache, then we don't need to clear out the focused node.
         return;
 
-    Element* focusedElement = node->treeScope().focusedElement();
+    Element* focusedElement = node.treeScope().focusedElement();
     if (!focusedElement)
         return;
     
-    if (isNodeInSubtree(focusedElement, node, amongChildrenOnly)) {
+    if (isNodeInSubtree(*focusedElement, node, amongChildrenOnly)) {
         setFocusedElement(nullptr, FocusDirectionNone, FocusRemovalEventsMode::DoNotDispatch);
         // Set the focus navigation starting node to the previous focused element so that
         // we can fallback to the siblings or parent node for the next search.
@@ -3890,11 +3887,11 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
     NoEventDispatchAssertion assertNoEventDispatch;
 
-    removeFocusedNodeOfSubtree(&container, true /* amongChildrenOnly */);
+    removeFocusedNodeOfSubtree(container, true /* amongChildrenOnly */);
     removeFocusNavigationNodeOfSubtree(container, true /* amongChildrenOnly */);
 
 #if ENABLE(FULLSCREEN_API)
-    removeFullScreenElementOfSubtree(&container, true /* amongChildrenOnly */);
+    removeFullScreenElementOfSubtree(container, true /* amongChildrenOnly */);
 #endif
 
     for (auto* range : m_ranges)
@@ -3919,31 +3916,31 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     }
 }
 
-void Document::nodeWillBeRemoved(Node& n)
+void Document::nodeWillBeRemoved(Node& node)
 {
     NoEventDispatchAssertion assertNoEventDispatch;
 
-    removeFocusedNodeOfSubtree(&n);
-    removeFocusNavigationNodeOfSubtree(n);
+    removeFocusedNodeOfSubtree(node);
+    removeFocusNavigationNodeOfSubtree(node);
 
 #if ENABLE(FULLSCREEN_API)
-    removeFullScreenElementOfSubtree(&n);
+    removeFullScreenElementOfSubtree(node);
 #endif
 
     for (auto* it : m_nodeIterators)
-        it->nodeWillBeRemoved(n);
+        it->nodeWillBeRemoved(node);
 
     for (auto* range : m_ranges)
-        range->nodeWillBeRemoved(n);
+        range->nodeWillBeRemoved(node);
 
     if (Frame* frame = this->frame()) {
-        frame->eventHandler().nodeWillBeRemoved(n);
-        frame->selection().nodeWillBeRemoved(n);
-        frame->page()->dragCaretController().nodeWillBeRemoved(n);
+        frame->eventHandler().nodeWillBeRemoved(node);
+        frame->selection().nodeWillBeRemoved(node);
+        frame->page()->dragCaretController().nodeWillBeRemoved(node);
     }
 
-    if (is<Text>(n))
-        m_markers->removeMarkers(&n);
+    if (is<Text>(node))
+        m_markers->removeMarkers(&node);
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
@@ -3956,7 +3953,7 @@ void Document::removeFocusNavigationNodeOfSubtree(Node& node, bool amongChildren
     if (!m_focusNavigationStartingNode)
         return;
 
-    if (isNodeInSubtree(m_focusNavigationStartingNode.get(), &node, amongChildrenOnly)) {
+    if (isNodeInSubtree(*m_focusNavigationStartingNode, node, amongChildrenOnly)) {
         m_focusNavigationStartingNode = amongChildrenOnly ? &node : fallbackFocusNavigationStartingNodeAfterRemoval(node);
         m_focusNavigationStartingNodeIsRemoved = true;
     }
@@ -5959,16 +5956,16 @@ void Document::fullScreenElementRemoved()
     webkitCancelFullScreen();
 }
 
-void Document::removeFullScreenElementOfSubtree(Node* node, bool amongChildrenOnly)
+void Document::removeFullScreenElementOfSubtree(Node& node, bool amongChildrenOnly)
 {
     if (!m_fullScreenElement)
         return;
     
     bool elementInSubtree = false;
     if (amongChildrenOnly)
-        elementInSubtree = m_fullScreenElement->isDescendantOf(node);
+        elementInSubtree = m_fullScreenElement->isDescendantOf(&node);
     else
-        elementInSubtree = (m_fullScreenElement == node) || m_fullScreenElement->isDescendantOf(node);
+        elementInSubtree = (m_fullScreenElement == &node) || m_fullScreenElement->isDescendantOf(&node);
     
     if (elementInSubtree)
         fullScreenElementRemoved();

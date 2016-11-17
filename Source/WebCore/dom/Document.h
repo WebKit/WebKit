@@ -707,7 +707,7 @@ public:
     void setFocusNavigationStartingNode(Node*);
     Element* focusNavigationStartingNode(FocusDirection) const;
 
-    void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
+    void removeFocusedNodeOfSubtree(Node&, bool amongChildrenOnly = false);
     void hoveredElementDidDetach(Element*);
     void elementInActiveChainDidDetach(Element*);
 
@@ -1109,7 +1109,7 @@ public:
     void fullScreenChangeDelayTimerFired();
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
-    void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
+    void removeFullScreenElementOfSubtree(Node&, bool amongChildrenOnly = false);
     bool isAnimatingFullScreen() const;
     WEBCORE_EXPORT void setAnimatingFullScreen(bool);
 
