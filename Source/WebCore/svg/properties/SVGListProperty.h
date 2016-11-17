@@ -190,7 +190,7 @@ public:
         return ListItemType { m_values->at(index) };
     }
 
-    ExceptionOr<Ref<ListItemTearOff>> getItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> getItemValuesAndWrappers(AnimatedListPropertyTearOff& animatedList, unsigned index)
     {
         ASSERT(m_wrappers);
 
@@ -377,7 +377,7 @@ public:
         return WTFMove(oldItem);
     }
 
-    ExceptionOr<Ref<ListItemTearOff>> removeItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index)
+    ExceptionOr<Ref<ListItemTearOff>> removeItemValuesAndWrappers(AnimatedListPropertyTearOff& animatedList, unsigned index)
     {
         ASSERT(m_wrappers);
 

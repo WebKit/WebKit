@@ -26,9 +26,8 @@ namespace WebCore {
 
 class SVGRect : public SVGPropertyTearOff<FloatRect> {
 public:
-    static Ref<SVGRect> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatRect& value)
+    static Ref<SVGRect> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatRect& value)
     {
-        ASSERT(animatedProperty);
         return adoptRef(*new SVGRect(animatedProperty, role, value));
     }
 
@@ -114,8 +113,8 @@ public:
     }
 
 private:
-    SVGRect(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatRect& value)
-        : SVGPropertyTearOff<FloatRect>(animatedProperty, role, value)
+    SVGRect(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatRect& value)
+        : SVGPropertyTearOff<FloatRect>(&animatedProperty, role, value)
     {
     }
 

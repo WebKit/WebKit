@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-typedef SVGAnimatedListPropertyTearOff<SVGPointList> SVGAnimatedPointList;
+using SVGAnimatedPointList = SVGAnimatedListPropertyTearOff<SVGPointListValues>;
 
 class SVGAnimationElement;
 

@@ -30,11 +30,14 @@
 
 namespace WebCore {
 
-class SVGMaskElement final : public SVGElement,
-                             public SVGTests,
-                             public SVGExternalResourcesRequired {
+class SVGMaskElement final : public SVGElement, public SVGTests, public SVGExternalResourcesRequired {
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
+
+    // SVGTests
+    Ref<SVGStringList> requiredFeatures();
+    Ref<SVGStringList> requiredExtensions();
+    Ref<SVGStringList> systemLanguage();
 
 private:
     SVGMaskElement(const QualifiedName&, Document&);
@@ -62,9 +65,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(this); }
-    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(this); }
-    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(this); }
+    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(*this); }
+    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(*this); }
+    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(*this); }
 };
 
 } // namespace WebCore

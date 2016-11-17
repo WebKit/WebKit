@@ -27,6 +27,7 @@
 #include "SVGNames.h"
 #include "SVGPathData.h"
 #include "SVGRect.h"
+#include "SVGStringList.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -121,7 +122,7 @@ bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::transformAttr) {
-        SVGTransformList newList;
+        SVGTransformListValues newList;
         newList.parse(value);
         detachAnimatedTransformListWrappers(newList.size());
         setTransformBaseValue(newList);
@@ -187,6 +188,21 @@ void SVGGraphicsElement::toClipPath(Path& path)
     updatePathFromGraphicsElement(this, path);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());
+}
+
+Ref<SVGStringList> SVGGraphicsElement::requiredFeatures()
+{
+    return SVGTests::requiredFeatures(*this);
+}
+
+Ref<SVGStringList> SVGGraphicsElement::requiredExtensions()
+{ 
+    return SVGTests::requiredExtensions(*this);
+}
+
+Ref<SVGStringList> SVGGraphicsElement::systemLanguage()
+{
+    return SVGTests::systemLanguage(*this);
 }
 
 }

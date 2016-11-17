@@ -32,9 +32,8 @@ namespace WebCore {
 
 class SVGNumber : public SVGPropertyTearOff<float> {
 public:
-    static Ref<SVGNumber> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, float& value)
+    static Ref<SVGNumber> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, float& value)
     {
-        ASSERT(animatedProperty);
         return adoptRef(*new SVGNumber(animatedProperty, role, value));
     }
 
@@ -72,8 +71,8 @@ public:
     }
 
 private:
-    SVGNumber(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, float& value)
-        : SVGPropertyTearOff<float>(animatedProperty, role, value)
+    SVGNumber(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, float& value)
+        : SVGPropertyTearOff<float>(&animatedProperty, role, value)
     {
     }
 

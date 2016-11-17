@@ -27,7 +27,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGTransformList.h"
+#include "SVGTransformListValues.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -181,7 +181,7 @@ SVGTransformValue::SVGTransformType SVGTransformable::parseTransformType(const S
     return type;
 }
 
-bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)
+bool SVGTransformable::parseTransformAttribute(SVGTransformListValues& list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)
 {
     if (mode == ClearList)
         list.clear();

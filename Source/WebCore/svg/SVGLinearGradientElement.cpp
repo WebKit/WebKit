@@ -30,7 +30,6 @@
 #include "RenderSVGResourceLinearGradient.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
-#include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
 #include <wtf/NeverDestroyed.h>
 

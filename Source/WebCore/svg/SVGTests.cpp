@@ -204,45 +204,44 @@ void SVGTests::addSupportedAttributes(HashSet<QualifiedName>& supportedAttribute
     supportedAttributes.add(systemLanguageAttr);
 }
 
-void SVGTests::synchronizeAttribute(SVGElement* contextElement, SVGSynchronizableAnimatedProperty<SVGStringList>& property, const QualifiedName& attributeName)
+void SVGTests::synchronizeAttribute(SVGElement& contextElement, SVGSynchronizableAnimatedProperty<SVGStringListValues>& property, const QualifiedName& attributeName)
 {
-    ASSERT(contextElement);
     if (!property.shouldSynchronize)
         return;
-    m_requiredFeatures.synchronize(contextElement, attributeName, property.value.valueAsString());
+    m_requiredFeatures.synchronize(&contextElement, attributeName, property.value.valueAsString());
 }
 
-void SVGTests::synchronizeRequiredFeatures(SVGElement* contextElement)
+void SVGTests::synchronizeRequiredFeatures(SVGElement& contextElement)
 {
     synchronizeAttribute(contextElement, m_requiredFeatures, requiredFeaturesAttr);
 }
 
-void SVGTests::synchronizeRequiredExtensions(SVGElement* contextElement)
+void SVGTests::synchronizeRequiredExtensions(SVGElement& contextElement)
 {
     synchronizeAttribute(contextElement, m_requiredExtensions, requiredExtensionsAttr);
 }
 
-void SVGTests::synchronizeSystemLanguage(SVGElement* contextElement)
+void SVGTests::synchronizeSystemLanguage(SVGElement& contextElement)
 {
     synchronizeAttribute(contextElement, m_systemLanguage, systemLanguageAttr);
 }
 
-SVGStringList& SVGTests::requiredFeatures()
+Ref<SVGStringList> SVGTests::requiredFeatures(SVGElement& contextElement)
 {
     m_requiredFeatures.shouldSynchronize = true;
-    return m_requiredFeatures.value;
+    return SVGStringList::create(contextElement, m_requiredFeatures.value);
 }
 
-SVGStringList& SVGTests::requiredExtensions()
+Ref<SVGStringList> SVGTests::requiredExtensions(SVGElement& contextElement)
 {
     m_requiredExtensions.shouldSynchronize = true;    
-    return m_requiredExtensions.value;
+    return SVGStringList::create(contextElement, m_requiredExtensions.value);
 }
 
-SVGStringList& SVGTests::systemLanguage()
+Ref<SVGStringList> SVGTests::systemLanguage(SVGElement& contextElement)
 {
     m_systemLanguage.shouldSynchronize = true;
-    return m_systemLanguage.value;
+    return SVGStringList::create(contextElement, m_systemLanguage.value);
 }
 
 bool SVGTests::hasFeatureForLegacyBindings(const String& feature, const String& version)

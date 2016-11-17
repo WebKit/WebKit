@@ -34,9 +34,8 @@ namespace WebCore {
 
 class SVGPoint : public SVGPropertyTearOff<FloatPoint> {
 public:
-    static Ref<SVGPoint> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatPoint& value)
+    static Ref<SVGPoint> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatPoint& value)
     {
-        ASSERT(animatedProperty);
         return adoptRef(*new SVGPoint(animatedProperty, role, value));
     }
 
@@ -101,8 +100,13 @@ public:
     }
 
 protected:
-    SVGPoint(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, FloatPoint& value)
-        : SVGPropertyTearOff<FloatPoint>(animatedProperty, role, value)
+    SVGPoint(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatPoint& value)
+        : SVGPropertyTearOff<FloatPoint>(&animatedProperty, role, value)
+    {
+    }
+
+    SVGPoint(SVGPropertyRole role, FloatPoint& value)
+        : SVGPropertyTearOff<FloatPoint>(nullptr, role, value)
     {
     }
 

@@ -24,16 +24,16 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
-#include "SVGPointList.h"
+#include "SVGPointListValues.h"
 
 namespace WebCore {
 
 class SVGPolyElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
-    RefPtr<SVGListPropertyTearOff<SVGPointList>> points();
-    RefPtr<SVGListPropertyTearOff<SVGPointList>> animatedPoints();
+    Ref<SVGPointList> points();
+    Ref<SVGPointList> animatedPoints();
 
-    SVGPointList& pointList() const { return m_points.value; }
+    SVGPointListValues& pointList() const { return m_points.value; }
 
     static const SVGPropertyInfo* pointsPropertyInfo();
 
@@ -59,7 +59,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
 protected:
-    mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
+    mutable SVGSynchronizableAnimatedProperty<SVGPointListValues> m_points;
 };
 
 } // namespace WebCore

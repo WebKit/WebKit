@@ -38,17 +38,18 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement final : public SVGElement,
-                                public SVGURIReference,
-                                public SVGTests,
-                                public SVGExternalResourcesRequired,
-                                public SVGFitToViewBox {
+class SVGPatternElement final : public SVGElement, public SVGURIReference, public SVGTests, public SVGExternalResourcesRequired, public SVGFitToViewBox {
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
 
     void collectPatternAttributes(PatternAttributes&) const;
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const final;
+
+    // SVGTests
+    Ref<SVGStringList> requiredFeatures();
+    Ref<SVGStringList> requiredExtensions();
+    Ref<SVGStringList> systemLanguage();
 
 private:
     SVGPatternElement(const QualifiedName&, Document&);
@@ -80,9 +81,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(this); }
-    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(this); }
-    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(this); }
+    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(*this); }
+    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(*this); }
+    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(*this); }
 };
 
 } // namespace WebCore

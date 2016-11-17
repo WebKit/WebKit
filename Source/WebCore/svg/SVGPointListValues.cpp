@@ -1,8 +1,6 @@
 /*
- * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,12 +18,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    SkipVTableValidation
-] interface SVGPoint {
-    [SetterMayThrowException] attribute unrestricted float x;
-    [SetterMayThrowException] attribute unrestricted float y;
+#include "config.h"
+#include "SVGPointListValues.h"
 
-    [MayThrowException, NewObject] SVGPoint matrixTransform(SVGMatrix matrix);
-};
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
+namespace WebCore {
+
+String SVGPointListValues::valueAsString() const
+{
+    StringBuilder builder;
+
+    unsigned size = this->size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (i > 0)
+            builder.append(' '); // FIXME: Shouldn't we use commas to seperate?
+
+        const auto& point = at(i);
+        builder.appendNumber(point.x());
+        builder.append(' ');
+        builder.appendNumber(point.y());
+    }
+
+    return builder.toString();
+}
+
+}

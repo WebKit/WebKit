@@ -26,6 +26,7 @@
 #include "IntSize.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include "SVGNumberListValues.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
@@ -124,7 +125,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::kernelMatrixAttr) {
-        SVGNumberList newList;
+        SVGNumberListValues newList;
         newList.parse(value);
         detachAnimatedKernelMatrixListWrappers(newList.size());
         setKernelMatrixBaseValue(newList);
@@ -233,7 +234,7 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 
 RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    auto* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
         return nullptr;
@@ -247,7 +248,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
     // Spec says order must be > 0. Bail if it is not.
     if (orderXValue < 1 || orderYValue < 1)
         return nullptr;
-    SVGNumberList& kernelMatrix = this->kernelMatrix();
+    auto& kernelMatrix = this->kernelMatrix();
     int kernelMatrixSize = kernelMatrix.size();
     // The spec says this is a requirement, and should bail out if fails
     if (orderXValue * orderYValue != kernelMatrixSize)
@@ -286,12 +287,9 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
             divisorValue = 1;
     }
 
-    RefPtr<FilterEffect> effect = FEConvolveMatrix::create(filter,
-                    IntSize(orderXValue, orderYValue), divisorValue,
-                    bias(), IntPoint(targetXValue, targetYValue), edgeMode(),
-                    FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
+    auto effect = FEConvolveMatrix::create(filter, IntSize(orderXValue, orderYValue), divisorValue, bias(), IntPoint(targetXValue, targetYValue), edgeMode(), FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
     effect->inputEffects().append(input1);
-    return effect;
+    return WTFMove(effect);
 }
 
 } // namespace WebCore

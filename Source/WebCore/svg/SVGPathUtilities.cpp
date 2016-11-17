@@ -49,7 +49,7 @@ bool buildPathFromString(const String& d, Path& result)
     return SVGPathParser::parse(source, builder);
 }
 
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPathByteStream& result, PathParsingMode parsingMode)
+bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues& list, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
     result.clear();
     if (list.isEmpty())
@@ -64,7 +64,7 @@ bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPath
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
     ASSERT(parsingMode == UnalteredParsing);
 
-    SVGPathSegList appendedItemList(PathSegUnalteredRole);
+    SVGPathSegListValues appendedItemList(PathSegUnalteredRole);
     appendedItemList.append(WTFMove(pathSeg));
 
     SVGPathByteStream appendedByteStream;
@@ -87,7 +87,7 @@ bool buildPathFromByteStream(const SVGPathByteStream& stream, Path& result)
     return SVGPathParser::parse(source, builder);
 }
 
-bool buildSVGPathSegListFromByteStream(const SVGPathByteStream& stream, SVGPathElement& element, SVGPathSegList& result, PathParsingMode parsingMode)
+bool buildSVGPathSegListValuesFromByteStream(const SVGPathByteStream& stream, SVGPathElement& element, SVGPathSegListValues& result, PathParsingMode parsingMode)
 {
     if (stream.isEmpty())
         return true;
@@ -106,7 +106,7 @@ bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, 
     return SVGPathParser::parseToString(source, result, parsingMode);
 }
 
-bool buildStringFromSVGPathSegList(const SVGPathSegList& list, String& result, PathParsingMode parsingMode)
+bool buildStringFromSVGPathSegListValues(const SVGPathSegListValues& list, String& result, PathParsingMode parsingMode)
 {
     result = String();
     if (list.isEmpty())

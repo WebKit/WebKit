@@ -24,7 +24,7 @@
  */
 
 interface SVGViewElement : SVGElement {
-    readonly attribute SVGStringList viewTarget;
+    [NewObject] readonly attribute SVGStringList viewTarget;
 };
 
 SVGViewElement implements SVGExternalResourcesRequired;

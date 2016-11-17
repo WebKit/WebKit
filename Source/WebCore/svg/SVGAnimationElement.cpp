@@ -37,6 +37,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGStringList.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
@@ -683,6 +684,21 @@ void SVGAnimationElement::setTargetElement(SVGElement* target)
 void SVGAnimationElement::checkInvalidCSSAttributeType(SVGElement* target)
 {
     m_hasInvalidCSSAttributeType = target && hasValidAttributeName() && attributeType() == AttributeType::CSS && !isTargetAttributeCSSProperty(target, attributeName());
+}
+
+Ref<SVGStringList> SVGAnimationElement::requiredFeatures()
+{
+    return SVGTests::requiredFeatures(*this);
+}
+
+Ref<SVGStringList> SVGAnimationElement::requiredExtensions()
+{ 
+    return SVGTests::requiredExtensions(*this);
+}
+
+Ref<SVGStringList> SVGAnimationElement::systemLanguage()
+{
+    return SVGTests::systemLanguage(*this);
 }
 
 }

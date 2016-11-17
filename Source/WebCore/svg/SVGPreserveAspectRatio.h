@@ -22,6 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #pragma once
 
 #include "ExceptionCode.h"
@@ -32,9 +33,8 @@ namespace WebCore {
 
 class SVGPreserveAspectRatio : public SVGPropertyTearOff<SVGPreserveAspectRatioValue> {
 public:
-    static Ref<SVGPreserveAspectRatio> create(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+    static Ref<SVGPreserveAspectRatio> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
     {
-        ASSERT(animatedProperty);
         return adoptRef(*new SVGPreserveAspectRatio(animatedProperty, role, value));
     }
 
@@ -92,8 +92,8 @@ public:
     }
 
 private:
-    SVGPreserveAspectRatio(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
-        : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(animatedProperty, role, value)
+    SVGPreserveAspectRatio(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+        : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(&animatedProperty, role, value)
     {
     }
 

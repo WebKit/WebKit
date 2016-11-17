@@ -23,7 +23,7 @@
 
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
-#include "SVGNumberList.h"
+#include "SVGNumberListValues.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -82,7 +82,7 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
     }
 
     if (name == SVGNames::tableValuesAttr) {
-        SVGNumberList newList;
+        SVGNumberListValues newList;
         newList.parse(value);
         detachAnimatedTableValuesListWrappers(newList.size());
         setTableValuesBaseValue(newList);

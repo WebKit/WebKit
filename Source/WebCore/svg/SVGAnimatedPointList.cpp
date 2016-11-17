@@ -23,7 +23,7 @@
 #include "SVGAnimateElementBase.h"
 #include "SVGParserUtilities.h"
 #include "SVGPoint.h"
-#include "SVGPointList.h"
+#include "SVGPointListValues.h"
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ SVGAnimatedPointListAnimator::SVGAnimatedPointListAnimator(SVGAnimationElement* 
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPointListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createPointList(std::make_unique<SVGPointList>());
+    auto animatedType = SVGAnimatedType::createPointList(std::make_unique<SVGPointListValues>());
     pointsListFromSVGData(animatedType->pointList(), string);
     return animatedType;
 }
@@ -69,8 +69,8 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
     ASSERT(from->type() == AnimatedPoints);
     ASSERT(from->type() == to->type());
 
-    const SVGPointList& fromPointList = from->pointList();
-    SVGPointList& toPointList = to->pointList();
+    const auto& fromPointList = from->pointList();
+    auto& toPointList = to->pointList();
 
     unsigned fromPointListSize = fromPointList.size();
     if (!fromPointListSize || fromPointListSize != toPointList.size())
@@ -84,11 +84,11 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
 {
     ASSERT(m_animationElement);
 
-    const SVGPointList& fromPointList = m_animationElement->animationMode() == ToAnimation ? animated->pointList() : from->pointList();
-    const SVGPointList& toPointList = to->pointList();
-    const SVGPointList& toAtEndOfDurationPointList = toAtEndOfDuration->pointList();
-    SVGPointList& animatedPointList = animated->pointList();
-    if (!m_animationElement->adjustFromToListValues<SVGPointList>(fromPointList, toPointList, animatedPointList, percentage))
+    const auto& fromPointList = m_animationElement->animationMode() == ToAnimation ? animated->pointList() : from->pointList();
+    const auto& toPointList = to->pointList();
+    const auto& toAtEndOfDurationPointList = toAtEndOfDuration->pointList();
+    auto& animatedPointList = animated->pointList();
+    if (!m_animationElement->adjustFromToListValues<SVGPointListValues>(fromPointList, toPointList, animatedPointList, percentage))
         return;
 
     unsigned fromPointListSize = fromPointList.size();
@@ -111,7 +111,7 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
 
 float SVGAnimatedPointListAnimator::calculateDistance(const String&, const String&)
 {
-    // FIXME: Distance calculation is not possible for SVGPointList right now. We need the distance of for every single value.
+    // FIXME: Distance calculation is not possible for SVGPointListValues right now. We need the distance of for every single value.
     return -1;
 }
 

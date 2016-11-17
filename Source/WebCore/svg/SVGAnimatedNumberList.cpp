@@ -32,7 +32,7 @@ SVGAnimatedNumberListAnimator::SVGAnimatedNumberListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberList(std::make_unique<SVGNumberList>());
+    auto animatedType = SVGAnimatedType::createNumberList(std::make_unique<SVGNumberListValues>());
     animatedType->numberList().parse(string);
     return animatedType;
 }
@@ -67,8 +67,8 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
     ASSERT(from->type() == AnimatedNumberList);
     ASSERT(from->type() == to->type());
 
-    const SVGNumberList& fromNumberList = from->numberList();
-    SVGNumberList& toNumberList = to->numberList();
+    const auto& fromNumberList = from->numberList();
+    auto& toNumberList = to->numberList();
 
     unsigned fromNumberListSize = fromNumberList.size();
     if (!fromNumberListSize || fromNumberListSize != toNumberList.size())
@@ -82,11 +82,11 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 {
     ASSERT(m_animationElement);
 
-    const SVGNumberList& fromNumberList = m_animationElement->animationMode() == ToAnimation ? animated->numberList() : from->numberList();
-    const SVGNumberList& toNumberList = to->numberList();
-    const SVGNumberList& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
-    SVGNumberList& animatedNumberList = animated->numberList();
-    if (!m_animationElement->adjustFromToListValues<SVGNumberList>(fromNumberList, toNumberList, animatedNumberList, percentage))
+    const auto& fromNumberList = m_animationElement->animationMode() == ToAnimation ? animated->numberList() : from->numberList();
+    const auto& toNumberList = to->numberList();
+    const auto& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
+    auto& animatedNumberList = animated->numberList();
+    if (!m_animationElement->adjustFromToListValues<SVGNumberListValues>(fromNumberList, toNumberList, animatedNumberList, percentage))
         return;
 
     unsigned fromNumberListSize = fromNumberList.size();
@@ -102,7 +102,7 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 
 float SVGAnimatedNumberListAnimator::calculateDistance(const String&, const String&)
 {
-    // FIXME: Distance calculation is not possible for SVGNumberList right now. We need the distance for every single value.
+    // FIXME: Distance calculation is not possible for SVGNumberListValues right now. We need the distance for every single value.
     return -1;
 }
 

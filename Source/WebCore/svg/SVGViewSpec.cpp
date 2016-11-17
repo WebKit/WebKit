@@ -26,6 +26,7 @@
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGTransformList.h"
 #include "SVGTransformable.h"
 
 namespace WebCore {
@@ -107,7 +108,7 @@ ExceptionOr<void> SVGViewSpec::setZoomAndPan(unsigned short)
 
 String SVGViewSpec::transformString() const
 {
-    return SVGPropertyTraits<SVGTransformList>::toString(m_transform);
+    return SVGPropertyTraits<SVGTransformListValues>::toString(m_transform);
 }
 
 String SVGViewSpec::viewBoxString() const
@@ -130,12 +131,12 @@ SVGElement* SVGViewSpec::viewTarget() const
     return downcast<SVGElement>(element);
 }
 
-RefPtr<SVGTransformListPropertyTearOff> SVGViewSpec::transform()
+RefPtr<SVGTransformList> SVGViewSpec::transform()
 {
     if (!m_contextElement)
         return nullptr;
     // Return the animVal here, as its readonly by default - which is exactly what we want here.
-    return static_pointer_cast<SVGTransformListPropertyTearOff>(static_reference_cast<SVGAnimatedTransformList>(lookupOrCreateTransformWrapper(this))->animVal());
+    return static_reference_cast<SVGAnimatedTransformList>(lookupOrCreateTransformWrapper(this))->animVal();
 }
 
 RefPtr<SVGAnimatedRect> SVGViewSpec::viewBoxAnimated()
@@ -170,15 +171,15 @@ Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateTransformWrapper(SVGViewSpec
 {
     ASSERT(ownerType);
     ASSERT(ownerType->m_contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformList>(ownerType->m_contextElement, transformPropertyInfo(), ownerType->m_transform);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformListValues>(ownerType->m_contextElement, transformPropertyInfo(), ownerType->m_transform);
 }
 
 void SVGViewSpec::reset()
 {
     m_zoomAndPan = SVGZoomAndPanMagnify;
     m_transform.clear();
-    m_viewBox = FloatRect();
-    m_preserveAspectRatio = SVGPreserveAspectRatioValue();
+    m_viewBox = { };
+    m_preserveAspectRatio = { };
     m_viewTargetString = emptyString();
 }
 

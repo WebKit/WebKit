@@ -22,6 +22,7 @@
 #include "SVGViewElement.h"
 
 #include "SVGNames.h"
+#include "SVGStringList.h"
 
 namespace WebCore {
 
@@ -51,10 +52,15 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
+Ref<SVGStringList> SVGViewElement::viewTarget()
+{
+    return SVGStringList::create(*this, m_viewTarget);
+}
+
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::viewTargetAttr)
-        viewTarget().reset(value);
+        m_viewTarget.reset(value);
 
     SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(this, name, value);

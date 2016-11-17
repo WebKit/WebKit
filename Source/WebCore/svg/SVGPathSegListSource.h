@@ -21,7 +21,7 @@
 
 #include "FloatPoint.h"
 #include "SVGPathSeg.h"
-#include "SVGPathSegList.h"
+#include "SVGPathSegListValues.h"
 #include "SVGPathSource.h"
 #include <wtf/RefPtr.h>
 
@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGPathSegListSource final : public SVGPathSource {
 public:
-    explicit SVGPathSegListSource(const SVGPathSegList&);
+    explicit SVGPathSegListSource(const SVGPathSegListValues&);
 
 private:
     bool hasMoreData() const final;
@@ -47,7 +47,7 @@ private:
     bool parseCurveToQuadraticSmoothSegment(FloatPoint&) final;
     bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) final;
 
-    const SVGPathSegList& m_pathSegList;
+    const SVGPathSegListValues& m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;
     int m_itemCurrent;
     int m_itemEnd;

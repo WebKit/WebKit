@@ -42,13 +42,13 @@
 #include "SVGPathSegLinetoRel.h"
 #include "SVGPathSegLinetoVerticalAbs.h"
 #include "SVGPathSegLinetoVerticalRel.h"
-#include "SVGPathSegList.h"
+#include "SVGPathSegListValues.h"
 #include "SVGPathSegMovetoAbs.h"
 #include "SVGPathSegMovetoRel.h"
 
 namespace WebCore {
 
-SVGPathSegListBuilder::SVGPathSegListBuilder(SVGPathElement& pathElement, SVGPathSegList& pathSegList, SVGPathSegRole role)
+SVGPathSegListBuilder::SVGPathSegListBuilder(SVGPathElement& pathElement, SVGPathSegListValues& pathSegList, SVGPathSegRole role)
     : m_pathElement(pathElement)
     , m_pathSegList(pathSegList)
     , m_pathSegRole(role)

@@ -1,6 +1,8 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,29 +21,24 @@
  */
 
 #include "config.h"
-#include "SVGPointList.h"
+#include "SVGPathSegListValues.h"
 
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
+#include "SVGNames.h"
+#include "SVGPathElement.h"
+#include "SVGPathUtilities.h"
 
 namespace WebCore {
 
-String SVGPointList::valueAsString() const
+String SVGPathSegListValues::valueAsString() const
 {
-    StringBuilder builder;
+    String pathString;
+    buildStringFromSVGPathSegListValues(*this, pathString, UnalteredParsing);
+    return pathString;
+}
 
-    unsigned size = this->size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (i > 0)
-            builder.append(' '); // FIXME: Shouldn't we use commas to seperate?
-
-        const auto& point = at(i);
-        builder.appendNumber(point.x());
-        builder.append(' ');
-        builder.appendNumber(point.y());
-    }
-
-    return builder.toString();
+void SVGPathSegListValues::commitChange(SVGElement& contextElement, ListModification listModification)
+{
+    downcast<SVGPathElement>(contextElement).pathSegListChanged(m_role, listModification);
 }
 
 }

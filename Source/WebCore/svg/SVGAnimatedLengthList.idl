@@ -29,4 +29,3 @@
     readonly attribute SVGLengthList baseVal;
     readonly attribute SVGLengthList animVal;
 };
-

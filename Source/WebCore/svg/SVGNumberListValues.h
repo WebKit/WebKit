@@ -1,8 +1,6 @@
 /*
- * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,12 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    SkipVTableValidation
-] interface SVGPoint {
-    [SetterMayThrowException] attribute unrestricted float x;
-    [SetterMayThrowException] attribute unrestricted float y;
+#pragma once
 
-    [MayThrowException, NewObject] SVGPoint matrixTransform(SVGMatrix matrix);
+#include "SVGPropertyTraits.h"
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class SVGNumber;
+class SVGNumberList;
+
+class SVGNumberListValues final : public Vector<float> {
+public:
+    void parse(const String&);
+    String valueAsString() const;
 };
 
+template<> struct SVGPropertyTraits<SVGNumberListValues> {
+    static SVGNumberListValues initialValue() { return { }; }
+    static String toString(const SVGNumberListValues& list) { return list.valueAsString(); }
+
+    using ListItemType = float;
+    using ListItemTearOff = SVGNumber;
+    using ListPropertyTearOff = SVGNumberList;
+};
+
+} // namespace WebCore

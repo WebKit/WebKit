@@ -67,7 +67,7 @@ void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const At
     }
 
     if (name == SVGNames::valuesAttr) {
-        SVGNumberList newList;
+        SVGNumberListValues newList;
         newList.parse(value);
         detachAnimatedValuesListWrappers(newList.size());
         setValuesBaseValue(newList);

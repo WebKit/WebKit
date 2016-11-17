@@ -1,3 +1,259 @@
+2016-11-15  Sam Weinig  <sam@webkit.org>
+
+        [SVG] Moving more special casing of SVG out of the bindings - SVG lists
+        https://bugs.webkit.org/show_bug.cgi?id=164790
+
+        Reviewed by Alex Christensen.
+
+        - Make SVGLengthList, SVGNumberList, SVGPointList, SVGStringList, SVGPathSegList and SVGTransformList
+          real classes and stop special casing them in the bindings generator. This 
+          removes the remaining SVG specializations for tear offs from the bindings generator.
+        - Renamed existing SVGLengthList, SVGNumberList, SVGPointList, SVGStringList, SVGPathSegList, 
+          SVGPathSegList and SVGTransformList to SVG<Type>ListValues, to make way for the new classes.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAllInOne.cpp:
+        Add new files.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Remove SVG tear off specific code!
+
+        * rendering/svg/RenderSVGShape.cpp:
+        * rendering/svg/RenderSVGText.cpp:
+        * rendering/svg/RenderSVGTextPath.cpp:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        * svg/SVGAnimateMotionElement.cpp:
+        * svg/SVGClipPathElement.cpp:
+        * svg/SVGLinearGradientElement.cpp:
+        * svg/SVGRadialGradientElement.cpp:
+        Remove unnecessary #includes.
+
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::updateCharacterData):
+        (WebCore::SVGTextLayoutAttributesBuilder::fillCharacterDataMap):
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::constructFromString):
+        (WebCore::parseLengthListFromString):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateDistance):
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateDistance):
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::constructFromString):
+        (WebCore::SVGAnimatedPointListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedPointListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedPointListAnimator::calculateDistance):
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::constructFromString):
+        (WebCore::SVGAnimatedTransformListAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedTransformList.h:
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::createLengthList):
+        (WebCore::SVGAnimatedType::createNumberList):
+        (WebCore::SVGAnimatedType::createPointList):
+        (WebCore::SVGAnimatedType::createTransformList):
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::lengthList):
+        (WebCore::SVGAnimatedType::numberList):
+        (WebCore::SVGAnimatedType::pointList):
+        (WebCore::SVGAnimatedType::transformList):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::build):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::pointsListFromSVGData):
+        * svg/SVGParserUtilities.h:
+        * svg/SVGPathElement.cpp:
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegListBuilder.cpp:
+        * svg/SVGPathSegListBuilder.h:
+        * svg/SVGPathSegListSource.cpp:
+        * svg/SVGPathSegListSource.h:
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildSVGPathByteStreamFromSVGPathSegListValues):
+        (WebCore::appendSVGPathByteStreamFromSVGPathSeg):
+        (WebCore::buildSVGPathSegListValuesFromByteStream):
+        (WebCore::buildStringFromSVGPathSegListValues):
+        (WebCore::buildSVGPathByteStreamFromSVGPathSegList): Deleted.
+        (WebCore::buildSVGPathSegListFromByteStream): Deleted.
+        (WebCore::buildStringFromSVGPathSegList): Deleted.
+        * svg/SVGPathUtilities.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::pointList):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseAttribute):
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * svg/SVGTransformable.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::viewTarget):
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewElement.idl:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::transformString):
+        (WebCore::SVGViewSpec::transform):
+        (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper):
+        (WebCore::SVGViewSpec::reset):
+        * svg/SVGViewSpec.h:
+        Update for name changes.
+        
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::create):
+        (WebCore::SVGAngle::SVGAngle):
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::create):
+        (WebCore::SVGLength::SVGLength):
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::create):
+        (WebCore::SVGMatrix::SVGMatrix):
+        * svg/SVGNumber.h:
+        (WebCore::SVGNumber::create):
+        (WebCore::SVGNumber::SVGNumber):
+        * svg/SVGPoint.h:
+        (WebCore::SVGPoint::create):
+        (WebCore::SVGPoint::SVGPoint):
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::create):
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        * svg/SVGRect.h:
+        (WebCore::SVGRect::create):
+        (WebCore::SVGRect::SVGRect):
+        * svg/SVGTransform.h:
+        (WebCore::SVGTransform::create):
+        (WebCore::SVGTransform::SVGTransform):
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::create):
+        Pass the SVGAnimatedProperty parameter by reference.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::requiredFeatures):
+        (WebCore::SVGAnimationElement::requiredExtensions):
+        (WebCore::SVGAnimationElement::systemLanguage):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::requiredFeatures):
+        (WebCore::SVGCursorElement::requiredExtensions):
+        (WebCore::SVGCursorElement::systemLanguage):
+        * svg/SVGCursorElement.h:
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::requiredFeatures):
+        (WebCore::SVGGraphicsElement::requiredExtensions):
+        (WebCore::SVGGraphicsElement::systemLanguage):
+        * svg/SVGGraphicsElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::requiredFeatures):
+        (WebCore::SVGMaskElement::requiredExtensions):
+        (WebCore::SVGMaskElement::systemLanguage):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseAttribute):
+        (WebCore::SVGPatternElement::requiredFeatures):
+        (WebCore::SVGPatternElement::requiredExtensions):
+        (WebCore::SVGPatternElement::systemLanguage):
+        * svg/SVGPatternElement.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::synchronizeAttribute):
+        (WebCore::SVGTests::synchronizeRequiredFeatures):
+        (WebCore::SVGTests::synchronizeRequiredExtensions):
+        (WebCore::SVGTests::synchronizeSystemLanguage):
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        * svg/SVGTests.h:
+        * svg/SVGTests.idl:
+        Make SVGTests SVGStringLists work by adding implementations of functions
+        on the SVGElements that implement SVGTests, passing *this down to SVGTests.
+
+        * svg/SVGLengthList.cpp: Removed.
+        * svg/SVGLengthList.h:
+        * svg/SVGLengthList.idl:
+        * svg/SVGLengthListValues.cpp: Copied from svg/SVGLengthList.cpp.
+        * svg/SVGLengthListValues.h: Copied from svg/SVGLengthList.h.
+        Rename SVGLengthList to SVGLengthListValues and add an explicit implementation of
+        the SVGLengthList interface inheriting from SVGListPropertyTearOff<SVGLengthListValues>.
+
+        * svg/SVGNumberList.cpp: Removed.
+        * svg/SVGNumberList.h:
+        * svg/SVGNumberListValues.cpp: Copied from svg/SVGNumberList.cpp.
+        * svg/SVGNumberListValues.h: Copied from svg/SVGNumberList.h.
+        Rename SVGNumberList to SVGNumberListValues and add an explicit implementation of
+        the SVGNumberList interface inheriting from SVGListPropertyTearOff<SVGNumberListValues>.
+
+        * svg/SVGPathSegList.cpp:
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegListValues.cpp: Copied from svg/SVGPathSegList.cpp.
+        * svg/SVGPathSegListValues.h: Copied from svg/SVGPathSegList.h.
+        * svg/properties/SVGPathSegListPropertyTearOff.cpp: Removed.
+        * svg/properties/SVGPathSegListPropertyTearOff.h: Removed.
+        Rename SVGPathSegList to SVGPathSegListValues and add an explicit implementation of
+        the SVGPathSegList interface inheriting from SVGListProperty<SVGPathSegListValues>.
+
+        * svg/SVGPointList.cpp: Removed.
+        * svg/SVGPointList.h:
+        * svg/SVGPointListValues.cpp: Copied from svg/SVGPointList.cpp.
+        * svg/SVGPointListValues.h: Copied from svg/SVGPointList.h.
+        Rename SVGPointList to SVGPointListValues and add an explicit implementation of
+        the SVGPointList interface inheriting from SVGListPropertyTearOff<SVGPointListValues>.
+
+        * svg/SVGStringList.cpp: Removed.
+        * svg/SVGStringList.h:
+        * svg/SVGStringListValues.cpp: Copied from svg/SVGStringList.cpp.
+        * svg/SVGStringListValues.h: Copied from svg/SVGStringList.h.
+        Rename SVGStringList to SVGStringListValues and add an explicit implementation of
+        the SVGStringList interface inheriting from SVGStaticListPropertyTearOff<SVGStringListValues>.
+
+        * svg/SVGTransformList.cpp: Removed.
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformListValues.cpp: Copied from svg/SVGTransformList.cpp.
+        * svg/SVGTransformListValues.h: Copied from svg/SVGTransformList.h.
+        * svg/properties/SVGTransformListPropertyTearOff.h: Removed.
+        Rename SVGTransformList to SVGTransformListValues and add an explicit implementation of
+        the SVGTransformList interface inheriting from SVGListPropertyTearOff<SVGTransformListValues>.
+
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        Convert to return fully specialized types for baseVal and animVal, removing many unnecessary casts
+        around the codebase. Also add some uses of Ref.
+
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::getItemValuesAndWrappers):
+        (WebCore::SVGListProperty::removeItemValuesAndWrappers):
+        * svg/properties/SVGListPropertyTearOff.h:
+        (WebCore::SVGListPropertyTearOff::create):
+        (WebCore::SVGListPropertyTearOff::SVGListPropertyTearOff):
+        (WebCore::SVGListPropertyTearOff::~SVGListPropertyTearOff):
+        Store the AnimatedListPropertyTearOff as a Ref, and pass it around by reference.
+
+        * svg/properties/SVGStaticPropertyTearOff.h:
+        Update to take the ContextElement by reference.
+
 2016-11-17  Brent Fulgham  <bfulgham@apple.com>
 
         Improve URL length handling

@@ -25,7 +25,6 @@
 #include "Document.h"
 #include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
-#include "SVGTransformList.h"
 #include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
 

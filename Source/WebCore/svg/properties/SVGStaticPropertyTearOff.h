@@ -38,16 +38,16 @@ public:
     // (for example: SVGSVGElement::currentTranslate).
     static Ref<Self> create(ContextElement& contextElement, PropertyType& value, UpdateMethod update)
     {
-        return adoptRef(*new Self(&contextElement, value, update));
+        return adoptRef(*new Self(contextElement, value, update));
     }
 
     virtual void commitChange() { (m_contextElement.get()->*m_update)(); }
 
 private:
-    SVGStaticPropertyTearOff(ContextElement* contextElement, PropertyType& value, UpdateMethod update)
-        : PropertyTearOff(0, UndefinedRole, value)
+    SVGStaticPropertyTearOff(ContextElement& contextElement, PropertyType& value, UpdateMethod update)
+        : PropertyTearOff(UndefinedRole, value)
         , m_update(update)
-        , m_contextElement(contextElement)
+        , m_contextElement(&contextElement)
     {
     }
 

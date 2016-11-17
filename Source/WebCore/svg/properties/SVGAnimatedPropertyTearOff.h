@@ -32,24 +32,30 @@ public:
     using PropertyType = typename PropertyTearOff::PropertyType;
     using ContentType = PropertyType;
 
-    RefPtr<PropertyTearOff> baseVal()
+    static Ref<SVGAnimatedPropertyTearOff<PropertyTearOff>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
     {
-        if (m_baseVal)
-            return m_baseVal;
-
-        auto property = PropertyTearOff::create(this, BaseValRole, m_property);
-        m_baseVal = property.ptr();
-        return WTFMove(property);
+        ASSERT(contextElement);
+        return adoptRef(*new SVGAnimatedPropertyTearOff<PropertyTearOff>(contextElement, attributeName, animatedPropertyType, property));
     }
 
-    RefPtr<PropertyTearOff> animVal()
+    Ref<PropertyTearOff> baseVal()
+    {
+        if (m_baseVal)
+            return *m_baseVal;
+
+        auto property = PropertyTearOff::create(*this, BaseValRole, m_property);
+        m_baseVal = property.ptr();
+        return property;
+    }
+
+    Ref<PropertyTearOff> animVal()
     {
         if (m_animVal)
-            return m_animVal;
+            return *m_animVal;
 
-        auto property = PropertyTearOff::create(this, AnimValRole, m_property);
+        auto property = PropertyTearOff::create(*this, AnimValRole, m_property);
         m_animVal = property.ptr();
-        return WTFMove(property);
+        return property;
     }
 
     bool isAnimating() const final { return m_animatedProperty; }
@@ -60,12 +66,6 @@ public:
             m_baseVal = nullptr;
         else if (&property == m_animVal)
             m_animVal = nullptr;
-    }
-
-    static Ref<SVGAnimatedPropertyTearOff<PropertyTearOff>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
-    {
-        ASSERT(contextElement);
-        return adoptRef(*new SVGAnimatedPropertyTearOff<PropertyTearOff>(contextElement, attributeName, animatedPropertyType, property));
     }
 
     PropertyType& currentAnimatedValue()

@@ -20,29 +20,58 @@
 
 #pragma once
 
-#include "SVGPropertyTraits.h"
-#include "SVGTransform.h"
-#include <wtf/Vector.h>
+#include "SVGAnimatedListPropertyTearOff.h"
+#include "SVGListPropertyTearOff.h"
+#include "SVGTransformListValues.h"
 
 namespace WebCore {
 
-class SVGTransformList final : public Vector<SVGTransformValue, 1> {
+class SVGTransformList final : public SVGListPropertyTearOff<SVGTransformListValues> {
 public:
-    Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&) const;
-    Ref<SVGTransform> consolidate();
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGTransformListValues>;
+    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
 
-    bool concatenate(AffineTransform& result) const;
- 
-    String valueAsString() const;
-    void parse(const String&);
-};
+    static Ref<SVGTransformList> create(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGTransformListValues& values, ListWrapperCache& wrappers)
+    {
+        return adoptRef(*new SVGTransformList(animatedProperty, role, values, wrappers));
+    }
 
-template<> struct SVGPropertyTraits<SVGTransformList> {
-    static SVGTransformList initialValue() { return { }; }
-    static String toString(const SVGTransformList& type) { return type.valueAsString(); }
+    ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(SVGMatrix& matrix)
+    {
+        ASSERT(m_values);
+        return m_values->createSVGTransformFromMatrix(matrix);
+    }
 
-    using ListItemType = SVGTransformValue;
-    using ListItemTearOff = SVGTransform;
+    ExceptionOr<RefPtr<SVGTransform>> consolidate()
+    {
+        ASSERT(m_values);
+        ASSERT(m_wrappers);
+
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        ASSERT(result.releaseReturnValue());
+
+        ASSERT(m_values->size() == m_wrappers->size());
+
+        // Spec: If the list was empty, then a value of null is returned.
+        if (m_values->isEmpty())
+            return nullptr;
+
+        detachListWrappers(0);
+        
+        RefPtr<SVGTransform> wrapper = m_values->consolidate();
+        m_wrappers->append(wrapper.get());
+
+        ASSERT(m_values->size() == m_wrappers->size());
+        return WTFMove(wrapper);
+    }
+
+private:
+    SVGTransformList(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGTransformListValues& values, ListWrapperCache& wrappers)
+        : SVGListPropertyTearOff<SVGTransformListValues>(animatedProperty, role, values, wrappers)
+    {
+    }
 };
 
 } // namespace WebCore

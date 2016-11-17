@@ -28,6 +28,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPoint.h"
+#include "SVGPointList.h"
 
 namespace WebCore {
 
@@ -64,7 +65,7 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
 void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::pointsAttr) {
-        SVGPointList newList;
+        SVGPointListValues newList;
         if (!pointsListFromSVGData(newList, value))
             document().accessSVGExtensions().reportError("Problem parsing points=\"" + value + "\"");
 
@@ -114,20 +115,19 @@ Ref<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGElement*
 {
     ASSERT(contextElement);
     SVGPolyElement& ownerType = downcast<SVGPolyElement>(*contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointList>
-        (&ownerType, pointsPropertyInfo(), ownerType.m_points.value);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointListValues>(&ownerType, pointsPropertyInfo(), ownerType.m_points.value);
 }
 
-RefPtr<SVGListPropertyTearOff<SVGPointList>> SVGPolyElement::points()
+Ref<SVGPointList> SVGPolyElement::points()
 {
     m_points.shouldSynchronize = true;
-    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->baseVal().get());
+    return static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->baseVal();
 }
 
-RefPtr<SVGListPropertyTearOff<SVGPointList>> SVGPolyElement::animatedPoints()
+Ref<SVGPointList> SVGPolyElement::animatedPoints()
 {
     m_points.shouldSynchronize = true;
-    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal().get());
+    return static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal();
 }
 
 size_t SVGPolyElement::approximateMemoryCost() const

@@ -21,18 +21,15 @@
 #pragma once
 
 #include "SVGAnimatedPropertyMacros.h"
-#include "SVGStringList.h"
+#include "SVGStringListValues.h"
 
 namespace WebCore {
 
 class SVGElement;
+class SVGStringList;
 
 class SVGTests {
 public:
-    SVGStringList& requiredFeatures();
-    SVGStringList& requiredExtensions();
-    SVGStringList& systemLanguage();
-
     static bool hasExtension(const String&);
     bool isValid() const;
 
@@ -50,16 +47,20 @@ public:
 protected:
     SVGTests();
 
-    void synchronizeRequiredFeatures(SVGElement* contextElement);
-    void synchronizeRequiredExtensions(SVGElement* contextElement);
-    void synchronizeSystemLanguage(SVGElement* contextElement);
+    Ref<SVGStringList> requiredFeatures(SVGElement&);
+    Ref<SVGStringList> requiredExtensions(SVGElement&);
+    Ref<SVGStringList> systemLanguage(SVGElement&);
+
+    void synchronizeRequiredFeatures(SVGElement&);
+    void synchronizeRequiredExtensions(SVGElement&);
+    void synchronizeSystemLanguage(SVGElement&);
 
 private:
-    void synchronizeAttribute(SVGElement* contextElement, SVGSynchronizableAnimatedProperty<SVGStringList>&, const QualifiedName& attributeName);
+    void synchronizeAttribute(SVGElement& contextElement, SVGSynchronizableAnimatedProperty<SVGStringListValues>&, const QualifiedName& attributeName);
 
-    SVGSynchronizableAnimatedProperty<SVGStringList> m_requiredFeatures;
-    SVGSynchronizableAnimatedProperty<SVGStringList> m_requiredExtensions;
-    SVGSynchronizableAnimatedProperty<SVGStringList> m_systemLanguage;
+    SVGSynchronizableAnimatedProperty<SVGStringListValues> m_requiredFeatures;
+    SVGSynchronizableAnimatedProperty<SVGStringListValues> m_requiredExtensions;
+    SVGSynchronizableAnimatedProperty<SVGStringListValues> m_systemLanguage;
 };
 
 } // namespace WebCore

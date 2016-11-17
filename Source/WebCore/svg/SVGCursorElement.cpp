@@ -24,6 +24,7 @@
 #include "CSSCursorImageValue.h"
 #include "Document.h"
 #include "SVGNames.h"
+#include "SVGStringList.h"
 #include "XLinkNames.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -120,6 +121,21 @@ void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     SVGElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document().completeURL(href()));
+}
+
+Ref<SVGStringList> SVGCursorElement::requiredFeatures()
+{
+    return SVGTests::requiredFeatures(*this);
+}
+
+Ref<SVGStringList> SVGCursorElement::requiredExtensions()
+{ 
+    return SVGTests::requiredExtensions(*this);
+}
+
+Ref<SVGStringList> SVGCursorElement::systemLanguage()
+{
+    return SVGTests::systemLanguage(*this);
 }
 
 }

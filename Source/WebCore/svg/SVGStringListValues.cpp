@@ -19,31 +19,49 @@
  */
 
 #include "config.h"
-#include "SVGNumberList.h"
+#include "SVGStringListValues.h"
 
+#include "SVGElement.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-void SVGNumberList::parse(const String& value)
+void SVGStringListValues::commitChange(SVGElement& contextElement)
 {
+    contextElement.invalidateSVGAttributes();
+    contextElement.svgAttributeChanged(m_attributeName);
+}
+
+void SVGStringListValues::reset(const String& string)
+{
+    parse(string, ' ');
+
+    // Add empty string, if list is empty.
+    if (isEmpty())
+        append(emptyString());
+}
+
+void SVGStringListValues::parse(const String& data, UChar delimiter)
+{
+    // TODO : more error checking/reporting
     clear();
 
-    float number = 0;
-    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+    auto upconvertedCharacters = StringView(data).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + value.length();
-
-    // The spec strangely doesn't allow leading whitespace.  We might choose to violate that intentionally. (section 4.1)
+    const UChar* end = ptr + data.length();
     while (ptr < end) {
-        if (!parseNumber(ptr, end, number))
-            return;
-        append(number);
+        const UChar* start = ptr;
+        while (ptr < end && *ptr != delimiter && !isSVGSpace(*ptr))
+            ptr++;
+        if (ptr == start)
+            break;
+        append(String(start, ptr - start));
+        skipOptionalSVGSpacesOrDelimiter(ptr, end, delimiter);
     }
 }
 
-String SVGNumberList::valueAsString() const
+String SVGStringListValues::valueAsString() const
 {
     StringBuilder builder;
 
@@ -52,7 +70,7 @@ String SVGNumberList::valueAsString() const
         if (i > 0)
             builder.append(' ');
 
-        builder.appendNumber(at(i));
+        builder.append(at(i));
     }
 
     return builder.toString();

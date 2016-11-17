@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGLengthList {
+[
+    SkipVTableValidation
+] interface SVGLengthList {
     readonly attribute unsigned long numberOfItems;
 
     [MayThrowException] void clear();

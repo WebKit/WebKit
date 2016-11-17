@@ -23,18 +23,21 @@
 
 namespace WebCore {
 
-template<typename PropertyType> class SVGStaticListPropertyTearOff final : public SVGListProperty<PropertyType> {
+template<typename PropertyType> 
+class SVGStaticListPropertyTearOff : public SVGListProperty<PropertyType> {
 public:
+    using Self = SVGStaticListPropertyTearOff<PropertyType>;
     using Base = SVGListProperty<PropertyType>;
+
     using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
     using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
 
     using Base::m_role;
     using Base::m_values;
 
-    static Ref<SVGStaticListPropertyTearOff<PropertyType>> create(SVGElement& contextElement, PropertyType& values)
+    static Ref<Self> create(SVGElement& contextElement, PropertyType& values)
     {
-        return adoptRef(*new SVGStaticListPropertyTearOff(contextElement, values));
+        return adoptRef(*new Self(contextElement, values));
     }
 
     ExceptionOr<void> clear()
@@ -72,9 +75,9 @@ public:
         return Base::appendItemValues(newItem);
     }
 
-private:
+protected:
     SVGStaticListPropertyTearOff(SVGElement& contextElement, PropertyType& values)
-        : SVGListProperty<PropertyType>(UndefinedRole, values, nullptr)
+        : Base(UndefinedRole, values, nullptr)
         , m_contextElement(contextElement)
     {
     }
@@ -87,7 +90,7 @@ private:
     virtual void commitChange()
     {
         ASSERT(m_values);
-        m_values->commitChange(m_contextElement.ptr());
+        m_values->commitChange(m_contextElement);
     }
 
     virtual bool processIncomingListItemValue(const ListItemType&, unsigned*)

@@ -842,9 +842,6 @@ sub GetImplClassName
 {
     my $interface = shift;
 
-    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
-    return $svgNativeType if $svgNativeType;
-
     return $interface->type->name;
 }
 
@@ -1342,7 +1339,6 @@ sub GenerateHeader
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = GetImplClassName($interface);
-    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
 
     my $numConstants = @{$interface->constants};
     my $numAttributes = @{$interface->attributes};
@@ -1355,7 +1351,7 @@ sub GenerateHeader
     } else {
         # Implementation class forward declaration
         if (IsDOMGlobalObject($interface)) {
-            AddClassForwardIfNeeded($interface->type) unless $svgListPropertyType;
+            AddClassForwardIfNeeded($interface->type);
         }
     }
 
@@ -1388,7 +1384,7 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($interface->extendedAttributes->{MasqueradesAsUndefined}) {
-        AddIncludesForImplementationTypeInHeader($implType) unless $svgListPropertyType;
+        AddIncludesForImplementationTypeInHeader($implType);
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), \"Allocated masquerading object\");\n");
@@ -1404,7 +1400,7 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");  
     } else {
-        AddIncludesForImplementationTypeInHeader($implType) unless $svgListPropertyType;
+        AddIncludesForImplementationTypeInHeader($implType);
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTFMove(impl));\n");
@@ -2373,9 +2369,7 @@ sub GetNativeTypeForConversions
 {
     my $interface = shift;
 
-    my $interfaceName = $interface->type->name;
-    $interfaceName = $codeGenerator->GetSVGTypeNeedingTearOff($interface->type) if $codeGenerator->IsSVGTypeNeedingTearOff($interface->type);
-    return $interfaceName;
+    return $interface->type->name;
 }
 
 # See http://refspecs.linux-foundation.org/cxxabi-1.83.html.
@@ -2966,8 +2960,6 @@ sub GenerateImplementation
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
-    my ($svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interface);
-
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         AddIncludesForImplementationTypeInImpl("JSDOMWindowShell");
@@ -3334,26 +3326,22 @@ sub GenerateImplementation
 
                 my @callWithArgs = GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, \@implContent, "jsUndefined()");
 
-                if ($svgListPropertyType) {
-                    push(@implContent, "    JSValue result =  " . NativeToJSValueUsingReferences($attribute, 0, $interface, "thisObject.wrapped().$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "thisObject") . ";\n");
+                my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+                my $implementedBy = $attribute->extendedAttributes->{ImplementedBy};
+                if ($implementedBy) {
+                    $implIncludes{"${implementedBy}.h"} = 1;
+                    $functionName = "WebCore::${implementedBy}::${functionName}";
+                    unshift(@arguments, "impl") if !$attribute->isStatic;
+                } elsif ($attribute->isStatic) {
+                    $functionName = "${interfaceName}::${functionName}";
                 } else {
-                    my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
-                    my $implementedBy = $attribute->extendedAttributes->{ImplementedBy};
-                    if ($implementedBy) {
-                        $implIncludes{"${implementedBy}.h"} = 1;
-                        $functionName = "WebCore::${implementedBy}::${functionName}";
-                        unshift(@arguments, "impl") if !$attribute->isStatic;
-                    } elsif ($attribute->isStatic) {
-                        $functionName = "${interfaceName}::${functionName}";
-                    } else {
-                        $functionName = "impl.${functionName}";
-                    }
-
-                    unshift(@arguments, @callWithArgs);
-                    my $jsType = NativeToJSValueUsingReferences($attribute, 0, $interface, "${functionName}(" . join(", ", @arguments) . ")", "thisObject");
-                    push(@implContent, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
-                    push(@implContent, "    JSValue result = $jsType;\n");
+                    $functionName = "impl.${functionName}";
                 }
+
+                unshift(@arguments, @callWithArgs);
+                my $jsType = NativeToJSValueUsingReferences($attribute, 0, $interface, "${functionName}(" . join(", ", @arguments) . ")", "thisObject");
+                push(@implContent, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
+                push(@implContent, "    JSValue result = $jsType;\n");
 
                 push(@implContent, "    thisObject.m_" . $attribute->name . ".set(state.vm(), &thisObject, result);\n") if $attribute->extendedAttributes->{CachedAttribute};
                 push(@implContent, "    return result;\n");
@@ -3604,42 +3592,34 @@ sub GenerateImplementation
                     push (@implContent, "        return false;\n");
                 }
 
-                if ($svgListPropertyType) {
-                    push(@implContent, "    ${svgListPropertyType}& podImpl = impl.propertyReference();\n");
-                    my $functionString = "podImpl.set$implSetterFunctionName(nativeValue)";
-                    $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
-                    push(@implContent, "    $functionString;\n");
-                    push(@implContent, "    return true;\n");
+                my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+
+                if ($codeGenerator->IsTypedArrayType($type) and not $type->name eq "ArrayBuffer") {
+                    push(@arguments, "nativeValue.get()");
+                } elsif ($codeGenerator->IsEnumType($type)) {
+                    push(@arguments, "nativeValue.value()");
                 } else {
-                    my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
-
-                    if ($codeGenerator->IsTypedArrayType($type) and not $type->name eq "ArrayBuffer") {
-                        push(@arguments, "nativeValue.get()");
-                    } elsif ($codeGenerator->IsEnumType($type)) {
-                        push(@arguments, "nativeValue.value()");
-                    } else {
-                        push(@arguments, ShouldPassWrapperByReference($attribute, $interface) ? "*nativeValue" : "WTFMove(nativeValue)");
-                    }
-                    my $implementedBy = $attribute->extendedAttributes->{ImplementedBy};
-                    if ($implementedBy) {
-                        AddToImplIncludes("${implementedBy}.h", $attribute->extendedAttributes->{Conditional});
-                        unshift(@arguments, "impl") if !$attribute->isStatic;
-                        $functionName = "WebCore::${implementedBy}::${functionName}";
-                    } elsif ($attribute->isStatic) {
-                        $functionName = "${interfaceName}::${functionName}";
-                    } else {
-                        $functionName = "impl.${functionName}";
-                    }
-
-                    unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, \@implContent, "false"));
-                    unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, \@implContent, "false"));
-
-                    my $functionString = "$functionName(" . join(", ", @arguments) . ")";
-                    $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
-
-                    push(@implContent, "    $functionString;\n");
-                    push(@implContent, "    return true;\n");
+                    push(@arguments, ShouldPassWrapperByReference($attribute, $interface) ? "*nativeValue" : "WTFMove(nativeValue)");
                 }
+                my $implementedBy = $attribute->extendedAttributes->{ImplementedBy};
+                if ($implementedBy) {
+                    AddToImplIncludes("${implementedBy}.h", $attribute->extendedAttributes->{Conditional});
+                    unshift(@arguments, "impl") if !$attribute->isStatic;
+                    $functionName = "WebCore::${implementedBy}::${functionName}";
+                } elsif ($attribute->isStatic) {
+                    $functionName = "${interfaceName}::${functionName}";
+                } else {
+                    $functionName = "impl.${functionName}";
+                }
+
+                unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, \@implContent, "false"));
+                unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, \@implContent, "false"));
+
+                my $functionString = "$functionName(" . join(", ", @arguments) . ")";
+                $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
+
+                push(@implContent, "    $functionString;\n");
+                push(@implContent, "    return true;\n");
             }
 
             push(@implContent, "}\n\n");
@@ -3860,8 +3840,6 @@ END
                     my $name = $argument->name;
                     my $encodedName = "encoded" . $codeGenerator->WK_ucfirst($name);
                     my $nativeType = GetNativeType($interface, $argument->type);
-                    my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
-                    die "TearOff type is not allowed" if $isTearOff;
                     my $shouldPassByReference = ShouldPassWrapperByReference($argument, $interface);
 
                     if (!$shouldPassByReference && ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type))) {
@@ -4471,7 +4449,6 @@ sub GenerateParametersCheck
             my $outer;
             my $inner;
             my $nativeType = GetNativeType($interface, $argument->type);
-            my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
 
             die "Variadic argument is already handled here" if $argument->isVariadic;
             my $argumentLookupMethod = $argument->isOptional ? "argument" : "uncheckedArgument";
@@ -4530,9 +4507,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
             }
 
-            if ($isTearOff) {
-                $value = "$name->propertyReference()";
-            } elsif (ShouldPassWrapperByReference($argument, $interface)) {
+            if (ShouldPassWrapperByReference($argument, $interface)) {
                 if ($codeGenerator->IsTypedArrayType($type) and $type->name ne "ArrayBuffer") {
                     $value = "$name.releaseNonNull()";
                 } else {
@@ -5155,7 +5130,6 @@ sub GetIDLInterfaceName
 {
     my ($type) = @_;
 
-    return $codeGenerator->GetSVGTypeNeedingTearOff($type) if $codeGenerator->IsSVGTypeNeedingTearOff($type);
     return $type->name;
 }
 
@@ -5219,9 +5193,6 @@ sub GetNativeType
     return GetDictionaryClassName($type, $interface) if $codeGenerator->IsDictionaryType($type);
     return GetNativeVectorType($type) if $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
-    my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-    return "${tearOffType}*" if $tearOffType;
-
     return "RefPtr<${typeName}>" if $codeGenerator->IsTypedArrayType($type) and $typeName ne "ArrayBuffer";
     return "${typeName}*";
 }
@@ -5261,40 +5232,6 @@ sub GetNativeTypeForMemoization
     my ($interface, $type) = @_;
 
     return GetNativeType($interface, $type);
-}
-
-sub GetSVGPropertyTypes
-{
-    my $interface = shift;
-
-    my $interfaceName = $interface->type->name;
-
-    my $svgListPropertyType;
-    my $svgNativeType;
-
-    return ($svgListPropertyType, $svgNativeType) if not $interfaceName =~ /SVG/;
-
-    $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($interface->type);
-    return ($svgListPropertyType, $svgNativeType) if not $svgNativeType;
-
-    my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($interface->type);
-    if ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
-        $svgListPropertyType = $svgWrappedNativeType;
-        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
-        $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
-    } elsif ($svgNativeType =~ /SVGTransformListPropertyTearOff/) {
-        $svgListPropertyType = $svgWrappedNativeType;
-        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
-        $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
-        $headerIncludes{"SVGTransformListPropertyTearOff.h"} = 1;
-    } elsif ($svgNativeType =~ /SVGPathSegListPropertyTearOff/) {
-        $svgListPropertyType = $svgWrappedNativeType;
-        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
-        $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
-        $headerIncludes{"SVGPathSegListPropertyTearOff.h"} = 1;
-    }
-
-    return ($svgListPropertyType, $svgNativeType);
 }
 
 sub GetIntegerConversionConfiguration
@@ -5508,23 +5445,6 @@ sub NativeToJSValue
 
     if ($type->name eq "SerializedScriptValue") {
         return "$value ? $value->deserialize($stateReference, $globalObject) : jsNull()";
-    }
-    
-    if ($codeGenerator->IsWrapperType($type) && !$codeGenerator->IsSVGAnimatedType($type)) {
-        if ($codeGenerator->IsSVGAnimatedType($interface->type) or ($interface->type->name eq "SVGViewSpec" and $type->name eq "SVGTransformList")) {
-            # Convert from abstract RefPtr<ListProperty> to real type, so the right toJS() method can be invoked.
-            $value = "static_cast<" . GetNativeType($interface, $type) . ">($value.get())";
-        } elsif ($interface->type->name eq "SVGViewSpec") {
-            # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
-            $value = "static_cast<" . GetNativeType($interface, $type) . ">($value)";
-        } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $interface->type->name =~ /List$/) {
-            my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-            if ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
-                $value = "${tearOffType}::create(impl, $value)";
-            } elsif (not $tearOffType =~ /SVG(Point|PathSeg)List/) {
-                $value = "${tearOffType}::create($value)";
-            }
-        }
     }
 
     $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)" if $context->extendedAttributes->{CheckSecurityForNode};

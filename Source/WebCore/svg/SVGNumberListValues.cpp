@@ -19,39 +19,31 @@
  */
 
 #include "config.h"
-#include "SVGLengthList.h"
+#include "SVGNumberListValues.h"
 
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-void SVGLengthList::parse(const String& value, SVGLengthMode mode)
+void SVGNumberListValues::parse(const String& value)
 {
     clear();
 
+    float number = 0;
     auto upconvertedCharacters = StringView(value).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + value.length();
-    while (ptr < end) {
-        const UChar* start = ptr;
-        while (ptr < end && *ptr != ',' && !isSVGSpace(*ptr))
-            ptr++;
-        if (ptr == start)
-            break;
 
-        SVGLengthValue length(mode);
-        String valueString(start, ptr - start);
-        if (valueString.isEmpty())
+    // The spec (section 4.1) strangely doesn't allow leading whitespace. We might choose to violate that intentionally.
+    while (ptr < end) {
+        if (!parseNumber(ptr, end, number))
             return;
-        if (length.setValueAsString(valueString).hasException())
-            return;
-        append(length);
-        skipOptionalSVGSpacesOrDelimiter(ptr, end);
+        append(number);
     }
 }
 
-String SVGLengthList::valueAsString() const
+String SVGNumberListValues::valueAsString() const
 {
     StringBuilder builder;
 
@@ -60,7 +52,7 @@ String SVGLengthList::valueAsString() const
         if (i > 0)
             builder.append(' ');
 
-        builder.append(at(i).valueAsString());
+        builder.appendNumber(at(i));
     }
 
     return builder.toString();

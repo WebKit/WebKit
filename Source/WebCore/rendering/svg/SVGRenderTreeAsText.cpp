@@ -54,7 +54,6 @@
 #include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathUtilities.h"
-#include "SVGPointList.h"
 #include "SVGPolyElement.h"
 #include "SVGRectElement.h"
 #include "SVGRootInlineBox.h"

@@ -118,15 +118,6 @@ my %svgAttributesInHTMLHash = (
     "onunload" => 1,
 );
 
-my %svgTypeNeedingTearOff = (
-    "SVGLengthList" => "SVGListPropertyTearOff<SVGLengthList>",
-    "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
-    "SVGPointList" => "SVGListPropertyTearOff<SVGPointList>",
-    "SVGStringList" => "SVGStaticListPropertyTearOff<SVGStringList>",
-    "SVGPathSegList" => "SVGPathSegListPropertyTearOff",
-    "SVGTransformList" => "SVGTransformListPropertyTearOff"
-);
-
 # Cache of IDL file pathnames.
 my $idlFiles;
 my $cachedInterfaces = {};
@@ -604,16 +595,6 @@ sub IsNonPointerType
     return 0;
 }
 
-sub IsSVGTypeNeedingTearOff
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return 1 if exists $svgTypeNeedingTearOff{$type->name};
-    return 0;
-}
-
 sub IsTypedArrayType
 {
     my ($object, $type) = @_;
@@ -638,37 +619,6 @@ sub IsRefPtrType
     return 0 if $type->name eq "any";
 
     return 1;
-}
-
-sub GetSVGTypeNeedingTearOff
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return $svgTypeNeedingTearOff{$type->name} if exists $svgTypeNeedingTearOff{$type->name};
-    return undef;
-}
-
-sub GetSVGWrappedTypeNeedingTearOff
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    my $svgTypeNeedingTearOff = $object->GetSVGTypeNeedingTearOff($type);
-    return $svgTypeNeedingTearOff if not $svgTypeNeedingTearOff;
-
-    if ($svgTypeNeedingTearOff =~ /SVGListPropertyTearOff/) {
-        $svgTypeNeedingTearOff =~ s/SVGListPropertyTearOff<//;
-    } elsif ($svgTypeNeedingTearOff =~ /SVGStaticListPropertyTearOff/) {
-        $svgTypeNeedingTearOff =~ s/SVGStaticListPropertyTearOff<//;
-    }  elsif ($svgTypeNeedingTearOff =~ /SVGTransformListPropertyTearOff/) {
-        $svgTypeNeedingTearOff =~ s/SVGTransformListPropertyTearOff<//;
-    } 
-
-    $svgTypeNeedingTearOff =~ s/>//;
-    return $svgTypeNeedingTearOff;
 }
 
 sub IsSVGAnimatedTypeName

@@ -25,7 +25,7 @@
 
 #include "Document.h"
 #include "FloatRect.h"
-#include "SVGPointList.h"
+#include "SVGPointListValues.h"
 #include <limits>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringView.h>
@@ -236,7 +236,7 @@ bool parseRect(const String& string, FloatRect& rect)
     return valid;
 }
 
-bool pointsListFromSVGData(SVGPointList& pointsList, const String& points)
+bool pointsListFromSVGData(SVGPointListValues& pointsList, const String& points)
 {
     if (points.isEmpty())
         return true;

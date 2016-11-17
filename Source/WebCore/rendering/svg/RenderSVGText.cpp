@@ -43,7 +43,6 @@
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
-#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"

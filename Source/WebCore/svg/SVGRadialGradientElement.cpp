@@ -30,7 +30,6 @@
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
-#include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
 #include <wtf/NeverDestroyed.h>
 

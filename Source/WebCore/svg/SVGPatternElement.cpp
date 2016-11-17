@@ -35,6 +35,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
+#include "SVGStringList.h"
 #include "SVGTransformable.h"
 #include "XLinkNames.h"
 #include <wtf/NeverDestroyed.h>
@@ -123,7 +124,7 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
         return;
     }
     if (name == SVGNames::patternTransformAttr) {
-        SVGTransformList newList;
+        SVGTransformListValues newList;
         newList.parse(value);
         detachAnimatedPatternTransformListWrappers(newList.size());
         setPatternTransformBaseValue(newList);
@@ -228,6 +229,21 @@ AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::C
     AffineTransform matrix;
     patternTransform().concatenate(matrix);
     return matrix;
+}
+
+Ref<SVGStringList> SVGPatternElement::requiredFeatures()
+{
+    return SVGTests::requiredFeatures(*this);
+}
+
+Ref<SVGStringList> SVGPatternElement::requiredExtensions()
+{ 
+    return SVGTests::requiredExtensions(*this);
+}
+
+Ref<SVGStringList> SVGPatternElement::systemLanguage()
+{
+    return SVGTests::systemLanguage(*this);
 }
 
 }

@@ -28,7 +28,6 @@
 #include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextPathElement.h"
-#include "SVGTransformList.h"
 
 namespace WebCore {
 

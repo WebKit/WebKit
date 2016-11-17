@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegList& pathSegList)
+SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegListValues& pathSegList)
     : m_pathSegList(pathSegList)
 {
     m_itemCurrent = 0;

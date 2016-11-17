@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,30 +20,35 @@
 
 #pragma once
 
-#include "SVGLocatable.h"
-#include "SVGTransformValue.h"
-#include <wtf/text/WTFString.h>
+#include "SVGPropertyTraits.h"
+#include "SVGTransform.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
-    
-class AffineTransform;
-class SVGTransformListValues;
 
-class SVGTransformable : public SVGLocatable {
+template<typename T>
+class SVGListPropertyTearOff;
+
+class SVGTransformList;
+
+class SVGTransformListValues final : public Vector<SVGTransformValue, 1> {
 public:
-    enum TransformParsingMode {
-        ClearList,
-        DoNotClearList
-    };
+    Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&) const;
+    Ref<SVGTransform> consolidate();
 
-    virtual ~SVGTransformable();
+    bool concatenate(AffineTransform& result) const;
 
-    static bool parseTransformAttribute(SVGTransformListValues&, const UChar*& ptr, const UChar* end, TransformParsingMode = ClearList);
-    static bool parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransformValue&);
-    static SVGTransformValue::SVGTransformType parseTransformType(const String&);
+    String valueAsString() const;
+    void parse(const String&);
+};
 
-    AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
-    virtual AffineTransform animatedLocalTransform() const = 0;
+template<> struct SVGPropertyTraits<SVGTransformListValues> {
+    static SVGTransformListValues initialValue() { return { }; }
+    static String toString(const SVGTransformListValues& list) { return list.valueAsString(); }
+
+    using ListItemType = SVGTransformValue;
+    using ListItemTearOff = SVGTransform;
+    using ListPropertyTearOff = SVGTransformList;
 };
 
 } // namespace WebCore

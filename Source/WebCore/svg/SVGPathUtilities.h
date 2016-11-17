@@ -30,23 +30,23 @@ class Path;
 class SVGPathByteStream;
 class SVGPathElement;
 class SVGPathSeg;
-class SVGPathSegList;
+class SVGPathSegListValues;
 
 // String/SVGPathByteStream -> Path
 bool buildPathFromString(const String&, Path&);
 bool buildPathFromByteStream(const SVGPathByteStream&, Path&);
 
-// SVGPathSegList/String -> SVGPathByteStream
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream& result, PathParsingMode);
+// SVGPathSegListValues/String -> SVGPathByteStream
+bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues&, SVGPathByteStream& result, PathParsingMode);
 bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream&, PathParsingMode);
 bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream&, PathParsingMode);
 
-// SVGPathByteStream/SVGPathSegList -> String
+// SVGPathByteStream/SVGPathSegListValues -> String
 bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode);
-bool buildStringFromSVGPathSegList(const SVGPathSegList&, String&, PathParsingMode);
+bool buildStringFromSVGPathSegListValues(const SVGPathSegListValues&, String&, PathParsingMode);
 
-// SVGPathByteStream -> SVGPathSegList
-bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathElement&, SVGPathSegList&, PathParsingMode);
+// SVGPathByteStream -> SVGPathSegListValues
+bool buildSVGPathSegListValuesFromByteStream(const SVGPathByteStream&, SVGPathElement&, SVGPathSegListValues&, PathParsingMode);
 
 bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
 

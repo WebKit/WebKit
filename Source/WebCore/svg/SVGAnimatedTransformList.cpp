@@ -41,7 +41,7 @@ SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createTransformList(std::make_unique<SVGTransformList>());
+    auto animatedType = SVGAnimatedType::createTransformList(std::make_unique<SVGTransformListValues>());
     animatedType->transformList().parse(m_transformTypeString + string + ')');
     ASSERT(animatedType->transformList().size() <= 1);
     return animatedType;
@@ -104,7 +104,7 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     auto& animatedTransformList = animated->transformList();
 
     // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
-    if (!m_animationElement->adjustFromToListValues<SVGTransformList>(fromTransformList, toTransformList, animatedTransformList, percentage, false))
+    if (!m_animationElement->adjustFromToListValues<SVGTransformListValues>(fromTransformList, toTransformList, animatedTransformList, percentage, false))
         return;
 
     // Never resize the animatedTransformList to the toTransformList size, instead either clear the list or append to it.

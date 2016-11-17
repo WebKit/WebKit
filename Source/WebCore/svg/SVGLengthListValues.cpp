@@ -19,50 +19,39 @@
  */
 
 #include "config.h"
-#include "SVGStringList.h"
+#include "SVGLengthListValues.h"
 
-#include "SVGElement.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-void SVGStringList::commitChange(SVGElement* contextElement)
+void SVGLengthListValues::parse(const String& value, SVGLengthMode mode)
 {
-    ASSERT(contextElement);
-    contextElement->invalidateSVGAttributes();
-    contextElement->svgAttributeChanged(m_attributeName);
-}
-
-void SVGStringList::reset(const String& string)
-{
-    parse(string, ' ');
-
-    // Add empty string, if list is empty.
-    if (isEmpty())
-        append(emptyString());
-}
-
-void SVGStringList::parse(const String& data, UChar delimiter)
-{
-    // TODO : more error checking/reporting
     clear();
 
-    auto upconvertedCharacters = StringView(data).upconvertedCharacters();
+    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
-    const UChar* end = ptr + data.length();
+    const UChar* end = ptr + value.length();
     while (ptr < end) {
         const UChar* start = ptr;
-        while (ptr < end && *ptr != delimiter && !isSVGSpace(*ptr))
+        while (ptr < end && *ptr != ',' && !isSVGSpace(*ptr))
             ptr++;
         if (ptr == start)
             break;
-        append(String(start, ptr - start));
-        skipOptionalSVGSpacesOrDelimiter(ptr, end, delimiter);
+
+        SVGLengthValue length(mode);
+        String valueString(start, ptr - start);
+        if (valueString.isEmpty())
+            return;
+        if (length.setValueAsString(valueString).hasException())
+            return;
+        append(length);
+        skipOptionalSVGSpacesOrDelimiter(ptr, end);
     }
 }
 
-String SVGStringList::valueAsString() const
+String SVGLengthListValues::valueAsString() const
 {
     StringBuilder builder;
 
@@ -71,7 +60,7 @@ String SVGStringList::valueAsString() const
         if (i > 0)
             builder.append(' ');
 
-        builder.append(at(i));
+        builder.append(at(i).valueAsString());
     }
 
     return builder.toString();

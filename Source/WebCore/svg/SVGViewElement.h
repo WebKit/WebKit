@@ -26,22 +26,21 @@
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGStringList.h"
+#include "SVGStringListValues.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
 
-class SVGViewElement final : public SVGElement,
-                             public SVGExternalResourcesRequired,
-                             public SVGFitToViewBox,
-                             public SVGZoomAndPan {
+class SVGStringList;
+
+class SVGViewElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
 public:
     static Ref<SVGViewElement> create(const QualifiedName&, Document&);
 
     using SVGElement::ref;
     using SVGElement::deref;
 
-    SVGStringList& viewTarget() { return m_viewTarget; }
+    Ref<SVGStringList> viewTarget();
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
@@ -60,7 +59,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     SVGZoomAndPanType m_zoomAndPan;
-    SVGStringList m_viewTarget;
+    SVGStringListValues m_viewTarget;
 };
 
 } // namespace WebCore

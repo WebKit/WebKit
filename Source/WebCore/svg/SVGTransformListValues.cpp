@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "SVGTransformList.h"
+#include "SVGTransformListValues.h"
 
 #include "AffineTransform.h"
 #include "SVGSVGElement.h"
@@ -28,12 +28,12 @@
 
 namespace WebCore {
 
-Ref<SVGTransform> SVGTransformList::createSVGTransformFromMatrix(SVGMatrix& matrix) const
+Ref<SVGTransform> SVGTransformListValues::createSVGTransformFromMatrix(SVGMatrix& matrix) const
 {
     return SVGSVGElement::createSVGTransformFromMatrix(matrix);
 }
 
-Ref<SVGTransform> SVGTransformList::consolidate()
+Ref<SVGTransform> SVGTransformListValues::consolidate()
 {
     AffineTransform matrix;
     if (!concatenate(matrix))
@@ -45,7 +45,7 @@ Ref<SVGTransform> SVGTransformList::consolidate()
     return SVGTransform::create(transform);
 }
 
-bool SVGTransformList::concatenate(AffineTransform& result) const
+bool SVGTransformListValues::concatenate(AffineTransform& result) const
 {
     unsigned size = this->size();
     if (!size)
@@ -57,7 +57,7 @@ bool SVGTransformList::concatenate(AffineTransform& result) const
     return true;
 }
 
-String SVGTransformList::valueAsString() const
+String SVGTransformListValues::valueAsString() const
 {
     StringBuilder builder;
     unsigned size = this->size();
@@ -71,7 +71,7 @@ String SVGTransformList::valueAsString() const
     return builder.toString();
 }
 
-void SVGTransformList::parse(const String& transform)
+void SVGTransformListValues::parse(const String& transform)
 {
     auto upconvertedCharacters = StringView(transform).upconvertedCharacters();
     const UChar* start = upconvertedCharacters;
