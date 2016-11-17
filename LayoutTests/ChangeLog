@@ -1,3 +1,14 @@
+2016-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r208082): 1% Speedometer regression on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=164852
+
+        Reviewed by Chris Dumez.
+
+        Add failing test expectations for various custom elements now that CEReactions is not working.
+
+        * TestExpectations:
+
 2016-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r208455): LayoutTests swipe/pushState-cached-back-swipe.html and swipe/main-frame-pinning-requirement.html are failing
