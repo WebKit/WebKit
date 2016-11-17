@@ -497,6 +497,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setDownloadAttributeEnabled:(BOOL)flag;
 - (BOOL)downloadAttributeEnabled;
 
+- (void)setES6ModulesEnabled:(BOOL)flag;
+- (BOOL)es6ModulesEnabled;
+
 - (void)setCSSGridLayoutEnabled:(BOOL)flag;
 - (BOOL)isCSSGridLayoutEnabled;
 

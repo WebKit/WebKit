@@ -1541,6 +1541,16 @@ bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->downloadAttributeEnabled();
 }
 
+void WKPreferencesSetES6ModulesEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setES6ModulesEnabled(flag);
+}
+
+bool WKPreferencesGetES6ModulesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->es6ModulesEnabled();
+}
+
 void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSelectionPaintingWithoutSelectionGapsEnabled(flag);

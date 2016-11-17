@@ -853,6 +853,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate3->setFetchAPIEnabled(TRUE);
     prefsPrivate3->setShadowDOMEnabled(TRUE);
     prefsPrivate3->setCustomElementsEnabled(TRUE);
+    prefsPrivate3->setES6ModulesEnabled(TRUE);
 
     prefsPrivate3->setDOMIteratorEnabled(TRUE);
     prefsPrivate3->setModernMediaControlsEnabled(FALSE);

@@ -309,6 +309,7 @@
     macro(VariationFontsEnabled, variationFontsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Variation Fonts", "Enable variation fonts") \
     macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Input Events", "Enable InputEvents support") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "WebGL 2.0", "WebGL 2 prototype") \
+    macro(ES6ModulesEnabled, es6ModulesEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "ES6 Modules", "Enable ES6 Modules support") \
     \
 
 #if PLATFORM(COCOA)

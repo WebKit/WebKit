@@ -1,3 +1,24 @@
+2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=164827
+
+        Reviewed by Ryosuke Niwa.
+
+        Use Settings.in. And intentionally do not use RuntimeEnabledFeatures.
+        According to the pointer lock's issue[1], we should use Settings.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=163801
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::determineScriptType):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * page/Settings.in:
+        A bit unfortunate thing is that the setter is named `setEs6ModulesEnabled`
+        if we use `es6ModulesEnabled` here.
+
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, remove outdated comment about using PassRefPtr.

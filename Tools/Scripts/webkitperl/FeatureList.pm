@@ -353,10 +353,6 @@ my @features = (
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", default => (isGtk() || isEfl()), value => \$mhtmlSupport },
 
-    { option => "modules", desc => "Toggle ES6 modules support",
-      define => "ENABLE_ES6_MODULES", default => 0, value => \$modulesSupport,
-      javascript => 1 },
-
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", default => isEfl(), value => \$mouseCursorScaleSupport },
 

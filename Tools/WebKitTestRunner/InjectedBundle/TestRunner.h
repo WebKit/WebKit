@@ -127,6 +127,7 @@ public:
     void setAsynchronousSpellCheckingEnabled(bool);
     void setDownloadAttributeEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
+    void setES6ModulesEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

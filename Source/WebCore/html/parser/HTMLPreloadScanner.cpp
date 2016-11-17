@@ -37,6 +37,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 
@@ -210,8 +211,11 @@ private:
             break;
         case TagId::Script:
             if (match(attributeName, typeAttr)) {
-                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module") ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
-                break;
+                auto* settings = document.settings();
+                if (settings && settings->es6ModulesEnabled()) {
+                    m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module") ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
+                    break;
+                }
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;

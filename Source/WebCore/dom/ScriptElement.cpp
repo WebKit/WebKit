@@ -162,12 +162,14 @@ Optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTyp
         return ScriptType::Classic;
     if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
         return ScriptType::Classic;
-#if ENABLE(ES6_MODULES)
+
+    auto* settings = m_element.document().settings();
+    if (!settings || !settings->es6ModulesEnabled())
+        return Nullopt;
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
     if (equalLettersIgnoringASCIICase(type, "module"))
         return ScriptType::Module;
-#endif
     return Nullopt;
 }
 

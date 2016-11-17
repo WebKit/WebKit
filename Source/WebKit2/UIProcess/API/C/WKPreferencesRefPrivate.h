@@ -438,6 +438,10 @@ WK_EXPORT bool WKPreferencesGetSelectionPaintingWithoutSelectionGapsEnabled(WKPr
 WK_EXPORT void WKPreferencesSetAllowsPictureInPictureMediaPlayback(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetAllowsPictureInPictureMediaPlayback(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetES6ModulesEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetES6ModulesEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

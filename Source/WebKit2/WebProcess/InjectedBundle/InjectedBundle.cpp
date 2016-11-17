@@ -238,6 +238,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitHTTPEquivEnabled, HttpEquivEnabled, httpEquivEnabled) \
     macro(WebKitVisualViewportEnabled, VisualViewportEnabled, visualViewportEnabled) \
     macro(WebKitAsyncImageDecodingEnabled, AsyncImageDecodingEnabled, asyncImageDecodingEnabled) \
+    macro(WebKitES6ModulesEnabled, Es6ModulesEnabled, es6ModulesEnabled) \
     \
 
 #define OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(TestRunnerName, SettingsName, WebPreferencesName) \
