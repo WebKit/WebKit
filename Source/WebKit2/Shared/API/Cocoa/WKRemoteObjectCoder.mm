@@ -37,7 +37,7 @@
 #import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/TemporaryChange.h>
+#import <wtf/SetForScope.h>
 #import <wtf/text/CString.h>
 
 static const char* const classNameKey = "$class";
@@ -277,7 +277,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encode
         return nil;
 
     Ref<API::Dictionary> dictionary = API::Dictionary::create();
-    TemporaryChange<API::Dictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.ptr());
+    SetForScope<API::Dictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.ptr());
 
     encodeObject(encoder, object);
 
@@ -667,13 +667,13 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
     if (!dictionary)
         return nil;
 
-    TemporaryChange<const API::Dictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
+    SetForScope<const API::Dictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
 
     // If no allowed classes were listed, just use the currently allowed classes.
     if (allowedClasses.isEmpty())
         return decodeObject(decoder);
 
-    TemporaryChange<const HashSet<Class>*> allowedClassesChange(decoder->_allowedClasses, &allowedClasses);
+    SetForScope<const HashSet<Class>*> allowedClassesChange(decoder->_allowedClasses, &allowedClasses);
     return decodeObject(decoder);
 }
 

@@ -138,8 +138,8 @@
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
 #include <bitset>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
 

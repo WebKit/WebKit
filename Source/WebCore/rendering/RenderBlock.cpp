@@ -73,8 +73,8 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
-#include <wtf/TemporaryChange.h>
 
 using namespace WTF;
 using namespace Unicode;

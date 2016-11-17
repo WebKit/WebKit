@@ -39,7 +39,6 @@
 #include "Nodes.h"
 #include "ParserError.h"
 #include "RegisterID.h"
-#include "SetForScope.h"
 #include "StaticPropertyAnalyzer.h"
 #include "SymbolTable.h"
 #include "TemplateRegistryKey.h"
@@ -48,6 +47,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

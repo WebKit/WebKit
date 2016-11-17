@@ -44,7 +44,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/NotImplemented.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -107,7 +107,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
     ASSERT(!m_plugin);
 
     ASSERT(!m_isInitializing);
-    m_isInitializing = true; // Cannot use TemporaryChange here, because this object can be deleted before the function returns.
+    m_isInitializing = true; // Cannot use SetForScope here, because this object can be deleted before the function returns.
 
     m_plugin = NetscapePlugin::create(PluginProcess::singleton().netscapePluginModule());
     if (!m_plugin) {

@@ -1,3 +1,17 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] WTF::TemporaryChange with WTF::SetForScope
+        https://bugs.webkit.org/show_bug.cgi?id=164761
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/SetForScope.cpp: Renamed from Tools/TestWebKitAPI/Tests/WTF/TemporaryChange.cpp.
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2016-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r208455): LayoutTests swipe/pushState-cached-back-swipe.html and swipe/main-frame-pinning-requirement.html are failing

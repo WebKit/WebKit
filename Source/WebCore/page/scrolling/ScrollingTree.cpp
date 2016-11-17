@@ -37,7 +37,7 @@
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include "TextStream.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -138,7 +138,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     }
     
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
-    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
+    SetForScope<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
 
     removeDestroyedNodes(*scrollingStateTree);
 

@@ -30,7 +30,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "TransformState.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -141,7 +141,7 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
 void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderLayerModelObject* ancestorRenderer)
 {
     // We need to push mappings in reverse order here, so do insertions rather than appends.
-    TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
+    SetForScope<size_t> positionChange(m_insertionPosition, m_mapping.size());
     do {
         renderer = renderer->pushMappingToContainer(ancestorRenderer, *this);
     } while (renderer && renderer != ancestorRenderer);
@@ -175,7 +175,7 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
 void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool respectTransforms)
 {
     MapCoordinatesFlags newFlags = respectTransforms ? m_mapCoordinatesFlags : m_mapCoordinatesFlags & ~UseTransforms;
-    TemporaryChange<MapCoordinatesFlags> flagsChange(m_mapCoordinatesFlags, newFlags);
+    SetForScope<MapCoordinatesFlags> flagsChange(m_mapCoordinatesFlags, newFlags);
 
     const RenderLayerModelObject& renderer = layer->renderer();
 
@@ -192,7 +192,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
             pushMappingsToAncestor(&ancestorLayer->renderer(), nullptr);
         }
 
-        TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
+        SetForScope<size_t> positionChange(m_insertionPosition, m_mapping.size());
         push(&renderer, layerOffset, /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }

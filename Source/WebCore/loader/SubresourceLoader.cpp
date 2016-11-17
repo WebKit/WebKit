@@ -45,8 +45,8 @@
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)

@@ -26,7 +26,7 @@
 #include "GtkVersioning.h"
 #include "SelectionData.h"
 #include <gtk/gtk.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -289,7 +289,7 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const Sel
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
 
     if (numberOfTargets > 0 && table) {
-        TemporaryChange<SelectionData*> change(settingClipboardSelection, const_cast<SelectionData*>(&selection));
+        SetForScope<SelectionData*> change(settingClipboardSelection, const_cast<SelectionData*>(&selection));
         auto data = std::make_unique<ClipboardSetData>(*settingClipboardSelection, WTFMove(primarySelectionCleared));
         if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, data.get())) {
             gtk_clipboard_set_can_store(clipboard, nullptr, 0);

@@ -34,7 +34,7 @@
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
 #include "MemoryObjectStore.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -211,7 +211,7 @@ void MemoryBackingStoreTransaction::abort()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
 
-    TemporaryChange<bool> change(m_isAborting, true);
+    SetForScope<bool> change(m_isAborting, true);
 
     for (auto iterator : m_originalIndexNames)
         iterator.key->rename(iterator.value);

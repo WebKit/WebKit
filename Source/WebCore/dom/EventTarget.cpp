@@ -42,8 +42,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 
 using namespace WTF;
@@ -194,7 +194,7 @@ bool EventTarget::fireEventListeners(Event& event)
     if (!data)
         return true;
 
-    TemporaryChange<bool> firingEventListenersScope(data->isFiringEventListeners, true);
+    SetForScope<bool> firingEventListenersScope(data->isFiringEventListeners, true);
 
     if (auto* listenersVector = data->eventListenerMap.find(event.type())) {
         fireEventListeners(event, *listenersVector);

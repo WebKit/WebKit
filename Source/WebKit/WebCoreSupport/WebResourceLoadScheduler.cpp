@@ -36,7 +36,7 @@
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/URL.h>
 #include <wtf/MainThread.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)

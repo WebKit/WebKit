@@ -25,18 +25,18 @@
 
 #include "config.h"
 
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace TestWebKitAPI {
 
-TEST(WTF, TemporaryChangeNested)
+TEST(WTF, SetForScopeNested)
 {
     bool originallyFalse = false;
     {
-        TemporaryChange<bool> change1OriginallyFalse(originallyFalse, true);
+        SetForScope<bool> change1OriginallyFalse(originallyFalse, true);
         EXPECT_TRUE(originallyFalse);
         {
-            TemporaryChange<bool> change2OriginallyFalse(originallyFalse, false);
+            SetForScope<bool> change2OriginallyFalse(originallyFalse, false);
             EXPECT_FALSE(originallyFalse);
         }
         EXPECT_TRUE(originallyFalse);

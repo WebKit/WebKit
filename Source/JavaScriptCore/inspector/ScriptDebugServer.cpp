@@ -40,7 +40,7 @@
 #include "ScriptValue.h"
 #include "SourceProvider.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 using namespace JSC;
 
@@ -143,7 +143,7 @@ void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const Strin
     if (m_listeners.isEmpty())
         return;
 
-    TemporaryChange<bool> change(m_callingListeners, true);
+    SetForScope<bool> change(m_callingListeners, true);
 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(m_listeners, listenersCopy);
@@ -159,7 +159,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState*, int breakpoint
     if (m_listeners.isEmpty())
         return;
 
-    TemporaryChange<bool> change(m_callingListeners, true);
+    SetForScope<bool> change(m_callingListeners, true);
 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(m_listeners, listenersCopy);
@@ -175,7 +175,7 @@ void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const Scr
     if (m_listeners.isEmpty())
         return;
 
-    TemporaryChange<bool> change(m_callingListeners, true);
+    SetForScope<bool> change(m_callingListeners, true);
 
     unsigned sampleId = m_nextProbeSampleId++;
 
@@ -247,7 +247,7 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     if (m_listeners.isEmpty())
         return;
 
-    TemporaryChange<bool> change(m_callingListeners, true);
+    SetForScope<bool> change(m_callingListeners, true);
 
     bool isError = errorLine != -1;
     if (isError)
@@ -264,7 +264,7 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
     if (m_listeners.isEmpty())
         return;
 
-    TemporaryChange<bool> change(m_callingListeners, true);
+    SetForScope<bool> change(m_callingListeners, true);
 
     dispatchFunctionToListeners(m_listeners, callback);
 }

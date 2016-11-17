@@ -35,8 +35,8 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
+#import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
-#import <wtf/TemporaryChange.h>
 
 using namespace WebCore;
 

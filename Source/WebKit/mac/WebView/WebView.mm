@@ -219,8 +219,8 @@
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/SetForScope.h>
 #import <wtf/StdLibExtras.h>
-#import <wtf/TemporaryChange.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if !PLATFORM(IOS)
@@ -9416,7 +9416,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
     if (_private->_isUpdatingTextTouchBar)
         return;
 
-    TemporaryChange<BOOL> isUpdatingTextTouchBar(_private->_isUpdatingTextTouchBar, YES);
+    SetForScope<BOOL> isUpdatingTextTouchBar(_private->_isUpdatingTextTouchBar, YES);
 
     if (!_private->_textTouchBarItemController)
         _private->_textTouchBarItemController = adoptNS([[WebTextTouchBarItemController alloc] initWithWebView:self]);

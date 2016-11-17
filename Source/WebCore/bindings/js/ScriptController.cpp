@@ -59,7 +59,7 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSModuleRecord.h>
 #include <runtime/JSNativeStdFunction.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
 
@@ -252,7 +252,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     auto& shell = *windowShell(world);
     auto& state = *shell.window()->globalExec();
-    TemporaryChange<const String*> sourceURLScope(m_sourceURL, &sourceURL.string());
+    SetForScope<const String*> sourceURLScope(m_sourceURL, &sourceURL.string());
 
     Ref<Frame> protector(m_frame);
 

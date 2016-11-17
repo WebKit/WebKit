@@ -30,7 +30,7 @@
 #include "HTMLParserIdioms.h"
 #include "SpaceSplitString.h"
 #include <wtf/HashSet.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -252,7 +252,7 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
     }
     AtomicString serializedValue = builder.toAtomicString();
 
-    TemporaryChange<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
+    SetForScope<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
     m_element.setAttribute(m_attributeName, serializedValue);
 }
 

@@ -52,7 +52,7 @@
 #include "SubframeLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -291,7 +291,7 @@ bool PageCache::canCache(Page& page) const
 
 void PageCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
 {
-    TemporaryChange<unsigned> change(m_maxSize, size);
+    SetForScope<unsigned> change(m_maxSize, size);
     prune(pruningReason);
 }
 

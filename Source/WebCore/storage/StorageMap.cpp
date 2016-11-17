@@ -26,7 +26,7 @@
 #include "config.h"
 #include "StorageMap.h"
 
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -144,7 +144,7 @@ RefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, S
 
 RefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
-    TemporaryChange<unsigned> quotaSizeChange(m_quotaSize, noQuota);
+    SetForScope<unsigned> quotaSizeChange(m_quotaSize, noQuota);
 
     String oldValue;
     bool quotaException;

@@ -24,7 +24,7 @@
 #include "AnimationUtilities.h"
 #include "SVGPathSeg.h"
 #include "SVGPathSource.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -341,7 +341,7 @@ static inline bool isSegmentEqual(const SVGPathSegType& fromType, const SVGPathS
 
 bool SVGPathBlender::addAnimatedPath(unsigned repeatCount)
 {
-    TemporaryChange<unsigned> change(m_addTypesCount, repeatCount);
+    SetForScope<unsigned> change(m_addTypesCount, repeatCount);
     return blendAnimatedPath(0);
 }
 

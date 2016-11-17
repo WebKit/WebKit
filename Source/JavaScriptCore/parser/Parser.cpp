@@ -26,9 +26,9 @@
 #include "ASTBuilder.h"
 #include "DebuggerParseData.h"
 #include "JSCInlines.h"
-#include "SetForScope.h"
 #include "VM.h"
 #include <utility>
+#include <wtf/SetForScope.h>
 #include <wtf/StringPrintStream.h>
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\

@@ -35,7 +35,7 @@
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/TemporaryChange.h>
+#import <wtf/SetForScope.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #import <WebCore/AxisScrollSnapOffsets.h>
@@ -179,7 +179,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
 {
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
 
-    TemporaryChange<bool> updatingChange(m_updatingFromStateNode, true);
+    SetForScope<bool> updatingChange(m_updatingFromStateNode, true);
 
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 

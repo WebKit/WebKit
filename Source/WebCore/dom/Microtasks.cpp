@@ -23,7 +23,7 @@
 #include "Microtasks.h"
 
 #include <wtf/MainThread.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -84,7 +84,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     if (m_performingMicrotaskCheckpoint)
         return;
 
-    TemporaryChange<bool> change(m_performingMicrotaskCheckpoint, true);
+    SetForScope<bool> change(m_performingMicrotaskCheckpoint, true);
 
     Vector<std::unique_ptr<Microtask>> queue = WTFMove(m_microtaskQueue);
     for (auto& task : queue) {

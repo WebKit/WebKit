@@ -29,7 +29,7 @@
 
 #include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -114,7 +114,7 @@ void BackendDispatcher::dispatch(const String& message)
     {
         // In case this is a re-entrant call from a nested run loop, we don't want to lose
         // the outer request's id just because the inner request is bogus.
-        TemporaryChange<Optional<long>> scopedRequestId(m_currentRequestId, Nullopt);
+        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, Nullopt);
 
         RefPtr<InspectorValue> parsedMessage;
         if (!InspectorValue::parseJSON(message, parsedMessage)) {
@@ -145,7 +145,7 @@ void BackendDispatcher::dispatch(const String& message)
 
     {
         // We could be called re-entrantly from a nested run loop, so restore the previous id.
-        TemporaryChange<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
+        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
 
         RefPtr<InspectorValue> methodValue;
         if (!messageObject->getValue(ASCIILiteral("method"), methodValue)) {

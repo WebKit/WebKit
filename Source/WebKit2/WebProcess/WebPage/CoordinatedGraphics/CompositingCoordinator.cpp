@@ -36,7 +36,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 using namespace WebCore;
 
@@ -99,7 +99,7 @@ void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 
 bool CompositingCoordinator::flushPendingLayerChanges()
 {
-    TemporaryChange<bool> protector(m_isFlushingLayerChanges, true);
+    SetForScope<bool> protector(m_isFlushingLayerChanges, true);
 
     initializeRootCompositingLayerIfNeeded();
 
@@ -373,7 +373,7 @@ void CompositingCoordinator::renderNextFrame()
 
 void CompositingCoordinator::purgeBackingStores()
 {
-    TemporaryChange<bool> purgingToggle(m_isPurging, true);
+    SetForScope<bool> purgingToggle(m_isPurging, true);
 
     for (auto& registeredLayer : m_registeredLayers.values())
         registeredLayer->purgeBackingStores();

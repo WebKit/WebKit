@@ -39,7 +39,7 @@
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
 #include <unistd.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 using namespace WebCore;
 
@@ -120,7 +120,7 @@ void WebProcessConnection::setGlobalException(const String& exceptionString)
 
 void WebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    TemporaryChange<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
+    SetForScope<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
 
     if (decoder.messageReceiverName() == Messages::WebProcessConnection::messageReceiverName()) {
         didReceiveWebProcessConnectionMessage(connection, decoder);
@@ -142,7 +142,7 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::D
 
 void WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
-    TemporaryChange<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
+    SetForScope<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
 
     uint64_t destinationID = decoder.destinationID();
 

@@ -29,7 +29,7 @@
 #include "CSSPreloadScanner.h"
 
 #include "HTMLParserIdioms.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ void CSSPreloadScanner::reset()
 void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
     ASSERT(!m_requests);
-    TemporaryChange<PreloadRequestStream*> change(m_requests, &requests);
+    SetForScope<PreloadRequestStream*> change(m_requests, &requests);
 
     for (UChar c : data) {
         if (m_state == DoneParsingImportRules)

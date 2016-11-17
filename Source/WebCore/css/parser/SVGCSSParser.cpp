@@ -31,7 +31,7 @@
 #include "RenderTheme.h"
 #include "SVGPaint.h"
 
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -213,7 +213,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     case CSSPropertyMarker:
     {
         ShorthandScope scope(this, propId);
-        TemporaryChange<bool> change(m_implicitShorthand, true);
+        SetForScope<bool> change(m_implicitShorthand, true);
         if (!parseValue(CSSPropertyMarkerStart, important))
             return false;
         if (m_valueList->current()) {

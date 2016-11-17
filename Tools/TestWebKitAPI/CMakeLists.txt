@@ -74,12 +74,12 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Scope.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ScopedLambda.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/SetForScope.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringBuilder.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringHasher.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringImpl.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Time.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/UniqueRef.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Variant.cpp

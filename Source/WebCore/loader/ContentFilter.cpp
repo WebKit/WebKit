@@ -42,7 +42,7 @@
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
 
 #if !LOG_DISABLED
@@ -292,7 +292,7 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
     RefPtr<SharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
     ResourceResponse response { URL(), ASCIILiteral("text/html"), replacementData->size(), ASCIILiteral("UTF-8") };
     SubstituteData substituteData { WTFMove(replacementData), error.failingURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
-    TemporaryChange<bool> loadingBlockedPage { m_isLoadingBlockedPage, true };
+    SetForScope<bool> loadingBlockedPage { m_isLoadingBlockedPage, true };
     m_documentLoader.frameLoader()->load(FrameLoadRequest(m_documentLoader.frame(), blockedPageURL(), ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
 }
 

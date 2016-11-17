@@ -29,7 +29,7 @@
 #include "WebFrameProxy.h"
 #include "WebSelectionData.h"
 #include <WebCore/PlatformPasteboard.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 using namespace WebCore;
 
@@ -37,7 +37,7 @@ namespace WebKit {
 
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const WebSelectionData& selection)
 {
-    TemporaryChange<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, m_primarySelectionOwner);
+    SetForScope<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, m_primarySelectionOwner);
     PlatformPasteboard(pasteboardName).writeToClipboard(selection.selectionData, [this] {
         if (m_frameWritingToClipboard == m_primarySelectionOwner)
             return;

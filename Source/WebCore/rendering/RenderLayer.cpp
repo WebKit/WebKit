@@ -577,7 +577,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         
     // With all our children positioned, now update our marquee if we need to.
     if (m_marquee) {
-        // FIXME: would like to use TemporaryChange<> but it doesn't work with bitfields.
+        // FIXME: would like to use SetForScope<> but it doesn't work with bitfields.
         bool oldUpdatingMarqueePosition = m_updatingMarqueePosition;
         m_updatingMarqueePosition = true;
         m_marquee->updateMarqueePosition();

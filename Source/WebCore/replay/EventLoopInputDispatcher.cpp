@@ -33,7 +33,7 @@
 #include "Page.h"
 #include "ReplayingInputCursor.h"
 #include "WebReplayInputs.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 #if !LOG_DISABLED
 #include "Logging.h"
@@ -145,7 +145,7 @@ void EventLoopInputDispatcher::dispatchInput()
         return;
 
     {
-        TemporaryChange<bool> change(m_dispatching, true);
+        SetForScope<bool> change(m_dispatching, true);
         m_currentWork.input->dispatch(m_page.replayController());
     }
 

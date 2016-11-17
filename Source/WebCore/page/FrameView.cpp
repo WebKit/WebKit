@@ -99,8 +99,8 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/TemporaryChange.h>
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TiledBackingStore.h"
@@ -1288,10 +1288,10 @@ void FrameView::layout(bool allowSubtree)
 
     // Many of the tasks performed during layout can cause this function to be re-entered,
     // so save the layout phase now and restore it on exit.
-    TemporaryChange<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
+    SetForScope<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
 
     // Every scroll that happens during layout is programmatic.
-    TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
 
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
@@ -1331,12 +1331,12 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(document.pageCacheState() == Document::NotInPageCache);
 
     {
-        TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+        SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !inChildFrameLayoutWithFrameFlattening) {
             // This is a new top-level layout. If there are any remaining tasks from the previous
             // layout, finish them now.
-            TemporaryChange<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
+            SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
             performPostLayoutTasks();
         }
 
@@ -1378,7 +1378,7 @@ void FrameView::layout(bool allowSubtree)
     ++m_nestedLayoutCount;
 
     {
-        TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+        SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         autoSizeIfEnabled();
 
@@ -1550,7 +1550,7 @@ void FrameView::layout(bool allowSubtree)
             if (inChildFrameLayoutWithFrameFlattening)
                 updateWidgetPositions();
             else {
-                TemporaryChange<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
+                SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
                 performPostLayoutTasks(); // Calls resumeScheduledEvents().
             }
         }
@@ -2359,7 +2359,7 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
-    TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = nullptr;
     Page* page = frame().page();
     if (page && page->expectsWheelEventTriggers())
@@ -2465,7 +2465,7 @@ void FrameView::applyRecursivelyWithVisibleRect(const std::function<void (FrameV
     apply(*this, visibleRect);
 
     // Recursive call for subframes. We cache the current FrameView's windowClipRect to avoid recomputing it for every subframe.
-    TemporaryChange<IntRect*> windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
+    SetForScope<IntRect*> windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
     for (Frame* childFrame = frame().tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
         if (auto* childView = childFrame->view())
             childView->applyRecursivelyWithVisibleRect(apply);
@@ -3539,7 +3539,7 @@ void FrameView::autoSizeIfEnabled()
 
     LOG(Layout, "FrameView %p autoSizeIfEnabled", this);
 
-    TemporaryChange<bool> changeInAutoSize(m_inAutoSize, true);
+    SetForScope<bool> changeInAutoSize(m_inAutoSize, true);
 
     Document* document = frame().document();
     if (!document)

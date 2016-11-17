@@ -1,3 +1,22 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] WTF::TemporaryChange with WTF::SetForScope
+        https://bugs.webkit.org/show_bug.cgi?id=164761
+
+        Reviewed by Saam Barati.
+
+        JavaScriptCore's bytecompiler/SetForScope.h is completely the same
+        to WTF::TemporaryChange. SetForScope sounds better name since it
+        says that this object works as Scope.
+
+        We rename WTF::TemporaryChange to WTF::SetForScope. And replace
+        all the use to this WTF::SetForScope.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/SetForScope.h: Renamed from Source/WTF/wtf/TemporaryChange.h.
+        (WTF::SetForScope::SetForScope):
+        (WTF::SetForScope::~SetForScope):
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag

@@ -185,7 +185,7 @@
 #include <runtime/JSLock.h>
 #include <runtime/SamplingProfiler.h>
 #include <wtf/RunLoop.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResult.h"
@@ -2238,7 +2238,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
-    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_userActivityHysteresis.impulse();
 
@@ -2316,7 +2316,7 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_userActivityHysteresis.impulse();
 
@@ -2378,7 +2378,7 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 #if ENABLE(IOS_TOUCH_EVENTS)
 void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
 {
-    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
@@ -2539,7 +2539,7 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
     if (!m_page)
         return;
 
-    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.document()->setFocusedElement(0);
@@ -4642,7 +4642,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
     if (replacementEditingRange.location != notFound) {
         RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo));
         if (replacementRange) {
-            TemporaryChange<bool> isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, suppressSelectionUpdate);
+            SetForScope<bool> isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, suppressSelectionUpdate);
             frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
             replacesText = true;
         }

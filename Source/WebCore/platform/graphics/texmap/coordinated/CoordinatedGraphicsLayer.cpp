@@ -32,7 +32,7 @@
 #include "ScrollableArea.h"
 #include <wtf/CurrentTime.h>
 #ifndef NDEBUG
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 #endif
 #include <wtf/text/CString.h>
 
@@ -1041,7 +1041,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 void CoordinatedGraphicsLayer::purgeBackingStores()
 {
 #ifndef NDEBUG
-    TemporaryChange<bool> updateModeProtector(m_isPurging, true);
+    SetForScope<bool> updateModeProtector(m_isPurging, true);
 #endif
     m_mainBackingStore = nullptr;
     m_previousBackingStore = nullptr;

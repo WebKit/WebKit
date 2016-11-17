@@ -97,7 +97,7 @@
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/TemporaryChange.h>
+#import <wtf/SetForScope.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -986,7 +986,7 @@ void WebViewImpl::updateTextTouchBar()
     if (m_isUpdatingTextTouchBar)
         return;
 
-    TemporaryChange<bool> isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
+    SetForScope<bool> isUpdatingTextFunctionBar(m_isUpdatingTextTouchBar, true);
 
     if (!m_textTouchBarItemController)
         m_textTouchBarItemController = adoptNS([[WKTextTouchBarItemController alloc] initWithWebViewImpl:this]);

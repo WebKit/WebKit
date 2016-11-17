@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +24,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemporaryChange_h
-#define TemporaryChange_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-// TemporaryChange<> is useful for setting a variable to a new value only within a
-// particular scope. An TemporaryChange<> object changes a variable to its original
+// SetForScope<> is useful for setting a variable to a new value only within a
+// particular scope. An SetForScope<> object changes a variable to its original
 // value upon destruction, making it an alternative to writing "var = false;"
 // or "var = oldVal;" at all of a block's exit points.
 //
-// This should be obvious, but note that an TemporaryChange<> instance should have a
+// This should be obvious, but note that an SetForScope<> instance should have a
 // shorter lifetime than its scopedVariable, to prevent invalid memory writes
-// when the TemporaryChange<> object is destroyed.
+// when the SetForScope<> object is destroyed.
 
 template<typename T>
-class TemporaryChange {
-    WTF_MAKE_NONCOPYABLE(TemporaryChange);
+class SetForScope {
+    WTF_MAKE_NONCOPYABLE(SetForScope);
 public:
-    TemporaryChange(T& scopedVariable)
+    SetForScope(T& scopedVariable)
         : m_scopedVariable(scopedVariable)
         , m_originalValue(scopedVariable)
     {
     }
-    TemporaryChange(T& scopedVariable, T newValue)
-        : TemporaryChange(scopedVariable)
+    template<typename U>
+    SetForScope(T& scopedVariable, U&& newValue)
+        : SetForScope(scopedVariable)
     {
-        m_scopedVariable = newValue;
+        m_scopedVariable = std::forward<U>(newValue);
     }
 
-    ~TemporaryChange()
+    ~SetForScope()
     {
-        m_scopedVariable = m_originalValue;
+        m_scopedVariable = WTFMove(m_originalValue);
     }
 
 private:
@@ -66,6 +68,4 @@ private:
 
 }
 
-using WTF::TemporaryChange;
-
-#endif
+using WTF::SetForScope;

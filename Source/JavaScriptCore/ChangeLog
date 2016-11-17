@@ -1,3 +1,23 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] WTF::TemporaryChange with WTF::SetForScope
+        https://bugs.webkit.org/show_bug.cgi?id=164761
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/SetForScope.h: Removed.
+        * debugger/Debugger.cpp:
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::dispatch):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionLog):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe):
+        (Inspector::ScriptDebugServer::sourceParsed):
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners):
+        * parser/Parser.cpp:
+
 2016-11-16  Mark Lam  <mark.lam@apple.com>
 
         ExceptionFuzz needs to placate exception check verification before overwriting a thrown exception.

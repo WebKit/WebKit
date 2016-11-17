@@ -46,7 +46,7 @@
 #include "StyleProperties.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -280,7 +280,7 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(MatchRequest& matchReq
         if (!slottedPseudoElementRules)
             continue;
         // Match in the current scope.
-        TemporaryChange<bool> change(m_isMatchingSlottedPseudoElements, true);
+        SetForScope<bool> change(m_isMatchingSlottedPseudoElements, true);
 
         MatchRequest scopeMatchRequest(nullptr, matchRequest.includeEmptyRules, matchRequest.treeContextOrdinal);
         collectMatchingRulesForList(slottedPseudoElementRules.get(), scopeMatchRequest, ruleRange);

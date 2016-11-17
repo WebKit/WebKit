@@ -192,8 +192,8 @@
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
 
@@ -1840,7 +1840,7 @@ void Document::recalcStyle(Style::Change change)
         m_inStyleRecalc = false;
 
         if (styleUpdate) {
-            TemporaryChange<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
+            SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
 
             RenderTreeUpdater updater(*this);
             updater.commit(WTFMove(styleUpdate));
@@ -1969,7 +1969,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
     Style::PostResolutionCallbackDisabler disabler(*this);
 
-    TemporaryChange<bool> change(m_ignorePendingStylesheets, true);
+    SetForScope<bool> change(m_ignorePendingStylesheets, true);
     auto elementStyle = element.resolveStyle(parentStyle);
 
     if (elementStyle.relations) {
@@ -2218,7 +2218,7 @@ void Document::destroyRenderTree()
     ASSERT(hasLivingRenderTree());
     ASSERT(m_pageCacheState != InPageCache);
 
-    TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
+    SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
     if (this == &topDocument())
         clearAXObjectCache();
