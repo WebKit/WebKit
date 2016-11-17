@@ -347,11 +347,10 @@ public:
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount, unsigned endColumn)
+    void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
     {
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
-        m_firstLine = firstLine;
         m_lineCount = lineCount;
         // For the UnlinkedCodeBlock, startColumn is always 0.
         m_endColumn = endColumn;
@@ -364,7 +363,6 @@ public:
 
     CodeFeatures codeFeatures() const { return m_features; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
-    unsigned firstLine() const { return m_firstLine; }
     unsigned lineCount() const { return m_lineCount; }
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
@@ -436,7 +434,6 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
-    unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;
 

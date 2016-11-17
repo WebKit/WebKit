@@ -1,3 +1,40 @@
+2016-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        UnlinkedCodeBlock should not have a starting line number
+        https://bugs.webkit.org/show_bug.cgi?id=164838
+
+        Reviewed by Mark Lam.
+
+        Here's how the starting line number in UnlinkedCodeBlock used to work:
+
+        (1) Assign the source code starting line number to the parser starting
+        line number.
+
+        (2) Assign (1) to the AST.
+
+        (3) Subtract (1) from (2) and assign to UnlinkedCodeBlock.
+
+        Then, when linking:
+
+        (4) Add (3) to (1).
+
+        This was an awesome no-op.
+
+        Generally, unlinked code is code that is not tied to any particular
+        web page or resource. So, it's inappropriate to think of it having a
+        starting line number.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::recordParse):
+        (JSC::UnlinkedCodeBlock::hasCapturedVariables):
+        (JSC::UnlinkedCodeBlock::firstLine): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlock):
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag
