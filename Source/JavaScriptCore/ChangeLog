@@ -1,5 +1,16 @@
 2016-11-17  Keith Miller  <keith_miller@apple.com>
 
+        Add sqrt to Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=164877
+
+        Reviewed by Mark Lam.
+
+        B3 already has a Sqrt opcode we just need to map Wasm to it.
+
+        * wasm/wasm.json:
+
+2016-11-17  Keith Miller  <keith_miller@apple.com>
+
         Add support for rotate in B3 and the relevant assemblers
         https://bugs.webkit.org/show_bug.cgi?id=164869
 
