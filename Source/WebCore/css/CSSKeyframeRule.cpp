@@ -70,6 +70,16 @@ String StyleKeyframe::keyText() const
 
     return keyText.toString();
 }
+    
+bool StyleKeyframe::setKeyText(const String& keyText)
+{
+    ASSERT(!keyText.isNull());
+    auto keys = CSSParser::parseKeyframeKeyList(keyText);
+    if (!keys || keys->isEmpty())
+        return false;
+    m_keys = *keys;
+    return true;
+}
 
 String StyleKeyframe::cssText() const
 {

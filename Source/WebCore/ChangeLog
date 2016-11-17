@@ -1,3 +1,106 @@
+2016-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add @supports, @keyframe and media query parsing options
+        https://bugs.webkit.org/show_bug.cgi?id=164821
+
+        Reviewed by Sam Weinig and Zalan Bujtas.
+
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::setKeyText):
+        * css/CSSKeyframeRule.h:
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::findKeyframeIndex):
+        Changed to call into CSSParserImpls implementation. The new parser
+        is now always used when parsing the key list.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::create):
+        (WebCore::MediaQuerySet::MediaQuerySet):
+        (WebCore::MediaQuerySet::set):
+        (WebCore::MediaQuerySet::add):
+        (WebCore::MediaQuerySet::remove):
+        (WebCore::MediaList::setMediaText):
+        (WebCore::parseMediaDescriptor): Deleted.
+        (WebCore::MediaQuerySet::internalParse): Deleted.
+        (WebCore::MediaQuerySet::parse): Deleted.
+        * css/MediaList.h:
+        Rewritten to remove fallback descriptor support/parsing, since no other
+        browser supports it, and this was part of our initial 2005 landing that
+        nobody else appears to use.  Media queries now call into the new parser always.
+
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithValidDensity):
+        (WebCore::featureWithPositiveNumber):
+        (WebCore::MediaQueryExpression::MediaQueryExpression):
+        Make sure to support transform2d, animation and transition.
+
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        Call the normal create now that fallback descriptor syntax is gone.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseKeyframeRule):
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        (WebCore::CSSParser::parseDeclarationDeprecated):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseKeyframeKeyList):
+        (WebCore::CSSParser::parseMediaQuery): Deleted.
+        (WebCore::CSSParser::parseKeyframeSelector): Deleted.
+        * css/parser/CSSParser.h:
+        Patched the old parser to have flags to call into the new parser
+        for supports conditions and keyframes. Rename the parseDeclaration that
+        is only used by the old parser to have the word Deprecated in it. Removed
+        the media query and key list parsing functions, since the new parser
+        now does it always.
+
+        * css/parser/CSSParserIdioms.cpp:
+        (WebCore::convertToASCIILowercaseInPlace): Deleted.
+        * css/parser/CSSParserIdioms.h:
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::convertToASCIILowercaseInPlace):
+        (WebCore::CSSParserToken::convertToASCIILowercaseInPlace):
+        * css/parser/CSSParserToken.h:
+        (WebCore::CSSParserToken::value):
+        (WebCore::CSSParserToken::initValueFromStringView):
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementSelectorFromStringView):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAttr):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeId):
+        (WebCore::CSSSelectorParser::consumeClass):
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Moving convertToASCIILowercase to be a CSSParserToken member function instead
+        of operating on StringView. This saves an extra step, since the token itself
+        already had all the correct members. Note that converting in-place is bad,
+        and we'll be removing it once the new parser turns on.
+
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::readMediaType):
+        (WebCore::MediaQueryParser::readFeature):
+        (WebCore::MediaQueryParser::readFeatureEnd):
+        Require the closing ")" on features. Fix the in-place lowercasing to only
+        be done for features, not for types. This matches the old parser.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createCSSStyleSheet):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::parseAttribute):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::mediaAttributeMatches):
+        Patched to call the normal MediaQuerySet::create and not the one that had fallback
+        descriptor support.
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix link error after r208841 part2

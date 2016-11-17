@@ -170,11 +170,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (!contentSecurityPolicy.allowInlineStyle(document.url(), m_startTextPosition.m_line, text, hasKnownNonce))
         return;
 
-    RefPtr<MediaQuerySet> mediaQueries;
-    if (element.isHTMLElement())
-        mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
-    else
-        mediaQueries = MediaQuerySet::create(m_media);
+    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(m_media);
 
     MediaQueryEvaluator screenEval(ASCIILiteral("screen"), true);
     MediaQueryEvaluator printEval(ASCIILiteral("print"), true);

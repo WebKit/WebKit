@@ -204,7 +204,7 @@ private:
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue;
-                auto mediaSet = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
+                auto mediaSet = MediaQuerySet::create(attributeValue);
                 auto* documentElement = document.documentElement();
                 m_mediaMatched = MediaQueryEvaluator { document.printing() ? "print" : "screen", document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }

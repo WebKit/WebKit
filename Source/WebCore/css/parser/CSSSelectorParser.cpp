@@ -388,10 +388,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeId(CSSParserTokenRa
     
     // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
     // to be compatible for now.
-    StringView stringView = range.consume().value();
+    CSSParserToken token = range.consume();
     if (m_context.mode == HTMLQuirksMode)
-        convertToASCIILowercaseInPlace(stringView);
-    selector->setValue(stringView.toAtomicString());
+        token.convertToASCIILowercaseInPlace();
+    selector->setValue(token.value().toAtomicString());
 
     return selector;
 }
@@ -408,10 +408,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeClass(CSSParserToke
     
     // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
     // to be compatible for now.
-    StringView stringView = range.consume().value();
+    CSSParserToken token = range.consume();
     if (m_context.mode == HTMLQuirksMode)
-        convertToASCIILowercaseInPlace(stringView);
-    selector->setValue(stringView.toAtomicString());
+        token.convertToASCIILowercaseInPlace();
+    selector->setValue(token.value().toAtomicString());
 
     return selector;
 }
@@ -513,6 +513,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         return nullptr;
 
     std::unique_ptr<CSSParserSelector> selector;
+    
+    // FIXME-NEWPARSER: Would like to eliminate this.
+    const_cast<CSSParserToken&>(token).convertToASCIILowercaseInPlace();
+    
     StringView value = token.value();
     
     // FIXME-NEWPARSER: We can't change the pseudoclass/element maps that the old parser

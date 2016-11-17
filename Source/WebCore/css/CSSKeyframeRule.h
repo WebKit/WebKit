@@ -51,7 +51,7 @@ public:
     ~StyleKeyframe();
 
     String keyText() const;
-    void setKeyText(const String& text) { m_keys = CSSParser::parseKeyframeSelector(text); }
+    bool setKeyText(const String&);
     void setKey(double key)
     {
         ASSERT(m_keys.isEmpty());

@@ -65,9 +65,7 @@ bool StyleMedia::matchMedium(const String& query) const
 
     auto rootStyle = document->styleScope().resolver().styleForElement(*documentElement, document->renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
 
-    auto media = MediaQuerySet::create();
-    if (!media->parse(query))
-        return false;
+    auto media = MediaQuerySet::create(query);
 
     return MediaQueryEvaluator { type(), *document, rootStyle.get() }.evaluate(media.get());
 }

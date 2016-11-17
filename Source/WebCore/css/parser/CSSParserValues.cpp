@@ -238,7 +238,6 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
 
 CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(StringView& pseudoTypeString)
 {
-    convertToASCIILowercaseInPlace(pseudoTypeString);
     AtomicString name = pseudoTypeString.toAtomicString();
     
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);

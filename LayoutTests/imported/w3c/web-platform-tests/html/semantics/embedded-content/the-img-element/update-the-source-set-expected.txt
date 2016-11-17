@@ -34,15 +34,15 @@ PASS <picture><source srcset="data:,b 1x 1x"><img src="data:,a" data-expect="dat
 PASS <picture><source srcset="data:,b" media=""><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><source srcset="data:,b" media="all"><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><source srcset="data:,b" media="all and (min-width:0)"><img src="data:,a" data-expect="data:,b"></picture> 
-FAIL <picture><source srcset="data:,b" media="all and !"><img src="data:,a" data-expect="data:,a"></picture> assert_equals: expected "data:,a" but got "data:,b"
-FAIL <picture><source srcset="data:,b" media="all and (!)"><img src="data:,a" data-expect="data:,a"></picture> assert_equals: expected "data:,a" but got "data:,b"
+PASS <picture><source srcset="data:,b" media="all and !"><img src="data:,a" data-expect="data:,a"></picture> 
+PASS <picture><source srcset="data:,b" media="all and (!)"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media="not all"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media="not all and (min-width:0)"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media="not all and (max-width:0)"><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><source srcset="data:,b" media="not all and !"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media="not all and (!)"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media="all, !"><img src="data:,a" data-expect="data:,b"></picture> 
-FAIL <picture><source srcset="data:,b" media=","><img src="data:,a" data-expect="data:,a"></picture> assert_equals: expected "data:,a" but got "data:,b"
+PASS <picture><source srcset="data:,b" media=","><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source srcset="data:,b" media=", all"><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><source srcset="data:,b" type=""><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><source srcset="data:,b" type=" "><img src="data:,a" data-expect="data:,b"></picture> 

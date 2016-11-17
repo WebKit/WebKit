@@ -69,6 +69,7 @@
 #include "CSSSelectorParser.h"
 #include "CSSShadowValue.h"
 #include "CSSStyleSheet.h"
+#include "CSSSupportsParser.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
@@ -404,18 +405,30 @@ RefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const Stri
 
 RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet, const String& string)
 {
+    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+        RefPtr<StyleRuleBase> keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
+        return downcast<StyleKeyframe>(keyframe.get());
+    }
+
     setStyleSheet(sheet);
     setupParser("@-webkit-keyframe-rule{ ", string, "} ");
     cssyyparse(this);
     return m_keyframe;
 }
 
-bool CSSParser::parseSupportsCondition(const String& string)
+bool CSSParser::parseSupportsCondition(const String& condition)
 {
+    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+        CSSTokenizer::Scope scope(condition);
+        CSSParserTokenRange range = scope.tokenRange();
+        CSSParserImpl parser(strictCSSParserContext());
+        return CSSSupportsParser::supportsCondition(range, parser) == CSSSupportsParser::Supported;
+    }
+
     m_supportsCondition = false;
     // can't use { because tokenizer state switches from supports to initial state when it sees { token.
     // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
-    setupParser("@-webkit-supports-condition ", string, "} ");
+    setupParser("@-webkit-supports-condition ", condition, "} ");
     cssyyparse(this);
     return m_supportsCondition;
 }
@@ -1440,11 +1453,13 @@ Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const Strin
     if (context.useNewParser)
         return CSSParserImpl::parseInlineStyleDeclaration(string, element);
 
-    return CSSParser(context).parseDeclaration(string, nullptr);
+    return CSSParser(context).parseDeclarationDeprecated(string, nullptr);
 }
 
-Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
+Ref<ImmutableStyleProperties> CSSParser::parseDeclarationDeprecated(const String& string, StyleSheetContents* contextStyleSheet)
 {
+    ASSERT(!m_context.useNewParser);
+    
     setStyleSheet(contextStyleSheet);
 
     setupParser("@-webkit-decls{", string, "} ");
@@ -1459,6 +1474,9 @@ Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, 
 
 bool CSSParser::parseDeclaration(MutableStyleProperties& declaration, const String& string, RefPtr<CSSRuleSourceData>&& ruleSourceData, StyleSheetContents* contextStyleSheet)
 {
+    if (m_context.useNewParser && m_context.mode != UASheetMode)
+        return CSSParserImpl::parseDeclarationList(&declaration, string, m_context);
+
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
 
@@ -1495,21 +1513,6 @@ bool CSSParser::parseDeclaration(MutableStyleProperties& declaration, const Stri
     }
 
     return ok;
-}
-
-std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
-{
-    if (string.isEmpty())
-        return nullptr;
-
-    ASSERT(!m_mediaQuery);
-
-    // can't use { because tokenizer state switches from mediaquery to initial state when it sees { token.
-    // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
-    setupParser("@-webkit-mediaquery ", string, "} ");
-    cssyyparse(this);
-
-    return WTFMove(m_mediaQuery);
 }
 
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
@@ -4943,34 +4946,9 @@ RefPtr<CSSPrimitiveValue> CSSParser::parseAnimationProperty(AnimationParseContex
 }
 
 /* static */
-Vector<double> CSSParser::parseKeyframeSelector(const String& selector) {
-    Vector<double> keys;
-    Vector<String> strings;
-    selector.split(',', strings);
-
-    keys.reserveInitialCapacity(strings.size());
-    for (size_t i = 0; i < strings.size(); ++i) {
-        double key = -1;
-        String cur = strings[i].stripWhiteSpace();
-
-        // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
-        if (equalLettersIgnoringASCIICase(cur, "from"))
-            key = 0;
-        else if (equalLettersIgnoringASCIICase(cur, "to"))
-            key = 1;
-        else if (cur.endsWith('%')) {
-            double k = cur.substring(0, cur.length() - 1).toDouble();
-            if (k >= 0 && k <= 100)
-                key = k / 100;
-        }
-        if (key < 0) {
-            keys.clear();
-            break;
-        }
-        keys.uncheckedAppend(key);
-    }
-
-    return keys;
+std::unique_ptr<Vector<double>> CSSParser::parseKeyframeKeyList(const String& selector)
+{
+    return CSSParserImpl::parseKeyframeKeyList(selector);
 }
 
 bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSValue>& value3)

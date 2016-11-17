@@ -56,7 +56,7 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature)
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSParserToken& token)
 {
-    if ((token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPPX && token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPI && token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPCM) || token.numericValue() <= 0)
+    if (!CSSPrimitiveValue::isResolution(static_cast<CSSPrimitiveValue::UnitTypes>(token.unitType())) || token.numericValue() <= 0)
         return false;
     
     return mediaFeature == MediaFeatureNames::resolution
@@ -108,7 +108,10 @@ static inline bool featureWithPositiveNumber(const String& mediaFeature, const C
     return mediaFeature == MediaFeatureNames::transform3d
     || mediaFeature == MediaFeatureNames::devicePixelRatio
     || mediaFeature == MediaFeatureNames::maxDevicePixelRatio
-    || mediaFeature == MediaFeatureNames::minDevicePixelRatio;
+    || mediaFeature == MediaFeatureNames::minDevicePixelRatio
+    || mediaFeature == MediaFeatureNames::transition
+    || mediaFeature == MediaFeatureNames::animation
+    || mediaFeature == MediaFeatureNames::transform2d;
 }
 
 static inline bool featureWithZeroOrOne(const String& mediaFeature, const CSSParserToken& token)
@@ -334,7 +337,6 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, const Vector<C
         
         m_value = CSSAspectRatioValue::create(numerator.numericValue(), denominator.numericValue());
         m_isValid = true;
-
     }
 }
 

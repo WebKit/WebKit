@@ -755,7 +755,7 @@ id <DOMEventTarget> kit(EventTarget* eventTarget)
         return true;
 
     Document& document = link.document();
-    auto mediaQuerySet = MediaQuerySet::createAllowingDescriptionSyntax(media);
+    auto mediaQuerySet = MediaQuerySet::create(media);
     return MediaQueryEvaluator { "screen", document, document.renderView() ? &document.renderView()->style() : nullptr }.evaluate(mediaQuerySet.get());
 }
 

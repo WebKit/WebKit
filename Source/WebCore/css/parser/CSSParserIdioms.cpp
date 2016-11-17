@@ -34,22 +34,6 @@
 
 namespace WebCore {
 
-template<typename CharacterType> ALWAYS_INLINE static void convertToASCIILowercaseInPlace(CharacterType* characters, unsigned length)
-{
-    for (unsigned i = 0; i < length; ++i)
-        characters[i] = toASCIILower(characters[i]);
-}
-
-// FIXME-NEWPARSER: Would like to get rid of this operation. Blink uses HTMLParser static lowercase
-// string hashing, but we don't have that code in our HTMLParser.
-void convertToASCIILowercaseInPlace(StringView& stringView)
-{
-    if (stringView.is8Bit())
-        WebCore::convertToASCIILowercaseInPlace(const_cast<LChar*>(stringView.characters8()), stringView.length());
-    else
-        WebCore::convertToASCIILowercaseInPlace(const_cast<UChar*>(stringView.characters16()), stringView.length());
-}
-
 bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
 {
     switch (id) {

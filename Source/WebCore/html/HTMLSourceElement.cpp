@@ -181,7 +181,7 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomicSt
     HTMLElement::parseAttribute(name, value);
     if (name == srcsetAttr || name == sizesAttr || name == mediaAttr || name == typeAttr) {
         if (name == mediaAttr)
-            m_mediaQuerySet = MediaQuerySet::createAllowingDescriptionSyntax(value);
+            m_mediaQuerySet = MediaQuerySet::create(value);
         auto* parent = parentNode();
         if (is<HTMLPictureElement>(parent))
             downcast<HTMLPictureElement>(*parent).sourcesChanged();

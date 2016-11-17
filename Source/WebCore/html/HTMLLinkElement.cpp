@@ -254,7 +254,7 @@ void HTMLLinkElement::process()
             Optional<RenderStyle> documentStyle;
             if (document().hasLivingRenderTree())
                 documentStyle = Style::resolveForDocument(document());
-            auto media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
+            auto media = MediaQuerySet::create(m_media);
             mediaQueryMatches = MediaQueryEvaluator { document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr }.evaluate(media.get());
         }
 
@@ -348,7 +348,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
         originClean = cachedStyleSheet.isCORSSameOrigin();
 
     m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);
-    m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
+    m_sheet->setMediaQueries(MediaQuerySet::create(m_media));
     m_sheet->setTitle(title());
 }
 

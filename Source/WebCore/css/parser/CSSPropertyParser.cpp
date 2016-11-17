@@ -1894,11 +1894,11 @@ static RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSSParserContext c
     if (args.peek().type() != IdentToken)
         return nullptr;
     
-    StringView stringView = args.consumeIncludingWhitespace().value();
+    CSSParserToken token = args.consumeIncludingWhitespace();
     if (context.isHTMLDocument)
-        convertToASCIILowercaseInPlace(stringView);
+        token.convertToASCIILowercaseInPlace();
 
-    String attrName = stringView.toString();
+    String attrName = token.value().toString();
     if (!args.atEnd())
         return nullptr;
 

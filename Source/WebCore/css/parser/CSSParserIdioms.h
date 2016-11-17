@@ -60,8 +60,6 @@ bool isNameCodePoint(CharacterType c)
     return isNameStartCodePoint(c) || isASCIIDigit(c) || c == '-';
 }
 
-void convertToASCIILowercaseInPlace(StringView&);
-
 bool isValueAllowedInMode(unsigned short, CSSParserMode);
 
 URL completeURL(const CSSParserContext&, const String& url);

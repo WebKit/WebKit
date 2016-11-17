@@ -143,7 +143,6 @@ public:
 
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&, RefPtr<CSSRuleSourceData>&&, StyleSheetContents* contextStyleSheet);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
-    std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
 
     void addProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
@@ -207,7 +206,7 @@ public:
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     RefPtr<CSSValue> parseAnimationTrigger();
 #endif
-    static Vector<double> parseKeyframeSelector(const String&);
+    static std::unique_ptr<Vector<double>> parseKeyframeKeyList(const String&);
 
     bool parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>&, RefPtr<CSSPrimitiveValue>&, RefPtr<CSSValue>&);
     Optional<double> parseCubicBezierTimingFunctionValue(CSSParserValueList&);
@@ -592,7 +591,9 @@ private:
     bool parseGeneratedImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, StyleSheetContents* contextStyleSheet);
-    Ref<ImmutableStyleProperties> parseDeclaration(const String&, StyleSheetContents* contextStyleSheet);
+    
+    // FIXME-NEWPARSER: Remove once old parser is gone.
+    Ref<ImmutableStyleProperties> parseDeclarationDeprecated(const String&, StyleSheetContents* contextStyleSheet);
 
     RefPtr<CSSBasicShapeInset> parseInsetRoundedCorners(Ref<CSSBasicShapeInset>&&, CSSParserValueList&);
 

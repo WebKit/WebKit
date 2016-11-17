@@ -121,9 +121,7 @@ void MediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserTok
             && isRestrictorOrLogicalOperator(token)) {
             m_state = SkipUntilComma;
         } else {
-            StringView stringView = token.value();
-            convertToASCIILowercaseInPlace(stringView);
-            m_mediaQueryData.setMediaType(stringView.toString());
+            m_mediaQueryData.setMediaType(token.value().toString());
             m_state = ReadAnd;
         }
     } else if (type == EOFToken && (!m_querySet->queryVector().size() || m_state != ReadRestrictor))
@@ -168,6 +166,8 @@ void MediaQueryParser::readFeatureStart(CSSParserTokenType type, const CSSParser
 void MediaQueryParser::readFeature(CSSParserTokenType type, const CSSParserToken& token)
 {
     if (type == IdentToken) {
+        // FIXME-NEWPARSER: Find a way to avoid this.
+        const_cast<CSSParserToken&>(token).convertToASCIILowercaseInPlace();
         m_mediaQueryData.setMediaFeature(token.value().toString());
         m_state = ReadFeatureColon;
     } else
@@ -199,7 +199,7 @@ void MediaQueryParser::readFeatureValue(CSSParserTokenType type, const CSSParser
 void MediaQueryParser::readFeatureEnd(CSSParserTokenType type, const CSSParserToken& token)
 {
     if (type == RightParenthesisToken || type == EOFToken) {
-        if (m_mediaQueryData.addExpression())
+        if (type != EOFToken && m_mediaQueryData.addExpression())
             m_state = ReadAnd;
         else
             m_state = SkipUntilComma;

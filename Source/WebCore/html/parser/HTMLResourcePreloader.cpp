@@ -62,7 +62,7 @@ void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 
 static bool mediaAttributeMatches(Document& document, const RenderStyle* renderStyle, const String& attributeValue)
 {
-    auto mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
+    auto mediaQueries = MediaQuerySet::create(attributeValue);
     return MediaQueryEvaluator { "screen", document, renderStyle }.evaluate(mediaQueries.get());
 }
 

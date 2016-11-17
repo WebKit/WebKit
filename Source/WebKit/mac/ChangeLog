@@ -1,3 +1,15 @@
+2016-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add @supports, @keyframe and media query parsing options
+        https://bugs.webkit.org/show_bug.cgi?id=164821
+
+        Reviewed by Sam Weinig and Zalan Bujtas.
+
+        Fix up the create call now that fallback descriptor syntax is gone.
+
+        * DOM/DOM.mm:
+        (-[DOMHTMLLinkElement _mediaQueryMatches]):
+
 2016-11-17  Saam Barati  <sbarati@apple.com>
 
         Remove async/await compile time flag and enable tests

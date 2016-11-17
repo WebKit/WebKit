@@ -117,9 +117,11 @@ public:
     StringView value() const
     {
         if (m_valueIs8Bit)
-            return StringView(reinterpret_cast<const LChar*>(m_valueDataCharRaw), m_valueLength);
-        return StringView(reinterpret_cast<const UChar*>(m_valueDataCharRaw), m_valueLength);
+            return StringView(static_cast<const LChar*>(m_valueDataCharRaw), m_valueLength);
+        return StringView(static_cast<const UChar*>(m_valueDataCharRaw), m_valueLength);
     }
+
+    void convertToASCIILowercaseInPlace();
 
     UChar delimiter() const;
     NumericSign numericSign() const;
@@ -146,7 +148,7 @@ private:
     {
         m_valueLength = string.length();
         m_valueIs8Bit = string.is8Bit();
-        m_valueDataCharRaw = m_valueIs8Bit ? static_cast<const void*>(string.characters8()) : static_cast<const void*>(string.characters16());
+        m_valueDataCharRaw = m_valueIs8Bit ? const_cast<void*>(static_cast<const void*>(string.characters8())) : const_cast<void*>(static_cast<const void*>(string.characters16()));
     }
     unsigned m_type : 6; // CSSParserTokenType
     unsigned m_blockType : 2; // BlockType
@@ -160,7 +162,7 @@ private:
     // tightly with the rest of this object for a smaller object size.
     bool m_valueIs8Bit : 1;
     unsigned m_valueLength;
-    const void* m_valueDataCharRaw; // Either LChar* or UChar*.
+    void* m_valueDataCharRaw; // Either LChar* or UChar*.
 
     union {
         UChar m_delimiter;

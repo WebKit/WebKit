@@ -1,3 +1,32 @@
+2016-11-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add @supports, @keyframe and media query parsing options
+        https://bugs.webkit.org/show_bug.cgi?id=164821
+
+        Reviewed by Sam Weinig and Zalan Bujtas.
+
+        Delete the fallback descriptor tests, since that feature has been
+        removed. Update some of the other tests based off some parsing changes
+        from using the new parser always.
+
+        * fast/media/media-descriptor-syntax-01-expected.html: Removed.
+        * fast/media/media-descriptor-syntax-01.html: Removed.
+        * fast/media/media-descriptor-syntax-02-expected.html: Removed.
+        * fast/media/media-descriptor-syntax-02.html: Removed.
+        * fast/media/media-descriptor-syntax-03-expected.html: Removed.
+        * fast/media/media-descriptor-syntax-03.html: Removed.
+        * fast/media/media-descriptor-syntax-04-expected.html: Removed.
+        * fast/media/media-descriptor-syntax-04.html: Removed.
+        * fast/media/media-descriptor-syntax-06-expected.html: Removed.
+        * fast/media/media-descriptor-syntax-06.html: Removed.
+        * fast/media/media-query-list-02-expected.txt:
+        * fast/media/media-query-list-03-expected.txt:
+        * fast/media/media-query-list-04-expected.txt:
+        * fast/media/media-query-list-05-expected.txt:
+        * fast/media/media-query-list-06-expected.txt:
+        * fast/media/mq-pointer-expected.txt:
+        * fast/media/w3c/test_media_queries-expected.txt:
+
 2016-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove pass expectation for custom-elements tests on ios-sim because CEReactions were disabled in r208837.

@@ -78,7 +78,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);
         if (sheet()) {
-            sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
+            sheet()->setMediaQueries(MediaQuerySet::create(value));
             if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else
