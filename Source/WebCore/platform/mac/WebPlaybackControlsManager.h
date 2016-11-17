@@ -46,12 +46,10 @@ WEBCORE_EXPORT
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
-#if USE(APPLE_INTERNAL_SDK)
     RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _audioFunctionBarMediaSelectionOptions;
     RetainPtr<AVFunctionBarMediaSelectionOption> _currentAudioFunctionBarMediaSelectionOption;
     RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
     RetainPtr<AVFunctionBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
-#endif
     float _rate;
     BOOL _playing;
     BOOL _canTogglePlayback;
@@ -72,14 +70,12 @@ WEBCORE_EXPORT
 
 @property (nonatomic) float rate;
 
-#if USE(APPLE_INTERNAL_SDK)
 - (AVFunctionBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption;
 - (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
 - (AVFunctionBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption;
 - (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
-#endif
 @end
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

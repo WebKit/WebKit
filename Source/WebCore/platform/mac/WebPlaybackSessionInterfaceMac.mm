@@ -131,7 +131,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 
 void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges)
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && USE(APPLE_INTERNAL_SDK)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setSeekableTimeRanges:timeRangesToArray(timeRanges).get()];
 #else
     UNUSED_PARAM(timeRanges);
@@ -140,7 +140,7 @@ void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& tim
 
 void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && USE(APPLE_INTERNAL_SDK)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 #else
     UNUSED_PARAM(options);
@@ -150,7 +150,7 @@ void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vec
 
 void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && USE(APPLE_INTERNAL_SDK)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 #else
     UNUSED_PARAM(options);
@@ -198,10 +198,8 @@ void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackContr
     manager.seekableTimeRanges = timeRangesToArray(m_playbackSessionModel->seekableRanges()).get();
     manager.canTogglePlayback = YES;
     manager.playing = m_playbackSessionModel->isPlaying();
-#if USE(APPLE_INTERNAL_SDK)
     [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
-#endif
 }
 
 void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)

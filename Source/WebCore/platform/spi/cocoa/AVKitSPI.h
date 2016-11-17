@@ -179,6 +179,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
+@class AVFunctionBarMediaSelectionOption;
+@class AVThumbnail;
+
 NS_ASSUME_NONNULL_END
 
 #endif

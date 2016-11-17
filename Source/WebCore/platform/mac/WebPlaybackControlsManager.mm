@@ -90,7 +90,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 {
 }
 
-#if USE(APPLE_INTERNAL_SDK)
 - (void)generateFunctionBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes size:(NSSize)size completionHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, NSError *error))completionHandler
 {
     UNUSED_PARAM(thumbnailTimes);
@@ -103,7 +102,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     UNUSED_PARAM(numberOfSamples);
     completionHandler(@[ ], nil);
 }
-#endif
 
 -(BOOL)canBeginFunctionBarScrubbing
 {
@@ -123,7 +121,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     _webPlaybackSessionInterfaceMac->endScrubbing();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
 - (NSArray<AVFunctionBarMediaSelectionOption *> *)audioFunctionBarMediaSelectionOptions
 {
     return _audioFunctionBarMediaSelectionOptions.get();
@@ -209,7 +206,7 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
     if (selectedIndex < [webOptions count])
         [self setCurrentLegibleFunctionBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
-#endif
+
 - (WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
     return _webPlaybackSessionInterfaceMac.get();
