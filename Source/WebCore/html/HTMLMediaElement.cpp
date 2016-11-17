@@ -3574,6 +3574,7 @@ void HTMLMediaElement::addVideoTrack(Ref<VideoTrack>&& track)
 void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
 {
     m_audioTracks->remove(track);
+    track.clearClient();
 }
 
 void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
@@ -3591,6 +3592,7 @@ void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
 void HTMLMediaElement::removeVideoTrack(VideoTrack& track)
 {
     m_videoTracks->remove(track);
+    track.clearClient();
 }
 
 void HTMLMediaElement::forgetResourceSpecificTracks()

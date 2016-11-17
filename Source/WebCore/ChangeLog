@@ -1,3 +1,20 @@
+2016-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Clear track client when removing a track
+        https://bugs.webkit.org/show_bug.cgi?id=164842
+        <rdar://problem/29213621>
+
+        Reviewed by Eric Carlson.
+
+        Call 'clearClient' when removing a track from an HTMLMediaElement.
+
+        Test: media/track/audio-track-add-remove.html
+              media/track/video-track-add-remove.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removeAudioTrack): Call 'clearClient'
+        (WebCore::HTMLMediaElement::removeVideoTrack): Ditto.
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag
