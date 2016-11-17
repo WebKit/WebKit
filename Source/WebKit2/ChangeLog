@@ -1,3 +1,14 @@
+2016-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r208589
+
+        The generated com.apple.WebKit.plugin-common.sb file was not getting copied into
+        the Resources folder, so was not deployed with WebKit. We need to treat it like
+        com.apple.WebProcess.sb and the other generated files.
+
+        * WebKit2.xcodeproj/project.pbxproj: Tell Xcode to include the generated file in
+        the framework Resources.
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag
