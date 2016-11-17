@@ -51,7 +51,6 @@ BEGIN {
 my (
     $accelerated2DCanvasSupport,
     $allInOneBuild,
-    $asyncfunctionSyntax,
     $attachmentElementSupport,
     $canvasPathSupport,
     $canvasProxySupport,
@@ -176,10 +175,6 @@ my @features = (
 
     { option => "allinone-build", desc => "Toggle all-in-one build",
       define => "ENABLE_ALLINONE_BUILD", default => isWindows(), value => \$allInOneBuild },
-
-    { option => "asyncfunction-syntax", desc => "Toggle ES2017 async functions support",
-      define => "ENABLE_ES2017_ASYNCFUNCTION_SYNTAX", default => 0, value => \$asyncfunctionSyntax,
-      javascript => 1 },
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },

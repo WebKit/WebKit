@@ -1,3 +1,16 @@
+2016-11-17  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] remove leftover references to ES2017_ASYNCFUNCTION_SYNTAX flag
+        https://bugs.webkit.org/show_bug.cgi?id=164879
+
+        Reviewed by Alex Christensen.
+
+        The flag was referenced in FeatureList.pm and in one of the
+        FeatureDefines.xcconfig files, despite being removed.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-11-17  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] run-api-tests is failing.
