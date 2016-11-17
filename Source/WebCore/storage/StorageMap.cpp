@@ -144,7 +144,7 @@ RefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, S
 
 RefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
-    SetForScope<unsigned> quotaSizeChange(m_quotaSize, noQuota);
+    SetForScope<unsigned> quotaSizeChange(m_quotaSize, static_cast<unsigned>(noQuota));
 
     String oldValue;
     bool quotaException;

@@ -1,5 +1,14 @@
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, attempt to fix link error after r208841 part2
+
+        Use static_cast to avoid referencing static storage.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItemIgnoringQuota):
+
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, attempt to fix link error after r208841
 
         * storage/StorageMap.h:
