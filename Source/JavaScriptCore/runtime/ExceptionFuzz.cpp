@@ -49,6 +49,15 @@ void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, v
     if (fireTarget == s_numberOfExceptionFuzzChecks) {
         printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p, seen in %s and return address %p.\n", exec, where, returnPC);
         fflush(stdout);
+
+        // The ThrowScope also checks for unchecked simulated exceptions before throwing a
+        // new exception. This ensures that we don't quietly overwrite a pending exception
+        // (which should never happen with the only exception being to rethrow the same
+        // exception). However, ExceptionFuzz works by intentionally throwing its own exception
+        // even when one may already exist. This is ok for ExceptionFuzz testing, but we need
+        // to placate the exception check verifier here.
+        ASSERT(scope.exception() || !scope.exception());
+
         throwException(exec, scope, createError(exec, ASCIILiteral("Exception Fuzz")));
     }
 }

@@ -1,3 +1,21 @@
+2016-11-16  Mark Lam  <mark.lam@apple.com>
+
+        ExceptionFuzz needs to placate exception check verification before overwriting a thrown exception.
+        https://bugs.webkit.org/show_bug.cgi?id=164843
+
+        Reviewed by Keith Miller.
+
+        The ThrowScope will check for unchecked simulated exceptions before throwing a
+        new exception.  This ensures that we don't quietly overwrite a pending exception
+        (which should never happen, with the only exception being to rethrow the same
+        exception).  However, ExceptionFuzz works by intentionally throwing its own
+        exception even when one may already exist thereby potentially overwriting an
+        existing exception.  This is ok for ExceptionFuzz testing, but we need to placate
+        the exception check verifier before ExceptionFuzz throws its own exception.
+
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+
 2016-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         UnlinkedCodeBlock should not have a starting line number
