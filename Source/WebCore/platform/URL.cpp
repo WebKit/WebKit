@@ -1675,12 +1675,22 @@ void URL::parse(const char* url, const String* originalString)
     }
 
     // assemble it all, remembering the real ranges
+    Checked<unsigned, RecordOverflow> bufferLength = fragmentEnd;
+    bufferLength *= 3;
 
     // The magic number 10 comes from the worst-case addition of characters for password start,
     // user info, and colon for port number, colon after scheme, plus inserting missing slashes
     // after protocol, slash for empty path, and possible end-of-query '#' character. This
     // yields a max of nine additional characters, plus a null.
-    Vector<char, 4096> buffer(fragmentEnd * 3 + 10);
+    bufferLength += 10;
+
+    if (bufferLength.hasOverflowed()) {
+        m_string = originalString ? *originalString : url;
+        invalidate();
+        return;
+    }
+
+    Vector<char, 4096> buffer(bufferLength.unsafeGet());
 
     char* p = buffer.data();
     const char* strPtr = url;
