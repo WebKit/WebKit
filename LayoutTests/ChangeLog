@@ -1,3 +1,13 @@
+2016-11-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Shift clicking on named color value only shows its hex form
+        https://bugs.webkit.org/show_bug.cgi?id=162758
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/color.html:
+        Updated the WebInspector.Color.prototype.nextFormat test for the new nextFormat logic.
+
 2016-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html as flaky.

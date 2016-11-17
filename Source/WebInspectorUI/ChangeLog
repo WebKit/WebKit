@@ -1,3 +1,38 @@
+2016-11-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Shift clicking on named color value only shows its hex form
+        https://bugs.webkit.org/show_bug.cgi?id=162758
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color.prototype.nextFormat):
+        Reworked the logic for the formatting order to be the following:
+         - Long HEX and Long HEXAlpha
+         - RGB and RGBA
+         - HSL and HSLA
+         - Keyword (if applicable)
+         - Short HEX (if applicable)
+         - Short HEXAlpha (if applicable)
+        It will only show formats with alpha values if the color value has an alpha that is not 1.
+        If the alpha is not 1, it will not show formats with non-alpha values.
+
+        The changes to this function have no effect on the context menu items of InlineSwatch
+        elements.  The purpose of each of those items is to allow the user to change the format to
+        a specified type, whereas WebInspector.Color.prototype.nextFormat is used to cycle through
+        all of the relevant formats.
+
+        (WebInspector.Color.prototype._toRGBString):
+        (WebInspector.Color.prototype._toRGBAString):
+        (WebInspector.Color.prototype._toHSLString):
+        (WebInspector.Color.prototype._toHSLAString):
+        Unrelated fix of extra decimals when converting from HEX to RGB and HSL.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor._inlineSwatchValueChanged):
+        Removed assertion for `_hasActiveInlineSwatchEditor` since the value may change from
+        switching the format of a color swatch (Shift-Click).
+
 2016-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Background tabs are often updating non-stop because they think they are visible

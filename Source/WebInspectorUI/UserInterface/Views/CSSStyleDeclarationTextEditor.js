@@ -1330,8 +1330,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _inlineSwatchValueChanged(event)
     {
-        console.assert(this._hasActiveInlineSwatchEditor);
-
         let swatch = event && event.target;
         console.assert(swatch);
         if (!swatch)

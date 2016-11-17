@@ -170,7 +170,7 @@ function test()
     suite.addTestCase({
         name: "WebInspector.Color.prototype.nextFormat",
         description: "Test we can cycle through color formats for different colors.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function test(string, phases) {
                 let color = WebInspector.Color.fromString(string);
                 color.format = WebInspector.Color.Format.Original;
@@ -193,7 +193,6 @@ function test()
                 WebInspector.Color.Format.Keyword,
                 WebInspector.Color.Format.ShortHEXAlpha,
                 WebInspector.Color.Format.HEXAlpha,
-                WebInspector.Color.Format.Original,
             ]);
 
             // All without alpha.
@@ -203,7 +202,6 @@ function test()
                 WebInspector.Color.Format.Keyword,
                 WebInspector.Color.Format.ShortHEX,
                 WebInspector.Color.Format.HEX,
-                WebInspector.Color.Format.Original,
             ]);
 
             // No short hex or keyword.
@@ -211,7 +209,6 @@ function test()
                 WebInspector.Color.Format.RGB,
                 WebInspector.Color.Format.HSL,
                 WebInspector.Color.Format.HEX,
-                WebInspector.Color.Format.Original,
             ]);
 
             // No short hex alpha or keyword.
@@ -219,7 +216,6 @@ function test()
                 WebInspector.Color.Format.RGBA,
                 WebInspector.Color.Format.HSLA,
                 WebInspector.Color.Format.HEXAlpha,
-                WebInspector.Color.Format.Original,
             ]);
 
             resolve();
