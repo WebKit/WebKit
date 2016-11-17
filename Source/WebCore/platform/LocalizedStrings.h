@@ -224,8 +224,6 @@ namespace WebCore {
     WEBCORE_EXPORT String builtInPDFPluginName();
     WEBCORE_EXPORT String pdfDocumentTypeDescription();
     WEBCORE_EXPORT String postScriptDocumentTypeDescription();
-    String keygenMenuItem512();
-    String keygenMenuItem1024();
     String keygenMenuItem2048();
     String keygenKeychainItemName(const String& host);
 #endif

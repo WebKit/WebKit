@@ -867,16 +867,6 @@ String postScriptDocumentTypeDescription()
     return WEB_UI_STRING("PostScript", "Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
 }
 
-String keygenMenuItem512()
-{
-    return WEB_UI_STRING("512 (Low Grade)", "Menu item title for KEYGEN pop-up menu");
-}
-
-String keygenMenuItem1024()
-{
-    return WEB_UI_STRING("1024 (Medium Grade)", "Menu item title for KEYGEN pop-up menu");
-}
-
 String keygenMenuItem2048()
 {
     return WEB_UI_STRING("2048 (High Grade)", "Menu item title for KEYGEN pop-up menu");

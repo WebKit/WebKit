@@ -124,6 +124,8 @@ static bool signPublicKeyAndChallenge(CSSM_CSP_HANDLE cspHandle, const CSSM_DATA
 
 static String signedPublicKeyAndChallengeString(unsigned keySize, const CString& challenge, const String& keyDescription)
 {
+    ASSERT(keySize >= 2048);
+
     SignedPublicKeyAndChallenge signedPublicKeyAndChallenge { };
 
     RetainPtr<SecAccessRef> access;
@@ -215,8 +217,6 @@ void getSupportedKeySizes(Vector<String>& supportedKeySizes)
 {
     ASSERT(supportedKeySizes.isEmpty());
     supportedKeySizes.append(keygenMenuItem2048());
-    supportedKeySizes.append(keygenMenuItem1024());
-    supportedKeySizes.append(keygenMenuItem512());
 }
 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url)
@@ -226,12 +226,6 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
     switch (keySizeIndex) {
     case 0:
         keySize = 2048;
-        break;
-    case 1:
-        keySize = 1024;
-        break;
-    case 2:
-        keySize = 512;
         break;
     default:
         ASSERT_NOT_REACHED();

@@ -1,3 +1,14 @@
+2016-11-17  Brent Fulgham  <bfulgham@apple.com>
+
+        keygen element should not support < 2048 RSA key lengths
+        https://bugs.webkit.org/show_bug.cgi?id=164874
+        <rdar://problem/22618141>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/fast/html/keygen-expected.txt:
+        * platform/mac-elcapitan/fast/html/keygen-expected.txt:
+
 2016-11-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Shift clicking on named color value only shows its hex form

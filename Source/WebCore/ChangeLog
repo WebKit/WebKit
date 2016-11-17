@@ -1,3 +1,27 @@
+2016-11-17  Brent Fulgham  <bfulgham@apple.com>
+
+        keygen element should not support < 2048 RSA key lengths
+        https://bugs.webkit.org/show_bug.cgi?id=164874
+        <rdar://problem/22618141>
+
+        Reviewed by Dean Jackson.
+
+        Remove the two insecure RSA choices (512-bit and 1024-bit) so that users
+        do not accidentally select a bad key length.
+
+        Tested by fast/html/keygen.html
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::keygenMenuItem512): Deleted.
+        (WebCore::keygenMenuItem1024): Deleted.
+        * platform/LocalizedStrings.h:
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString): ASSERT on bad key size.
+        (WebCore::getSupportedKeySizes): Remove bad key sizes.
+        (WebCore::signedPublicKeyAndChallengeString): Ditto.
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::WebCore::getSupportedKeySizes): Ditto.
+
 2016-11-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream][Mac] Use AVCapturePreview object for camera/microphone rendering
