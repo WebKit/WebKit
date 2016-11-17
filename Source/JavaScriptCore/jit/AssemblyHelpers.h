@@ -1363,7 +1363,7 @@ public:
     
     void mutatorFence()
     {
-        if (isX86())
+        if (isX86() || !useGCFences())
             return;
         Jump ok = jumpIfMutatorFenceNotNeeded();
         storeFence();
@@ -1372,7 +1372,7 @@ public:
     
     void storeButterfly(GPRReg butterfly, GPRReg object)
     {
-        if (isX86()) {
+        if (isX86() || !useGCFences()) {
             storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
             return;
         }
@@ -1618,12 +1618,16 @@ public:
     
     void emitInitializeInlineStorage(GPRReg baseGPR, unsigned inlineCapacity)
     {
+        if (!useGCFences())
+            return;
         for (unsigned i = 0; i < inlineCapacity; ++i)
             storeTrustedValue(JSValue(), Address(baseGPR, JSObject::offsetOfInlineStorage() + i * sizeof(EncodedJSValue)));
     }
 
     void emitInitializeInlineStorage(GPRReg baseGPR, GPRReg inlineCapacity)
     {
+        if (!useGCFences())
+            return;
         Jump empty = branchTest32(Zero, inlineCapacity);
         Label loop = label();
         sub32(TrustedImm32(1), inlineCapacity);
@@ -1634,6 +1638,8 @@ public:
 
     void emitInitializeOutOfLineStorage(GPRReg butterflyGPR, unsigned outOfLineCapacity)
     {
+        if (!useGCFences())
+            return;
         for (unsigned i = 0; i < outOfLineCapacity; ++i)
             storeTrustedValue(JSValue(), Address(butterflyGPR, -sizeof(IndexingHeader) - (i + 1) * sizeof(EncodedJSValue)));
     }

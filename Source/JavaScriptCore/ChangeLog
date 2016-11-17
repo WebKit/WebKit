@@ -1,3 +1,38 @@
+2016-11-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Speculatively disable eager object zero-fill on not-x86 to let the bots decide if that's a problem
+        https://bugs.webkit.org/show_bug.cgi?id=164885
+
+        Reviewed by Mark Lam.
+        
+        This adds a useGCFences() function that we use to guard all eager object zero-fill and the
+        related fences. It currently returns true only on x86().
+        
+        The goal here is to get the bots to tell us if this code is responsible for perf issues on
+        any non-x86 platforms. We have a few different paths that we can pursue if this turns out
+        to be the case. Eager zero-fill is merely the easiest way to optimize out some fences, but
+        we could get rid of it and instead teach B3 how to think about fences.
+
+        * assembler/CPU.h:
+        (JSC::useGCFences):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::mutatorFence):
+        (JSC::FTL::DFG::LowerDFGToB3::setButterfly):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::mutatorFence):
+        (JSC::AssemblyHelpers::storeButterfly):
+        (JSC::AssemblyHelpers::emitInitializeInlineStorage):
+        (JSC::AssemblyHelpers::emitInitializeOutOfLineStorage):
+
 2016-11-17  Keith Miller  <keith_miller@apple.com>
 
         Add rotate to Wasm
