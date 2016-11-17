@@ -1,3 +1,20 @@
+2016-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix build on macOS Sierra when WEB_PLAYBACK_CONTROLS_MANAGER is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=164845
+
+        Reviewed by Wenson Hsieh.
+
+        Fix builds after r208802 by wrapping code inside USE(APPLE_INTERNAL_SDK).
+
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::seekableRangesChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::setPlayBackControlsManager):
+
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
         ScriptExecutionContext::processMessagePortMessagesSoon() should only post task when necessary
