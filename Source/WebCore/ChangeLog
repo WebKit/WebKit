@@ -1,3 +1,10 @@
+2016-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build after r208839.
+
+        * dom/Node.h:
+        (WebCore::Node::isDescendantOf):
+
 2016-11-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add @supports, @keyframe and media query parsing options
