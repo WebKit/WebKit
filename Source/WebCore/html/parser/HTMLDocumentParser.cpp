@@ -27,7 +27,6 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
-#include "CachedScript.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "HTMLDocument.h"

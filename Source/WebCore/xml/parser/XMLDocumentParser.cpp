@@ -27,7 +27,6 @@
 #include "XMLDocumentParser.h"
 
 #include "CDATASection.h"
-#include "CachedScript.h"
 #include "Comment.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -39,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "ImageLoader.h"
+#include "PendingScript.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -227,37 +227,18 @@ void XMLDocumentParser::insertErrorMessageBlock()
     m_xmlErrors->insertErrorMessageBlock();
 }
 
-void XMLDocumentParser::notifyFinished(CachedResource& unusedResource)
+void XMLDocumentParser::notifyFinished(PendingScript& pendingScript)
 {
-    ASSERT_UNUSED(unusedResource, &unusedResource == m_pendingScript);
-    ASSERT(m_pendingScript->accessCount() > 0);
-
-    // FIXME: Support ES6 modules in XML document.
-    // https://bugs.webkit.org/show_bug.cgi?id=161651
-    ScriptSourceCode sourceCode(m_pendingScript.get(), JSC::SourceProviderSourceType::Program);
-    bool errorOccurred = m_pendingScript->errorOccurred();
-    bool wasCanceled = m_pendingScript->wasCanceled();
-
-    m_pendingScript->removeClient(*this);
-    m_pendingScript = nullptr;
-
-    RefPtr<Element> e = m_scriptElement;
-    m_scriptElement = nullptr;
-
-    ScriptElement* scriptElement = toScriptElementIfPossible(e.get());
-    ASSERT(scriptElement);
+    ASSERT(&pendingScript == m_pendingScript.get());
 
     // JavaScript can detach this parser, make sure it's kept alive even if detached.
     Ref<XMLDocumentParser> protectedThis(*this);
-    
-    if (errorOccurred)
-        scriptElement->dispatchErrorEvent();
-    else if (!wasCanceled) {
-        scriptElement->executeScript(sourceCode);
-        scriptElement->dispatchLoadEvent();
-    }
 
-    m_scriptElement = nullptr;
+    m_pendingScript = nullptr;
+    pendingScript.clearClient();
+
+    auto& scriptElement = *toScriptElementIfPossible(&pendingScript.element());
+    scriptElement.executePendingScript(pendingScript);
 
     if (!isDetached() && !m_requestingScript)
         resumeParsing();

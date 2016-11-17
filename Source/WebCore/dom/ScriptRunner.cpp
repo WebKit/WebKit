@@ -125,7 +125,7 @@ void ScriptRunner::timerFired()
         auto* scriptElement = toScriptElementIfPossible(&script->element());
         ASSERT(scriptElement);
         ASSERT(script->needsLoading());
-        scriptElement->executeScriptForScriptRunner(*script);
+        scriptElement->executePendingScript(*script);
         m_document.decrementLoadEventDelayCount();
     }
 }

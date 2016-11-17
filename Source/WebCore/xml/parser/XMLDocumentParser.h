@@ -24,9 +24,8 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
 #include "FragmentScriptingPermission.h"
+#include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
 #include "XMLErrors.h"
@@ -40,13 +39,13 @@
 namespace WebCore {
 
 class ContainerNode;
-class CachedScript;
 class CachedResourceLoader;
 class DocumentFragment;
 class Document;
 class Element;
 class FrameView;
 class PendingCallbacks;
+class PendingScript;
 class Text;
 
     class XMLParserContext : public RefCounted<XMLParserContext> {
@@ -64,7 +63,7 @@ class Text;
         xmlParserCtxtPtr m_context;
     };
 
-    class XMLDocumentParser final : public ScriptableDocumentParser, public CachedResourceClient {
+    class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static Ref<XMLDocumentParser> create(Document& document, FrameView* view)
@@ -106,8 +105,7 @@ class Text;
         TextPosition textPosition() const override;
         bool shouldAssociateConsoleMessagesWithTextPosition() const override;
 
-        // from CachedResourceClient
-        void notifyFinished(CachedResource&) final;
+        void notifyFinished(PendingScript&) final;
 
         void end();
 
@@ -178,8 +176,7 @@ class Text;
 
         std::unique_ptr<XMLErrors> m_xmlErrors;
 
-        CachedResourceHandle<CachedScript> m_pendingScript;
-        RefPtr<Element> m_scriptElement;
+        RefPtr<PendingScript> m_pendingScript;
         TextPosition m_scriptStartPosition;
 
         bool m_parsingFragment;

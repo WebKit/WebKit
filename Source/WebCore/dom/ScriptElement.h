@@ -51,10 +51,10 @@ public:
 
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
-    void executeScript(const ScriptSourceCode&);
+    void executeClassicScript(const ScriptSourceCode&);
     void executeModuleScript(CachedModuleScript&);
 
-    void executeScriptForScriptRunner(PendingScript&);
+    void executePendingScript(PendingScript&);
 
     // XML parser calls these
     virtual void dispatchLoadEvent() = 0;

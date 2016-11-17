@@ -102,7 +102,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
 void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
     ASSERT(!error());
-    scriptElement.executeScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program));
+    scriptElement.executeClassicScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program));
 }
 
 }

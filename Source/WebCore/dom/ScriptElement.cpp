@@ -163,6 +163,13 @@ Optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTyp
     if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
         return ScriptType::Classic;
 
+    // FIXME: XHTML spec defines "defer" attribute. But WebKit does not implement it for a long time.
+    // And module tag also uses defer attribute semantics. We disable script type="module" for non HTML document.
+    // Once "defer" is implemented, we can reconsider enabling modules in XHTML.
+    // https://bugs.webkit.org/show_bug.cgi?id=123387
+    if (!m_element.document().isHTMLDocument())
+        return Nullopt;
+
     auto* settings = m_element.document().settings();
     if (!settings || !settings->es6ModulesEnabled())
         return Nullopt;
@@ -271,7 +278,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     } else {
         ASSERT(scriptType == ScriptType::Classic);
         TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
-        executeScript(ScriptSourceCode(scriptContent(), document.url(), position, JSC::SourceProviderSourceType::Program));
+        executeClassicScript(ScriptSourceCode(scriptContent(), document.url(), position, JSC::SourceProviderSourceType::Program));
     }
 
     return true;
@@ -386,7 +393,7 @@ CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const U
     return document.cachedResourceLoader().requestScript(WTFMove(request));
 }
 
-void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
+void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
     ASSERT(m_alreadyStarted);
 
@@ -442,14 +449,14 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
     }
 }
 
-void ScriptElement::executeScriptForScriptRunner(PendingScript& pendingScript)
+void ScriptElement::executePendingScript(PendingScript& pendingScript)
 {
     if (auto* loadableScript = pendingScript.loadableScript())
         executeScriptAndDispatchEvent(*loadableScript);
     else {
         ASSERT(!pendingScript.error());
-        JSC::SourceProviderSourceType sourceType = scriptType() == ScriptType::Module ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
-        executeScript(ScriptSourceCode(scriptContent(), m_element.document().url(), pendingScript.startingPosition(), sourceType));
+        ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic, "Module script always have a loadableScript pointer.");
+        executeClassicScript(ScriptSourceCode(scriptContent(), m_element.document().url(), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program));
         dispatchLoadEvent();
     }
 }

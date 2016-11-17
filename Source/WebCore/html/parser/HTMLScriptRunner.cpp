@@ -121,7 +121,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(RefPtr<PendingScript
 
     if (auto* scriptElement = toScriptElementIfPossible(&pendingScript->element())) {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
-        scriptElement->executeScriptForScriptRunner(*pendingScript);
+        scriptElement->executePendingScript(*pendingScript);
     }
     ASSERT(!isExecutingScript());
 }
@@ -275,7 +275,7 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
             if (m_scriptNestingLevel == 1)
                 m_parserBlockingScript = PendingScript::create(*script, scriptStartPosition);
             else
-                scriptElement->executeScript(ScriptSourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition));
+                scriptElement->executeClassicScript(ScriptSourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition));
         } else
             requestParsingBlockingScript(script);
     }

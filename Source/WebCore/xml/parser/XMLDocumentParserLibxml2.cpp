@@ -29,7 +29,6 @@
 #include "XMLDocumentParser.h"
 
 #include "CDATASection.h"
-#include "CachedScript.h"
 #include "Comment.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
@@ -46,6 +45,7 @@
 #include "HTMLTemplateElement.h"
 #include "LoadableClassicScript.h"
 #include "Page.h"
+#include "PendingScript.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -588,7 +588,6 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_pendingScript(nullptr)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(false)
 {
@@ -610,7 +609,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
 {
@@ -662,7 +660,7 @@ XMLDocumentParser::~XMLDocumentParser()
 
     // FIXME: m_pendingScript handling should be moved into XMLDocumentParser.cpp!
     if (m_pendingScript)
-        m_pendingScript->removeClient(*this);
+        m_pendingScript->clearClient();
 }
 
 void XMLDocumentParser::doWrite(const String& parseString)
@@ -915,19 +913,15 @@ void XMLDocumentParser::endElementNs()
         // the libxml2 and Qt XMLDocumentParser implementations.
 
         if (scriptElement->readyToBeParserExecuted())
-            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
-        else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript() && is<LoadableClassicScript>(*scriptElement->loadableScript())) {
-            // FIXME: Allow "module" scripts for XML documents.
-            // https://bugs.webkit.org/show_bug.cgi?id=161651
-            m_pendingScript = &downcast<LoadableClassicScript>(*scriptElement->loadableScript()).cachedScript();
-            m_scriptElement = &element;
-            m_pendingScript->addClient(*this);
+            scriptElement->executeClassicScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
+        else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript()) {
+            m_pendingScript = PendingScript::create(element, *scriptElement->loadableScript());
+            m_pendingScript->setClient(this);
 
-            // m_pendingScript will be 0 if script was already loaded and addClient() executed it.
+            // m_pendingScript will be nullptr if script was already loaded and setClient() executed it.
             if (m_pendingScript)
                 pauseParsing();
-        } else
-            m_scriptElement = nullptr;
+        }
 
         // JavaScript may have detached the parser
         if (isDetached())

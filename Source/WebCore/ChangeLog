@@ -1,3 +1,42 @@
+2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore] Clean up script loading code in XML
+        https://bugs.webkit.org/show_bug.cgi?id=161651
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch cleans up XML document script handling by using PendingScript.
+        Previously, we directly used CachedScript. But it is not good since we
+        have PendingScript wrapper.
+
+        We also disable ES6 modules for non HTML document. While ES6 modules tag
+        requires "defer" semantics, "defer" semantics is not implemented in non
+        HTML documents. And ES6 module tag is only specified in whatwg HTML spec.
+
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::execute):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::determineScriptType):
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::executeClassicScript):
+        (WebCore::ScriptElement::executePendingScript):
+        (WebCore::ScriptElement::executeScript): Deleted.
+        (WebCore::ScriptElement::executeScriptForScriptRunner): Deleted.
+        * dom/ScriptElement.h:
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::timerFired):
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        (WebCore::HTMLScriptRunner::runScript):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::notifyFinished):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::endElementNs):
+
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
         Add Node::isDescendantOf() overload that takes in a reference
