@@ -705,7 +705,6 @@ void ContainerNode::parserAppendChild(Node& newChild)
 
     {
         NoEventDispatchAssertion assertNoEventDispatch;
-        // FIXME: This method should take a PassRefPtr.
         appendChildCommon(newChild);
         treeScope().adoptIfNeeded(&newChild);
     }
