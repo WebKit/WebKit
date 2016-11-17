@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,41 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockRealtimeVideoSourceMac_h
-#define MockRealtimeVideoSourceMac_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "FontCascade.h"
-#include "MockRealtimeVideoSource.h"
-
-typedef struct __CVBuffer *CVBufferRef;
-typedef CVBufferRef CVImageBufferRef;
-typedef CVImageBufferRef CVPixelBufferRef;
+#include "PlatformLayer.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource {
+class RealtimeMediaSourcePreview : public RefCounted<RealtimeMediaSourcePreview> {
 public:
+    virtual ~RealtimeMediaSourcePreview() { }
 
-    virtual ~MockRealtimeVideoSourceMac() { }
+    virtual void play() const = 0;
+    virtual void pause() const = 0;
+    virtual void setEnabled(bool) = 0;
+
+    virtual PlatformLayer* platformLayer() const = 0;
+    virtual void setVolume(double) const = 0;
+
+    virtual void invalidate() { m_weakPtrFactory.revokeAll(); }
+
+    WeakPtr<RealtimeMediaSourcePreview> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
+protected:
+    RealtimeMediaSourcePreview()
+        : m_weakPtrFactory(this)
+    {
+    }
 
 private:
-    friend class MockRealtimeVideoSource;
-    MockRealtimeVideoSourceMac(const String&);
-
-    RetainPtr<CMSampleBufferRef> CMSampleBufferFromPixelBuffer(CVPixelBufferRef);
-    RetainPtr<CVPixelBufferRef> pixelBufferFromCGImage(CGImageRef) const;
-
-    PlatformLayer* platformLayer() const;
-    void updateSampleBuffer() override;
-
-    mutable RetainPtr<CGImageRef> m_previewImage;
-    mutable RetainPtr<PlatformLayer> m_previewLayer;
+    WeakPtrFactory<RealtimeMediaSourcePreview> m_weakPtrFactory;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MockRealtimeVideoSourceMac_h

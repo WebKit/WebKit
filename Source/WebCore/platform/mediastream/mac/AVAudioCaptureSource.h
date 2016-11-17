@@ -67,6 +67,7 @@ private:
     void shutdownCaptureSession() override;
     void updateSettings(RealtimeMediaSourceSettings&) override;
     AudioSourceProvider* audioSourceProvider() override;
+    RefPtr<AVMediaSourcePreview> createPreview() final;
 
     RetainPtr<AVCaptureConnection> m_audioConnection;
 

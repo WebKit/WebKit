@@ -138,7 +138,6 @@ bool MockRealtimeVideoSource::applyFrameRate(double rate)
     if (m_timer.isActive())
         m_timer.startRepeating(std::chrono::milliseconds(lround(1000 / rate)));
 
-    updatePlatformLayer();
     updateSampleBuffer();
     return true;
 }
@@ -168,7 +167,6 @@ bool MockRealtimeVideoSource::applySize(const IntSize& size)
     m_statsFont.update(nullptr);
 
     m_imageBuffer = nullptr;
-    updatePlatformLayer();
 
     return true;
 }
@@ -339,7 +337,6 @@ void MockRealtimeVideoSource::generateFrame()
     drawAnimation(context);
     drawBoxes(context);
 
-    updatePlatformLayer();
     updateSampleBuffer();
 }
 

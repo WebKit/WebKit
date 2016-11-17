@@ -1,3 +1,109 @@
+2016-11-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream][Mac] Use AVCapturePreview object for camera/microphone rendering
+        https://bugs.webkit.org/show_bug.cgi?id=164837
+        <rdar://problem/29297727>
+
+        Reviewed by Jer Noble.
+
+        No new tests, the real capture devices can not be used in layout tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        Drive-by fix: clear m_settingMediaStreamSrcObject when the media player is destroyed unless
+        that happens as a side effect of setting video.srcObject.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrcObject):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        * html/HTMLMediaElement.h:
+
+        Add support for realtime media source that vend a preview interface, while keeping support
+        for those that do not (e.g. the mock capture devices).
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBuffer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::prepareVideoSampleBufferFromTrack):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::platformLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::internalSetVolume):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks):
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::platformLayer): Deleted, no longer used.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+        Enable/disable the preview when available.
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::setEnabled):
+        (WebCore::MediaStreamTrackPrivate::endTrack):
+        (WebCore::MediaStreamTrackPrivate::preview):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::preview):
+        (WebCore::RealtimeMediaSource::createWeakPtr):
+        (WebCore::RealtimeMediaSource::platformLayer): Deleted.
+
+        Define a realtime media source preview interface.
+        * platform/mediastream/RealtimeMediaSourcePreview.h: Added.
+        (WebCore::RealtimeMediaSourcePreview::~RealtimeMediaSourcePreview):
+        (WebCore::RealtimeMediaSourcePreview::invalidate):
+        (WebCore::RealtimeMediaSourcePreview::createWeakPtr):
+        (WebCore::RealtimeMediaSourcePreview::RealtimeMediaSourcePreview):
+
+        Implement the preview interface.
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioSourcePreview::create):
+        (WebCore::AVAudioSourcePreview::AVAudioSourcePreview):
+        (WebCore::AVAudioSourcePreview::invalidate):
+        (WebCore::AVAudioSourcePreview::play):
+        (WebCore::AVAudioSourcePreview::pause):
+        (WebCore::AVAudioSourcePreview::setEnabled):
+        (WebCore::AVAudioSourcePreview::setVolume):
+        (WebCore::AVAudioSourcePreview::updateState):
+        (WebCore::AVAudioCaptureSource::createPreview):
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        (WebCore::AVMediaCaptureSource::createWeakPtr):
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource):
+        (WebCore::AVMediaCaptureSource::reset):
+        (WebCore::AVMediaCaptureSource::preview):
+        (WebCore::AVMediaCaptureSource::removePreview):
+        (WebCore::AVMediaSourcePreview::AVMediaSourcePreview):
+        (WebCore::AVMediaSourcePreview::~AVMediaSourcePreview):
+        (WebCore::AVMediaSourcePreview::invalidate):
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoSourcePreview::create):
+        (WebCore::AVVideoSourcePreview::AVVideoSourcePreview):
+        (WebCore::AVVideoSourcePreview::invalidate):
+        (WebCore::AVVideoSourcePreview::play):
+        (WebCore::AVVideoSourcePreview::pause):
+        (WebCore::AVVideoSourcePreview::setPaused):
+        (WebCore::AVVideoSourcePreview::setEnabled):
+        (WebCore::AVVideoCaptureSource::shutdownCaptureSession):
+        (WebCore::AVVideoCaptureSource::processNewFrame):
+        (WebCore::AVVideoCaptureSource::createPreview):
+        (WebCore::AVVideoCaptureSource::platformLayer): Deleted.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::platformLayer): Deleted.
+        (WebCore::MockRealtimeVideoSourceMac::updatePlatformLayer): Deleted.
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::applyFrameRate):
+        (WebCore::MockRealtimeVideoSource::applySize):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::updatePlatformLayer): Deleted.
+
 2016-11-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build after r208839.

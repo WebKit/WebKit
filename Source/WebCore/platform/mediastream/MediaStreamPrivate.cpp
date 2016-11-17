@@ -239,14 +239,6 @@ FloatSize MediaStreamPrivate::intrinsicSize() const
     return size;
 }
 
-PlatformLayer* MediaStreamPrivate::platformLayer() const
-{
-    if (!m_activeVideoTrack)
-        return nullptr;
-
-    return m_activeVideoTrack->source().platformLayer();
-}
-
 void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
     if (context.paintingDisabled())

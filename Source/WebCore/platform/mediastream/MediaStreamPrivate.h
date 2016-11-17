@@ -93,7 +93,6 @@ public:
     void stopProducingData();
     bool isProducingData() const;
 
-    PlatformLayer* platformLayer() const;
     RefPtr<Image> currentFrameImage();
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 

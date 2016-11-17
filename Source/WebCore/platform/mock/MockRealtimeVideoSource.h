@@ -53,7 +53,6 @@ public:
 
 protected:
     MockRealtimeVideoSource(const String&);
-    virtual void updatePlatformLayer() const { }
     virtual void updateSampleBuffer() { }
 
     ImageBuffer* imageBuffer() const;
@@ -77,7 +76,6 @@ private:
     bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) override { return true; }
     bool applyAspectRatio(double) override { return true; }
 
-    PlatformLayer* platformLayer() const override { return nullptr; }
     RefPtr<Image> currentFrameImage() override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 

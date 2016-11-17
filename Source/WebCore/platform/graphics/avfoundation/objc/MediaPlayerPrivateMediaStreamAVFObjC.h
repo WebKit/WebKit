@@ -186,11 +186,19 @@ private:
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
+    bool haveVideoLayer() const { return m_sampleBufferDisplayLayer || m_videoPreviewPlayer; }
+
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
+
+    RefPtr<RealtimeMediaSourcePreview> m_videoPreviewPlayer;
+    RefPtr<MediaStreamTrackPrivate> m_videoTrack;
+
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+#if PLATFORM(MAC)
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
+#endif
     RetainPtr<CGImageRef> m_pausedImage;
     double m_pausedTime { 0 };
     std::unique_ptr<Clock> m_clock;

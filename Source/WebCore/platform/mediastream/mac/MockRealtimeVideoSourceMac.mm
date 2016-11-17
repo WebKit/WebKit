@@ -120,49 +120,6 @@ RetainPtr<CVPixelBufferRef> MockRealtimeVideoSourceMac::pixelBufferFromCGImage(C
     return adoptCF(pixelBuffer);
 }
 
-PlatformLayer* MockRealtimeVideoSourceMac::platformLayer() const
-{
-    if (m_previewLayer)
-        return m_previewLayer.get();
-
-    m_previewLayer = adoptNS([[CALayer alloc] init]);
-    m_previewLayer.get().name = @"MockRealtimeVideoSourceMac preview layer";
-    m_previewLayer.get().contentsGravity = kCAGravityResizeAspect;
-    m_previewLayer.get().anchorPoint = CGPointZero;
-    m_previewLayer.get().needsDisplayOnBoundsChange = YES;
-#if !PLATFORM(IOS)
-    m_previewLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
-#endif
-
-    updatePlatformLayer();
-
-    return m_previewLayer.get();
-}
-
-void MockRealtimeVideoSourceMac::updatePlatformLayer() const
-{
-    if (!m_previewLayer)
-        return;
-
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:0];
-    [CATransaction setDisableActions:YES];
-
-    do {
-        RefPtr<Image> image = imageBuffer()->copyImage();
-        if (!image)
-            break;
-
-        m_previewImage = image->nativeImage();
-        if (!m_previewImage)
-            break;
-
-        m_previewLayer.get().contents = (NSObject*)(m_previewImage.get());
-    } while (0);
-
-    [CATransaction commit];
-}
-
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
     auto pixelBuffer = pixelBufferFromCGImage(imageBuffer()->copyImage()->nativeImage().get());

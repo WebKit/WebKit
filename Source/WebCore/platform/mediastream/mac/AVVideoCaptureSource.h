@@ -41,6 +41,7 @@ namespace WebCore {
 
 class FloatRect;
 class GraphicsContext;
+class AVVideoSourcePreview;
 
 class AVVideoCaptureSource : public AVMediaCaptureSource {
 public:
@@ -77,16 +78,16 @@ private:
     void processNewFrame(RetainPtr<CMSampleBufferRef>);
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-    PlatformLayer* platformLayer() const final;
 
+    RefPtr<AVMediaSourcePreview> createPreview() final;
     RetainPtr<CGImageRef> currentFrameCGImage();
     RefPtr<Image> currentFrameImage() final;
 
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<CGImageRef> m_lastImage;
+
     Vector<Float64> m_videoFrameTimeStamps;
-    mutable RetainPtr<PlatformLayer> m_videoPreviewLayer;
     Float64 m_frameRate { 0 };
     int32_t m_width { 0 };
     int32_t m_height { 0 };
