@@ -49,7 +49,7 @@ class TreeScope {
 
 public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
-    void setParentTreeScope(TreeScope*);
+    void setParentTreeScope(TreeScope&);
 
     Element* focusedElement();
     WEBCORE_EXPORT Element* getElementById(const AtomicString&) const;
@@ -66,7 +66,7 @@ public:
     void addElementByName(const AtomicStringImpl&, Element&);
     void removeElementByName(const AtomicStringImpl&, Element&);
 
-    Document& documentScope() const { return *m_documentScope; }
+    Document& documentScope() const { return m_documentScope.get(); }
     static ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     // https://dom.spec.whatwg.org/#retarget
@@ -94,7 +94,7 @@ public:
     Element* findAnchor(const String& name);
 
     // Used by the basic DOM mutation methods (e.g., appendChild()).
-    void adoptIfNeeded(Node*);
+    void adoptIfNeeded(Node&);
 
     ContainerNode& rootNode() const { return m_rootNode; }
 
@@ -106,9 +106,8 @@ protected:
     ~TreeScope();
 
     void destroyTreeScopeData();
-    void setDocumentScope(Document* document)
+    void setDocumentScope(Document& document)
     {
-        ASSERT(document);
         m_documentScope = document;
     }
 
@@ -116,7 +115,7 @@ protected:
 
 private:
     ContainerNode& m_rootNode;
-    Document* m_documentScope;
+    std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;
 
     std::unique_ptr<DocumentOrderedMap> m_elementsById;

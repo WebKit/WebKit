@@ -190,7 +190,7 @@ void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& conta
         } else {
             Ref<Node> protect(*node); // removedFromDocument may remove remove all references to this node.
             if (Document* containerDocument = container.ownerDocument())
-                containerDocument->adoptIfNeeded(node);
+                containerDocument->adoptIfNeeded(*node);
             if (node->isInTreeScope())
                 notifyChildNodeRemoved(container, *node);
         }

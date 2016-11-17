@@ -67,7 +67,7 @@ private:
     void finishedInsertingSubtree() final;
     void removedFrom(ContainerNode&) final;
 
-    void didMoveToNewDocument(Document* oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument) final;
 
     void childrenChanged(const ChildChange&) final;
 

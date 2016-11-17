@@ -202,24 +202,23 @@ public:
         invalidateCaches();
     }
 
-    void adoptDocument(Document* oldDocument, Document* newDocument)
+    void adoptDocument(Document& oldDocument, Document& newDocument)
     {
-        ASSERT(oldDocument);
-        if (oldDocument == newDocument) {
+        if (&oldDocument == &newDocument) {
             invalidateCaches();
             return;
         }
 
         for (auto& cache : m_atomicNameCaches.values())
-            cache->invalidateCache(*oldDocument);
+            cache->invalidateCache(oldDocument);
 
         for (auto& list : m_tagCollectionNSCache.values()) {
             ASSERT(!list->isRootedAtDocument());
-            list->invalidateCache(*oldDocument);
+            list->invalidateCache(oldDocument);
         }
 
         for (auto& collection : m_cachedCollections.values())
-            collection->invalidateCache(*oldDocument);
+            collection->invalidateCache(oldDocument);
     }
 
 private:

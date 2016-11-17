@@ -48,7 +48,7 @@ public:
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
 
-    void didMoveToNewDocument(Document* oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument) final;
 
     WeakPtrFactory<HTMLPictureElement> m_weakFactory { this };
     Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;

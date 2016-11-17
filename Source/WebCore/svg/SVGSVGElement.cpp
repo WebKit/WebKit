@@ -98,10 +98,9 @@ SVGSVGElement::~SVGSVGElement()
     document().accessSVGExtensions().removeTimeContainer(this);
 }
 
-void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
+void SVGSVGElement::didMoveToNewDocument(Document& oldDocument)
 {
-    if (oldDocument)
-        oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+    oldDocument.unregisterForDocumentSuspensionCallbacks(this);
     document().registerForDocumentSuspensionCallbacks(this);
     SVGGraphicsElement::didMoveToNewDocument(oldDocument);
 }

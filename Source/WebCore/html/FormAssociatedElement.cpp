@@ -60,10 +60,10 @@ FormAssociatedElement::~FormAssociatedElement()
     setForm(nullptr);
 }
 
-void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
+void FormAssociatedElement::didMoveToNewDocument(Document&)
 {
     HTMLElement& element = asHTMLElement();
-    if (oldDocument && element.hasAttributeWithoutSynchronization(formAttr))
+    if (element.hasAttributeWithoutSynchronization(formAttr))
         resetFormAttributeTargetObserver();
 }
 

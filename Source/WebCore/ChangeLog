@@ -1,3 +1,102 @@
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Use more references in TreeScope / TreeScopeAdopter
+        https://bugs.webkit.org/show_bug.cgi?id=164836
+
+        Reviewed by Ryosuke Niwa.
+
+        Use more references in TreeScope / TreeScopeAdopter and avoid some
+        unnecessary null checks.
+
+        No new tests, no Web-exposed behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::ContainerNode::appendChildWithoutPreInsertionValidityCheck):
+        (WebCore::ContainerNode::parserAppendChild):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::addChildNodesToDeletionQueue):
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        (WebCore::Document::moveNodeIteratorsToNewDocument):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::didMoveToNewDocument):
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::setAttributeNodeNS):
+        (WebCore::Element::ensureAttr):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        (WebCore::TreeScope::adoptIfNeeded):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::documentScope):
+        (WebCore::TreeScope::setDocumentScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveShadowTreeToNewDocument):
+        (WebCore::TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled):
+        (WebCore::TreeScopeAdopter::updateTreeScope):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+        * dom/TreeScopeAdopter.h:
+        (WebCore::TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled):
+        (WebCore::TreeScopeAdopter::TreeScopeAdopter):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        * html/FormAssociatedElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::didMoveToNewDocument):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didMoveToNewDocument):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::didMoveToNewDocument):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::didMoveToNewDocument):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::didMoveToNewDocument):
+        * html/HTMLPictureElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::didMoveToNewDocument):
+        * html/HTMLTemplateElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didMoveToNewDocument):
+        * html/HTMLVideoElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::didMoveToNewDocument):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::didMoveToNewDocument):
+        * svg/SVGImageElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::didMoveToNewDocument):
+        * svg/SVGSVGElement.h:
+
 2016-11-16  Jon Davis  <jond@apple.com>
 
         Added Web App Manifest to the Feature Status page.

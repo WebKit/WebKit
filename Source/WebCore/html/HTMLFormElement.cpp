@@ -843,11 +843,10 @@ void HTMLFormElement::resumeFromDocumentSuspension()
     }
 }
 
-void HTMLFormElement::didMoveToNewDocument(Document* oldDocument)
+void HTMLFormElement::didMoveToNewDocument(Document& oldDocument)
 {
     if (!shouldAutocomplete()) {
-        if (oldDocument)
-            oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+        oldDocument.unregisterForDocumentSuspensionCallbacks(this);
         document().registerForDocumentSuspensionCallbacks(this);
     }
 

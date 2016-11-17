@@ -139,12 +139,12 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         destroyRenderTreeIfNeeded(child);
 
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> adoptedChild = document().adoptNode(child).releaseReturnValue();
-        parserAppendChild(*adoptedChild);
+        auto adoptedChild = document().adoptNode(child).releaseReturnValue();
+        parserAppendChild(adoptedChild);
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
-        treeScope().adoptIfNeeded(adoptedChild.get());
+        treeScope().adoptIfNeeded(adoptedChild);
     }
 }
 
@@ -280,7 +280,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
         if (child->parentNode())
             break;
 
-        treeScope().adoptIfNeeded(child.ptr());
+        treeScope().adoptIfNeeded(child);
 
         insertBeforeCommon(next, child);
 
@@ -444,7 +444,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
         if (child->parentNode())
             break;
 
-        treeScope().adoptIfNeeded(child.ptr());
+        treeScope().adoptIfNeeded(child);
 
         {
             NoEventDispatchAssertion assertNoEventDispatch;
@@ -579,7 +579,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     ASSERT(!oldChild.nextSibling());
     oldChild.setParentNode(nullptr);
 
-    document().adoptIfNeeded(&oldChild);
+    document().adoptIfNeeded(oldChild);
 }
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
@@ -679,7 +679,7 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
         if (child->parentNode())
             break;
 
-        treeScope().adoptIfNeeded(child.ptr());
+        treeScope().adoptIfNeeded(child);
 
         // Append child to the end of the list
         {
@@ -706,7 +706,7 @@ void ContainerNode::parserAppendChild(Node& newChild)
     {
         NoEventDispatchAssertion assertNoEventDispatch;
         appendChildCommon(newChild);
-        treeScope().adoptIfNeeded(&newChild);
+        treeScope().adoptIfNeeded(newChild);
     }
 
     newChild.updateAncestorConnectedSubframeCountForInsertion();

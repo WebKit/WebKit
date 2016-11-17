@@ -1024,7 +1024,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
             return result.releaseException();
     }
 
-    adoptIfNeeded(&source);
+    adoptIfNeeded(source);
 
     return Ref<Node> { source };
 }
@@ -3865,14 +3865,14 @@ void Document::detachNodeIterator(NodeIterator* ni)
     m_nodeIterators.remove(ni);
 }
 
-void Document::moveNodeIteratorsToNewDocument(Node* node, Document* newDocument)
+void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 {
     Vector<NodeIterator*> nodeIterators;
     copyToVector(m_nodeIterators, nodeIterators);
     for (auto* it : nodeIterators) {
-        if (&it->root() == node) {
+        if (&it->root() == &node) {
             detachNodeIterator(it);
-            newDocument->attachNodeIterator(it);
+            newDocument.attachNodeIterator(it);
         }
     }
 }

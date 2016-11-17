@@ -33,7 +33,7 @@
 namespace WebCore {
 
 // FIXME: Do we ever change tree scopes except between documents?
-void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
+void TreeScopeAdopter::moveTreeToNewScope(Node& root) const
 {
     ASSERT(needsScopeChange());
 
@@ -49,11 +49,11 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         oldDocument.incDOMTreeVersion();
     }
 
-    for (Node* node = root; node; node = NodeTraversal::next(*node, root)) {
-        updateTreeScope(node);
+    for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
+        updateTreeScope(*node);
 
         if (willMoveToNewDocument)
-            moveNodeToNewDocument(node, &oldDocument, &newDocument);
+            moveNodeToNewDocument(*node, oldDocument, newDocument);
         else if (node->hasRareData()) {
             NodeRareData* rareData = node->rareData();
             if (rareData->nodeLists())
@@ -65,13 +65,13 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 
         if (node->hasSyntheticAttrChildNodes()) {
             for (auto& attr : downcast<Element>(*node).attrNodeList())
-                moveTreeToNewScope(attr.get());
+                moveTreeToNewScope(*attr);
         }
 
-        if (ShadowRoot* shadow = node->shadowRoot()) {
-            shadow->setParentTreeScope(&m_newScope);
+        if (auto* shadow = node->shadowRoot()) {
+            shadow->setParentTreeScope(m_newScope);
             if (willMoveToNewDocument)
-                moveShadowTreeToNewDocument(shadow, &oldDocument, &newDocument);
+                moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
         }
     }
 
@@ -79,12 +79,12 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         oldDocument.decrementReferencingNodeCount();
 }
 
-void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Document* oldDocument, Document* newDocument) const
+void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument) const
 {
-    for (Node* node = shadowRoot; node; node = NodeTraversal::next(*node, shadowRoot)) {
-        moveNodeToNewDocument(node, oldDocument, newDocument);
-        if (ShadowRoot* shadow = node->shadowRoot())
-            moveShadowTreeToNewDocument(shadow, oldDocument, newDocument);
+    for (Node* node = &shadowRoot; node; node = NodeTraversal::next(*node, &shadowRoot)) {
+        moveNodeToNewDocument(*node, oldDocument, newDocument);
+        if (auto* shadow = node->shadowRoot())
+            moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
     }
 }
 
@@ -92,46 +92,45 @@ void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Docum
 static bool didMoveToNewDocumentWasCalled = false;
 static Document* oldDocumentDidMoveToNewDocumentWasCalledWith = nullptr;
 
-void TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(Document* oldDocument)
+void TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(Document& oldDocument)
 {
     ASSERT(!didMoveToNewDocumentWasCalled);
-    ASSERT_UNUSED(oldDocument, oldDocument == oldDocumentDidMoveToNewDocumentWasCalledWith);
+    ASSERT_UNUSED(oldDocument, &oldDocument == oldDocumentDidMoveToNewDocumentWasCalledWith);
     didMoveToNewDocumentWasCalled = true;
 }
 #endif
 
-inline void TreeScopeAdopter::updateTreeScope(Node* node) const
+inline void TreeScopeAdopter::updateTreeScope(Node& node) const
 {
-    ASSERT(!node->isTreeScope());
-    ASSERT(&node->treeScope() == &m_oldScope);
-    node->setTreeScope(m_newScope);
+    ASSERT(!node.isTreeScope());
+    ASSERT(&node.treeScope() == &m_oldScope);
+    node.setTreeScope(m_newScope);
 }
 
-inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDocument, Document* newDocument) const
+inline void TreeScopeAdopter::moveNodeToNewDocument(Node& node, Document& oldDocument, Document& newDocument) const
 {
-    ASSERT(!node->inDocument() || oldDocument != newDocument);
+    ASSERT(!node.inDocument() || &oldDocument != &newDocument);
 
-    newDocument->incrementReferencingNodeCount();
-    oldDocument->decrementReferencingNodeCount();
+    newDocument.incrementReferencingNodeCount();
+    oldDocument.decrementReferencingNodeCount();
 
-    if (node->hasRareData()) {
-        NodeRareData* rareData = node->rareData();
-        if (rareData->nodeLists())
-            rareData->nodeLists()->adoptDocument(oldDocument, newDocument);
+    if (node.hasRareData()) {
+        NodeRareData* rareData = node.rareData();
+        if (auto* nodeLists = rareData->nodeLists())
+            nodeLists->adoptDocument(oldDocument, newDocument);
     }
 
-    if (oldDocument)
-        oldDocument->moveNodeIteratorsToNewDocument(node, newDocument);
+    oldDocument.moveNodeIteratorsToNewDocument(node, newDocument);
 
-    if (is<ShadowRoot>(*node))
-        downcast<ShadowRoot>(*node).setDocumentScope(newDocument);
+    if (is<ShadowRoot>(node))
+        downcast<ShadowRoot>(node).setDocumentScope(newDocument);
 
 #ifndef NDEBUG
     didMoveToNewDocumentWasCalled = false;
-    oldDocumentDidMoveToNewDocumentWasCalledWith = oldDocument;
+    oldDocumentDidMoveToNewDocumentWasCalledWith = &oldDocument;
 #endif
 
-    node->didMoveToNewDocument(oldDocument);
+    node.didMoveToNewDocument(oldDocument);
     ASSERT(didMoveToNewDocumentWasCalled);
 }
 

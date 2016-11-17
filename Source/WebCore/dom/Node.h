@@ -628,7 +628,7 @@ protected:
     };
     Node(Document&, ConstructionType);
 
-    virtual void didMoveToNewDocument(Document* oldDocument);
+    virtual void didMoveToNewDocument(Document& oldDocument);
     
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 

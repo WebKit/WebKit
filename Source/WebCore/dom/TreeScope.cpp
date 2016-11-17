@@ -57,7 +57,7 @@ using namespace HTMLNames;
 
 TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     : m_rootNode(shadowRoot)
-    , m_documentScope(&document)
+    , m_documentScope(document)
     , m_parentTreeScope(&document)
     , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
@@ -66,7 +66,7 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
 
 TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
-    , m_documentScope(&document)
+    , m_documentScope(document)
     , m_parentTreeScope(nullptr)
     , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
@@ -84,15 +84,13 @@ void TreeScope::destroyTreeScopeData()
     m_labelsByForAttribute = nullptr;
 }
 
-void TreeScope::setParentTreeScope(TreeScope* newParentScope)
+void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 {
     // A document node cannot be re-parented.
     ASSERT(!m_rootNode.isDocumentNode());
-    // Every scope other than document needs a parent scope.
-    ASSERT(newParentScope);
 
-    m_parentTreeScope = newParentScope;
-    setDocumentScope(&newParentScope->documentScope());
+    m_parentTreeScope = &newParentScope;
+    setDocumentScope(newParentScope.documentScope());
 }
 
 Element* TreeScope::getElementById(const AtomicString& elementId) const
@@ -348,11 +346,10 @@ Element* TreeScope::findAnchor(const String& name)
     return nullptr;
 }
 
-void TreeScope::adoptIfNeeded(Node* node)
+void TreeScope::adoptIfNeeded(Node& node)
 {
-    ASSERT(node);
-    ASSERT(!node->isDocumentNode());
-    ASSERT(!node->m_deletionHasBegun);
+    ASSERT(!node.isDocumentNode());
+    ASSERT(!node.m_deletionHasBegun);
     TreeScopeAdopter adopter(node, *this);
     if (adopter.needsScopeChange())
         adopter.execute();

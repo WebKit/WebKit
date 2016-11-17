@@ -33,32 +33,32 @@ class TreeScope;
 
 class TreeScopeAdopter {
 public:
-    explicit TreeScopeAdopter(Node* toAdopt, TreeScope& newScope);
+    explicit TreeScopeAdopter(Node& toAdopt, TreeScope& newScope);
 
     void execute() const { moveTreeToNewScope(m_toAdopt); }
     bool needsScopeChange() const { return &m_oldScope != &m_newScope; }
 
 #ifdef NDEBUG
-    static void ensureDidMoveToNewDocumentWasCalled(Document*) { }
+    static void ensureDidMoveToNewDocumentWasCalled(Document&) { }
 #else
-    static void ensureDidMoveToNewDocumentWasCalled(Document*);
+    static void ensureDidMoveToNewDocumentWasCalled(Document&);
 #endif
 
 private:
-    void updateTreeScope(Node*) const;
-    void moveTreeToNewScope(Node*) const;
-    void moveShadowTreeToNewDocument(ShadowRoot*, Document* oldDocument, Document* newDocument) const;
-    void moveNodeToNewDocument(Node*, Document* oldDocument, Document* newDocument) const;
+    void updateTreeScope(Node&) const;
+    void moveTreeToNewScope(Node&) const;
+    void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument) const;
+    void moveNodeToNewDocument(Node&, Document& oldDocument, Document& newDocument) const;
 
-    Node* m_toAdopt;
+    Node& m_toAdopt;
     TreeScope& m_newScope;
     TreeScope& m_oldScope;
 };
 
-inline TreeScopeAdopter::TreeScopeAdopter(Node* toAdopt, TreeScope& newScope)
+inline TreeScopeAdopter::TreeScopeAdopter(Node& toAdopt, TreeScope& newScope)
     : m_toAdopt(toAdopt)
     , m_newScope(newScope)
-    , m_oldScope(toAdopt->treeScope())
+    , m_oldScope(toAdopt.treeScope())
 {
 }
 

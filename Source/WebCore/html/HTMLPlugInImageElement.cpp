@@ -309,10 +309,10 @@ void HTMLPlugInImageElement::finishParsingChildren()
         invalidateStyleForSubtree();
 }
 
-void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
+void HTMLPlugInImageElement::didMoveToNewDocument(Document& oldDocument)
 {
     if (m_needsDocumentActivationCallbacks) {
-        oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+        oldDocument.unregisterForDocumentSuspensionCallbacks(this);
         document().registerForDocumentSuspensionCallbacks(this);
     }
 
