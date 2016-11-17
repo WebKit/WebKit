@@ -1,3 +1,15 @@
+2016-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] run-api-tests is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=164818
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure Visual Studio interprets string literal as utf8.
+ 
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] WTF::TemporaryChange with WTF::SetForScope
