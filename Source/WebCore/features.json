@@ -378,6 +378,23 @@
         }
     },
     {
+        "name": "Web App Manifest",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://www.w3.org/TR/appmanifest/",
+        "webkit-url": "https://webkit.org/b/158205",
+        "keywords": ["web app","manifest", "webapp"],
+        "category": "webapps",
+        "description": "A JSON-format manifest file for developers to place metadata associated with a web application.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Web Components",
         "url": "http://www.w3.org/wiki/WebComponents/",
         "keywords": ["web components", "shadow dom", "html imports", "custom elements", "template element"],
