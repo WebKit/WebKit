@@ -1,3 +1,12 @@
+2016-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        Render tree should be all clean by the end of FrameView::layout().
+        https://bugs.webkit.org/show_bug.cgi?id=162834
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2016-11-17  Brent Fulgham  <bfulgham@apple.com>
 
         keygen element should not support < 2048 RSA key lengths

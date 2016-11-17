@@ -215,6 +215,7 @@ public :
         auto reportNeedsLayoutError = [] (const RenderObject& renderer) {
             WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "post-layout: dirty renderer(s)");
             renderer.showRenderTreeForThis();
+            ASSERT_NOT_REACHED();
         };
 
         if (m_layoutRoot.needsLayout()) {
