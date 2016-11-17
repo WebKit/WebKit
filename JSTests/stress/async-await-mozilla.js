@@ -2,9 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://moz.org/MPL/2.0/. */
 
-// This test requires ENABLE_ES2017_ASYNCFUNCTION_SYNTAX to be enabled at build time.
-//@ skip
-
 function shouldBe(expected, actual, msg = "") {
     if (msg)
         msg = " for " + msg;

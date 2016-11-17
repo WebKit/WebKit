@@ -1,3 +1,33 @@
+2016-11-17  Saam Barati  <sbarati@apple.com>
+
+        Remove async/await compile time flag and enable tests
+        https://bugs.webkit.org/show_bug.cgi?id=164828
+        <rdar://problem/28639334>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-arrow-functions-lexical-arguments-binding.js:
+        * stress/async-arrow-functions-lexical-new.target-binding.js:
+        * stress/async-arrow-functions-lexical-super-binding.js:
+        * stress/async-arrow-functions-lexical-this-binding.js:
+        * stress/async-await-basic.js:
+        * stress/async-await-long-loop.js:
+        * stress/async-await-module-reserved-word.js:
+        * stress/async-await-mozilla.js:
+        (mozSyntaxErrors):
+        * stress/async-await-reserved-word.js:
+        * stress/async-await-syntax.js:
+        * stress/async-await-throw-loop.js:
+        * stress/async-function-create-nobaseline.js:
+        * stress/async-function-create-optimized.js:
+        * stress/async-function-declaration-sinking-no-double-allocate.js:
+        * stress/async-function-declaration-sinking-osrexit.js:
+        * stress/async-function-declaration-sinking-put.js:
+        * stress/async-function-expression-sinking-no-double-allocate.js:
+        * stress/async-function-expression-sinking-osrexit.js:
+        * stress/async-function-expression-sinking-put.js:
+        * test262.yaml:
+
 2016-11-15  Mark Lam  <mark.lam@apple.com>
 
         Make JSC test functions more robust.

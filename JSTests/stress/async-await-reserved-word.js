@@ -1,6 +1,3 @@
-// This test requires ENABLE_ES2017_ASYNCFUNCTION_SYNTAX to be enabled at build time.
-//@ skip
-
 function assert(cond, msg = "") {
     if (!cond)
         throw new Error(msg);

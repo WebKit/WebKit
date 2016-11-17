@@ -1,6 +1,3 @@
-// This test requires ENABLE_ES2017_ASYNCFUNCTION_SYNTAX to be enabled at build time.
-//@ skip
-
 function shouldBe(expected, actual, msg) {
     if (msg === void 0)
         msg = "";

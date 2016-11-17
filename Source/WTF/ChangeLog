@@ -1,3 +1,13 @@
+2016-11-17  Saam Barati  <sbarati@apple.com>
+
+        Remove async/await compile time flag and enable tests
+        https://bugs.webkit.org/show_bug.cgi?id=164828
+        <rdar://problem/28639334>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/FeatureDefines.h:
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] WTF::TemporaryChange with WTF::SetForScope

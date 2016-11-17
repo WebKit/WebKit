@@ -1,7 +1,5 @@
 // Copyright (C) Copyright 2016 the v8 project authors. All rights reserved.
 
-// This test requires ENABLE_ES2017_ASYNCFUNCTION_SYNTAX to be enabled at build time.
-//@ skip
 // TODO: @runNoCJIT("--gcMaxHeapSize=2000000")
 
 
