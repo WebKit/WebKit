@@ -137,6 +137,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {
+    if (m_willProcessMessagePortMessagesSoon)
+        return;
+
+    m_willProcessMessagePortMessagesSoon = true;
     postTask([] (ScriptExecutionContext& context) {
         context.dispatchMessagePortEvents();
     });
@@ -147,6 +151,8 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
     checkConsistency();
 
     Ref<ScriptExecutionContext> protectedThis(*this);
+    ASSERT(m_willProcessMessagePortMessagesSoon);
+    m_willProcessMessagePortMessagesSoon = false;
 
     // Make a frozen copy of the ports so we can iterate while new ones might be added or destroyed.
     Vector<MessagePort*> possibleMessagePorts;

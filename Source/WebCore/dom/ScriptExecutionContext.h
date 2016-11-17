@@ -259,6 +259,7 @@ private:
     RefPtr<DatabaseContext> m_databaseContext;
 
     bool m_activeDOMObjectAdditionForbidden;
+    bool m_willProcessMessagePortMessagesSoon { false };
     int m_timerNestingLevel;
 
 #if !ASSERT_DISABLED

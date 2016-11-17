@@ -1,5 +1,21 @@
 2016-11-16  Chris Dumez  <cdumez@apple.com>
 
+        ScriptExecutionContext::processMessagePortMessagesSoon() should only post task when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=164812
+        <rdar://problem/29148465>
+
+        Reviewed by Geoffrey Garen.
+
+        ScriptExecutionContext::processMessagePortMessagesSoon() should only post task when necessary,
+        meaning when there is not already one pending.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon):
+        (WebCore::ScriptExecutionContext::dispatchMessagePortEvents):
+        * dom/ScriptExecutionContext.h:
+
+2016-11-16  Chris Dumez  <cdumez@apple.com>
+
         Use more references in TreeScope / TreeScopeAdopter
         https://bugs.webkit.org/show_bug.cgi?id=164836
 
