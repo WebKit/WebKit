@@ -1,3 +1,17 @@
+2016-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Background tabs are often updating non-stop because they think they are visible
+        https://bugs.webkit.org/show_bug.cgi?id=164841
+        <rdar://problem/29298658>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._update):
+        Don't constantly update when this tab is not in the foreground.
+
 2016-11-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: SourceCodeTextEditor should display execution lines for background threads

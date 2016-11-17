@@ -268,8 +268,11 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         if (isNaN(this._startTime))
             this._startTime = resourceTimelineRecord.startTime;
 
-        if (this.visible)
-            this._startUpdatingCurrentTime();
+        // FIXME: <https://webkit.org/b/153634> Web Inspector: some background tabs think they are the foreground tab and do unnecessary work
+        if (!(WebInspector.tabBrowser.selectedTabContentView instanceof WebInspector.NetworkTabContentView))
+            return;
+
+        this._startUpdatingCurrentTime();
     }
 
     _treeElementPathComponentSelected(event)
