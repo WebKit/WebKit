@@ -175,6 +175,20 @@ Value* Const64Value::zShrConstant(Procedure& proc, const Value* other) const
     return proc.add<Const64Value>(origin(), static_cast<int64_t>(static_cast<uint64_t>(m_value) >> (other->asInt32() & 63)));
 }
 
+Value* Const64Value::rotRConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), rotateRight(m_value, other->asInt32()));
+}
+
+Value* Const64Value::rotLConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), rotateLeft(m_value, other->asInt32()));
+}
+
 Value* Const64Value::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<ConstDoubleValue>(origin(), bitwise_cast<double>(m_value));

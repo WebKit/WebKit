@@ -95,6 +95,8 @@ enum Opcode : int16_t {
     Shl,
     SShr, // Arithmetic Shift.
     ZShr, // Logical Shift.
+    RotR, // Rotate Right.
+    RotL, // Rotate Left.
     Clz, // Count leading zeros.
 
     // Floating point math.

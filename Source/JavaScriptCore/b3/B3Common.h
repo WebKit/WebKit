@@ -148,6 +148,28 @@ static IntType chillUMod(IntType numerator, IntType denominator)
     return unsignedNumerator % unsignedDenominator;
 }
 
+template<typename IntType>
+static IntType rotateRight(IntType value, int32_t shift)
+{
+    typedef typename std::make_unsigned<IntType>::type UnsignedIntType;
+    UnsignedIntType uValue = static_cast<UnsignedIntType>(value);
+    int32_t bits = sizeof(IntType) * 8;
+    int32_t mask = bits - 1;
+    shift &= mask;
+    return (uValue >> shift) | (uValue << ((bits - shift) & mask));
+}
+
+template<typename IntType>
+static IntType rotateLeft(IntType value, int32_t shift)
+{
+    typedef typename std::make_unsigned<IntType>::type UnsignedIntType;
+    UnsignedIntType uValue = static_cast<UnsignedIntType>(value);
+    int32_t bits = sizeof(IntType) * 8;
+    int32_t mask = bits - 1;
+    shift &= mask;
+    return (uValue << shift) | (uValue >> ((bits - shift) & mask));
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

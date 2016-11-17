@@ -343,6 +343,16 @@ Value* Value::zShrConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::rotRConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::rotLConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::bitwiseCastConstant(Procedure&) const
 {
     return nullptr;
@@ -550,6 +560,8 @@ Effects Value::effects() const
     case Shl:
     case SShr:
     case ZShr:
+    case RotR:
+    case RotL:
     case Clz:
     case Abs:
     case Ceil:
@@ -696,6 +708,8 @@ ValueKey Value::key() const
     case Shl:
     case SShr:
     case ZShr:
+    case RotR:
+    case RotL:
     case Equal:
     case NotEqual:
     case LessThan:
@@ -777,6 +791,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case Shl:
     case SShr:
     case ZShr:
+    case RotR:
+    case RotL:
     case Clz:
     case Abs:
     case Ceil:

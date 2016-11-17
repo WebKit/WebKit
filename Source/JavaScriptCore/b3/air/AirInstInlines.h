@@ -214,6 +214,26 @@ inline bool isUrshift64Valid(const Inst& inst)
     return isShiftValid(inst);
 }
 
+inline bool isRotateRight32Valid(const Inst& inst)
+{
+    return isShiftValid(inst);
+}
+
+inline bool isRotateLeft32Valid(const Inst& inst)
+{
+    return isShiftValid(inst);
+}
+
+inline bool isRotateRight64Valid(const Inst& inst)
+{
+    return isShiftValid(inst);
+}
+
+inline bool isRotateLeft64Valid(const Inst& inst)
+{
+    return isShiftValid(inst);
+}
+
 inline bool isX86DivHelperValid(const Inst& inst)
 {
 #if CPU(X86) || CPU(X86_64)

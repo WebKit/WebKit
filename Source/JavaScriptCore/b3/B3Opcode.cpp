@@ -152,6 +152,12 @@ void printInternal(PrintStream& out, Opcode opcode)
     case ZShr:
         out.print("ZShr");
         return;
+    case RotR:
+        out.print("RotR");
+        return;
+    case RotL:
+        out.print("RotL");
+        return;
     case Clz:
         out.print("Clz");
         return;

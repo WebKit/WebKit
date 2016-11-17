@@ -11959,6 +11959,76 @@ void testSShrShl64(int64_t value, int32_t sshrAmount, int32_t shlAmount)
 }
 
 template<typename T>
+void testRotR(T valueInt, int32_t shift)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    if (sizeof(T) == 4)
+        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
+
+    Value* ammount = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    root->appendNewControlValue(proc, Return, Origin(),
+        root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
+
+    CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateRight(valueInt, shift));
+}
+
+template<typename T>
+void testRotL(T valueInt, int32_t shift)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    if (sizeof(T) == 4)
+        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
+
+    Value* ammount = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    root->appendNewControlValue(proc, Return, Origin(),
+        root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
+
+    CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateLeft(valueInt, shift));
+}
+
+template<typename T>
+void testRotRWithImmShift(T valueInt, int32_t shift)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    if (sizeof(T) == 4)
+        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
+
+    Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
+    root->appendNewControlValue(proc, Return, Origin(),
+        root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
+
+    CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateRight(valueInt, shift));
+}
+
+template<typename T>
+void testRotLWithImmShift(T valueInt, int32_t shift)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    if (sizeof(T) == 4)
+        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
+
+    Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
+    root->appendNewControlValue(proc, Return, Origin(),
+        root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
+
+    CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateLeft(valueInt, shift));
+}
+
+template<typename T>
 void testComputeDivisionMagic(T value, T magicMultiplier, unsigned shift)
 {
     DivisionMagic<T> magic = computeDivisionMagic(value);
@@ -15292,6 +15362,16 @@ void run(const char* filter)
     RUN(testSShrShl64(-42000000000, 8, 8));
 
     RUN(testCheckMul64SShr());
+
+    RUN_BINARY(testRotR, int32Operands(), int32Operands());
+    RUN_BINARY(testRotR, int64Operands(), int32Operands());
+    RUN_BINARY(testRotL, int32Operands(), int32Operands());
+    RUN_BINARY(testRotL, int64Operands(), int32Operands());
+
+    RUN_BINARY(testRotRWithImmShift, int32Operands(), int32Operands());
+    RUN_BINARY(testRotRWithImmShift, int64Operands(), int32Operands());
+    RUN_BINARY(testRotLWithImmShift, int32Operands(), int32Operands());
+    RUN_BINARY(testRotLWithImmShift, int64Operands(), int32Operands());
 
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
     RUN(testTrivialInfiniteLoop());

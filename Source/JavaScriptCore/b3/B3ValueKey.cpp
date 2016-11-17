@@ -86,6 +86,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case Shl:
     case SShr:
     case ZShr:
+    case RotR:
+    case RotL:
     case Equal:
     case NotEqual:
     case LessThan:

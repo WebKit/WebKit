@@ -175,6 +175,20 @@ Value* Const32Value::zShrConstant(Procedure& proc, const Value* other) const
     return proc.add<Const32Value>(origin(), static_cast<int32_t>(static_cast<uint32_t>(m_value) >> (other->asInt32() & 31)));
 }
 
+Value* Const32Value::rotRConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), rotateRight(m_value, other->asInt32()));
+}
+
+Value* Const32Value::rotLConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), rotateLeft(m_value, other->asInt32()));
+}
+
 Value* Const32Value::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<ConstFloatValue>(origin(), bitwise_cast<float>(m_value));

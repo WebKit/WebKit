@@ -58,6 +58,8 @@ public:
     Value* shlConstant(Procedure&, const Value* other) const override;
     Value* sShrConstant(Procedure&, const Value* other) const override;
     Value* zShrConstant(Procedure&, const Value* other) const override;
+    Value* rotRConstant(Procedure&, const Value* other) const override;
+    Value* rotLConstant(Procedure&, const Value* other) const override;
     Value* bitwiseCastConstant(Procedure&) const override;
     Value* iToDConstant(Procedure&) const override;
     Value* iToFConstant(Procedure&) const override;

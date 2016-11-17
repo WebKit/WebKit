@@ -402,10 +402,10 @@ public:
             m_assembler.shlq_CLr(dest);
         else {
             ASSERT(src != dest);
-            
+
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
-            m_assembler.shlq_CLr(dest);
+            m_assembler.shlq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
     }
@@ -424,7 +424,7 @@ public:
             
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
-            m_assembler.sarq_CLr(dest);
+            m_assembler.sarq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
     }
@@ -443,7 +443,45 @@ public:
             
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
-            m_assembler.shrq_CLr(dest);
+            m_assembler.shrq_CLr(dest == X86Registers::ecx ? src : dest);
+            swap(src, X86Registers::ecx);
+        }
+    }
+
+    void rotateRight64(TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.rorq_i8r(imm.m_value, dest);
+    }
+
+    void rotateRight64(RegisterID src, RegisterID dest)
+    {
+        if (src == X86Registers::ecx)
+            m_assembler.rorq_CLr(dest);
+        else {
+            ASSERT(src != dest);
+
+            // Can only rotate by ecx, so we do some swapping if we see anything else.
+            swap(src, X86Registers::ecx);
+            m_assembler.rorq_CLr(dest == X86Registers::ecx ? src : dest);
+            swap(src, X86Registers::ecx);
+        }
+    }
+
+    void rotateLeft64(TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.rolq_i8r(imm.m_value, dest);
+    }
+
+    void rotateLeft64(RegisterID src, RegisterID dest)
+    {
+        if (src == X86Registers::ecx)
+            m_assembler.rolq_CLr(dest);
+        else {
+            ASSERT(src != dest);
+
+            // Can only rotate by ecx, so we do some swapping if we see anything else.
+            swap(src, X86Registers::ecx);
+            m_assembler.rolq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
     }
@@ -541,11 +579,6 @@ public:
     {
         move(src, dest);
         or64(imm, dest);
-    }
-    
-    void rotateRight64(TrustedImm32 imm, RegisterID srcDst)
-    {
-        m_assembler.rorq_i8r(imm.m_value, srcDst);
     }
 
     void sub64(RegisterID src, RegisterID dest)

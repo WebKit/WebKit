@@ -373,7 +373,7 @@ x86:Lshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: Lshift64 U:G:64, U:G:64, ZD:G:64
+arm64: Lshift64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -389,7 +389,7 @@ x86: Rshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: Rshift64 U:G:64, U:G:64, ZD:G:64
+arm64: Rshift64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -405,11 +405,35 @@ x86: Urshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: Urshift64 U:G:64, U:G:64, ZD:G:64
+arm64: Urshift64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
 x86_64: Urshift64 U:G:64, UD:G:64
+    Tmp*, Tmp
+    Imm, Tmp
+
+x86_64: RotateRight32 U:G:32, UZD:G:32
+    Tmp*, Tmp
+    Imm, Tmp
+
+arm64: RotateRight32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+    Tmp, Imm, Tmp
+
+x86_64: RotateRight64 U:G:64, UD:G:64
+    Tmp*, Tmp
+    Imm, Tmp
+
+arm64: RotateRight64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+    Tmp, Imm, Tmp
+
+x86_64: RotateLeft32 U:G:32, UZD:G:32
+    Tmp*, Tmp
+    Imm, Tmp
+
+x86_64: RotateLeft64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 

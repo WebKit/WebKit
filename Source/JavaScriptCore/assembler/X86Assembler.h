@@ -967,16 +967,6 @@ public:
     {
         m_formatter.oneByteOp64(OP_XOR_EvGv, src, base, offset);
     }
-    
-    void rorq_i8r(int imm, RegisterID dst)
-    {
-        if (imm == 1)
-            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_ROR, dst);
-        else {
-            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_ROR, dst);
-            m_formatter.immediate8(imm);
-        }
-    }
 
 #endif
 
@@ -1028,14 +1018,22 @@ public:
     }
 #endif
 
-    void sarl_i8r(int imm, RegisterID dst)
+private:
+    template<GroupOpcodeID op>
+    void shiftInstruction32(int imm, RegisterID dst)
     {
         if (imm == 1)
-            m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SAR, dst);
+            m_formatter.oneByteOp(OP_GROUP2_Ev1, op, dst);
         else {
-            m_formatter.oneByteOp(OP_GROUP2_EvIb, GROUP2_OP_SAR, dst);
+            m_formatter.oneByteOp(OP_GROUP2_EvIb, op, dst);
             m_formatter.immediate8(imm);
         }
+    }
+public:
+
+    void sarl_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction32<GROUP2_OP_SAR>(imm, dst);
     }
 
     void sarl_CLr(RegisterID dst)
@@ -1045,12 +1043,7 @@ public:
     
     void shrl_i8r(int imm, RegisterID dst)
     {
-        if (imm == 1)
-            m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SHR, dst);
-        else {
-            m_formatter.oneByteOp(OP_GROUP2_EvIb, GROUP2_OP_SHR, dst);
-            m_formatter.immediate8(imm);
-        }
+        shiftInstruction32<GROUP2_OP_SHR>(imm, dst);
     }
     
     void shrl_CLr(RegisterID dst)
@@ -1060,12 +1053,7 @@ public:
 
     void shll_i8r(int imm, RegisterID dst)
     {
-        if (imm == 1)
-            m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SHL, dst);
-        else {
-            m_formatter.oneByteOp(OP_GROUP2_EvIb, GROUP2_OP_SHL, dst);
-            m_formatter.immediate8(imm);
-        }
+        shiftInstruction32<GROUP2_OP_SHL>(imm, dst);
     }
 
     void shll_CLr(RegisterID dst)
@@ -1073,7 +1061,39 @@ public:
         m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
     }
 
+    void rorl_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction32<GROUP2_OP_ROR>(imm, dst);
+    }
+
+    void rorl_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_ROR, dst);
+    }
+
+    void roll_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction32<GROUP2_OP_ROL>(imm, dst);
+    }
+
+    void roll_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_ROL, dst);
+    }
+
 #if CPU(X86_64)
+private:
+    template<GroupOpcodeID op>
+    void shiftInstruction64(int imm, RegisterID dst)
+    {
+        if (imm == 1)
+            m_formatter.oneByteOp64(OP_GROUP2_Ev1, op, dst);
+        else {
+            m_formatter.oneByteOp64(OP_GROUP2_EvIb, op, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
+public:
     void sarq_CLr(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SAR, dst);
@@ -1081,22 +1101,12 @@ public:
 
     void sarq_i8r(int imm, RegisterID dst)
     {
-        if (imm == 1)
-            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_SAR, dst);
-        else {
-            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_SAR, dst);
-            m_formatter.immediate8(imm);
-        }
+        shiftInstruction64<GROUP2_OP_SAR>(imm, dst);
     }
 
     void shrq_i8r(int imm, RegisterID dst)
     {
-        if (imm == 1)
-            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_SHR, dst);
-        else {
-            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_SHR, dst);
-            m_formatter.immediate8(imm);
-        }
+        shiftInstruction64<GROUP2_OP_SHR>(imm, dst);
     }
 
     void shrq_CLr(RegisterID dst)
@@ -1106,17 +1116,32 @@ public:
 
     void shlq_i8r(int imm, RegisterID dst)
     {
-        if (imm == 1)
-            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_SHL, dst);
-        else {
-            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_SHL, dst);
-            m_formatter.immediate8(imm);
-        }
+        shiftInstruction64<GROUP2_OP_SHL>(imm, dst);
     }
 
     void shlq_CLr(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
+    }
+
+    void rorq_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction64<GROUP2_OP_ROR>(imm, dst);
+    }
+
+    void rorq_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_ROR, dst);
+    }
+
+    void rolq_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction64<GROUP2_OP_ROL>(imm, dst);
+    }
+
+    void rolq_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_ROL, dst);
     }
 #endif // CPU(X86_64)
 

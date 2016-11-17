@@ -2191,6 +2191,16 @@ private:
             return;
         }
 
+        case RotR: {
+            appendShift<RotateRight32, RotateRight64>(m_value->child(0), m_value->child(1));
+            return;
+        }
+
+        case RotL: {
+            appendShift<RotateLeft32, RotateLeft64>(m_value->child(0), m_value->child(1));
+            return;
+        }
+
         case Clz: {
             appendUnOp<CountLeadingZeros32, CountLeadingZeros64>(m_value->child(0));
             return;

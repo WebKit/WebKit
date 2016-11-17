@@ -1,3 +1,92 @@
+2016-11-17  Keith Miller  <keith_miller@apple.com>
+
+        Add support for rotate in B3 and the relevant assemblers
+        https://bugs.webkit.org/show_bug.cgi?id=164869
+
+        Reviewed by Geoffrey Garen.
+
+        This patch runs RotR and RotL (rotate right and left respectively)
+        through B3 and B3's assemblers. One thing of note is that ARM64 does
+        not support rotate left instead it allows negative right rotations.
+
+        This patch also fixes a theoretical bug in the assembler where
+        on X86 doing someShiftOp(reg, edx) would instead shift the shift
+        amount by the value. Additionally, this patch refactors some
+        of the X86 assembler to use templates when deciding how to format
+        the appropriate shift instruction.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::rotateRight32):
+        (JSC::MacroAssemblerARM64::rotateRight64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::rotateRight32):
+        (JSC::MacroAssemblerX86Common::rotateLeft32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::lshift64):
+        (JSC::MacroAssemblerX86_64::rshift64):
+        (JSC::MacroAssemblerX86_64::urshift64):
+        (JSC::MacroAssemblerX86_64::rotateRight64):
+        (JSC::MacroAssemblerX86_64::rotateLeft64):
+        (JSC::MacroAssemblerX86_64::or64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::xorq_rm):
+        (JSC::X86Assembler::shiftInstruction32):
+        (JSC::X86Assembler::sarl_i8r):
+        (JSC::X86Assembler::shrl_i8r):
+        (JSC::X86Assembler::shll_i8r):
+        (JSC::X86Assembler::rorl_i8r):
+        (JSC::X86Assembler::rorl_CLr):
+        (JSC::X86Assembler::roll_i8r):
+        (JSC::X86Assembler::roll_CLr):
+        (JSC::X86Assembler::shiftInstruction64):
+        (JSC::X86Assembler::sarq_CLr):
+        (JSC::X86Assembler::sarq_i8r):
+        (JSC::X86Assembler::shrq_i8r):
+        (JSC::X86Assembler::shlq_i8r):
+        (JSC::X86Assembler::rorq_i8r):
+        (JSC::X86Assembler::rorq_CLr):
+        (JSC::X86Assembler::rolq_i8r):
+        (JSC::X86Assembler::rolq_CLr):
+        * b3/B3Common.h:
+        (JSC::B3::rotateRight):
+        (JSC::B3::rotateLeft):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::rotRConstant):
+        (JSC::B3::Const32Value::rotLConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::rotRConstant):
+        (JSC::B3::Const64Value::rotLConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::rotRConstant):
+        (JSC::B3::Value::rotLConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isRotateRight32Valid):
+        (JSC::B3::Air::isRotateLeft32Valid):
+        (JSC::B3::Air::isRotateRight64Valid):
+        (JSC::B3::Air::isRotateLeft64Valid):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testRotR):
+        (JSC::B3::testRotL):
+        (JSC::B3::testRotRWithImmShift):
+        (JSC::B3::testRotLWithImmShift):
+        (JSC::B3::run):
+
 2016-11-17  Saam Barati  <sbarati@apple.com>
 
         Remove async/await compile time flag and enable tests

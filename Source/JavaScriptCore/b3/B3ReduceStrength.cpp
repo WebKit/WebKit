@@ -1069,9 +1069,7 @@ private:
                 break;
             }
 
-            if (handleShiftAmount())
-                break;
-
+            handleShiftAmount();
             break;
 
         case SShr:
@@ -1131,9 +1129,7 @@ private:
                     break;
             }
 
-            if (handleShiftAmount())
-                break;
-
+            handleShiftAmount();
             break;
 
         case ZShr:
@@ -1144,9 +1140,39 @@ private:
                 break;
             }
 
-            if (handleShiftAmount())
-                break;
+            handleShiftAmount();
+            break;
 
+        case RotR:
+            // Turn this: RotR(constant1, constant2)
+            // Into this: (constant1 >> constant2) | (constant1 << sizeof(constant1) * 8 - constant2)
+            if (Value* constant = m_value->child(0)->rotRConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            handleShiftAmount();
+            break;
+
+        case RotL:
+            // Turn this: RotL(constant1, constant2)
+            // Into this: (constant1 << constant2) | (constant1 >> sizeof(constant1) * 8 - constant2)
+            if (Value* constant = m_value->child(0)->rotLConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            // ARM64 only has rotate right.
+            // Turn this: RotL(value, shift)
+            // Into this: RotR(value, Neg(shift))
+            if (isARM64()) {
+                Value* newShift = m_insertionSet.insert<Value>(m_index, Neg, m_value->origin(), m_value->child(1));
+                Value* rotate = m_insertionSet.insert<Value>(m_index, RotR, m_value->origin(), m_value->child(0), newShift);
+                replaceWithIdentity(rotate);
+                break;
+            }
+
+            handleShiftAmount();
             break;
 
         case Abs:
@@ -2184,12 +2210,12 @@ private:
         m_changed = true;
     }
 
-    bool handleShiftAmount()
+    void handleShiftAmount()
     {
         // Shift anything by zero is identity.
         if (m_value->child(1)->isInt32(0)) {
             replaceWithIdentity(m_value->child(0));
-            return true;
+            return;
         }
 
         // The shift already masks its shift amount. If the shift amount is being masked by a
@@ -2202,11 +2228,7 @@ private:
             && (m_value->child(1)->child(1)->asInt32() & mask) == mask) {
             m_value->child(1) = m_value->child(1)->child(0);
             m_changed = true;
-            // Don't need to return true, since we're still the same shift, and we can still cascade
-            // through other optimizations.
         }
-        
-        return false;
     }
 
     void replaceIfRedundant()
