@@ -1162,16 +1162,6 @@ private:
                 break;
             }
 
-            // ARM64 only has rotate right.
-            // Turn this: RotL(value, shift)
-            // Into this: RotR(value, Neg(shift))
-            if (isARM64()) {
-                Value* newShift = m_insertionSet.insert<Value>(m_index, Neg, m_value->origin(), m_value->child(1));
-                Value* rotate = m_insertionSet.insert<Value>(m_index, RotR, m_value->origin(), m_value->child(0), newShift);
-                replaceWithIdentity(rotate);
-                break;
-            }
-
             handleShiftAmount();
             break;
 

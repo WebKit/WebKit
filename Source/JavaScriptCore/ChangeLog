@@ -1,5 +1,26 @@
 2016-11-17  Keith Miller  <keith_miller@apple.com>
 
+        Add rotate to Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=164871
+
+        Reviewed by Filip Pizlo.
+
+        Add rotate left and rotate right to Wasm. These directly map to B3 opcodes.
+        This also moves arm specific transformations of rotate left to lower macros
+        after optimization. It's a bad idea to have platform specific canonicalizations
+        in reduce strength since other optimizations may not be aware of it.
+
+        Add a bug to do pure CSE after lower macros after optimization since we want to
+        clean up RotL(value, Neg(Neg(shift))).
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * wasm/wasm.json:
+
+2016-11-17  Keith Miller  <keith_miller@apple.com>
+
         Add sqrt to Wasm
         https://bugs.webkit.org/show_bug.cgi?id=164877
 

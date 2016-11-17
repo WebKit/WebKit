@@ -105,6 +105,9 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     legalizeMemoryOffsets(procedure);
     moveConstants(procedure);
 
+    // FIXME: We should run pureCSE here to clean up some platform specific changes from the previous phases.
+    // https://bugs.webkit.org/show_bug.cgi?id=164873
+
     if (shouldValidateIR())
         validate(procedure);
     
