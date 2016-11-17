@@ -51,7 +51,7 @@ public:
 
     unsigned quota() const { return m_quotaSize; }
 
-    static const unsigned noQuota = UINT_MAX;
+    static const constexpr unsigned noQuota = UINT_MAX;
 
 private:
     explicit StorageMap(unsigned quota);
