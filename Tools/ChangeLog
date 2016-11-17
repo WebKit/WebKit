@@ -1,3 +1,13 @@
+2016-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r208455): LayoutTests swipe/pushState-cached-back-swipe.html and swipe/main-frame-pinning-requirement.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=164572
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm: (WTR::TestController::platformResetStateToConsistentValues):
+        Use the correct constant.
+
 2016-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6][WebCore] Change ES6_MODULES compile time flag to runtime flag

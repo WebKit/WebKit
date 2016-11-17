@@ -599,6 +599,3 @@ webkit.org/b/161653 [ Debug ] storage/indexeddb/key-generator.html [ Pass Timeou
 webkit.org/b/163453 [ Sierra Release ] http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html [ Pass Timeout ]
 
 webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]
-
-webkit.org/b/164572 [ ElCapitan ] swipe/main-frame-pinning-requirement.html [ Failure ]
-webkit.org/b/164572 [ ElCapitan ] swipe/pushState-cached-back-swipe.html [ Failure ]

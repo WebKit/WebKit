@@ -1,3 +1,12 @@
+2016-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r208455): LayoutTests swipe/pushState-cached-back-swipe.html and swipe/main-frame-pinning-requirement.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=164572
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations: Remove flakiness expectations.
+
 2016-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         Clear track client when removing a track
