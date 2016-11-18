@@ -1,3 +1,21 @@
+2016-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r208511): ImageDecoders: Crash decoding GIF images since r208511
+        https://bugs.webkit.org/show_bug.cgi?id=164864
+
+        Reviewed by Simon Fraser.
+
+        This happens sometimes since r208511 because the same decoder is used by more than one thread at the same
+        time and the decoders are not thread-safe. Several methods in ImageDecoder need to decode partially the image,
+        so it's possible that one method calls frameBufferAtIndex at the same times as createFrameImageAtIndex that now
+        can be called from the image decoder thread. Use a Lock in ImageDecoder to protect calls to frameBufferAtIndex.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+
 2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an experimental API to find elements across shadow boundaries

@@ -170,6 +170,7 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 bool ImageDecoder::frameIsCompleteAtIndex(size_t index)
 {
+    LockHolder locker(m_lock);
     ImageFrame* buffer = frameBufferAtIndex(index);
     return buffer && buffer->isComplete();
 }
@@ -193,6 +194,7 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
 
 float ImageDecoder::frameDurationAtIndex(size_t index)
 {
+    LockHolder locker(m_lock);
     ImageFrame* buffer = frameBufferAtIndex(index);
     if (!buffer || buffer->isEmpty())
         return 0;
@@ -213,6 +215,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
     if (size().isEmpty())
         return nullptr;
 
+    LockHolder locker(m_lock);
     ImageFrame* buffer = frameBufferAtIndex(index);
     if (!buffer || buffer->isEmpty() || !buffer->hasBackingStore())
         return nullptr;
