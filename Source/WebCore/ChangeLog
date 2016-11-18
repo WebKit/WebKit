@@ -1,3 +1,70 @@
+2016-11-18  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Hook up InspectorStyleSheet to the new CSS parser.
+        https://bugs.webkit.org/show_bug.cgi?id=164886
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSGrammar.y.in:
+        Get rid of the CSSRuleSourceData type enum, since StyleRule's type
+        enum is exactly the same.
+
+        * css/CSSPropertySourceData.cpp:
+        (WebCore::CSSPropertySourceData::CSSPropertySourceData):
+        * css/CSSPropertySourceData.h:
+        Add a concept of disabled to CSSPropertySourceData. This is used for
+        commented out properties.
+
+        (WebCore::CSSRuleSourceData::create):
+        (WebCore::CSSRuleSourceData::createUnknown):
+        (WebCore::CSSRuleSourceData::CSSRuleSourceData):
+        Get rid of the CSSRuleSourceData type enum, since StyleRule's type
+        enum is exactly the same.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::CSSParser::parseSheetForInspector):
+        (WebCore::CSSParser::parseDeclarationForInspector):
+        (WebCore::CSSParser::markSupportsRuleHeaderStart):
+        (WebCore::CSSParser::markRuleHeaderStart):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/parser/CSSParser.h:
+        Add functions that represent the new API for inspector sheet
+        and declaration parsing. Patch the old parse code to use StyleRule::Type
+        now that the CSSRuleSourceData type is gone.
+
+        * css/parser/CSSParserObserver.h:
+        Tweak the API for our memory management.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        (WebCore::parserContextForDocument):
+        (WebCore::StyleSheetHandler::StyleSheetHandler):
+        (WebCore::StyleSheetHandler::startRuleHeader):
+        (WebCore::StyleSheetHandler::setRuleHeaderEnd):
+        (WebCore::StyleSheetHandler::endRuleHeader):
+        (WebCore::StyleSheetHandler::observeSelector):
+        (WebCore::StyleSheetHandler::startRuleBody):
+        (WebCore::StyleSheetHandler::endRuleBody):
+        (WebCore::StyleSheetHandler::popRuleData):
+        (WebCore::fixUnparsedProperties):
+        (WebCore::StyleSheetHandler::fixUnparsedPropertyRanges):
+        (WebCore::StyleSheetHandler::observeProperty):
+        (WebCore::StyleSheetHandler::observeComment):
+        (WebCore::InspectorStyle::populateAllProperties):
+        (WebCore::isValidSelectorListString):
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+        (WebCore::InspectorStyleSheetForInlineStyle::ensureParsedDataReady):
+        (WebCore::InspectorStyleSheetForInlineStyle::ruleSourceData):
+        (WebCore::createCSSParser): Deleted.
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges): Deleted.
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorStyleProperty::setRawTextFromStyleDeclaration):
+        Add the new implementation. This involves duplicating most of the old
+        parser code for this into a new class, StyleSheetHandler, that implements
+        the observer interface and builds up the same data structures as the old
+        parser did in response to the callbacks.
+
 2016-11-18  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix some non-macOS builds.

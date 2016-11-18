@@ -50,6 +50,7 @@ namespace WebCore {
 class AnimationParseContext;
 class CSSBorderImageSliceValue;
 class CSSContentDistributionValue;
+class CSSParserObserver;
 class CSSPrimitiveValue;
 class CSSSelectorList;
 class CSSValue;
@@ -132,6 +133,9 @@ public:
     RefPtr<StyleKeyframe> parseKeyframeRule(StyleSheetContents*, const String&);
     bool parseSupportsCondition(const String&);
 
+    static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserObserver&);
+    static void parseDeclarationForInspector(const CSSParserContext&, const String&, CSSParserObserver&);
+
     static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&, StyleSheetContents*);
     static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomicString& propertyName, const String&, bool important, const CSSParserContext&, StyleSheetContents* contextStyleSheet);
 
@@ -141,6 +145,7 @@ public:
     static RefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     RefPtr<CSSPrimitiveValue> parseValidPrimitive(CSSValueID ident, ValueWithCalculation&);
 
+    // FIXME-NEWPARSER: Can remove the last two arguments once the new parser is turned on.
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&, RefPtr<CSSRuleSourceData>&&, StyleSheetContents* contextStyleSheet);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
 
@@ -456,7 +461,7 @@ public:
     RuleSourceDataList* m_ruleSourceDataResult { nullptr };
 
     void fixUnparsedPropertyRanges(CSSRuleSourceData&);
-    void markRuleHeaderStart(CSSRuleSourceData::Type);
+    void markRuleHeaderStart(StyleRule::Type);
     void markRuleHeaderEnd();
 
     void startNestedSelectorList() { ++m_nestedSelectorLevel; }

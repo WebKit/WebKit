@@ -58,6 +58,7 @@
 #include "CSSPageRule.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
+#include "CSSParserObserver.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -390,6 +391,11 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, cons
     m_rule = nullptr;
     m_ignoreErrorsInDeclaration = false;
     m_logErrors = false;
+}
+
+void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserObserver& observer)
+{
+    return CSSParserImpl::parseStyleSheetForInspector(string, context, sheet, observer);
 }
 
 RefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const String& string)
@@ -1513,6 +1519,11 @@ bool CSSParser::parseDeclaration(MutableStyleProperties& declaration, const Stri
     }
 
     return ok;
+}
+
+void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, const String& string, CSSParserObserver& observer)
+{
+    CSSParserImpl::parseDeclarationListForInspector(string, context, observer);
 }
 
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
@@ -12925,7 +12936,7 @@ void CSSParser::markSupportsRuleHeaderStart()
     if (!m_supportsRuleDataStack)
         m_supportsRuleDataStack = std::make_unique<RuleSourceDataList>();
 
-    auto data = CSSRuleSourceData::create(CSSRuleSourceData::SUPPORTS_RULE);
+    auto data = CSSRuleSourceData::create(StyleRule::Supports);
     data->ruleHeaderRange.start = tokenStartOffset();
     m_supportsRuleDataStack->append(WTFMove(data));
 }
@@ -13325,7 +13336,7 @@ void CSSParser::fixUnparsedPropertyRanges(CSSRuleSourceData& ruleData)
     fixUnparsedProperties<UChar>(m_dataStart16.get() + m_parsedTextPrefixLength, ruleData);
 }
 
-void CSSParser::markRuleHeaderStart(CSSRuleSourceData::Type ruleType)
+void CSSParser::markRuleHeaderStart(StyleRule::Type ruleType)
 {
     if (!isExtractingSourceData())
         return;
@@ -13450,7 +13461,7 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         // The property range is relative to the declaration start offset.
         SourceRange& topRuleBodyRange = m_currentRuleDataStack->last()->ruleBodyRange;
         m_currentRuleDataStack->last()->styleSourceData->propertyData.append(
-            CSSPropertySourceData(name, value, isImportantFound, isPropertyParsed, SourceRange(start - topRuleBodyRange.start, end - topRuleBodyRange.start)));
+            CSSPropertySourceData(name, value, isImportantFound, false, isPropertyParsed, SourceRange(start - topRuleBodyRange.start, end - topRuleBodyRange.start)));
     }
     resetPropertyRange();
 }

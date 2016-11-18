@@ -516,7 +516,7 @@ at_import_header_end_maybe_space:
 
 before_import_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::IMPORT_RULE);
+        parser->markRuleHeaderStart(StyleRule::Import);
     }
     ;
 
@@ -654,7 +654,7 @@ at_rule_body_start:
 
 before_media_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::MEDIA_RULE);
+        parser->markRuleHeaderStart(StyleRule::Media);
     }
     ;
 
@@ -699,7 +699,7 @@ supports_error:
 
 before_supports_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::SUPPORTS_RULE);
+        parser->markRuleHeaderStart(StyleRule::Supports);
         parser->markSupportsRuleHeaderStart();
     }
     ;
@@ -767,7 +767,7 @@ supports_declaration_condition:
 
 before_keyframes_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::KEYFRAMES_RULE);
+        parser->markRuleHeaderStart(StyleRule::Keyframe);
     }
     ;
 
@@ -829,7 +829,7 @@ key:
 
 before_page_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::PAGE_RULE);
+        parser->markRuleHeaderStart(StyleRule::Page);
     }
     ;
 
@@ -942,7 +942,7 @@ margin_sym:
 
 before_font_face_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::FONT_FACE_RULE);
+        parser->markRuleHeaderStart(StyleRule::FontFace);
     }
     ;
 
@@ -965,7 +965,7 @@ font_face:
 before_viewport_rule:
     /* empty */ {
         parser->markViewportRuleBodyStart();
-        parser->markRuleHeaderStart(CSSRuleSourceData::VIEWPORT_RULE);
+        parser->markRuleHeaderStart(StyleRule::Viewport);
     }
     ;
 
@@ -991,7 +991,7 @@ viewport:
 
 before_region_rule:
     /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::REGION_RULE);
+        parser->markRuleHeaderStart(StyleRule::Region);
     }
     ;
 
@@ -1024,7 +1024,7 @@ maybe_space_before_declaration: maybe_space { parser->markPropertyStart(); } ;
 
 before_selector_list:
     {
-        parser->markRuleHeaderStart(CSSRuleSourceData::STYLE_RULE);
+        parser->markRuleHeaderStart(StyleRule::Style);
         parser->markSelectorStart();
     }
   ;

@@ -55,10 +55,11 @@ unsigned SourceRange::length() const
     return end - start;
 }
 
-CSSPropertySourceData::CSSPropertySourceData(const String& name, const String& value, bool important, bool parsedOk, const SourceRange& range)
+CSSPropertySourceData::CSSPropertySourceData(const String& name, const String& value, bool important, bool disabled, bool parsedOk, const SourceRange& range)
     : name(name)
     , value(value)
     , important(important)
+    , disabled(disabled)
     , parsedOk(parsedOk)
     , range(range)
 {
@@ -68,6 +69,7 @@ CSSPropertySourceData::CSSPropertySourceData(const CSSPropertySourceData& other)
     : name(other.name)
     , value(other.value)
     , important(other.important)
+    , disabled(other.disabled)
     , parsedOk(other.parsedOk)
     , range(other.range)
 {
@@ -77,6 +79,7 @@ CSSPropertySourceData::CSSPropertySourceData()
     : name(emptyString())
     , value(emptyString())
     , important(false)
+    , disabled(false)
     , parsedOk(false)
     , range(SourceRange(0, 0))
 {
