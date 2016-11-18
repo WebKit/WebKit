@@ -1,3 +1,22 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unsupported emoji are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=164944
+        <rdar://problem/28591608>
+
+        Reviewed by Dean Jackson.
+
+        In WidthIterator, we explicitly skip characters which the OS has no font
+        to render with. However, for emoji, we should draw something to show that
+        there is missing content. Because we have nothing to draw, we can draw
+        the .notdef glyph (empty box, or "tofu").
+
+        Test: fast/text/emoji-draws.html
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::characterMustDrawSomething):
+        (WebCore::WidthIterator::advanceInternal):
+
 2016-11-18  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for record types

@@ -1,3 +1,14 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unsupported emoji are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=164944
+        <rdar://problem/28591608>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/emoji-draws-expected-mismatch.html: Added.
+        * fast/text/emoji-draws.html: Added.
+
 2016-11-18  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for record types
