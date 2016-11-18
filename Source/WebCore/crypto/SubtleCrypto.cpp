@@ -32,6 +32,7 @@ namespace WebCore {
 
 SubtleCrypto::SubtleCrypto(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)
+    , m_workQueue(WorkQueue::create("com.apple.WebKit.CryptoQueue"))
 {
 }
 

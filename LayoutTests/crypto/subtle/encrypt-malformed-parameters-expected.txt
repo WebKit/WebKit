@@ -1,0 +1,15 @@
+Test encrypting with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.encrypt() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.encrypt(1) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.encrypt(1, 2) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.encrypt(aesCbcParams, fakedKey, plainText) rejected promise  with TypeError: Invalid CryptoKey.
+PASS crypto.subtle.encrypt(aesCbcParams, wrongKey, plainText) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't match AlgorithmIdentifier.
+PASS crypto.subtle.encrypt(aesCbcParams, wrongKey, plainText) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't support encryption.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

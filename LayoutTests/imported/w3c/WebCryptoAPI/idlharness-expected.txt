@@ -43,8 +43,8 @@ FAIL SubtleCrypto interface: operation wrapKey(KeyFormat,CryptoKey,CryptoKey,Alg
 FAIL SubtleCrypto interface: operation unwrapKey(KeyFormat,BufferSource,CryptoKey,AlgorithmIdentifier,AlgorithmIdentifier,boolean,[object Object]) assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 FAIL SubtleCrypto must be primary interface of crypto.subtle assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 PASS Stringification of crypto.subtle 
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "encrypt" with the proper type (0) assert_inherits: property "encrypt" not found in prototype chain
-FAIL SubtleCrypto interface: calling encrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "encrypt" not found in prototype chain
+PASS SubtleCrypto interface: crypto.subtle must inherit property "encrypt" with the proper type (0) 
+PASS SubtleCrypto interface: calling encrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError 
 FAIL SubtleCrypto interface: crypto.subtle must inherit property "decrypt" with the proper type (1) assert_inherits: property "decrypt" not found in prototype chain
 FAIL SubtleCrypto interface: calling decrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "decrypt" not found in prototype chain
 FAIL SubtleCrypto interface: crypto.subtle must inherit property "sign" with the proper type (2) assert_inherits: property "sign" not found in prototype chain

@@ -71,6 +71,7 @@ bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDep
 
 void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
+    ASSERT(parameters);
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmHMAC(usages)) {
@@ -94,6 +95,7 @@ void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParam
 
 void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    ASSERT(parameters);
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmHMAC(usages)) {
@@ -139,9 +141,9 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
     callback(*result);
 }
 
-void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    const auto& hmacKey = downcast<CryptoKeyHMAC>(*key);
+    const auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
 
     if (hmacKey.key().isEmpty()) {
         exceptionCallback(OperationError);

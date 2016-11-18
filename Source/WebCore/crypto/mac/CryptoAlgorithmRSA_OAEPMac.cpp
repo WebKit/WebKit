@@ -29,32 +29,64 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CommonCryptoUtilities.h"
+#include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoAlgorithmRsaOaepParamsDeprecated.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
+// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
 {
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
-        return Exception { NOT_SUPPORTED_ERR };
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
+        return Exception { OperationError };
 
-    Vector<uint8_t> cipherText(1024);
+    Vector<uint8_t> cipherText(keyLength / 8); // Per Step 3.c of https://tools.ietf.org/html/rfc3447#section-7.1.1
     size_t cipherTextLength = cipherText.size();
+    if (CCRSACryptorEncrypt(key, ccOAEPPadding, data, dataLength, cipherText.data(), &cipherTextLength, label.data(), label.size(), digestAlgorithm))
+        return Exception { OperationError };
+
+    return WTFMove(cipherText);
+}
+
+void CryptoAlgorithmRSA_OAEP::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(*parameters);
+        auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
+        auto result = encryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
+        if (result.hasException()) {
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue()](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
+ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
+{
     ASSERT(parameters.hasLabel || parameters.label.isEmpty());
-    CCCryptorStatus status = CCRSACryptorEncrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, cipherText.data(), &cipherTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
-    if (status) {
+    auto result = encryptRSA_OAEP(parameters.hash, parameters.label, key.platformKey(), key.keySizeInBits(), data.first, data.second);
+    if (result.hasException()) {
         failureCallback();
         return { };
     }
-
-    cipherText.resize(cipherTextLength);
-    callback(cipherText);
+    callback(result.releaseReturnValue());
     return { };
 }
 
+// FIXME: We should get rid of the magic number 1024. It only makes sense when key length < 8192 bits
 ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     CCDigestAlgorithm digestAlgorithm;

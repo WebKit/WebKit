@@ -37,11 +37,13 @@ class CryptoAlgorithmParameters {
 public:
     enum class Class {
         None,
+        AesCbcParams,
         AesKeyGenParams,
         HmacKeyParams,
         RsaHashedKeyGenParams,
         RsaHashedImportParams,
         RsaKeyGenParams,
+        RsaOaepParams,
     };
 
     // FIXME: Consider merging name and identifier.

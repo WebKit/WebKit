@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WorkQueue.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -39,8 +40,12 @@ public:
 
     static Ref<SubtleCrypto> create(ScriptExecutionContext& context) { return adoptRef(*new SubtleCrypto(context)); }
 
+    WorkQueue& workQueue() { return m_workQueue.get(); };
+
 private:
     SubtleCrypto(ScriptExecutionContext&);
+
+    Ref<WorkQueue> m_workQueue;
 };
 
 }

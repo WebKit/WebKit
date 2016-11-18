@@ -34,6 +34,11 @@
 
 namespace WebCore {
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
+
 ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();

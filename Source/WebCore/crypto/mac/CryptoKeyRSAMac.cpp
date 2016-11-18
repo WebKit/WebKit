@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+// FIXME: We should get rid of magic number 16384. It assumes that the length of provided key will not exceed 16KB.
+// https://bugs.webkit.org/show_bug.cgi?id=164942
 static CCCryptorStatus getPublicKeyComponents(CCRSACryptorRef rsaKey, Vector<uint8_t>& modulus, Vector<uint8_t>& publicExponent)
 {
     ASSERT(CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic || CCRSAGetKeyType(rsaKey) == ccRSAKeyPrivate);
@@ -233,7 +235,9 @@ static bool bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& resu
     return true;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap usage, KeyPairCallback callback, VoidCallback failureCallback, ScriptExecutionContext* context)
+// FIXME: We should use WorkQueue here instead of dispatch_async once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164943
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap usage, KeyPairCallback&& callback, VoidCallback&& failureCallback, ScriptExecutionContext* context)
 {
     uint32_t e;
     if (!bigIntegerToUInt32(publicExponent, e)) {

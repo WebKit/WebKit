@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+void CryptoAlgorithmRSA_OAEP::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
+
 ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();

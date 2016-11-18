@@ -70,6 +70,7 @@ bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithm
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
+    ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedKeyGenParams>(*parameters);
 
     if (usages & (CryptoKeyUsageDecrypt | CryptoKeyUsageEncrypt | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
@@ -90,6 +91,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoA
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
 
     RefPtr<CryptoKeyRSA> result;
@@ -146,9 +148,9 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format,
     callback(*result);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    const auto& rsaKey = downcast<CryptoKeyRSA>(*key);
+    const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {
         exceptionCallback(OperationError);

@@ -68,8 +68,20 @@ bool CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches(const CryptoAlgorithmRsaOaepPa
     return true;
 }
 
+void CryptoAlgorithmRSA_OAEP::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    ASSERT(parameters);
+    if (key->type() != CryptoKeyType::Public) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    platformEncrypt(WTFMove(parameters), WTFMove(key), WTFMove(plainText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
+
 void CryptoAlgorithmRSA_OAEP::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
+    ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedKeyGenParams>(*parameters);
 
     if (usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits)) {
@@ -90,6 +102,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const std::unique_ptr<CryptoAlgorithmP
 
 void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
 
     RefPtr<CryptoKeyRSA> result;
@@ -157,9 +170,9 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
     callback(*result);
 }
 
-void CryptoAlgorithmRSA_OAEP::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmRSA_OAEP::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    const auto& rsaKey = downcast<CryptoKeyRSA>(*key);
+    const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {
         exceptionCallback(OperationError);

@@ -59,8 +59,18 @@ bool CryptoAlgorithmRSAES_PKCS1_v1_5::keyAlgorithmMatches(const CryptoKey& key) 
     return true;
 }
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    if (key->type() != CryptoKeyType::Public) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    platformEncrypt(WTFMove(key), WTFMove(plainText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
 void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
+    ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(*parameters);
 
     if (usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
@@ -82,6 +92,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAl
 
 void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    ASSERT(parameters);
     RefPtr<CryptoKeyRSA> result;
     switch (format) {
     case SubtleCrypto::KeyFormat::Jwk: {
@@ -113,9 +124,9 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
     callback(*result);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    const auto& rsaKey = downcast<CryptoKeyRSA>(*key);
+    const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {
         exceptionCallback(OperationError);

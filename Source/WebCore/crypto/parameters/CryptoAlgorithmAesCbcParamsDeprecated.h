@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmAesCbcParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
     // The initialization vector. MUST be 16 bytes.
-    std::array<char, 16> iv;
+    std::array<uint8_t, 16> iv;
 
     Class parametersClass() const override { return Class::AesCbcParams; }
 };

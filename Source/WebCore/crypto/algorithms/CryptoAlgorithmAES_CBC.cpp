@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmAesCbcParams.h"
 #include "CryptoAlgorithmAesCbcParamsDeprecated.h"
 #include "CryptoAlgorithmAesKeyGenParams.h"
 #include "CryptoAlgorithmAesKeyGenParamsDeprecated.h"
@@ -40,6 +41,7 @@ namespace WebCore {
 static const char* const ALG128 = "A128CBC";
 static const char* const ALG192 = "A192CBC";
 static const char* const ALG256 = "A256CBC";
+static const size_t IVSIZE = 16;
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_CBC(CryptoKeyUsageBitmap usages)
 {
@@ -64,8 +66,20 @@ bool CryptoAlgorithmAES_CBC::keyAlgorithmMatches(const CryptoAlgorithmAesCbcPara
     return true;
 }
 
+void CryptoAlgorithmAES_CBC::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    ASSERT(parameters);
+    auto& aesParameters = downcast<CryptoAlgorithmAesCbcParams>(*parameters);
+    if (aesParameters.ivVector().size() != IVSIZE) {
+        exceptionCallback(OperationError);
+        return;
+    }
+    platformEncrypt(WTFMove(parameters), WTFMove(key), WTFMove(plainText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
 void CryptoAlgorithmAES_CBC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
+    ASSERT(parameters);
     auto& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(*parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmAES_CBC(usages)) {
@@ -84,6 +98,7 @@ void CryptoAlgorithmAES_CBC::generateKey(const std::unique_ptr<CryptoAlgorithmPa
 
 void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CBC(usages)) {
         exceptionCallback(SYNTAX_ERR);
         return;
@@ -121,9 +136,9 @@ void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&&
     callback(*result);
 }
 
-void CryptoAlgorithmAES_CBC::exportKey(SubtleCrypto::KeyFormat format, RefPtr<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAES_CBC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    const auto& aesKey = downcast<CryptoKeyAES>(*key);
+    const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
         exceptionCallback(OperationError);

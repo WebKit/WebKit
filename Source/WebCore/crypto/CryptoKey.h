@@ -31,7 +31,7 @@
 #include "CryptoKeyType.h"
 #include "CryptoKeyUsage.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -74,7 +74,7 @@ private:
     String m_name;
 };
 
-class CryptoKey : public RefCounted<CryptoKey> {
+class CryptoKey : public ThreadSafeRefCounted<CryptoKey> {
 public:
     using Type = CryptoKeyType;
     CryptoKey(CryptoAlgorithmIdentifier, Type, bool extractable, CryptoKeyUsageBitmap);

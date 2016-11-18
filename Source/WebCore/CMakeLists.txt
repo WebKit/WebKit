@@ -333,11 +333,13 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/SubtleCrypto.idl
     crypto/WebKitSubtleCrypto.idl
 
+    crypto/parameters/AesCbcParams.idl
     crypto/parameters/AesKeyGenParams.idl
     crypto/parameters/HmacKeyParams.idl
     crypto/parameters/RsaHashedImportParams.idl
     crypto/parameters/RsaHashedKeyGenParams.idl
     crypto/parameters/RsaKeyGenParams.idl
+    crypto/parameters/RsaOaepParams.idl
 
     css/CSSFontFaceLoadEvent.idl
     css/CSSFontFaceRule.idl
