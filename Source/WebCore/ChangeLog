@@ -1,3 +1,17 @@
+2016-11-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win32] Start releasing memory earlier when memory is running low.
+        https://bugs.webkit.org/show_bug.cgi?id=164862
+
+        Reviewed by Brent Fulgham.
+
+        On Windows, 32-bit processes have 2GB of memory available, where some is used by the system.
+        Debugging has shown that allocations might fail and cause crashes when memory usage is > ~1GB.
+        We should start releasing memory before we reach 1GB.
+
+        * platform/win/MemoryPressureHandlerWin.cpp:
+        (WebCore::CheckMemoryTimer::fired):
+
 2016-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r208511): ImageDecoders: Crash decoding GIF images since r208511
