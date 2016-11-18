@@ -1,5 +1,16 @@
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
+        Fix WinCairo build after r208740
+        https://bugs.webkit.org/show_bug.cgi?id=164749
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore::GraphicsContext3D::getExtensions):
+        Use more references instead of pointers, like Myles did in r208740
+
+2016-11-17  Alex Christensen  <achristensen@webkit.org>
+
         Implement TextDecoder and TextEncoder
         https://bugs.webkit.org/show_bug.cgi?id=163771
 
