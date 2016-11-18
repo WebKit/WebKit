@@ -482,7 +482,7 @@ public:
     const AtomicString& UIActions() const;
 #endif
     
-    virtual bool isSpellCheckingEnabled() const;
+    bool isSpellCheckingEnabled() const;
 
     RenderNamedFlowFragment* renderNamedFlowFragment() const;
 

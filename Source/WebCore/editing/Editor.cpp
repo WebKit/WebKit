@@ -54,6 +54,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
@@ -521,7 +522,7 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
         return;
 
     RefPtr<Range> rangeToCheck = Range::create(document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck));
-    m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
+    m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(*nodeToCheck, TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace, EditAction editingAction)
@@ -2374,7 +2375,8 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     bool asynchronous = m_frame.settings().asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
 
     // In asynchronous mode, we intentionally check paragraph-wide sentence.
-    auto request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
+    const auto resolvedOptions = resolveTextCheckingTypeMask(editableNode, textCheckingOptions);
+    auto request = SpellCheckRequest::create(resolvedOptions, TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
 
     if (asynchronous) {
         m_spellChecker->requestCheckingFor(WTFMove(request));
@@ -2382,7 +2384,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     }
 
     Vector<TextCheckingResult> results;
-    checkTextOfParagraph(*textChecker(), paragraphToCheck.text(), resolveTextCheckingTypeMask(textCheckingOptions), results, m_frame.selection().selection());
+    checkTextOfParagraph(*textChecker(), paragraphToCheck.text(), resolvedOptions, results, m_frame.selection().selection());
     markAndReplaceFor(WTFMove(request), results);
 }
 
@@ -3482,8 +3484,18 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, i
     return false;
 }       
 
-TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask textCheckingOptions)
+TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(const Node& rootEditableElement, TextCheckingTypeMask textCheckingOptions)
 {
+#if USE(AUTOMATIC_TEXT_REPLACEMENT) && !PLATFORM(IOS)
+    bool onlyAllowsTextReplacement = false;
+    if (auto* host = rootEditableElement.shadowHost())
+        onlyAllowsTextReplacement = is<HTMLInputElement>(host) && downcast<HTMLInputElement>(*host).isSpellcheckDisabledExceptTextReplacement();
+    if (onlyAllowsTextReplacement)
+        textCheckingOptions &= TextCheckingTypeReplacement;
+#else
+    UNUSED_PARAM(rootEditableElement);
+#endif
+
     bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
 #if !PLATFORM(IOS)
@@ -3505,16 +3517,18 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
     if (shouldPerformReplacement) {
-        if (isAutomaticLinkDetectionEnabled())
-            checkingTypes |= TextCheckingTypeLink;
-        if (isAutomaticQuoteSubstitutionEnabled())
-            checkingTypes |= TextCheckingTypeQuote;
-        if (isAutomaticDashSubstitutionEnabled())
-            checkingTypes |= TextCheckingTypeDash;
+        if (!onlyAllowsTextReplacement) {
+            if (isAutomaticLinkDetectionEnabled())
+                checkingTypes |= TextCheckingTypeLink;
+            if (isAutomaticQuoteSubstitutionEnabled())
+                checkingTypes |= TextCheckingTypeQuote;
+            if (isAutomaticDashSubstitutionEnabled())
+                checkingTypes |= TextCheckingTypeDash;
+            if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
+                checkingTypes |= TextCheckingTypeCorrection;
+        }
         if (isAutomaticTextReplacementEnabled())
             checkingTypes |= TextCheckingTypeReplacement;
-        if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
-            checkingTypes |= TextCheckingTypeCorrection;
     }
 #endif
 #endif // !PLATFORM(IOS)

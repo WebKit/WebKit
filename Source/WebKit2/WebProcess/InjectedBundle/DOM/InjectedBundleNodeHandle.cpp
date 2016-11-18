@@ -215,7 +215,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled(bool enabled
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(m_node.get()).setSpellcheckEnabled(enabled);
+    downcast<HTMLInputElement>(m_node.get()).setSpellcheckDisabledExceptTextReplacement(!enabled);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const

@@ -1,3 +1,35 @@
+2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled should keep text replacement enabled
+        https://bugs.webkit.org/show_bug.cgi?id=164857
+        <rdar://problem/27721742>
+
+        Reviewed by Wenson Hsieh.
+
+        It turns out that some users want text replacement to be always enabled so change the semantics of
+        WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled to only disable everything else.
+
+        Instead of completely disabling spellchecking, remove all text checking options but text replacement
+        when the user types into an input element on which this API is used to disable spellchecking.
+
+        No new tests since we don't have a good facility to test text replacement.
+
+        * dom/Element.h:
+        (WebCore::Element::isSpellCheckingEnabled): Made this non-virtual now that there is no override.
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Don't call resolveTextCheckingTypeMask twice.
+        (WebCore::Editor::resolveTextCheckingTypeMask): Filter out the text checking options if the root editable
+        element is inside an input element on which isSpellcheckDisabledExceptTextReplacement is set to true.
+        * editing/Editor.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::isSpellCheckingEnabled): Deleted.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::setSpellcheckDisabledExceptTextReplacement): Renamed from setSpellcheckEnabled
+        to reflect the new semantics.
+        (WebCore::HTMLInputElement::isSpellcheckDisabledExceptTextReplacement): Ditto.
+
 2016-11-17  John Wilander  <wilander@apple.com>
 
         Resource load statistics: Cover further data records, count removed data records, and only fire handler when needed
