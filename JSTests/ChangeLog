@@ -1,3 +1,15 @@
+2016-11-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r208867): JSC test failure: ChakraCore.yaml/ChakraCore/test/strict/05.arguments_sm.js.default
+        https://bugs.webkit.org/show_bug.cgi?id=164929
+
+        Reviewed by Mark Lam.
+
+        ES2017 drops arguments.caller and JavaScriptCore is updated to meet the spec.
+        This patch rebaselines the result of ChakraCore test for JSC.
+
+        * ChakraCore/test/strict/05.arguments_sm.baseline-jsc:
+
 2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generator functions should have a displayable name when shown in stack traces
