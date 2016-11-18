@@ -1,3 +1,14 @@
+2016-11-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix iOS build again.
+        <rdar://problem/29312689>
+
+        Unreviewed build fix.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack):
+
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] FontFaceSet.load() promises don't always fire

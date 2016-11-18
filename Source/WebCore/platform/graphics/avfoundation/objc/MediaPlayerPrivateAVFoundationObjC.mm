@@ -2706,7 +2706,10 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
 
     if (track) {
         if (track->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [m_avPlayer.get() setClosedCaptionDisplayEnabled:YES];
+#pragma clang diagnostic pop
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 #if ENABLE(AVF_CAPTIONS)
         else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
@@ -2719,7 +2722,10 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
         [m_avPlayerItem.get() selectMediaOption:0 inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 #endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [m_avPlayer.get() setClosedCaptionDisplayEnabled:NO];
+#pragma clang diagnostic pop
     }
 
 }
@@ -2735,7 +2741,10 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     // If AVFoundation has an audible group, return the language of the currently selected audible option.
     AVMediaSelectionGroupType *audibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     AVMediaSelectionOptionType *currentlySelectedAudibleOption = [m_avPlayerItem.get() selectedMediaOptionInMediaSelectionGroup:audibleGroup];
+#pragma clang diagnostic pop
     if (currentlySelectedAudibleOption) {
         m_languageOfPrimaryAudioTrack = [[currentlySelectedAudibleOption locale] localeIdentifier];
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - returning language of selected audible option: %s", this, m_languageOfPrimaryAudioTrack.utf8().data());
