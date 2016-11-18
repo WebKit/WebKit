@@ -108,7 +108,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     Ref<CSSFontFaceSet> m_backing;
-    HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
+    HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     Optional<ReadyPromise> m_promise;
     bool m_isReady { true };
 };

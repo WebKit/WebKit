@@ -206,6 +206,16 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         return;
 
     if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookUpByCSSConnection(fontFaceRule)) {
+        // This adoption is fairly subtle. Script can trigger a purge of m_cssFontFaceSet at any time,
+        // which will cause us to just rely on the memory cache to retain the bytes of the file the next
+        // time we build up the CSSFontFaceSet. However, when the CSS Font Loading API is involved,
+        // the FontFace and FontFaceSet objects need to retain state. We create the new CSSFontFace object
+        // while the old one is still in scope so that the memory cache will be forced to retain the bytes
+        // of the resource. This means that the CachedFont will temporarily have two clients (until the
+        // old CSSFontFace goes out of scope, which should happen at the end of this "if" block). Because
+        // the CSSFontFaceSource objects will inspect their CachedFonts, the new CSSFontFace is smart enough
+        // to enter the correct state() during the next pump(). This approach of making a new CSSFontFace is
+        // simpler than computing and applying a diff of the StyleProperties.
         m_cssFontFaceSet->remove(*existingFace);
         if (auto* existingWrapper = existingFace->existingWrapper())
             existingWrapper->adopt(fontFace.get());

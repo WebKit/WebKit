@@ -448,6 +448,7 @@ void CSSFontFace::initializeWrapper()
         m_wrapper->fontStateChanged(*this, Status::Pending, Status::Failure);
         break;
     }
+    m_mayBePurged = false;
 }
 
 Ref<FontFace> CSSFontFace::wrapper()
@@ -458,7 +459,6 @@ Ref<FontFace> CSSFontFace::wrapper()
     auto wrapper = FontFace::create(*this);
     m_wrapper = wrapper->createWeakPtr();
     initializeWrapper();
-    m_mayBePurged = false;
     return wrapper;
 }
 

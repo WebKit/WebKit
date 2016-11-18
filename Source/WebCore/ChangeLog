@@ -1,5 +1,52 @@
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [CSS Font Loading] FontFaceSet.load() promises don't always fire
+        https://bugs.webkit.org/show_bug.cgi?id=164902
+
+        Reviewed by David Hyatt.
+
+        Test: fast/text/fontfaceset-rebuild-during-loading.html
+
+        We currently handle web fonts in two phases. The first phase is building up
+        StyleRuleFontFace objects which reflect the style on the page. The second is creating
+        CSSFontFace objects from those StyleRuleFontFace objects. When script modifies the
+        style on the page, we can often update the CSSFontFace objects, but there are some
+        modifications which we don't know how to model. For these operations, we destroy the
+        CSSFontFace objects and rebuild them from the newly modified StyleRuleFontFace objects.
+
+        Normally, this is fine. However, with the CSS font loading API, the CSSFontFaces back
+        Javascript objects which will persist across the rebuilding step mentioned above. This
+        means that the FontFace objects need to adopt the new CSSFontFace objects and forget
+        the old CSSFontFace objects.
+
+        There was one bit of state which I forgot to update during this rebuilding phase. The
+        FontFaceSet object contains an internal HashMap where a reference to a CSSFontFace
+        is used as a key. After the rebuilding phase, this reference wasn't updated to point
+        to the new CSSFontFace.
+
+        The solution is to instead use a reference to the higher-level FontFace as the key to
+        the HashMap. This object is persistent across the rebuilding phase (and it adopts
+        the new CSSFontFaces). There is not a lifetime problem because the FontFace holds a
+        strong reference to its backing CSSFontFace object.
+
+        This bug didn't cause a memory problem because the HashMap was keeping the old
+        CSSFontFace alive because the key was a strong reference.
+
+        This patch also adds a lengthy comment explaining how the migration works.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::initializeWrapper): This is another bit of state which didn't
+        survive the rebuilding phase. Moving it here causes it to survive.
+        (WebCore::CSSFontFace::wrapper):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::load):
+        (WebCore::FontFaceSet::faceFinished):
+        * css/FontFaceSet.h:
+
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [SVG -> OTF Font Converter] Fonts advances are not internally consistent inside the generated font file
         https://bugs.webkit.org/show_bug.cgi?id=164846
         <rdar://problem/29031509>

@@ -155,7 +155,8 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
         if (face.get().status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;
-        m_pendingPromises.add(&face.get(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
+        ASSERT(face.get().existingWrapper());
+        m_pendingPromises.add(face.get().existingWrapper(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
     }
 
     if (!waiting)
@@ -209,7 +210,10 @@ void FontFaceSet::completedLoading()
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
 {
-    auto iterator = m_pendingPromises.find(&face);
+    if (!face.existingWrapper())
+        return;
+
+    auto iterator = m_pendingPromises.find(face.existingWrapper());
     if (iterator == m_pendingPromises.end())
         return;
 

@@ -1,5 +1,15 @@
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [CSS Font Loading] FontFaceSet.load() promises don't always fire
+        https://bugs.webkit.org/show_bug.cgi?id=164902
+
+        Reviewed by David Hyatt.
+
+        * fast/text/fontfaceset-rebuild-during-loading-expected.txt: Added.
+        * fast/text/fontfaceset-rebuild-during-loading.html: Added.
+
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [SVG -> OTF Font Converter] Fonts advances are not internally consistent inside the generated font file
         https://bugs.webkit.org/show_bug.cgi?id=164846
         <rdar://problem/29031509>
