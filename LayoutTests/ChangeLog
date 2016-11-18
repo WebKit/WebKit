@@ -1,3 +1,11 @@
+2016-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/html/keygen.html for Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/html/keygen-expected.txt:
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop arguments.caller
