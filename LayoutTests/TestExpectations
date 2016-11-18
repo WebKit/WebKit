@@ -1026,3 +1026,6 @@ webkit.org/b/164539 http/tests/security/module-crossorigin-onerror-information.h
 webkit.org/b/164856 [ Debug ] editing/execCommand/indent-block-in-list.html [ Skip ]
 webkit.org/b/162831 [ Debug ] imported/blink/css3/flexbox/relpos-with-scrollable-with-abspos-crash.html  [ Skip ]
 webkit.org/b/162828 [ Debug ] tables/table-section-overflow-clip-crash.html  [ Skip ]
+
+webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
+webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]
