@@ -1,5 +1,18 @@
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION: API test _WKDownload.ConvertResponseToDownload is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=164631
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::convertToDownload):
+        I could reproduce the flaky failure 100% of the time when not using NETWORK_SESSION
+        by adding a usleep(1000000) in NetworkResourceLoader::convertToDownload.  m_networkLoad
+        was not being set to nullptr before it was being checked in NetworkResourceLoader::abort
+
+2016-11-17  Alex Christensen  <achristensen@webkit.org>
+
         Fix CMake build after r208865
         https://bugs.webkit.org/show_bug.cgi?id=164894
 
