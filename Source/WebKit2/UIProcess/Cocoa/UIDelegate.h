@@ -101,6 +101,11 @@ private:
 
         NSDictionary *dataDetectionContext() override;
 
+#if ENABLE(POINTER_LOCK)
+        void requestPointerLock(WebKit::WebPageProxy*) override;
+        void didLosePointerLock(WebKit::WebPageProxy*) override;
+#endif
+
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
 
         UIDelegate& m_uiDelegate;
@@ -135,7 +140,10 @@ private:
 #endif
         bool dataDetectionContextForWebView : 1;
         bool webViewImageOrMediaDocumentSizeChanged : 1;
-
+#if ENABLE(POINTER_LOCK)
+        bool webViewRequestPointerLock : 1;
+        bool webViewDidLosePointerLock : 1;
+#endif
 #if ENABLE(CONTEXT_MENUS)
         bool webViewContextMenuForElement : 1;
         bool webViewContextMenuForElementUserInfo : 1;

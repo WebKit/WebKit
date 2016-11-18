@@ -109,7 +109,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2218,6 +2218,23 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.mediaSessionMetadataDidChange(toAPI(&page), toAPI(metadata), m_client.base.clientInfo);
         }
 #endif
+#if ENABLE(POINTER_LOCK)
+        void requestPointerLock(WebPageProxy* page) override
+        {
+            if (!m_client.requestPointerLock)
+                return;
+            
+            m_client.requestPointerLock(toAPI(page), m_client.base.clientInfo);
+        }
+
+        void didLosePointerLock(WebPageProxy* page) override
+        {
+            if (!m_client.requestPointerLock)
+                return;
+
+            m_client.didLosePointerLock(toAPI(page), m_client.base.clientInfo);
+        }
+#endif
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));
@@ -2604,6 +2621,24 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 void WKPageSetMuted(WKPageRef page, WKMediaMutedState muted)
 {
     toImpl(page)->setMuted(muted);
+}
+
+void WKPageDidAllowPointerLock(WKPageRef page)
+{
+#if ENABLE(POINTER_LOCK)
+    toImpl(page)->didAllowPointerLock();
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+void WKPageDidDenyPointerLock(WKPageRef page)
+{
+#if ENABLE(POINTER_LOCK)
+    toImpl(page)->didDenyPointerLock();
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 bool WKPageHasMediaSessionWithActiveMediaElements(WKPageRef page)

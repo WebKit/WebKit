@@ -77,7 +77,6 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
-#import <WebCore/PointerLockController.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/Widget.h>
@@ -93,6 +92,10 @@
 
 #if PLATFORM(IOS) && ENABLE(GEOLOCATION)
 #import <WebCore/Geolocation.h>
+#endif
+
+#if ENABLE(POINTER_LOCK)
+#import <WebCore/PointerLockController.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -730,8 +733,8 @@ bool WebChromeClient::requestPointerLock()
 void WebChromeClient::requestPointerUnlock()
 {
 #if PLATFORM(MAC)
-    CGDisplayShowCursor(CGMainDisplayID());
     CGAssociateMouseAndMouseCursorPosition(true);
+    CGDisplayShowCursor(CGMainDisplayID());
     if ([m_webView page])
         [m_webView page]->pointerLockController().didLosePointerLock();
 #endif

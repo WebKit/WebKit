@@ -1590,3 +1590,4 @@ void WKPreferencesSetApplePayCapabilityDisclosureAllowed(WKPreferencesRef prefer
 {
     WebKit::toImpl(preferencesRef)->setApplePayCapabilityDisclosureAllowed(allowed);
 }
+

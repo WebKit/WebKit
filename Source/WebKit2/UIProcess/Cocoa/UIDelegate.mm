@@ -106,6 +106,10 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.dataDetectionContextForWebView = [delegate respondsToSelector:@selector(_dataDetectionContextForWebView:)];
     m_delegateMethods.webViewImageOrMediaDocumentSizeChanged = [delegate respondsToSelector:@selector(_webView:imageOrMediaDocumentSizeChanged:)];
 
+#if ENABLE(POINTER_LOCK)
+    m_delegateMethods.webViewRequestPointerLock = [delegate respondsToSelector:@selector(_webViewRequestPointerLock:)];
+    m_delegateMethods.webViewDidLosePointerLock = [delegate respondsToSelector:@selector(_webViewDidLosePointerLock:)];
+#endif
 #if ENABLE(CONTEXT_MENUS)
     m_delegateMethods.webViewContextMenuForElement = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:)];
     m_delegateMethods.webViewContextMenuForElementUserInfo = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:userInfo:)];
@@ -456,6 +460,34 @@ NSDictionary *UIDelegate::UIClient::dataDetectionContext()
 
     return [static_cast<id <WKUIDelegatePrivate>>(delegate) _dataDetectionContextForWebView:m_uiDelegate.m_webView];
 }
+
+#if ENABLE(POINTER_LOCK)
+
+void UIDelegate::UIClient::requestPointerLock(WebKit::WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRequestPointerLock)
+        return;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewRequestPointerLock:m_uiDelegate.m_webView];
+}
+
+void UIDelegate::UIClient::didLosePointerLock(WebKit::WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidLosePointerLock)
+        return;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidLosePointerLock:m_uiDelegate.m_webView];
+}
+
+#endif
 
 void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
 {

@@ -2643,7 +2643,11 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
     settings.setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings.setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
-    
+
+#if ENABLE(POINTER_LOCK)
+    settings.setPointerLockEnabled([preferences pointerLockEnabled]);
+#endif
+
     settings.setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
     settings.setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
     settings.setDisplayListDrawingEnabled([preferences displayListDrawingEnabled]);

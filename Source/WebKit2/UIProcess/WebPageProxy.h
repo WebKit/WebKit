@@ -1945,6 +1945,11 @@ private:
     bool m_forceAlwaysUserScalable { false };
 #endif
 
+#if ENABLE(POINTER_LOCK)
+    bool m_isPointerLockPending { false };
+    bool m_isPointerLocked { false };
+#endif
+
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_syncNavigationActionHasDownloadAttribute { false };
 #endif

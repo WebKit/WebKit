@@ -34,6 +34,8 @@
 #include "EventNames.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "ScriptController.h"
+#include "Settings.h"
 #include "VoidCallback.h"
 
 
@@ -47,7 +49,15 @@ PointerLockController::PointerLockController(Page& page)
 
 void PointerLockController::requestPointerLock(Element* target)
 {
+    if (!m_page.settings().pointerLockEnabled())
+        return;
+
     if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock) {
+        enqueueEvent(eventNames().pointerlockerrorEvent, target);
+        return;
+    }
+
+    if (!ScriptController::processingUserGesture()) {
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         return;
     }
@@ -79,7 +89,13 @@ void PointerLockController::requestPointerLock(Element* target)
 
 void PointerLockController::requestPointerUnlock()
 {
-    return m_page.chrome().client().requestPointerUnlock();
+    if (!m_element)
+        return;
+
+    if (!m_page.settings().pointerLockEnabled())
+        return;
+
+    m_page.chrome().client().requestPointerUnlock();
 }
 
 void PointerLockController::elementRemoved(Element* element)

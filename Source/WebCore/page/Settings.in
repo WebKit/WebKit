@@ -293,3 +293,4 @@ forcedPrefersReducedMotionAccessibilityValue type=ForcedAccessibilityValue, init
 asyncImageDecodingEnabled initial=true
 
 es6ModulesEnabled initial=false
+pointerLockEnabled initial=false

@@ -630,7 +630,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_POINTER_LOCK)
-#define ENABLE_POINTER_LOCK 0
+#define ENABLE_POINTER_LOCK 1
 #endif
 
 #if !defined(ENABLE_PROXIMITY_EVENTS)

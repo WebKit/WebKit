@@ -1,3 +1,23 @@
+2016-11-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Add runtime flag to enable pointer lock. Enable pointer lock feature for mac.
+        https://bugs.webkit.org/show_bug.cgi?id=163801
+
+        Reviewed by Simon Fraser.
+
+        Plumb through PointerLockEnabled setting.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestPointerUnlock):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences pointerLockEnabled]):
+        (-[WebPreferences setPointerLockEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-11-17  Dan Bernstein  <mitz@apple.com>
 
         Try to fix some non-macOS builds.

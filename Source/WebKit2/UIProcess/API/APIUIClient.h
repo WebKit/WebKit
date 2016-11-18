@@ -167,6 +167,11 @@ public:
     virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
 
+#if ENABLE(POINTER_LOCK)
+    virtual void requestPointerLock(WebKit::WebPageProxy*) { }
+    virtual void didLosePointerLock(WebKit::WebPageProxy*) { }
+#endif
+
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }

@@ -72,7 +72,6 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
-#include "PointerLockController.h"
 #include "RenderFrameSet.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
@@ -118,6 +117,10 @@
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 #include "PlatformGestureEventMac.h"
+#endif
+
+#if ENABLE(POINTER_LOCK)
+#include "PointerLockController.h"
 #endif
 
 namespace WebCore {

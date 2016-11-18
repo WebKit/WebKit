@@ -1,3 +1,32 @@
+2016-11-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Add runtime flag to enable pointer lock. Enable pointer lock feature for mac.
+        https://bugs.webkit.org/show_bug.cgi?id=163801
+
+        Reviewed by Simon Fraser.
+
+        These tests now pass with DumpRenderTree.
+        LayoutTests/pointer-lock/lock-already-locked.html
+        LayoutTests/pointer-lock/lock-element-not-in-dom.html
+        LayoutTests/pointer-lock/locked-element-iframe-removed-from-dom.html
+        LayoutTests/pointer-lock/mouse-event-api.html
+
+        PointerLockController::requestPointerLock now protects against synchronous callback
+        to allowPointerLock().
+
+        Add pointerLockEnabled setting.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/Document.cpp:
+        (WebCore::Document::exitPointerLock): Fix existing typo.
+        (WebCore::Document::pointerLockElement):
+        * features.json:
+        * page/EventHandler.cpp:
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::requestPointerUnlock):
+        * page/Settings.in:
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Support IDN2008 with UTS #46 instead of IDN2003

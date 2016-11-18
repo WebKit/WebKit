@@ -1,3 +1,12 @@
+2016-11-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Add runtime flag to enable pointer lock. Enable pointer lock feature for mac.
+        https://bugs.webkit.org/show_bug.cgi?id=163801
+
+        Reviewed by Simon Fraser.
+
+        * wtf/FeatureDefines.h: ENABLE_POINTER_LOCK true for Mac.
+
 2016-11-17  Saam Barati  <sbarati@apple.com>
 
         Remove async/await compile time flag and enable tests

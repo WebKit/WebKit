@@ -6028,7 +6028,7 @@ void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
 
 void Document::exitPointerLock()
 {
-    Page* page = this>page();
+    Page* page = this->page();
     if (!page)
         return;
     if (auto* target = page->pointerLockController().element()) {
@@ -6040,10 +6040,10 @@ void Document::exitPointerLock()
 
 Element* Document::pointerLockElement() const
 {
-    Page* page = this>page();
+    Page* page = this->page();
     if (!page || page->pointerLockController().lockPending())
         return nullptr;
-    auto* element = page()->pointerLockController().element();
+    auto* element = page->pointerLockController().element();
     if (!element || &element->document() != this)
         return nullptr;
     return element;

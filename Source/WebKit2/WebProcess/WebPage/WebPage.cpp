@@ -151,7 +151,6 @@
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
-#include <WebCore/PointerLockController.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderLayer.h>
@@ -197,6 +196,10 @@
 
 #if ENABLE(VIBRATION)
 #include "WebVibrationClient.h"
+#endif
+
+#if ENABLE(POINTER_LOCK)
+#include <WebCore/PointerLockController.h>
 #endif
 
 #if ENABLE(PROXIMITY_EVENTS)
@@ -3026,6 +3029,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setMediaDataLoadsAutomatically(store.getBoolValueForKey(WebPreferencesKey::mediaDataLoadsAutomaticallyKey()));
 #if ENABLE(ATTACHMENT_ELEMENT)
     settings.setAttachmentElementEnabled(store.getBoolValueForKey(WebPreferencesKey::attachmentElementEnabledKey()));
+#endif
+#if ENABLE(POINTER_LOCK)
+    settings.setPointerLockEnabled(store.getBoolValueForKey(WebPreferencesKey::pointerLockEnabledKey()));
 #endif
     settings.setAllowsPictureInPictureMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey()));
     settings.setMediaControlsScaleWithPageZoom(store.getBoolValueForKey(WebPreferencesKey::mediaControlsScaleWithPageZoomKey()));
