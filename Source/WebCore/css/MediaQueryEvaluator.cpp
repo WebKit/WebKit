@@ -261,16 +261,34 @@ static bool colorGamutEvaluate(CSSValue* value, const CSSToLengthConversionData&
 
 static bool monochromeEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(frame.mainFrame().view()))
+    bool isMonochrome;
+
+    if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == Settings::ForcedAccessibilityValue::On)
+        isMonochrome = true;
+    else if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == Settings::ForcedAccessibilityValue::Off)
+        isMonochrome = false;
+    else
+        isMonochrome = screenIsMonochrome(frame.mainFrame().view());
+
+    if (!isMonochrome)
         return zeroEvaluate(value, op);
     return colorEvaluate(value, conversionData, frame, op);
 }
 
-static bool invertedColorsEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+static bool invertedColorsEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    bool isInverted = screenHasInvertedColors();
+    bool isInverted;
+
+    if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == Settings::ForcedAccessibilityValue::On)
+        isInverted = true;
+    else if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == Settings::ForcedAccessibilityValue::Off)
+        isInverted = false;
+    else
+        isInverted = screenHasInvertedColors();
+
     if (!value)
         return isInverted;
+
     return downcast<CSSPrimitiveValue>(*value).valueID() == (isInverted ? CSSValueInverted : CSSValueNone);
 }
 
@@ -657,16 +675,16 @@ static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&
 
 static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-#if USE(NEW_THEME)
-    bool userPrefersReducedMotion = platformTheme()->userPrefersReducedMotion();
-#else
     bool userPrefersReducedMotion = false;
-#endif
 
-    if (frame.settings().forcedPrefersReducedMotionValue() == Settings::ForcedPrefersReducedMotionValue::On)
+    if (frame.settings().forcedPrefersReducedMotionAccessibilityValue() == Settings::ForcedAccessibilityValue::On)
         userPrefersReducedMotion = true;
-    else if (frame.settings().forcedPrefersReducedMotionValue() == Settings::ForcedPrefersReducedMotionValue::Off)
+    else if (frame.settings().forcedPrefersReducedMotionAccessibilityValue() == Settings::ForcedAccessibilityValue::Off)
         userPrefersReducedMotion = false;
+#if PLATFORM(IOS) || USE(NEW_THEME)
+    else
+        userPrefersReducedMotion = platformTheme()->userPrefersReducedMotion();
+#endif
 
     if (!value)
         return userPrefersReducedMotion;

@@ -1,3 +1,17 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        Better testing for accessibility media queries
+        https://bugs.webkit.org/show_bug.cgi?id=164954
+        <rdar://problem/29338292>
+
+        Reviewed by Myles Maxfield.
+
+        * fast/media/mq-inverted-colors-forced-value-expected.html: Added.
+        * fast/media/mq-inverted-colors-forced-value.html: Copied from LayoutTests/fast/media/mq-prefers-reduced-motion-forced-value.html.
+        * fast/media/mq-monochrome-forced-value-expected.html: Added.
+        * fast/media/mq-monochrome-forced-value.html: Added.
+        * fast/media/mq-prefers-reduced-motion-forced-value.html:
+
 2016-11-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/misc/link-rel-icon-beforeload.html as failing on mac-wk1.

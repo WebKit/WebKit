@@ -1,3 +1,41 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        Better testing for accessibility media queries
+        https://bugs.webkit.org/show_bug.cgi?id=164954
+        <rdar://problem/29338292>
+
+        Reviewed by Myles Maxfield.
+
+        Provide an override mode for the accessibility media queries
+        that rely on system settings. This way we can test that they
+        are least responding to something.
+
+        Tests: fast/media/mq-inverted-colors-forced-value.html
+               fast/media/mq-monochrome-forced-value.html
+
+        * css/MediaQueryEvaluator.cpp: Query the Settings to see if we're
+        forcing a value.
+        (WebCore::monochromeEvaluate):
+        (WebCore::invertedColorsEvaluate):
+        (WebCore::prefersReducedMotionEvaluate):
+        * page/Settings.h:
+        * testing/InternalSettings.cpp: Add new forcing values for inverted-colors
+        and monochrome.
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::settingsToInternalSettingsValue):
+        (WebCore::internalSettingsToSettingsValue):
+        (WebCore::InternalSettings::forcedColorsAreInvertedAccessibilityValue):
+        (WebCore::InternalSettings::setForcedColorsAreInvertedAccessibilityValue):
+        (WebCore::InternalSettings::forcedDisplayIsMonochromeAccessibilityValue):
+        (WebCore::InternalSettings::setForcedDisplayIsMonochromeAccessibilityValue):
+        (WebCore::InternalSettings::forcedPrefersReducedMotionAccessibilityValue):
+        (WebCore::InternalSettings::setForcedPrefersReducedMotionAccessibilityValue):
+        (WebCore::InternalSettings::forcedPrefersReducedMotionValue): Deleted.
+        (WebCore::InternalSettings::setForcedPrefersReducedMotionValue): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unsupported emoji are invisible

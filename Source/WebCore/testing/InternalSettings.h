@@ -99,9 +99,13 @@ public:
     ExceptionOr<bool> variationFontsEnabled();
     ExceptionOr<void> setVariationFontsEnabled(bool);
 
-    enum class ForcedPrefersReducedMotionValue { System, On, Off };
-    ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue() const;
-    void setForcedPrefersReducedMotionValue(ForcedPrefersReducedMotionValue);
+    enum class ForcedAccessibilityValue { System, On, Off };
+    ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
+    void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
+    ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue() const;
+    void setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue);
+    ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
+    void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
 
     static void setAllowsAnySSLCertificate(bool);
 
@@ -178,7 +182,9 @@ private:
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;
-        Settings::ForcedPrefersReducedMotionValue m_forcedPrefersReducedMotionValue;
+        Settings::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
+        Settings::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
+        Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
     };
 
     Page* m_page;

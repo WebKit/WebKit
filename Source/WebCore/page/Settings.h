@@ -98,8 +98,10 @@ public:
 
     void pageDestroyed() { m_page = nullptr; }
 
-    enum class ForcedPrefersReducedMotionValue { System, On, Off };
-    static const Settings::ForcedPrefersReducedMotionValue defaultForcedPrefersReducedMotionValue = ForcedPrefersReducedMotionValue::System;
+    enum class ForcedAccessibilityValue { System, On, Off };
+    static const Settings::ForcedAccessibilityValue defaultForcedColorsAreInvertedAccessibilityValue = ForcedAccessibilityValue::System;
+    static const Settings::ForcedAccessibilityValue defaultForcedDisplayIsMonochromeAccessibilityValue = ForcedAccessibilityValue::System;
+    static const Settings::ForcedAccessibilityValue defaultForcedPrefersReducedMotionAccessibilityValue = ForcedAccessibilityValue::System;
 
     WEBCORE_EXPORT void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;

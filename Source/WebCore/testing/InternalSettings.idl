@@ -24,7 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum ForcedPrefersReducedMotionValue { "system", "on", "off" };
+enum ForcedAccessibilityValue { "system", "on", "off" };
 
 [
     NoInterfaceObject,
@@ -92,7 +92,9 @@ enum ForcedPrefersReducedMotionValue { "system", "on", "off" };
     [MayThrowException] boolean variationFontsEnabled();
     [MayThrowException] void setVariationFontsEnabled(boolean enabled);
 
-    attribute ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue;
+    attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
 
     void setInputEventsEnabled(boolean enabled);
 };

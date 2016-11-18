@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>CSS4 media query test: prefers-reduced-motion.</title>
+<title>CSS4 media query test: inverted-colors.</title>
 <style type="text/css">
 p { color: black; }
 </style>
@@ -9,16 +9,16 @@ window.addEventListener("load", function () {
     if (!window.internals)
         return;
 
-    window.internals.settings.forcedPrefersReducedMotionAccessibilityValue = "on";
-    if (window.matchMedia("(prefers-reduced-motion)").matches)
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+    if (window.matchMedia("(inverted-colors)").matches)
         document.getElementById("a").style.color = "green";
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    if (window.matchMedia("(inverted-colors: inverted)").matches)
         document.getElementById("b").style.color = "green";
 
-    window.internals.settings.forcedPrefersReducedMotionAccessibilityValue = "off";
-    if (!window.matchMedia("(prefers-reduced-motion)").matches)
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "off";
+    if (!window.matchMedia("(inverted-colors)").matches)
         document.getElementById("c").style.color = "green";
-    if (window.matchMedia("(prefers-reduced-motion: default)").matches)
+    if (window.matchMedia("(inverted-colors: none)").matches)
         document.getElementById("d").style.color = "green";
 }, false);
 </script>
