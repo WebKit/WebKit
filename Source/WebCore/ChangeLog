@@ -1,3 +1,10 @@
+2016-11-17  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the windows build.
+
+        * svg/SVGStringList.h:
+        Remove unnecessary using declarations.
+
 2016-11-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r208672?): ASSERTION FAILED: isMainThread() in WebCore::Node::ref()

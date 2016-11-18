@@ -33,9 +33,6 @@ namespace WebCore {
 
 class SVGStringList final : public SVGStaticListPropertyTearOff<SVGStringListValues> {
 public:
-    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGStringListValues>;
-    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
-
     static Ref<SVGStringList> create(SVGElement& contextElement, SVGStringListValues& values)
     {
         return adoptRef(*new SVGStringList(contextElement, values));
