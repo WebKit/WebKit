@@ -39,6 +39,9 @@
 #include "CSSCustomIdentValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#if ENABLE(VARIATION_FONTS)
+#include "CSSFontVariationValue.h"
+#endif
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
@@ -489,6 +492,53 @@ static RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange& range)
     } while (consumeCommaIncludingWhitespace(range));
     return settings;
 }
+
+#if ENABLE(VARIATION_FONTS)
+static RefPtr<CSSValue> consumeFontVariationTag(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != StringToken)
+        return nullptr;
+    
+    auto string = range.consumeIncludingWhitespace().value().toString();
+    
+    FontTag tag;
+    if (string.length() != tag.size())
+        return nullptr;
+    for (unsigned i = 0; i < tag.size(); ++i) {
+        // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
+        UChar character = string[i];
+        if (character < 0x20 || character > 0x7E)
+            return nullptr;
+        tag[i] = character;
+    }
+    
+    if (range.atEnd() || range.peek().type() != NumberToken)
+        return nullptr;
+
+    float tagValue = range.consumeIncludingWhitespace().numericValue();
+    
+    return CSSFontVariationValue::create(tag, tagValue);
+}
+    
+static RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNormal)
+        return consumeIdent(range);
+    
+    auto settings = CSSValueList::createCommaSeparated();
+    do {
+        RefPtr<CSSValue> variationValue = consumeFontVariationTag(range);
+        if (!variationValue)
+            return nullptr;
+        settings->append(variationValue.releaseNonNull());
+    } while (consumeCommaIncludingWhitespace(range));
+    
+    if (!settings->length())
+        return nullptr;
+
+    return WTFMove(settings);
+}
+#endif // ENABLE(VARIATION_FONTS)
 
 static RefPtr<CSSValue> consumePage(CSSParserTokenRange& range)
 {
@@ -3393,6 +3443,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontWeight(m_range);
     case CSSPropertyFontSynthesis:
         return consumeFontSynthesis(m_range);
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontVariationSettings:
+        if (m_context.variationFontsEnabled)
+            return consumeFontVariationSettings(m_range);
+        return nullptr;
+#endif
     case CSSPropertyLetterSpacing:
         return consumeLetterSpacing(m_range, m_context.mode);
     case CSSPropertyWordSpacing:

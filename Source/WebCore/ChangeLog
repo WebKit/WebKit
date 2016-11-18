@@ -1,3 +1,15 @@
+2016-11-18  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=164947
+
+        Reviewed by Myles Maxfield.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontVariationTag):
+        (WebCore::consumeFontVariationSettings):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::encrypt to match the latest spec
