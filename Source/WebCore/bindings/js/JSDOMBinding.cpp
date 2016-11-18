@@ -90,6 +90,36 @@ JSValue jsStringOrUndefined(ExecState* exec, const URL& url)
     return jsStringWithCache(exec, url.string());
 }
 
+static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope, String&& string)
+{
+    if (!string.containsOnlyLatin1()) {
+        throwTypeError(&state, scope);
+        return { };
+    }
+
+    return string;
+}
+
+String identifierToByteString(ExecState& state, const Identifier& identifier)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String string = identifier.string();
+    return stringToByteString(state, scope, WTFMove(string));
+}
+
+String valueToByteString(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String string = value.toWTFString(&state);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return stringToByteString(state, scope, WTFMove(string));
+}
+
 static inline bool hasUnpairedSurrogate(StringView string)
 {
     // Fast path for 8-bit strings; they can't have any surrogates.
@@ -102,30 +132,8 @@ static inline bool hasUnpairedSurrogate(StringView string)
     return false;
 }
 
-String valueToByteString(ExecState& state, JSValue value)
+static inline String stringToUSVString(String&& string)
 {
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String string = value.toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (!string.containsOnlyLatin1()) {
-        throwTypeError(&state, scope);
-        return { };
-    }
-
-    return string;
-}
-
-String valueToUSVString(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String string = value.toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, { });
-
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string))
         return string;
@@ -142,6 +150,23 @@ String valueToUSVString(ExecState& state, JSValue value)
             result.append(codePoint);
     }
     return result.toString();
+}
+
+String identifierToUSVString(ExecState&, const Identifier& identifier)
+{
+    String string = identifier.string();
+    return stringToUSVString(WTFMove(string));
+}
+
+String valueToUSVString(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String string = value.toWTFString(&state);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return stringToUSVString(WTFMove(string));
 }
 
 JSValue jsDate(ExecState* exec, double value)

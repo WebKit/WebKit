@@ -27,6 +27,7 @@
 
 #include "Node.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -101,6 +102,13 @@ public:
     const String& testByteString() const { return m_byteString; }
     void setTestByteString(const String& byteString) { m_byteString = byteString; }
 
+    const HashMap<String, int>& testLongRecord() const { return m_longRecord; }
+    void setTestLongRecord(const HashMap<String, int>& value) { m_longRecord = value; }
+    const HashMap<String, RefPtr<Node>>& testNodeRecord() const { return m_nodeRecord; }
+    void setTestNodeRecord(const HashMap<String, RefPtr<Node>>& value) { m_nodeRecord = value; }
+    const HashMap<String, Vector<String>>& testSequenceRecord() const { return m_sequenceRecord; }
+    void setTestSequenceRecord(const HashMap<String, Vector<String>>& value) { m_sequenceRecord = value; }
+
     using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
     void setTestUnion(const TestUnion& value) { m_union = value; }
@@ -142,6 +150,9 @@ private:
     String m_string;
     String m_usvstring;
     String m_byteString;
+    HashMap<String, int> m_longRecord;
+    HashMap<String, RefPtr<Node>> m_nodeRecord;
+    HashMap<String, Vector<String>> m_sequenceRecord;
     TestUnion m_union;
     
     int m_typeConversionsDictionaryLongValue { 0 };

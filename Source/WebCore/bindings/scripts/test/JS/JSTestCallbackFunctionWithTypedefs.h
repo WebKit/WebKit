@@ -40,7 +40,7 @@ public:
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual bool handleEvent(Vector<RefPtr<LONG>> sequenceArg, int32_t longArg);
+    virtual bool handleEvent(Vector<int32_t> sequenceArg, int32_t longArg);
 
 private:
     JSTestCallbackFunctionWithTypedefs(JSC::JSObject* callback, JSDOMGlobalObject*);

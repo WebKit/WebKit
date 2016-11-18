@@ -1075,6 +1075,8 @@ converter.testByteString = undefined
 PASS converter.testUSVString is "undefined"
 PASS converter.testString is "undefined"
 PASS converter.testByteString is "undefined"
+
+Testing union conversion
 converter.testUnion = 'hello'
 PASS converter.testUnion is 'hello'
 PASS typeof converter.testUnion is 'string'
@@ -1123,6 +1125,71 @@ converter.setTypeConversionsDictionary({ unionValue: undefined })
 PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
 converter.setTypeConversionsDictionary({ })
 PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
+
+Testing record conversion
+converter.testLongRecord = { key: 1, key2: 2 }
+PASS converter.testLongRecord is an instance of Object
+PASS converter.testLongRecord.hasOwnProperty('key') is true
+PASS 'key' in converter.testLongRecord is true
+PASS converter.testLongRecord['key'] is 1
+PASS converter.testLongRecord.hasOwnProperty('key2') is true
+PASS 'key2' in converter.testLongRecord is true
+PASS converter.testLongRecord['key2'] is 2
+converter.testLongRecord = undefined
+PASS converter.testLongRecord is an instance of Object
+converter.testLongRecord = null
+PASS converter.testLongRecord is an instance of Object
+PASS converter.testLongRecord = 1 threw exception TypeError: Type error.
+PASS converter.testLongRecord = { key: { valueOf:function() { throw new Error(); } } } threw exception Error.
+var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { enumerable: false, value: 1 }); converter.testLongRecord = o;
+PASS converter.testLongRecord.hasOwnProperty('key') is false
+PASS converter.testLongRecord.hasOwnProperty('otherKey') is true
+PASS converter.testLongRecord['otherKey'] is 2
+var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { return 1; }, enumerable: true }); converter.testLongRecord = o;
+PASS converter.testLongRecord.hasOwnProperty('key') is true
+PASS converter.testLongRecord['key'] is 1
+PASS converter.testLongRecord.hasOwnProperty('otherKey') is true
+PASS converter.testLongRecord['otherKey'] is 2
+PASS var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error();; }, enumerable: true }); converter.testLongRecord = o; threw exception Error.
+converter.testNodeRecord = { key: document, key2: document.documentElement }
+PASS converter.testNodeRecord.hasOwnProperty('key') is true
+PASS 'key' in converter.testNodeRecord is true
+PASS converter.testNodeRecord['key'] is document
+PASS converter.testNodeRecord.hasOwnProperty('key2') is true
+PASS 'key2' in converter.testNodeRecord is true
+PASS converter.testNodeRecord['key2'] is document.documentElement
+PASS converter.testNodeRecord = { key: 'hello' } threw exception TypeError: Type error.
+converter.testLongRecord = {'í ': 1 }
+PASS converter.testLongRecord['í '] is 1
+converter.testNodeRecord = {'í ': document }
+PASS converter.testNodeRecord['ï¿½'] is document
+converter.testLongRecord = {'í°': 1 }
+PASS converter.testLongRecord['í°'] is 1
+converter.testNodeRecord = {'í°': document }
+PASS converter.testNodeRecord['ï¿½'] is document
+converter.testLongRecord = {'í ': 1 }
+PASS converter.testLongRecord['í \0'] is 1
+converter.testNodeRecord = {'í ': document }
+PASS converter.testNodeRecord['ï¿½\0'] is document
+converter.testLongRecord = {'í°': 1 }
+PASS converter.testLongRecord['í°\0'] is 1
+converter.testNodeRecord = {'í°': document }
+PASS converter.testNodeRecord['ï¿½\0'] is document
+converter.testLongRecord = {'í°í ': 1 }
+PASS converter.testLongRecord['í°í '] is 1
+converter.testNodeRecord = {'í°í ': document }
+PASS converter.testNodeRecord['ï¿½ï¿½'] is document
+converter.testLongRecord = {'ð': 1 }
+PASS converter.testLongRecord['ð'] is 1
+converter.testNodeRecord = {'ð': document }
+PASS converter.testNodeRecord['ð'] is document
+converter.testSequenceRecord = { key: ['value', 'other value'] }
+PASS converter.testSequenceRecord.hasOwnProperty('key') is true
+PASS 'key' in converter.testSequenceRecord is true
+PASS converter.testSequenceRecord['key'] is ['value', 'other value']
+PASS converter.testSequenceRecord = { 'Ä': ['value'] } threw exception TypeError: Type error.
+converter.testSequenceRecord = { 'Ã¿': ['value'] }
+PASS converter.testSequenceRecord['Ã¿'] is ['value']
 PASS successfullyParsed is true
 
 TEST COMPLETE

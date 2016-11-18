@@ -215,7 +215,9 @@ String propertyNameToString(JSC::PropertyName);
 
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
+WEBCORE_EXPORT String identifierToByteString(JSC::ExecState&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToByteString(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT String identifierToUSVString(JSC::ExecState&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToUSVString(JSC::ExecState&, JSC::JSValue);
 
 int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);

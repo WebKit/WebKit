@@ -383,6 +383,17 @@ sub identifierRemoveNullablePrefix
     return $type;
 }
 
+sub typeDescription
+{
+    my $type = shift;
+
+    if (scalar @{$type->subtypes}) {
+        return $type->name . '<' . join(', ', map { typeDescription($_) } @{$type->subtypes}) . '>' . ($type->isNullable ? "?" : "");
+    }
+
+    return $type->name . ($type->isNullable ? "?" : "");
+}
+
 sub makeSimpleType
 {
     my $typeName = shift;
@@ -528,7 +539,7 @@ sub typeByApplyingTypedefs
         my $clonedType = $self->cloneType($typedef->type);
         $clonedType->isNullable($clonedType->isNullable || $type->isNullable);
 
-        return $clonedType;
+        return $self->typeByApplyingTypedefs($clonedType);
     }
     
     return $type;
@@ -2101,7 +2112,6 @@ sub parseNonAnyType
         $self->assertTokenValue($self->getToken(), "<", __LINE__);
 
         my $subtype = $self->parseType();
-        my $subtypeName = $subtype->name;
 
         $self->assertTokenValue($self->getToken(), ">", __LINE__);
 
@@ -2115,7 +2125,6 @@ sub parseNonAnyType
         $self->assertTokenValue($self->getToken(), "<", __LINE__);
 
         my $subtype = $self->parseType();
-        my $subtypeName = $subtype->name;
 
         $self->assertTokenValue($self->getToken(), ">", __LINE__);
 
@@ -2129,12 +2138,30 @@ sub parseNonAnyType
         $self->assertTokenValue($self->getToken(), "<", __LINE__);
 
         my $subtype = $self->parseReturnType();
-        my $subtypeName = $subtype->name;
 
         $self->assertTokenValue($self->getToken(), ">", __LINE__);
 
         $type->name("Promise");
         push(@{$type->subtypes}, $subtype);
+
+        return $type;
+    }
+    if ($next->value() eq "record") {
+        $self->assertTokenValue($self->getToken(), "record", __LINE__);
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+
+        my $keyType = IDLType->new();
+        $keyType->name($self->parseStringType());
+
+        $self->assertTokenValue($self->getToken(), ",", __LINE__);
+
+        my $valueType = $self->parseType();
+
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+        $type->name("record");
+        push(@{$type->subtypes}, $keyType);
+        push(@{$type->subtypes}, $valueType);
 
         return $type;
     }

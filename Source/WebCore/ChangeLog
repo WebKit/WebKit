@@ -1,3 +1,121 @@
+2016-11-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for record types
+        https://bugs.webkit.org/show_bug.cgi?id=164935
+
+        Reviewed by Tim Horton.
+
+        Add support for WebIDLs record types. We map them to HashMap<String, {OtherType}>.
+
+        * bindings/generic/IDLTypes.h:
+        - Add IDLRecord type and helper predicate.
+        - Remove IDLRegExp which is no longer in WebIDL and we never supported.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::stringToByteString):
+        (WebCore::identifierToByteString):
+        (WebCore::valueToByteString):
+        (WebCore::hasUnpairedSurrogate):
+        (WebCore::stringToUSVString):
+        (WebCore::identifierToUSVString):
+        (WebCore::valueToUSVString):
+        * bindings/js/JSDOMBinding.h:
+        Refactor ByteString and USVString conversion to support converting from
+        either a JSValue or Identifier.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::DetailConverter<IDLRecord<K, V>>):
+        (WebCore::JSConverter<IDLRecord<K, V>>):
+        Add conversion support for record types. Use Detail::IdentifierConverter helper
+        to convert identifiers to strings using the correct conversion rules.
+
+        (WebCore::Converter<IDLUnion<T...>>::convert):
+        Update comments in union conversion to match current spec. Remove check
+        for regular expressions and add support for record types.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsRefPtrType):
+        Add record and union types to the list of things that aren't RefPtrs.
+
+        (IsRecordType):
+        Add predicate for testing if a type is a record.
+
+        (IsWrapperType):
+        Remove check for union. This is now handled in the IsRefPtrType check.
+
+        (SkipIncludeHeader): Deleted.
+        (GetSequenceInnerType): Deleted.
+        (GetFrozenArrayInnerType): Deleted.
+        (GetSequenceOrFrozenArrayInnerType): Deleted.
+        Remove no longer necessary functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForImplementationType):
+        Remove check for includes to skip. This is now only called for interfaces, which should be included
+        unconditionally.
+
+        (AddToIncludesForIDLType):
+        Add includes and recursive includes for record types.
+
+        (GenerateOverloadedFunctionOrConstructor):
+        Update to account for records.
+
+        (GetGnuVTableRefForInterface):
+        (GetGnuVTableNameForInterface):
+        (GetGnuMangledNameForInterface):
+        (GetWinVTableNameForInterface):
+        (GetWinMangledNameForInterface):
+        Strength-reduce GetNativeTypeForConversions and GetNamespaceForInterface into their callers.
+
+        (GetBaseIDLType):
+        Add support for IDLRecord. Remove call to GetIDLInterfaceName now that is simply the type name.
+
+        (GetNativeType):
+        Simplify sequence/FrozenArray support and add record support.
+
+        (GetNativeInnerType):
+        Generalize GetNativeVectorInnerType to work for record types as well.
+
+        (ShouldPassWrapperByReference):
+        Moved so native type accessors can be together.
+
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Add record support.
+
+        (GetNativeTypeForConversions): Deleted.
+        (GetNamespaceForInterface): Deleted.
+        (GetNativeVectorType): Deleted.
+        (GetIDLInterfaceName): Deleted.
+        (GetNativeVectorInnerType): Deleted.
+        Remove unneeded functions.
+
+        * bindings/scripts/IDLParser.pm:
+        (typeDescription):
+        Add helper useful for debugging, that constructs the string form of a type.
+
+        (typeByApplyingTypedefs):
+        Add missing call to typeByApplyingTypedefs (this is noted by a fix in JSTestCallbackFunctionWithTypedefs.h)
+
+        (parseNonAnyType):
+        Remove unused $subtypeName variables and add support for parsing record types.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for records and update results.
+
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testLongRecord):
+        (WebCore::TypeConversions::setTestLongRecord):
+        (WebCore::TypeConversions::testNodeRecord):
+        (WebCore::TypeConversions::setTestNodeRecord):
+        (WebCore::TypeConversions::testSequenceRecord):
+        (WebCore::TypeConversions::setTestSequenceRecord):
+        * testing/TypeConversions.idl:
+        Add record types so it can be tested from layout tests.
+
 2016-11-18  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support font-variation-settings

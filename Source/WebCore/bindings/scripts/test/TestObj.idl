@@ -58,28 +58,30 @@ enum TestConfidence { "high", "kinda-low" };
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
     [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
-    attribute TestEnumType             enumAttr;
-    attribute byte                     byteAttr;
-    attribute octet                    octetAttr;
-    [Unscopable] attribute short                    shortAttr;
-    [Clamp] attribute short            clampedShortAttr;
-    [EnforceRange] attribute short     enforceRangeShortAttr;
-    attribute unsigned short           unsignedShortAttr;
-    attribute long                     longAttr;
-    attribute long long                longLongAttr;
-    attribute unsigned long long       unsignedLongLongAttr;
-    attribute DOMString                stringAttr;
-#if defined(TESTING_JS)
-    attribute USVString                usvstringAttr;
-#endif
-    attribute TestObj                  testObjAttr;
-    attribute TestObj?                 testNullableObjAttr;
-    [LenientThis] attribute TestObj    lenientTestObjAttr;
+    attribute TestEnumType enumAttr;
+    attribute byte byteAttr;
+    attribute octet octetAttr;
+    [Unscopable] attribute short shortAttr;
+    [Clamp] attribute short clampedShortAttr;
+    [EnforceRange] attribute short enforceRangeShortAttr;
+    attribute unsigned short unsignedShortAttr;
+    attribute long longAttr;
+    attribute long long longLongAttr;
+    attribute unsigned long long unsignedLongLongAttr;
+    attribute DOMString stringAttr;
+    attribute USVString usvstringAttr;
+    attribute TestObj testObjAttr;
+    attribute TestObj? testNullableObjAttr;
+    [LenientThis] attribute TestObj lenientTestObjAttr;
     [Unforgeable] readonly attribute DOMString unforgeableAttr;
     [TreatNullAs=EmptyString] attribute DOMString stringAttrTreatingNullAsEmptyString;
-#if defined(TESTING_JS)
     [TreatNullAs=EmptyString] attribute USVString usvstringAttrTreatingNullAsEmptyString;
-#endif
+    [TreatNullAs=EmptyString] attribute ByteString byteStringAttrTreatingNullAsEmptyString;
+    attribute record<DOMString, long> stringLongRecordAttr;
+    attribute record<USVString, long> usvstringLongRecordAttr;
+    attribute record<ByteString, long> usvstringLongRecordAttr;
+    attribute record<DOMString, TestObj> stringObjRecordAttr;
+    attribute record<DOMString, TestObj?> stringNullableObjRecordAttr;
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
 
@@ -89,16 +91,12 @@ enum TestConfidence { "high", "kinda-low" };
 
     // Reflected DOM attributes
     [Reflect] attribute DOMString reflectedStringAttr;
-#if defined(TESTING_JS)
     [Reflect] attribute USVString reflectedUSVStringAttr;
-#endif
     [Reflect] attribute long reflectedIntegralAttr;
     [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
     [Reflect] attribute boolean reflectedBooleanAttr;
     [Reflect, URL] attribute DOMString reflectedURLAttr;
-#if defined(TESTING_JS)
     [Reflect, URL] attribute USVString reflectedUSVURLAttr;
-#endif
     [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;
     [Reflect=customContentIntegralAttr] attribute long reflectedCustomIntegralAttr;
     [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
@@ -142,14 +140,18 @@ enum TestConfidence { "high", "kinda-low" };
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
     [MayThrowException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
 
-#if defined(TESTING_JS)
     void methodWithUSVStringArg(USVString str);
     void methodWithNullableUSVStringArg(USVString? str);
     void methodWithUSVStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] USVString str);
-#endif
+
+    void methodWithByteStringArg(ByteString str);
+    void methodWithNullableByteStringArg(ByteString? str);
+    void methodWithByteStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] ByteString str);
 
     void serializedValue(SerializedScriptValue serializedArg);
     void optionsObject(Dictionary oo, optional Dictionary ooo);
+
+    void methodWithRecord(record<DOMString, long> recordParameter);
 
     // Exceptions
     [MayThrowException] void methodWithException();
@@ -210,9 +212,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
     void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
     void    methodWithOptionalString(optional DOMString str);
-#if defined(TESTING_JS)
     void    methodWithOptionalUSVString(optional USVString str);
-#endif
     void    methodWithOptionalAtomicString([AtomicString] optional DOMString str);
     void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
     void    methodWithOptionalAtomicStringAndDefaultValue([AtomicString] optional DOMString str = "foo");
@@ -220,9 +220,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
     void    methodWithOptionalAtomicStringIsNull([AtomicString] optional DOMString str = null);
     void    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
-#if defined(TESTING_JS)
     void    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
-#endif
     void    methodWithOptionalAtomicStringIsEmptyString([AtomicString] optional DOMString str = "");
     void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
     void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
@@ -238,8 +236,8 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalNullableWrapper(optional TestObj? obj);
     void    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
     void    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
+    void    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
 
-#if defined(TESTING_JS)
     // Callback interface parameters.
     void    methodWithCallbackArg(TestCallbackInterface callback);
     void    methodWithNonCallbackArgAndCallbackArg(long nonCallback, TestCallbackInterface callback);
@@ -253,7 +251,6 @@ enum TestConfidence { "high", "kinda-low" };
     // static methods with 'Callback' extended attribute
     static void    staticMethodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
     static void    staticMethodWithCallbackArg(TestCallbackInterface callback);
-#endif
 
     // 'Conditional' extended attribute
     [Conditional=Condition1] attribute long conditionalAttr1;
@@ -271,14 +268,11 @@ enum TestConfidence { "high", "kinda-low" };
 
     [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
-#if defined(TESTING_JS)
     [CachedAttribute] readonly attribute any cachedAttribute1;
     [CachedAttribute] readonly attribute any cachedAttribute2;
-#endif
     
     attribute any anyAttribute;
 
-#if defined(TESTING_JS)
     // Overloads
     void    overloadedMethod(TestObj? objArg, DOMString strArg);
     void    overloadedMethod(TestObj? objArg, optional long longArg);
@@ -316,7 +310,6 @@ enum TestConfidence { "high", "kinda-low" };
 
     void overloadWithNullableNonDistinguishingParameter(TestObj? obj, TestNode node);
     void overloadWithNullableNonDistinguishingParameter(TestNode? node, long index);
-#endif
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).
     static void classMethod();
@@ -330,7 +323,6 @@ enum TestConfidence { "high", "kinda-low" };
     void classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
     void classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);
 
-#if defined(TESTING_JS)
     void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
     [MayThrowException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
     [MayThrowException] DOMStringList domStringListFunction(DOMStringList values);
@@ -338,7 +330,6 @@ enum TestConfidence { "high", "kinda-low" };
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
 
     Element? getElementById([RequiresExistingAtomicString] DOMString elementId);
-#endif
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     [CheckSecurityForNode, MayThrowException] SVGDocument getSVGDocument();
@@ -389,9 +380,8 @@ enum TestConfidence { "high", "kinda-low" };
 
     attribute long? nullableLongSettableAttribute;
     attribute DOMString? nullableStringSettableAttribute;
-#if defined(TESTING_JS)
     attribute USVString? nullableUSVStringSettableAttribute;
-#endif
+    attribute ByteString? nullableByteStringSettableAttribute;
 
     [GetterMayThrowException] attribute long? nullableStringValue;
 
@@ -418,14 +408,12 @@ enum TestConfidence { "high", "kinda-low" };
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
     [PutForwards=name] readonly attribute TestNode? putForwardsNullableAttribute;
 
-#if defined(TESTING_JS)
     // Overloading with conditionals.
     [Conditional=CONDITION1] void conditionalOverload(DOMString str);
     [Conditional=CONDITION2] void conditionalOverload(long a);
 
     void singleConditionalOverload(DOMString str);
     [Conditional=CONDITION] void singleConditionalOverload(long a);
-#endif
 
     void attachShadowRoot(TestDictionary init);
     void operationWithExternalDictionaryParameter(TestStandaloneDictionary dict);

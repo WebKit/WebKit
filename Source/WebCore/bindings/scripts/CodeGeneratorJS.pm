@@ -261,8 +261,6 @@ sub AddIncludesForImplementationType
 {
     my ($implementationType, $includesRef) = @_;
 
-    return if $codeGenerator->SkipIncludeHeader($implementationType);
-
     $includesRef->{"${implementationType}.h"} = 1;
 }
 
@@ -299,18 +297,20 @@ sub AddToIncludesForIDLType
         return;
     }
 
+    if ($codeGenerator->IsRecordType($type)) {
+        AddToIncludes("<wtf/HashMap.h>", $includesRef, $conditional);
+        AddToIncludesForIDLType(@{$type->subtypes}[0], $includesRef, $conditional);
+        AddToIncludesForIDLType(@{$type->subtypes}[1], $includesRef, $conditional);
+        return;
+    }
+
     if ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsExternalDictionaryType($type) || $codeGenerator->IsExternalEnumType($type)) {
         AddToIncludes("JS" . $type->name . ".h", $includesRef, $conditional);
         return;
     }
     
-    if ($type->name eq "SerializedScriptValue") {
-        AddToIncludes("SerializedScriptValue.h", $includesRef, $conditional);
-        return;
-    }
-
-    if ($type->name eq "Dictionary") {
-        AddToIncludes("Dictionary.h", $includesRef, $conditional);
+    if ($type->name eq "SerializedScriptValue" || $type->name eq "Dictionary") {
+        AddToIncludes($type->name . ".h", $includesRef, $conditional);
         return;
     }
 }
@@ -2169,20 +2169,20 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($type, $optionality) = @_;
         return $optionality eq "optional";
     };
-    my $isDictionaryParameter = sub {
+    my $isDictionaryOrRecordParameter = sub {
         my ($type, $optionality) = @_;
-        return $type->name eq "Dictionary" || $codeGenerator->IsDictionaryType($type);
+        return $type->name eq "Dictionary" || $codeGenerator->IsDictionaryType($type) || $codeGenerator->IsRecordType($type);
     };
-    my $isNullableOrDictionaryParameterOrUnionContainingOne = sub {
+    my $isNullableOrDictionaryOrRecordOrUnionContainingOne = sub {
         my ($type, $optionality) = @_;
         return 1 if $type->isNullable;
         if ($type->isUnion) {
             for my $subtype (GetFlattenedMemberTypes($type)) {
-                return 1 if $type->isNullable || &$isDictionaryParameter($subtype, $optionality);
+                return 1 if $type->isNullable || &$isDictionaryOrRecordParameter($subtype, $optionality);
             }
             return 0;
         } else {
-            return &$isDictionaryParameter($type, $optionality);
+            return &$isDictionaryOrRecordParameter($type, $optionality);
         }
     };
     my $isRegExpOrObjectParameter = sub {
@@ -2206,9 +2206,9 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($type, $optionality) = @_;
         return $codeGenerator->IsSequenceOrFrozenArrayType($type);
     };
-    my $isDictionaryOrObjectOrCallbackInterfaceParameter = sub {
+    my $isDictionaryOrRecordOrObjectOrCallbackInterfaceParameter = sub {
         my ($type, $optionality) = @_;
-        return 1 if &$isDictionaryParameter($type, $optionality);
+        return 1 if &$isDictionaryOrRecordParameter($type, $optionality);
         return 1 if $type->name eq "object";
         return 1 if $codeGenerator->IsCallbackInterface($type) && !$codeGenerator->IsCallbackFunction($type);
         return 0;
@@ -2260,7 +2260,7 @@ END
             my $overload = GetOverloadThatMatchesIgnoringUnionSubtypes($S, $d, \&$isOptionalParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isUndefined()");
 
-            $overload = GetOverloadThatMatchesIgnoringUnionSubtypes($S, $d, \&$isNullableOrDictionaryParameterOrUnionContainingOne);
+            $overload = GetOverloadThatMatchesIgnoringUnionSubtypes($S, $d, \&$isNullableOrDictionaryOrRecordOrUnionContainingOne);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isUndefinedOrNull()");
 
             for my $tuple (@{$S}) {
@@ -2296,7 +2296,7 @@ END
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
             &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)");
 
-            $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrObjectOrCallbackInterfaceParameter);
+            $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrRecordOrObjectOrCallbackInterfaceParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType");
 
             my $booleanOverload = GetOverloadThatMatches($S, $d, \&$isBooleanParameter);
@@ -2372,13 +2372,6 @@ sub LengthOfLongestFunctionParameterList
     return $result;
 }
 
-sub GetNativeTypeForConversions
-{
-    my $interface = shift;
-
-    return $interface->type->name;
-}
-
 # See http://refspecs.linux-foundation.org/cxxabi-1.83.html.
 sub GetGnuVTableRefForInterface
 {
@@ -2387,7 +2380,7 @@ sub GetGnuVTableRefForInterface
     if (!$vtableName) {
         return "0";
     }
-    my $typename = GetNativeTypeForConversions($interface);
+    my $typename = $interface->type->name;
     my $offset = GetGnuVTableOffsetForType($typename);
     return "&" . $vtableName . "[" . $offset . "]";
 }
@@ -2395,7 +2388,7 @@ sub GetGnuVTableRefForInterface
 sub GetGnuVTableNameForInterface
 {
     my $interface = shift;
-    my $typename = GetNativeTypeForConversions($interface);
+    my $typename = $interface->type->name;
     my $templatePosition = index($typename, "<");
     return "" if $templatePosition != -1;
     return "" if GetImplementationLacksVTableForInterface($interface);
@@ -2406,13 +2399,13 @@ sub GetGnuVTableNameForInterface
 sub GetGnuMangledNameForInterface
 {
     my $interface = shift;
-    my $typename = GetNativeTypeForConversions($interface);
+    my $typename = $interface->type->name;
     my $templatePosition = index($typename, "<");
     if ($templatePosition != -1) {
         return "";
     }
     my $mangledType = length($typename) . $typename;
-    my $namespace = GetNamespaceForInterface($interface);
+    my $namespace = "WebCore";
     my $mangledNamespace =  "N" . length($namespace) . $namespace;
     return $mangledNamespace . $mangledType . "E";
 }
@@ -2456,7 +2449,7 @@ sub GetWinVTableRefForInterface
 sub GetWinVTableNameForInterface
 {
     my $interface = shift;
-    my $typename = GetNativeTypeForConversions($interface);
+    my $typename = $interface->type->name;
     my $templatePosition = index($typename, "<");
     return "" if $templatePosition != -1;
     return "" if GetImplementationLacksVTableForInterface($interface);
@@ -2467,15 +2460,9 @@ sub GetWinVTableNameForInterface
 sub GetWinMangledNameForInterface
 {
     my $interface = shift;
-    my $typename = GetNativeTypeForConversions($interface);
-    my $namespace = GetNamespaceForInterface($interface);
+    my $typename = $interface->type->name;
+    my $namespace = "WebCore";
     return $typename . "@" . $namespace . "@@";
-}
-
-sub GetNamespaceForInterface
-{
-    my $interface = shift;
-    return "WebCore";
 }
 
 sub GetImplementationLacksVTableForInterface
@@ -5054,6 +5041,7 @@ sub addIterableProperties()
 }
 
 my %nativeType = (
+    "ByteString" => "String",
     "DOMString" => "String",
     "USVString" => "String",
     "Date" => "double",
@@ -5076,16 +5064,6 @@ my %nativeType = (
     "unsigned long" => "uint32_t",
     "unsigned short" => "uint16_t",
 );
-
-sub GetNativeVectorType
-{
-    my ($type) = @_;
-
-    die "This should only be called for sequence or array types" unless $codeGenerator->IsSequenceOrFrozenArrayType($type);
-
-    my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
-    return "Vector<" . GetNativeVectorInnerType($innerType) . ">";
-}
 
 # http://heycam.github.io/webidl/#dfn-flattened-union-member-types
 sub GetFlattenedMemberTypes
@@ -5138,13 +5116,6 @@ sub GetIDLUnionMemberTypes
     return @idlUnionMemberTypes;
 }
 
-sub GetIDLInterfaceName
-{
-    my ($type) = @_;
-
-    return $type->name;
-}
-
 sub GetBaseIDLType
 {
     my ($interface, $type) = @_;
@@ -5178,8 +5149,9 @@ sub GetBaseIDLType
     return "IDLDictionary<" . GetDictionaryClassName($type, $interface) . ">" if $codeGenerator->IsDictionaryType($type);
     return "IDLSequence<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsSequenceType($type);
     return "IDLFrozenArray<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsFrozenArrayType($type);
+    return "IDLRecord<" . GetIDLType($interface, @{$type->subtypes}[0]) . ", " . GetIDLType($interface, @{$type->subtypes}[1]) . ">" if $codeGenerator->IsRecordType($type);
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">" if $type->isUnion;
-    return "IDLInterface<" . GetIDLInterfaceName($type) . ">";
+    return "IDLInterface<" . $type->name . ">";
 }
 
 sub GetIDLType
@@ -5203,30 +5175,25 @@ sub GetNativeType
 
     return GetEnumerationClassName($type, $interface) if $codeGenerator->IsEnumType($type);
     return GetDictionaryClassName($type, $interface) if $codeGenerator->IsDictionaryType($type);
-    return GetNativeVectorType($type) if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+    return "Vector<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+    return "HashMap<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ", " . GetNativeInnerType(@{$type->subtypes}[1], $interface) . ">" if $codeGenerator->IsRecordType($type);
 
     return "RefPtr<${typeName}>" if $codeGenerator->IsTypedArrayType($type) and $typeName ne "ArrayBuffer";
     return "${typeName}*";
 }
 
-sub ShouldPassWrapperByReference
+sub GetNativeInnerType
 {
-    my ($parameter, $interface) = @_;
-
-    return 0 if $codeGenerator->IsCallbackInterface($parameter->type) || $codeGenerator->IsCallbackFunction($parameter->type);
-
-    my $nativeType = GetNativeType($interface, $parameter->type);
-    return $codeGenerator->ShouldPassWrapperByReference($parameter) && (substr($nativeType, -1) eq '*' || $nativeType =~ /^RefPtr/);
-}
-
-sub GetNativeVectorInnerType
-{
-    my $innerType = shift;
+    my ($innerType, $interface) = @_;
 
     my $innerTypeName = $innerType->name;
 
     return $nativeType{$innerTypeName} if exists $nativeType{$innerTypeName};
-    return GetDictionaryClassName($innerType) if $codeGenerator->IsDictionaryType($innerType);
+
+    return GetEnumerationClassName($innerType, $interface) if $codeGenerator->IsEnumType($innerType);
+    return GetDictionaryClassName($innerType, $interface) if $codeGenerator->IsDictionaryType($innerType);
+    return "Vector<" . GetNativeInnerType(@{$innerType->subtypes}[0], $interface) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($innerType);
+    return "HashMap<" . GetNativeInnerType(@{$innerType->subtypes}[0], $interface) . ", " . GetNativeInnerType(@{$innerType->subtypes}[1], $interface) . ">" if $codeGenerator->IsRecordType($innerType);
     return "RefPtr<$innerTypeName>";
 }
 
@@ -5244,6 +5211,16 @@ sub GetNativeTypeForMemoization
     my ($interface, $type) = @_;
 
     return GetNativeType($interface, $type);
+}
+
+sub ShouldPassWrapperByReference
+{
+    my ($parameter, $interface) = @_;
+
+    return 0 if $codeGenerator->IsCallbackInterface($parameter->type) || $codeGenerator->IsCallbackFunction($parameter->type);
+
+    my $nativeType = GetNativeType($interface, $parameter->type);
+    return $codeGenerator->ShouldPassWrapperByReference($parameter) && (substr($nativeType, -1) eq '*' || $nativeType =~ /^RefPtr/);
 }
 
 sub GetIntegerConversionConfiguration
@@ -5375,6 +5352,7 @@ sub NativeToJSValueDOMConvertNeedsState
     # FIXME: This should actually check if all the sub-objects of the union need the state.
     return 1 if $type->isUnion;
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+    return 1 if $codeGenerator->IsRecordType($type);
     return 1 if $codeGenerator->IsStringType($type);
     return 1 if $codeGenerator->IsEnumType($type);
     return 1 if $codeGenerator->IsWrapperType($type);
@@ -5391,6 +5369,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     # FIXME: This should actually check if all the sub-objects of the union need the global object.
     return 1 if $type->isUnion;
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+    return 1 if $codeGenerator->IsRecordType($type);
     return 1 if $codeGenerator->IsWrapperType($type);
     return 1 if $codeGenerator->IsTypedArrayType($type);
 
@@ -6029,7 +6008,6 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "\n");
     }
     push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
- 
 }
 
 sub HasCustomConstructor

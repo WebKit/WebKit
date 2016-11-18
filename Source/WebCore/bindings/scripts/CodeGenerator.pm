@@ -352,23 +352,6 @@ sub ParseInterface
 
 # Helpers for all CodeGenerator***.pm modules
 
-sub SkipIncludeHeader
-{
-    my ($object, $typeName) = @_;
-
-    # FIXME: This is a lot like !IsRefPtrType. Maybe they could share code?
-
-    return 1 if $primitiveTypeHash{$typeName};
-    return 1 if $integerTypeHash{$typeName};
-    return 1 if $floatingPointTypeHash{$typeName};
-    return 1 if $typedArrayTypes{$typeName};
-    return 1 if $stringTypeHash{$typeName};
-    return 1 if $typeName eq "BufferSource";
-    return 1 if $typeName eq "any";
-
-    return 0;
-}
-
 sub IsNumericType
 {
     my ($object, $type) = @_;
@@ -616,7 +599,9 @@ sub IsRefPtrType
     return 0 if $object->IsDictionaryType($type);
     return 0 if $object->IsEnumType($type);
     return 0 if $object->IsSequenceOrFrozenArrayType($type);
+    return 0 if $object->IsRecordType($type);
     return 0 if $object->IsStringType($type);
+    return 0 if $type->isUnion;
     return 0 if $type->name eq "any";
 
     return 1;
@@ -656,15 +641,6 @@ sub IsSequenceType
     return $type->name eq "sequence";
 }
 
-sub GetSequenceInnerType
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return @{$type->subtypes}[0];
-}
-
 sub IsFrozenArrayType
 {
     my ($object, $type) = @_;
@@ -672,15 +648,6 @@ sub IsFrozenArrayType
     assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name eq "FrozenArray";
-}
-
-sub GetFrozenArrayInnerType
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return @{$type->subtypes}[0];
 }
 
 sub IsSequenceOrFrozenArrayType
@@ -692,13 +659,13 @@ sub IsSequenceOrFrozenArrayType
     return $object->IsSequenceType($type) || $object->IsFrozenArrayType($type);
 }
 
-sub GetSequenceOrFrozenArrayInnerType
+sub IsRecordType
 {
     my ($object, $type) = @_;
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return @{$type->subtypes}[0];
+    return $type->name eq "record";
 }
 
 # These match WK_lcfirst and WK_ucfirst defined in builtins_generator.py.
@@ -897,7 +864,6 @@ sub IsWrapperType
     return 0 if !$object->IsRefPtrType($type);
     return 0 if $object->IsTypedArrayType($type);
     return 0 if $type->name eq "BufferSource";
-    return 0 if $type->name eq "UNION";
     return 0 if $webCoreTypeHash{$type->name};
 
     return 1;
