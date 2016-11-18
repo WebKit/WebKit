@@ -285,3 +285,5 @@ webkit.org/b/163750 compositing/iframes/page-cache-layer-tree.html [ Pass Failur
 webkit.org/b/164491 [ Yosemite ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
 
 webkit.org/b/164336 [ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash Failure ]
+
+webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
