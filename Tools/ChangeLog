@@ -1,3 +1,19 @@
+2016-11-17  Alex Christensen  <achristensen@webkit.org>
+
+        Support IDN2008 with UTS #46 instead of IDN2003
+        https://bugs.webkit.org/show_bug.cgi?id=144194
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        Add some tests from http://unicode.org/faq/idn.html verifying that we follow UTS46's deviations from IDN2008.
+        Add some tests based on https://tools.ietf.org/html/rfc5893 verifying that we check for bidirectional text.
+        Add a test based on https://tools.ietf.org/html/rfc5892 verifying that we do not do ContextO check.
+        Add a test for U+321D and U+321E which have particularly interesting punycode encodings.  We match Firefox here now.
+        Also add a test from http://www.unicode.org/reports/tr46/#IDNAComparison verifying we are not using IDN2003.
+        We should consider importing all of http://www.unicode.org/Public/idna/9.0.0/IdnaTest.txt as URL domain tests.
+
 2016-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Downloads started by context menu actions should also have a web view associated

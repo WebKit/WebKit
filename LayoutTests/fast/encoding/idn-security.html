@@ -134,8 +134,6 @@ testIDNCharacter(0x0E01, "allowed");
 testIDNCharacter(0xA000, "allowed");
 
 /* ICU converts these to other allowed characters, so the original character can't be used to get to a phishy domain name */
-testIDNCharacter(0x2024, ".");
-testIDNCharacter(0xFE52, ".");
 testIDNCharacter(0xFF0F, "/");
 
 /* ICU converts these characters to backslash, so the original character can't be used to get to a phishy domain name */
@@ -168,16 +166,6 @@ testIDNCharacter(0x00ED, "disallowed");
 testIDNCharacter(0x01C3, "disallowed");
 testIDNCharacter(0x0251, "disallowed");
 testIDNCharacter(0x0261, "disallowed");
-testIDNCharacter(0x0337, "disallowed");
-testIDNCharacter(0x0337, "disallowed");
-testIDNCharacter(0x0338, "disallowed");
-testIDNCharacter(0x0338, "disallowed");
-testIDNCharacter(0x05B4, "disallowed");
-testIDNCharacter(0x05BC, "disallowed");
-testIDNCharacter(0x0660, "disallowed");
-testIDNCharacter(0x06F0, "disallowed");
-testIDNCharacter(0x115F, "disallowed");
-testIDNCharacter(0x1160, "disallowed");
 testIDNCharacter(0x2027, "disallowed");
 testIDNCharacter(0x2039, "disallowed");
 testIDNCharacter(0x203A, "disallowed");
@@ -206,19 +194,13 @@ testIDNCharacter(0x3014, "disallowed");
 testIDNCharacter(0x3015, "disallowed");
 testIDNCharacter(0x3033, "disallowed");
 testIDNCharacter(0x3035, "disallowed");
-testIDNCharacter(0x3164, "disallowed");
-testIDNCharacter(0x321D, "disallowed");
-testIDNCharacter(0x321E, "disallowed");
 testIDNCharacter(0x33AE, "disallowed");
 testIDNCharacter(0x33AF, "disallowed");
 testIDNCharacter(0x33C6, "disallowed");
 testIDNCharacter(0x33DF, "disallowed");
-testIDNCharacter(0xFE14, "disallowed");
-testIDNCharacter(0xFE15, "disallowed");
 testIDNCharacter(0xFE3F, "disallowed");
 testIDNCharacter(0xFE5D, "disallowed");
 testIDNCharacter(0xFE5E, "disallowed");
-testIDNCharacter(0xFFA0, "disallowed");
 
 /* ICU won't encode these characters in IDN, thus we should always get 'host not found'. */
 testIDNCharacter(0x2028, "does not encode");
@@ -258,12 +240,48 @@ if (isOlderICU) {
     testIDNCharacter(0xFF0E, ".");
     testIDNCharacter(0xFF61, ".");
     testIDNCharacter(0xFEFF, "");
+    testIDNCharacter(0x2024, ".");
+    testIDNCharacter(0xFE52, ".");
+    testIDNCharacter(0x0337, "disallowed");
+    testIDNCharacter(0x0337, "disallowed");
+    testIDNCharacter(0x0338, "disallowed");
+    testIDNCharacter(0x0338, "disallowed");
+    testIDNCharacter(0x05B4, "disallowed");
+    testIDNCharacter(0x05BC, "disallowed");
+    testIDNCharacter(0x0660, "disallowed");
+    testIDNCharacter(0x06F0, "disallowed");
+    testIDNCharacter(0x115F, "disallowed");
+    testIDNCharacter(0x1160, "disallowed");
+    testIDNCharacter(0x3164, "disallowed");
+    testIDNCharacter(0x321D, "disallowed");
+    testIDNCharacter(0x321E, "disallowed");
+    testIDNCharacter(0xFE14, "disallowed");
+    testIDNCharacter(0xFE15, "disallowed");
+    testIDNCharacter(0xFFA0, "disallowed");
 } else {
     testIDNCharacter(0x200B, "does not encode", "");
     testIDNCharacter(0x3002, "does not encode", ".");
     testIDNCharacter(0xFF0E, "does not encode", ".");
     testIDNCharacter(0xFF61, "does not encode", ".");
     testIDNCharacter(0xFEFF, "does not encode", "");
+    testIDNCharacter(0x2024, "%u2024");
+    testIDNCharacter(0xFE52, "%uFE52");
+    testIDNCharacter(0x0337, "%u0337", "punycode");
+    testIDNCharacter(0x0337, "%u0337", "punycode");
+    testIDNCharacter(0x0338, "%u0338", "punycode");
+    testIDNCharacter(0x0338, "%u0338", "punycode");
+    testIDNCharacter(0x05B4, "%u05B4", "punycode");
+    testIDNCharacter(0x05BC, "%u05BC", "punycode");
+    testIDNCharacter(0x0660, "%u0660");
+    testIDNCharacter(0x06F0, "disallowed");
+    testIDNCharacter(0x115F, "%u115F");
+    testIDNCharacter(0x1160, "%u1160");
+    testIDNCharacter(0x3164, "%u3164");
+    testIDNCharacter(0x321D, "%28%uC624%uC804%29");
+    testIDNCharacter(0x321E, "%28%uC624%uD6C4%29");
+    testIDNCharacter(0xFE14, "%3B");
+    testIDNCharacter(0xFE15, "%21");
+    testIDNCharacter(0xFFA0, "%uFFA0");
 }
 
 </script>

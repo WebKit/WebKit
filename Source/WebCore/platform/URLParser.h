@@ -29,6 +29,8 @@
 #include "URL.h"
 #include <wtf/Forward.h>
 
+struct UIDNA;
+
 namespace WebCore {
 
 template<typename CharacterType> class CodePointIterator;
@@ -47,6 +49,8 @@ public:
     typedef Vector<std::pair<String, String>> URLEncodedForm;
     static URLEncodedForm parseURLEncodedForm(StringView);
     static String serialize(const URLEncodedForm&);
+
+    static const UIDNA& internationalDomainNameTranscoder();
 
 private:
     static Optional<uint16_t> defaultPortForProtocol(StringView);

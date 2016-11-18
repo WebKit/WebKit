@@ -1,3 +1,37 @@
+2016-11-17  Alex Christensen  <achristensen@webkit.org>
+
+        Support IDN2008 with UTS #46 instead of IDN2003
+        https://bugs.webkit.org/show_bug.cgi?id=144194
+
+        Reviewed by Darin Adler.
+
+        Use uidna_nameToASCII instead of the deprecated uidna_IDNToASCII.
+        It uses IDN2008 instead of IDN2003, and it uses UTF #46 when used with a UIDNA opened with uidna_openUTS46.
+        This follows https://url.spec.whatwg.org/#concept-domain-to-ascii except we do not use Transitional_Processing
+        to prevent homograph attacks on german domain names with "ß" and "ss" in them.  These are now treated as separate domains.
+        Firefox also doesn't use Transitional_Processing. Chrome and the current specification use Transitional_processing,
+        but https://github.com/whatwg/url/issues/110 might change the spec.
+        
+        In addition, http://unicode.org/reports/tr46/ says:
+        "implementations are encouraged to apply the Bidi and ContextJ validity criteria"
+        Bidi checks prevent domain names with bidirectional text, such as latin and hebrew characters in the same domain.  Chrome and Firefox do this.
+
+        ContextJ checks prevent code points such as U+200D, which is a zero-width joiner which users would not see when looking at the domain name.
+        Firefox currently enables ContextJ checks and it is suggested by UTS #46, so we'll do it.
+
+        ContextO checks, which we do not use and neither does any other browser nor the spec, would fail if a domain contains code points such as U+30FB,
+        which looks somewhat like a dot.  We can investigate enabling these checks later.
+
+        Covered by new API tests and rebased LayoutTests.
+        The new API tests verify that we do not use transitional processing, that we do apply the Bidi and ContextJ checks, but not ContextO checks.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::domainToASCII):
+        (WebCore::URLParser::internationalDomainNameTranscoder):
+        * platform/URLParser.h:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::mapHostNameWithRange):
+
 2016-11-18  Dean Jackson  <dino@apple.com>
 
         Better testing for accessibility media queries

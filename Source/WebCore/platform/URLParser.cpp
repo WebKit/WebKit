@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "RuntimeApplicationChecks.h"
 #include <array>
+#include <mutex>
 #include <unicode/uidna.h>
 #include <unicode/utypes.h>
 
@@ -2479,19 +2480,11 @@ Optional<Vector<LChar, URLParser::defaultInlineBufferSize>> URLParser::domainToA
     
     UChar hostnameBuffer[defaultInlineBufferSize];
     UErrorCode error = U_ZERO_ERROR;
-
-#if COMPILER(GCC) || COMPILER(CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    // FIXME: This should use uidna_openUTS46 / uidna_close instead
-    int32_t numCharactersConverted = uidna_IDNToASCII(StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, defaultInlineBufferSize, UIDNA_ALLOW_UNASSIGNED, nullptr, &error);
-#if COMPILER(GCC) || COMPILER(CLANG)
-#pragma GCC diagnostic pop
-#endif
+    UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
+    int32_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, defaultInlineBufferSize, &processingDetails, &error);
     ASSERT(numCharactersConverted <= static_cast<int32_t>(defaultInlineBufferSize));
 
-    if (error == U_ZERO_ERROR) {
+    if (U_SUCCESS(error) && !processingDetails.errors) {
         for (int32_t i = 0; i < numCharactersConverted; ++i) {
             ASSERT(isASCII(hostnameBuffer[i]));
             ASSERT(!isASCIIUpper(hostnameBuffer[i]));
@@ -2758,6 +2751,19 @@ String URLParser::serialize(const URLEncodedForm& tuples)
         serializeURLEncodedForm(tuple.second, output);
     }
     return String::adopt(WTFMove(output));
+}
+
+const UIDNA& URLParser::internationalDomainNameTranscoder()
+{
+    static UIDNA* encoder;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        UErrorCode error = U_ZERO_ERROR;
+        encoder = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_UNICODE | UIDNA_NONTRANSITIONAL_TO_ASCII, &error);
+        RELEASE_ASSERT(U_SUCCESS(error));
+        RELEASE_ASSERT(encoder);
+    });
+    return *encoder;
 }
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)

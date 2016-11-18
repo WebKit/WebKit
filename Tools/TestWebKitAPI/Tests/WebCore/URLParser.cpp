@@ -1093,6 +1093,32 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("a://b", "//[aBc]",
         {"a", "", "", "b", 0, "", "", "", "a://b"},
         {"", "", "", "", 0, "", "", "", "a://b"});
+    checkURL(utf16String(u"http://öbb.at"), {"http", "", "", "xn--bb-eka.at", 0, "/", "", "", "http://xn--bb-eka.at/"});
+    checkURL(utf16String(u"http://ÖBB.at"), {"http", "", "", "xn--bb-eka.at", 0, "/", "", "", "http://xn--bb-eka.at/"});
+    checkURL(utf16String(u"http://√.com"), {"http", "", "", "xn--19g.com", 0, "/", "", "", "http://xn--19g.com/"});
+    checkURLDifferences(utf16String(u"http://faß.de"),
+        {"http", "", "", "xn--fa-hia.de", 0, "/", "", "", "http://xn--fa-hia.de/"},
+        {"http", "", "", "fass.de", 0, "/", "", "", "http://fass.de/"});
+    checkURL(utf16String(u"http://ԛәлп.com"), {"http", "", "", "xn--k1ai47bhi.com", 0, "/", "", "", "http://xn--k1ai47bhi.com/"});
+    checkURLDifferences(utf16String(u"http://Ⱥbby.com"),
+        {"http", "", "", "xn--bby-iy0b.com", 0, "/", "", "", "http://xn--bby-iy0b.com/"},
+        {"http", "", "", "xn--bby-spb.com", 0, "/", "", "", "http://xn--bby-spb.com/"});
+    checkURLDifferences(utf16String(u"http://\u2132"),
+        {"", "", "", "", 0, "", "", "", utf16String(u"http://Ⅎ")},
+        {"http", "", "", "xn--f3g", 0, "/", "", "", "http://xn--f3g/"});
+    checkURLDifferences(utf16String(u"http://\u05D9\u05B4\u05D5\u05D0\u05B8/"),
+        {"http", "", "", "xn--cdbi5etas", 0, "/", "", "", "http://xn--cdbi5etas/"},
+        {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
+    checkURLDifferences(utf16String(u"http://bidirectional\u0786\u07AE\u0782\u07B0\u0795\u07A9\u0793\u07A6\u0783\u07AA/"),
+        {"", "", "", "", 0, "", "", "", utf16String(u"http://bidirectionalކޮންޕީޓަރު/")},
+        {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
+    checkURLDifferences(utf16String(u"http://contextj\u200D"),
+        {"", "", "", "", 0, "", "", "", utf16String(u"http://contextj\u200D")},
+        {"http", "", "", "contextj", 0, "/", "", "", "http://contextj/"});
+    checkURL(utf16String(u"http://contexto\u30FB"), {"http", "", "", "xn--contexto-wg5g", 0, "/", "", "", "http://xn--contexto-wg5g/"});
+    checkURLDifferences(utf16String(u"http://\u321D\u321E/"),
+        {"http", "", "", "xn--()()-bs0sc174agx4b", 0, "/", "", "", "http://xn--()()-bs0sc174agx4b/"},
+        {"http", "", "", "xn--5mkc", 0, "/", "", "", "http://xn--5mkc/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

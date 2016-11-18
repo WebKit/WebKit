@@ -27,6 +27,7 @@
  */
 
 #import "config.h"
+#import "URLParser.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreNSURLExtras.h"
@@ -478,8 +479,9 @@ static NSString *mapHostNameWithRange(NSString *string, NSRange range, BOOL enco
     [string getCharacters:sourceBuffer range:range];
     
     UErrorCode uerror = U_ZERO_ERROR;
-    int32_t numCharactersConverted = (encode ? uidna_IDNToASCII : uidna_IDNToUnicode)(sourceBuffer, length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, UIDNA_ALLOW_UNASSIGNED, NULL, &uerror);
-    if (U_FAILURE(uerror)) {
+    UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
+    int32_t numCharactersConverted = (encode ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer, length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, &processingDetails, &uerror);
+    if (U_FAILURE(uerror) || processingDetails.errors) {
         *error = YES;
         return nil;
     }
