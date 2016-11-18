@@ -1,3 +1,38 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Font Converter] Fonts advances are not internally consistent inside the generated font file
+        https://bugs.webkit.org/show_bug.cgi?id=164846
+        <rdar://problem/29031509>
+
+        Reviewed by Darin Adler.
+
+        * platform/ios-simulator/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+        * platform/ios-simulator/svg/batik/text/textEffect-expected.txt:
+        * platform/ios-simulator/svg/batik/text/textEffect3-expected.txt:
+        * platform/ios-simulator/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+
 2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generator functions should have a displayable name when shown in stack traces

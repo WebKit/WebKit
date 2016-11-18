@@ -1,3 +1,18 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Font Converter] Fonts advances are not internally consistent inside the generated font file
+        https://bugs.webkit.org/show_bug.cgi?id=164846
+        <rdar://problem/29031509>
+
+        Reviewed by Darin Adler.
+
+        The fonts I'm generating in the SVG -> OTF converter have fractional FUnit values for their advances.
+        The CFF table can encode that, but hmtx can't, which means the font isn't internally consistent.
+
+        Covered by existing tests.
+
+        * svg/SVGToOTFFontConversion.cpp:
+
 2016-11-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix iOS build.

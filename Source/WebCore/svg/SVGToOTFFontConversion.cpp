@@ -1149,7 +1149,7 @@ public:
         : m_cffData(cffData)
         , m_unitsPerEmScalar(unitsPerEmScalar)
     {
-        writeCFFEncodedNumber(m_cffData, width);
+        writeCFFEncodedNumber(m_cffData, std::floor(width)); // hmtx table can't encode fractional FUnit values, and the CFF table needs to agree with hmtx.
         writeCFFEncodedNumber(m_cffData, origin.x());
         writeCFFEncodedNumber(m_cffData, origin.y());
         m_cffData.append(rMoveTo);
