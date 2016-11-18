@@ -43,7 +43,7 @@ struct ResourceLoadStatistics {
     ResourceLoadStatistics() = default;
 
     void encode(KeyedEncoder&) const;
-    bool decode(KeyedDecoder&);
+    bool decode(KeyedDecoder&, unsigned version);
 
     String toString() const;
 
@@ -83,6 +83,7 @@ struct ResourceLoadStatistics {
     // Prevalent resource stats
     HashCountedSet<String> redirectedToOtherPrevalentResourceOrigins;
     bool isPrevalentResource { false };
+    unsigned dataRecordsRemoved { 0 };
 };
 
 } // namespace WebCore

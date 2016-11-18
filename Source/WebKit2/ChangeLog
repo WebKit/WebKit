@@ -1,3 +1,22 @@
+2016-11-17  John Wilander  <wilander@apple.com>
+
+        Resource load statistics: Cover further data records, count removed data records, and only fire handler when needed
+        https://bugs.webkit.org/show_bug.cgi?id=164659
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Consistent naming with 'remove' rather than 'delete'.
+            Now removes localStorage, IndexDB, disk cache, and memory cache too.
+            Updates statistics with number of times it has removed data records.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            No longer checks whether it has enough data since the classification rules
+            are absolute, not relative.
+        (WebKit::WebResourceLoadStatisticsStore::clearDataRecords): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Consistent naming with 'remove' rather than 'delete'.
+
 2016-11-17  Brady Eidson  <beidson@apple.com>
 
         Add _WKIconLoadingDelegate SPI.

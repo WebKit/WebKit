@@ -103,17 +103,22 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     
     if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
         return;
-    
+
     auto targetOrigin = SecurityOrigin::create(targetURL);
     auto targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-    
+
+    // Always fire if we have previously removed data records for this domain
+    bool shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
+
     if (isMainFrame)
         targetStatistics.topFrameHasBeenNavigatedToBefore = true;
     else {
         targetStatistics.subframeHasBeenLoadedBefore = true;
 
         auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
-        targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+        auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+        if (subframeUnderTopFrameOriginsResult.isNewEntry)
+            shouldFireDataModificationHandler = true;
     }
     
     if (isRedirect) {
@@ -152,7 +157,8 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     }
 
     m_store->setResourceStatisticsForPrimaryDomain(targetPrimaryDomain, WTFMove(targetStatistics));
-    m_store->fireDataModificationHandler();
+    if (shouldFireDataModificationHandler)
+        m_store->fireDataModificationHandler();
 }
     
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -185,8 +191,13 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
 
     auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
+    // Always fire if we have previously removed data records for this domain
+    bool shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
+
     auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
-    targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+        shouldFireDataModificationHandler = true;
 
     if (isRedirect) {
         auto& redirectingOriginStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
@@ -200,7 +211,9 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         ++redirectingOriginStatistics.subresourceHasBeenRedirectedFrom;
         ++updatedTargetStatistics.subresourceHasBeenRedirectedTo;
 
-        redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
+        auto subresourceUniqueRedirectsToResult = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
+        if (subresourceUniqueRedirectsToResult.isNewEntry)
+            shouldFireDataModificationHandler = true;
 
         ++updatedTargetStatistics.subresourceHasBeenSubresourceCount;
 
@@ -214,8 +227,9 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         
         targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
     }
-    
-    m_store->fireDataModificationHandler();
+
+    if (shouldFireDataModificationHandler)
+        m_store->fireDataModificationHandler();
 }
 
 void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& targetURL)
@@ -245,17 +259,23 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         return;
 
     auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+
+    // Always fire if we have previously removed data records for this domain
+    bool shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
     
     auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
-    targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-    
+    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+        shouldFireDataModificationHandler = true;
+
     ++targetStatistics.subresourceHasBeenSubresourceCount;
     
     auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
     
     targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
 
-    m_store->fireDataModificationHandler();
+    if (shouldFireDataModificationHandler)
+        m_store->fireDataModificationHandler();
 }
 
 void ResourceLoadObserver::logUserInteraction(const Document& document)

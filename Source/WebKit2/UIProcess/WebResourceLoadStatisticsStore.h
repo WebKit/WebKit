@@ -74,7 +74,7 @@ private:
 
     bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics&);
     void classifyResource(WebCore::ResourceLoadStatistics&);
-    void clearDataRecords();
+    void removeDataRecords();
 
     String persistentStoragePath(const String& label) const;
 
@@ -89,8 +89,8 @@ private:
     String m_storagePath;
     bool m_resourceLoadStatisticsEnabled { false };
 
-    double m_lastTimeDataRecordsWereCleared { 0 };
-    bool m_dataStoreClearPending { false };
+    double m_lastTimeDataRecordsWereRemoved { 0 };
+    bool m_dataRecordsRemovalPending { false };
 };
 
 } // namespace WebKit

@@ -1,3 +1,46 @@
+2016-11-17  John Wilander  <wilander@apple.com>
+
+        Resource load statistics: Cover further data records, count removed data records, and only fire handler when needed
+        https://bugs.webkit.org/show_bug.cgi?id=164659
+
+        Reviewed by Andy Estes.
+
+        No new tests. This feature is behind a flag and off by default. Tests require real domain names.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+            All three functions are now more conservative in calls to
+            m_store->fireDataModificationHandler(). They only fire when an important statistic has
+            changed or data records have previously been removed for the domain in question.
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode):
+            Added the dataRecordsRemoved statistic.
+        (WebCore::ResourceLoadStatistics::decode):
+            Now takes a version parameter to control which keys to expect.
+            Added the dataRecordsRemoved statistic.
+        (WebCore::appendHashCountedSet):
+            Removed stray linefeed.
+        (WebCore::ResourceLoadStatistics::toString):
+            Added the dataRecordsRemoved statistic.
+        (WebCore::ResourceLoadStatistics::merge):
+            Added the dataRecordsRemoved statistic.
+        * loader/ResourceLoadStatistics.h:
+            Added the dataRecordsRemoved statistic.
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData):
+            Now encodes a version number for the statistics model.
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+            Now tries to decode a version number and passes it on to statistics decoding.
+        (WebCore::ResourceLoadStatisticsStore::processStatistics):
+            No longer gates processing on the number of data captured.
+        (WebCore::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords):
+            Update function for the new dataRecordsRemoved statistic.
+        (WebCore::ResourceLoadStatisticsStore::hasEnoughDataForStatisticsProcessing): Deleted.
+            No longer needed since we no longer gate processing on the number of data captured.
+        * loader/ResourceLoadStatisticsStore.h:
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build after r208740

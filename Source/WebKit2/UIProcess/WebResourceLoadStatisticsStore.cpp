@@ -44,8 +44,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const auto numberOfSecondsBetweenClearingDataRecords = 600;
+static const auto numberOfSecondsBetweenRemovingDataRecords = 60;
 static const auto featureVectorLengthThreshold = 3;
+static OptionSet<WebKit::WebsiteDataType> dataTypesToRemove;
 
 Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const String& resourceLoadStatisticsDirectory)
 {
@@ -99,9 +100,9 @@ void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& re
     }
 }
 
-void WebResourceLoadStatisticsStore::clearDataRecords()
+void WebResourceLoadStatisticsStore::removeDataRecords()
 {
-    if (m_dataStoreClearPending)
+    if (m_dataRecordsRemovalPending)
         return;
 
     Vector<String> prevalentResourceDomains = coreStore().prevalentResourceDomainsWithoutUserInteraction();
@@ -109,41 +110,53 @@ void WebResourceLoadStatisticsStore::clearDataRecords()
         return;
 
     double now = currentTime();
-    if (!m_lastTimeDataRecordsWereCleared) {
-        m_lastTimeDataRecordsWereCleared = now;
+    if (!m_lastTimeDataRecordsWereRemoved) {
+        m_lastTimeDataRecordsWereRemoved = now;
         return;
     }
 
-    if (now < (m_lastTimeDataRecordsWereCleared + numberOfSecondsBetweenClearingDataRecords))
+    if (now < (m_lastTimeDataRecordsWereRemoved + numberOfSecondsBetweenRemovingDataRecords))
         return;
 
-    m_dataStoreClearPending = true;
-    m_lastTimeDataRecordsWereCleared = now;
+    m_dataRecordsRemovalPending = true;
+    m_lastTimeDataRecordsWereRemoved = now;
+
+    if (dataTypesToRemove.isEmpty()) {
+        dataTypesToRemove |= WebsiteDataType::Cookies;
+        dataTypesToRemove |= WebsiteDataType::LocalStorage;
+        dataTypesToRemove |= WebsiteDataType::IndexedDBDatabases;
+        dataTypesToRemove |= WebsiteDataType::DiskCache;
+        dataTypesToRemove |= WebsiteDataType::MemoryCache;
+    }
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = WTFMove(prevalentResourceDomains), this] () mutable {
         auto& websiteDataStore = API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
 
-        websiteDataStore.fetchData(WebsiteDataType::Cookies, { }, [prevalentResourceDomains = WTFMove(prevalentResourceDomains), this](auto websiteDataRecords) {
+        websiteDataStore.fetchData(dataTypesToRemove, { }, [prevalentResourceDomains = WTFMove(prevalentResourceDomains), this](auto websiteDataRecords) {
             Vector<WebsiteDataRecord> dataRecords;
+            Vector<String> prevalentResourceDomainsWithDataRecords;
             for (auto& websiteDataRecord : websiteDataRecords) {
                 for (auto& prevalentResourceDomain : prevalentResourceDomains) {
                     if (websiteDataRecord.displayName.endsWithIgnoringASCIICase(prevalentResourceDomain)) {
                         auto suffixStart = websiteDataRecord.displayName.length() - prevalentResourceDomain.length();
-                        if (!suffixStart || websiteDataRecord.displayName[suffixStart - 1] == '.')
+                        if (!suffixStart || websiteDataRecord.displayName[suffixStart - 1] == '.') {
                             dataRecords.append(websiteDataRecord);
+                            prevalentResourceDomainsWithDataRecords.append(prevalentResourceDomain);
+                        }
                     }
                 }
             }
 
             if (!dataRecords.size()) {
-                m_dataStoreClearPending = false;
+                m_dataRecordsRemovalPending = false;
                 return;
             }
 
             auto& websiteDataStore = API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
-            websiteDataStore.removeData(WebsiteDataType::Cookies, { WTFMove(dataRecords) }, [this] {
-                m_dataStoreClearPending = false;
+            websiteDataStore.removeData(dataTypesToRemove, dataRecords, [prevalentResourceDomainsWithDataRecords = WTFMove(prevalentResourceDomainsWithDataRecords), this] {
+                this->coreStore().updateStatisticsForRemovedDataRecords(prevalentResourceDomainsWithDataRecords);
+                m_dataRecordsRemovalPending = false;
             });
         });
     });
@@ -153,13 +166,11 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<
 {
     coreStore().mergeStatistics(origins);
 
-    if (coreStore().hasEnoughDataForStatisticsProcessing()) {
-        coreStore().processStatistics([this] (ResourceLoadStatistics& resourceStatistic) {
-            classifyResource(resourceStatistic);
-            clearDataRecords();
-        });
-    }
-
+    coreStore().processStatistics([this] (ResourceLoadStatistics& resourceStatistic) {
+        classifyResource(resourceStatistic);
+        removeDataRecords();
+    });
+    
     auto encoder = coreStore().createEncoderFromData();
     
     writeEncoderToDisk(*encoder.get(), "full_browsing_session");

@@ -81,6 +81,7 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     // Prevalent Resource
     encodeHashCountedSet(encoder, "redirectedToOtherPrevalentResourceOrigins", redirectedToOtherPrevalentResourceOrigins);
     encoder.encodeBool("isPrevalentResource", isPrevalentResource);
+    encoder.encodeUInt32("dataRecordsRemoved", dataRecordsRemoved);
 }
 
 static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
@@ -99,7 +100,7 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
     });
 }
 
-bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
+bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned version)
 {
     if (!decoder.decodeString("PrevalentResourceOrigin", highLevelDomain))
         return false;
@@ -170,6 +171,12 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     
     if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
         return false;
+
+    if (version < 2)
+        return true;
+
+    if (!decoder.decodeUInt32("dataRecordsRemoved", dataRecordsRemoved))
+        return false;
     
     return true;
 }
@@ -198,7 +205,6 @@ static void appendHashCountedSet(StringBuilder& builder, const String& label, co
         builder.appendNumber(entry.value);
         builder.append('\n');
     }
-    
 }
 
 String ResourceLoadStatistics::toString() const
@@ -268,6 +274,10 @@ String ResourceLoadStatistics::toString() const
     // Prevalent Resource
     appendHashCountedSet(builder, "redirectedToOtherPrevalentResourceOrigins", redirectedToOtherPrevalentResourceOrigins);
     appendBoolean(builder, "isPrevalentResource", isPrevalentResource);
+    builder.appendLiteral("    dataRecordsRemoved: ");
+    builder.appendNumber(dataRecordsRemoved);
+    builder.append('\n');
+
     builder.append('\n');
 
     return builder.toString();
@@ -314,6 +324,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     // Prevalent resource stats
     mergeHashCountedSet(redirectedToOtherPrevalentResourceOrigins, other.redirectedToOtherPrevalentResourceOrigins);
     isPrevalentResource |= other.isPrevalentResource;
+    dataRecordsRemoved += other.dataRecordsRemoved;
 }
 
 }
