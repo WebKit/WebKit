@@ -184,6 +184,7 @@ public:
     ExpressionType createAwait(const JSTokenLocation&, ExpressionType, int, int, int) { return AwaitExpr; }
     ClassExpression createClassExpr(const JSTokenLocation&, const ParserClassInfo<SyntaxChecker>&, VariableEnvironment&, ExpressionType, ExpressionType, PropertyList, PropertyList) { return ClassExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
+    ExpressionType createGeneratorFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, const Identifier&) { return FunctionExpr; }
     ExpressionType createAsyncFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, SuperBinding, unsigned, int, SourceParseMode, bool, InnerArrowFunctionCodeFeatures = NoInnerArrowFunctionFeatures) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }

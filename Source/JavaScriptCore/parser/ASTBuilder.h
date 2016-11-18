@@ -389,6 +389,14 @@ public:
         return result;
     }
 
+    ExpressionNode* createGeneratorFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, const Identifier& name)
+    {
+        FuncExprNode* result = static_cast<FuncExprNode*>(createFunctionExpr(location, functionInfo));
+        if (!name.isNull())
+            result->metadata()->setInferredName(name);
+        return result;
+    }
+
     ExpressionNode* createAsyncFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, SourceParseMode parseMode)
     {
         if (parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {

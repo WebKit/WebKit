@@ -1,3 +1,15 @@
+2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generator functions should have a displayable name when shown in stack traces
+        https://bugs.webkit.org/show_bug.cgi?id=164844
+        <rdar://problem/29300697>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/generator-function-name.js:
+        Add another test now that we name the inner generator function
+        that we do not break the lexical resolution of names.
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop arguments.caller

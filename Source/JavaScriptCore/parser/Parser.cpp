@@ -290,7 +290,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         else if (isModuleParseMode(parseMode))
             sourceElements = parseModuleSourceElements(context, parseMode);
         else if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode)
-            sourceElements = parseGeneratorFunctionSourceElements(context, CheckForStrictMode);
+            sourceElements = parseGeneratorFunctionSourceElements(context, calleeName, CheckForStrictMode);
         else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
     }
@@ -504,7 +504,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGeneratorFunctionSourceElements(TreeBuilder& context, SourceElementsMode mode)
+template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGeneratorFunctionSourceElements(TreeBuilder& context, const Identifier& name, SourceElementsMode mode)
 {
     auto sourceElements = context.createSourceElements();
 
@@ -537,7 +537,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
     info.endOffset = m_token.m_data.offset;
     info.parametersStartColumn = startColumn;
 
-    auto functionExpr = context.createFunctionExpr(startLocation, info);
+    auto functionExpr = context.createGeneratorFunctionBody(startLocation, info, name);
     auto statement = context.createExprStatement(startLocation, functionExpr, start, m_lastTokenEndPosition.line);
     context.appendStatement(sourceElements, statement);
 

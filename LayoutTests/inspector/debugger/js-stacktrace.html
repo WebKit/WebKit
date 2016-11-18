@@ -1,15 +1,10 @@
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-function typeErrorWrap()
-{
-    return typeError();
-}
-
-function typeError()
-{
-    var object = {};
+function typeError() {
+    let object = {};
     try {
         object.propertyDoesnt.exist;
     } catch (e) {
@@ -18,15 +13,18 @@ function typeError()
     }
 }
 
-function testWithNativeCallInBetween()
-{
+function triggerTypeError() {
+    return typeError();
+}
+
+function triggerTypeErrorWithNativeCallInBetween() {
     return [42].map(typeError)[0];
 }
 
-var _anonymousFunctionError = null;
+let _anonymousFunctionError = null;
 
 (function() {
-    var object = {};
+    let object = {};
     try {
         object.methodDoesntExist();
     } catch (e) {
@@ -38,17 +36,54 @@ function getAnonymousFunctionError() {
     return _anonymousFunctionError;
 }
 
+function* generator1() {
+    yield* generator2();
+}
+
+function* generator2() {
+    yield typeError();
+}
+
+function triggerGeneratorError() {
+    return generator1().next().value;
+}
 
 function test()
 {
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+    function stripFilePaths(stackTrace) {
+        for (let frame of stackTrace) {
+            if (typeof frame.url === "string")
+                frame.url = frame.url.replace(/^.+?LayoutTests/, "");
+        }
+        return stackTrace;
+    }
+
+    function stripCallFramesAfterEval(stackTrace) {
+        for (let i = 0; i < stackTrace.length; ++i) {
+            let frame = stackTrace[i];
+            if (frame.programCode)
+                return stackTrace.slice(0, i + 1);
+        }
+        return stackTrace;
+    }
+
+    function stripPayloadAfterGlobalCode(stackTrace) {
+        for (let i = 0; i < stackTrace.length; ++i) {
+            let frame = stackTrace[i];
+            if (frame.functionName === "global code")
+                return stackTrace.slice(0, i + 1);
+        }
+        return stackTrace;
+    }
+
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
         InspectorTest.log("\nconsole.trace():");
 
-        var stackTrace = [];
-        var callFramesBeforeEval = stripCallFramesAfterEval(event.data.message.stackTrace.callFrames);
-        for (var callFrame of callFramesBeforeEval) {
-            var lineNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.lineNumber : null;
-            var columnNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.columnNumber : null;
+        let stackTrace = [];
+        let callFramesBeforeEval = stripCallFramesAfterEval(event.data.message.stackTrace.callFrames);
+        for (let callFrame of callFramesBeforeEval) {
+            let lineNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.lineNumber : null;
+            let columnNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.columnNumber : null;
             stackTrace.push({
                 lineNumber: lineNumber,
                 columnNumber: columnNumber,
@@ -60,82 +95,50 @@ function test()
 
         InspectorTest.log(JSON.stringify(stackTrace, null, 4));
     });
+    
 
-    InspectorTest.evaluateInPage("typeErrorWrap()", function(error, result) {
-        InspectorTest.log("\nError object:");
+    let suite = InspectorTest.createAsyncSuite("ConsoleTraceAndJavaScriptStackTrace");
 
-        if (error)
-            InspectorTest.log(error);
-
-        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
-        stackTrace = stripFilePaths(stackTrace);
-
-        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
-        InspectorTest.completeTest();
-    });
-
-    InspectorTest.evaluateInPage("testWithNativeCallInBetween()", function(error, result) {
-        InspectorTest.log("\nError object:");
-
-        if (error)
-            InspectorTest.log(error);
-
-        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
-        stackTrace = stripFilePaths(stackTrace);
-
-        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
-        InspectorTest.completeTest();
-    });
-
-    InspectorTest.evaluateInPage("getAnonymousFunctionError()", function(error, result) {
-        InspectorTest.log("\nError object:");
-
-        if (error)
-            InspectorTest.log(error);
-
-        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
-        stackTrace = stripFilePaths(stackTrace);
-
-        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
-        InspectorTest.completeTest();
-    });
-
-    function stripFilePaths(stackTrace)
-    {
-        for (var frame of stackTrace) {
-            if (typeof frame.url === "string")
-                frame.url = frame.url.replace(/^.+?LayoutTests/, "");
-        }
-        return stackTrace;
+    function addTestCase({name, expression}) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression, (error, result) => {
+                    InspectorTest.assert(!error, error);
+                    InspectorTest.log("\nError object:");
+                    let stackTrace = stripFilePaths(stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value)));
+                    InspectorTest.log(JSON.stringify(stackTrace, null, 4));
+                    resolve();
+                });
+            }
+        });
     }
 
-    function stripCallFramesAfterEval(stackTrace)
-    {
-        var index = 0;
-        for (var frame of stackTrace) {
-            index++;
-            if (frame.programCode)
-                break;
-        }
-        return stackTrace.slice(0, index);
-    }
+    addTestCase({
+        name: "ConsoleTraceAndJavaScriptStackTrace.BasicError",
+        expression: "triggerTypeError()",
+    });
 
-    function stripPayloadAfterGlobalCode(payload)
-    {
-        var index = 0;
-        for (var frame of payload) {
-            index++;
-            if (frame.functionName === "global code")
-                break;
-        }
-        return payload.slice(0, index);
-    }
+    addTestCase({
+        name: "ConsoleTraceAndJavaScriptStackTrace.ErrorInNativeCall",
+        expression: "triggerTypeErrorWithNativeCallInBetween()",
+    });
+
+    addTestCase({
+        name: "ConsoleTraceAndJavaScriptStackTrace.ErrorInAnonymousFunction",
+        expression: "getAnonymousFunctionError()",
+    });
+
+    addTestCase({
+        name: "ConsoleTraceAndJavaScriptStackTrace.ErrorInGenerator",
+        expression: "triggerGeneratorError()",
+    });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-<p>
-Test that the inspector can parse the stack trace format used by JSC for Error instances and console.trace.<br>
-</p>
+<p>Tests that we can parse the stack trace format used by JavaScriptCore and the contents of Error / console.trace stack traces.</p>
 </body>
 </html>

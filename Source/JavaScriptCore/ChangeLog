@@ -1,3 +1,24 @@
+2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generator functions should have a displayable name when shown in stack traces
+        https://bugs.webkit.org/show_bug.cgi?id=164844
+        <rdar://problem/29300697>
+
+        Reviewed by Yusuke Suzuki.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createGeneratorFunctionBody):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGeneratorFunctionBody):
+        New way to create a generator function with an inferred name.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        * parser/Parser.h:
+        Pass on the name of the generator wrapper function so we can
+        use it on the inner generator function.
+
 2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an experimental API to find elements across shadow boundaries

@@ -1,3 +1,16 @@
+2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generator functions should have a displayable name when shown in stack traces
+        https://bugs.webkit.org/show_bug.cgi?id=164844
+        <rdar://problem/29300697>
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/debugger/js-stacktrace-expected.txt:
+        * inspector/debugger/js-stacktrace.html:
+        Add a test case for console.trace() / Error stack inside of generators.
+        Modernize the test to reduce redundency and get nicer output.
+
 2016-11-17  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for ByteString

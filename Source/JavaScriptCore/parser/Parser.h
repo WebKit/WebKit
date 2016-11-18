@@ -1468,7 +1468,7 @@ private:
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
-    template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, const Identifier& name, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, SourceParseMode, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
