@@ -1,3 +1,26 @@
+2016-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Downloads started by context menu actions should also have a web view associated
+        https://bugs.webkit.org/show_bug.cgi?id=164364
+
+        Reviewed by Michael Catanzaro.
+
+        When a request is converted to a download WebPageProxy calls handleDownloadRequest() and clients handle that to
+        associate the web view to the download. When a download is started by a context menu action, WebPageProxy calls
+        WebProcessPool::download() with this as initiatingPage parameter, but clients are not notified in this case.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadCreateForRequest): Deleted.
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextStartDownload): Use webkitWebContextGetOrCreateDownload() after WebProcessPool::download()
+        because the WebKitDownload could have already been created by the web view download handler at this point.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_download_uri): We no longer need to associate the web view to the download here.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download): If an initiatingPage has been passed, call handleDownloadRequest() to notify
+        the page client.
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: API test _WKDownload.ConvertResponseToDownload is a flaky timeout

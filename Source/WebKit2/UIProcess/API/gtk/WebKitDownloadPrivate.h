@@ -27,7 +27,6 @@
 #include <wtf/text/CString.h>
 
 WebKitDownload* webkitDownloadCreate(WebKit::DownloadProxy*);
-WebKitDownload* webkitDownloadCreateForRequest(WebKit::DownloadProxy*, const WebCore::ResourceRequest&);
 bool webkitDownloadIsCancelled(WebKitDownload*);
 void webkitDownloadSetResponse(WebKitDownload*, WebKitURIResponse*);
 void webkitDownloadSetWebView(WebKitDownload*, WebKitWebView*);

@@ -812,6 +812,9 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
     DownloadProxy* downloadProxy = createDownloadProxy(request);
     SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
 
+    if (initiatingPage)
+        initiatingPage->handleDownloadRequest(downloadProxy);
+
     if (networkProcess()) {
         ResourceRequest updatedRequest(request);
         // Request's firstPartyForCookies will be used as Original URL of the download request.

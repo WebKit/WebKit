@@ -3351,13 +3351,11 @@ gboolean webkit_web_view_save_to_file_finish(WebKitWebView* webView, GAsyncResul
  */
 WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char* uri)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(uri, 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(uri, nullptr);
 
-    WebKitDownload* download = webkitWebContextStartDownload(webView->priv->context.get(), uri, getPage(webView));
-    webkitDownloadSetWebView(download, webView);
-
-    return download;
+    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(webView->priv->context.get(), uri, getPage(webView));
+    return download.leakRef();
 }
 
 /**

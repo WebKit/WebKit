@@ -579,10 +579,11 @@ static DownloadsMap& downloadsMap()
  */
 WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const gchar* uri)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
-    g_return_val_if_fail(uri, 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+    g_return_val_if_fail(uri, nullptr);
 
-    return webkitWebContextStartDownload(context, uri, 0);
+    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(context, uri, nullptr);
+    return download.leakRef();
 }
 
 /**
@@ -1237,10 +1238,7 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext* context, const char* uri, WebPageProxy* initiatingPage)
 {
     WebCore::ResourceRequest request(String::fromUTF8(uri));
-    DownloadProxy* downloadProxy = context->priv->processPool->download(initiatingPage, request);
-    WebKitDownload* download = webkitDownloadCreateForRequest(downloadProxy, request);
-    downloadsMap().set(downloadProxy, download);
-    return download;
+    return webkitWebContextGetOrCreateDownload(context->priv->processPool->download(initiatingPage, request));
 }
 
 void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)

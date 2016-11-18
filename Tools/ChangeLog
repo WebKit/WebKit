@@ -1,3 +1,23 @@
+2016-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Downloads started by context menu actions should also have a web view associated
+        https://bugs.webkit.org/show_bug.cgi?id=164364
+
+        Reviewed by Michael Catanzaro.
+
+        Add a GTK+ unit tests to check that downloads started by the context menu have a web view associated.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (downloadLocalFileSuccessfully):
+        (testDownloadOverwriteDestinationDisallowed):
+        (testDownloadLocalFileError):
+        (testDownloadRemoteFile):
+        (testDownloadRemoteFileError):
+        (testDownloadMIMEType):
+        (contextMenuCallback):
+        (testContextMenuDownloadActions):
+        (beforeAll):
+
 2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an experimental API to find elements across shadow boundaries
