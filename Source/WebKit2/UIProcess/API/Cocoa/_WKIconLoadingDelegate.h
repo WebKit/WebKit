@@ -23,27 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+NS_ASSUME_NONNULL_BEGIN
 
-class Document;
-enum class LinkIconType;
+@class _WKLinkIconParameters;
 
-class LinkIconCollector {
-public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
-    }
+@protocol _WKIconLoadingDelegate <NSObject>
+@optional
 
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
+- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler;
 
-private:
-    Document& m_document;
-};
+@end
 
-}
+NS_ASSUME_NONNULL_END
+
+#endif

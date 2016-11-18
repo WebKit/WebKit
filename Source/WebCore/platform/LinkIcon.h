@@ -25,25 +25,46 @@
 
 #pragma once
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#include "LinkIconType.h"
+#include "URL.h"
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Document;
-enum class LinkIconType;
+struct LinkIcon {
+    URL url;
+    LinkIconType type;
+    String mimeType;
+    Optional<unsigned> size;
 
-class LinkIconCollector {
-public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
-    }
-
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
-
-private:
-    Document& m_document;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
 };
 
+template<class Encoder>
+void LinkIcon::encode(Encoder& encoder) const
+{
+    encoder << url << mimeType << size;
+    encoder.encodeEnum(type);
 }
+
+template<class Decoder>
+bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
+{
+    if (!decoder.decode(result.url))
+        return false;
+
+    if (!decoder.decode(result.mimeType))
+        return false;
+
+    if (!decoder.decode(result.size))
+        return false;
+
+    if (!decoder.decodeEnum(result.type))
+        return false;
+
+    return true;
+}
+
+} // namespace WebCore

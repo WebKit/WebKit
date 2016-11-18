@@ -25,25 +25,23 @@
 
 #pragma once
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#include "GenericCallback.h"
+#include <WebCore/LinkIcon.h>
+#include <wtf/Function.h>
 
-namespace WebCore {
+namespace IPC {
+class DataReference;
+}
 
-class Document;
-enum class LinkIconType;
+namespace API {
 
-class LinkIconCollector {
+class IconLoadingClient {
 public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
+    virtual ~IconLoadingClient() { }
+
+    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) {
+        completionHandler(nullptr);
     }
-
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
-
-private:
-    Document& m_document;
 };
 
-}
+} // namespace API

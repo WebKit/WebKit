@@ -23,27 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+#import <Foundation/Foundation.h>
 
-class Document;
-enum class LinkIconType;
-
-class LinkIconCollector {
-public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
-    }
-
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
-
-private:
-    Document& m_document;
+typedef NS_ENUM(NSInteger, WKLinkIconType) {
+    WKLinkIconTypeFavicon,
+    WKLinkIconTypeTouchIcon,
+    WKLinkIconTypeTouchPrecomposedIcon,
 };
 
-}
+@interface _WKLinkIconParameters : NSObject
+
+@property (nonatomic, readonly, copy) NSURL *url;
+@property (nonatomic, readonly) WKLinkIconType iconType;
+@property (nonatomic, readonly, copy) NSString *mimeType;
+@property (nonatomic, readonly, copy) NSNumber *size;
+
+@end
+
+#endif

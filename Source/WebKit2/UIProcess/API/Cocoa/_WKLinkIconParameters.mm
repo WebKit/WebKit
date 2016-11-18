@@ -23,27 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKLinkIconParametersInternal.h"
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+#import <WebCore/LinkIcon.h>
 
-class Document;
-enum class LinkIconType;
+@implementation _WKLinkIconParameters {
+    RetainPtr<NSURL> _url;
+    WKLinkIconType _iconType;
+    RetainPtr<NSString> _mimeType;
+    RetainPtr<NSNumber> _size;
+}
 
-class LinkIconCollector {
-public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
+- (instancetype)_initWithLinkIcon:(const WebCore::LinkIcon&)linkIcon
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _url = adoptNS([(NSURL *)linkIcon.url copy]);
+    _mimeType = adoptNS([(NSString *)linkIcon.mimeType copy]);
+
+    if (linkIcon.size)
+        _size = adoptNS([[NSNumber alloc] initWithUnsignedInt:linkIcon.size.value()]);
+
+    switch (linkIcon.type) {
+    case WebCore::LinkIconType::Favicon:
+        _iconType = WKLinkIconTypeFavicon;
+        break;
+    case WebCore::LinkIconType::TouchIcon:
+        _iconType = WKLinkIconTypeTouchIcon;
+        break;
+    case WebCore::LinkIconType::TouchPrecomposedIcon:
+        _iconType = WKLinkIconTypeTouchPrecomposedIcon;
+        break;
     }
 
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
-
-private:
-    Document& m_document;
-};
-
+    return self;
 }
+
+- (NSURL *)url
+{
+    return _url.get();
+}
+
+- (NSString *)mimeType
+{
+    return _mimeType.get();
+}
+
+- (NSNumber *)size
+{
+    return _size.get();
+}
+
+- (WKLinkIconType)iconType
+{
+    return _iconType;
+}
+
+@end
+
+#endif // WK_API_ENABLED

@@ -968,6 +968,9 @@ public:
     void didLosePointerLock();
 #endif
 
+    void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
+    void setUseIconLoadingClient(bool);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

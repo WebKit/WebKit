@@ -478,6 +478,9 @@ messages -> WebPageProxy {
 
     DidRestoreScrollPosition()
 
+    GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, uint64_t callbackID)
+    FinishedLoadingIcon(uint64_t callbackIdentifier, IPC::DataReference data);
+
 #if PLATFORM(MAC)
     DidHandleAcceptedCandidate()
     HandleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, String title, double duration, double elapsedTime)

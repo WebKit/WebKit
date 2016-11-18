@@ -23,27 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "_WKLinkIconParameters.h"
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#if WK_API_ENABLED
 
 namespace WebCore {
-
-class Document;
-enum class LinkIconType;
-
-class LinkIconCollector {
-public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
-    }
-
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
-
-private:
-    Document& m_document;
-};
-
+struct LinkIcon;
 }
+
+@interface _WKLinkIconParameters ()
+
+- (instancetype)_initWithLinkIcon:(const WebCore::LinkIcon&)linkIcon;
+
+@end
+
+#endif

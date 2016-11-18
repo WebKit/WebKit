@@ -25,25 +25,49 @@
 
 #pragma once
 
-#include "LinkIcon.h"
-#include <wtf/OptionSet.h>
+#import "WKFoundation.h"
 
-namespace WebCore {
+#if WK_API_ENABLED
 
-class Document;
-enum class LinkIconType;
+#import "APIIconLoadingClient.h"
+#import "WeakObjCPtr.h"
+#import <wtf/RetainPtr.h>
 
-class LinkIconCollector {
+@class WKWebView;
+@protocol _WKIconLoadingDelegate;
+
+namespace WebKit {
+
+class IconLoadingDelegate {
 public:
-    explicit LinkIconCollector(Document& document)
-        : m_document(document)
-    {
-    }
+    explicit IconLoadingDelegate(WKWebView *);
+    ~IconLoadingDelegate();
 
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
+    std::unique_ptr<API::IconLoadingClient> createIconLoadingClient();
+
+    RetainPtr<id <_WKIconLoadingDelegate> > delegate();
+    void setDelegate(id <_WKIconLoadingDelegate>);
 
 private:
-    Document& m_document;
+    class IconLoadingClient : public API::IconLoadingClient {
+    public:
+        explicit IconLoadingClient(IconLoadingDelegate&);
+        ~IconLoadingClient();
+
+    private:
+        void getLoadDecisionForIcon(const WebCore::LinkIcon&, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) override;
+
+        IconLoadingDelegate& m_iconLoadingDelegate;
+    };
+
+    WKWebView *m_webView;
+    WeakObjCPtr<id <_WKIconLoadingDelegate> > m_delegate;
+
+    struct {
+        bool webViewShouldLoadIconWithParametersCompletionHandler : 1;
+    } m_delegateMethods;
 };
 
-}
+} // namespace WebKit
+
+#endif // WK_API_ENABLED
