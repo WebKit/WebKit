@@ -1,3 +1,77 @@
+2016-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent GC should be able to run splay in debug mode and earley/raytrace in release mode with no perf regression
+        https://bugs.webkit.org/show_bug.cgi?id=164282
+
+        Reviewed by Geoffrey Garen and Oliver Hunt.
+        
+        The two three remaining bugs were:
+
+        - Improper ordering inside putDirectWithoutTransition() and friends. We need to make sure
+          that the GC doesn't see the store to Structure::m_offset until we've resized the butterfly.
+          That proved a bit tricky. On the other hand, this means that we could probably remove the
+          requirement that the GC holds the Structure lock in some cases. I haven't removed that lock
+          yet because I still think it might protect some weird cases, and it doesn't seem to cost us
+          anything.
+        
+        - CodeBlock's GC strategy needed to be made thread-safe (visitWeakly, visitChildren, and
+          their friends now hold locks) and incremental-safe (we need to update predictions in the
+          finalizer to make sure we clear anything that was put into a value profile towards the end
+          of GC).
+        
+        - The GC timeslicing scheduler needed to be made a bit more aggressive to deal with
+          generational workloads like earley, raytrace, and CDjs. Once I got those benchmarks to run,
+          I found that they would do many useless iterations of GC because they wouldn't pause long
+          enough after rescanning weak references and roots. I added a bunch of knobs for forcing a
+          pause. In the end, I realized that I could get the desired effect by putting a ceiling on
+          mutator utilization. We want the GC to finish quickly if it is possible to do so, even if
+          the amount of allocation that the mutator had done is low. Having a utilization ceiling
+          seems to accomplish this for benchmarks with trivial heaps (earley and raytrace) as well as
+          huge heaps (like CDjs in its "large" configuration).
+        
+        This preserves splay performance, makes the concurrent GC more stable, and makes the
+        concurrent GC not a perf regression on earley or raytrace. It seems to give us great CDjs
+        performance as well, but this is still hard to tell because we crash a lot in that benchmark.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitWeakly):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::shouldVisitStrongly):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::WeakReferenceHarvester::visitWeakReferences):
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally):
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        * heap/Heap.cpp:
+        (JSC::Heap::ResumeTheWorldScope::ResumeTheWorldScope):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::collectInThread):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::mutatorFence):
+        * heap/MarkedBlock.cpp:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::finishCreation):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Options.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::add):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::add):
+
 2016-11-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generator functions should have a displayable name when shown in stack traces

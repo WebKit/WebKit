@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+const size_t MarkedBlock::blockSize;
+
 static const bool computeBalance = false;
 static size_t balance;
 

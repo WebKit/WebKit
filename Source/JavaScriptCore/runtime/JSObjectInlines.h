@@ -167,9 +167,9 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
     structure->addPropertyWithoutTransition(
         vm, propertyName, attributes,
-        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset) {
-            if (structure->outOfLineCapacity() != oldOutOfLineCapacity) {
-                butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, structure->outOfLineCapacity());
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, unsigned newOutOfLineCapacity) {
+            if (newOutOfLineCapacity != oldOutOfLineCapacity) {
+                butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
                 WTF::storeStoreFence();
                 setButterfly(vm, butterfly);
             }
@@ -266,15 +266,14 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
         offset = structure->addPropertyWithoutTransition(
             vm, propertyName, attributes,
-            [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset) {
+            [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, unsigned newOutOfLineCapacity) {
                 Butterfly* butterfly = this->butterfly();
-                if (structure->outOfLineCapacity() != oldOutOfLineCapacity) {
-                    butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, structure->outOfLineCapacity());
+                if (newOutOfLineCapacity != oldOutOfLineCapacity) {
+                    butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
                     WTF::storeStoreFence();
                     setButterfly(vm, butterfly);
                 }
                 validateOffset(offset);
-                ASSERT(structure->isValidOffset(offset));
                 putDirect(vm, offset, value);
             });
 

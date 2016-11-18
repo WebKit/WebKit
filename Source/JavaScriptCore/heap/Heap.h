@@ -116,6 +116,8 @@ public:
     
     void writeBarrierWithoutFence(const JSCell* from);
     
+    void mutatorFence();
+    
     // Take this if you know that from->cellState() < barrierThreshold.
     JS_EXPORT_PRIVATE void writeBarrierSlowPath(const JSCell* from);
 
@@ -605,6 +607,12 @@ private:
     Box<Lock> m_threadLock;
     RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
+    
+    MonotonicTime m_lastGCStartTime;
+    MonotonicTime m_lastGCEndTime;
+    MonotonicTime m_currentGCStartTime;
+    
+    uintptr_t m_barriersExecuted { 0 };
 };
 
 } // namespace JSC

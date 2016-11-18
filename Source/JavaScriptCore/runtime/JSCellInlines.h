@@ -60,8 +60,7 @@ inline void JSCell::finishCreation(VM& vm)
 {
     // This object is ready to be escaped so the concurrent GC may see it at any time. We have
     // to make sure that none of our stores sink below here.
-    if (isX86() || UNLIKELY(vm.heap.mutatorShouldBeFenced()))
-        WTF::storeStoreFence();
+    vm.heap.mutatorFence();
 #if ENABLE(GC_VALIDATION)
     ASSERT(vm.isInitializingObject());
     vm.setInitializingObjectClass(0);

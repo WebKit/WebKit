@@ -943,7 +943,7 @@ Vector<PropertyMapEntry> Structure::getPropertiesConcurrently()
 
 PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes)
 {
-    return add(vm, propertyName, attributes, [] (const GCSafeConcurrentJSLocker&, PropertyOffset) { });
+    return add(vm, propertyName, attributes, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, unsigned) { });
 }
 
 PropertyOffset Structure::remove(PropertyName propertyName)

@@ -98,7 +98,7 @@ public:
         
         if (Options::logGC()) {
             double thisPauseMS = (MonotonicTime::now() - m_heap.m_stopTime).milliseconds();
-            dataLog(thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), ")...]\n");
+            dataLog("p=", thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), ")...]\n");
         }
         
         m_heap.resumeTheWorld();
@@ -542,19 +542,40 @@ void Heap::markToFixpoint(double gcStartTime)
     const Seconds period = Seconds::fromMilliseconds(Options::concurrentGCPeriodMS());
     
     const double bytesAllocatedThisCycleAtTheBeginning = m_bytesAllocatedThisCycle;
-    const double bytesAllocatedThisCycleAtTheEnd = bytesAllocatedThisCycleAtTheBeginning * Options::concurrentGCHeadroomRatio();
+    const double bytesAllocatedThisCycleAtTheEnd =
+        Options::concurrentGCMaxHeadroom() *
+        std::max(
+            bytesAllocatedThisCycleAtTheBeginning,
+            static_cast<double>(m_maxEdenSize));
     
-    auto targetCollectorUtilization = [&] () -> double {
+    auto targetMutatorUtilization = [&] () -> double {
         double headroomFullness =
             (m_bytesAllocatedThisCycle - bytesAllocatedThisCycleAtTheBeginning) /
             (bytesAllocatedThisCycleAtTheEnd - bytesAllocatedThisCycleAtTheBeginning);
+        
+        // headroomFullness can be NaN and other interesting things if
+        // bytesAllocatedThisCycleAtTheBeginning is zero. We see that in debug tests. This code
+        // defends against all floating point dragons.
         
         if (!(headroomFullness >= 0))
             headroomFullness = 0;
         if (!(headroomFullness <= 1))
             headroomFullness = 1;
         
-        return headroomFullness;
+        double mutatorUtilization = 1 - headroomFullness;
+        
+        // Scale the mutator utilization into the permitted window.
+        mutatorUtilization =
+            Options::minimumMutatorUtilization() +
+            mutatorUtilization * (
+                Options::maximumMutatorUtilization() -
+                Options::minimumMutatorUtilization());
+        
+        return mutatorUtilization;
+    };
+    
+    auto targetCollectorUtilization = [&] () -> double {
+        return 1 - targetMutatorUtilization();
     };
     
     auto elapsedInPeriod = [&] (MonotonicTime now) -> Seconds {
@@ -566,22 +587,41 @@ void Heap::markToFixpoint(double gcStartTime)
     };
     
     auto shouldBeResumed = [&] (MonotonicTime now) -> bool {
+        if (Options::collectorShouldResumeFirst())
+            return phase(now) <= targetMutatorUtilization();
         return phase(now) > targetCollectorUtilization();
     };
     
     auto timeToResume = [&] (MonotonicTime now) -> MonotonicTime {
         ASSERT(!shouldBeResumed(now));
+        if (Options::collectorShouldResumeFirst())
+            return now - elapsedInPeriod(now) + period;
         return now - elapsedInPeriod(now) + period * targetCollectorUtilization();
     };
     
     auto timeToStop = [&] (MonotonicTime now) -> MonotonicTime {
         ASSERT(shouldBeResumed(now));
-        return now - elapsedInPeriod(now) + period;
+        if (Options::collectorShouldResumeFirst())
+            return now - elapsedInPeriod(now) + period * targetMutatorUtilization();
+        return now -  - elapsedInPeriod(now) + period;
     };
+    
+    // Adjust the target extra pause ratio as necessary.
+    double rateOfCollection =
+        (m_lastGCEndTime - m_lastGCStartTime) /
+        (m_currentGCStartTime - m_lastGCStartTime);
+    
+    if (Options::logGC())
+        dataLog("cr=", rateOfCollection, " ");
+    
+    // FIXME: Determine if this is useful or get rid of it.
+    // https://bugs.webkit.org/show_bug.cgi?id=164940
+    double extraPauseRatio = Options::initialExtraPauseRatio();
     
     for (unsigned iteration = 1; ; ++iteration) {
         if (Options::logGC())
             dataLog("i#", iteration, " ");
+        MonotonicTime topOfLoop = MonotonicTime::now();
         {
             TimingScope preConvergenceTimingScope(*this, "Heap::markToFixpoint conservative scan");
             ConservativeRoots conservativeRoots(*this);
@@ -642,6 +682,9 @@ void Heap::markToFixpoint(double gcStartTime)
         DFG::markCodeBlocks(*m_vm, *m_collectorSlotVisitor);
         bool shouldTerminate = m_collectorSlotVisitor->isEmpty() && m_mutatorMarkStack->isEmpty();
         
+        if (Options::logGC())
+            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + m_collectorSlotVisitor->mutatorMarkStack().size(), ", a=", m_bytesAllocatedThisCycle / 1024, " kb, b=", m_barriersExecuted, ", mu=", targetMutatorUtilization(), " ");
+        
         // We want to do this to conservatively ensure that we rescan any code blocks that are
         // running right now. However, we need to be sure to do it *after* we mark the code block
         // so that we know for sure if it really needs a barrier. Also, this has to happen after the
@@ -661,23 +704,30 @@ void Heap::markToFixpoint(double gcStartTime)
         if (Options::logGC() == GCLogging::Verbose)
             dataLog("Live Weak Handles:\n", *m_collectorSlotVisitor);
         
-        if (Options::logGC())
-            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_collectorSlotVisitor->mutatorMarkStack().size(), " mu=", 1 - targetCollectorUtilization(), " ");
+        MonotonicTime beforeConvergence = MonotonicTime::now();
         
         {
             TimingScope traceTimingScope(*this, "Heap::markToFixpoint tracing");
             ParallelModeEnabler enabler(*m_collectorSlotVisitor);
+            
             if (Options::useCollectorTimeslicing()) {
-                for (;;) {
+                // Before we yield to the mutator, we should do GC work proportional to the time we
+                // spent paused. We initialize the timeslicer to start after this "mandatory" pause
+                // completes.
+                
+                SlotVisitor::SharedDrainResult drainResult;
+                
+                Seconds extraPause = (beforeConvergence - topOfLoop) * extraPauseRatio;
+                initialTime = beforeConvergence + extraPause;
+                drainResult = m_collectorSlotVisitor->drainInParallel(initialTime);
+                
+                while (drainResult != SlotVisitor::SharedDrainResult::Done) {
                     MonotonicTime now = MonotonicTime::now();
-                    SlotVisitor::SharedDrainResult drainResult;
                     if (shouldBeResumed(now)) {
                         ResumeTheWorldScope resumeTheWorldScope(*this);
                         drainResult = m_collectorSlotVisitor->drainInParallel(timeToStop(now));
                     } else
                         drainResult = m_collectorSlotVisitor->drainInParallel(timeToResume(now));
-                    if (drainResult == SlotVisitor::SharedDrainResult::Done)
-                        break;
                 }
             } else {
                 // Disabling collector timeslicing is meant to be used together with
@@ -686,6 +736,8 @@ void Heap::markToFixpoint(double gcStartTime)
                 m_collectorSlotVisitor->drainInParallel();
             }
         }
+        
+        extraPauseRatio *= Options::extraPauseRatioIterationGrowthRate();
     }
 
     {
@@ -730,6 +782,7 @@ void Heap::beginMarking()
     m_objectSpace.beginMarking();
     m_mutatorShouldBeFenced = true;
     m_barrierThreshold = tautologicalThreshold;
+    m_barriersExecuted = 0;
 }
 
 void Heap::visitConservativeRoots(ConservativeRoots& roots)
@@ -986,6 +1039,7 @@ void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
+    m_barriersExecuted++;
     if (!Heap::isMarkedConcurrently(cell)) {
         // During a full collection a store into an unmarked object that had surivived past
         // collections will manifest as a store to an unmarked black object. If the object gets
@@ -1082,6 +1136,8 @@ bool Heap::shouldCollectInThread(const LockHolder&)
 
 void Heap::collectInThread()
 {
+    m_currentGCStartTime = MonotonicTime::now();
+    
     Optional<CollectionScope> scope;
     {
         LockHolder locker(*m_threadLock);
@@ -1166,7 +1222,7 @@ void Heap::collectInThread()
     if (Options::logGC()) {
         MonotonicTime after = MonotonicTime::now();
         double thisPauseMS = (after - m_stopTime).milliseconds();
-        dataLog(thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (after - before).milliseconds(), " ms END]\n");
+        dataLog("p=", thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (after - before).milliseconds(), " ms END]\n");
     }
     
     {
@@ -1179,6 +1235,9 @@ void Heap::collectInThread()
 
     setNeedFinalize();
     resumeTheWorld();
+    
+    m_lastGCStartTime = m_currentGCStartTime;
+    m_lastGCEndTime = MonotonicTime::now();
 }
 
 void Heap::stopTheWorld()
@@ -1698,7 +1757,7 @@ void Heap::updateAllocationLimits()
     m_bytesAllocatedThisCycle = 0;
 
     if (Options::logGC())
-        dataLog(currentHeapSize / 1024, " kb, ");
+        dataLog("=> ", currentHeapSize / 1024, " kb, ");
 }
 
 void Heap::didFinishCollection(double gcStartTime)

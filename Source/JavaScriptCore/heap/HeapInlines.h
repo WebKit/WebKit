@@ -157,6 +157,12 @@ inline void Heap::writeBarrierWithoutFence(const JSCell* from)
         addToRememberedSet(from);
 }
 
+inline void Heap::mutatorFence()
+{
+    if (isX86() || UNLIKELY(mutatorShouldBeFenced()))
+        WTF::storeStoreFence();
+}
+
 template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& func)
 {
     forEachCodeBlockImpl(scopedLambdaRef<bool(CodeBlock*)>(func));

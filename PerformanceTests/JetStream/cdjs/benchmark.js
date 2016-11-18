@@ -1,5 +1,5 @@
 // Copyright (c) 2001-2010, Purdue University. All rights reserved.
-// Copyright (C) 2015 Apple Inc. All rights reserved.
+// Copyright (C) 2015-2016 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -23,12 +23,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function benchmark() {
-    var verbosity = 0;
-    var numAircraft = 1000;
-    var numFrames = 200;
-    var expectedCollisions = 14484;
-    var percentile = 95;
+function benchmarkImpl(configuration) {
+    var verbosity = configuration.verbosity;
+    var numAircraft = configuration.numAircraft;
+    var numFrames = configuration.numFrames;
+    var expectedCollisions = configuration.expectedCollisions;
+    var percentile = configuration.percentile;
 
     var simulator = new Simulator(numAircraft);
     var detector = new CollisionDetector();
@@ -78,3 +78,24 @@ function benchmark() {
     
     return averageAbovePercentile(times, percentile);
 }
+
+function benchmark() {
+    return benchmarkImpl({
+        verbosity: 0,
+        numAircraft: 1000,
+        numFrames: 200,
+        expectedCollisions: 14484,
+        percentile: 95
+    });
+}
+
+function largeBenchmark() {
+    return benchmarkImpl({
+        verbosity: 0,
+        numAircraft: 20000,
+        numFrames: 100,
+        expectedCollisions: 5827,
+        percentile: 95
+    });
+}
+

@@ -294,26 +294,11 @@ public:
 
     unsigned outOfLineCapacity() const
     {
-        ASSERT(checkOffsetConsistency());
-            
-        unsigned outOfLineSize = this->outOfLineSize();
-
-        if (!outOfLineSize)
-            return 0;
-
-        if (outOfLineSize <= initialOutOfLineCapacity)
-            return initialOutOfLineCapacity;
-
-        ASSERT(outOfLineSize > initialOutOfLineCapacity);
-        COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
-        return WTF::roundUpToPowerOfTwo(outOfLineSize);
+        return outOfLineCapacity(m_offset);
     }
     unsigned outOfLineSize() const
     {
-        ASSERT(checkOffsetConsistency());
-        ASSERT(structure()->classInfo() == info());
-            
-        return numberOfOutOfLineSlotsForLastOffset(m_offset);
+        return outOfLineSize(m_offset);
     }
     bool hasInlineStorage() const
     {
@@ -636,6 +621,33 @@ private:
     void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
+    
+    unsigned outOfLineCapacity(PropertyOffset lastOffset) const
+    {
+        unsigned outOfLineSize = this->outOfLineSize(lastOffset);
+
+        // This algorithm completely determines the out-of-line property storage growth algorithm.
+        // The JSObject code will only trigger a resize if the value returned by this algorithm
+        // changed between the new and old structure. So, it's important to keep this simple because
+        // it's on a fast path.
+        
+        if (!outOfLineSize)
+            return 0;
+
+        if (outOfLineSize <= initialOutOfLineCapacity)
+            return initialOutOfLineCapacity;
+
+        ASSERT(outOfLineSize > initialOutOfLineCapacity);
+        COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
+        return WTF::roundUpToPowerOfTwo(outOfLineSize);
+    }
+    
+    unsigned outOfLineSize(PropertyOffset lastOffset) const
+    {
+        ASSERT(structure()->classInfo() == info());
+            
+        return numberOfOutOfLineSlotsForLastOffset(lastOffset);
+    }
 
     template<typename Func>
     PropertyOffset add(VM&, PropertyName, unsigned attributes, const Func&);

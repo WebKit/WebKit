@@ -94,8 +94,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
     }
 
     // Any remaining young CodeBlocks are live and need to be promoted to the set of old CodeBlocks.
-    if (scope == CollectionScope::Eden)
-        promoteYoungCodeBlocks(locker);
+    promoteYoungCodeBlocks(locker);
 }
 
 bool CodeBlockSet::contains(const LockHolder&, void* candidateCodeBlock)

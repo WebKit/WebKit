@@ -304,11 +304,14 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
     
-    table->add(PropertyMapEntry(rep, newOffset, attributes), m_offset, PropertyTable::PropertyOffsetMayChange);
+    PropertyOffset newLastOffset = m_offset;
+    table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
     
-    checkConsistency();
+    func(locker, newOffset, outOfLineCapacity(newLastOffset));
+    vm.heap.mutatorFence();
+    m_offset = newLastOffset;
 
-    func(locker, newOffset);
+    checkConsistency();
     return newOffset;
 }
 
