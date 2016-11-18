@@ -1,5 +1,14 @@
 2016-11-17  Sam Weinig  <sam@webkit.org>
 
+        Try to fix the windows build again.
+
+
+        * svg/SVGStringList.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        (WebCore::SVGStaticListPropertyTearOff::SVGStaticListPropertyTearOff):
+
+2016-11-17  Sam Weinig  <sam@webkit.org>
+
         Try to fix the windows build.
 
         * svg/SVGStringList.h:

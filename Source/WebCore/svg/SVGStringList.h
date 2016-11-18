@@ -33,13 +33,23 @@ namespace WebCore {
 
 class SVGStringList final : public SVGStaticListPropertyTearOff<SVGStringListValues> {
 public:
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGStringListValues>;
+    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
+
     static Ref<SVGStringList> create(SVGElement& contextElement, SVGStringListValues& values)
     {
-        return adoptRef(*new SVGStringList(contextElement, values));
+        return adoptRef(*new SVGStringList(&contextElement, values));
+    }
+
+    static Ref<SVGStringList> create(AnimatedListPropertyTearOff&, SVGPropertyRole, SVGStringListValues& values, ListWrapperCache&)
+    {
+        // FIXME: Find a way to remove this. It's only needed to keep Windows compiling.
+        ASSERT_NOT_REACHED();
+        return adoptRef(*new SVGStringList(nullptr, values));
     }
 
 private:
-    SVGStringList(SVGElement& contextElement, SVGStringListValues& values)
+    SVGStringList(SVGElement* contextElement, SVGStringListValues& values)
         : SVGStaticListPropertyTearOff<SVGStringListValues>(contextElement, values)
     {
     }

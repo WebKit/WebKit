@@ -76,9 +76,9 @@ public:
     }
 
 protected:
-    SVGStaticListPropertyTearOff(SVGElement& contextElement, PropertyType& values)
+    SVGStaticListPropertyTearOff(SVGElement* contextElement, PropertyType& values)
         : Base(UndefinedRole, values, nullptr)
-        , m_contextElement(contextElement)
+        , m_contextElement(*contextElement)
     {
     }
 
