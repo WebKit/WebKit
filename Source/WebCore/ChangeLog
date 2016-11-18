@@ -1,3 +1,13 @@
+2016-11-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix iOS build.
+        <rdar://problem/29312689>
+
+        Unreviewed build fix.
+
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+
 2016-11-18  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Hook up InspectorStyleSheet to the new CSS parser.
