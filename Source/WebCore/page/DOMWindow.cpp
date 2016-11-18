@@ -35,6 +35,7 @@
 #include "CSSRuleList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeIterator.h"
 #include "ContentExtensionActions.h"
 #include "ContentExtensionRule.h"
 #include "Crypto.h"
@@ -89,8 +90,10 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "SecurityPolicy.h"
+#include "SelectorQuery.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
+#include "StaticNodeList.h"
 #include "Storage.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
@@ -630,6 +633,33 @@ CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
     if (!m_customElementRegistry)
         m_customElementRegistry = CustomElementRegistry::create(*this);
     return *m_customElementRegistry;
+}
+
+ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& scope, const String& selectors)
+{
+    if (!m_frame)
+        return Exception { NOT_SUPPORTED_ERR };
+
+    Document* document = m_frame->document();
+    if (!document)
+        return Exception { NOT_SUPPORTED_ERR };
+
+    auto queryOrException = document->selectorQueryForString(selectors);
+    if (queryOrException.hasException())
+        return queryOrException.releaseException();
+
+    if (!is<ContainerNode>(scope))
+        return Ref<NodeList> { StaticElementList::create() };
+
+    SelectorQuery& query = queryOrException.releaseReturnValue();
+
+    Vector<Ref<Element>> result;
+    for (auto& node : composedTreeDescendants(downcast<ContainerNode>(scope))) {
+        if (is<Element>(node) && query.matches(downcast<Element>(node)))
+            result.append(downcast<Element>(node));
+    }
+
+    return Ref<NodeList> { StaticElementList::create(WTFMove(result)) };
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

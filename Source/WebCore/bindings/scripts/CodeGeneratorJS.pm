@@ -693,6 +693,13 @@ sub AttributeShouldBeOnInstance
     return 0;
 }
 
+sub NeedsRuntimeCheck
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{EnabledAtRuntime}
+        || $interface->extendedAttributes->{EnabledForWorld};
+}
+
 # https://heycam.github.io/webidl/#es-operations
 sub OperationShouldBeOnInstance
 {
@@ -702,7 +709,7 @@ sub OperationShouldBeOnInstance
     return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
 
     # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
-    return 0 if $function->extendedAttributes->{EnabledAtRuntime};
+    return 0 if NeedsRuntimeCheck($function);
 
     # [Unforgeable] operations should be on the instance. https://heycam.github.io/webidl/#Unforgeable
     return 1 if IsUnforgeable($interface, $function);
@@ -1875,7 +1882,7 @@ sub GeneratePropertiesHashTable
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
 
         # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
-        if ($isInstance && $attribute->extendedAttributes->{EnabledAtRuntime}) {
+        if ($isInstance && NeedsRuntimeCheck($attribute)) {
             $propertyCount -= 1;
             next;
         }
@@ -1904,7 +1911,7 @@ sub GeneratePropertiesHashTable
         my $conditional = $attribute->extendedAttributes->{Conditional};
         $conditionals->{$name} = $conditional if $conditional;
 
-        if ($attribute->extendedAttributes->{EnabledAtRuntime}) {
+        if (NeedsRuntimeCheck($attribute)) {
             push(@$runtimeEnabledAttributes, $attribute);
         }
     }
@@ -1920,7 +1927,7 @@ sub GeneratePropertiesHashTable
         next if $function->name eq "[Symbol.Iterator]";
 
         # Global objects add RuntimeEnabled operations after creation so do not add them to the static table.
-        if ($isInstance && $function->extendedAttributes->{EnabledAtRuntime}) {
+        if ($isInstance && NeedsRuntimeCheck($function)) {
             $propertyCount -= 1;
             next;
         }
@@ -1947,7 +1954,7 @@ sub GeneratePropertiesHashTable
         my $conditional = getConditionalForFunctionConsideringOverloads($function);
         $conditionals->{$name} = $conditional if $conditional;
 
-        if ($function->extendedAttributes->{EnabledAtRuntime}) {
+        if (NeedsRuntimeCheck($function)) {
             push(@$runtimeEnabledFunctions, $function);
         }
     }
@@ -2511,8 +2518,16 @@ sub GetRuntimeEnableFunctionName
 {
     my $context = shift;
 
+    AddToImplIncludes("RuntimeEnabledFeatures.h");
+    
+    if ($context->extendedAttributes->{EnabledForWorld}) {
+        return "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld});
+    }
+
     # If a parameter is given (e.g. "EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::sharedFeatures().{FeatureName}Enabled() method.
-    return "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($context->extendedAttributes->{EnabledAtRuntime}) . "Enabled" if ($context->extendedAttributes->{EnabledAtRuntime} && $context->extendedAttributes->{EnabledAtRuntime} ne "VALUE_IS_MISSING");
+    if ($context->extendedAttributes->{EnabledAtRuntime} && $context->extendedAttributes->{EnabledAtRuntime} ne "VALUE_IS_MISSING") {
+        return "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($context->extendedAttributes->{EnabledAtRuntime}) . "Enabled";
+    }
 
     # Otherwise return a function named RuntimeEnabledFeatures::sharedFeatures().{methodName}Enabled().
     return "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($context->name) . "Enabled";
@@ -3000,10 +3015,9 @@ sub GenerateImplementation
 
     # Support for RuntimeEnabled attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
-        next unless $attribute->extendedAttributes->{EnabledAtRuntime};
+        next unless NeedsRuntimeCheck($attribute);
         next unless AttributeShouldBeOnInstance($interface, $attribute);
 
-        AddToImplIncludes("RuntimeEnabledFeatures.h");
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         my $enable_function = GetRuntimeEnableFunctionName($attribute);
@@ -3035,11 +3049,10 @@ sub GenerateImplementation
 
     # Support for RuntimeEnabled operations on instances.
     foreach my $function (@{$interface->functions}) {
-        next unless $function->extendedAttributes->{EnabledAtRuntime};
+        next unless NeedsRuntimeCheck($function);
         next unless OperationShouldBeOnInstance($interface, $function);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
 
-        AddToImplIncludes("RuntimeEnabledFeatures.h");
         my $conditionalString = $codeGenerator->GenerateConditionalString($function);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         my $enable_function = GetRuntimeEnableFunctionName($function);
@@ -5027,8 +5040,7 @@ sub addIterableProperties()
     my $interface = shift;
     my $className = shift;
 
-    if ($interface->iterable->extendedAttributes->{EnabledAtRuntime}) {
-        AddToImplIncludes("RuntimeEnabledFeatures.h");
+    if (NeedsRuntimeCheck($interface->iterable)) {
         my $enable_function = GetRuntimeEnableFunctionName($interface->iterable);
         push(@implContent, "    if (${enable_function}())\n    ");
     }

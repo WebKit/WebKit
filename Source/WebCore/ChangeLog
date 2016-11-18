@@ -1,3 +1,44 @@
+2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an experimental API to find elements across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=164851
+        <rdar://problem/28220092>
+
+        Reviewed by Sam Weinig.
+
+        Add window.collectMatchingElementsInFlatTree(Node node, DOMString selectors)
+        as an experimental API which finds a list of elements that matches the given CSS selectors
+        and expose it to a JSWorld on which WKBundleScriptWorldMakeAllShadowRootsOpen was called.
+
+        No new tests. More test cases are added to WebKit2.InjectedBundleMakeAllShadowRootsOpen.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck): Added. Abstracts checks for EnabledAtRuntime and EnabledForWorld.
+        (OperationShouldBeOnInstance):
+        (GeneratePropertiesHashTable):
+        (GetRuntimeEnableFunctionName): Use worldForDOMObject(this).condition() for EnabledForWorld.
+        Also split the line for EnabledAtRuntime and EnabledAtRuntime for a better readability.
+        (GenerateImplementation):
+        (addIterableProperties):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttribute):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjPrototypeFunctionWorldSpecificMethod):
+        (WebCore::jsTestObjPrototypeFunctionWorldSpecificMethodCaller):
+        * bindings/scripts/test/TestGlobalObject.idl: Added a test case.
+        * bindings/scripts/test/TestObj.idl: Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::collectMatchingElementsInFlatTree): Added. Implements the feature by
+        calling SelectorQuery's matches on a node yielded by ComposedTreeIterator.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2016-11-17  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for ByteString

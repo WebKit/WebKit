@@ -109,6 +109,8 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
 
+    [EnabledForWorld=someWorld] void worldSpecificMethod(long testParam);
+
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
 

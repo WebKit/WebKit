@@ -51,9 +51,27 @@ public:
         WKBundleScriptWorldMakeAllShadowRootsOpen(world);
 
         WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString(
-            "var element = document.createElement('div');"
-            "element.attachShadow({mode: 'closed'});"
-            "alert(element.shadowRoot ? 'PASS' : 'FAIL');"));
+            "window.onload = function () {\n"
+            "    const element = document.createElement('div');\n"
+            "    const queryMethodName = 'collectMatchingElementsInFlatTree';\n"
+            "    element.attachShadow({mode: 'closed'});\n"
+            // Test 1
+            "    alert(element.shadowRoot ? 'PASS: shadowRoot created in injected bundle' : 'FAIL');\n"
+            // Test 2
+            "    alert(document.querySelector('shadow-host').shadowRoot ? 'PASS: shadowRoot created by normal world' : 'FAIL');\n"
+            // Test 3
+            "    alert(window[queryMethodName] ? 'PASS: query method exists' : 'FAIL');\n"
+            // Test 4
+            "    document.dispatchEvent(new Event('testnormalworld'));\n"
+            // Test 5
+            "    const queryMethod = window[queryMethodName];\n"
+            "    let queryResult = Array.from(queryMethod(document, 'span'));\n"
+            "    alert('Found:' + queryResult.map((span) => span.textContent).join(','));\n"
+            // Test 6
+            "    const innerHost = queryMethod(document, 'inner-host')[0];\n"
+            "    queryResult = Array.from(queryMethod(innerHost, 'span'));\n"
+            "    alert('Found:' + queryResult.map((span) => span.textContent).join(','));\n"
+            "}\n"));
         WKBundleAddUserScript(bundle, pageGroup, world, source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
     }
 };

@@ -1,3 +1,13 @@
+2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an experimental API to find elements across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=164851
+        <rdar://problem/28220092>
+
+        Reviewed by Sam Weinig.
+
+        * runtime/CommonIdentifiers.h:
+
 2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop arguments.caller

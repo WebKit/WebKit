@@ -1,3 +1,26 @@
+2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an experimental API to find elements across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=164851
+        <rdar://problem/28220092>
+
+        Reviewed by Sam Weinig.
+
+        Added test cases for window.collectMatchingElementsInFlatTree to WebKit2.InjectedBundleMakeAllShadowRootOpen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleMakeAllShadowRoot*s*Open_Bundle.cpp: Renamed
+        from InjectedBundleMakeAllShadowRootOpen_Bundle.cpp.
+        (TestWebKitAPI::InjectedBundleMakeAllShadowRootOpenTest::initialize): Added test cases for
+        window.collectMatchingElementsInFlatTree by calling alert() many times.
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleMakeAllShadowRootsOpen.cpp:
+        (TestWebKitAPI::runJavaScriptAlert): Added expectations for multiple test cases. Each test case
+        finishes with a call to alert, and moves testNumber forward.
+        (TestWebKitAPI::TEST): Use the newly added closed-shadow-tree-test.html
+        * TestWebKitAPI/Tests/WebKit2/closed-shadow-tree-test.html: Added. Creates a shadow tree with slots
+        and tests that window.collectMatchingElementsInFlatTree is not present when
+        an event named "testnormalworld" is dispatched by the injected bundle.
+
 2016-11-17  Brady Eidson  <beidson@apple.com>
 
         Add _WKIconLoadingDelegate SPI.

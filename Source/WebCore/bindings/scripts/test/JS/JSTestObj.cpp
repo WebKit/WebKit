@@ -938,6 +938,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
 #endif
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWorldSpecificMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(JSC::ExecState*);
@@ -1545,6 +1546,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+    { "worldSpecificMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWorldSpecificMethod), (intptr_t) (1) } },
     { "voidMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) } },
     { "voidMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) } },
     { "byteMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) } },
@@ -1726,6 +1728,11 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
+    if (!worldForDOMObject(this).someWorld()) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
+    }
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
@@ -4710,6 +4717,26 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 #endif
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWorldSpecificMethod(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWorldSpecificMethodCaller>(state, "worldSpecificMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto testParam = convert<IDLLong>(*state, state->uncheckedArgument(0), IntegerConversionConfiguration::Normal);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.worldSpecificMethod(WTFMove(testParam));
+    return JSValue::encode(jsUndefined());
+}
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
 

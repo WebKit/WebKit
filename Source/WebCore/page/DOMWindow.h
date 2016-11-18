@@ -71,6 +71,7 @@ class MessageEvent;
 class MessagePort;
 class Navigator;
 class Node;
+class NodeList;
 class Page;
 class PageConsoleClient;
 class Performance;
@@ -294,6 +295,8 @@ public:
 
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
     CustomElementRegistry& ensureCustomElementRegistry();
+
+    ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
 
 #if ENABLE(ORIENTATION_EVENTS)
     // This is the interface orientation in degrees. Some examples are:

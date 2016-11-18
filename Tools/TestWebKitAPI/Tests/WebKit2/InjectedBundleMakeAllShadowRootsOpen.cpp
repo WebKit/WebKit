@@ -34,6 +34,7 @@
 
 namespace TestWebKitAPI {
 
+static unsigned testNumber = 0;
 static bool done;
 
 static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
@@ -41,9 +42,27 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
     ASSERT_NOT_NULL(frame);
 
     EXPECT_EQ(page, WKFrameGetPage(frame));
-    EXPECT_WK_STREQ("PASS", alertText);
-
-    done = true;
+    switch (++testNumber) {
+    case 1:
+        EXPECT_WK_STREQ("PASS: shadowRoot created in injected bundle", alertText);
+        break;
+    case 2:
+        EXPECT_WK_STREQ("PASS: shadowRoot created by normal world", alertText);
+        break;
+    case 3:
+        EXPECT_WK_STREQ("PASS: query method exists", alertText);
+        break;
+    case 4:
+        EXPECT_WK_STREQ("PASS: query method was not present in the normal world", alertText);
+        break;
+    case 5:
+        EXPECT_WK_STREQ("Found:1,2,3,4,5,6", alertText);
+        break;
+    case 6:
+        EXPECT_WK_STREQ("Found:2,3,4", alertText);
+        done = true;
+        break;
+    }
 }
 
 TEST(WebKit2, InjectedBundleMakeAllShadowRootOpenTest)
@@ -61,7 +80,7 @@ TEST(WebKit2, InjectedBundleMakeAllShadowRootOpenTest)
 
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("closed-shadow-tree-test", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

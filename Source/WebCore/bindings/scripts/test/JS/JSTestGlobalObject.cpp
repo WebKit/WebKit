@@ -44,6 +44,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOpera
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
 #endif
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(JSC::ExecState*);
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(JSC::ExecState*);
 #endif
@@ -159,6 +160,8 @@ void JSTestGlobalObject::finishCreation(VM& vm)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
         putDirectNativeFunction(vm, this, vm.propertyNames->enabledAtRuntimeOperation, 1, jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation, NoIntrinsic, attributesForStructure(JSC::Function));
 #endif
+    if (worldForDOMObject(this).specificWorld())
+        putDirectNativeFunction(vm, this, vm.propertyNames->enabledInSpecificWorld, 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld, NoIntrinsic, attributesForStructure(JSC::Function));
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
         putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testPrivateFunctionPrivateName(), 0, jsTestGlobalObjectInstanceFunctionTestPrivateFunction, NoIntrinsic, attributesForStructure(JSC::Function));
@@ -450,6 +453,26 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 #endif
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(ExecState* state)
+{
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller>(state, "enabledInSpecificWorld");
+}
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto testParam = convert<IDLLong>(*state, state->uncheckedArgument(0), IntegerConversionConfiguration::Normal);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.enabledInSpecificWorld(WTFMove(testParam));
+    return JSValue::encode(jsUndefined());
+}
 
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);

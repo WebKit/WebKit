@@ -35,6 +35,8 @@
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
 
+    [EnabledForWorld=specificWorld] void enabledInSpecificWorld(long testParam);
+
     [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
     [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
 };
