@@ -1,3 +1,14 @@
+2016-11-17  Mark Lam  <mark.lam@apple.com>
+
+        Inlining should be disallowed when JSC_alwaysUseShadowChicken=true.
+        https://bugs.webkit.org/show_bug.cgi?id=164893
+        <rdar://problem/29146436>
+
+        Reviewed by Saam Barati.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         Speculatively disable eager object zero-fill on not-x86 to let the bots decide if that's a problem

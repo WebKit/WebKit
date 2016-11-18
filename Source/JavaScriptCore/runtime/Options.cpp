@@ -384,6 +384,9 @@ static void recomputeDependentOptions()
     Options::useSeparatedWXHeap() = true;
 #endif
 
+    if (Options::alwaysUseShadowChicken())
+        Options::maximumInliningDepth() = 1;
+
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
     // to left-shift the execution counter by this amount. Currently the value ends
