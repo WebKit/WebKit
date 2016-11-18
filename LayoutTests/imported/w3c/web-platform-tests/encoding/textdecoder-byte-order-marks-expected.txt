@@ -1,5 +1,5 @@
 
-FAIL Byte-order marks: utf-8 Can't find variable: TextDecoder
-FAIL Byte-order marks: utf-16le Can't find variable: TextDecoder
-FAIL Byte-order marks: utf-16be Can't find variable: TextDecoder
+PASS Byte-order marks: utf-8 
+PASS Byte-order marks: utf-16le 
+PASS Byte-order marks: utf-16be 
 

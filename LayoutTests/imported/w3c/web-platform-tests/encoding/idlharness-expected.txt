@@ -3,32 +3,32 @@ idlharness test
 This test validates the WebIDL included in the Encoding Living Standard.
 
 
-FAIL TextDecoder interface: existence and properties of interface object assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface object length assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface object name assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: attribute encoding assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: attribute fatal assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: attribute ignoreBOM assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder interface: operation decode(BufferSource,TextDecodeOptions) assert_own_property: self does not have own property "TextDecoder" expected property "TextDecoder" missing
-FAIL TextDecoder must be primary interface of new TextDecoder() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL Stringification of new TextDecoder() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextDecoder interface: new TextDecoder() must inherit property "encoding" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextDecoder interface: new TextDecoder() must inherit property "fatal" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextDecoder interface: new TextDecoder() must inherit property "ignoreBOM" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextDecoder interface: new TextDecoder() must inherit property "decode" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextDecoder interface: calling decode(BufferSource,TextDecodeOptions) on new TextDecoder() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextDecoder"
-FAIL TextEncoder interface: existence and properties of interface object assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface object length assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface object name assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface: attribute encoding assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder interface: operation encode(USVString) assert_own_property: self does not have own property "TextEncoder" expected property "TextEncoder" missing
-FAIL TextEncoder must be primary interface of new TextEncoder() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextEncoder"
-FAIL Stringification of new TextEncoder() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextEncoder"
-FAIL TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextEncoder"
-FAIL TextEncoder interface: new TextEncoder() must inherit property "encode" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextEncoder"
-FAIL TextEncoder interface: calling encode(USVString) on new TextEncoder() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TextEncoder"
+PASS TextDecoder interface: existence and properties of interface object 
+PASS TextDecoder interface object length 
+PASS TextDecoder interface object name 
+PASS TextDecoder interface: existence and properties of interface prototype object 
+PASS TextDecoder interface: existence and properties of interface prototype object's "constructor" property 
+PASS TextDecoder interface: attribute encoding 
+PASS TextDecoder interface: attribute fatal 
+PASS TextDecoder interface: attribute ignoreBOM 
+PASS TextDecoder interface: operation decode(BufferSource,TextDecodeOptions) 
+PASS TextDecoder must be primary interface of new TextDecoder() 
+PASS Stringification of new TextDecoder() 
+PASS TextDecoder interface: new TextDecoder() must inherit property "encoding" with the proper type (0) 
+PASS TextDecoder interface: new TextDecoder() must inherit property "fatal" with the proper type (1) 
+PASS TextDecoder interface: new TextDecoder() must inherit property "ignoreBOM" with the proper type (2) 
+PASS TextDecoder interface: new TextDecoder() must inherit property "decode" with the proper type (3) 
+PASS TextDecoder interface: calling decode(BufferSource,TextDecodeOptions) on new TextDecoder() with too few arguments must throw TypeError 
+PASS TextEncoder interface: existence and properties of interface object 
+PASS TextEncoder interface object length 
+PASS TextEncoder interface object name 
+PASS TextEncoder interface: existence and properties of interface prototype object 
+PASS TextEncoder interface: existence and properties of interface prototype object's "constructor" property 
+PASS TextEncoder interface: attribute encoding 
+PASS TextEncoder interface: operation encode(USVString) 
+PASS TextEncoder must be primary interface of new TextEncoder() 
+PASS Stringification of new TextEncoder() 
+PASS TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type (0) 
+PASS TextEncoder interface: new TextEncoder() must inherit property "encode" with the proper type (1) 
+PASS TextEncoder interface: calling encode(USVString) on new TextEncoder() with too few arguments must throw TypeError 
 

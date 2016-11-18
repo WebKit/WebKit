@@ -2103,6 +2103,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'Text').hasOwnProperty('get') is fa
 PASS Object.getOwnPropertyDescriptor(global, 'Text').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Text').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Text').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'TextDecoder').value is TextDecoder
+PASS Object.getOwnPropertyDescriptor(global, 'TextDecoder').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextDecoder').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextDecoder').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextDecoder').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'TextEncoder').value is TextEncoder
+PASS Object.getOwnPropertyDescriptor(global, 'TextEncoder').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextEncoder').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextEncoder').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'TextEncoder').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'TextEvent').value is TextEvent
 PASS Object.getOwnPropertyDescriptor(global, 'TextEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'TextEvent').hasOwnProperty('set') is false

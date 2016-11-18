@@ -1,7 +1,43 @@
+2016-11-17  Alex Christensen  <achristensen@webkit.org>
+
+        Implement TextDecoder and TextEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=163771
+
+        Reviewed by Sam Weinig.
+
+        This API is already implemented by Chrome and Firefox
+        as specified in https://encoding.spec.whatwg.org/
+
+        Covered by newly passing web platform tests.
+
+        * features.json:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/TextDecoder.cpp: Added.
+        (WebCore::isEncodingWhitespace):
+        (WebCore::TextDecoder::create):
+        (WebCore::TextDecoder::TextDecoder):
+        (WebCore::TextDecoder::ignoreBOMIfNecessary):
+        (WebCore::TextDecoder::prependBOMIfNecessary):
+        (WebCore::codeUnitByteSize):
+        (WebCore::TextDecoder::decode):
+        (WebCore::TextDecoder::encoding):
+        * dom/TextDecoder.h: Added.
+        (WebCore::TextDecoder::fatal):
+        (WebCore::TextDecoder::ignoreBOM):
+        * dom/TextDecoder.idl: Added.
+        * dom/TextEncoder.cpp: Added.
+        (WebCore::TextEncoder::TextEncoder):
+        (WebCore::TextEncoder::encoding):
+        (WebCore::TextEncoder::encode):
+        * dom/TextEncoder.h: Added.
+        (WebCore::TextEncoder::create):
+        * dom/TextEncoder.idl: Added.
+
 2016-11-17  Sam Weinig  <sam@webkit.org>
 
         Try to fix the windows build again.
-
 
         * svg/SVGStringList.h:
         * svg/properties/SVGStaticListPropertyTearOff.h:

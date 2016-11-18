@@ -449,6 +449,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/StaticRange.idl
     dom/StringCallback.idl
     dom/Text.idl
+    dom/TextDecoder.idl
+    dom/TextEncoder.idl
     dom/TextEvent.idl
     dom/Touch.idl
     dom/TouchEvent.idl
@@ -1520,6 +1522,8 @@ set(WebCore_SOURCES
     dom/StyledElement.cpp
     dom/TagCollection.cpp
     dom/Text.cpp
+    dom/TextDecoder.cpp
+    dom/TextEncoder.cpp
     dom/TextEvent.cpp
     dom/TextNodeTraversal.cpp
     dom/Touch.cpp

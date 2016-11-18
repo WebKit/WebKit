@@ -374,6 +374,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/StaticRange.idl \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
+    $(WebCore)/dom/TextDecoder.idl \
+    $(WebCore)/dom/TextEncoder.idl \
     $(WebCore)/dom/TextEvent.idl \
     $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \

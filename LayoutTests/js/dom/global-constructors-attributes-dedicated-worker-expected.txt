@@ -259,6 +259,16 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SyntaxError').hasOwnPrope
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SyntaxError').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SyntaxError').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SyntaxError').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextDecoder').value is TextDecoder
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextDecoder').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextDecoder').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextDecoder').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextDecoder').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextEncoder').value is TextEncoder
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextEncoder').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextEncoder').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextEncoder').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TextEncoder').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TypeError').value is TypeError
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TypeError').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'TypeError').hasOwnProperty('set') is false

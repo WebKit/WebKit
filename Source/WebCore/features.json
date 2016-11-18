@@ -203,6 +203,22 @@
         "category": "html"
     },
     {
+        "name": "Encoding",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://encoding.spec.whatwg.org",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=163771",
+        "keywords": ["encoding", "TextEncoder", "TextDecoder", "request", "response", "header"],
+        "category": "webapps",
+        "description": "TextEncoder and TextDecoder APIs for converting text from different character sets.",
+        "contact": {
+            "name": "Alex Christensen",
+            "twitter": "@alexfchr",
+            "email": "achristensen@webkit.org"
+        }
+    },    {
         "name": "Fetch API",
         "status": {
             "status": "In Development"

@@ -1,9 +1,9 @@
 
-FAIL USVString handling: lone surrogate lead Can't find variable: TextEncoder
-FAIL USVString handling: lone surrogate trail Can't find variable: TextEncoder
-FAIL USVString handling: unmatched surrogate lead Can't find variable: TextEncoder
-FAIL USVString handling: unmatched surrogate trail Can't find variable: TextEncoder
-FAIL USVString handling: swapped surrogate pair Can't find variable: TextEncoder
-FAIL USVString handling: properly encoded MUSICAL SYMBOL G CLEF (U+1D11E) Can't find variable: TextEncoder
-FAIL USVString default Can't find variable: TextEncoder
+PASS USVString handling: lone surrogate lead 
+PASS USVString handling: lone surrogate trail 
+PASS USVString handling: unmatched surrogate lead 
+PASS USVString handling: unmatched surrogate trail 
+PASS USVString handling: swapped surrogate pair 
+PASS USVString handling: properly encoded MUSICAL SYMBOL G CLEF (U+1D11E) 
+PASS USVString default 
 
