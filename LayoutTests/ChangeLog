@@ -1,3 +1,17 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop arguments.caller
+        https://bugs.webkit.org/show_bug.cgi?id=164859
+
+        Reviewed by Saam Barati.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/script-tests/basic-strict-mode.js:
+        * js/script-tests/strict-throw-type-error.js:
+        * js/script-tests/throw-type-error-is-unique.js:
+        (test):
+        * js/strict-throw-type-error-expected.txt:
+
 2016-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for media/modern-media-controls/pip-support/pip-support-enabled.html.

@@ -44,7 +44,7 @@ let sloppyArguments = Function("return arguments;");
 
 function test()
 {
-    let baseThrowTypeErrorFunction = Object.getOwnPropertyDescriptor(arguments, "caller").get;
+    let baseThrowTypeErrorFunction = Object.getOwnPropertyDescriptor(arguments, "callee").get;
 
     let sources = [
         new ThrowTypeErrorSource("Function.prototype", Function.prototype, ["arguments", "caller"]),

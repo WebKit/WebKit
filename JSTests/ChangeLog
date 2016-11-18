@@ -1,3 +1,14 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop arguments.caller
+        https://bugs.webkit.org/show_bug.cgi?id=164859
+
+        Reviewed by Saam Barati.
+
+        * stress/strict-mode-arguments-caller.js: Added.
+        (strictArguments):
+        (shouldBe):
+
 2016-11-17  Keith Miller  <keith_miller@apple.com>
 
         Add rotate to Wasm

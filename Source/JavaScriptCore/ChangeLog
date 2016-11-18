@@ -1,3 +1,32 @@
+2016-11-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop arguments.caller
+        https://bugs.webkit.org/show_bug.cgi?id=164859
+
+        Reviewed by Saam Barati.
+
+        Originally, some JavaScript engine has `arguments.caller` property.
+        But it easily causes some information leaks and it becomes obstacles
+        for secure ECMAScript (SES). In ES5, we make it deprecated in strict
+        mode. To do so, we explicitly set "caller" getter throwing TypeError
+        to arguments in strict mode.
+
+        But now, there is no modern engine which supports `arguments.caller`
+        in sloppy mode. So the original compatibility problem is gone and
+        "caller" getter in the strict mode arguments becomes meaningless.
+
+        ES2017 drops this from the spec. In this patch, we also drop this
+        `arguments.caller` in strict mode support.
+
+        Note that Function#caller is still alive.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::put):
+        (JSC::ClonedArguments::deleteProperty):
+        (JSC::ClonedArguments::defineOwnProperty):
+        (JSC::ClonedArguments::materializeSpecials):
+
 2016-11-17  Mark Lam  <mark.lam@apple.com>
 
         Inlining should be disallowed when JSC_alwaysUseShadowChicken=true.

@@ -5,12 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS functionCaller1 === functionCaller2 is true
 PASS functionCaller1 === functionArguments1 is true
-PASS functionCaller1 === argumentsCaller1 is true
+PASS argumentsCaller1 is undefined
 PASS functionCaller1 === argumentsCallee1 is true
 PASS functionCaller1 === boundCaller1 is true
 PASS functionCaller1 === boundArguments1 is true
 PASS functionCaller2 === functionArguments2 is true
-PASS functionCaller2 === argumentsCaller2 is true
+PASS argumentsCaller2 is undefined
 PASS functionCaller2 === argumentsCallee2 is true
 PASS functionCaller2 === boundCaller2 is true
 PASS functionCaller2 === boundArguments2 is true
