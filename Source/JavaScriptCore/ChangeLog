@@ -1,5 +1,12 @@
 2016-11-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix cloop.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+
+2016-11-18  Filip Pizlo  <fpizlo@apple.com>
+
         Concurrent GC should be able to run splay in debug mode and earley/raytrace in release mode with no perf regression
         https://bugs.webkit.org/show_bug.cgi?id=164282
 

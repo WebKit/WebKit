@@ -3126,6 +3126,8 @@ void CodeBlock::visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor& visi
 
 void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, SlotVisitor& visitor)
 {
+    UNUSED_PARAM(locker);
+    
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
     visitor.append(&m_unlinkedCode);
