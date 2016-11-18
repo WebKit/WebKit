@@ -1,3 +1,9 @@
+2016-11-17  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix some non-macOS builds.
+
+        * WebView/WebView.mm:
+
 2016-11-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add @supports, @keyframe and media query parsing options
