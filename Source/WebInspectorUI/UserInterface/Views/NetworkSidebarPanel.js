@@ -174,7 +174,9 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     _networkTimelineReset(event)
     {
         this.contentBrowser.contentViewContainer.closeAllContentViews();
-        this.showDefaultContentView();
+
+        if (this.visible)
+            this.showDefaultContentView();
     }
 
     _contentBrowserCurrentContentViewDidChange(event)

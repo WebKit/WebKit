@@ -1,3 +1,57 @@
+2016-11-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineDataGridNode assertions when refreshing page
+        https://bugs.webkit.org/show_bug.cgi?id=162642
+        <rdar://problem/28505898>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch fixes a number of deficiencies in the Network tab that caused
+        TimelineDataGridNode graphs to refresh before the tab became visible.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WebInspector.ElementsTabContentView):
+        (WebInspector.ElementsTabContentView.prototype.shown):
+        Drive-by fix: defer showing the DOM content view until the tab is shown.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        Drive-by event listener cleanup.
+        (WebInspector.NetworkGridContentView.prototype.get startTime):
+        (WebInspector.NetworkGridContentView.prototype.get endTime):
+        Back endTime with a variable, instead of using the ruler value which
+        isn't valid before the tab is shown for the first time.
+
+        (WebInspector.NetworkGridContentView.prototype.shown):
+        Force the grid to update its layout, and that of the Timeline column ruler.
+        During layout the ruler's secondsPerPixel value is used, which isn't
+        valid until the ruler does an initial layout.
+
+        (WebInspector.NetworkGridContentView.prototype.reset):
+        Clear pending records. This was causing duplicates to appear when the
+        inspected page was refreshed multiple times prior to showing the Network
+        tab for the first time.
+
+        (WebInspector.NetworkGridContentView.prototype.layout):
+        Should more closely match behavior in NetworkTimelineView.prototype.layout.
+        Graph end time padding is added if no longer updating the current time.
+
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        Track endTime of the last record added, so that the graph end time can
+        be padded once the current time is no longer being updated.
+
+        (WebInspector.NetworkGridContentView.prototype._update):
+        (WebInspector.NetworkGridContentView.prototype._stopUpdatingCurrentTime):
+        Graph end time padding shouldn't be applied here, since this isn't called
+        if the inspected page finishes loading before the view is shown.
+
+        (WebInspector.NetworkGridContentView.prototype._clearNetworkItems): Deleted.
+        Replaced by an arrow function.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype._networkTimelineReset):
+        Don't show the content view if the tab is hidden.
+
 2016-11-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Shift clicking on named color value only shows its hex form

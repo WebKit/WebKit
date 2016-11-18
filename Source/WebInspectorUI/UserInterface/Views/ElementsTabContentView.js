@@ -38,8 +38,6 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
 
         WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-
-        this._showDOMTreeContentView();
     }
 
     static tabInfo()
@@ -84,6 +82,13 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
         // Because nodeToSelect is ephemeral, we don't want to keep
         // it around in the back-forward history entries.
         cookie.nodeToSelect = undefined;
+    }
+
+    shown()
+    {
+        super.shown();
+
+        this._showDOMTreeContentView();
     }
 
     closed()
