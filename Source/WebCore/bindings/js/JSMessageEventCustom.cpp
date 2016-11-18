@@ -119,7 +119,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
 
     JSValue dataArg = state.argument(3);
 
-    const String originArg = valueToUSVString(&state, state.argument(4));
+    const String originArg = convert<IDLUSVString>(state, state.argument(4));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     const String lastEventIdArg = state.argument(5).toString(&state)->value(&state);

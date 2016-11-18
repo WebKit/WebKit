@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSWorkerGlobalScope.h"
 
+#include "JSDOMConvert.h"
 #include "ScheduledAction.h"
 #include "WorkerGlobalScope.h"
 
@@ -54,7 +55,7 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
     Vector<String> urls;
     urls.reserveInitialCapacity(state.argumentCount());
     for (unsigned i = 0; i < state.argumentCount(); ++i) {
-        urls.uncheckedAppend(valueToUSVString(&state, state.uncheckedArgument(i)));
+        urls.uncheckedAppend(convert<IDLUSVString>(state, state.uncheckedArgument(i)));
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 

@@ -709,10 +709,8 @@ template<> struct JSConverter<IDLUnrestrictedDouble> {
 template<> struct Converter<IDLDOMString> : DefaultConverter<IDLDOMString> {
     static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
     {
-        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString) {
-            if (value.isNull())
-                return emptyString();
-        }
+        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
+            return emptyString();
         return value.toWTFString(&state);
     }
 };
@@ -727,14 +725,31 @@ template<> struct JSConverter<IDLDOMString> {
     }
 };
 
+template<> struct Converter<IDLByteString> : DefaultConverter<IDLByteString> {
+    static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
+    {
+        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
+            return emptyString();
+        return valueToByteString(state, value);
+    }
+};
+
+template<> struct JSConverter<IDLByteString> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSC::jsStringWithCache(&state, value);
+    }
+};
+
 template<> struct Converter<IDLUSVString> : DefaultConverter<IDLUSVString> {
     static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
     {
-        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString) {
-            if (value.isNull())
-                return emptyString();
-        }
-        return valueToUSVString(&state, value);
+        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
+            return emptyString();
+        return valueToUSVString(state, value);
     }
 };
 

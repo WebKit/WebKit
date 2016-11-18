@@ -1043,22 +1043,38 @@ converter.testUSVString = "ð"
 converter.testString = "ð"
 PASS converter.testUSVString is "ð"
 PASS converter.testString is "ð"
+converter.testByteString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
+PASS converter.testByteString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
+converter.testByteString = '\u00FF'
+PASS converter.testByteString is "Ã¿"
+PASS converter.testByteString = '\u0100' threw exception TypeError: Type error.
+PASS converter.testByteString is "Ã¿"
+PASS converter.testByteString = {toString: function() { throw Error(); }} threw exception Error.
+PASS converter.testByteString is "Ã¿"
 converter.testUSVString = true
 converter.testString = true
+converter.testByteString = true
 PASS converter.testUSVString is "true"
 PASS converter.testString is "true"
+PASS converter.testByteString is "true"
 converter.testUSVString = 123
 converter.testString = 123
+converter.testByteString = 123
 PASS converter.testUSVString is "123"
 PASS converter.testString is "123"
+PASS converter.testByteString is "123"
 converter.testUSVString = null
 converter.testString = null
+converter.testByteString = null
 PASS converter.testUSVString is "null"
 PASS converter.testString is "null"
+PASS converter.testByteString is "null"
 converter.testUSVString = undefined
 converter.testString = undefined
+converter.testByteString = undefined
 PASS converter.testUSVString is "undefined"
 PASS converter.testString is "undefined"
+PASS converter.testByteString is "undefined"
 converter.testUnion = 'hello'
 PASS converter.testUnion is 'hello'
 PASS typeof converter.testUnion is 'string'

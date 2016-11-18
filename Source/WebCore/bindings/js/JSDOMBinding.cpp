@@ -102,12 +102,28 @@ static inline bool hasUnpairedSurrogate(StringView string)
     return false;
 }
 
-String valueToUSVString(ExecState* exec, JSValue value)
+String valueToByteString(ExecState& state, JSValue value)
 {
-    VM& vm = exec->vm();
+    VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = value.toWTFString(exec);
+    String string = value.toWTFString(&state);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!string.containsOnlyLatin1()) {
+        throwTypeError(&state, scope);
+        return { };
+    }
+
+    return string;
+}
+
+String valueToUSVString(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String string = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Fast path for the case where there are no unpaired surrogates.

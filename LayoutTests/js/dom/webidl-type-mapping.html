@@ -579,12 +579,25 @@ shouldBeEqualToString("converter.testString", "\u0100");
     shouldBeEqualToString("converter.testUSVString", test.expected);
     shouldBeEqualToString("converter.testString", test.input);
 });
+
+evalAndLog("converter.testByteString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+shouldBeEqualToString("converter.testByteString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+evalAndLog("converter.testByteString = '\\u00FF'");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+shouldThrow("converter.testByteString = '\\u0100'");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+shouldThrow("converter.testByteString = {toString: function() { throw Error(); }}");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+
 ["true", "123", "null", "undefined"].forEach(function(value) {
     evalAndLog("converter.testUSVString = " + value);
     evalAndLog("converter.testString = " + value);
+    evalAndLog("converter.testByteString = " + value);
     shouldBeEqualToString("converter.testUSVString", value);
     shouldBeEqualToString("converter.testString", value);
+    shouldBeEqualToString("converter.testByteString", value);
 });
+
 
 evalAndLog("converter.testUnion = 'hello'");
 shouldBe("converter.testUnion", "'hello'");

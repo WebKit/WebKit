@@ -1,3 +1,44 @@
+2016-11-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for ByteString
+        https://bugs.webkit.org/show_bug.cgi?id=164901
+
+        Reviewed by Darin Adler.
+
+        * bindings/generic/IDLTypes.h:
+        Make IDLByteString a IDLString.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::valueToByteString):
+        (WebCore::valueToUSVString):
+        * bindings/js/JSDOMBinding.h:
+        Add conversion function for ByteString and fix valueToUSVString to take an ExecState reference.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLByteString>::convert):
+        (WebCore::JSConverter<IDLByteString>::convert):
+        Add conversion functions for ByteString, using valueToByteString.
+
+        (WebCore::Converter<IDLUSVString>::convert):
+        Update to pass the ExecState by reference.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        Update to pass the ExecState by reference.
+
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::importScripts):
+        Update to pass the ExecState by reference.
+
+        * bindings/scripts/CodeGenerator.pm:
+        Add ByteString as a string type.
+
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testByteString):
+        (WebCore::TypeConversions::setTestByteString):
+        * testing/TypeConversions.idl:
+        Add a testByteString attribute for testing.
+
 2016-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled should keep text replacement enabled

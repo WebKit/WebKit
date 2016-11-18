@@ -86,7 +86,7 @@ struct IDLString : IDLType<String> {
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 struct IDLDOMString : IDLString { };
-struct IDLByteString : IDLUnsupportedType { };
+struct IDLByteString : IDLString { };
 struct IDLUSVString : IDLString { };
 
 struct IDLObject : IDLUnsupportedType { };

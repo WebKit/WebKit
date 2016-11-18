@@ -65,6 +65,7 @@ my %floatingPointTypeHash = (
 );
 
 my %stringTypeHash = (
+    "ByteString" => 1,
     "DOMString" => 1,
     "USVString" => 1,
 );

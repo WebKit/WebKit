@@ -1,3 +1,14 @@
+2016-11-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for ByteString
+        https://bugs.webkit.org/show_bug.cgi?id=164901
+
+        Reviewed by Darin Adler.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+        Add tests for ByteString using the new TypeConversions.testByteString attribute.
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Implement TextDecoder and TextEncoder

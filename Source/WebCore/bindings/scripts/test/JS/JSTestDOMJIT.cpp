@@ -26,7 +26,6 @@
 #include "DOMJITIDLConvert.h"
 #include "DOMJITIDLType.h"
 #include "DOMJITIDLTypeFilter.h"
-#include "JSByteString.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
@@ -671,7 +670,7 @@ static inline JSValue jsTestDOMJITByteStringAttrGetter(ExecState& state, JSTestD
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLByteString>(state, *thisObject.globalObject(), impl.byteStringAttr());
+    JSValue result = toJS<IDLByteString>(state, impl.byteStringAttr());
     return result;
 }
 
@@ -1130,7 +1129,7 @@ static inline JSValue jsTestDOMJITByteStringNullableAttrGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLByteString>>(state, *thisObject.globalObject(), impl.byteStringNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLByteString>>(state, impl.byteStringNullableAttr());
     return result;
 }
 

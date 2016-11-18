@@ -98,6 +98,8 @@ public:
     void setTestString(const String& string) { m_string = string; }
     const String& testUSVString() const { return m_usvstring; }
     void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
+    const String& testByteString() const { return m_byteString; }
+    void setTestByteString(const String& byteString) { m_byteString = byteString; }
 
     using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
@@ -139,6 +141,7 @@ private:
     uint16_t m_UnsignedShort { 0 };
     String m_string;
     String m_usvstring;
+    String m_byteString;
     TestUnion m_union;
     
     int m_typeConversionsDictionaryLongValue { 0 };
