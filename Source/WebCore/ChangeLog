@@ -1,3 +1,26 @@
+2016-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r208672?): ASSERTION FAILED: isMainThread() in WebCore::Node::ref()
+        https://bugs.webkit.org/show_bug.cgi?id=164887
+        <rdar://problem/29319497>
+
+        Reviewed by Brady Eidson.
+
+        Restore pre-r208672 behavior where we do not ref the script execution context in the
+        background thread since this is unsafe. We use WTFMove(m_scriptExecutionContext)
+        instead of m_scriptExecutionContext.copyRef(). Before r208672, it was calling
+        m_scriptExecutionContext.releaseNonNull() because m_scriptExecutionContext was a
+        RefPtr instead of a Ref. Note that copyRef() causes 2 issues here:
+        1. It refs the scriptExecutionContext in a non-main thread which is unsafe and asserts.
+        2. The point of this postTask in the destructor is to make sure the scriptExecutionContext
+           gets destroyed in the main thread so we definitely want to *transfer* ownership of
+           m_scriptExecutionContext to the main thread, not ref it to pass it to the main thread.
+
+        No new tests, already covered by storage/websql/multiple-transactions-on-different-handles.html.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::~Database):
+
 2016-11-17  Brady Eidson  <beidson@apple.com>
 
         Add _WKIconLoadingDelegate SPI.

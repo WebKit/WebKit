@@ -229,7 +229,7 @@ Database::~Database()
 {
     // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!m_scriptExecutionContext->isContextThread()) {
-        auto passedContext = m_scriptExecutionContext.copyRef();
+        auto passedContext = WTFMove(m_scriptExecutionContext);
         auto& contextRef = passedContext.get();
         contextRef.postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(passedContext)] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, &context == passedContext.ptr());
