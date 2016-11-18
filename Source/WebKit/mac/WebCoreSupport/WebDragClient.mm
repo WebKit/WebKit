@@ -66,12 +66,12 @@ static WebHTMLView *getTopHTMLView(Frame* frame)
     return (WebHTMLView*)[[kit(&frame->page()->mainFrame()) frameView] documentView];
 }
 
-WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(WebCore::DragData& dragData)
+WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(const WebCore::DragData& dragData)
 {
     return (WebCore::DragDestinationAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragDestinationActionMaskForDraggingInfo:dragData.platformData()];
 }
 
-void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, WebCore::DragData& dragData)
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:dragData.platformData()];
 }

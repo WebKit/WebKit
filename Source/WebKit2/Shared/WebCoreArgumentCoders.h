@@ -41,6 +41,7 @@ class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
+class DragData;
 class FilterOperation;
 class FilterOperations;
 class FloatPoint;
@@ -325,6 +326,13 @@ template<> struct ArgumentCoder<WebCore::Color> {
     static void encode(Encoder&, const WebCore::Color&);
     static bool decode(Decoder&, WebCore::Color&);
 };
+
+#if ENABLE(DRAG_SUPPORT)
+template<> struct ArgumentCoder<WebCore::DragData> {
+    static void encode(Encoder&, const WebCore::DragData&);
+    static bool decode(Decoder&, WebCore::DragData&);
+};
+#endif
 
 #if PLATFORM(COCOA)
 template<> struct ArgumentCoder<WebCore::MachSendRight> {

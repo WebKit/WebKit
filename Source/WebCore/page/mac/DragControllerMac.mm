@@ -54,12 +54,12 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-bool DragController::isCopyKeyDown(DragData& dragData)
+bool DragController::isCopyKeyDown(const DragData& dragData)
 {
     return dragData.flags() & DragApplicationIsCopyKeyDown;
 }
     
-DragOperation DragController::dragOperation(DragData& dragData)
+DragOperation DragController::dragOperation(const DragData& dragData)
 {
     if ((dragData.flags() & DragApplicationIsModal) || !dragData.containsURL())
         return DragOperationNone;

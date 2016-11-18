@@ -1,3 +1,15 @@
+2016-11-18  Enrica Casucci  <enrica@apple.com>
+
+        Refactor drag and drop for WebKit2 to encode DragData message exchange.
+        https://bugs.webkit.org/show_bug.cgi?id=164945
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::actionMaskForDrag):
+        (WebDragClient::willPerformDragDestinationAction):
+
 2016-11-18  Jeremy Jones  <jeremyj@apple.com>
 
         Add runtime flag to enable pointer lock. Enable pointer lock feature for mac.

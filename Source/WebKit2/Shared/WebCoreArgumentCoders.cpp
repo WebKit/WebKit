@@ -37,6 +37,7 @@
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
+#include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FileChooser.h>
@@ -1183,6 +1184,47 @@ bool ArgumentCoder<Color>::decode(Decoder& decoder, Color& color)
     return true;
 }
 
+#if ENABLE(DRAG_SUPPORT)
+void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
+{
+    encoder << dragData.clientPosition();
+    encoder << dragData.globalPosition();
+    encoder.encodeEnum(dragData.draggingSourceOperationMask());
+    encoder.encodeEnum(dragData.flags());
+#if PLATFORM(MAC)
+    encoder << dragData.pasteboardName();
+#endif
+}
+
+bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
+{
+    IntPoint clientPosition;
+    if (!decoder.decode(clientPosition))
+        return false;
+
+    IntPoint globalPosition;
+    if (!decoder.decode(globalPosition))
+        return false;
+
+    DragOperation draggingSourceOperationMask;
+    if (!decoder.decodeEnum(draggingSourceOperationMask))
+        return false;
+
+    DragApplicationFlags applicationFlags;
+    if (!decoder.decodeEnum(applicationFlags))
+        return false;
+
+    String pasteboardName;
+#if PLATFORM(MAC)
+    if (!decoder.decode(pasteboardName))
+        return false;
+#endif
+
+    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags);
+
+    return true;
+}
+#endif
 
 void ArgumentCoder<CompositionUnderline>::encode(Encoder& encoder, const CompositionUnderline& underline)
 {

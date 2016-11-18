@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData&)
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData&)
 {
     if (action == DragDestinationActionLoad)
         m_page->willPerformLoadDragDestinationAction();
@@ -46,7 +46,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 {
 }
 
-DragDestinationAction WebDragClient::actionMaskForDrag(DragData&)
+DragDestinationAction WebDragClient::actionMaskForDrag(const DragData&)
 {
     return DragDestinationActionAny;
 }

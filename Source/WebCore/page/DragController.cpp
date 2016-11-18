@@ -94,7 +94,7 @@ bool isDraggableLink(const Element& element)
 
 #if ENABLE(DRAG_SUPPORT)
     
-static PlatformMouseEvent createMouseEvent(DragData& dragData)
+static PlatformMouseEvent createMouseEvent(const DragData& dragData)
 {
     bool shiftKey = false;
     bool ctrlKey = false;
@@ -125,7 +125,7 @@ DragController::~DragController()
     m_client.dragControllerDestroyed();
 }
 
-static RefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
@@ -162,7 +162,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData,
     return nullptr;
 }
 
-bool DragController::dragIsMove(FrameSelection& selection, DragData& dragData)
+bool DragController::dragIsMove(FrameSelection& selection, const DragData& dragData)
 {
     const VisibleSelection& visibleSelection = selection.selection();
     return m_documentUnderMouse == m_dragInitiator && visibleSelection.isContentEditable() && visibleSelection.isRange() && !isCopyKeyDown(dragData);
@@ -182,12 +182,12 @@ void DragController::dragEnded()
     m_client.dragEnded();
 }
 
-DragOperation DragController::dragEntered(DragData& dragData)
+DragOperation DragController::dragEntered(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
 
-void DragController::dragExited(DragData& dragData)
+void DragController::dragExited(const DragData& dragData)
 {
     if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -207,12 +207,12 @@ void DragController::dragExited(DragData& dragData)
     m_fileInputElementUnderMouse = nullptr;
 }
 
-DragOperation DragController::dragUpdated(DragData& dragData)
+DragOperation DragController::dragUpdated(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
 
-bool DragController::performDragOperation(DragData& dragData)
+bool DragController::performDragOperation(const DragData& dragData)
 {
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
@@ -264,7 +264,7 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
     m_documentUnderMouse = newDocument;
 }
 
-DragOperation DragController::dragEnteredOrUpdated(DragData& dragData)
+DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
@@ -316,7 +316,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     return downcast<Element>(node);
 }
 
-bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)
+bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)
 {
     if (!m_documentUnderMouse)
         return false;
@@ -411,7 +411,7 @@ DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootVi
     return m_dragSourceAction;
 }
 
-DragOperation DragController::operationForLoad(DragData& dragData)
+DragOperation DragController::operationForLoad(const DragData& dragData)
 {
     Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
@@ -442,7 +442,7 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
     return !frame->selection().isNone() && frame->selection().selection().isContentEditable();
 }
 
-bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData& dragData)
+bool DragController::dispatchTextInputEventFor(Frame* innerFrame, const DragData& dragData)
 {
     ASSERT(m_page.dragCaretController().hasCaret());
     String text = m_page.dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
@@ -450,7 +450,7 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData& drag
     return target->dispatchEvent(TextEvent::createForDrop(innerFrame->document()->domWindow(), text));
 }
 
-bool DragController::concludeEditDrag(DragData& dragData)
+bool DragController::concludeEditDrag(const DragData& dragData)
 {
     RefPtr<HTMLInputElement> fileInput = m_fileInputElementUnderMouse;
     if (m_fileInputElementUnderMouse) {
@@ -554,7 +554,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
     return true;
 }
 
-bool DragController::canProcessDrag(DragData& dragData)
+bool DragController::canProcessDrag(const DragData& dragData)
 {
     if (!dragData.containsCompatibleContent())
         return false;
@@ -603,7 +603,7 @@ static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
     return DragOperationGeneric;
 }
 
-bool DragController::tryDHTMLDrag(DragData& dragData, DragOperation& operation)
+bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& operation)
 {
     ASSERT(m_documentUnderMouse);
     Ref<MainFrame> mainFrame(m_page.mainFrame());

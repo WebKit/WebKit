@@ -589,9 +589,9 @@ class EmptyDragClient : public DragClient {
 public:
     EmptyDragClient() { }
     virtual ~EmptyDragClient() {}
-    void willPerformDragDestinationAction(DragDestinationAction, DragData&) override { }
+    void willPerformDragDestinationAction(DragDestinationAction, const DragData&) override { }
     void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) override { }
-    DragDestinationAction actionMaskForDrag(DragData&) override { return DragDestinationActionNone; }
+    DragDestinationAction actionMaskForDrag(const DragData&) override { return DragDestinationActionNone; }
     DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) override { return DragSourceActionNone; }
     void startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool) override { }
     void dragControllerDestroyed() override { }

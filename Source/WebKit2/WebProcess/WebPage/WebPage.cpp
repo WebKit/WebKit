@@ -3449,14 +3449,13 @@ void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clien
     }
 }
 #else
-void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
+void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragData& dragData, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0));
         return;
     }
 
-    DragData dragData(dragStorageName, clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
     switch (action) {
     case DragControllerActionEntered: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);

@@ -32,9 +32,9 @@
 class WebDragClient : public WebCore::DragClient {
 public:
     WebDragClient(WebView*);
-    void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
+    void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&) override;
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
-    WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
+    WebCore::DragDestinationAction actionMaskForDrag(const WebCore::DragData&) override;
     void dragControllerDestroyed() override;
     WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
     void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::DataTransfer&, WebCore::Frame&, bool linkDrag) override;
