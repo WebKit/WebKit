@@ -105,7 +105,7 @@ TEST(WebCore, URLExtras_Solidus)
 
     // Separate functions that deal with just a host name on its own.
     EXPECT_STREQ("site.com/othersite.org", [WebCore::encodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
-    EXPECT_STREQ("site.com\xEF\xBC\x8Fothersite.org", [WebCore::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
+    EXPECT_STREQ("site.com/othersite.org", [WebCore::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
 }
 
 TEST(WebCore, URLExtras_Space)

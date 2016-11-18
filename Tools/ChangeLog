@@ -1,3 +1,14 @@
+2016-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API test after r208902
+        https://bugs.webkit.org/show_bug.cgi?id=144194
+
+        * TestWebKitAPI/Tests/Cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+        The fullwidth solidus, U+FF0F, changed encoding from IDN2003 to IDN2008, probably to prevent domains from using it
+        to spoof other domains.  https://webkit.org/blog/ and https://webkit.org\uFF0Fblog/ would otherwise look 
+        too similar when rendered.
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Support IDN2008 with UTS #46 instead of IDN2003
