@@ -1,3 +1,10 @@
+2016-11-18  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix some non-macOS builds.
+        <rdar://problems/29331425&29331438&29331722>
+
+        * platform/mac/WebPlaybackControlsManager.h:
+
 2016-11-18  Per Arne Vollan  <pvollan@apple.com>
 
         [Win32] Start releasing memory earlier when memory is running low.

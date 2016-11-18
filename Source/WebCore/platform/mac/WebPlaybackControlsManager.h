@@ -26,11 +26,11 @@
 #ifndef WebPlaybackControlsManager_h
 #define WebPlaybackControlsManager_h
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+
 #import <WebCore/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
-
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 namespace WebCore {
 class WebPlaybackSessionInterfaceMac;
