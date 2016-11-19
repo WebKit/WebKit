@@ -45,6 +45,10 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (!parent)
         return DefaultBehavior;
 
+    // If the author has provided a role, platform-specific inclusion likely doesn't apply.
+    if (ariaRoleAttribute() != UnknownRole)
+        return DefaultBehavior;
+
     AccessibilityRole role = roleValue();
     // We expose the slider as a whole but not its value indicator.
     if (role == SliderThumbRole)

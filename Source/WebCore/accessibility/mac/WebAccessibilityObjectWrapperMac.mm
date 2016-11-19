@@ -2704,7 +2704,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (m_object->isListBox()) {
+        if (m_object->canHaveSelectedChildren()) {
             AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
             m_object->selectedChildren(selectedChildrenCopy);
             return convertToNSArray(selectedChildrenCopy);

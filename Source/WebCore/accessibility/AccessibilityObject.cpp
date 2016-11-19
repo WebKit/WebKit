@@ -511,6 +511,13 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     return accessibleObject;
 }
 
+bool AccessibilityObject::isDescendantOfRole(AccessibilityRole role) const
+{
+    return AccessibilityObject::matchedParent(*this, false, [&role] (const AccessibilityObject& object) {
+        return object.roleValue() == role;
+    }) != nullptr;
+}
+
 static void appendAccessibilityObject(AccessibilityObject* object, AccessibilityObject::AccessibilityChildrenVector& results)
 {
     // Find the next descendant of this attachment object so search can continue through frames.

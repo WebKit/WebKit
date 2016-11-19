@@ -933,12 +933,13 @@ AccessibilityObject* AccessibilityNodeObject::selectedTabItem()
     if (!isTabList())
         return nullptr;
 
+    // FIXME: Is this valid? ARIA tab items support aria-selected; not aria-checked.
     // Find the child tab item that is selected (ie. the intValue == 1).
     AccessibilityObject::AccessibilityChildrenVector tabs;
     tabChildren(tabs);
 
     for (const auto& child : children()) {
-        if (child->isTabItem() && child->isChecked())
+        if (child->isTabItem() && (child->isChecked() || child->isSelected()))
             return child.get();
     }
     return nullptr;
@@ -2176,6 +2177,9 @@ bool AccessibilityNodeObject::canSetSelectedAttribute() const
     case TreeGridRole:
     case TreeItemRole:
     case TreeRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
+    case MenuItemRole:
         return isEnabled();
     default:
         return false;

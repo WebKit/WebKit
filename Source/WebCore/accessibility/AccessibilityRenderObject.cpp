@@ -1621,6 +1621,10 @@ bool AccessibilityRenderObject::isSelected() const
     if (isTabItem() && isTabItemSelected())
         return true;
 
+    // Menu items are considered selectable by assistive technologies
+    if (isMenuItem())
+        return isFocused() || parentObjectUnignored()->activeDescendant() == this;
+
     return false;
 }
 
@@ -3274,6 +3278,26 @@ bool AccessibilityRenderObject::isBusy() const
 {
     return elementAttributeValue(aria_busyAttr);    
 }
+
+bool AccessibilityRenderObject::canHaveSelectedChildren() const
+{
+    switch (roleValue()) {
+    // These roles are containers whose children support aria-selected:
+    case GridRole:
+    case ListBoxRole:
+    case TabListRole:
+    case TreeRole:
+    case TreeGridRole:
+    // These roles are containers whose children are treated as selected by assistive
+    // technologies. We can get the "selected" item via aria-activedescendant or the
+    // focused element.
+    case MenuRole:
+    case MenuBarRole:
+        return true;
+    default:
+        return false;
+    }
+}
     
 void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& result)
 {
@@ -3327,12 +3351,36 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
 {
     ASSERT(result.isEmpty());
 
-    // only listboxes should be asked for their selected children. 
-    AccessibilityRole role = roleValue();
-    if (role == ListBoxRole) // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+    if (!canHaveSelectedChildren())
+        return;
+
+    switch (roleValue()) {
+    case ListBoxRole:
+        // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
         ariaListboxSelectedChildren(result);
-    else if (role == TreeRole || role == TreeGridRole || role == TableRole || role == GridRole)
+        return;
+    case GridRole:
+    case TreeRole:
         ariaSelectedRows(result);
+        return;
+    case TabListRole:
+        if (AccessibilityObject* selectedTab = selectedTabItem())
+            result.append(selectedTab);
+        return;
+    case MenuRole:
+    case MenuBarRole:
+        if (AccessibilityObject* descendant = activeDescendant()) {
+            result.append(descendant);
+            return;
+        }
+        if (AccessibilityObject* focusedElement = focusedUIElement()) {
+            result.append(focusedElement);
+            return;
+        }
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildrenVector& result)      

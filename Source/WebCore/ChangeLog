@@ -1,3 +1,47 @@
+2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement selection interface and states for elements supporting aria-selected and for menu roles
+        https://bugs.webkit.org/show_bug.cgi?id=164865
+
+        Reviewed by Chris Fleizach.
+
+        Implement AtkSelection and support ATK_STATE_SELECTABLE and ATK_STATE_SELECTED
+        for elements supporting aria-selected and for menu-related roles. Also enable the
+        equivalent support for the Mac because NSAccessibilitySelectedChildrenAttribute is
+        included as supported on the same roles.
+
+        In addition, fix several bugs discovered along the way: Call isSelected() on role
+        tab, because tab supports aria-selected; not aria-checked. Correct ATK mapping
+        of ListBoxRole and ListBoxOptionRole for combobox descendants. Always defer to
+        WebCore for inclusion/exclusion decisions related to elements with an explicit
+        ARIA role.
+
+        Tests: accessibility/aria-combobox-hierarchy.html
+               accessibility/aria-selected-menu-items.html
+               accessibility/aria-selected.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::selectedTabItem):
+        (WebCore::AccessibilityNodeObject::canSetSelectedAttribute):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isDescendantOfRole):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::canHaveSelectedChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isSelected):
+        (WebCore::AccessibilityRenderObject::canHaveSelectedChildren):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionGetSelectionCount):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        (getInterfaceMaskFromObject):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2016-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] When zoomed in and panning on pages with fixed bars, parts of the bars are sometimes missing

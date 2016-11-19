@@ -686,6 +686,8 @@ public:
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual bool isDescendantOfBarrenParent() const { return false; }
+
+    bool isDescendantOfRole(AccessibilityRole) const;
     
     // Text selection
     RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String>&) const;
@@ -818,6 +820,7 @@ public:
 #endif
     virtual bool isDetachedFromParent() { return false; }
 
+    virtual bool canHaveSelectedChildren() const { return false; }
     virtual void selectedChildren(AccessibilityChildrenVector&) { }
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
     virtual void tabChildren(AccessibilityChildrenVector&) { }

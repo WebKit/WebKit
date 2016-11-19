@@ -175,12 +175,6 @@ static gint webkitAccessibleSelectionGetSelectionCount(AtkSelection* selection)
     if (!coreSelection || !coreSelection->isAccessibilityRenderObject())
         return 0;
 
-    if (coreSelection->isListBox()) {
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        coreSelection->selectedChildren(selectedItems);
-        return static_cast<gint>(selectedItems.size());
-    }
-
     if (coreSelection->isMenuList()) {
         RenderObject* renderer = coreSelection->renderer();
         if (!renderer)
@@ -190,7 +184,9 @@ static gint webkitAccessibleSelectionGetSelectionCount(AtkSelection* selection)
         return selectedIndex >= 0 && selectedIndex < static_cast<int>(downcast<HTMLSelectElement>(renderer->node())->listItems().size());
     }
 
-    return 0;
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    coreSelection->selectedChildren(selectedItems);
+    return static_cast<gint>(selectedItems.size());
 }
 
 static gboolean webkitAccessibleSelectionIsChildSelected(AtkSelection* selection, gint index)

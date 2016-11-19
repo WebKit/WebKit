@@ -1,3 +1,25 @@
+2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement selection interface and states for elements supporting aria-selected and for menu roles
+        https://bugs.webkit.org/show_bug.cgi?id=164865
+
+        Reviewed by Chris Fleizach.
+
+        New tests for the added support. In addition, update the expectations for
+        aria-combobox.html to reflect the corrected ATK mapping of ListBoxRole for
+        combobox descendants.
+
+        * accessibility/aria-combobox-expected.txt: Updated.
+        * accessibility/aria-combobox-hierarchy.html: Added.
+        * accessibility/aria-selected-menu-items.html: Added.
+        * accessibility/aria-selected.html: Added.
+        * platform/gtk/accessibility/aria-combobox-hierarchy-expected.txt: Added.
+        * platform/gtk/accessibility/aria-selected-expected.txt: Added.
+        * platform/gtk/accessibility/aria-selected-menu-items-expected.txt: Added.
+        * platform/mac/accessibility/aria-combobox-hierarchy-expected.txt: Added.
+        * platform/mac/accessibility/aria-selected-expected.txt: Added.
+        * platform/mac/accessibility/aria-selected-menu-items-expected.txt: Added.
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test non-stable-state scrolling on iOS
