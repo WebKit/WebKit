@@ -56,6 +56,10 @@ JSClassRef UIScriptController::wrapperClass()
 void UIScriptController::doAsyncTask(JSValueRef)
 {
 }
+
+void simulateAccessibilitySettingsChangeNotification(JSValueRef)
+{
+}
 #endif
 
 void UIScriptController::setDidStartFormControlInteractionCallback(JSValueRef callback)
@@ -159,6 +163,10 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
 
 #if !PLATFORM(COCOA)
 void UIScriptController::zoomToScale(double, JSValueRef)
+{
+}
+
+void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef)
 {
 }
 

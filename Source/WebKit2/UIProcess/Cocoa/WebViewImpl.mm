@@ -122,6 +122,46 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
 @end
 
+@interface WKAccessibilitySettingsObserver : NSObject {
+    WebKit::WebViewImpl *_impl;
+}
+
+- (instancetype)initWithImpl:(WebKit::WebViewImpl&)impl;
+@end
+
+@implementation WKAccessibilitySettingsObserver
+
+- (instancetype)initWithImpl:(WebKit::WebViewImpl&)impl
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _impl = &impl;
+
+    NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [workspaceNotificationCenter addObserver:self selector:@selector(_settingsDidChange:) name:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    NSNotificationCenter *workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [workspaceNotificationCenter removeObserver:self name:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
+
+    [super dealloc];
+}
+
+- (void)_settingsDidChange:(NSNotification *)notification
+{
+    WTFLogAlways("received notification");
+
+    _impl->accessibilitySettingsDidChange();
+}
+
+@end
+
 @interface WKWindowVisibilityObserver : NSObject {
     NSView *_view;
     WebKit::WebViewImpl *_impl;
@@ -133,7 +173,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 - (void)startObservingFontPanel;
 - (void)startObservingLookupDismissal;
 @end
-
 
 @implementation WKWindowVisibilityObserver
 
@@ -1180,6 +1219,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     , m_layoutStrategy([WKViewLayoutStrategy layoutStrategyWithPage:m_page view:m_view viewImpl:*this mode:kWKLayoutModeViewSize])
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
+    , m_accessibilitySettingsObserver(adoptNS([[WKAccessibilitySettingsObserver alloc] initWithImpl:*this]))
     , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:m_view.frame options:trackingAreaOptions() owner:m_view userInfo:nil]))
 {
     static_cast<PageClientImpl&>(*m_pageClient).setImpl(*this);
@@ -1837,6 +1877,11 @@ bool WebViewImpl::mightBeginScrollWhileInactive()
         return true;
 
     return false;
+}
+
+void WebViewImpl::accessibilitySettingsDidChange()
+{
+    m_page->accessibilitySettingsDidChange();
 }
 
 bool WebViewImpl::acceptsFirstMouse(NSEvent *event)

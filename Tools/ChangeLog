@@ -1,3 +1,29 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        AX: "(inverted-colors)" media query only matches on page reload; should match on change
+        https://bugs.webkit.org/show_bug.cgi?id=163564
+        <rdar://problem/28807350>
+
+        Reviewed by Simon Fraser.
+
+        Add a UIScriptController method that tricks WebKit into thinking
+        it has received a notification that accessibility settings have
+        changed. Combined with our forced overrides, this allows us to
+        test if a page would react to the notifications.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::simulateAccessibilitySettingsChangeNotification):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::simulateAccessibilitySettingsChangeNotification):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::simulateAccessibilitySettingsChangeNotification):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::simulateAccessibilitySettingsChangeNotification):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::simulateAccessibilitySettingsChangeNotification):
+
 2016-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test after r208902

@@ -70,6 +70,12 @@ editing/selection/character-granularity-rect.html [ Skip ]
 # This test is for ios-simulator-wk1
 editing/input/focus-change-with-marked-text.html [ Skip ]
 
+# These only run on Mac and iOS WK2
+fast/media/mq-inverted-colors-live-update.html [ Skip ]
+fast/media/mq-inverted-colors-live-update-in-subframes.html [ Skip ]
+fast/media/mq-monochrome-live-update.html [ Skip ]
+fast/media/mq-prefers-reduced-motion-live-update.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,31 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        AX: "(inverted-colors)" media query only matches on page reload; should match on change
+        https://bugs.webkit.org/show_bug.cgi?id=163564
+        <rdar://problem/28807350>
+
+        Reviewed by Simon Fraser.
+
+        Mark some media queries as responding to notifications that
+        system accessibility settings have changed. When Page gets told
+        that has happened, check if any of the results have changed.
+
+        Tests: fast/media/mq-inverted-colors-live-update.html
+               fast/media/mq-monochrome-live-update.html
+               fast/media/mq-prefers-reduced-motion-live-update.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::isAccessibilitySettingsDependent):
+        (WebCore::MediaQueryEvaluator::evaluate):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addAccessibilitySettingsDependentMediaQueryResult):
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByAccessibilitySettingsChange):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::hasAccessibilitySettingsDependentMediaQueries):
+        * page/Page.cpp:
+        (WebCore::Page::accessibilitySettingsDidChange):
+        * page/Page.h:
+
 2016-11-18  Anders Carlsson  <andersca@apple.com>
 
         Rename the 'other' Apple Pay Button type to 'donate'

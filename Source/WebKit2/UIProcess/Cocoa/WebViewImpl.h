@@ -43,6 +43,7 @@
 OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
+OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKEditorUndoTargetObjC;
 OBJC_CLASS WKFullScreenWindowController;
@@ -207,6 +208,8 @@ public:
     void windowDidChangeOcclusionState();
     bool shouldDelayWindowOrderingForEvent(NSEvent *);
     bool windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint);
+
+    void accessibilitySettingsDidChange();
 
     // -[NSView mouseDownCanMoveWindow] returns YES when the NSView is transparent,
     // but we don't want a drag in the NSView to move the window, even if it's transparent.
@@ -631,6 +634,7 @@ private:
 #endif
 
     RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
+    RetainPtr<WKAccessibilitySettingsObserver> m_accessibilitySettingsObserver;
 
     bool m_shouldDeferViewInWindowChanges { false };
     bool m_viewInWindowChangeWasDeferred { false };

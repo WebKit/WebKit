@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>CSS4 media query test: inverted-colors.</title>
+<style type="text/css">
+p { color: black; }
+
+@media (inverted-colors) {
+    #a { color: green; }
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.simulateAccessibilitySettingsChangeNotification(function() {
+            uiController.uiScriptComplete("Done");
+        });
+    })();`
+}
+
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    var element = document.getElementById("a");
+
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+    document.getElementById("before").textContent = window.getComputedStyle(element).color;
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function(result) {
+            document.getElementById("after").textContent = window.getComputedStyle(element).color;
+            testRunner.notifyDone();
+        });
+    }
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+  <p id="a"></p>
+  <p>Before was: <span id="before"></span> - should be rgb(0, 0, 0)</p>
+  <p>After was: <span id="after"></span> - should be rgb(0, 128, 0)</p>
+</body>
+</html>

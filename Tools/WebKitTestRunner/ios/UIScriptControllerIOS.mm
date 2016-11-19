@@ -68,6 +68,21 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
     }];
 }
 
+void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIAccessibilityInvertColorsStatusDidChangeNotification object:webView];
+
+    [webView _doAfterNextPresentationUpdate: ^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 double UIScriptController::zoomScale() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

@@ -1,3 +1,37 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        AX: "(inverted-colors)" media query only matches on page reload; should match on change
+        https://bugs.webkit.org/show_bug.cgi?id=163564
+        <rdar://problem/28807350>
+
+        Reviewed by Simon Fraser.
+
+        Listen for the appropriate notifications that accessibility settings
+        have changed. This is a single notification on macOS, which uses WebViewImpl,
+        and more fine-grained notifications on iOS, using WKWebView.
+
+        When we see the notification, send a message to the WebProcess which will
+        then tell the WebCore::Page.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _accessibilitySettingsDidChange:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKAccessibilitySettingsObserver initWithImpl:]):
+        (-[WKAccessibilitySettingsObserver dealloc]):
+        (-[WKAccessibilitySettingsObserver _settingsDidChange:]):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::accessibilitySettingsDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::accessibilitySettingsDidChange):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::accessibilitySettingsDidChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-11-18  Jeremy Jones  <jeremyj@apple.com>
 
         USE WK_MAC_TBA for version number in _webViewRequestPointerLock:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.12))

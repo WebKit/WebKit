@@ -1,3 +1,20 @@
+2016-11-18  Dean Jackson  <dino@apple.com>
+
+        AX: "(inverted-colors)" media query only matches on page reload; should match on change
+        https://bugs.webkit.org/show_bug.cgi?id=163564
+        <rdar://problem/28807350>
+
+        Reviewed by Simon Fraser.
+
+        * fast/media/mq-inverted-colors-live-update-in-subframes-expected.html: Added.
+        * fast/media/mq-inverted-colors-live-update-in-subframes.html: Added.
+        * fast/media/mq-inverted-colors-live-update-expected.html: Added.
+        * fast/media/mq-inverted-colors-live-update.html: Added.
+        * fast/media/mq-monochrome-live-update-expected.html: Added.
+        * fast/media/mq-monochrome-live-update.html: Added.
+        * fast/media/mq-prefers-reduced-motion-live-update-expected.html: Added.
+        * fast/media/mq-prefers-reduced-motion-live-update.html: Added.
+
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Implement texStorage2D()

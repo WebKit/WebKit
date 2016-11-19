@@ -63,6 +63,15 @@ enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 typedef bool (*MediaQueryFunction)(CSSValue*, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix);
 typedef HashMap<AtomicStringImpl*, MediaQueryFunction> MediaQueryFunctionMap;
 
+static bool isAccessibilitySettingsDependent(const AtomicString& mediaFeature)
+{
+    return mediaFeature == MediaFeatureNames::invertedColors
+        || mediaFeature == MediaFeatureNames::maxMonochrome
+        || mediaFeature == MediaFeatureNames::minMonochrome
+        || mediaFeature == MediaFeatureNames::monochrome
+        || mediaFeature == MediaFeatureNames::prefersReducedMotion;
+}
+
 static bool isViewportDependent(const AtomicString& mediaFeature)
 {
     return mediaFeature == MediaFeatureNames::width
@@ -120,9 +129,9 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver*
 {
     auto& queries = querySet.queryVector();
     if (!queries.size())
-        return true; // empty query list evaluates to true
+        return true; // Empty query list evaluates to true.
 
-    // iterate over queries, stop if any of them eval to true (OR semantics)
+    // Iterate over queries, stop if any of them eval to true (OR semantics).
     bool result = false;
     for (size_t i = 0; i < queries.size() && !result; ++i) {
         auto& query = queries[i];
@@ -132,18 +141,19 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver*
 
         if (mediaTypeMatch(query.mediaType())) {
             auto& expressions = query.expressions();
-            // iterate through expressions, stop if any of them eval to false (AND semantics)
+            // Iterate through expressions, stop if any of them eval to false (AND semantics).
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
                 bool expressionResult = evaluate(expressions[j]);
                 if (styleResolver && isViewportDependent(expressions[j].mediaFeature()))
                     styleResolver->addViewportDependentMediaQueryResult(expressions[j], expressionResult);
+                if (styleResolver && isAccessibilitySettingsDependent(expressions[j].mediaFeature()))
+                    styleResolver->addAccessibilitySettingsDependentMediaQueryResult(expressions[j], expressionResult);
                 if (!expressionResult)
                     break;
             }
 
-            // assume true if we are at the end of the list,
-            // otherwise assume false
+            // Assume true if we are at the end of the list, otherwise assume false.
             result = applyRestrictor(query.restrictor(), expressions.size() == j);
         } else
             result = applyRestrictor(query.restrictor(), false);

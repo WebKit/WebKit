@@ -1674,6 +1674,11 @@ float WebPage::deviceScaleFactor() const
     return m_page->deviceScaleFactor();
 }
 
+void WebPage::accessibilitySettingsDidChange()
+{
+    m_page->accessibilitySettingsDidChange();
+}
+
 void WebPage::setUseFixedLayout(bool fixed)
 {
     // Do not overwrite current settings if initially setting it to false.

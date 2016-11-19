@@ -29,6 +29,8 @@ interface UIScriptController {
 
     void zoomToScale(double scale, object callback);
 
+    void simulateAccessibilitySettingsChangeNotification(object callback);
+
     // Interaction.
     // These functions post events asynchronously. The callback is fired when the events have been dispatched, but any
     // resulting behavior may also be asynchronous.

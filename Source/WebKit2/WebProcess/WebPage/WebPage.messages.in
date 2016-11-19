@@ -201,6 +201,8 @@ messages -> WebPage LegacyReceiver {
     SetTextZoomFactor(double zoomFactor)
     WindowScreenDidChange(uint32_t displayID)
 
+    AccessibilitySettingsDidChange()
+
     ScalePage(double scale, WebCore::IntPoint origin)
     ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
     ScaleView(double scale)

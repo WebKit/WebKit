@@ -2603,6 +2603,14 @@ void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
         m_drawingArea->deviceScaleFactorDidChange();
 }
 
+void WebPageProxy::accessibilitySettingsDidChange()
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::AccessibilitySettingsDidChange(), m_pageID);
+}
+
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     if (!isValid())
