@@ -37,6 +37,7 @@
 #include <heap/Heap.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 

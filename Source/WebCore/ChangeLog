@@ -1,3 +1,9 @@
+2016-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix the build after r208917.
+
+        * dom/CustomElementReactionQueue.cpp:
+
 2016-11-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::decrypt to match the latest spec
