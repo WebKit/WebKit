@@ -1,3 +1,11 @@
+2016-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Mac and iOS bulds.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _stableStateOverride]):
+        (-[TestRunnerWKWebView _setStableStateOverride:]):
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test non-stable-state scrolling on iOS

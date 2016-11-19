@@ -44,7 +44,7 @@
 #if WK_API_ENABLED
 
 @interface TestRunnerWKWebView () {
-    RetainPtr<NSNumber *> _stableStateOverride;
+    RetainPtr<NSNumber *> m_stableStateOverride;
 }
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
@@ -177,12 +177,12 @@
 
 - (NSNumber *)_stableStateOverride
 {
-    return _stableStateOverride.get();
+    return m_stableStateOverride.get();
 }
 
 - (void)_setStableStateOverride:(NSNumber *)overrideBoolean
 {
-    _stableStateOverride = overrideBoolean;
+    m_stableStateOverride = overrideBoolean;
 }
 
 #endif
