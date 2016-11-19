@@ -2598,14 +2598,25 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
 int jscmain(int argc, char** argv);
 
 static double s_desiredTimeout;
+static double s_timeoutMultiplier = 1.0;
 
 static NO_RETURN_DUE_TO_CRASH void timeoutThreadMain(void*)
 {
-    auto timeout = std::chrono::microseconds(static_cast<std::chrono::microseconds::rep>(s_desiredTimeout * 1000000));
-    std::this_thread::sleep_for(timeout);
-    
-    dataLog("Timed out after ", s_desiredTimeout, " seconds!\n");
+    Seconds timeoutDuration(s_desiredTimeout * s_timeoutMultiplier);
+    sleep(timeoutDuration);
+    dataLog("Timed out after ", timeoutDuration, " seconds!\n");
     CRASH();
+}
+
+static void startTimeoutThreadIfNeeded()
+{
+    if (char* timeoutString = getenv("JSCTEST_timeout")) {
+        if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
+            dataLog("WARNING: timeout string is malformed, got ", timeoutString,
+                " but expected a number. Not using a timeout.\n");
+        } else
+            createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
+    }
 }
 
 int main(int argc, char** argv)
@@ -2649,15 +2660,6 @@ int main(int argc, char** argv)
     // threading yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
     WTF::initializeThreading();
-
-    if (char* timeoutString = getenv("JSCTEST_timeout")) {
-        if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
-            dataLog(
-                "WARNING: timeout string is malformed, got ", timeoutString,
-                " but expected a number. Not using a timeout.\n");
-        } else
-            createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
-    }
 
 #if PLATFORM(IOS)
     Options::crashIfCantAllocateJITMemory() = true;
@@ -3010,6 +3012,15 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
 
+        static const char* timeoutMultiplierOptStr = "--timeoutMultiplier=";
+        static const unsigned timeoutMultiplierOptStrLength = strlen(timeoutMultiplierOptStr);
+        if (!strncmp(arg, timeoutMultiplierOptStr, timeoutMultiplierOptStrLength)) {
+            const char* valueStr = &arg[timeoutMultiplierOptStrLength];
+            if (sscanf(valueStr, "%lf", &s_timeoutMultiplier) != 1)
+                dataLog("WARNING: --timeoutMultiplier=", valueStr, " is invalid. Expects a numeric ratio.\n");
+            continue;
+        }
+
         if (!strcmp(arg, "--test262-async")) {
             test262AsyncTest = true;
             continue;
@@ -3136,6 +3147,7 @@ int jscmain(int argc, char** argv)
     // Initialize JSC before getting VM.
     WTF::initializeMainThread();
     JSC::initializeThreading();
+    startTimeoutThreadIfNeeded();
 
     VM* vm = &VM::create(LargeHeap).leakRef();
     int result;

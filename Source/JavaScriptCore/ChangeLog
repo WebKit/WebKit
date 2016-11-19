@@ -1,5 +1,25 @@
 2016-11-19  Mark Lam  <mark.lam@apple.com>
 
+        Add --timeoutMultiplier option to allow some tests more time to run.
+        https://bugs.webkit.org/show_bug.cgi?id=164951
+
+        Reviewed by Yusuke Suzuki.
+
+        * jsc.cpp:
+        (timeoutThreadMain):
+        - Modified to factor in a timeout multiplier that can adjust the timeout duration.
+        (startTimeoutThreadIfNeeded):
+        - Moved the code that starts the timeout thread here from main() so that we can
+        call it after command line args have been parsed instead.
+        (main):
+        - Deleted old timeout thread starting code.
+        (CommandLine::parseArguments):
+        - Added parsing of the --timeoutMultiplier option.
+        (jscmain):
+        - Start the timeout thread if needed after we've parsed the command line args.
+
+2016-11-19  Mark Lam  <mark.lam@apple.com>
+
         Fix missing exception checks in JSC inspector files.
         https://bugs.webkit.org/show_bug.cgi?id=164959
 
