@@ -750,6 +750,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (isListBoxOption && coreObject->isSelectedOptionActive())
         atk_state_set_add_state(stateSet, ATK_STATE_ACTIVE);
 
+    if (coreObject->isBusy())
+        atk_state_set_add_state(stateSet, ATK_STATE_BUSY);
+
 #if ATK_CHECK_VERSION(2,11,2)
     if (coreObject->supportsChecked() && coreObject->canSetValueAttribute())
         atk_state_set_add_state(stateSet, ATK_STATE_CHECKABLE);

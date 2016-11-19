@@ -1048,7 +1048,31 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(J
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
-    // FIXME: implement
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return false;
+
+    String attributeString = jsStringToWTFString(attribute);
+    if (attributeString == "AXElementBusy")
+        return checkElementState(m_element.get(), ATK_STATE_BUSY);
+    if (attributeString == "AXChecked")
+        return checkElementState(m_element.get(), ATK_STATE_CHECKED);
+    if (attributeString == "AXEnabled")
+        return checkElementState(m_element.get(), ATK_STATE_ENABLED);
+    if (attributeString == "AXExpanded")
+        return checkElementState(m_element.get(), ATK_STATE_EXPANDED);
+    if (attributeString == "AXFocused")
+        return checkElementState(m_element.get(), ATK_STATE_FOCUSED);
+    if (attributeString == "AXInvalid")
+        return checkElementState(m_element.get(), ATK_STATE_INVALID);
+    if (attributeString == "AXMultiSelectable")
+        return checkElementState(m_element.get(), ATK_STATE_MULTISELECTABLE);
+    if (attributeString == "AXRequired")
+        return checkElementState(m_element.get(), ATK_STATE_REQUIRED);
+    if (attributeString == "AXSelected")
+        return checkElementState(m_element.get(), ATK_STATE_SELECTED);
+    if (attributeString == "AXVisited")
+        return checkElementState(m_element.get(), ATK_STATE_VISITED);
+
     return false;
 }
 

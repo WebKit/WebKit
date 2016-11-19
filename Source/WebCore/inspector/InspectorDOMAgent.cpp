@@ -1627,7 +1627,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             // An AX object is "busy" if it or any ancestor has aria-busy="true" set.
             AccessibilityObject* current = axObject;
             while (!busy && current) {
-                busy = current->ariaLiveRegionBusy();
+                busy = current->isBusy();
                 current = current->parentObject();
             }
 

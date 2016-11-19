@@ -1,3 +1,15 @@
+2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose aria-busy via ATK_STATE_BUSY
+        https://bugs.webkit.org/show_bug.cgi?id=164909
+
+        Reviewed by Chris Fleizach.
+
+        Implement boolAttributeValue() for ATK so we can test AXElementBusy.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Eliminate a source of flakiness in layout tests by forcing WebPage into "responsive" mode for all tests, with an internals override

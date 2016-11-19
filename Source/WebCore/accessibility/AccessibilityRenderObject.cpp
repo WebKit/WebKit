@@ -3270,7 +3270,7 @@ bool AccessibilityRenderObject::ariaLiveRegionAtomic() const
     }
 }
 
-bool AccessibilityRenderObject::ariaLiveRegionBusy() const
+bool AccessibilityRenderObject::isBusy() const
 {
     return elementAttributeValue(aria_busyAttr);    
 }

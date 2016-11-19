@@ -273,7 +273,7 @@ private:
     const String ariaLiveRegionStatus() const override;
     const AtomicString& ariaLiveRegionRelevant() const override;
     bool ariaLiveRegionAtomic() const override;
-    bool ariaLiveRegionBusy() const override;
+    bool isBusy() const override;
 
     bool inheritsPresentationalRole() const override;
 

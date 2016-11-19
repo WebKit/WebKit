@@ -921,7 +921,7 @@ public:
     virtual const String ariaLiveRegionStatus() const { return String(); }
     virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom; }
     virtual bool ariaLiveRegionAtomic() const { return false; }
-    virtual bool ariaLiveRegionBusy() const { return false; }
+    virtual bool isBusy() const { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
     static bool liveRegionStatusIsEnabled(const AtomicString&);
     static bool contentEditableAttributeIsEnabled(Element*);

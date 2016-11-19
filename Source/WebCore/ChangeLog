@@ -1,3 +1,32 @@
+2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose aria-busy via ATK_STATE_BUSY
+        https://bugs.webkit.org/show_bug.cgi?id=164909
+
+        Reviewed by Chris Fleizach.
+
+        Expose aria-busy via ATK_STATE_BUSY. Also rename ariaLiveRegionBusy()
+        to isBusy() because in ARIA 1.1 aria-busy is no longer limited to live
+        regions.
+
+        Test: accessibility/aria-busy.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isBusy):
+        (WebCore::AccessibilityObject::ariaLiveRegionBusy): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isBusy):
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionBusy): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityARIAIsBusy]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r200964): Tab focus navigation is broken on results.en.voyages-sncf.com

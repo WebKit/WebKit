@@ -3329,7 +3329,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityARIAAtomicAttribute])
         return [NSNumber numberWithBool:m_object->ariaLiveRegionAtomic()];
     if ([attributeName isEqualToString:NSAccessibilityElementBusyAttribute])
-        return [NSNumber numberWithBool:m_object->ariaLiveRegionBusy()];
+        return [NSNumber numberWithBool:m_object->isBusy()];
     
     // MathML Attributes.
     if (m_object->isMathElement()) {

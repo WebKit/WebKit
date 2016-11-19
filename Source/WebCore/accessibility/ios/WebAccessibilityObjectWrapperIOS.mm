@@ -2655,7 +2655,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return NO;
 
-    return m_object->ariaLiveRegionBusy();
+    return m_object->isBusy();
 }
 
 - (NSString *)accessibilityARIALiveRegionStatus
