@@ -110,6 +110,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     if (LIKELY(property.isUInt32())) {
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
         ASSERT(isIndex(property.asUInt32()));
+        scope.release();
         putByVal<strict, direct>(exec, baseValue, property.asUInt32(), value);
         return;
     }
@@ -118,6 +119,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsDouble == propertyAsUInt32 && isIndex(propertyAsUInt32)) {
+            scope.release();
             putByVal<strict, direct>(exec, baseValue, propertyAsUInt32, value);
             return;
         }
@@ -130,12 +132,16 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     PutPropertySlot slot(baseValue, strict);
     if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
-        if (Optional<uint32_t> index = parseIndex(propertyName))
+        if (Optional<uint32_t> index = parseIndex(propertyName)) {
+            scope.release();
             asObject(baseValue)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-        else
-            asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
-    } else
-        baseValue.put(exec, propertyName, value, slot);
+            return;
+        }
+        asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
+        return;
+    }
+    scope.release();
+    baseValue.put(exec, propertyName, value, slot);
 }
 
 template<typename ViewClass>
@@ -152,7 +158,8 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size,
     
     if (vector)
         return bitwise_cast<char*>(ViewClass::createWithFastVector(exec, structure, size, vector));
-    
+
+    scope.release();
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
 }
 
@@ -189,8 +196,11 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (constructor->type() == JSFunctionType)
-        return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure());
+    if (constructor->type() == JSFunctionType) {
+        auto rareData = jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        return constructEmptyObject(exec, rareData->objectAllocationProfile()->structure());
+    }
 
     JSValue proto = constructor->get(exec, exec->propertyNames().prototype);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -223,6 +233,7 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValu
 
     int32_t a = op1.toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a & b));
 }
@@ -238,6 +249,7 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue
 
     int32_t a = op1.toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a | b));
 }
@@ -253,6 +265,7 @@ EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValu
 
     int32_t a = op1.toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a ^ b));
 }
@@ -268,6 +281,7 @@ EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSV
 
     int32_t a = op1.toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a << (b & 0x1f)));
 }
@@ -283,6 +297,7 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSV
 
     int32_t a = op1.toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a >> (b & 0x1f)));
 }
@@ -298,6 +313,7 @@ EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJS
 
     uint32_t a = op1.toUInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
 }
@@ -329,6 +345,7 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
 
     double a = op1.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     double b = op2.toNumber(exec);
     return JSValue::encode(jsNumber(a / b));
 }
@@ -506,13 +523,17 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     if (LIKELY(baseValue.isCell())) {
         JSCell* base = baseValue.asCell();
 
-        if (property.isUInt32())
+        if (property.isUInt32()) {
+            scope.release();
             return getByVal(exec, base, property.asUInt32());
-        else if (property.isDouble()) {
+        }
+        if (property.isDouble()) {
             double propertyAsDouble = property.asDouble();
             uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-            if (propertyAsUInt32 == propertyAsDouble && isIndex(propertyAsUInt32))
+            if (propertyAsUInt32 == propertyAsDouble && isIndex(propertyAsUInt32)) {
+                scope.release();
                 return getByVal(exec, base, propertyAsUInt32);
+            }
         } else if (property.isString()) {
             Structure& structure = *base->structure(vm);
             if (JSCell::canUseFastGetOwnProperty(structure)) {
@@ -528,6 +549,7 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto propertyName = property.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     return JSValue::encode(baseValue.get(exec, propertyName));
 }
 
@@ -954,6 +976,7 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             return JSValue::encode(asString(baseValue)->getIndex(exec, i));
         
+        scope.release();
         return JSValue::encode(baseValue.get(exec, i, slot));
     }
 
@@ -962,6 +985,7 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
 
     auto property = subscript.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     return JSValue::encode(baseValue.get(exec, property, slot));
 }
 
@@ -989,6 +1013,7 @@ void JIT_OPERATION operationPutByValWithThisStrict(ExecState* exec, EncodedJSVal
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
     putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, property);
 }
 
@@ -1000,6 +1025,7 @@ void JIT_OPERATION operationPutByValWithThis(ExecState* exec, EncodedJSValue enc
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
     putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, property);
 }
 
@@ -1021,6 +1047,7 @@ void JIT_OPERATION operationDefineDataProperty(ExecState* exec, JSObject* base, 
 
     Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
     defineDataProperty(exec, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
@@ -1032,6 +1059,7 @@ void JIT_OPERATION operationDefineDataPropertyString(ExecState* exec, JSObject* 
 
     Identifier propertyName = property->toIdentifier(exec);
     RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
     defineDataProperty(exec, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
@@ -1943,6 +1971,7 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
 
     if (isJSArray(iterable) && globalObject->isArrayIteratorProtocolFastAndNonObservable()) {
         JSArray* array = jsCast<JSArray*>(iterable);
+        throwScope.release();
         return JSFixedArray::createFromArray(exec, vm, array);
     }
 
@@ -1963,6 +1992,7 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
         array = jsCast<JSArray*>(arrayResult);
     }
 
+    throwScope.release();
     return JSFixedArray::createFromArray(exec, vm, array);
 }
 
@@ -2040,6 +2070,7 @@ EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* s
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Identifier ident = Identifier::fromUid(exec, impl);
+    throwScope.release();
     return JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             GetPutInfo getPutInfo(getPutInfoBits);
@@ -2071,6 +2102,7 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
     const Identifier& ident = Identifier::fromUid(exec, impl);
     GetPutInfo getPutInfo(getPutInfoBits);
     bool hasProperty = scope->hasProperty(exec, ident);
+    RETURN_IF_EXCEPTION(throwScope, void());
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
         && !isInitialization(getPutInfo.initializationMode())) {
@@ -2095,6 +2127,7 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
     else
         strictMode = exec->codeBlock()->isStrictMode();
     PutPropertySlot slot(scope, strictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
+    throwScope.release();
     scope->methodTable()->put(scope, exec, ident, JSValue::decode(value), slot);
 }
 

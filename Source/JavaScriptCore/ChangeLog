@@ -1,5 +1,14 @@
 2016-11-18  Mark Lam  <mark.lam@apple.com>
 
+        Fix missing exception checks in DFGOperations.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164958
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGOperations.cpp:
+
+2016-11-18  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in ShadowChicken.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=164966
 
