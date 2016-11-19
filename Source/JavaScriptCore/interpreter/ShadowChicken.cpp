@@ -444,6 +444,7 @@ JSArray* ShadowChicken::functionsOnStack(ExecState* exec)
         vm, exec,
         [&] (const Frame& frame) -> bool {
             result->push(exec, frame.callee);
+            RELEASE_ASSERT(!scope.exception()); // This function is only called from tests.
             return true;
         });
     
