@@ -70,6 +70,7 @@
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 #undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
 #include "OpenGLShims.h"
@@ -563,6 +564,18 @@ void GraphicsContext3D::copyBufferSubData(GC3Denum readTarget, GC3Denum writeTar
 {
     makeContextCurrent();
     ::glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
+}
+
+void GraphicsContext3D::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+{
+    makeContextCurrent();
+    ::glTexStorage2D(target, levels, internalformat, width, height);
+}
+
+void GraphicsContext3D::texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth)
+{
+    makeContextCurrent();
+    ::glTexStorage3D(target, levels, internalformat, width, height, depth);
 }
 #endif
 

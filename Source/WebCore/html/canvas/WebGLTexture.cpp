@@ -53,6 +53,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     , m_isCompressed(false)
     , m_isFloatType(false)
     , m_isHalfFloatType(false)
+    , m_isForWebGL1(ctx.isWebGL1())
 {
     setObject(ctx.graphicsContext3D()->createTexture());
 }
@@ -188,6 +189,7 @@ GC3Denum WebGLTexture::getInternalFormat(GC3Denum target, GC3Dint level) const
 
 GC3Denum WebGLTexture::getType(GC3Denum target, GC3Dint level) const
 {
+    ASSERT(m_isForWebGL1);
     const LevelInfo* info = getLevelInfo(target, level);
     if (!info)
         return 0;
@@ -250,10 +252,12 @@ bool WebGLTexture::needToUseBlackTexture(TextureExtensionFlag extensions) const
         return false;
     if (m_needToUseBlackTexture)
         return true;
-    if ((m_isFloatType && !(extensions & TextureExtensionFloatLinearEnabled)) || (m_isHalfFloatType && !(extensions & TextureExtensionHalfFloatLinearEnabled))) {
-        if (m_magFilter != GraphicsContext3D::NEAREST || (m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::NEAREST_MIPMAP_NEAREST))
-            return true;
-    }
+    if (m_magFilter == GraphicsContext3D::NEAREST && (m_minFilter == GraphicsContext3D::NEAREST || m_minFilter == GraphicsContext3D::NEAREST_MIPMAP_NEAREST))
+        return false;
+    if (m_isForWebGL1 && m_isHalfFloatType && !(extensions & TextureExtensionHalfFloatLinearEnabled))
+        return true;
+    if (m_isFloatType && !(extensions & TextureExtensionFloatLinearEnabled))
+        return true;
     return false;
 }
 
@@ -308,7 +312,7 @@ bool WebGLTexture::canGenerateMipmaps()
         const LevelInfo& info = m_info[ii][0];
         if (!info.valid
             || info.width != first.width || info.height != first.height
-            || info.internalFormat != first.internalFormat || info.type != first.type)
+            || info.internalFormat != first.internalFormat || (m_isForWebGL1 && info.type != first.type))
             return false;
     }
     return true;
@@ -334,6 +338,36 @@ GC3Dint WebGLTexture::computeLevelCount(GC3Dsizei width, GC3Dsizei height)
     return log + 1;
 }
 
+static bool internalFormatIsFloatType(GC3Denum internalFormat)
+{
+    switch (internalFormat) {
+    case GraphicsContext3D::R32F:
+    case GraphicsContext3D::RG32F:
+    case GraphicsContext3D::RGB32F:
+    case GraphicsContext3D::RGBA32F:
+    case GraphicsContext3D::DEPTH_COMPONENT32F:
+    case GraphicsContext3D::DEPTH32F_STENCIL8:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool internalFormatIsHalfFloatType(GC3Denum internalFormat)
+{
+    switch (internalFormat) {
+    case GraphicsContext3D::R16F:
+    case GraphicsContext3D::RG16F:
+    case GraphicsContext3D::R11F_G11F_B10F:
+    case GraphicsContext3D::RGB9_E5:
+    case GraphicsContext3D::RGB16F:
+    case GraphicsContext3D::RGBA16F:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void WebGLTexture::update()
 {
     m_isNPOT = false;
@@ -353,7 +387,7 @@ void WebGLTexture::update()
             const LevelInfo& info0 = m_info[ii][0];
             if (!info0.valid
                 || info0.width != first.width || info0.height != first.height
-                || info0.internalFormat != first.internalFormat || info0.type != first.type) {
+                || info0.internalFormat != first.internalFormat || (m_isForWebGL1 && info0.type != first.type)) {
                 m_isComplete = false;
                 break;
             }
@@ -365,7 +399,7 @@ void WebGLTexture::update()
                 const LevelInfo& info = m_info[ii][level];
                 if (!info.valid
                     || info.width != width || info.height != height
-                    || info.internalFormat != info0.internalFormat || info.type != info0.type) {
+                    || info.internalFormat != info0.internalFormat || (m_isForWebGL1 && info.type != info0.type)) {
                     m_isComplete = false;
                     break;
                 }
@@ -375,25 +409,37 @@ void WebGLTexture::update()
     }
 
     m_isFloatType = false;
-    if (m_isComplete)
-        m_isFloatType = m_info[0][0].type == GraphicsContext3D::FLOAT;
-    else {
-        for (size_t ii = 0; ii < m_info.size(); ++ii) {
-            if (m_info[ii][0].type == GraphicsContext3D::FLOAT) {
-                m_isFloatType = true;
-                break;
+    if (m_isForWebGL1) {
+        if (m_isComplete) {
+            if (m_isForWebGL1)
+                m_isFloatType = m_info[0][0].type == GraphicsContext3D::FLOAT;
+            else
+                m_isFloatType = internalFormatIsFloatType(m_info[0][0].internalFormat);
+        } else {
+            for (size_t ii = 0; ii < m_info.size(); ++ii) {
+                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContext3D::FLOAT)
+                    || (!m_isForWebGL1 && internalFormatIsFloatType(m_info[ii][0].internalFormat))) {
+                    m_isFloatType = true;
+                    break;
+                }
             }
         }
     }
 
     m_isHalfFloatType = false;
-    if (m_isComplete)
-        m_isHalfFloatType = m_info[0][0].type == GraphicsContext3D::HALF_FLOAT_OES;
-    else {
-        for (size_t ii = 0; ii < m_info.size(); ++ii) {
-            if (m_info[ii][0].type == GraphicsContext3D::HALF_FLOAT_OES) {
-                m_isHalfFloatType = true;
-                break;
+    if (m_isForWebGL1) {
+        if (m_isComplete) {
+            if (m_isForWebGL1)
+                m_isHalfFloatType = internalFormatIsHalfFloatType(m_info[0][0].internalFormat);
+            else
+                m_isHalfFloatType = m_info[0][0].type == GraphicsContext3D::HALF_FLOAT_OES;
+        } else {
+            for (size_t ii = 0; ii < m_info.size(); ++ii) {
+                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContext3D::HALF_FLOAT_OES)
+                    || (!m_isForWebGL1 && internalFormatIsHalfFloatType(m_info[ii][0].internalFormat))) {
+                    m_isHalfFloatType = true;
+                    break;
+                }
             }
         }
     }

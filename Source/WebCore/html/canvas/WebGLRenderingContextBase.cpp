@@ -434,6 +434,13 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (extensions.supports("GL_EXT_debug_marker"))
         extensions.pushGroupMarkerEXT("WebGLRenderingContext");
 
+#if ENABLE(WEBGL2) && PLATFORM(MAC)
+    // glTexStorage() was only added to Core in OpenGL 4.2.
+    // However, according to https://developer.apple.com/opengl/capabilities/ all Apple GPUs support this extension.
+    if (attributes.useGLES3 && !extensions.supports("GL_ARB_texture_storage"))
+        return nullptr;
+#endif
+
     std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
@@ -1365,7 +1372,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
         std::unique_ptr<unsigned char[]> zero;
         if (width && height) {
             unsigned size;
-            GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, 0);
+            GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, nullptr);
             if (error != GraphicsContext3D::NO_ERROR) {
                 synthesizeGLError(error, "copyTexSubImage2D", "bad dimensions");
                 return;
@@ -3311,6 +3318,10 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
         return false;
 
     if (functionType != TexSubImage) {
+        if (functionType == TexImage && texture->immutable()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "texStorage() called on this texture previously");
+            return false;
+        }
         if (!validateNPOTTextureLevel(width, height, level, functionName))
             return false;
         // For SourceArrayBufferView, function validateTexFuncData() would handle whether to validate the SettableTexFormat
@@ -3333,7 +3344,7 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "dimensions out of range");
             return false;
         }
-        if (texture->getInternalFormat(target, level) != internalFormat || texture->getType(target, level) != type) {
+        if (texture->getInternalFormat(target, level) != internalFormat || (isWebGL1() && texture->getType(target, level) != type)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type and format do not match texture");
             return false;
         }
@@ -3629,7 +3640,7 @@ bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, GC
         return false;
     
     unsigned totalBytesRequired;
-    GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &totalBytesRequired, 0);
+    GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &totalBytesRequired, nullptr);
     if (error != GraphicsContext3D::NO_ERROR) {
         synthesizeGLError(error, functionName, "invalid texture dimensions");
         return false;
@@ -3963,6 +3974,14 @@ void WebGLRenderingContextBase::copyTexImage2D(GC3Denum target, GC3Dint level, G
     tex->setLevelInfo(target, level, internalFormat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
 }
 
+static bool isRGBFormat(GC3Denum internalFormat)
+{
+    return internalFormat == GraphicsContext3D::RGB
+        || internalFormat == GraphicsContext3D::RGBA
+        || internalFormat == GraphicsContext3D::RGB8
+        || internalFormat == GraphicsContext3D::RGBA8;
+}
+
 ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource> source)
 {
     if (!source) {
@@ -4023,12 +4042,14 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         // ImageBuffer::copyToPlatformTexture implementations are fully functional.
         if (texture
             && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
-            && type == GraphicsContext3D::UNSIGNED_BYTE
-            && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))) {
-            ImageBuffer* buffer = canvas->buffer();
-            if (buffer && buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
-                texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
-                return { };
+            && type == GraphicsContext3D::UNSIGNED_BYTE) {
+            auto textureInternalFormat = texture->getInternalFormat(target, level);
+            if (isRGBFormat(textureInternalFormat) || !texture->isValid(target, level)) {
+                ImageBuffer* buffer = canvas->buffer();
+                if (buffer && buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+                    texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
+                    return { };
+                }
             }
         }
 
@@ -4053,11 +4074,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         if (GraphicsContext3D::TEXTURE_2D == target && texture
             && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
             && type == GraphicsContext3D::UNSIGNED_BYTE
-            && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))
             && !level) {
-            if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
-                texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
-                return { };
+            auto textureInternalFormat = texture->getInternalFormat(target, level);
+            if (isRGBFormat(textureInternalFormat) || !texture->isValid(target, level)) {
+                if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+                    texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
+                    return { };
+                }
             }
         }
 

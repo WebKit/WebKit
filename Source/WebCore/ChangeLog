@@ -1,3 +1,61 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Implement texStorage2D()
+        https://bugs.webkit.org/show_bug.cgi?id=164493
+
+        Reviewed by Dean Jackson.
+
+        Create a new validation function which only accepts sized internalFormats.
+        After running texStorage2D(), we also texSubImage2D() to zero-fill it. This
+        is to compensate for potentially buggy drivers.
+
+        Because glTexStorage2D() was only added to OpenGL in version 4.2, not all
+        OpenGL 3.2+ contexts can implement this command. However, according to
+        https://developer.apple.com/opengl/capabilities/ all Apple GPUs have the
+        GL_ARB_texture_storage which implements this call. In the future, we could
+        implement texStorage2D() on top of texImage2D() if there are any ports which
+        want WebGL2 but don't have 4.2 and don't have the extension.
+
+        Also, when calling texStorage2D, callers specify an internalFormat but not a
+        type/format pair. This means that storing the texture's type is only valid
+        for WebGL 1 contexts. This patch surrounds all calls to reading the texture
+        type with guards and adds an ASSERT() at the read site to make sure the
+        right thing is happening.
+
+        Test: fast/canvas/webgl/webgl2-texStorage.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateTexStorageFuncParameters):
+        (WebCore::WebGL2RenderingContext::texStorage2D):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateTexFunc):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture):
+        (WebCore::WebGLTexture::getType):
+        (WebCore::WebGLTexture::needToUseBlackTexture):
+        (WebCore::WebGLTexture::canGenerateMipmaps):
+        (WebCore::internalFormatIsFloatType):
+        (WebCore::internalFormatIsHalfFloatType):
+        (WebCore::WebGLTexture::update):
+        * html/canvas/WebGLTexture.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe):
+        (WebCore::GraphicsContext3D::packImageData):
+        (WebCore::GraphicsContext3D::extractImageData):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::texStorage2D):
+        (WebCore::GraphicsContext3D::texStorage3D):
+
 2016-11-18  Alex Christensen  <achristensen@webkit.org>
 
         TextDecoder constructor should not accept replacement encodings

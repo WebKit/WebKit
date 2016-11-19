@@ -78,6 +78,9 @@ public:
 
     static GC3Dint computeLevelCount(GC3Dsizei width, GC3Dsizei height);
 
+    bool immutable() const { return m_immutable; }
+    void setImmutable() { m_immutable = true; }
+
 private:
     WebGLTexture(WebGLRenderingContextBase&);
 
@@ -133,6 +136,8 @@ private:
     bool m_isCompressed;
     bool m_isFloatType;
     bool m_isHalfFloatType;
+    bool m_isForWebGL1;
+    bool m_immutable { false };
 };
 
 } // namespace WebCore

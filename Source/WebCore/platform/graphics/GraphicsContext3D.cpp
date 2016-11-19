@@ -149,7 +149,7 @@ bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, G
     std::unique_ptr<unsigned char[]> zero;
     if (width > 0 && height > 0) {
         unsigned int size;
-        GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, 0);
+        GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, nullptr);
         if (error != GraphicsContext3D::NO_ERROR) {
             synthesizeGLError(error);
             return false;
@@ -373,7 +373,7 @@ bool GraphicsContext3D::packImageData(Image* image, const void* pixels, GC3Denum
 
     unsigned packedSize;
     // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, nullptr) != GraphicsContext3D::NO_ERROR)
         return false;
     data.resize(packedSize);
 
@@ -393,7 +393,7 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData, GC3Denum format, 
 
     unsigned int packedSize;
     // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, nullptr) != GraphicsContext3D::NO_ERROR)
         return false;
     data.resize(packedSize);
 

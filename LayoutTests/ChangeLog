@@ -1,3 +1,13 @@
+2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGL2] Implement texStorage2D()
+        https://bugs.webkit.org/show_bug.cgi?id=164493
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/webgl2-texStorage-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-texStorage.html: Added.
+
 2016-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Support IDN2008 with UTS #46 instead of IDN2003

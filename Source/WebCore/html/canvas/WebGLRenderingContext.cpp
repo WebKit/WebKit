@@ -772,8 +772,8 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
         }
         default:
             return false;
-    }
-    elementArrayBuffer->setCachedMaxIndex(type, maxIndex);
+        }
+        elementArrayBuffer->setCachedMaxIndex(type, maxIndex);
     }
     
     if (maxIndex >= 0) {

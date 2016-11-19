@@ -215,6 +215,15 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i)
             m_availableExtensions.add(glGetStringi(GL_EXTENSIONS, i));
+
+        if (!m_availableExtensions.contains(ASCIILiteral("GL_ARB_texture_storage"))) {
+            GLint majorVersion;
+            glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+            GLint minorVersion;
+            glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+            if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 2))
+                m_availableExtensions.add(ASCIILiteral("GL_ARB_texture_storage"));
+        }
     } else
 #endif
     {
