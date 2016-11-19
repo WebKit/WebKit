@@ -1,3 +1,18 @@
+2016-11-19  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception checks in JSC inspector files.
+        https://bugs.webkit.org/show_bug.cgi?id=164959
+
+        Reviewed by Saam Barati.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeDescriptions):
+
 2016-11-18  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception checks in DFGOperations.cpp.

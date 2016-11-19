@@ -269,19 +269,24 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, JSValue());
         switch (promise->status(exec->vm())) {
         case JSPromise::Status::Pending:
+            scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("pending"))));
-            break;
+            return array;
         case JSPromise::Status::Fulfilled:
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("resolved"))));
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(exec->vm())));
-            break;
+            return array;
         case JSPromise::Status::Rejected:
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("rejected"))));
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(exec->vm())));
-            break;
+            return array;
         }
         // FIXME: <https://webkit.org/b/141664> Web Inspector: ES6: Improved Support for Promises - Promise Reactions
-        return array;
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     if (JSBoundFunction* boundFunction = jsDynamicCast<JSBoundFunction*>(value)) {
@@ -289,9 +294,14 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         JSArray* array = constructEmptyArray(exec, nullptr);
         RETURN_IF_EXCEPTION(scope, JSValue());
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "targetFunction", boundFunction->targetFunction()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundThis", boundFunction->boundThis()));
-        if (boundFunction->boundArgs())
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        if (boundFunction->boundArgs()) {
+            scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
+            return array;
+        }
         return array;
     }
 
@@ -300,6 +310,8 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         JSArray* array = constructEmptyArray(exec, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("target"), proxy->target()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        scope.release();
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("handler"), proxy->handler()));
         return array;
     }
@@ -313,6 +325,8 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             JSArray* array = constructEmptyArray(exec, nullptr, 2);
             RETURN_IF_EXCEPTION(scope, JSValue());
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, "array", iteratedValue));
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", kind));
             return array;
         }
@@ -335,6 +349,8 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         JSArray* array = constructEmptyArray(exec, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "map", mapIterator->iteratedValue()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        scope.release();
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", jsNontrivialString(exec, kind)));
         return array;
     }
@@ -356,6 +372,8 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         JSArray* array = constructEmptyArray(exec, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "set", setIterator->iteratedValue()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        scope.release();
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", jsNontrivialString(exec, kind)));
         return array;
     }
@@ -364,6 +382,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr, 1);
         RETURN_IF_EXCEPTION(scope, JSValue());
+        scope.release();
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "string", stringIterator->iteratedValue(exec)));
         return array;
     }
@@ -372,6 +391,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr, 1);
         RETURN_IF_EXCEPTION(scope, JSValue());
+        scope.release();
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "object", propertyNameIterator->iteratedValue()));
         return array;
     }
@@ -436,6 +456,7 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "key"), it->key);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->value.get());
         array->putDirectIndex(exec, fetched++, entry);
+        RETURN_IF_EXCEPTION(scope, JSValue());
         if (numberToFetch && fetched >= numberToFetch)
             break;
     }
@@ -482,6 +503,7 @@ JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
         JSObject* entry = constructEmptyObject(exec);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->key);
         array->putDirectIndex(exec, fetched++, entry);
+        RETURN_IF_EXCEPTION(scope, JSValue());
         if (numberToFetch && fetched >= numberToFetch)
             break;
     }
@@ -552,6 +574,8 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         JSObject* entry = constructEmptyObject(exec);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), nextValue);
         array->putDirectIndex(exec, i, entry);
+        if (UNLIKELY(scope.exception()))
+            break;
     }
 
     iteratorClose(exec, iterator);
