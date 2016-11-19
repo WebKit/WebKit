@@ -1,3 +1,24 @@
+2016-11-18  Anders Carlsson  <andersca@apple.com>
+
+        Rename the 'other' Apple Pay Button type to 'donate'
+        https://bugs.webkit.org/show_bug.cgi?id=164978
+
+        Reviewed by Dean Jackson.
+
+        * DerivedSources.make:
+        * WebCorePrefix.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ApplePayButtonType):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::toPKPaymentButtonType):
+        * rendering/style/RenderStyleConstants.h:
+
 2016-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGL2] Implement texStorage2D()

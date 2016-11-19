@@ -5488,8 +5488,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
     case ApplePayButtonType::SetUp:
         m_value.valueID = CSSValueSetUp;
         break;
-    case ApplePayButtonType::Other:
-        m_value.valueID = CSSValueOther;
+    case ApplePayButtonType::Donate:
+        m_value.valueID = CSSValueDonate;
         break;
 
     default:
@@ -5508,8 +5508,8 @@ template<> inline CSSPrimitiveValue::operator ApplePayButtonType() const
         return ApplePayButtonType::Buy;
     case CSSValueSetUp:
         return ApplePayButtonType::SetUp;
-    case CSSValueOther:
-        return ApplePayButtonType::Other;
+    case CSSValueDonate:
+        return ApplePayButtonType::Donate;
     default:
         break;
     }

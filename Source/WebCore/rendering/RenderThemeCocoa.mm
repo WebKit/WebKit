@@ -78,7 +78,7 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
         return PKPaymentButtonTypeBuy;
     case ApplePayButtonType::SetUp:
         return PKPaymentButtonTypeSetUp;
-    case ApplePayButtonType::Other:
+    case ApplePayButtonType::Donate:
         // FIXME: Use a named constant here.
         return (PKPaymentButtonType)4;
     }
