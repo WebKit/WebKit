@@ -27,6 +27,7 @@
 #include "ScrollingStateFixedNode.h"
 
 #include "GraphicsLayer.h"
+#include "Logging.h"
 #include "ScrollingStateTree.h"
 #include "TextStream.h"
 
@@ -68,11 +69,28 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
     setPropertyChanged(ViewportConstraints);
 }
 
-void ScrollingStateFixedNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
+void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
     FloatPoint position = m_constraints.layerPositionForViewportRect(viewportRect);
-    if (layer().representsGraphicsLayer())
-        static_cast<GraphicsLayer*>(layer())->syncPosition(position);
+    if (layer().representsGraphicsLayer()) {
+        GraphicsLayer* graphicsLayer = static_cast<GraphicsLayer*>(layer());
+
+        LOG_WITH_STREAM(Compositing, stream << "ScrollingStateFixedNode::reconcileLayerPositionForViewportRect setting position of layer " << graphicsLayer->primaryLayerID() << " to " << position);
+        
+        switch (action) {
+        case ScrollingLayerPositionAction::Set:
+            graphicsLayer->setPosition(position);
+            break;
+
+        case ScrollingLayerPositionAction::SetApproximate:
+            graphicsLayer->setApproximatePosition(position);
+            break;
+        
+        case ScrollingLayerPositionAction::Sync:
+            graphicsLayer->syncPosition(position);
+            break;
+        }
+    }
 }
 
 void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const

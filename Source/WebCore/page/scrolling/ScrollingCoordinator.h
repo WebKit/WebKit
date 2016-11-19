@@ -66,9 +66,10 @@ class ViewportConstraints;
 class ScrollingTree;
 #endif
 
-enum SetOrSyncScrollingLayerPosition {
-    SetScrollingLayerPosition,
-    SyncScrollingLayerPosition
+enum class ScrollingLayerPositionAction {
+    Set,
+    SetApproximate,
+    Sync
 };
 
 struct ScrollableAreaParameters {
@@ -119,7 +120,7 @@ public:
     virtual void frameViewLayoutUpdated(FrameView&) { }
 
     using LayoutViewportOriginOrOverrideRect = WTF::Variant<Optional<FloatPoint>, Optional<FloatRect>>;
-    virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool /* programmaticScroll */, SetOrSyncScrollingLayerPosition) { }
+    virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool /* programmaticScroll */, bool /* inStableState*/, ScrollingLayerPositionAction) { }
 
     // Should be called whenever the slow repaint objects counter changes between zero and one.
     void frameViewHasSlowRepaintObjectsDidChange(FrameView&);
@@ -176,7 +177,7 @@ public:
 
     virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry* = nullptr) { }
     virtual void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, const ScrollingGeometry* = nullptr) { }
-    virtual void syncViewportConstrainedLayerPositions(const LayoutRect&) { }
+    virtual void reconcileViewportConstrainedLayerPositions(const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText() const;
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
@@ -235,6 +236,7 @@ private:
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingLayerPositionAction);
 
 } // namespace WebCore
 

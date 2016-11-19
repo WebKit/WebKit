@@ -131,9 +131,6 @@ public:
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
 
-    void setViewportIsStable(bool stable) { m_viewportIsStable = stable; }
-    bool viewportIsStable() const { return m_viewportIsStable; }
-
 #if PLATFORM(IOS)
     bool useCustomFixedPositionLayoutRect() const;
     IntRect customFixedPositionLayoutRect() const { return m_customFixedPositionLayoutRect; }
@@ -806,8 +803,6 @@ private:
     unsigned m_visuallyNonEmptyPixelCount;
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
-
-    bool m_viewportIsStable { true };
 
     bool m_needsDeferredScrollbarsUpdate { false };
 

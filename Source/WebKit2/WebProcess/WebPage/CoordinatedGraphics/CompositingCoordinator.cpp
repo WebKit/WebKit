@@ -103,12 +103,11 @@ bool CompositingCoordinator::flushPendingLayerChanges()
 
     initializeRootCompositingLayerIfNeeded();
 
-    bool viewportIsStable = m_page->mainFrame().view()->viewportIsStable();
-    m_rootLayer->flushCompositingStateForThisLayerOnly(viewportIsStable);
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_client.didFlushRootLayer(m_visibleContentsRect);
 
     if (m_overlayCompositingLayer)
-        m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()), viewportIsStable);
+        m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
     bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
 

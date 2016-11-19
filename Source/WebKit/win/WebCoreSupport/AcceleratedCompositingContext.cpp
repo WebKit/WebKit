@@ -355,8 +355,8 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
     FrameView* frameView = core(&m_webView)->mainFrame().view();
-    m_rootLayer->flushCompositingStateForThisLayerOnly(frameView->viewportIsStable());
-    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly(frameView->viewportIsStable());
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (!frameView->flushCompositingStateIncludingSubframes())
         return false;
 

@@ -307,15 +307,14 @@ bool LayerTreeHostGtk::renderFrame()
 
 bool LayerTreeHostGtk::flushPendingLayerChanges()
 {
-    bool viewportIsStable = m_webPage.corePage()->mainFrame().view()->viewportIsStable();
-    m_rootLayer->flushCompositingStateForThisLayerOnly(viewportIsStable);
-    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly(viewportIsStable);
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
 
     if (!m_webPage.corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes())
         return false;
 
     if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()), viewportIsStable);
+        m_viewOverlayRootLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();
     return true;

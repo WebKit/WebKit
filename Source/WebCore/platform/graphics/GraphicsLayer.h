@@ -307,7 +307,11 @@ public:
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
-    virtual void setPosition(const FloatPoint& p) { m_position = p; }
+    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = Nullopt; m_position = p; }
+
+    // approximatePosition, if set, overrides position() and is used during coverage rect computation.
+    FloatPoint approximatePosition() const { return m_approximatePosition ? m_approximatePosition.value() : m_position; }
+    void setApproximatePosition(Optional<FloatPoint> p) { m_approximatePosition = p; }
 
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncPosition(const FloatPoint& p) { m_position = p; }
@@ -513,8 +517,8 @@ public:
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
     // and descendant layers, and this layer only.
-    virtual void flushCompositingState(const FloatRect& /* clipRect */, bool /* viewportIsStable */) { }
-    virtual void flushCompositingStateForThisLayerOnly(bool /* viewportIsStable */) { }
+    virtual void flushCompositingState(const FloatRect& /* clipRect */) { }
+    virtual void flushCompositingStateForThisLayerOnly() { }
 
     // If the exposed rect of this layer changes, returns true if this or descendant layers need a flush,
     // for example to allocate new tiles.
@@ -596,6 +600,10 @@ protected:
     
     // Position is relative to the parent GraphicsLayer
     FloatPoint m_position;
+
+    // If set, overrides m_position. Only used for coverage computation.
+    Optional<FloatPoint> m_approximatePosition;
+
     FloatPoint3D m_anchorPoint;
     FloatSize m_size;
     FloatPoint m_boundsOrigin;

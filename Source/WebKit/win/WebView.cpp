@@ -7352,7 +7352,7 @@ void WebView::flushPendingGraphicsLayerChanges()
 #if USE(CA)
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)
-        m_backingLayer->flushCompositingStateForThisLayerOnly(view->viewportIsStable());
+        m_backingLayer->flushCompositingStateForThisLayerOnly();
 
     view->flushCompositingStateIncludingSubframes();
 #elif USE(TEXTURE_MAPPER_GL)

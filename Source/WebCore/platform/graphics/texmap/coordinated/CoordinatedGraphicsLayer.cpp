@@ -599,18 +599,18 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect, bool viewportIsStable)
+void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
     if (CoordinatedGraphicsLayer* mask = downcast<CoordinatedGraphicsLayer>(maskLayer()))
-        mask->flushCompositingStateForThisLayerOnly(viewportIsStable);
+        mask->flushCompositingStateForThisLayerOnly();
 
     if (CoordinatedGraphicsLayer* replica = downcast<CoordinatedGraphicsLayer>(replicaLayer()))
-        replica->flushCompositingStateForThisLayerOnly(viewportIsStable);
+        replica->flushCompositingStateForThisLayerOnly();
 
-    flushCompositingStateForThisLayerOnly(viewportIsStable);
+    flushCompositingStateForThisLayerOnly();
 
     for (auto& child : children())
-        child->flushCompositingState(rect, viewportIsStable);
+        child->flushCompositingState(rect);
 }
 
 void CoordinatedGraphicsLayer::syncChildren()
@@ -784,7 +784,7 @@ void CoordinatedGraphicsLayer::createPlatformLayerIfNeeded()
 }
 #endif
 
-void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly(bool)
+void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
     // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
     bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();

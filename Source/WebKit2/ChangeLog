@@ -1,3 +1,48 @@
+2016-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When zoomed in and panning on pages with fixed bars, parts of the bars are sometimes missing
+        https://bugs.webkit.org/show_bug.cgi?id=164855
+
+        Reviewed by Sam Weinig.
+
+        During UI-process panning and zooming, we send visible rect updates to the web process
+        with inStableState=false, and don't update GraphicsLayers until we get into a stable state.
+
+        This causes a problem where the web process has a stale notion of where the GraphicsLayers
+        for position:fixed elements are, but is then told to update tiling coverage with an up-to-date
+        visible rect. The existing "sync layer positions" path isn't useful to fix this, because it
+        breaks the relationship between the GraphicsLayer positions and their FixedPositionViewportConstraints
+        in the scrolling tree.
+
+        To address this, add the notion of an Optional<> approximatePosition on GraphicsLayers. This is used
+        only by the coverageRect computation code path, and is cleared by a setPosition(). ApproximatePositions
+        are pushed onto GraphicsLayers via the syncViewportConstrainedLayerPositions() code path (renamed to
+        reconcileViewportConstrainedLayerPositions).
+
+        Tested by scrollingcoordinator/ios/non-stable-viewport-scroll.html
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::flushPendingLayerChanges):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects): Always push the custom fixed position rect down, but send
+        ScrollingLayerPositionAction::SetApproximate if the state is not stable.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test non-stable-state scrolling on iOS

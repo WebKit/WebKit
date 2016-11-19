@@ -154,7 +154,7 @@ void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContent
 {
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(visibleContentRect,  m_webPage.mainFrame()->view()->viewportIsStable());
+        m_viewOverlayRootLayer->flushCompositingState(visibleContentRect);
 }
 
 void CoordinatedLayerTreeHost::layerFlushTimerFired()

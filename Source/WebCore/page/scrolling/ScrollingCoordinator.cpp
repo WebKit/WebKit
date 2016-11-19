@@ -436,4 +436,20 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollingLayerPositionAction action)
+{
+    switch (action) {
+    case ScrollingLayerPositionAction::Set:
+        ts << "set";
+        break;
+    case ScrollingLayerPositionAction::SetApproximate:
+        ts << "set approximate";
+        break;
+    case ScrollingLayerPositionAction::Sync:
+        ts << "sync";
+        break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

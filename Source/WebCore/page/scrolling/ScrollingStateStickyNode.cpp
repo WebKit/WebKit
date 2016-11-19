@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsLayer.h"
+#include "Logging.h"
 #include "ScrollingStateTree.h"
 #include "TextStream.h"
 
@@ -68,11 +69,28 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
     setPropertyChanged(ViewportConstraints);
 }
 
-void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
+void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
     FloatPoint position = m_constraints.layerPositionForConstrainingRect(viewportRect);
-    if (layer().representsGraphicsLayer())
-        static_cast<GraphicsLayer*>(layer())->syncPosition(position);
+    if (layer().representsGraphicsLayer()) {
+        GraphicsLayer* graphicsLayer = static_cast<GraphicsLayer*>(layer());
+
+        LOG_WITH_STREAM(Compositing, stream << "ScrollingStateStickyNode::reconcileLayerPositionForViewportRect setting position of layer " << graphicsLayer->primaryLayerID() << " to " << position);
+        
+        switch (action) {
+        case ScrollingLayerPositionAction::Set:
+            graphicsLayer->setPosition(position);
+            break;
+
+        case ScrollingLayerPositionAction::SetApproximate:
+            graphicsLayer->setApproximatePosition(position);
+            break;
+        
+        case ScrollingLayerPositionAction::Sync:
+            graphicsLayer->syncPosition(position);
+            break;
+        }
+    }
 }
 
 void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const

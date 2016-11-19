@@ -1,3 +1,95 @@
+2016-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When zoomed in and panning on pages with fixed bars, parts of the bars are sometimes missing
+        https://bugs.webkit.org/show_bug.cgi?id=164855
+
+        Reviewed by Sam Weinig.
+
+        During UI-process panning and zooming, we send visible rect updates to the web process
+        with inStableState=false, and don't update GraphicsLayers until we get into a stable state.
+
+        This causes a problem where the web process has a stale notion of where the GraphicsLayers
+        for position:fixed elements are, but is then told to update tiling coverage with an up-to-date
+        visible rect. The existing "sync layer positions" path isn't useful to fix this, because it
+        breaks the relationship between the GraphicsLayer positions and their FixedPositionViewportConstraints
+        in the scrolling tree.
+
+        To address this, add the notion of an Optional<> approximatePosition on GraphicsLayers. This is used
+        only by the coverageRect computation code path, and is cleared by a setPosition(). ApproximatePositions
+        are pushed onto GraphicsLayers via the syncViewportConstrainedLayerPositions() code path (renamed to
+        reconcileViewportConstrainedLayerPositions).
+
+        This allows us to remmove "viewportIsStable" from GraphicsLayer flushing, and FrameView.
+
+        SetOrSyncScrollingLayerPosition is made into an enum class.
+
+        Tested by scrollingcoordinator/ios/non-stable-viewport-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions):
+        (WebCore::AsyncScrollingCoordinator::syncViewportConstrainedLayerPositions): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        (WebCore::AsyncScrollingCoordinator::ScheduledScrollUpdate::ScheduledScrollUpdate):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::operator<<):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::reconcileScrollingState):
+        (WebCore::ScrollingCoordinator::reconcileViewportConstrainedLayerPositions):
+        (WebCore::ScrollingCoordinator::syncViewportConstrainedLayerPositions): Deleted.
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::reconcileLayerPositionForViewportRect):
+        (WebCore::ScrollingStateFixedNode::syncLayerPositionForViewportRect): Deleted.
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::reconcileLayerPositionForViewportRect):
+        (WebCore::ScrollingStateNode::syncLayerPositionForViewportRect): Deleted.
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::reconcileLayerPositionForViewportRect):
+        (WebCore::ScrollingStateStickyNode::syncLayerPositionForViewportRect): Deleted.
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setPosition):
+        (WebCore::GraphicsLayer::approximatePosition):
+        (WebCore::GraphicsLayer::setApproximatePosition):
+        (WebCore::GraphicsLayer::flushCompositingState):
+        (WebCore::GraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect):
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects): No longer bail for viewportConstained layers when the viewport is unstable.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::CommitState::CommitState): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose aria-busy via ATK_STATE_BUSY
