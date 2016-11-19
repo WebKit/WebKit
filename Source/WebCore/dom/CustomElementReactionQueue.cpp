@@ -37,7 +37,7 @@
 #include <heap/Heap.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
-#include <wtf/TemporaryChange.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -215,7 +215,7 @@ inline void CustomElementReactionStack::ElementQueue::invokeAll()
 {
 #if !ASSERT_DISABLED
     RELEASE_ASSERT(!m_invoking);
-    TemporaryChange<bool> invoking(m_invoking, true);
+    SetForScope<bool> invoking(m_invoking, true);
 #endif
     Vector<Ref<Element>> elements;
     elements.swap(m_elements);
