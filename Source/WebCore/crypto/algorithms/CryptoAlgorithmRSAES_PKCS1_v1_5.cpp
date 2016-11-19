@@ -68,6 +68,15 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(std::unique_ptr<CryptoAlgorithmPar
     platformEncrypt(WTFMove(key), WTFMove(plainText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
 }
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    if (key->type() != CryptoKeyType::Private) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    platformDecrypt(WTFMove(key), WTFMove(cipherText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
 void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
     ASSERT(parameters);

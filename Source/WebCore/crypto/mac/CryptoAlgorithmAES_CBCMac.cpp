@@ -95,6 +95,28 @@ void CryptoAlgorithmAES_CBC::platformEncrypt(std::unique_ptr<CryptoAlgorithmPara
     });
 }
 
+void CryptoAlgorithmAES_CBC::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& aesParameters = downcast<CryptoAlgorithmAesCbcParams>(*parameters);
+        auto& aesKey = downcast<CryptoKeyAES>(key.get());
+        assert(aesParameters.ivVector().size() == kCCBlockSizeAES128);
+        auto result = transformAES_CBC(kCCDecrypt, aesParameters.ivVector().data(), aesKey.key(), cipherText.data(), cipherText.size());
+        if (result.hasException()) {
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue()](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
 ExceptionOr<void> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     ASSERT(sizeof(parameters.iv) == kCCBlockSizeAES128);

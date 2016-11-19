@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test decrypting with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var cipherText = hexStringToUint8Array("2ffa4618784dfd414b22c40c6330d022");
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.decrypt()');
+shouldReject('crypto.subtle.decrypt(1)');
+shouldReject('crypto.subtle.decrypt(1, 2)');
+
+crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["wrapKey", "unwrapKey"]).then(function(result) {
+    wrongKey = result;
+    // Wrong algorithm identifier.
+    shouldReject('crypto.subtle.decrypt(aesCbcParams, wrongKey, cipherText)');
+
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["wrapKey", "unwrapKey"]);
+}).then(function(result) {
+    wrongKey = result;
+    // Wrong usage.
+    return shouldReject('crypto.subtle.decrypt(aesCbcParams, wrongKey, cipherText)');
+}).then(finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

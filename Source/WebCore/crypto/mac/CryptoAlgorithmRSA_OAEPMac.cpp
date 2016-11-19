@@ -53,6 +53,23 @@ static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier ha
     return WTFMove(cipherText);
 }
 
+// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+{
+    CCDigestAlgorithm digestAlgorithm;
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
+        return Exception { OperationError };
+
+    Vector<uint8_t> plainText(keyLength / 8); // Per Step 1.b of https://tools.ietf.org/html/rfc3447#section-7.1.1
+    size_t plainTextLength = plainText.size();
+    if (CCRSACryptorDecrypt(key, ccOAEPPadding, data, dataLength, plainText.data(), &plainTextLength, label.data(), label.size(), digestAlgorithm))
+        return Exception { OperationError };
+
+    plainText.resize(plainTextLength);
+    return WTFMove(plainText);
+}
+
 void CryptoAlgorithmRSA_OAEP::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     context.ref();
@@ -60,6 +77,27 @@ void CryptoAlgorithmRSA_OAEP::platformEncrypt(std::unique_ptr<CryptoAlgorithmPar
         auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(*parameters);
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
         auto result = encryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
+        if (result.hasException()) {
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue()](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
+void CryptoAlgorithmRSA_OAEP::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(*parameters);
+        auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
+        auto result = decryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText.data(), cipherText.size());
         if (result.hasException()) {
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
                 exceptionCallback(ec);
@@ -86,23 +124,15 @@ ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithm
     return { };
 }
 
-// FIXME: We should get rid of the magic number 1024. It only makes sense when key length < 8192 bits
 ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
-        return Exception { NOT_SUPPORTED_ERR };
-
-    Vector<uint8_t> plainText(1024);
-    size_t plainTextLength = plainText.size();
-    CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, plainText.data(), &plainTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
-    if (status) {
+    ASSERT(parameters.hasLabel || parameters.label.isEmpty());
+    auto result = decryptRSA_OAEP(parameters.hash, parameters.label, key.platformKey(), key.keySizeInBits(), data.first, data.second);
+    if (result.hasException()) {
         failureCallback();
         return { };
     }
-
-    plainText.resize(plainTextLength);
-    callback(plainText);
+    callback(result.releaseReturnValue());
     return { };
 }
 

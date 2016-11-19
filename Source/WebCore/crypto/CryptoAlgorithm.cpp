@@ -37,6 +37,11 @@ void CryptoAlgorithm::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
+void CryptoAlgorithm::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+{
+    exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
 void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);

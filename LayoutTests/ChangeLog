@@ -1,3 +1,43 @@
+2016-11-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::decrypt to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164739
+        <rdar://problem/29257848>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-cbc-decrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-cbc-decrypt-malformed-parameters.html: Added.
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-cbc-import-key-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-decrypt.html: Added.
+        * crypto/subtle/decrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/decrypt-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-oaep-decrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-decrypt-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-label-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-label.html: Added.
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt.html: Added.
+        * crypto/subtle/rsa-oaep-import-key-decrypt-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-key-decrypt-label-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-key-decrypt-label.html: Added.
+        * crypto/subtle/rsa-oaep-import-key-decrypt.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-encrypt-decrypt.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-key-decrypt-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-key-decrypt.html: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-decrypt-expected.txt: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-decrypt.html: Added.
+        * crypto/workers/subtle/resources/aes-cbc-import-key-decrypt.js: Added.
+        * crypto/workers/subtle/resources/rsa-oaep-import-key-decrypt.js: Added.
+        * crypto/workers/subtle/resources/rsaes-pkcs1-v1_5-import-key-decrypt.js: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-decrypt-expected.txt: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-decrypt.html: Added.
+        * crypto/workers/subtle/rsaes-pkcs1-v1_5-import-key-decrypt-expected.txt: Added.
+        * crypto/workers/subtle/rsaes-pkcs1-v1_5-import-key-decrypt.html: Added.
+
 2016-11-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r208837.

@@ -7,40 +7,40 @@ PASS AES-CBC 256-bit key
 PASS AES-CBC 128-bit key with altered plaintext 
 PASS AES-CBC 192-bit key with altered plaintext 
 PASS AES-CBC 256-bit key with altered plaintext 
-FAIL AES-CBC 128-bit key decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 128-bit key decryption with altered ciphertext subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, ciphertext)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key decryption with altered ciphertext subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, ciphertext)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key decryption with altered ciphertext subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, ciphertext)', 'subtle.decrypt' is undefined)
+PASS AES-CBC 128-bit key decryption 
+PASS AES-CBC 192-bit key decryption 
+PASS AES-CBC 256-bit key decryption 
+PASS AES-CBC 128-bit key decryption with altered ciphertext 
+PASS AES-CBC 192-bit key decryption with altered ciphertext 
+PASS AES-CBC 256-bit key decryption with altered ciphertext 
 PASS AES-CBC 128-bit key without encrypt usage 
 PASS AES-CBC 192-bit key without encrypt usage 
 PASS AES-CBC 256-bit key without encrypt usage 
 FAIL AES-CBC 128-bit key with mismatched key and algorithm assert_equals: Mismatch should cause InvalidAccessError instead of The operation is not supported. expected "InvalidAccessError" but got "NotSupportedError"
 FAIL AES-CBC 192-bit key with mismatched key and algorithm assert_equals: Mismatch should cause InvalidAccessError instead of The operation is not supported. expected "InvalidAccessError" but got "NotSupportedError"
 FAIL AES-CBC 256-bit key with mismatched key and algorithm assert_equals: Mismatch should cause InvalidAccessError instead of The operation is not supported. expected "InvalidAccessError" but got "NotSupportedError"
-FAIL AES-CBC 128-bit key without decrypt usage subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key without decrypt usage subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key without decrypt usage subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
+PASS AES-CBC 128-bit key without decrypt usage 
+PASS AES-CBC 192-bit key without decrypt usage 
+PASS AES-CBC 256-bit key without decrypt usage 
 PASS AES-CBC 128-bit key, 64-bit IV 
 PASS AES-CBC 128-bit key, 192-bit IV 
 PASS AES-CBC 192-bit key, 64-bit IV 
 PASS AES-CBC 192-bit key, 192-bit IV 
 PASS AES-CBC 256-bit key, 64-bit IV 
 PASS AES-CBC 256-bit key, 192-bit IV 
-FAIL AES-CBC 128-bit key, 64-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 128-bit key, 192-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key, 64-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key, 192-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key, 64-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key, 192-bit IV decryption subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 128-bit key, zeroPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 128-bit key, bigPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 128-bit key, inconsistentPadChars subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key, zeroPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key, bigPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 192-bit key, inconsistentPadChars subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key, zeroPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key, bigPadChar subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
-FAIL AES-CBC 256-bit key, inconsistentPadChars subtle.decrypt is not a function. (In 'subtle.decrypt(vector.algorithm, vector.key, vector.result)', 'subtle.decrypt' is undefined)
+PASS AES-CBC 128-bit key, 64-bit IV decryption 
+PASS AES-CBC 128-bit key, 192-bit IV decryption 
+PASS AES-CBC 192-bit key, 64-bit IV decryption 
+PASS AES-CBC 192-bit key, 192-bit IV decryption 
+PASS AES-CBC 256-bit key, 64-bit IV decryption 
+PASS AES-CBC 256-bit key, 192-bit IV decryption 
+FAIL AES-CBC 128-bit key, zeroPadChar assert_unreached: should have thrown exception for test AES-CBC 128-bit key, zeroPadChar Reached unreachable code
+FAIL AES-CBC 128-bit key, bigPadChar assert_unreached: should have thrown exception for test AES-CBC 128-bit key, bigPadChar Reached unreachable code
+FAIL AES-CBC 128-bit key, inconsistentPadChars assert_unreached: should have thrown exception for test AES-CBC 128-bit key, inconsistentPadChars Reached unreachable code
+FAIL AES-CBC 192-bit key, zeroPadChar assert_unreached: should have thrown exception for test AES-CBC 192-bit key, zeroPadChar Reached unreachable code
+FAIL AES-CBC 192-bit key, bigPadChar assert_unreached: should have thrown exception for test AES-CBC 192-bit key, bigPadChar Reached unreachable code
+FAIL AES-CBC 192-bit key, inconsistentPadChars assert_unreached: should have thrown exception for test AES-CBC 192-bit key, inconsistentPadChars Reached unreachable code
+FAIL AES-CBC 256-bit key, zeroPadChar assert_unreached: should have thrown exception for test AES-CBC 256-bit key, zeroPadChar Reached unreachable code
+FAIL AES-CBC 256-bit key, bigPadChar assert_unreached: should have thrown exception for test AES-CBC 256-bit key, bigPadChar Reached unreachable code
+FAIL AES-CBC 256-bit key, inconsistentPadChars assert_unreached: should have thrown exception for test AES-CBC 256-bit key, inconsistentPadChars Reached unreachable code
 

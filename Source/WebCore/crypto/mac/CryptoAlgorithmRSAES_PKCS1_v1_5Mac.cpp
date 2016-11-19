@@ -47,12 +47,45 @@ static ExceptionOr<Vector<uint8_t>> encryptRSAES_PKCS1_v1_5(const PlatformRSAKey
     return WTFMove(cipherText);
 }
 
+// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static ExceptionOr<Vector<uint8_t>> decryptRSAES_PKCS1_v1_5(const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+{
+    Vector<uint8_t> plainText(keyLength / 8); // Per Step 1 of https://tools.ietf.org/html/rfc3447#section-7.2.1
+    size_t plainTextLength = plainText.size();
+    if (CCRSACryptorDecrypt(key, ccPKCS1Padding, data, dataLength, plainText.data(), &plainTextLength, 0, 0, kCCDigestNone))
+        return Exception { OperationError };
+
+    plainText.resize(plainTextLength);
+    return WTFMove(plainText);
+}
+
 void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     context.ref();
     workQueue.dispatch([key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
         auto result = encryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
+        if (result.hasException()) {
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue()](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
+void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
+        auto result = decryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText.data(), cipherText.size());
         if (result.hasException()) {
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code()](ScriptExecutionContext& context) {
                 exceptionCallback(ec);
@@ -78,19 +111,14 @@ ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoK
     return { };
 }
 
-// FIXME: We should get rid of the magic number 1024. It only makes sense when key length < 8192 bits
 ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
-    Vector<uint8_t> plainText(1024);
-    size_t plainTextLength = plainText.size();
-    CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccPKCS1Padding, data.first, data.second, plainText.data(), &plainTextLength, 0, 0, kCCDigestNone);
-    if (status) {
+    auto result = decryptRSAES_PKCS1_v1_5(key.platformKey(), key.keySizeInBits(), data.first, data.second);
+    if (result.hasException()) {
         failureCallback();
         return { };
     }
-
-    plainText.resize(plainTextLength);
-    callback(plainText);
+    callback(result.releaseReturnValue());
     return { };
 }
 

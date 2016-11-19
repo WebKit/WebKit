@@ -53,6 +53,7 @@ namespace WebCore {
 
 enum class Operations {
     Encrypt,
+    Decrypt,
     Digest,
     GenerateKey,
     ImportKey,
@@ -94,6 +95,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
         std::unique_ptr<CryptoAlgorithmParameters> result;
         switch (operation) {
         case Operations::Encrypt:
+        case Operations::Decrypt:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
@@ -388,6 +390,32 @@ static JSValue toJSValueFromJsonWebKey(JSDOMGlobalObject& globalObject, JsonWebK
     return result;
 }
 
+static RefPtr<CryptoKey> toCryptoKey(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RefPtr<CryptoKey> result = JSCryptoKey::toWrapped(value);
+    if (!result) {
+        throwTypeError(&state, scope, ASCIILiteral("Invalid CryptoKey"));
+        return nullptr;
+    }
+    return result;
+}
+
+static Vector<uint8_t> toVector(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    BufferSource data = convert<IDLBufferSource>(state, value);
+    RETURN_IF_EXCEPTION(scope, { });
+    Vector<uint8_t> dataVector;
+    dataVector.append(data.data(), data.length());
+
+    return dataVector;
+}
+
 static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -401,16 +429,11 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
     auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::Encrypt);
     RETURN_IF_EXCEPTION(scope, void());
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
-    if (!key) {
-        promise->reject(TypeError, ASCIILiteral("Invalid CryptoKey"));
-        return;
-    }
-
-    BufferSource data = convert<IDLBufferSource>(state, state.uncheckedArgument(2));
+    auto key = toCryptoKey(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, void());
-    Vector<uint8_t> dataVector;
-    dataVector.append(data.data(), data.length());
+
+    auto data = toVector(state, state.uncheckedArgument(2));
+    RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != key->algorithmIdentifier()) {
         promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
@@ -435,7 +458,52 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
 
     JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
     ASSERT(subtle);
-    algorithm->encrypt(WTFMove(params), key.releaseNonNull(), WTFMove(dataVector), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+    algorithm->encrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+}
+
+static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 3)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::Decrypt);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto key = toCryptoKey(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto data = toVector(state, state.uncheckedArgument(2));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (params->identifier != key->algorithmIdentifier()) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        return;
+    }
+
+    if (!key->allows(CryptoKeyUsageDecrypt)) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support decryption"));
+        return;
+    }
+
+    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& cipherText) mutable {
+        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), cipherText.data(), cipherText.size());
+        return;
+    };
+    auto exceptionCallback = [capturedPromise = promise.copyRef()](ExceptionCode ec) mutable {
+        rejectWithException(WTFMove(capturedPromise), ec);
+    };
+
+    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    ASSERT(subtle);
+    algorithm->decrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
@@ -545,11 +613,8 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, void());
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
-    if (!key) {
-        promise->reject(TypeError, ASCIILiteral("Invalid CryptoKey"));
-        return;
-    }
+    auto key = toCryptoKey(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
 
     switch (key->algorithmIdentifier()) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -605,6 +670,11 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
 JSValue JSSubtleCrypto::encrypt(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionEncryptPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::decrypt(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionDecryptPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::generateKey(ExecState& state)
