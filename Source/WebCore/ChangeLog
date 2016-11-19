@@ -1,3 +1,19 @@
+2016-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        TextDecoder constructor should not accept replacement encodings
+        https://bugs.webkit.org/show_bug.cgi?id=164903
+
+        Reviewed by Chris Dumez.
+
+        Covered by newly passing web platform tests.
+
+        * dom/TextDecoder.cpp:
+        (WebCore::TextDecoder::create):
+        https://encoding.spec.whatwg.org/#textdecoder says about the constructor:
+        "If label is either not a label or is a label for replacement, throws a RangeError."
+        See https://bugs.webkit.org/show_bug.cgi?id=159180 for the mapping of the replacement
+        codec names to "replacement".
+
 2016-11-18  Chris Dumez  <cdumez@apple.com>
 
         Assertion failures in ActiveDOMObject::~ActiveDOMObject under Database destructor

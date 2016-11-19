@@ -1,8 +1,8 @@
 
 PASS The "replacement" label should not be a known encoding. 
-FAIL Label for "replacement" should be rejected by API: csiso2022kr assert_throws: function "function () { new TextDecoder(label); }" did not throw
-FAIL Label for "replacement" should be rejected by API: hz-gb-2312 assert_throws: function "function () { new TextDecoder(label); }" did not throw
-FAIL Label for "replacement" should be rejected by API: iso-2022-cn assert_throws: function "function () { new TextDecoder(label); }" did not throw
-FAIL Label for "replacement" should be rejected by API: iso-2022-cn-ext assert_throws: function "function () { new TextDecoder(label); }" did not throw
-FAIL Label for "replacement" should be rejected by API: iso-2022-kr assert_throws: function "function () { new TextDecoder(label); }" did not throw
+PASS Label for "replacement" should be rejected by API: csiso2022kr 
+PASS Label for "replacement" should be rejected by API: hz-gb-2312 
+PASS Label for "replacement" should be rejected by API: iso-2022-cn 
+PASS Label for "replacement" should be rejected by API: iso-2022-cn-ext 
+PASS Label for "replacement" should be rejected by API: iso-2022-kr 
 

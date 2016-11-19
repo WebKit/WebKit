@@ -1,3 +1,12 @@
+2016-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        TextDecoder constructor should not accept replacement encodings
+        https://bugs.webkit.org/show_bug.cgi?id=164903
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/encoding/api-replacement-encodings-expected.txt:
+
 2016-11-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::encrypt to match the latest spec
