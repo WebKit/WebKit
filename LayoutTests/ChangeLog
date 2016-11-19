@@ -1,3 +1,15 @@
+2016-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r208837.
+
+        The bots did not show a progression
+
+        Reverted changeset:
+
+        "REGRESSION(r208082): 1% Speedometer regression on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=164852
+        http://trac.webkit.org/changeset/208837
+
 2016-11-18  Dean Jackson  <dino@apple.com>
 
         AX: "(inverted-colors)" media query only matches on page reload; should match on change
