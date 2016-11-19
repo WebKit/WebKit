@@ -49,6 +49,11 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
     });
 }
 
+void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
+{
+    return doAsyncTask(callback);
+}
+
 void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     RefPtr<UIScriptController> protectedThis(this);
@@ -145,8 +150,35 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
     return nullptr;
 }
 
-void UIScriptController::scrollToOffset(long, long)
+static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
+    UIEdgeInsets contentInsets = scrollView.contentInset;
+    CGSize contentSize = scrollView.contentSize;
+    CGSize scrollViewSize = scrollView.bounds.size;
+
+    CGFloat maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
+    contentOffset.x = std::min(maxHorizontalOffset, contentOffset.x);
+    contentOffset.x = std::max(-contentInsets.left, contentOffset.x);
+
+    CGFloat maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
+    contentOffset.y = std::min(maxVerticalOffset, contentOffset.y);
+    contentOffset.y = std::max(-contentInsets.top, contentOffset.y);
+    return contentOffset;
+}
+
+void UIScriptController::scrollToOffset(long x, long y)
+{
+    [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:YES];
+}
+
+void UIScriptController::immediateScrollToOffset(long x, long y)
+{
+    [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:NO];
+}
+
+void UIScriptController::immediateZoomToScale(double scale)
+{
+    [gWebScrollView setZoomScale:scale animated:NO];
 }
 
 void UIScriptController::keyboardAccessoryBarNext()
@@ -166,6 +198,16 @@ double UIScriptController::maximumZoomScale() const
 {
     return gWebScrollView.maximumZoomScale;
 }
+
+Optional<bool> UIScriptController::stableStateOverride() const
+{
+    return Nullopt;
+}
+
+void UIScriptController::setStableStateOverride(Optional<bool>)
+{
+}
+
 
 JSObjectRef UIScriptController::contentVisibleRect() const
 {

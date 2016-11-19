@@ -1,3 +1,72 @@
+2016-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test non-stable-state scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=164905
+
+        Reviewed by Dan Bernstein.
+
+        Make it possible for an iOS layout test to force every visible rect update
+        from the UI process to the web process to be in a non-stable state. This emulates
+        what happens during panning and zooming interactions, and allows us to test the
+        scrolling and layer trees in these transient states.
+        
+        This is done by adding a testing property on WKWebView, _stableStateOverride, whose
+        getters and setters are overridden in TestRunnerWKWebView. When non-nil, we _updateVisibleContentRectAfterScrollInView
+        consults the NSNumber's boolValue and uses it to override the stable state.
+        
+        To facilitate this kind of testing, also add immediateScrollToOffset() and
+        immediateZoomToScale() to UIScriptController. Finally, add doAfterPresentationUpdate()
+        which provides a callback that fires after one trip to the web process and back.
+        
+        Add code generation support for optional boolean attributes in IDL.
+
+        Align CodeGeneratorDumpRenderTree.pm and CodeGeneratorTestRunner.pm.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        (_generateImplementationFile):
+        (_platformTypeConstructor):
+        (_returnExpression):
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAfterPresentationUpdate):
+        (WTR::contentOffsetBoundedInValidRange):
+        (WTR::UIScriptController::scrollToOffset):
+        (WTR::UIScriptController::immediateScrollToOffset):
+        (WTR::UIScriptController::immediateZoomToScale):
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAfterPresentationUpdate):
+        * TestRunnerShared/Bindings/JSWrappable.h:
+        (WTR::JSValueMakeBooleanOrNull):
+        (WTR::JSValueToNullableBoolean):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::immediateScrollToOffset):
+        (WTR::UIScriptController::immediateZoomToScale):
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_classRefGetter):
+        (_platformTypeConstructor):
+        (_returnExpression):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _stableStateOverride]):
+        (-[TestRunnerWKWebView _setStableStateOverride:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::doAfterPresentationUpdate):
+        (WTR::UIScriptController::zoomToScale):
+        (WTR::UIScriptController::immediateScrollToOffset):
+        (WTR::UIScriptController::immediateZoomToScale):
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAfterPresentationUpdate):
+
 2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose aria-busy via ATK_STATE_BUSY

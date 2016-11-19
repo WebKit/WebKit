@@ -60,6 +60,10 @@ void UIScriptController::doAsyncTask(JSValueRef)
 void simulateAccessibilitySettingsChangeNotification(JSValueRef)
 {
 }
+
+void UIScriptController::doAfterPresentationUpdate(JSValueRef)
+{
+}
 #endif
 
 void UIScriptController::setDidStartFormControlInteractionCallback(JSValueRef callback)
@@ -253,6 +257,14 @@ void UIScriptController::scrollToOffset(long x, long y)
 {
 }
 
+void UIScriptController::immediateScrollToOffset(long x, long y)
+{
+}
+
+void UIScriptController::immediateZoomToScale(double scale)
+{
+}
+
 void UIScriptController::keyboardAccessoryBarNext()
 {
 }
@@ -274,6 +286,15 @@ double UIScriptController::minimumZoomScale() const
 double UIScriptController::maximumZoomScale() const
 {
     return 1;
+}
+
+Optional<bool> UIScriptController::stableStateOverride() const
+{
+    return Nullopt;
+}
+
+void UIScriptController::setStableStateOverride(Optional<bool>)
+{
 }
 
 JSObjectRef UIScriptController::contentVisibleRect() const

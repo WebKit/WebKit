@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWrappable_h
-#define JSWrappable_h
+#pragma once
 
 #include <JavaScriptCore/JavaScript.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WTR {
@@ -37,11 +37,19 @@ public:
     virtual JSClassRef wrapperClass() = 0;
 };
 
+inline JSValueRef JSValueMakeBooleanOrNull(JSContextRef context, Optional<bool> value)
+{
+    return value ? JSValueMakeBoolean(context, value.value()) : JSValueMakeNull(context);
+}
+
+inline Optional<bool> JSValueToNullableBoolean(JSContextRef context, JSValueRef value)
+{
+    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? Nullopt : Optional<bool>(JSValueToBoolean(context, value));
+}
+
 inline JSValueRef JSValueMakeStringOrNull(JSContextRef context, JSStringRef stringOrNull)
 {
     return stringOrNull ? JSValueMakeString(context, stringOrNull) : JSValueMakeNull(context);
 }
 
 } // namespace WTR
-
-#endif // JSWrappable_h

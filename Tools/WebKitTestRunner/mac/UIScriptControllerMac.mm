@@ -56,6 +56,11 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
     });
 }
 
+void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
+{
+    return doAsyncTask(callback);
+}
+
 void UIScriptController::insertText(JSStringRef text, int location, int length)
 {
 #if WK_API_ENABLED

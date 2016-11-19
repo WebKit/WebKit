@@ -2071,6 +2071,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (isStableState && [scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
         isStableState = ![scrollView performSelector:@selector(_isInterruptingDeceleration)];
 
+    if (NSNumber *stableOverride = self._stableStateOverride)
+        isStableState = stableOverride.boolValue;
+
     [self _updateContentRectsWithState:isStableState];
 }
 
@@ -4729,6 +4732,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return @"";
 
     return coordinator->scrollingTreeAsText();
+}
+
+- (NSNumber *)_stableStateOverride
+{
+    // For subclasses to override.
+    return nil;
 }
 
 #endif // PLATFORM(IOS)

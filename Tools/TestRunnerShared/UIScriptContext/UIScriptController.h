@@ -28,6 +28,7 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -50,6 +51,8 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
     
     void doAsyncTask(JSValueRef callback);
+    void doAfterPresentationUpdate(JSValueRef callback);
+
     void zoomToScale(double scale, JSValueRef callback);
 
     void simulateAccessibilitySettingsChangeNotification(JSValueRef callback);
@@ -85,6 +88,9 @@ public:
     
     void scrollToOffset(long x, long y);
 
+    void immediateScrollToOffset(long x, long y);
+    void immediateZoomToScale(double scale);
+
     void setDidStartFormControlInteractionCallback(JSValueRef);
     JSValueRef didStartFormControlInteractionCallback() const;
 
@@ -115,6 +121,9 @@ public:
     double zoomScale() const;
     double minimumZoomScale() const;
     double maximumZoomScale() const;
+    
+    Optional<bool> stableStateOverride() const;
+    void setStableStateOverride(Optional<bool>);
 
     JSObjectRef contentVisibleRect() const;
     

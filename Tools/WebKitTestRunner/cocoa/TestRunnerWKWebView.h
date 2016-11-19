@@ -41,11 +41,10 @@
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
-- (void)dealloc;
-
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 #endif
+
+@property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 
 @end
 

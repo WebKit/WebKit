@@ -86,6 +86,7 @@ void TestController::platformResetStateToConsistentValues()
     cocoaResetStateToConsistentValues();
 
     if (PlatformWebView* webView = mainWebView()) {
+        webView->platformView()._stableStateOverride = nil;
         UIScrollView *scrollView = webView->platformView().scrollView;
         [scrollView setZoomScale:1 animated:NO];
         [scrollView setContentOffset:CGPointZero];

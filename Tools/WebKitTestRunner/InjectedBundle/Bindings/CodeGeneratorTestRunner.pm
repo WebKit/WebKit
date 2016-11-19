@@ -77,6 +77,7 @@ sub _className
 sub _classRefGetter
 {
     my ($self, $type) = @_;
+
     return $$self{codeGenerator}->WK_lcfirst(_implementationClassName($type)) . "Class";
 }
 
@@ -444,6 +445,7 @@ sub _platformTypeConstructor
 {
     my ($self, $type, $argumentName) = @_;
 
+    return "JSValueToNullableBoolean(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
     return "JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, $argumentName, 0))" if $$self{codeGenerator}->IsStringType($type);
@@ -484,6 +486,7 @@ sub _returnExpression
     my ($self, $returnType, $expression) = @_;
 
     return "JSValueMakeUndefined(context)" if $returnType->name eq "void";
+    return "JSValueMakeBooleanOrNull(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsNonPointerType($returnType);

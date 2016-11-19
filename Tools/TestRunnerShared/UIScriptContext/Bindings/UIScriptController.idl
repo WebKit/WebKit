@@ -26,8 +26,7 @@
 interface UIScriptController {
 
     void doAsyncTask(object callback); // Used to test the harness.
-
-    void zoomToScale(double scale, object callback);
+    void doAfterPresentationUpdate(object callback); // Call the callback after sending a message to the WebProcess and receiving a subsequent update.
 
     void simulateAccessibilitySettingsChangeNotification(object callback);
 
@@ -146,13 +145,22 @@ interface UIScriptController {
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;
 
+    void zoomToScale(double scale, object callback);
+
     void scrollToOffset(long x, long y); // Initiate an animated scroll in the UI process.
     attribute object didEndScrollingCallback;
+
+    void immediateScrollToOffset(long x, long y); // Set the scroll position in the UI process without animation.
+    void immediateZoomToScale(double scale); // Set the zoom scale in the UI process without animation.
 
     // View state
     readonly attribute double zoomScale;
     readonly attribute double minimumZoomScale;
     readonly attribute double maximumZoomScale;
+
+    // Overides the "in stable state" behavior of WKWebView (only applies to iOS)
+    // When false, content rect updates to the web process have inStableState=false, as if a scroll or zoom were in progress.
+    attribute boolean? stableStateOverride;
 
     readonly attribute object contentVisibleRect; // Returned object has 'left', 'top', 'width', 'height' properties.
 
