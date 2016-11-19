@@ -53,7 +53,7 @@ private:
 
     struct UpdateData {
         VisibleContentRectUpdateInfo visibleContentRectUpdateInfo;
-        double oldestTimestamp;
+        MonotonicTime oldestTimestamp;
     };
 
     Ref<WorkQueue> m_queue;

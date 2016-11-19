@@ -381,13 +381,13 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
     double horizontalMargin = kDefaultTileSize / contentsScale;
     double verticalMargin = kDefaultTileSize / contentsScale;
 
-    double currentTime = monotonicallyIncreasingTime();
-    double timeDelta = currentTime - m_velocity.lastUpdateTime;
+    MonotonicTime currentTime = MonotonicTime::now();
+    Seconds timeDelta = currentTime - m_velocity.lastUpdateTime;
 
     FloatRect futureRect = visibleRect;
     futureRect.setLocation(FloatPoint(
-        futureRect.location().x() + timeDelta * m_velocity.horizontalVelocity,
-        futureRect.location().y() + timeDelta * m_velocity.verticalVelocity));
+        futureRect.location().x() + timeDelta.value() * m_velocity.horizontalVelocity,
+        futureRect.location().y() + timeDelta.value() * m_velocity.verticalVelocity));
 
     if (m_velocity.horizontalVelocity) {
         futureRect.setWidth(futureRect.width() + horizontalMargin);

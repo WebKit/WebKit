@@ -1,3 +1,46 @@
+2016-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove use of std::chrono in WebPage and entrained code
+        https://bugs.webkit.org/show_bug.cgi?id=164967
+
+        Reviewed by Tim Horton.
+
+        Replace std::chrono with Seconds and Monotonic Time.
+
+        Use more C++11 initialization for WebPage data members.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::timestamp):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MonotonicTime>::encode):
+        (IPC::ArgumentCoder<MonotonicTime>::decode):
+        (IPC::ArgumentCoder<Seconds>::encode):
+        (IPC::ArgumentCoder<Seconds>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ios/WKContentView.mm:
+        (WebKit::HistoricalVelocityData::HistoricalVelocityData):
+        (WebKit::HistoricalVelocityData::velocityForNewData):
+        (WebKit::HistoricalVelocityData::append):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::eventThrottlingDelay):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::m_userActivityHysteresis):
+        (WebKit::WebPage::didFlushLayerTreeAtTime):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::eventThrottlingDelay):
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2016-11-18  Dean Jackson  <dino@apple.com>
 
         AX: "(inverted-colors)" media query only matches on page reload; should match on change

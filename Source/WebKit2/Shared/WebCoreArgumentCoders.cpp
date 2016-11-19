@@ -70,6 +70,8 @@
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
@@ -103,6 +105,36 @@ using namespace WebCore;
 using namespace WebKit;
 
 namespace IPC {
+
+void ArgumentCoder<MonotonicTime>::encode(Encoder& encoder, const MonotonicTime& time)
+{
+    encoder << time.secondsSinceEpoch().value();
+}
+
+bool ArgumentCoder<MonotonicTime>::decode(Decoder& decoder, MonotonicTime& time)
+{
+    double value;
+    if (!decoder.decode(value))
+        return false;
+
+    time = MonotonicTime::fromRawSeconds(value);
+    return true;
+}
+
+void ArgumentCoder<Seconds>::encode(Encoder& encoder, const Seconds& seconds)
+{
+    encoder << seconds.value();
+}
+
+bool ArgumentCoder<Seconds>::decode(Decoder& decoder, Seconds& seconds)
+{
+    double value;
+    if (!decoder.decode(value))
+        return false;
+
+    seconds = Seconds(value);
+    return true;
+}
 
 void ArgumentCoder<AffineTransform>::encode(Encoder& encoder, const AffineTransform& affineTransform)
 {

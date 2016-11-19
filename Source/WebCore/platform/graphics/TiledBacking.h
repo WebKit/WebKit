@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TiledBacking_h
-#define TiledBacking_h
+#pragma once
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -51,9 +51,9 @@ struct VelocityData  {
     double horizontalVelocity;
     double verticalVelocity;
     double scaleChangeRate;
-    double lastUpdateTime;
+    MonotonicTime lastUpdateTime;
     
-    VelocityData(double horizontal = 0, double vertical = 0, double scaleChange = 0, double updateTime = 0)
+    VelocityData(double horizontal = 0, double vertical = 0, double scaleChange = 0, MonotonicTime updateTime = MonotonicTime())
         : horizontalVelocity(horizontal)
         , verticalVelocity(vertical)
         , scaleChangeRate(scaleChange)
@@ -156,5 +156,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // TiledBacking_h

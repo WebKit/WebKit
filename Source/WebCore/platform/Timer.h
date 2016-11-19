@@ -30,6 +30,7 @@
 #include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
+#include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -58,8 +59,11 @@ public:
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
     void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
+    void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
+
     void startOneShot(double interval) { start(interval, 0); }
     void startOneShot(std::chrono::milliseconds interval) { startOneShot(msToSeconds(interval)); }
+    void startOneShot(Seconds interval) { start(interval.value(), 0); }
 
     WEBCORE_EXPORT void stop();
     bool isActive() const;
@@ -71,8 +75,11 @@ public:
 
     void augmentFireInterval(double delta) { setNextFireTime(m_nextFireTime + delta); }
     void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }
+    void augmentFireInterval(Seconds delta) { augmentFireInterval(delta.value()); }
+
     void augmentRepeatInterval(double delta) { augmentFireInterval(delta); m_repeatInterval += delta; }
     void augmentRepeatInterval(std::chrono::milliseconds delta) { augmentRepeatInterval(msToSeconds(delta)); }
+    void augmentRepeatInterval(Seconds delta) { augmentRepeatInterval(delta.value()); }
 
     void didChangeAlignmentInterval();
 

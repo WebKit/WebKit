@@ -174,7 +174,7 @@ private:
     void webAppOrientationsUpdated() override;
     void showPlaybackTargetPicker(bool hasVideo) override;
 
-    std::chrono::milliseconds eventThrottlingDelay() override;
+    Seconds eventThrottlingDelay() override;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

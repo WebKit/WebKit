@@ -1,3 +1,29 @@
+2016-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove use of std::chrono in WebPage and entrained code
+        https://bugs.webkit.org/show_bug.cgi?id=164967
+
+        Reviewed by Tim Horton.
+
+        Replace std::chrono with Seconds and Monotonic Time.
+
+        Use more C++11 initialization for WebPage data members.
+
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::setScrollVelocity):
+        * page/FrameView.h:
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+        * platform/graphics/TiledBacking.h:
+        (WebCore::VelocityData::VelocityData):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::adjustTileCoverageRect):
+
 2016-11-18  Dean Jackson  <dino@apple.com>
 
         AX: "(inverted-colors)" media query only matches on page reload; should match on change

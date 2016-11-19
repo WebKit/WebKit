@@ -2122,12 +2122,12 @@ void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-std::chrono::milliseconds WebPage::eventThrottlingDelay() const
+Seconds WebPage::eventThrottlingDelay() const
 {
-    if (m_isInStableState || m_estimatedLatency <= std::chrono::milliseconds(1000 / 60))
-        return std::chrono::milliseconds::zero();
+    if (m_isInStableState || m_estimatedLatency <= Seconds(1.0 / 60))
+        return Seconds(0);
 
-    return std::chrono::milliseconds(std::min<std::chrono::milliseconds::rep>(m_estimatedLatency.count() * 2, 1000));
+    return Seconds(std::min<double>(m_estimatedLatency.value() * 2, 1));
 }
 
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
@@ -2832,7 +2832,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         newExposedContentRect.moveBy(adjustmentDelta);
     }
 
-    frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
+    frameView.setScrollVelocity(0, 0, 0, MonotonicTime::now());
 
     IntPoint roundedUnobscuredContentRectPosition = roundedIntPoint(newUnobscuredContentRect.location());
     frameView.setUnobscuredContentSize(newUnobscuredContentRect.size());
@@ -2904,7 +2904,7 @@ void WebPage::viewportConfigurationChanged()
         minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
         IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
         frameView.setUnobscuredContentSize(minimumLayoutSizeInDocumentCoordinates);
-        frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
+        frameView.setScrollVelocity(0, 0, 0, MonotonicTime::now());
 
         // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
         // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
@@ -2982,7 +2982,7 @@ static inline FloatRect adjustExposedRectForBoundedScale(const FloatRect& expose
     return adjustExposedRectForNewScale(exposedRect, exposedRectScale, newScale);
 }
 
-void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo, double oldestTimestamp)
+void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo, MonotonicTime oldestTimestamp)
 {
     // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
     if (visibleContentRectUpdateInfo.lastLayerTreeTransactionID() < m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad())
@@ -3010,8 +3010,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (m_isInStableState)
         m_hasStablePageScaleFactor = true;
     else {
-        if (m_oldestNonStableUpdateVisibleContentRectsTimestamp == std::chrono::milliseconds::zero())
-            m_oldestNonStableUpdateVisibleContentRectsTimestamp = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(oldestTimestamp * 1000));
+        if (!m_oldestNonStableUpdateVisibleContentRectsTimestamp)
+            m_oldestNonStableUpdateVisibleContentRectsTimestamp = oldestTimestamp;
     }
 
     FloatRect exposedContentRect = visibleContentRectUpdateInfo.exposedContentRect();

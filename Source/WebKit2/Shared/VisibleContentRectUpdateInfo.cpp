@@ -116,7 +116,7 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
     if (info.enclosedInScrollableAncestorView())
         ts.dumpProperty("enclosedInScrollableAncestorView", info.enclosedInScrollableAncestorView());
 
-    ts.dumpProperty("timestamp", info.timestamp());
+    ts.dumpProperty("timestamp", info.timestamp().secondsSinceEpoch().value());
     if (info.horizontalVelocity())
         ts.dumpProperty("horizontalVelocity", info.horizontalVelocity());
     if (info.verticalVelocity())
