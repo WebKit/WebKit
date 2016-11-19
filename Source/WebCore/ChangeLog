@@ -1,3 +1,32 @@
+2016-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Eliminate a source of flakiness in layout tests by forcing WebPage into "responsive" mode for all tests, with an internals override
+        https://bugs.webkit.org/show_bug.cgi?id=164980
+
+        Reviewed by Chris Dumez.
+
+        WebPage::eventThrottlingDelay() uses a latency estimate based on the round-trip time from the UI process
+        to affect behavior, including whether scroll events are fired. This also affects the FrameView "scrolledByUser"
+        flag that impacts tile coverage.
+
+        During testing, latency falling above or below the 16ms threshold could affect behavior. Fix by forcing
+        WebPage into "responsive" mode while running tests, via InjectedBundlePage::prepare().
+
+        Add a nullable internals property so that a test can specify responsive, unresponsive or default behavior.
+
+        Tests: fast/scrolling/ios/scroll-events-default.html
+               fast/scrolling/ios/scroll-events-responsive.html
+               fast/scrolling/ios/scroll-events-unresponsive.html
+
+        * page/Page.h:
+        (WebCore::Page::eventThrottlingBehaviorOverride):
+        (WebCore::Page::setEventThrottlingBehaviorOverride):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setEventThrottlingBehaviorOverride):
+        (WebCore::Internals::eventThrottlingBehaviorOverride):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-11-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the build after r208917.

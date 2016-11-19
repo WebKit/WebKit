@@ -111,6 +111,13 @@ WK_EXPORT void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, 
 WK_EXPORT void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin);
 WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
 
+enum EventThrottlingBehavior {
+    EventThrottlingBehaviorResponsive,
+    EventThrottlingBehaviorUnresponsive
+};
+
+WK_EXPORT void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef, EventThrottlingBehavior*);
+
 #if TARGET_OS_IPHONE
 WK_EXPORT void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef, bool);
 #endif

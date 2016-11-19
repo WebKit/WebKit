@@ -691,3 +691,20 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 
     return toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }
+
+void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, EventThrottlingBehavior* behavior)
+{
+    Optional<WebCore::EventThrottlingBehavior> behaviorValue;
+    if (behavior) {
+        switch (*behavior) {
+        case EventThrottlingBehaviorResponsive:
+            behaviorValue = WebCore::EventThrottlingBehavior::Responsive;
+            break;
+        case EventThrottlingBehaviorUnresponsive:
+            behaviorValue = WebCore::EventThrottlingBehavior::Unresponsive;
+            break;
+        }
+    }
+
+    toImpl(page)->corePage()->setEventThrottlingBehaviorOverride(behaviorValue);
+}

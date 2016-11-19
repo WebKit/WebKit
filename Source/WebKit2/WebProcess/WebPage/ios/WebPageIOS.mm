@@ -2124,6 +2124,16 @@ void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t
 
 Seconds WebPage::eventThrottlingDelay() const
 {
+    auto behaviorOverride = m_page->eventThrottlingBehaviorOverride();
+    if (behaviorOverride) {
+        switch (behaviorOverride.value()) {
+        case EventThrottlingBehavior::Responsive:
+            return Seconds(0);
+        case EventThrottlingBehavior::Unresponsive:
+            return Seconds(1);
+        }
+    }
+
     if (m_isInStableState || m_estimatedLatency <= Seconds(1.0 / 60))
         return Seconds(0);
 

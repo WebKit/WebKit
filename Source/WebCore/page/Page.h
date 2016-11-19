@@ -130,7 +130,15 @@ class VisitedLinkStore;
 
 typedef uint64_t LinkHash;
 
-enum FindDirection { FindDirectionForward, FindDirectionBackward };
+enum FindDirection {
+    FindDirectionForward,
+    FindDirectionBackward
+};
+
+enum class EventThrottlingBehavior {
+    Responsive,
+    Unresponsive
+};
 
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
@@ -533,6 +541,9 @@ public:
     bool isResourceCachingDisabled() const { return m_resourceCachingDisabled; }
     void setResourceCachingDisabled(bool disabled) { m_resourceCachingDisabled = disabled; }
 
+    Optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
+    void setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -724,6 +735,9 @@ private:
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabled { false };
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
+    
+    // For testing.
+    Optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
 };
 
 inline PageGroup& Page::group()

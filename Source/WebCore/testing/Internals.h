@@ -121,6 +121,10 @@ public:
     bool isRequestAnimationFrameThrottled() const;
     bool areTimersThrottled() const;
 
+    enum EventThrottlingBehavior { Responsive, Unresponsive };
+    void setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior>);
+    Optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const;
+
     // Spatial Navigation testing.
     ExceptionOr<unsigned> lastSpatialNavigationCandidateCount() const;
 

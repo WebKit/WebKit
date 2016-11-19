@@ -854,6 +854,47 @@ bool Internals::areTimersThrottled() const
     return contextDocument()->isTimerThrottlingEnabled();
 }
 
+void Internals::setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior> value)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return;
+
+    if (!value) {
+        document->page()->setEventThrottlingBehaviorOverride(Nullopt);
+        return;
+    }
+
+    switch (value.value()) {
+    case Internals::EventThrottlingBehavior::Responsive:
+        document->page()->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Responsive);
+        break;
+    case Internals::EventThrottlingBehavior::Unresponsive:
+        document->page()->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Unresponsive);
+        break;
+    }
+}
+
+Optional<Internals::EventThrottlingBehavior> Internals::eventThrottlingBehaviorOverride() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Nullopt;
+
+    auto behavior = document->page()->eventThrottlingBehaviorOverride();
+    if (!behavior)
+        return Nullopt;
+    
+    switch (behavior.value()) {
+    case WebCore::EventThrottlingBehavior::Responsive:
+        return Internals::EventThrottlingBehavior::Responsive;
+    case WebCore::EventThrottlingBehavior::Unresponsive:
+        return Internals::EventThrottlingBehavior::Unresponsive;
+    }
+
+    return Nullopt;
+}
+
 String Internals::visiblePlaceholder(Element& element)
 {
     if (is<HTMLTextFormControlElement>(element)) {

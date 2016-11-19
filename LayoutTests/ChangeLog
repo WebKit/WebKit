@@ -1,3 +1,17 @@
+2016-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Eliminate a source of flakiness in layout tests by forcing WebPage into "responsive" mode for all tests, with an internals override
+        https://bugs.webkit.org/show_bug.cgi?id=164980
+
+        Reviewed by Chris Dumez.
+
+        * fast/scrolling/ios/scroll-events-default-expected.txt: Added.
+        * fast/scrolling/ios/scroll-events-default.html: Added.
+        * fast/scrolling/ios/scroll-events-responsive-expected.txt: Added.
+        * fast/scrolling/ios/scroll-events-responsive.html: Added.
+        * fast/scrolling/ios/scroll-events-unresponsive-expected.txt: Added.
+        * fast/scrolling/ios/scroll-events-unresponsive.html: Added.
+
 2016-11-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::decrypt to match the latest spec
