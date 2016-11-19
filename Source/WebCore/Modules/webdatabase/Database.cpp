@@ -231,7 +231,7 @@ Database::~Database()
     if (!m_scriptExecutionContext->isContextThread()) {
         auto passedContext = WTFMove(m_scriptExecutionContext);
         auto& contextRef = passedContext.get();
-        contextRef.postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(passedContext)] (ScriptExecutionContext& context) {
+        contextRef.postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(passedContext), databaseContext = WTFMove(m_databaseContext)] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, &context == passedContext.ptr());
         }});
     }
