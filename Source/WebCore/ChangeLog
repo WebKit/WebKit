@@ -1,3 +1,36 @@
+2016-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Update HTML form validation messages
+        https://bugs.webkit.org/show_bug.cgi?id=164957
+        <rdar://problem/29338669>
+
+        Reviewed by Darin Adler.
+
+        Update HTML form validation messages as per recent feedback:
+        - Drop the "Please".
+        - Drop the period at the end.
+        - Drop the "if you want to proceed" that was used only for the checkbox.
+
+        No new tests, rebaselined existing tests.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::validationMessageValueMissingText):
+        (WebCore::validationMessageValueMissingForCheckboxText):
+        (WebCore::validationMessageValueMissingForFileText):
+        (WebCore::validationMessageValueMissingForRadioText):
+        (WebCore::validationMessageValueMissingForSelectText):
+        (WebCore::validationMessageTypeMismatchText):
+        (WebCore::validationMessageTypeMismatchForEmailText):
+        (WebCore::validationMessageTypeMismatchForURLText):
+        (WebCore::validationMessagePatternMismatchText):
+        (WebCore::validationMessageTooShortText):
+        (WebCore::validationMessageTooLongText):
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageRangeOverflowText):
+        (WebCore::validationMessageStepMismatchText):
+        (WebCore::validationMessageBadInputForNumberText):
+
 2016-11-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Implement selection interface and states for elements supporting aria-selected and for menu roles

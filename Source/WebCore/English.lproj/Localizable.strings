@@ -86,13 +86,7 @@
 "1. 2. 3." = "1. 2. 3.";
 
 /* Menu item title for KEYGEN pop-up menu */
-"1024 (Medium Grade)" = "1024 (Medium Grade)";
-
-/* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
-
-/* Menu item title for KEYGEN pop-up menu */
-"512 (Low Grade)" = "512 (Low Grade)";
 
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
@@ -156,6 +150,9 @@
 
 /* Check spelling while typing context menu item */
 "Check Spelling While Typing" = "Check Spelling While Typing";
+
+/* Validation message for required checkboxes that have not be checked */
+"Check this box" = "Check this box";
 
 /* title for a single file chooser button used in HTML forms */
 "Choose File" = "Choose File";
@@ -250,6 +247,18 @@
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
 
+/* Validation message for input form controls of type 'url' that have an invalid value */
+"Enter a URL" = "Enter a URL";
+
+/* Validation message for number fields where the user entered a non-number string */
+"Enter a number" = "Enter a number";
+
+/* Validation message for input form controls with value not respecting the step attribute */
+"Enter a valid value" = "Enter a valid value";
+
+/* Validation message for input form controls of type 'email' that have an invalid value */
+"Enter an email address" = "Enter an email address";
+
 /* Video Exit Fullscreen context menu item */
 "Exit Full Screen" = "Exit Full Screen";
 
@@ -258,6 +267,9 @@
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
+
+/* Validation message for required form control elements that have no value */
+"Fill out this field" = "Fill out this field";
 
 /* Default application name for Open With context menu */
 "Finder" = "Finder";
@@ -305,7 +317,7 @@
 "Inspect Element" = "Inspect Element";
 
 /* Validation message for input form controls with a value not matching type */
-"Invalid value." = "Invalid value.";
+"Invalid value" = "Invalid value";
 
 /* Italic context menu item */
 "Italic" = "Italic";
@@ -366,6 +378,9 @@
 
 /* Make Upper Case context menu item */
 "Make Upper Case" = "Make Upper Case";
+
+/* Validation message for input form controls requiring a constrained value according to pattern */
+"Match the requested format" = "Match the requested format";
 
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
@@ -463,42 +478,6 @@
 /* accessibility help text for enter fullscreen button */
 "Play movie in fullscreen mode" = "Play movie in fullscreen mode";
 
-/* Validation message for required checkboxes that have not be checked */
-"Please check this box if you want to proceed." = "Please check this box if you want to proceed.";
-
-/* Validation message for input form controls of type 'url' that have an invalid value */
-"Please enter a URL." = "Please enter a URL.";
-
-/* Validation message for number fields where the user entered a non-number string */
-"Please enter a number." = "Please enter a number.";
-
-/* Validation message for input form controls with value not respecting the step attribute */
-"Please enter a valid value." = "Please enter a valid value.";
-
-/* Validation message for input form controls of type 'email' that have an invalid value */
-"Please enter an email address." = "Please enter an email address.";
-
-/* Validation message for required form control elements that have no value */
-"Please fill out this field." = "Please fill out this field.";
-
-/* Validation message for input form controls requiring a constrained value according to pattern */
-"Please match the requested format." = "Please match the requested format.";
-
-/* Validation message for required file inputs that have no value */
-"Please select a file." = "Please select a file.";
-
-/* Validation message for required menu list controls that have no selection */
-"Please select an item in the list." = "Please select an item in the list.";
-
-/* Validation message for required radio boxes that have no selection */
-"Please select one of these options." = "Please select one of these options.";
-
-/* Validation message for form control elements with a value shorter than minimum allowed length */
-"Please use at least %d characters." = "Please use at least %d characters.";
-
-/* Validation message for form control elements with a value shorter than maximum allowed length */
-"Please use no more than %d characters." = "Please use no more than %d characters.";
-
 /* Label text to be used if plugin host process has crashed */
 "Plug-in Failure" = "Plug-in Failure";
 
@@ -540,6 +519,15 @@
 
 /* Search with Google context menu item */
 "Search with Google" = "Search with Google";
+
+/* Validation message for required file inputs that have no value */
+"Select a file" = "Select a file";
+
+/* Validation message for required menu list controls that have no selection */
+"Select an item in the list" = "Select an item in the list";
+
+/* Validation message for required radio boxes that have no selection */
+"Select one of these options" = "Select one of these options";
 
 /* Selection direction context sub-menu item */
 "Selection Direction" = "Selection Direction";
@@ -751,14 +739,20 @@
 /* Undo action name */
 "Use Standard Ligatures (Undo action name)" = "Use Standard Ligatures";
 
+/* Validation message for form control elements with a value shorter than minimum allowed length */
+"Use at least %d characters" = "Use at least %d characters";
+
+/* Validation message for form control elements with a value shorter than maximum allowed length */
+"Use no more than %d characters" = "Use no more than %d characters";
+
 /* Description of WebCrypto master keys in Keychain */
 "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB" = "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB";
 
 /* Validation message for input form controls with value lower than allowed minimum */
-"Value must be greater than or equal to %@." = "Value must be greater than or equal to %@.";
+"Value must be greater than or equal to %@" = "Value must be greater than or equal to %@";
 
 /* Validation message for input form controls with value higher than allowed maximum */
-"Value must be less than or equal to %@." = "Value must be less than or equal to %@.";
+"Value must be less than or equal to %@" = "Value must be less than or equal to %@";
 
 /* Web Inspector window title when inspecting Web Inspector */
 "Web Inspector [%d] — %@" = "Web Inspector [%d] — %@";
@@ -843,6 +837,9 @@
 
 /* HTTP result code string */
 "created" = "created";
+
+/* The less good value description for a meter element. */
+"critical value" = "critical value";
 
 /* accessibility help text for movie status display */
 "current movie status" = "current movie status";
@@ -933,9 +930,6 @@
 
 /* HTTP result code string */
 "length required" = "length required";
-
-/* The less good value description for a meter element. */
-"critical value" = "critical value";
 
 /* accessibility role description for link */
 "link" = "link";

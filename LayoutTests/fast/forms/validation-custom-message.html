@@ -33,7 +33,7 @@ onload = function() {
 
         testRunner.runUIScript(getValidationBubbleContents(), function(result) {
             validationBubbleContents = JSON.parse(result).validationBubble;
-            shouldBeEqualToString("validationBubbleContents.message", "Please fill out this field.");
+            shouldBeEqualToString("validationBubbleContents.message", "Fill out this field");
             finishJSTest();
         });
     });
