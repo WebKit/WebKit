@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests moving a focus across slotted input elements.
+To test manually, press Tab key to move the focus from the first input element to the next.</p>
+<style> svg { width: 10px; height: 10px; } </style>
+<div>
+    <div><input id="first" value="hello"> <svg><use xlink:href="#foo"></use></svg></div>
+    <div><input id="second" value="world"> <svg id="foo"><circle cx=5 cy=5 r=5></svg></div>
+</div>
+<div id="result">FAIL</div>
+<script>
+
+document.getElementById('first').focus();
+const resultElement = document.getElementById('result');
+const secondInputElement = document.getElementById('second');
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    eventSender.keyDown('\t');
+    setTimeout(() => {
+        resultElement.textContent = document.activeElement == secondInputElement ? 'PASS' : 'FAIL'
+        testRunner.notifyDone();
+    }, 1);
+}
+
+</script>
+</body>
+</html>

@@ -130,17 +130,13 @@ Node* FocusNavigationScope::lastChildInScope(const Node& node) const
 
 Node* FocusNavigationScope::parentInScope(const Node& node) const
 {
-    if (is<Element>(node) && isFocusScopeOwner(downcast<Element>(node)))
+    if (m_rootTreeScope && &m_rootTreeScope->rootNode() == &node)
         return nullptr;
 
     if (UNLIKELY(m_slotElement && m_slotElement == node.assignedSlot()))
         return nullptr;
 
-    ContainerNode* parent = node.parentNode();
-    if (parent && is<Element>(parent) && isFocusScopeOwner(downcast<Element>(*parent)))
-        return nullptr;
-
-    return parent;
+    return node.parentNode();
 }
 
 Node* FocusNavigationScope::nextSiblingInScope(const Node& node) const

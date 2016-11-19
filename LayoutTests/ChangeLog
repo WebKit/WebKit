@@ -1,3 +1,21 @@
+2016-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r200964): Tab focus navigation is broken on results.en.voyages-sncf.com
+        https://bugs.webkit.org/show_bug.cgi?id=164888
+
+        Reviewed by Antti Koivisto.
+
+        Add regression tests for moving the focus across a shadow tree and a SVG use element
+        and the one that moves out of a slot element.
+
+        * fast/shadow-dom/focus-navigation-out-of-slot-expected.txt: Added.
+        * fast/shadow-dom/focus-navigation-out-of-slot.html: Added.
+        * fast/shadow-dom/focus-navigation-passes-shadow-host-expected.txt: Added.
+        * fast/shadow-dom/focus-navigation-passes-shadow-host.html: Added.
+        * fast/shadow-dom/focus-navigation-passes-svg-use-element-expected.txt: Added.
+        * fast/shadow-dom/focus-navigation-passes-svg-use-element.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip the newly added tests on iOS.
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Eliminate a source of flakiness in layout tests by forcing WebPage into "responsive" mode for all tests, with an internals override

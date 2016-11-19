@@ -1,3 +1,21 @@
+2016-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r200964): Tab focus navigation is broken on results.en.voyages-sncf.com
+        https://bugs.webkit.org/show_bug.cgi?id=164888
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by FocusNavigationScope::parentInScope incorrectly returning nullptr when moving out of
+        a user agent shadow tree of a SVG use element. Fixed the bug by explicitly checking against the focus scope's
+        root node or its slot element. Also removed a superfluous early return when the parent node is a focus scope.
+
+        Tests: fast/shadow-dom/focus-navigation-out-of-slot.html
+               fast/shadow-dom/focus-navigation-passes-shadow-host.html
+               fast/shadow-dom/focus-navigation-passes-svg-use-element.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::parentInScope):
+
 2016-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Eliminate a source of flakiness in layout tests by forcing WebPage into "responsive" mode for all tests, with an internals override
