@@ -87,7 +87,7 @@ public:
     size_t capacity() const { return m_capacity; }
     size_t approximateSize() const;
 
-    static const unsigned version = 10;
+    static const unsigned version = 11;
 #if PLATFORM(MAC)
     /// Allow the last stable version of the cache to co-exist with the latest development one.
     static const unsigned lastStableVersion = 9;
@@ -97,10 +97,12 @@ public:
     String versionPath() const;
     String recordsPath() const;
 
+    const Salt& salt() const { return m_salt; }
+
     ~Storage();
 
 private:
-    Storage(const String& directoryPath);
+    Storage(const String& directoryPath, Salt);
 
     String recordDirectoryPathForKey(const Key&) const;
     String recordPathForKey(const Key&) const;
@@ -141,6 +143,8 @@ private:
     const String m_basePath;
     const String m_recordsPath;
 
+    const Salt m_salt;
+
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateRecordsSize { 0 };
 
@@ -175,7 +179,8 @@ private:
 };
 
 // FIXME: Remove, used by NetworkCacheStatistics only.
-void traverseRecordsFiles(const String& recordsPath, const String& type, const std::function<void (const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath)>&);
+using RecordFileTraverseFunction = std::function<void (const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath)>;
+void traverseRecordsFiles(const String& recordsPath, const String& type, const RecordFileTraverseFunction&);
 
 }
 }
