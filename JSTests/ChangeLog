@@ -1,3 +1,16 @@
+2016-11-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] speed up parsing of async functions
+        https://bugs.webkit.org/show_bug.cgi?id=164808
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests for line terminator following "async" keyword in async
+        function syntax.
+
+        * stress/async-await-syntax.js:
+        (shouldBe):
+
 2016-11-19  Mark Lam  <mark.lam@apple.com>
 
         op_mod-* JSC tests needs a longer timeout too.

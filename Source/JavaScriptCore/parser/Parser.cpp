@@ -616,12 +616,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         if (!strictMode()) {
             SavePoint savePoint = createSavePoint();
             next();
-            // Intentionally use `match(IDENT) || match(LET) || match(YIELD)` and don't use `matchSpecIdentifier()`.
+            // Intentionally use `isIdentifierOrAnyContextualKeyword(m_token)` and don't use `matchSpecIdentifier()`.
             // We would like to fall into parseVariableDeclaration path even if "yield" is not treated as an Identifier.
             // For example, under a generator context, matchSpecIdentifier() for "yield" returns `false`.
             // But we would like to enter parseVariableDeclaration and raise an error under the context of parseVariableDeclaration
             // to raise consistent errors between "var", "const" and "let".
-            if (!(match(IDENT) || match(LET) || match(YIELD) || match(AWAIT)) && !match(OPENBRACE) && !match(OPENBRACKET))
+            if (!isIdentifierOrAnyContextualKeyword(m_token) && !match(OPENBRACE) && !match(OPENBRACKET))
                 shouldParseVariableDeclaration = false;
             restoreSavePoint(savePoint);
         }
@@ -640,19 +640,19 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
     case FUNCTION:
         result = parseFunctionDeclaration(context);
         break;
-    case IDENT:
-        if (UNLIKELY(*m_token.m_data.ident == m_vm->propertyNames->async)) {
-            // Eagerly parse as AsyncFunctionDeclaration. This is the uncommon case,
-            // but could be mistakenly parsed as an AsyncFunctionExpression.
-            SavePoint savePoint = createSavePoint();
-            next();
-            if (UNLIKELY(match(FUNCTION) && !m_lexer->prevTerminator())) {
-                result = parseAsyncFunctionDeclaration(context);
-                break;
-            }
-            restoreSavePoint(savePoint);
+    case ASYNC: {
+        // Eagerly parse as AsyncFunctionDeclaration. This is the uncommon case,
+        // but could be mistakenly parsed as an AsyncFunctionExpression.
+        SavePoint savePoint = createSavePoint();
+        next();
+        if (UNLIKELY(match(FUNCTION) && !m_lexer->prevTerminator())) {
+            result = parseAsyncFunctionDeclaration(context);
+            break;
         }
+        restoreSavePoint(savePoint);
         FALLTHROUGH;
+    }
+    case IDENT:
     case AWAIT:
     case YIELD: {
         // This is a convenient place to notice labeled statements
@@ -1784,10 +1784,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case DEFAULT:
         // These tokens imply the end of a set of source elements
         return 0;
-    case IDENT:
-        if (UNLIKELY(*m_token.m_data.ident == m_vm->propertyNames->async && maybeParseAsyncFunctionDeclarationStatement(context, result, parentAllowsFunctionDeclarationAsStatement)))
+    case ASYNC:
+        if (maybeParseAsyncFunctionDeclarationStatement(context, result, parentAllowsFunctionDeclarationAsStatement))
             break;
         FALLTHROUGH;
+    case IDENT:
     case AWAIT:
     case YIELD: {
         bool allowFunctionDeclarationAsStatement = false;
@@ -1870,7 +1871,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
 template <typename LexerType>
 template <class TreeBuilder> bool Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement(TreeBuilder& context, TreeStatement& result, bool parentAllowsFunctionDeclarationAsStatement)
 {
-    ASSERT(*m_token.m_data.ident == m_vm->propertyNames->async);
+    ASSERT(match(ASYNC));
     SavePoint savePoint = createSavePoint();
     next();
     if (match(FUNCTION) && !m_lexer->prevTerminator()) {
@@ -2665,6 +2666,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         bool isGetter = false;
         bool isSetter = false;
         bool isGenerator = false;
+        bool isAsync = false;
         bool isAsyncMethod = false;
         if (consume(TIMES))
             isGenerator = true;
@@ -2677,6 +2679,9 @@ parseMethod:
             ASSERT(ident);
             next();
             break;
+        case ASYNC:
+            isAsync = !isGenerator && !isAsyncMethod;
+            FALLTHROUGH;
         case IDENT:
         case AWAIT:
             ident = m_token.m_data.ident;
@@ -2686,7 +2691,7 @@ parseMethod:
                 isGetter = *ident == propertyNames.get;
                 isSetter = *ident == propertyNames.set;
 
-                if (UNLIKELY(*ident == propertyNames.async && !m_lexer->prevTerminator() && !isAsyncMethod)) {
+                if (UNLIKELY(isAsync && !m_lexer->prevTerminator())) {
                     isAsyncMethod = true;
                     goto parseMethod;
                 }
@@ -3207,7 +3212,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             if (match(IDENT))
                 localName = m_token.m_data.ident;
             restoreSavePoint(savePoint);
-        } else if (UNLIKELY(isIdentifierOrKeyword(m_token) && *m_token.m_data.ident == m_vm->propertyNames->async)) {
+        } else if (match(ASYNC)) {
             SavePoint savePoint = createSavePoint();
             next();
             if (match(FUNCTION) && !m_lexer->prevTerminator()) {
@@ -3231,7 +3236,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             } else if (match(CLASSTOKEN)) {
                 result = parseClassDeclaration(context, ExportType::NotExported, DeclarationDefaultContext::ExportDefault);
             } else {
-                ASSERT(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->async);
+                ASSERT(match(ASYNC));
                 next();
                 DepthManager statementDepth(&m_statementDepth);
                 m_statementDepth = 1;
@@ -3352,13 +3357,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             result = parseClassDeclaration(context, ExportType::Exported);
             break;
 
+        case ASYNC:
+            next();
+            semanticFailIfFalse(match(FUNCTION) && !m_lexer->prevTerminator(), "Expected 'function' keyword following 'async' keyword with no preceding line terminator");
+            result = parseAsyncFunctionDeclaration(context, ExportType::Exported);
+            break;
+
         default:
-            if (UNLIKELY(isIdentifierOrKeyword(m_token) && *m_token.m_data.ident == m_vm->propertyNames->async)) {
-                next();
-                semanticFailIfFalse(match(FUNCTION) && !m_lexer->prevTerminator(), "Expected 'function' keyword following 'async' keyword with no preceding line terminator");
-                result = parseAsyncFunctionDeclaration(context, ExportType::Exported);
-                break;
-            }
             failWithMessage("Expected either a declaration or a variable statement");
             break;
         }
@@ -3441,7 +3446,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     SavePoint savePoint = createSavePoint();
     size_t usedVariablesSize = 0;
 
-    if (wasOpenParen || (wasIdentifierOrKeyword && *m_token.m_data.ident == m_vm->propertyNames->async)) {
+    if (wasOpenParen) {
         usedVariablesSize = currentScope()->currentUsedVariablesSize();
         currentScope()->pushUsedVariableSet();
     }
@@ -3455,12 +3460,12 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
             restoreSavePoint(savePoint);
             bool isAsyncArrow = false;
             if (UNLIKELY(classifier.indicatesPossibleAsyncArrowFunction())) {
-                ASSERT(matchContextualKeyword(m_vm->propertyNames->async));
+                ASSERT(match(ASYNC));
                 next();
                 isAsyncArrow = !m_lexer->prevTerminator();
             }
             if (isArrowFunctionParameters()) {
-                if (wasOpenParen || isAsyncArrow)
+                if (wasOpenParen)
                     currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
                 return parseArrowFunctionExpression(context, isAsyncArrow);
             }
@@ -3713,26 +3718,28 @@ template <typename LexerType>
 template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeBuilder& context, bool complete)
 {
     bool wasIdent = false;
+    bool isAsync = false;
     bool isGenerator = false;
     bool isClassProperty = false;
     bool isAsyncMethod = false;
     if (consume(TIMES))
         isGenerator = true;
 
-UNUSED_LABEL(parseProperty);
 parseProperty:
     switch (m_token.m_type) {
-    namedProperty:
+    case ASYNC:
+        isAsync = !isGenerator && !isAsyncMethod;
+        FALLTHROUGH;
     case IDENT:
     case AWAIT:
         wasIdent = true;
         FALLTHROUGH;
     case STRING: {
+namedProperty:
         const Identifier* ident = m_token.m_data.ident;
         unsigned getterOrSetterStartOffset = tokenStart();
-        if (complete || (wasIdent && !isGenerator && (*ident == m_vm->propertyNames->get || *ident == m_vm->propertyNames->set)))
-            nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
-        else if (wasIdent && !isGenerator && *ident == m_vm->propertyNames->async)
+
+        if (complete || (wasIdent && !isGenerator && (*ident == m_vm->propertyNames->get || *ident == m_vm->propertyNames->set)) || isAsync)
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
         else
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
@@ -3772,7 +3779,7 @@ parseProperty:
             type = PropertyNode::Getter;
         else if (*ident == m_vm->propertyNames->set)
             type = PropertyNode::Setter;
-        else if (UNLIKELY(*ident == m_vm->propertyNames->async && !isGenerator && !isAsyncMethod)) {
+        else if (UNLIKELY(isAsync && !isAsyncMethod)) {
             isAsyncMethod = true;
             failIfTrue(m_lexer->prevTerminator(), "Expected a property name following keyword 'async'");
             goto parseProperty;
@@ -3820,6 +3827,7 @@ parseProperty:
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");
+        wasIdent = true; // Treat keyword token as an identifier
         goto namedProperty;
     }
 }
@@ -4198,6 +4206,14 @@ template <class TreeBuilder> typename TreeBuilder::TemplateLiteral Parser<LexerT
     return context.createTemplateLiteral(location, templateStringList, templateExpressionList);
 }
 
+template <class LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::createResolveAndUseVariable(TreeBuilder& context, const Identifier* ident, bool isEval, const JSTextPosition& start, const JSTokenLocation& location)
+{
+    currentScope()->useVariable(ident, isEval);
+    m_parserState.lastIdentifier = ident;
+    return context.createResolve(location, *ident, start, lastTokenEndPosition());
+}
+
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpression(TreeBuilder& context)
 {
@@ -4231,22 +4247,34 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case AWAIT:
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
             failIfFalse(m_parserState.allowAwait, "Cannot use await expression within parameters");
-        FALLTHROUGH;
+        goto identifierExpression;
+    case ASYNC: {
+        JSTextPosition start = tokenStartPosition();
+        const Identifier* ident = m_token.m_data.ident;
+        JSTokenLocation location(tokenLocation());
+        next();
+        if (match(FUNCTION) && !m_lexer->prevTerminator())
+            return parseAsyncFunctionExpression(context);
+
+        // Avoid using variable if it is an arrow function parameter
+        if (UNLIKELY(match(ARROWFUNCTION)))
+            return 0;
+
+        const bool isEval = false;
+        return createResolveAndUseVariable(context, ident, isEval, start, location);
+    }
     case IDENT: {
     identifierExpression:
         JSTextPosition start = tokenStartPosition();
         const Identifier* ident = m_token.m_data.ident;
         JSTokenLocation location(tokenLocation());
         next();
-        if (match(ARROWFUNCTION))
+
+        // Avoid using variable if it is an arrow function parameter
+        if (UNLIKELY(match(ARROWFUNCTION)))
             return 0;
 
-        if (UNLIKELY(*ident == m_vm->propertyNames->async && match(FUNCTION) && !m_lexer->prevTerminator()))
-            return parseAsyncFunctionExpression(context);
-
-        currentScope()->useVariable(ident, m_vm->propertyNames->eval == *ident);
-        m_parserState.lastIdentifier = ident;
-        return context.createResolve(location, *ident, start, lastTokenEndPosition());
+        return createResolveAndUseVariable(context, ident, *ident == m_vm->propertyNames->eval, start, location);
     }
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
@@ -4440,10 +4468,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             }
         }
     } else if (!baseIsNewTarget) {
-        const bool isAsync = isIdentifierOrKeyword(m_token) && *m_token.m_data.ident == m_vm->propertyNames->async;
+        const bool isAsync = match(ASYNC);
+
         base = parsePrimaryExpression(context);
         failIfFalse(base, "Cannot parse base expression");
-        if (isAsync && context.isResolve(base) && !m_lexer->prevTerminator()) {
+        if (UNLIKELY(isAsync && context.isResolve(base) && !m_lexer->prevTerminator())) {
             if (matchSpecIdentifier()) {
                 // AsyncArrowFunction
                 forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
@@ -4484,10 +4513,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 failIfFalse(arguments, "Cannot parse call arguments");
                 base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             } else {
+                size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 TreeArguments arguments = parseArguments(context);
 
                 if (baseIsAsyncKeyword && (!arguments || match(ARROWFUNCTION))) {
+                    currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
                     forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
                     failDueToUnexpectedToken();
                 }
@@ -4787,6 +4818,7 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
         out.print("Invalid private name '", getToken(), "'");
         return;
             
+    case ASYNC:
     case AWAIT:
     case IDENT:
         out.print("Unexpected identifier '", getToken(), "'");

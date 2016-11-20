@@ -128,6 +128,22 @@ ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
 {
     return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
 }
+// _Any_ContextualKeyword includes keywords such as "let" or "yield", which have a specific meaning depending on the current parse mode
+// or strict mode. These helpers allow to treat all contextual keywords as identifiers as required.
+ALWAYS_INLINE static bool isAnyContextualKeyword(const JSToken& token)
+{
+    return token.m_type >= FirstContextualKeywordToken && token.m_type <= LastContextualKeywordToken;
+}
+ALWAYS_INLINE static bool isIdentifierOrAnyContextualKeyword(const JSToken& token)
+{
+    return token.m_type == IDENT || isAnyContextualKeyword(token);
+}
+// _Safe_ContextualKeyword includes only contextual keywords which can be treated as identifiers independently from parse mode. The exeption
+// to this rule is `await`, but matchSpecIdentifier() always treats it as an identifier regardless.
+ALWAYS_INLINE static bool isSafeContextualKeyword(const JSToken& token)
+{
+    return token.m_type >= FirstSafeContextualKeywordToken && token.m_type <= LastSafeContextualKeywordToken;
+}
 
 struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
@@ -1459,12 +1475,12 @@ private:
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     ALWAYS_INLINE bool matchSpecIdentifier(bool inGenerator)
     {
-        return match(IDENT) || match(AWAIT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator);
+        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator) || isSafeContextualKeyword(m_token);
     }
 
     ALWAYS_INLINE bool matchSpecIdentifier()
     {
-        return match(IDENT) || match(AWAIT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(currentScope()->isGenerator());
+        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(currentScope()->isGenerator()) || isSafeContextualKeyword(m_token);
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
@@ -1538,6 +1554,8 @@ private:
     template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
     template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);
+
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, const Identifier*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType);

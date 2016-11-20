@@ -1,3 +1,37 @@
+2016-11-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] speed up parsing of async functions
+        https://bugs.webkit.org/show_bug.cgi?id=164808
+
+        Reviewed by Yusuke Suzuki.
+
+        Minor adjustments to Parser in order to mitigate slowdown with async
+        function parsing enabled:
+
+          - Tokenize "async" as a keyword
+          - Perform less branching in various areas of the Parser
+
+        * parser/Keywords.table:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::createResolveAndUseVariable):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::isAnyContextualKeyword):
+        (JSC::isIdentifierOrAnyContextualKeyword):
+        (JSC::isSafeContextualKeyword):
+        (JSC::Parser::matchSpecIdentifier):
+        * parser/ParserTokens.h:
+        * runtime/CommonIdentifiers.h:
+
 2016-11-19  Mark Lam  <mark.lam@apple.com>
 
         Add --timeoutMultiplier option to allow some tests more time to run.

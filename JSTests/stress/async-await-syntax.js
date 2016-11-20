@@ -1,6 +1,13 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
+function shouldBe(expected, actual, msg = "") {
+    if (msg)
+        msg = " for " + msg;
+    if (actual !== expected)
+        throw new Error("bad value" + msg + ": " + actual + ". Expected " + expected);
+}
+
 function testSyntax(script) {
     try {
         eval(script);
@@ -388,3 +395,87 @@ async function fn(b) {
     const b = 1;
 }
 `, `SyntaxError: Cannot declare a const variable twice: 'b'.`);
+
+(function testMethodDefinition() {
+    testSyntax("({ async [foo]() {} })");
+    testSyntax("({ async [Symbol.asyncIterator]() {} })");
+    testSyntax("({ async 0() {} })");
+    testSyntax("({ async 'string'() {} })");
+    testSyntax("({ async ident() {} })");
+
+    testSyntax("(class { async [foo]() {} })");
+    testSyntax("(class { async [Symbol.asyncIterator]() {} })");
+    testSyntax("(class { async 0() {} })");
+    testSyntax("(class { async 'string'() {} })");
+    testSyntax("(class { async ident() {} })");
+
+    testSyntax("(class { static async [foo]() {} })");
+    testSyntax("(class { static async [Symbol.asyncIterator]() {} })");
+    testSyntax("(class { static async 0() {} })");
+    testSyntax("(class { static async 'string'() {} })");
+    testSyntax("(class { static async ident() {} })");
+})();
+
+(function testLineTerminator() {
+    let testLineFeedErrors = (prefix, suffix) => {
+        testSyntaxError(`${prefix}// comment
+                         ${suffix}`);
+        testSyntaxError(`${prefix}/* comment
+                         */ ${suffix}`);
+        testSyntaxError(`${prefix}
+                         ${suffix}`);
+        testSyntaxError(`"use strict";${prefix}// comment
+                         ${suffix}`);
+        testSyntaxError(`"use strict";${prefix}/* comment
+                         */ ${suffix}`);
+        testSyntaxError(`"use strict";${prefix}
+                         ${suffix}`);
+    };
+
+    let testLineFeeds = (prefix, suffix) => {
+        testSyntax(`${prefix}// comment
+                    ${suffix}`);
+        testSyntax(`${prefix}/* comment
+                    */${suffix}`);
+        testSyntax(`${prefix}
+                    ${suffix}`);
+        testSyntax(`"use strict";${prefix}// comment
+                    ${suffix}`);
+        testSyntax(`"use strict";${prefix}/* comment
+                    */${suffix}`);
+        testSyntax(`"use strict";${prefix}
+                    ${suffix}`);
+    };
+
+    let tests = [
+        // ObjectLiteral AsyncMethodDefinition
+        { prefix: "({ async", suffix: "method() {} }).method" },
+
+        // ClassLiteral AsyncMethodDefinition
+        { prefix: "(class { async", suffix: "method() {} }).prototype.method" },
+
+        // AsyncArrowFunctions
+        { prefix: "(async", suffix: "param => 1)" },
+        { prefix: "(async", suffix: "(param) => 1)" },
+        { prefix: "(async", suffix: "param => {})" },
+        { prefix: "(async", suffix: "(param) => {})" },
+    ];
+
+    for (let { prefix, suffix } of tests) {
+        testSyntax(`${prefix} ${suffix}`);
+        testSyntax(`"use strict";${prefix} ${suffix}`);
+        shouldBe("function", typeof eval(`${prefix} ${suffix}`));
+        shouldBe("function", typeof eval(`"use strict";${prefix} ${suffix}`));
+        testLineFeedErrors(prefix, suffix);
+    }
+
+    // AsyncFunctionDeclaration
+    testSyntax("async function foo() {}");
+    testLineFeeds("async", "function foo() {}");
+
+    // AsyncFunctionExpression
+    testSyntax("var x = async function foo() {}");
+    testSyntax("'use strict';var x = async function foo() {}");
+    testLineFeeds("var x = async", "function foo() {}");
+    testLineFeedErrors("var x = async", "function() {}");
+})();

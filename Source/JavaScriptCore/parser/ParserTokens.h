@@ -57,7 +57,6 @@ enum JSTokenType {
     FOR,
     NEW,
     VAR,
-    LET,
     CONSTTOKEN,
     CONTINUE,
     FUNCTION,
@@ -78,11 +77,21 @@ enum JSTokenType {
     ELSE,
     IMPORT,
     EXPORT,
-    YIELD,
     CLASSTOKEN,
     EXTENDS,
     SUPER,
+
+    // Contextual keywords
+    LET,
+    YIELD,
     AWAIT,
+    ASYNC,
+
+    FirstContextualKeywordToken = LET,
+    LastContextualKeywordToken = ASYNC,
+    FirstSafeContextualKeywordToken = AWAIT,
+    LastSafeContextualKeywordToken = LastContextualKeywordToken,
+
     OPENBRACE = 0,
     CLOSEBRACE,
     OPENPAREN,
