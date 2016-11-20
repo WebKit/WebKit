@@ -1,4 +1,4 @@
-//@ runFTLNoCJIT
+//@ runFTLNoCJIT("--timeoutMultiplier=1.5")
 
 // If all goes well, this test module will terminate silently. If not, it will print
 // errors. See binary-op-test.js for debugging options if needed.

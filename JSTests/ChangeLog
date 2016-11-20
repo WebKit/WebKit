@@ -1,5 +1,16 @@
 2016-11-19  Mark Lam  <mark.lam@apple.com>
 
+        op_mod-* JSC tests needs a longer timeout too.
+        https://bugs.webkit.org/show_bug.cgi?id=164994
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+
+2016-11-19  Mark Lam  <mark.lam@apple.com>
+
         Add --timeoutMultiplier option to allow some tests more time to run.
         https://bugs.webkit.org/show_bug.cgi?id=164951
 
