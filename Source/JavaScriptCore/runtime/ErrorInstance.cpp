@@ -39,6 +39,15 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure)
 {
 }
 
+ErrorInstance* ErrorInstance::create(ExecState* state, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    String messageString = message.isUndefined() ? String() : message.toWTFString(state);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return create(state, vm, structure, messageString, appender, type, useCurrentFrame);
+}
+
 static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
 {
     ErrorInstance::SourceAppender appender = exception->sourceAppender();
