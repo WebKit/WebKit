@@ -103,6 +103,7 @@ public:
     WEBCORE_EXPORT StringView protocol() const;
     WEBCORE_EXPORT String host() const;
     WEBCORE_EXPORT Optional<uint16_t> port() const;
+    WEBCORE_EXPORT String hostAndPort() const;
     WEBCORE_EXPORT String user() const;
     WEBCORE_EXPORT String pass() const;
     WEBCORE_EXPORT String path() const;

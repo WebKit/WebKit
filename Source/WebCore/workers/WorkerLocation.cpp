@@ -43,7 +43,7 @@ String WorkerLocation::protocol() const
 
 String WorkerLocation::host() const
 {
-    return m_url.port() ? m_url.host() + ":" + String::number(m_url.port().value()) : m_url.host();
+    return m_url.hostAndPort();
 }
 
 String WorkerLocation::hostname() const

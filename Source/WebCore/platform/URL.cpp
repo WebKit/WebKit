@@ -730,6 +730,13 @@ Optional<uint16_t> URL::port() const
     return number;
 }
 
+String URL::hostAndPort() const
+{
+    if (auto port = this->port())
+        return host() + ':' + String::number(port.value());
+    return host();
+}
+
 String URL::user() const
 {
     return decodeURLEscapeSequences(m_string.substring(m_userStart, m_userEnd - m_userStart));

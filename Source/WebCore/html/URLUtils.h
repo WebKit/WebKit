@@ -125,12 +125,7 @@ void URLUtils<T>::setPassword(const String& pass)
 template <typename T>
 String URLUtils<T>::host() const
 {
-    const URL& url = href();
-    if (url.hostEnd() == url.pathStart())
-        return url.host();
-    if (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol()))
-        return url.host();
-    return url.host() + ':' + String::number(url.port().value());
+    return href().hostAndPort();
 }
 
 // This function does not allow leading spaces before the port number.

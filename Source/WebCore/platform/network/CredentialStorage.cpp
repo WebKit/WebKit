@@ -42,10 +42,7 @@ CredentialStorage& CredentialStorage::defaultCredentialStorage()
 
 static String originStringFromURL(const URL& url)
 {
-    if (url.port())
-        return makeString(url.protocol(), "://", url.host(), ':', String::number(url.port().value()), '/');
-
-    return makeString(url.protocol(), "://", url.host(), '/');
+    return makeString(url.protocol(), "://", url.hostAndPort(), '/');
 }
 
 static String protectionSpaceMapKeyFromURL(const URL& url)
