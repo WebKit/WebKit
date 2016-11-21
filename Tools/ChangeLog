@@ -1,3 +1,18 @@
+2016-11-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] build fails after update to cmake 3.7
+        https://bugs.webkit.org/show_bug.cgi?id=165008
+
+        Reviewed by Dan Bernstein.
+
+        When we remove the CMake cache, we should remove both the
+        CMakeCache.txt file and the CMakeFiles directory.
+        See: https://gitlab.kitware.com/cmake/cmake/issues/14820
+
+        * Scripts/webkitdirs.pm:
+        (cmakeFilesPath):
+        (removeCMakeCache):
+
 2016-11-16  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WebRTC] Switch to downstream OpenWebRTC and more recent GStreamer

@@ -1831,6 +1831,11 @@ sub cmakeCachePath()
     return File::Spec->catdir(baseProductDir(), configuration(), "CMakeCache.txt");
 }
 
+sub cmakeFilesPath()
+{
+    return File::Spec->catdir(baseProductDir(), configuration(), "CMakeFiles");
+}
+
 sub shouldRemoveCMakeCache(@)
 {
     my ($cacheFilePath, @buildArgs) = @_;
@@ -1884,7 +1889,9 @@ sub removeCMakeCache(@)
     my (@buildArgs) = @_;
     if (shouldRemoveCMakeCache(@buildArgs)) {
         my $cmakeCache = cmakeCachePath();
+        my $cmakeFiles = cmakeFilesPath();
         unlink($cmakeCache) if -e $cmakeCache;
+        rmtree($cmakeFiles) if -d $cmakeFiles;
     }
 }
 
