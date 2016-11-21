@@ -59,7 +59,7 @@ static const Vector<String> candidateTypes = { "host", "srflx", "prflx", "relay"
 static const Vector<String> candidateTcpTypes = { "", "active", "passive", "so" };
 static const Vector<String> codecTypes = { "NONE", "PCMU", "PCMA", "OPUS", "H264", "VP8" };
 
-static const char* helperServerRegEx = "(turn|stun):([\\w\\.\\-]+|\\[[\\w\\:]+\\])(:\\d+)?(\\?.+)?";
+static const char* helperServerRegEx = "(turns|turn|stun):([\\w\\.\\-]+|\\[[\\w\\:]+\\])(:\\d+)?(\\?.+)?";
 
 static const unsigned short helperServerDefaultPort = 3478;
 static const unsigned short candidateDefaultPort = 9;
@@ -606,6 +606,10 @@ void MediaEndpointOwr::ensureTransportAgentAndTransceivers(bool isInitiator, con
                         : OWR_HELPER_SERVER_TYPE_TURN_UDP;
 
                     owr_transport_agent_add_helper_server(m_transportAgent, serverType,
+                        url.host.ascii().data(), port,
+                        server.username.ascii().data(), server.credential.ascii().data());
+                } else if (url.protocol == "turns") {
+                    owr_transport_agent_add_helper_server(m_transportAgent, OWR_HELPER_SERVER_TYPE_TURN_TLS,
                         url.host.ascii().data(), port,
                         server.username.ascii().data(), server.credential.ascii().data());
                 } else
