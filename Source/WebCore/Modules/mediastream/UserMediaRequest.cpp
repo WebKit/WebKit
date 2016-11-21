@@ -228,14 +228,13 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
 
 void UserMediaRequest::contextDestroyed()
 {
+    ContextDestructionObserver::contextDestroyed();
     Ref<UserMediaRequest> protectedThis(*this);
 
     if (m_controller) {
         m_controller->cancelUserMediaAccessRequest(*this);
         m_controller = nullptr;
     }
-
-    ContextDestructionObserver::contextDestroyed();
 }
 
 Document* UserMediaRequest::document() const
