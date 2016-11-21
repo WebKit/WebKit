@@ -1,3 +1,29 @@
+2016-11-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EncryptedMedia] Make EME API runtime-enabled
+        https://bugs.webkit.org/show_bug.cgi?id=164927
+
+        Reviewed by Jer Noble.
+
+        Update the EME API IDL definitions to use the EnabledAtRuntime
+        attribute on the relevant interfaces, attributes and operations.
+        EncryptedMediaAPI is used as the attribute value.
+
+        The corresponding getter, setter and member boolean are added to
+        the RuntimeEnabledFeatures class.
+
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeyStatusMap.idl:
+        * Modules/encryptedmedia/MediaKeySystemAccess.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/encryptedmedia/NavigatorEME.idl:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setEncryptedMediaAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::encryptedMediaAPIEnabled):
+        * html/HTMLMediaElement.idl:
+        * html/MediaEncryptedEvent.idl:
+
 2016-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r208606?): LayoutTest fast/mediastream/enumerating-crash.html is a flaky crash

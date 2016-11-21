@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=ENCRYPTED_MEDIA
+    Conditional=ENCRYPTED_MEDIA,
+    EnabledAtRuntime=EncryptedMediaAPI
 ] interface MediaKeySystemAccess {
     readonly attribute DOMString keySystem;
     [Custom] MediaKeySystemConfiguration getConfiguration();

@@ -128,6 +128,7 @@ public:
     void setDownloadAttributeEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
     void setES6ModulesEnabled(bool);
+    void setEncryptedMediaAPIEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

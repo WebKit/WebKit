@@ -70,6 +70,12 @@
     macro(Map)\
     macro(MapIterator)\
     macro(Math) \
+    macro(MediaEncryptedEvent) \
+    macro(MediaKeyMessageEvent) \
+    macro(MediaKeySession) \
+    macro(MediaKeyStatusMap) \
+    macro(MediaKeySystemAccess) \
+    macro(MediaKeys) \
     macro(ModernMediaControls) \
     macro(NaN) \
     macro(Number) \

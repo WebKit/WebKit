@@ -230,6 +230,11 @@ public:
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void setEncryptedMediaAPIEnabled(bool isEnabled) { m_encryptedMediaAPIEnabled = isEnabled; }
+    bool encryptedMediaAPIEnabled() const { return m_encryptedMediaAPIEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
     WEBCORE_EXPORT void reset();
@@ -342,6 +347,10 @@ private:
 
 #if ENABLE(CSS_GRID_LAYOUT)
     bool m_cssGridLayoutEnabled;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    bool m_encryptedMediaAPIEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

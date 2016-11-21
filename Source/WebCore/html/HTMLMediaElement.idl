@@ -93,10 +93,10 @@
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA] readonly attribute WebKitMediaKeys webkitKeys;
     [Conditional=LEGACY_ENCRYPTED_MEDIA] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
-    [Conditional=ENCRYPTED_MEDIA] readonly attribute MediaKeys mediaKeys;
-    [Conditional=ENCRYPTED_MEDIA] attribute EventHandler onencrypted;
-    [Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwaitingforkey;
-    [Conditional=ENCRYPTED_MEDIA] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] readonly attribute MediaKeys mediaKeys;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onencrypted;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onwaitingforkey;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
 
     [Conditional=VIDEO_TRACK, MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;

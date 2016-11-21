@@ -37,7 +37,8 @@ enum MediaKeyStatus {
 };
 
 [
-    Conditional=ENCRYPTED_MEDIA
+    Conditional=ENCRYPTED_MEDIA,
+    EnabledAtRuntime=EncryptedMediaAPI
 ] interface MediaKeyStatusMap {
     iterable<BufferSource, MediaKeyStatus>;
     readonly attribute unsigned long size;

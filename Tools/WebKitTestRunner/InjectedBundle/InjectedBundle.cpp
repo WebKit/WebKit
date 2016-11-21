@@ -330,6 +330,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setES6ModulesEnabled(true);
 
+    m_testRunner->setEncryptedMediaAPIEnabled(true);
+
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
