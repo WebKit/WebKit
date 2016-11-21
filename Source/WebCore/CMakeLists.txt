@@ -2346,6 +2346,7 @@ set(WebCore_SOURCES
     platform/mediastream/RealtimeMediaSource.cpp
     platform/mediastream/RealtimeMediaSourceCenter.cpp
     platform/mediastream/RealtimeMediaSourceSettings.cpp
+    platform/mediastream/SDPProcessorScriptResource.cpp
 
     platform/mock/DeviceMotionClientMock.cpp
     platform/mock/DeviceOrientationClientMock.cpp
@@ -3668,11 +3669,13 @@ if (WebCore_USER_AGENT_SCRIPTS)
     )
 endif ()
 
-if (WebCore_SDP_PROCESSOR_SCRIPTS)
+if (ENABLE_WEB_RTC)
     # Necessary variables:
     # WebCore_SDP_PROCESSOR_SCRIPTS containing the JavaScript sources list
     # WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES containing the source file that will load the scripts to add the proper
     #   dependency and having them built at the right moment
+    set(WebCore_SDP_PROCESSOR_SCRIPTS ${WEBCORE_DIR}/Modules/mediastream/sdp.js)
+    set(WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/mediastream/SDPProcessorScriptResource.cpp)
 
     MAKE_JS_FILE_ARRAYS(
         ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp

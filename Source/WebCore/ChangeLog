@@ -1,3 +1,26 @@
+2016-11-21  Olivier Blin  <olivier.blin@softathome.com>
+
+        [cmake][OpenWebRTC] Move SDPProcessorScriptResource rules to common WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=164937
+
+        Reviewed by Youenn Fablet.
+
+        SDPProcessorScriptResource has been moved in common mediastream directory (bug 163940).
+
+        Since it is not specific to the GTK port, the matching cmake rules should be
+        moved out from PlatformGTK.cmake to the main WebCore CMakeLists.txt.
+
+        This is needed to build OpenWebRTC support in other ports, WPE in my case,
+        probably Mac, EFL and Qt as well.
+
+        This also fixes the path in SDP scripts dependencies, the old openwebrtc subdir
+        was still being used.
+
+        No new tests, build fix only
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+
 2016-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add URL::hostAndPort()
