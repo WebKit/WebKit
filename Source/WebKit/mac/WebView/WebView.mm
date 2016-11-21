@@ -9514,7 +9514,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 
 - (void)updateMediaTouchBar
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!_private->mediaTouchBarProvider)
         _private->mediaTouchBarProvider = adoptNS([allocAVFunctionBarPlaybackControlsProviderInstance() init]);
 

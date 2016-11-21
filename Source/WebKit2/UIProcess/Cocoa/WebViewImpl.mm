@@ -1095,7 +1095,7 @@ void WebViewImpl::updateTextTouchBar()
 
 void WebViewImpl::updateMediaTouchBar()
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!m_mediaTouchBarProvider)
         m_mediaTouchBarProvider = adoptNS([allocAVFunctionBarPlaybackControlsProviderInstance() init]);
 
