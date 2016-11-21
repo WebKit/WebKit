@@ -47,6 +47,7 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(ExecState* exec, const So
     executable->finishCreation(vm);
 
     UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createGlobalEvalCodeBlock(exec, executable);
+    ASSERT(!!scope.exception() == !unlinkedEvalCode);
     if (!unlinkedEvalCode)
         return 0;
 

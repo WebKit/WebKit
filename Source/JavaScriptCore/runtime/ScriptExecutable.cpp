@@ -307,18 +307,20 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 JSObject* ScriptExecutable::prepareForExecutionImpl(
     VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     DeferGCForAWhile deferGC(vm.heap);
 
-    if (vm.getAndClearFailNextNewCodeBlock())
-        return createError(scope->globalObject()->globalExec(), ASCIILiteral("Forced Failure"));
+    if (vm.getAndClearFailNextNewCodeBlock()) {
+        auto& state = *scope->globalObject()->globalExec();
+        return throwException(&state, throwScope, createError(&state, ASCIILiteral("Forced Failure")));
+    }
 
-    JSObject* exception = 0;
+    JSObject* exception = nullptr;
     CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope, exception);
     resultCodeBlock = codeBlock;
-    if (!codeBlock) {
-        RELEASE_ASSERT(exception);
+    ASSERT(!!throwScope.exception() == !codeBlock);
+    if (UNLIKELY(!codeBlock))
         return exception;
-    }
     
     if (Options::validateBytecode())
         codeBlock->validate();

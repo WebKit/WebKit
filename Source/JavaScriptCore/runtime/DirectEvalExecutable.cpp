@@ -47,6 +47,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(ExecState* exec, const Source
     executable->finishCreation(vm);
 
     UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createLocalEvalCodeBlock(exec, executable, variablesUnderTDZ);
+    ASSERT(!!scope.exception() == !unlinkedEvalCode);
     if (!unlinkedEvalCode)
         return 0;
 

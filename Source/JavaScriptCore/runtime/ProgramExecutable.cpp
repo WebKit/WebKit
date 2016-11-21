@@ -28,6 +28,7 @@
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
 #include "Debugger.h"
+#include "Exception.h"
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LLIntEntrypoint.h"
@@ -72,14 +73,15 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 
 JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callFrame, JSScope* scope)
 {
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
     JSGlobalObject* globalObject = scope->globalObject();
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 
-    JSObject* exception = 0;
+    JSObject* exception = nullptr;
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = globalObject->createProgramCodeBlock(callFrame, this, &exception);
-    if (exception)
+    if (UNLIKELY(exception))
         return exception;
 
     JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();
@@ -98,7 +100,9 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names, or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
-            if (globalObject->hasProperty(exec, entry.key.get())) {
+            bool hasProperty = globalObject->hasProperty(exec, entry.key.get());
+            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            if (hasProperty) {
                 // The ES6 spec says that just RestrictedGlobalProperty can't be shadowed
                 // This carried out section 8.1.1.4.14 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
                 PropertyDescriptor descriptor;
@@ -107,8 +111,10 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
                 if (descriptor.value() != jsUndefined() && !descriptor.configurable())
                     return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
             }
-                
-            if (globalLexicalEnvironment->hasProperty(exec, entry.key.get())) {
+
+            hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            if (hasProperty) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {
                     // We only allow "const" duplicate declarations under this setting.
                     // For example, we don't "let" variables to be overridden by "const" variables.
@@ -123,7 +129,9 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // It's an error to introduce a shadow.
         if (!globalLexicalEnvironment->isEmpty()) {
             for (auto& entry : variableDeclarations) {
-                if (globalLexicalEnvironment->hasProperty(exec, entry.key.get()))
+                bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+                if (hasProperty)
                     return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
             }
         }
@@ -148,6 +156,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     for (auto& entry : variableDeclarations) {
         ASSERT(entry.value.isVar());
         globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
+        ASSERT(!throwScope.exception());
     }
 
     {
