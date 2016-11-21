@@ -1,3 +1,23 @@
+2016-11-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WebRTC] Switch to downstream OpenWebRTC and more recent GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=164817
+
+        Reviewed by Alejandro G. Castro.
+
+        This is temporary, hopefully. The OpenWebRTC patches will/should
+        be soon reviewed and upstream but meanwhile it makes sense to use
+        the Igalia downstream fork so that the WebRTC testing is easier.
+
+        Recent GStreamer patches are also needed for RTP bundling support
+        and RTP retransmission fixes.
+
+        * gtk/jhbuild.modules:
+        * gtk/openwebrtc.modules: Removed.
+        * gtk/patches/gst-plugins-good-0001-rtpbin-pipeline-gets-an-EOS-when-any-rtpsources-byes.patch: Added.
+        * gtk/patches/gst-plugins-good-0002-rtpbin-avoid-generating-errors-when-rtcp-messages-ar.patch: Added.
+        * gtk/patches/gst-plugins-good-0003-rtpbin-receive-bundle-support.patch: Added.
+
 2016-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [EncryptedMedia] Make EME API runtime-enabled

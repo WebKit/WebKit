@@ -1,0 +1,61 @@
+From dab6c473c3e1b2b400ee18afc70140c2f842debf Mon Sep 17 00:00:00 2001
+From: "Alejandro G. Castro" <alex@igalia.com>
+Date: Thu, 20 Oct 2016 13:14:13 +0200
+Subject: [PATCH] rtpbin: avoid generating errors when rtcp messages are empty
+ and check the queue is not empty
+
+Add a check to verify all the output buffers were empty for the
+session in a timout and log an error.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=773269
+---
+ gst/rtpmanager/rtpsession.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/gst/rtpmanager/rtpsession.c b/gst/rtpmanager/rtpsession.c
+index 75908c0..f1d9210 100644
+--- a/gst/rtpmanager/rtpsession.c
++++ b/gst/rtpmanager/rtpsession.c
+@@ -3923,6 +3923,7 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
+   ReportData data = { GST_RTCP_BUFFER_INIT };
+   GHashTable *table_copy;
+   ReportOutput *output;
++  gboolean all_empty = FALSE;
+ 
+   g_return_val_if_fail (RTP_IS_SESSION (sess), GST_FLOW_ERROR);
+ 
+@@ -3989,6 +3990,9 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
+   if (!is_rtcp_time (sess, current_time, &data))
+     goto done;
+ 
++  /* check if all the buffers are empty afer generation */
++  all_empty = TRUE;
++
+   GST_DEBUG
+       ("doing RTCP generation %u for %u sources, early %d, may suppress %d",
+       sess->generation, data.num_to_report, data.is_early, data.may_suppress);
+@@ -4036,8 +4040,8 @@ done:
+ 
+     empty_buffer = gst_buffer_get_size (buffer) == 0;
+ 
+-    if (empty_buffer)
+-      g_warning ("rtpsession: Trying to send an empty RTCP packet");
++    if (!empty_buffer)
++      all_empty = FALSE;
+ 
+     if (sess->callbacks.send_rtcp &&
+         !empty_buffer && (do_not_suppress || !data.may_suppress)) {
+@@ -4068,6 +4072,10 @@ done:
+     g_object_unref (source);
+     g_slice_free (ReportOutput, output);
+   }
++
++  if (all_empty)
++    GST_ERROR ("generated empty RTCP messages for all the sources");
++
+   return result;
+ }
+ 
+-- 
+2.10.2
+

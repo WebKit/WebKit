@@ -48,6 +48,8 @@
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
   <repository type="git" name="github.com"
       href="https://github.com"/>
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
   <repository type="tarball" name="sourceware.org-mirror"
       href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
@@ -385,6 +387,9 @@
             md5sum="91ed4649c7c2e43a61f731d144f6f6d0">
       <patch file="gst-plugins-good-use-the-tfdt-decode-time.patch" strip="1"/>
       <patch file="gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch" strip="1"/>
+      <patch file="gst-plugins-good-0001-rtpbin-pipeline-gets-an-EOS-when-any-rtpsources-byes.patch" strip="1"/>
+      <patch file="gst-plugins-good-0002-rtpbin-avoid-generating-errors-when-rtcp-messages-ar.patch" strip="1"/>
+      <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -492,21 +497,38 @@
 
   <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
     <branch repo="github.com" module="sctplab/usrsctp.git" checkoutdir="usrsctp" tag="078ff3252f73327e0ac11d6fd5eff62011f6646e"/>
-   </autotools>
+  </autotools>
+
+  <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
+    <branch module="cisco/openh264/archive/v${version}.tar.gz" version="1.5.0"
+            checkoutdir="openh264-${version}" repo="github-tarball">
+      <patch file="openh264-configure.patch" strip="0"/>
+    </branch>
+  </autotools>
+
+  <autotools id="libvpx"
+    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared">
+    <branch repo="github.com" module="webmproject/libvpx.git" version="1.6.0" checkoutdir="libvpx-1.6.0">
+    </branch>
+  </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
      <dependencies>
        <dep package="gst-plugins-base"/>
        <dep package="libusrsctp"/>
      </dependencies>
-    <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="f40f3302007da00f0bfb82065d705b62c2ea1afd"/>
+    <branch repo="github.com" module="Igalia/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="9b2199ea970369dbf1d9ca2f8e61c95f21db2b6e"/>
    </autotools>
 
-   <autotools id="libnice" supports-non-srcdir-builds="no">
+  <autotools id="libnice" supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="freedesktop-git" module="libnice/libnice.git" tag="0.1.13" checkoutdir="libnice"/>
+    <branch module="libnice/libnice/archive/${version}.tar.gz" version="2803a0b4b70af9684e05ef5ed3f0c2fbca4b6c93"
+            checkoutdir="libnice-${version}" repo="github-tarball">
+      <patch file="libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch" strip="1"/>
+      <patch file="libnice-0001-TURN-allow-REALM-to-be-empty.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
@@ -515,7 +537,7 @@
       <dep package="gst-plugins-bad"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="0b28b080d61af3adb1f779e693fc029f9c1ad499"/>
+    <branch repo="github.com" module="Igalia/openwebrtc.git" checkoutdir="openwebrtc" tag="7f3d23e034818893db198f4b56e41609abd8847b"/>
   </autotools>
 
   <autotools id="llvm"
