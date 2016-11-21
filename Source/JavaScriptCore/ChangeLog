@@ -1,3 +1,63 @@
+2016-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Crash in com.apple.JavaScriptCore: WTF::ThreadSpecific<WTF::WTFThreadData, + 142
+        https://bugs.webkit.org/show_bug.cgi?id=164898
+
+        Reviewed by Darin Adler.
+
+        The callsite object (JSArray) of tagged template literal is managed by WeakGCMap since
+        same tagged template literal need to return an identical object.
+        The problem is that we used TemplateRegistryKey as the key of the WeakGCMap. WeakGCMap
+        can prune its entries in the collector thread. At that time, this TemplateRegistryKey
+        is deallocated. Since it includes String (and then, StringImpl), we accidentally call
+        ref(), deref() and StringImpl::destroy() in the different thread from the main thread
+        while this TemplateRegistryKey is allocated in the main thread.
+
+        Instead, we use TemplateRegistryKey* as the key of WeakGCMap. Then, to keep its liveness
+        while the entry of the WeakGCMap is alive, the callsite object has the reference to
+        the JSTemplateRegistryKey. And it holds Ref<TemplateRegistryKey>.
+
+        And now we need to lookup WeakGCMap with TemplateRegistryKey*. To do so, we create
+        interning system for TemplateRegistryKey. It is similar to AtomicStringTable and
+        SymbolRegistry. TemplateRegistryKey is allocated from this table. This table atomize the
+        TemplateRegistryKey. So we can use the pointer comparison between TemplateRegistryKey.
+        It allows us to lookup the entry from WeakGCMap by TemplateRegistryKey*.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::getTemplateObject):
+        * runtime/JSTemplateRegistryKey.cpp:
+        (JSC::JSTemplateRegistryKey::JSTemplateRegistryKey):
+        (JSC::JSTemplateRegistryKey::create):
+        * runtime/JSTemplateRegistryKey.h:
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/TemplateRegistry.h:
+        * runtime/TemplateRegistryKey.cpp: Copied from Source/JavaScriptCore/runtime/TemplateRegistry.h.
+        (JSC::TemplateRegistryKey::~TemplateRegistryKey):
+        * runtime/TemplateRegistryKey.h:
+        (JSC::TemplateRegistryKey::calculateHash):
+        (JSC::TemplateRegistryKey::create):
+        (JSC::TemplateRegistryKey::TemplateRegistryKey):
+        * runtime/TemplateRegistryKeyTable.cpp: Added.
+        (JSC::TemplateRegistryKeyTranslator::hash):
+        (JSC::TemplateRegistryKeyTranslator::equal):
+        (JSC::TemplateRegistryKeyTranslator::translate):
+        (JSC::TemplateRegistryKeyTable::~TemplateRegistryKeyTable):
+        (JSC::TemplateRegistryKeyTable::createKey):
+        (JSC::TemplateRegistryKeyTable::unregister):
+        * runtime/TemplateRegistryKeyTable.h: Copied from Source/JavaScriptCore/runtime/JSTemplateRegistryKey.h.
+        (JSC::TemplateRegistryKeyTable::KeyHash::hash):
+        (JSC::TemplateRegistryKeyTable::KeyHash::equal):
+        * runtime/VM.h:
+        (JSC::VM::templateRegistryKeyTable):
+
 2016-11-21  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in runtime/Error* files.

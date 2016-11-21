@@ -290,7 +290,7 @@ static EncodedJSValue JSC_HOST_CALL getTemplateObject(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     ASSERT(thisValue.inherits(JSTemplateRegistryKey::info()));
-    return JSValue::encode(exec->lexicalGlobalObject()->templateRegistry().getTemplateObject(exec, jsCast<JSTemplateRegistryKey*>(thisValue)->templateRegistryKey()));
+    return JSValue::encode(exec->lexicalGlobalObject()->templateRegistry().getTemplateObject(exec, jsCast<JSTemplateRegistryKey*>(thisValue)));
 }
 
 

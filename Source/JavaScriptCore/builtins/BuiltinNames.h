@@ -81,6 +81,7 @@ namespace JSC {
     macro(BuiltinLog) \
     macro(homeObject) \
     macro(getTemplateObject) \
+    macro(templateRegistryKey) \
     macro(enqueueJob) \
     macro(handler) \
     macro(promiseState) \

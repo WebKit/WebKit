@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSTemplateRegistryKey.h"
+#pragma once
 
-#include "JSCInlines.h"
-#include "VM.h"
+#include "TemplateRegistryKey.h"
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
-const ClassInfo JSTemplateRegistryKey::s_info = { "TemplateRegistryKey", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSTemplateRegistryKey) };
+class TemplateRegistryKeyTable {
+    WTF_MAKE_NONCOPYABLE(TemplateRegistryKeyTable);
+public:
+    using StringVector = Vector<String, 4>;
 
+    TemplateRegistryKeyTable() = default;
 
-JSTemplateRegistryKey::JSTemplateRegistryKey(VM& vm, Ref<TemplateRegistryKey>&& templateRegistryKey)
-    : Base(vm, vm.templateRegistryKeyStructure.get())
-    , m_templateRegistryKey(WTFMove(templateRegistryKey))
-{
-}
+    Ref<TemplateRegistryKey> createKey(const StringVector& rawStrings, const StringVector& cookedStrings);
 
-JSTemplateRegistryKey* JSTemplateRegistryKey::create(VM& vm, Ref<TemplateRegistryKey>&& templateRegistryKey)
-{
-    JSTemplateRegistryKey* result = new (NotNull, allocateCell<JSTemplateRegistryKey>(vm.heap)) JSTemplateRegistryKey(vm, WTFMove(templateRegistryKey));
-    result->finishCreation(vm);
-    return result;
-}
+    void unregister(TemplateRegistryKey&);
 
-void JSTemplateRegistryKey::destroy(JSCell* cell)
-{
-    static_cast<JSTemplateRegistryKey*>(cell)->JSTemplateRegistryKey::~JSTemplateRegistryKey();
-}
+    ~TemplateRegistryKeyTable();
+
+private:
+    struct KeyHash {
+        static unsigned hash(const TemplateRegistryKey* key) { return key->hash(); }
+        static bool equal(const TemplateRegistryKey* a, const TemplateRegistryKey* b) { return *a == *b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    HashSet<TemplateRegistryKey*, KeyHash> m_atomicTable;
+};
 
 } // namespace JSC

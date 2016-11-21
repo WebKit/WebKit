@@ -35,7 +35,7 @@ class JSTemplateRegistryKey final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSTemplateRegistryKey* create(VM&, const TemplateRegistryKey&);
+    static JSTemplateRegistryKey* create(VM&, Ref<TemplateRegistryKey>&&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -44,15 +44,15 @@ public:
 
     DECLARE_INFO;
 
-    const TemplateRegistryKey& templateRegistryKey() const { return m_templateRegistryKey; }
+    const TemplateRegistryKey& templateRegistryKey() const { return m_templateRegistryKey.get(); }
 
 protected:
     static void destroy(JSCell*);
 
 private:
-    JSTemplateRegistryKey(VM&, const TemplateRegistryKey&);
+    JSTemplateRegistryKey(VM&, Ref<TemplateRegistryKey>&&);
 
-    TemplateRegistryKey m_templateRegistryKey;
+    Ref<TemplateRegistryKey> m_templateRegistryKey;
 };
 
 } // namespace JSC

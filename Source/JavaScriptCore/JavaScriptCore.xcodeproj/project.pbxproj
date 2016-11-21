@@ -2329,6 +2329,9 @@
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A8826B1653C4CD1A642983B /* TemplateRegistryKeyTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B47F234366C4B72AC852A7E /* TemplateRegistryKeyTable.cpp */; };
+		78274D8E4C4D4FCD9A1DC6E6 /* TemplateRegistryKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDB4B5E099CD4C1BB3C1CF05 /* TemplateRegistryKey.cpp */; };
+		95D4261AF4C84CE2ACBAC981 /* TemplateRegistryKeyTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FC2F37AB76483A9966688F /* TemplateRegistryKeyTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4819,6 +4822,9 @@
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
+		8B47F234366C4B72AC852A7E /* TemplateRegistryKeyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateRegistryKeyTable.cpp; path = TemplateRegistryKeyTable.cpp; sourceTree = "<group>"; };
+		BDB4B5E099CD4C1BB3C1CF05 /* TemplateRegistryKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateRegistryKey.cpp; path = TemplateRegistryKey.cpp; sourceTree = "<group>"; };
+		08FC2F37AB76483A9966688F /* TemplateRegistryKeyTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemplateRegistryKeyTable.h; path = TemplateRegistryKeyTable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6637,6 +6643,9 @@
 				147341D91DC0300100AA29BA /* WebAssemblyExecutable.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
+				8B47F234366C4B72AC852A7E /* TemplateRegistryKeyTable.cpp */,
+				BDB4B5E099CD4C1BB3C1CF05 /* TemplateRegistryKey.cpp */,
+				08FC2F37AB76483A9966688F /* TemplateRegistryKeyTable.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -8971,6 +8980,7 @@
 				A79D3ED9C5064DD0A8466A3A /* ModuleScopeData.h in Headers */,
 				D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */,
 				473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */,
+				95D4261AF4C84CE2ACBAC981 /* TemplateRegistryKeyTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10363,6 +10373,8 @@
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
 				0F2BBD991C5FF3F50023EF23 /* B3VariableValue.cpp in Sources */,
 				13FECE06D3B445FCB6C93461 /* JSModuleLoader.cpp in Sources */,
+				1A8826B1653C4CD1A642983B /* TemplateRegistryKeyTable.cpp in Sources */,
+				78274D8E4C4D4FCD9A1DC6E6 /* TemplateRegistryKey.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

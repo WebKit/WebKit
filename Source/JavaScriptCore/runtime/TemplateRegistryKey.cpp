@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +24,16 @@
  */
 
 #include "config.h"
-#include "JSTemplateRegistryKey.h"
+#include "TemplateRegistryKey.h"
 
-#include "JSCInlines.h"
-#include "VM.h"
+#include "TemplateRegistryKeyTable.h"
 
 namespace JSC {
 
-const ClassInfo JSTemplateRegistryKey::s_info = { "TemplateRegistryKey", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSTemplateRegistryKey) };
-
-
-JSTemplateRegistryKey::JSTemplateRegistryKey(VM& vm, Ref<TemplateRegistryKey>&& templateRegistryKey)
-    : Base(vm, vm.templateRegistryKeyStructure.get())
-    , m_templateRegistryKey(WTFMove(templateRegistryKey))
+TemplateRegistryKey::~TemplateRegistryKey()
 {
-}
-
-JSTemplateRegistryKey* JSTemplateRegistryKey::create(VM& vm, Ref<TemplateRegistryKey>&& templateRegistryKey)
-{
-    JSTemplateRegistryKey* result = new (NotNull, allocateCell<JSTemplateRegistryKey>(vm.heap)) JSTemplateRegistryKey(vm, WTFMove(templateRegistryKey));
-    result->finishCreation(vm);
-    return result;
-}
-
-void JSTemplateRegistryKey::destroy(JSCell* cell)
-{
-    static_cast<JSTemplateRegistryKey*>(cell)->JSTemplateRegistryKey::~JSTemplateRegistryKey();
+    if (m_table)
+        m_table->unregister(*this);
 }
 
 } // namespace JSC

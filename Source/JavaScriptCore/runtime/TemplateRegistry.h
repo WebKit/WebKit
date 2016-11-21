@@ -26,20 +26,22 @@
 #pragma once
 
 #include "JSArray.h"
-#include "TemplateRegistryKey.h"
 #include "WeakGCMap.h"
 #include <limits>
 
 namespace JSC {
 
+class JSTemplateRegistryKey;
+class TemplateRegistryKey;
+
 class TemplateRegistry {
 public:
     TemplateRegistry(VM&);
 
-    JSArray* getTemplateObject(ExecState*, const TemplateRegistryKey&);
+    JSArray* getTemplateObject(ExecState*, JSTemplateRegistryKey*);
 
 private:
-    WeakGCMap<TemplateRegistryKey, JSArray> m_templateMap;
+    WeakGCMap<const TemplateRegistryKey*, JSArray> m_templateMap;
 };
 
 } // namespace JSC
