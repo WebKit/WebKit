@@ -83,11 +83,14 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     JSObject* baseObj = asObject(baseVal);
 
     uint32_t i;
-    if (propName.getUInt32(i))
+    if (propName.getUInt32(i)) {
+        scope.release();
         return baseObj->hasProperty(exec, i);
+    }
 
     auto property = propName.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, false);
+    scope.release();
     return baseObj->hasProperty(exec, property);
 }
 

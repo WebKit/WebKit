@@ -1,5 +1,17 @@
 2016-11-20  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in CommonSlowPaths.cpp/h.
+        https://bugs.webkit.org/show_bug.cgi?id=164975
+
+        Reviewed by Darin Adler.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+
+2016-11-20  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in DateConstructor.cpp and DatePrototype.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=164995
 
