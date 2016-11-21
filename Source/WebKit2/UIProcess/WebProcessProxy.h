@@ -27,7 +27,6 @@
 
 #include "APIUserInitiatedAction.h"
 #include "ChildProcessProxy.h"
-#include "CustomProtocolManagerProxy.h"
 #include "MessageReceiverMap.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
@@ -235,8 +234,6 @@ private:
 
     HashSet<VisitedLinkStore*> m_visitedLinkStores;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
-
-    CustomProtocolManagerProxy m_customProtocolManagerProxy;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     ProcessThrottler m_throttler;

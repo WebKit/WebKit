@@ -1,3 +1,17 @@
+2016-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove m_customProtocolManagerProxy from WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=164908
+
+        Reviewed by Andreas Kling.
+
+        Since the network process is mandatory, the custom protocol manager proxy of WebProcessProxy is unused and can
+        be removed.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+
 2016-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [EncryptedMedia] Make EME API runtime-enabled
