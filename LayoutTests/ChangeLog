@@ -1,3 +1,21 @@
+2016-11-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Add iOS text selection tests - long press clear and multi line selection tests
+        https://bugs.webkit.org/show_bug.cgi?id=164899
+
+        Reviewed by Darin Adler.
+
+        Test for clearing a selection after a long press.
+        Test for checking multi-line select, both increasing and decreasing, using the left selection.
+        Test for checking multi-line select, both increasing and decreasing, using the right selection.
+
+        * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-to-select-and-tap-to-clear-expected.txt: Added.
+        * fast/events/touch/ios/long-press-to-select-and-tap-to-clear.html: Added.
+
 2016-11-19  Chris Dumez  <cdumez@apple.com>
 
         Update HTML form validation messages
