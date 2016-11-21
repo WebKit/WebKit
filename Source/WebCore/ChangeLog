@@ -1,3 +1,20 @@
+2016-11-21  Alejandro G. Castro  <alex@igalia.com> and Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][OpenWebRTC] RTP bundling support
+        https://bugs.webkit.org/show_bug.cgi?id=162333
+
+        Reviewed by Alejandro G. Castro.
+
+        Configure the OpenWebRTC transport agent bundle policy according
+        to the RTCConfiguration and pass the receive SSRCs over to
+        OpenWebRTC as well. Those are needed so the agent is aware of the
+        bundle layout.
+
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::updateReceiveConfiguration):
+        (WebCore::MediaEndpointOwr::updateSendConfiguration):
+        (WebCore::MediaEndpointOwr::ensureTransportAgentAndTransceivers):
+
 2016-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [EncryptedMedia] Make EME API runtime-enabled
