@@ -109,15 +109,14 @@ void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
 
 static double millisecondsFromComponents(ExecState* exec, const ArgList& args, WTF::TimeType timeType)
 {
-    double doubleArguments[] = {
-        args.at(0).toNumber(exec), 
-        args.at(1).toNumber(exec), 
-        args.at(2).toNumber(exec), 
-        args.at(3).toNumber(exec), 
-        args.at(4).toNumber(exec), 
-        args.at(5).toNumber(exec), 
-        args.at(6).toNumber(exec)
-    };
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double doubleArguments[7];
+    for (int i = 0; i < 7; i++) {
+        doubleArguments[i] = args.at(i).toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, 0);
+    }
 
     int numArgs = args.size();
 
@@ -140,7 +139,7 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     t.setIsDST(-1);
     double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
-    return gregorianDateTimeToMS(exec->vm(), t, ms, timeType);
+    return gregorianDateTimeToMS(vm, t, ms, timeType);
 }
 
 // ECMA 15.9.3
@@ -159,6 +158,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
             value = asDateInstance(args.at(0))->internalNumber();
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);
+            RETURN_IF_EXCEPTION(scope, nullptr);
             if (primitive.isString())
                 value = parseDate(vm, primitive.getString(exec));
             else
@@ -166,6 +166,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
         }
     } else
         value = millisecondsFromComponents(exec, args, WTF::LocalTime);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     Structure* dateStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->dateStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);

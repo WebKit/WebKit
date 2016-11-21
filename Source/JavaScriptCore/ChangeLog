@@ -1,3 +1,16 @@
+2016-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in DateConstructor.cpp and DatePrototype.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164995
+
+        Reviewed by Darin Adler.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::millisecondsFromComponents):
+        (JSC::constructDate):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+
 2016-11-20  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] speed up parsing of async functions

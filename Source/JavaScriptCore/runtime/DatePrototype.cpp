@@ -620,6 +620,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState* exec)
     if (type == NoPreference)
         type = PreferString;
 
+    scope.release();
     return JSValue::encode(thisObject->ordinaryToPrimitive(exec, type));
 }
 
