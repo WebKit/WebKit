@@ -1,3 +1,17 @@
+2016-11-21  Philippe Normand  <pnormand@igalia.com>
+
+        [Gstreamer] Add volume and mute support to the WebRTC mediaplayer
+        https://bugs.webkit.org/show_bug.cgi?id=153828
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setVolume): New implementation setting the OWR source volume property.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setMuted): New implementation setting the OWR source mute property.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState): Also set audio OWR source mute state depending on the track enabled state.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnabledChanged): chain to maybeHandleChangeMuteState.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h:
+
 2016-11-21  Alejandro G. Castro  <alex@igalia.com> and Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][OpenWebRTC] RTP bundling support

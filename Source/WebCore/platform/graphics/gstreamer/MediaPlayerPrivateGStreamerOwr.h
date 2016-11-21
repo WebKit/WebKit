@@ -40,50 +40,53 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    void setSize(const IntSize&) override;
+    void setSize(const IntSize&) final;
 
 private:
-    GstElement* createVideoSink() override;
-    GstElement* audioSink() const override { return m_audioSink.get(); }
-    bool isLiveStream() const override { return true; }
+    GstElement* createVideoSink() final;
+    GstElement* audioSink() const final { return m_audioSink.get(); }
+    bool isLiveStream() const final { return true; }
 
-    String engineDescription() const override { return "OpenWebRTC"; }
+    String engineDescription() const final { return "OpenWebRTC"; }
 
-    void load(const String&) override;
+    void load(const String&) final;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, MediaSourcePrivateClient*) override;
+    void load(const String&, MediaSourcePrivateClient*) final;
 #endif
-    void load(MediaStreamPrivate&) override;
-    void cancelLoad() override { }
+    void load(MediaStreamPrivate&) final;
+    void cancelLoad() final { }
 
-    void prepareToPlay() override { }
-    void play() override;
-    void pause() override;
+    void prepareToPlay() final { }
+    void play() final;
+    void pause() final;
 
-    bool hasVideo() const override;
-    bool hasAudio() const override;
+    bool hasVideo() const final;
+    bool hasAudio() const final;
 
-    float duration() const override { return 0; }
+    float duration() const final { return 0; }
 
-    float currentTime() const override;
-    void seek(float) override { }
-    bool seeking() const override { return false; }
+    float currentTime() const final;
+    void seek(float) final { }
+    bool seeking() const final { return false; }
 
-    void setRate(float) override { }
-    void setPreservesPitch(bool) override { }
-    bool paused() const override { return m_paused; }
+    void setRate(float) final { }
+    void setPreservesPitch(bool) final { }
+    bool paused() const final { return m_paused; }
 
-    bool hasClosedCaptions() const override { return false; }
-    void setClosedCaptionsVisible(bool) override { };
+    void setVolume(float) final;
+    void setMuted(bool) final;
 
-    float maxTimeSeekable() const override { return 0; }
-    std::unique_ptr<PlatformTimeRanges> buffered() const override { return std::make_unique<PlatformTimeRanges>(); }
-    bool didLoadingProgress() const override;
+    bool hasClosedCaptions() const final { return false; }
+    void setClosedCaptionsVisible(bool) final { };
 
-    unsigned long long totalBytes() const override { return 0; }
+    float maxTimeSeekable() const final { return 0; }
+    std::unique_ptr<PlatformTimeRanges> buffered() const final { return std::make_unique<PlatformTimeRanges>(); }
+    bool didLoadingProgress() const final;
 
-    bool canLoadPoster() const override { return false; }
-    void setPoster(const String&) override { }
+    unsigned long long totalBytes() const final { return 0; }
+
+    bool canLoadPoster() const final { return false; }
+    void setPoster(const String&) final { }
 
     // MediaStreamTrackPrivate::Observer implementation.
     void trackEnded(MediaStreamTrackPrivate&) final;

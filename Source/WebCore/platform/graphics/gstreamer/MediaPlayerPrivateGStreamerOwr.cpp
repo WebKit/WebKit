@@ -30,7 +30,6 @@
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceOwr.h"
 #include "URL.h"
-#include <gst/audio/streamvolume.h>
 #include <owr/owr.h>
 #include <owr/owr_gst_audio_renderer.h>
 #include <owr/owr_gst_video_renderer.h>
@@ -99,6 +98,32 @@ bool MediaPlayerPrivateGStreamerOwr::hasVideo() const
 bool MediaPlayerPrivateGStreamerOwr::hasAudio() const
 {
     return m_audioTrack;
+}
+
+void MediaPlayerPrivateGStreamerOwr::setVolume(float volume)
+{
+    if (!m_audioTrack)
+        return;
+
+    auto& realTimeMediaSource = static_cast<RealtimeMediaSourceOwr&>(m_audioTrack->source());
+    auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource.mediaSource());
+
+    GST_DEBUG("Setting volume: %f", volume);
+    g_object_set(mediaSource, "volume", static_cast<gdouble>(volume), nullptr);
+}
+
+void MediaPlayerPrivateGStreamerOwr::setMuted(bool muted)
+{
+    if (!m_audioTrack)
+        return;
+
+    auto& realTimeMediaSource = static_cast<RealtimeMediaSourceOwr&>(m_audioTrack->source());
+    auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource.mediaSource());
+    if (!mediaSource)
+        return;
+
+    GST_DEBUG("Setting mute: %s", muted ? "on":"off");
+    g_object_set(mediaSource, "mute", muted, nullptr);
 }
 
 float MediaPlayerPrivateGStreamerOwr::currentTime() const
@@ -300,22 +325,24 @@ void MediaPlayerPrivateGStreamerOwr::trackMutedChanged(MediaStreamTrackPrivate& 
 
 void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrackPrivate& track)
 {
-    auto realTimeMediaSource = reinterpret_cast<RealtimeMediaSourceOwr*>(&track.source());
-    auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource->mediaSource());
+    auto& realTimeMediaSource = static_cast<RealtimeMediaSourceOwr&>(track.source());
+    auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource.mediaSource());
 
-    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", realTimeMediaSource->muted() ? "muted":"un-muted");
+    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", realTimeMediaSource.muted() ? "muted":"un-muted");
     switch (track.type()) {
     case RealtimeMediaSource::Audio:
-        if (!realTimeMediaSource->muted()) {
+        if (!realTimeMediaSource.muted()) {
             g_object_set(m_audioRenderer.get(), "disabled", false, nullptr);
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), mediaSource);
         } else {
             g_object_set(m_audioRenderer.get(), "disabled", true, nullptr);
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), nullptr);
         }
+        if (mediaSource)
+            g_object_set(mediaSource, "mute", !track.enabled(), nullptr);
         break;
     case RealtimeMediaSource::Video:
-        if (!realTimeMediaSource->muted()) {
+        if (!realTimeMediaSource.muted()) {
             g_object_set(m_videoRenderer.get(), "disabled", false, nullptr);
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), mediaSource);
         } else {
@@ -333,9 +360,10 @@ void MediaPlayerPrivateGStreamerOwr::trackSettingsChanged(MediaStreamTrackPrivat
     GST_DEBUG("Track settings changed");
 }
 
-void MediaPlayerPrivateGStreamerOwr::trackEnabledChanged(MediaStreamTrackPrivate&)
+void MediaPlayerPrivateGStreamerOwr::trackEnabledChanged(MediaStreamTrackPrivate& track)
 {
-    GST_DEBUG("Track enabled changed");
+    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", track.enabled() ? "enabled":"disabled");
+    maybeHandleChangeMutedState(track);
 }
 
 GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
