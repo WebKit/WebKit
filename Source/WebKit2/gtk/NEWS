@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.15.2
+=================
+
+What's new in WebKitGTK+ 2.15.2?
+
+  - Add new API to notify about dynamically added forms to Web Extensions.
+  - Implement selection interface and states for elements supporting aria-selected and for menu roles.
+  - Expose STATE_SINGLE_LINE and STATE_MULTI_LINE for ARIA searchbox role.
+  - Enable WebMemorySampler.
+  - Downloads started by context menu actions now have a web view associated.
+  - Fix a network process crash when main resource load is converted into a download.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.15.1
 =================
 
