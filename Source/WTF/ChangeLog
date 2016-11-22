@@ -1,3 +1,16 @@
+2016-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Hasher::addCharacters() should be able to handle zero length strings.
+        https://bugs.webkit.org/show_bug.cgi?id=165024
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, it will fail to handle zero length strings if it has a pending
+        character.  The fix is simply to return early if length is 0. 
+
+        * wtf/Hasher.h:
+        (WTF::StringHasher::addCharacters):
+
 2016-11-18  Jeremy Jones  <jeremyj@apple.com>
 
         Add runtime flag to enable pointer lock. Enable pointer lock feature for mac.

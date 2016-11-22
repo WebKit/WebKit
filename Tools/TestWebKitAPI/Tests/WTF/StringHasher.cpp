@@ -264,6 +264,43 @@ TEST(WTF, StringHasher_addCharacters)
     hasher.addCharacters(testBUChars + 3);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+
+    // Hashing zero characters after hashing other characters.
+    hasher = StringHasher();
+    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(emptyStringHash, hasher.hash());
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+    
+    hasher = StringHasher();
+    hasher.addCharacters(testALChars, 1);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(testAHash1, hasher.hash());
+    ASSERT_EQ(testAHash1 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+    
+    hasher = StringHasher();
+    hasher.addCharacters(testALChars, 2);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(testAHash2, hasher.hash());
+    ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+
+    hasher = StringHasher();
+    hasher.addCharacters(testAUChars, 3);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(testAHash3, hasher.hash());
+    ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+
+    hasher = StringHasher();
+    hasher.addCharacters(testALChars, 4);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(testAHash4, hasher.hash());
+    ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
+    
+    hasher = StringHasher();
+    hasher.addCharacters(testALChars, 5);
+    hasher.addCharacters(nullLChars, 0);
+    ASSERT_EQ(testAHash5, hasher.hash());
+    ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
 
 TEST(WTF, StringHasher_addCharactersAssumingAligned)

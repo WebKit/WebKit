@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2006, 2008, 2010, 2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -131,7 +131,9 @@ public:
 
     template<typename T, UChar Converter(T)> void addCharacters(const T* data, unsigned length)
     {
-        if (m_hasPendingCharacter && length) {
+        if (!length)
+            return;
+        if (m_hasPendingCharacter) {
             m_hasPendingCharacter = false;
             addCharactersAssumingAligned(m_pendingCharacter, Converter(*data++));
             --length;
