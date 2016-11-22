@@ -82,14 +82,18 @@ void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) 
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* header = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, void());
-    for (unsigned i = 0; i < m_header.size(); ++i)
+    for (unsigned i = 0; i < m_header.size(); ++i) {
         header->putDirectIndex(exec, i, jsString(exec, String::fromUTF8(m_header[i])));
+        RETURN_IF_EXCEPTION(scope, void());
+    }
     result->putDirect(vm, exec->propertyNames().header, header);
     
     JSArray* sequence = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, void());
-    for (unsigned i = 0; i < m_sequence.size(); ++i)
+    for (unsigned i = 0; i < m_sequence.size(); ++i) {
         sequence->putDirectIndex(exec, i, m_sequence[i].toJS(exec));
+        RETURN_IF_EXCEPTION(scope, void());
+    }
     result->putDirect(vm, exec->propertyNames().bytecode, sequence);
 }
 

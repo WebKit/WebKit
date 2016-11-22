@@ -39,9 +39,11 @@ JSValue OSRExitSite::toJS(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(exec, 0);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    for (unsigned i = 0; i < m_codeAddresses.size(); ++i)
+    RETURN_IF_EXCEPTION(scope, { });
+    for (unsigned i = 0; i < m_codeAddresses.size(); ++i) {
         result->putDirectIndex(exec, i, jsString(exec, toString(RawPointer(m_codeAddresses[i]))));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     return result;
 }
 

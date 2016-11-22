@@ -103,10 +103,12 @@ JSValue OriginStack::toJS(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(exec, 0);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     
-    for (unsigned i = 0; i < m_stack.size(); ++i)
+    for (unsigned i = 0; i < m_stack.size(); ++i) {
         result->putDirectIndex(exec, i, m_stack[i].toJS(exec));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     
     return result;
 }

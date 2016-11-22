@@ -1,3 +1,22 @@
+2016-11-18  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in JSC profiler files.
+        https://bugs.webkit.org/show_bug.cgi?id=164971
+
+        Reviewed by Saam Barati.
+
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::addSequenceProperties):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::toJS):
+        (JSC::Profiler::Database::toJSON):
+        * profiler/ProfilerOSRExitSite.cpp:
+        (JSC::Profiler::OSRExitSite::toJS):
+        * profiler/ProfilerOriginStack.cpp:
+        (JSC::Profiler::OriginStack::toJS):
+
 2016-11-22  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in JSONObject.cpp.
