@@ -1,3 +1,19 @@
+2016-11-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Disable #line markers in bison output on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=164973
+
+        Reviewed by Darin Adler.
+
+        New bison versions since 3.0 have bug that causes unescaped paths
+        to be printed in #line directives. On Windows CMake passes absolute
+        paths to bison that have backslashes in them, leading to compiler
+        errors or warnings because of unrecognized escape sequences.
+
+        No new tests needed.
+
+        * css/makegrammar.pl:
+
 2016-11-21  Olivier Blin  <olivier.blin@softathome.com>
 
         [cmake][OpenWebRTC] Move SDPProcessorScriptResource rules to common WebCore
