@@ -83,6 +83,7 @@ JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const
 
     if (!globalObject->evalEnabled())
         return throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+    scope.release();
     return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, position, -1, functionConstructionMode, newTarget);
 }
 
@@ -116,9 +117,11 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     String program;
     if (args.isEmpty())
         program = makeString(prefix, functionName.string(), "() {\n\n}}");
-    else if (args.size() == 1)
-        program = makeString(prefix, functionName.string(), "() {\n", args.at(0).toString(exec)->value(exec), "\n}}");
-    else {
+    else if (args.size() == 1) {
+        auto body = args.at(0).toWTFString(exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        program = makeString(prefix, functionName.string(), "() {\n", body, "\n}}");
+    } else {
         StringBuilder builder;
         builder.append(prefix);
         builder.append(functionName.string());

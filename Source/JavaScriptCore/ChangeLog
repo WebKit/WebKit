@@ -1,5 +1,16 @@
 2016-11-21  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in FunctionConstructor.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165011
+
+        Reviewed by Saam Barati.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+
+2016-11-21  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in GetterSetter.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=165013
 
