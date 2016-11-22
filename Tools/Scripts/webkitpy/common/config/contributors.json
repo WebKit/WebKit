@@ -5307,6 +5307,15 @@
       ],
       "status" : "committer"
    },
+   "Tom\u00e1\u0161 Popela" : {
+      "emails" : [
+         "tpopela@redhat.com"
+      ],
+      "nicks" : [
+         "tpopela"
+      ],
+      "status" : "committer"
+   },
    "Tony Chang" : {
       "emails" : [
          "tony@chromium.org"
