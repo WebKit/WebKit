@@ -190,8 +190,10 @@ private:
 
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&, GridTrackSizingDirection, SizingOperation) const;
 
+    // FIXME: Look for better names once the refactoring is complete.
     unsigned gridColumnCount() const;
     unsigned gridRowCount() const;
+    unsigned numTracks(GridTrackSizingDirection) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 

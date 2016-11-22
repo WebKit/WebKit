@@ -387,12 +387,7 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 unsigned RenderGrid::gridColumnCount() const
 {
     ASSERT(!m_gridIsDirty);
-    // Due to limitations in our internal representation, we cannot know the number of columns from
-    // m_grid *if* there is no row (because m_grid would be empty). That's why in that case we need
-    // to get it from the style. Note that we know for sure that there are't any implicit tracks,
-    // because not having rows implies that there are no "normal" children (out-of-flow children are
-    // not stored in m_grid).
-    return m_grid.size() ? m_grid[0].size() : GridPositionsResolver::explicitGridColumnCount(style(), m_autoRepeatColumns);
+    return m_grid.size() ? m_grid[0].size() : 0;
 }
 
 unsigned RenderGrid::gridRowCount() const
@@ -488,7 +483,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     placeItemsOnGrid(TrackSizing);
 
-    GridSizingData sizingData(gridColumnCount(), gridRowCount());
+    GridSizingData sizingData(numTracks(ForColumns), numTracks(ForRows));
 
     // At this point the logical width is always definite as the above call to updateLogicalWidth()
     // properly resolves intrinsic sizes. We cannot do the same for heights though because many code
@@ -638,7 +633,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     if (!wasPopulated)
         const_cast<RenderGrid*>(this)->placeItemsOnGrid(IntrinsicSizeComputation);
 
-    GridSizingData sizingData(gridColumnCount(), gridRowCount());
+    GridSizingData sizingData(numTracks(ForColumns), numTracks(ForRows));
     sizingData.setAvailableSpace(Nullopt);
     sizingData.setFreeSpace(ForColumns, Nullopt);
     sizingData.sizingOperation = IntrinsicSizeComputation;
@@ -1687,8 +1682,12 @@ void RenderGrid::placeItemsOnGrid(SizingOperation sizingOperation)
         insertItemIntoGrid(*child, GridArea(area.rows, area.columns));
     }
 
-    ASSERT(gridRowCount() >= GridPositionsResolver::explicitGridRowCount(style(), m_autoRepeatRows));
-    ASSERT(gridColumnCount() >= GridPositionsResolver::explicitGridColumnCount(style(), m_autoRepeatColumns));
+#if ENABLE(ASSERT)
+    if (!m_gridItemArea.isEmpty()) {
+        ASSERT(gridRowCount() >= GridPositionsResolver::explicitGridRowCount(style(), m_autoRepeatRows));
+        ASSERT(gridColumnCount() >= GridPositionsResolver::explicitGridColumnCount(style(), m_autoRepeatColumns));
+    }
+#endif
 
     placeSpecifiedMajorAxisItemsOnGrid(specifiedMajorAxisAutoGridItems);
     placeAutoMajorAxisItemsOnGrid(autoMajorAxisAutoGridItems);
@@ -2057,7 +2056,7 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
 
     GridPosition startPosition = isRowAxis ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
     GridPosition endPosition = isRowAxis ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
-    int lastLine = isRowAxis ? gridColumnCount() : gridRowCount();
+    int lastLine = numTracks(direction);
 
     bool startIsAuto = startPosition.isAuto()
         || (startPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(startPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnStartSide : RowStartSide))
@@ -2709,6 +2708,19 @@ LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
     // logical position, which will only take into account the child's writing-mode.
     LayoutPoint childLocation(rowAxisOffset, columnAxisOffset);
     return isOrthogonalChild(child) ? childLocation.transposedPoint() : childLocation;
+}
+
+unsigned RenderGrid::numTracks(GridTrackSizingDirection direction) const
+{
+    // Due to limitations in our internal representation, we cannot know the number of columns from
+    // m_grid *if* there is no row (because m_grid would be empty). That's why in that case we need
+    // to get it from the style. Note that we know for sure that there are't any implicit tracks,
+    // because not having rows implies that there are no "normal" children (out-of-flow children are
+    // not stored in m_grid).
+    if (direction == ForRows)
+        return m_grid.size();
+
+    return m_grid.size() ? m_grid[0].size() : GridPositionsResolver::explicitGridColumnCount(style(), m_autoRepeatColumns);
 }
 
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)

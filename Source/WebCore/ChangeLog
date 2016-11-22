@@ -1,3 +1,38 @@
+2016-11-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Isolate size of internal representation from actual grid size
+        https://bugs.webkit.org/show_bug.cgi?id=165006
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        RenderGrid has an internal representation of a grid used to place grid items, compute grid
+        positions, run the track sizing algorithm etc. That data structure normally has exactly the
+        same size as the actual grid specified using the grid-template-xxx properties (or any other
+        shorthand). But in some cases, like for example when the grid is empty, the internal data
+        structure does not really match the actual grid. In the particular case of empty grids no
+        memory allocations are done to create a grid representation as it is not needed.
+
+        From now on both gridColumnCount() and gridRowCount() will always return the size of the
+        data structure representing the grid whereas the newly added numTracks() will always return
+        the actual size of the grid.
+
+        This is the first required step of the process of isolating the data used by the grid track
+        sizing algorithm from the actual internal state of the LayoutGrid object.
+
+        No new tests as this is just a code refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridColumnCount): Always return the number of columns of the internal
+        data structure to represent the grid.
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths): Use the actual size of the grid to
+        create the GridSizingData structure.
+        (WebCore::RenderGrid::placeItemsOnGrid): Use the actual size of the grid to create the
+        GridSizingData structure.
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::numTracks): New method which returns the actual size of the grid.
+        * rendering/RenderGrid.h:
+
 2016-11-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         Disable #line markers in bison output on Windows
