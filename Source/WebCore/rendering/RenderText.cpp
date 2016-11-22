@@ -705,15 +705,16 @@ LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
     switch (lineBreak) {
     case LineBreakAuto:
     case LineBreakAfterWhiteSpace:
-        return LineBreakIteratorModeUAX14;
+        return LineBreakIteratorMode::Default;
     case LineBreakLoose:
-        return LineBreakIteratorModeUAX14Loose;
+        return LineBreakIteratorMode::Loose;
     case LineBreakNormal:
-        return LineBreakIteratorModeUAX14Normal;
+        return LineBreakIteratorMode::Normal;
     case LineBreakStrict:
-        return LineBreakIteratorModeUAX14Strict;
+        return LineBreakIteratorMode::Strict;
     }
-    return LineBreakIteratorModeUAX14;
+    ASSERT_NOT_REACHED();
+    return LineBreakIteratorMode::Default;
 }
 
 void RenderText::computePreferredLogicalWidths(float leadWidth)

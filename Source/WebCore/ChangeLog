@@ -1,3 +1,36 @@
+2016-11-22  Darin Adler  <darin@apple.com>
+
+        Make normal case fast in the input element limitString function
+        https://bugs.webkit.org/show_bug.cgi?id=165023
+
+        Reviewed by Dan Bernstein.
+
+        When running Speedometer, the limitLength function was showing up as hot.
+        Fixed a couple obvious problems with that function's performance.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::isASCIILineBreak): Deleted. The isHTMLLineBreak function does
+        the same thing, but faster.
+        (WebCore::limitLength): Added a FIXME comment explaining that the function
+        isn't really a good idea. Don't call through to numCharactersInGraphemeClusters
+        at all for 8-bit strings since we don't allow CR or LF characters in the string
+        anyway, so there are no grapheme clusters more than a single code unit. Removed
+        optimization when the length is the string's length that String::left already does.
+        (WebCore::TextFieldInputType::sanitizeValue): Use isHTMLLineBreak instead of
+        isASCIILineBreak.
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent): Ditto.
+
+        * platform/LocalizedStrings.cpp: Use auto a lot more rather than writing out
+        RetainPtr.
+        (WebCore::truncatedStringForLookupMenuItem): Removed unneeded special case for
+        empty strings. Removed unneeded string with the ellipsis character in it, since
+        the makeString function already knows how to append a character to a string.
+
+        * rendering/RenderText.cpp:
+        (WebCore::mapLineBreakToIteratorMode): Updated for change to LineBreakIteratorMode.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextBreakablePosition): Ditto.
+
 2016-11-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Isolate size of internal representation from actual grid size

@@ -59,7 +59,7 @@ static String formatLocalizedString(String format, ...)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
 #endif
-    RetainPtr<CFStringRef> result = adoptCF(CFStringCreateWithFormatAndArguments(0, 0, format.createCFString().get(), arguments));
+    auto result = adoptCF(CFStringCreateWithFormatAndArguments(0, 0, format.createCFString().get(), arguments));
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
@@ -73,19 +73,17 @@ static String formatLocalizedString(String format, ...)
 }
 
 #if ENABLE(CONTEXT_MENUS)
+
 static String truncatedStringForLookupMenuItem(const String& original)
 {
-    if (original.isEmpty())
-        return original;
-
-    // Truncate the string if it's too long. This is in consistency with AppKit.
+    // Truncate the string if it's too long. This number is roughly the same as the one used by AppKit.
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
-    static NeverDestroyed<String> ellipsis(&horizontalEllipsis, 1);
 
     String trimmed = original.stripWhiteSpace();
     unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
-    return numberOfCharacters == trimmed.length() ? trimmed : trimmed.left(numberOfCharacters) + ellipsis.get();
+    return numberOfCharacters == trimmed.length() ? trimmed : makeString(trimmed.left(numberOfCharacters), horizontalEllipsis);
 }
+
 #endif
 
 String inputElementAltText()
@@ -135,13 +133,16 @@ String defaultDetailsSummaryText()
 }
 
 #if PLATFORM(COCOA)
+
 String copyImageUnknownFileLabel()
 {
     return WEB_UI_STRING("unknown", "Unknown filename");
 }
+
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
+
 String contextMenuItemTagOpenLinkInNewWindow()
 {
     return WEB_UI_STRING("Open Link in New Window", "Open in New Window context menu item");
@@ -237,7 +238,7 @@ String contextMenuItemTagSearchInSpotlight()
 String contextMenuItemTagSearchWeb()
 {
 #if PLATFORM(COCOA)
-    RetainPtr<CFStringRef> searchProviderName = adoptCF(wkCopyDefaultSearchProviderDisplayName());
+    auto searchProviderName = adoptCF(wkCopyDefaultSearchProviderDisplayName());
     return formatLocalizedString(WEB_UI_STRING("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get());
 #else
     return WEB_UI_STRING("Search with Google", "Search with Google context menu item");
@@ -247,7 +248,7 @@ String contextMenuItemTagSearchWeb()
 String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
 #if USE(CF)
-    RetainPtr<CFStringRef> selectedCFString = truncatedStringForLookupMenuItem(selectedString).createCFString();
+    auto selectedCFString = truncatedStringForLookupMenuItem(selectedString).createCFString();
     return formatLocalizedString(WEB_UI_STRING("Look Up “%@”", "Look Up context menu item with selected word"), selectedCFString.get());
 #else
     return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForLookupMenuItem(selectedString));
@@ -324,6 +325,7 @@ String contextMenuItemTagOutline()
 }
 
 #if PLATFORM(COCOA)
+
 String contextMenuItemTagStyles()
 {
     return WEB_UI_STRING("Styles...", "Styles context menu item");
@@ -348,6 +350,7 @@ String contextMenuItemTagStopSpeaking()
 {
     return WEB_UI_STRING("Stop Speaking", "Stop speaking context menu item");
 }
+
 #endif
 
 String contextMenuItemTagWritingDirectionMenu()
@@ -544,6 +547,7 @@ String contextMenuItemTagInspectElement()
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if !PLATFORM(IOS)
+
 String searchMenuNoRecentSearchesText()
 {
     return WEB_UI_STRING("No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed");
@@ -558,6 +562,7 @@ String searchMenuClearRecentSearchesText()
 {
     return WEB_UI_STRING("Clear Recent Searches", "menu item in Recent Searches menu that empties menu's contents");
 }
+
 #endif // !PLATFORM(IOS)
 
 String AXWebAreaText()
@@ -880,6 +885,7 @@ String keygenKeychainItemName(const String& host)
 #endif
 
 #if PLATFORM(IOS)
+
 String htmlSelectMultipleItems(size_t count)
 {
     switch (count) {
@@ -911,21 +917,22 @@ String fileButtonNoMediaFilesSelectedLabel()
 {
     return WEB_UI_STRING("no media selected (multiple)", "Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected");
 }
+
 #endif
 
 String imageTitle(const String& filename, const IntSize& size)
 {
 #if USE(CF)
-    RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCopyCurrent());
-    RetainPtr<CFNumberFormatterRef> formatter = adoptCF(CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));
+    auto locale = adoptCF(CFLocaleCopyCurrent());
+    auto formatter = adoptCF(CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));
 
     int widthInt = size.width();
-    RetainPtr<CFNumberRef> width = adoptCF(CFNumberCreate(0, kCFNumberIntType, &widthInt));
-    RetainPtr<CFStringRef> widthString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), width.get()));
+    auto width = adoptCF(CFNumberCreate(0, kCFNumberIntType, &widthInt));
+    auto widthString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), width.get()));
 
     int heightInt = size.height();
-    RetainPtr<CFNumberRef> height = adoptCF(CFNumberCreate(0, kCFNumberIntType, &heightInt));
-    RetainPtr<CFStringRef> heightString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), height.get()));
+    auto height = adoptCF(CFNumberCreate(0, kCFNumberIntType, &heightInt));
+    auto heightString = adoptCF(CFNumberFormatterCreateStringWithNumber(0, formatter.get(), height.get()));
 
     return formatLocalizedString(WEB_UI_STRING("%@ %@×%@ pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename.createCFString().get(), widthString.get(), heightString.get());
 #else
@@ -1126,7 +1133,7 @@ String validationMessageTooLongText(int, int maxLength)
 
 String validationMessageRangeUnderflowText(const String& minimum)
 {
-#if PLATFORM(COCOA)
+#if USE(CF)
     return formatLocalizedString(WEB_UI_STRING("Value must be greater than or equal to %@", "Validation message for input form controls with value lower than allowed minimum"), minimum.createCFString().get());
 #else
     UNUSED_PARAM(minimum);
@@ -1136,7 +1143,7 @@ String validationMessageRangeUnderflowText(const String& minimum)
 
 String validationMessageRangeOverflowText(const String& maximum)
 {
-#if PLATFORM(COCOA)
+#if USE(CF)
     return formatLocalizedString(WEB_UI_STRING("Value must be less than or equal to %@", "Validation message for input form controls with value higher than allowed maximum"), maximum.createCFString().get());
 #else
     UNUSED_PARAM(maximum);
@@ -1160,6 +1167,7 @@ String clickToExitFullScreenText()
 }
 
 #if ENABLE(VIDEO_TRACK)
+
 String textTrackSubtitlesText()
 {
     return WEB_UI_STRING("Subtitles", "Menu section heading for subtitles");
@@ -1185,7 +1193,10 @@ String audioTrackNoLabelText()
     return WEB_UI_STRING_KEY("Unknown", "Unknown (audio track)", "Menu item label for an audio track that has no other name");
 }
 
-#if PLATFORM(COCOA) || PLATFORM(WIN)
+#endif
+
+#if ENABLE(VIDEO_TRACK) && USE(CF)
+
 String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
 {
     return formatLocalizedString(WEB_UI_STRING("%@ (%@-%@)", "Text track display name format that includes the country and language of the subtitle, in the form of 'Title (Language-Country)'"), title.createCFString().get(), language.createCFString().get(), country.createCFString().get());
@@ -1220,7 +1231,6 @@ String audioDescriptionTrackSuffixText(const String& title)
 {
     return formatLocalizedString(WEB_UI_STRING("%@ AD", "Text track contains Audio Descriptions"), title.createCFString().get());
 }
-#endif
 
 #endif
 
@@ -1240,6 +1250,7 @@ String useBlockedPlugInContextMenuTitle()
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
+
 String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName)
 {
     return formatLocalizedString(WEB_UI_STRING("%@ WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain"), localizedApplicationName.createCFString().get());
@@ -1249,9 +1260,11 @@ String webCryptoMasterKeyKeychainComment()
 {
     return WEB_UI_STRING("Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB", "Description of WebCrypto master keys in Keychain");
 }
+
 #endif
 
 #if PLATFORM(MAC)
+
 String insertListTypeNone()
 {
     return WEB_UI_STRING("None", "Option in segmented control for choosing list type in text editing");
@@ -1281,6 +1294,7 @@ String exitFullScreenButtonAccessibilityTitle()
 {
     return WEB_UI_STRING("Exit Fullscreen", "Button for exiting fullscreen when in fullscreen media playback");
 }
+
 #endif // PLATFORM(MAC)
 
 } // namespace WebCore

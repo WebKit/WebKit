@@ -1,3 +1,32 @@
+2016-11-22  Darin Adler  <darin@apple.com>
+
+        Make normal case fast in the input element limitString function
+        https://bugs.webkit.org/show_bug.cgi?id=165023
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/text/LineBreakIteratorPoolICU.h: Removed many unneeded includes.
+        Simplified the class a bit, removing some extra definitions.
+        (WTF::LineBreakIteratorPool::sharedPool): Use NeverDestroyed instead of new.
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword): Reimplemented in
+        a simpler way without using StringBuilder. Also updated for change to
+        LineBreakIteratorMode.
+        (WTF::LineBreakIteratorPool::put): Use uncheckedAppend since the code is
+        careful to only use the inline capacity in the vector.
+
+        * wtf/text/TextBreakIterator.cpp: Moved some includes in here from the header.
+        (WTF::mapLineIteratorModeToRules): Updated for change to LineBreakIteratorMode.
+        (WTF::openLineBreakIterator): Ditto.
+        (WTF::numGraphemeClusters): Added a fast path for all 8-bit strings; don't
+        use ICU for that case, even if there is a CR character in it.
+        (WTF::numCharactersInGraphemeClusters): Added a fast path for strings that are
+        short enough to entirely fit without even looking at the characters; that's a
+        case we likely hit all the time. Also added a fast path for all 8-bit strings.
+
+        * wtf/text/TextBreakIterator.h: Changed LineBreakIteratorMode to be an enum
+        class and not repeat UAX14 in the names of the modes. Initialize data members
+        in the class definition rather than the constructors.
+
 2016-11-21  Mark Lam  <mark.lam@apple.com>
 
         Hasher::addCharacters() should be able to handle zero length strings.

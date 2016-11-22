@@ -121,7 +121,7 @@ unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment
         UChar lastCharacter = textLength > 0 ? currentText[textLength - 1] : 0;
         UChar secondToLastCharacter = textLength > 1 ? currentText[textLength - 2] : 0;
         m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
-        m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
+        m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorMode::Default);
     }
     const auto* characters = segment.text.characters<CharacterType>();
     unsigned segmentLength = segment.end - segment.start;

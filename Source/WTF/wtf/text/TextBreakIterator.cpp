@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,11 +23,13 @@
 #include "TextBreakIterator.h"
 
 #include "LineBreakIteratorPoolICU.h"
+#include "TextBreakIteratorInternalICU.h"
 #include "UTextProviderLatin1.h"
 #include "UTextProviderUTF16.h"
 #include <atomic>
 #include <mutex>
-#include <wtf/text/StringView.h>
+#include <unicode/ubrk.h>
+#include <wtf/text/StringBuilder.h>
 
 // FIXME: This needs a better name
 #define ADDITIONAL_EMOJI_SUPPORT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100))
@@ -734,16 +736,16 @@ static String mapLineIteratorModeToRules(LineBreakIteratorMode mode, bool isCJK)
     rulesBuilder.append(uax14Prologue);
     rulesBuilder.append(uax14AssignmentsBefore);
     switch (mode) {
-    case LineBreakIteratorModeUAX14:
+    case LineBreakIteratorMode::Default:
         rulesBuilder.append(isCJK ? uax14AssignmentsCustomDefaultCJK : uax14AssignmentsCustomDefaultNonCJK);
         break;
-    case LineBreakIteratorModeUAX14Loose:
+    case LineBreakIteratorMode::Loose:
         rulesBuilder.append(isCJK ? uax14AssignmentsCustomLooseCJK : uax14AssignmentsCustomLooseNonCJK);
         break;
-    case LineBreakIteratorModeUAX14Normal:
+    case LineBreakIteratorMode::Normal:
         rulesBuilder.append(isCJK ? uax14AssignmentsCustomNormalCJK : uax14AssignmentsCustomNormalNonCJK);
         break;
-    case LineBreakIteratorModeUAX14Strict:
+    case LineBreakIteratorMode::Strict:
         rulesBuilder.append(isCJK ? uax14AssignmentsCustomStrictCJK : uax14AssignmentsCustomStrictNonCJK);
         break;
     }
@@ -783,7 +785,7 @@ TextBreakIterator* openLineBreakIterator(const AtomicString& locale, LineBreakIt
     UBreakIterator* ubrkIter;
     UErrorCode openStatus = U_ZERO_ERROR;
     bool localeIsEmpty = locale.isEmpty();
-    if (mode == LineBreakIteratorModeUAX14)
+    if (mode == LineBreakIteratorMode::Default)
         ubrkIter = ubrk_open(UBRK_LINE, localeIsEmpty ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
     else {
         UParseError parseStatus;
@@ -902,40 +904,56 @@ unsigned numGraphemeClusters(StringView string)
     if (!stringLength)
         return 0;
 
-    // The only Latin-1 Extended Grapheme Cluster is CR LF
-    if (string.is8Bit() && !string.contains('\r'))
-        return stringLength;
+    // The only Latin-1 Extended Grapheme Cluster is CRLF.
+    if (string.is8Bit()) {
+        auto* characters = string.characters8();
+        unsigned numCRLF = 0;
+        for (unsigned i = 1; i < stringLength; ++i)
+            numCRLF += characters[i - 1] == '\r' && characters[i] == '\n';
+        return stringLength - numCRLF;
+    }
 
-    NonSharedCharacterBreakIterator it(string);
-    if (!it)
+    NonSharedCharacterBreakIterator iterator { string };
+    if (!iterator) {
+        ASSERT_NOT_REACHED();
         return stringLength;
+    }
 
-    unsigned num = 0;
-    while (textBreakNext(it) != TextBreakDone)
-        ++num;
-    return num;
+    unsigned numGraphemeClusters = 0;
+    while (textBreakNext(iterator) != TextBreakDone)
+        ++numGraphemeClusters;
+    return numGraphemeClusters;
 }
 
-unsigned numCharactersInGraphemeClusters(const StringView& s, unsigned numGraphemeClusters)
+unsigned numCharactersInGraphemeClusters(StringView string, unsigned numGraphemeClusters)
 {
-    unsigned stringLength = s.length();
+    unsigned stringLength = string.length();
 
-    if (!stringLength)
-        return 0;
+    if (stringLength <= numGraphemeClusters)
+        return stringLength;
 
-    // The only Latin-1 Extended Grapheme Cluster is CR LF
-    if (s.is8Bit() && !s.contains('\r'))
-        return std::min(stringLength, numGraphemeClusters);
+    // The only Latin-1 Extended Grapheme Cluster is CRLF.
+    if (string.is8Bit()) {
+        auto* characters = string.characters8();
+        unsigned i, j;
+        for (i = 0, j = 0; i < numGraphemeClusters && j + 1 < stringLength; ++i, ++j)
+            j += characters[j] == '\r' && characters[j + 1] == '\n';
+        return j + (i < numGraphemeClusters && j < stringLength);
+    }
 
-    NonSharedCharacterBreakIterator it(s);
-    if (!it)
-        return std::min(stringLength, numGraphemeClusters);
+    NonSharedCharacterBreakIterator iterator { string };
+    if (!iterator) {
+        ASSERT_NOT_REACHED();
+        return stringLength;
+    }
 
     for (unsigned i = 0; i < numGraphemeClusters; ++i) {
-        if (textBreakNext(it) == TextBreakDone)
+        if (textBreakNext(iterator) == TextBreakDone) {
+            ASSERT_NOT_REACHED();
             return stringLength;
+        }
     }
-    return textBreakCurrent(it);
+    return textBreakCurrent(iterator);
 }
 
 } // namespace WTF

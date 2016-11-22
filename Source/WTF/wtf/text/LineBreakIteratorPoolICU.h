@@ -23,63 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineBreakIteratorPoolICU_h
-#define LineBreakIteratorPoolICU_h
+#pragma once
 
 #include "TextBreakIterator.h"
-#include "TextBreakIteratorInternalICU.h"
-#include <unicode/ubrk.h>
-#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WTF {
 
 class LineBreakIteratorPool {
     WTF_MAKE_NONCOPYABLE(LineBreakIteratorPool);
 public:
-    LineBreakIteratorPool() { }
+    LineBreakIteratorPool() = default;
 
     static LineBreakIteratorPool& sharedPool()
     {
-        static WTF::ThreadSpecific<LineBreakIteratorPool>* pool = new WTF::ThreadSpecific<LineBreakIteratorPool>;
-        return **pool;
+        static NeverDestroyed<WTF::ThreadSpecific<LineBreakIteratorPool>> pool;
+        return *pool.get();
     }
 
-    static String makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
+    static AtomicString makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
     {
-        StringBuilder localeWithKeyword;
-        localeWithKeyword.append(locale);
-        localeWithKeyword.appendLiteral("@break=");
         switch (mode) {
-        case LineBreakIteratorModeUAX14:
-            ASSERT_NOT_REACHED();
-            break;
-        case LineBreakIteratorModeUAX14Loose:
-            localeWithKeyword.appendLiteral("loose");
-            break;
-        case LineBreakIteratorModeUAX14Normal:
-            localeWithKeyword.appendLiteral("normal");
-            break;
-        case LineBreakIteratorModeUAX14Strict:
-            localeWithKeyword.appendLiteral("strict");
-            break;
+        case LineBreakIteratorMode::Default:
+            return locale;
+        case LineBreakIteratorMode::Loose:
+            return makeString(locale, "@break=loose");
+        case LineBreakIteratorMode::Normal:
+            return makeString(locale, "@break=normal");
+        case LineBreakIteratorMode::Strict:
+            return makeString(locale, "@break=strict");
         }
-        return localeWithKeyword.toString();
+        ASSERT_NOT_REACHED();
+        return locale;
     }
 
     TextBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
     {
-        AtomicString localeWithOptionalBreakKeyword;
-        if (mode == LineBreakIteratorModeUAX14)
-            localeWithOptionalBreakKeyword = locale;
-        else
-            localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
+        auto localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
 
-        TextBreakIterator* iterator = 0;
+        TextBreakIterator* iterator = nullptr;
         for (size_t i = 0; i < m_pool.size(); ++i) {
             if (m_pool[i].first == localeWithOptionalBreakKeyword) {
                 iterator = m_pool[i].second;
@@ -91,37 +76,31 @@ public:
         if (!iterator) {
             iterator = openLineBreakIterator(localeWithOptionalBreakKeyword, mode, isCJK);
             if (!iterator)
-                return 0;
+                return nullptr;
         }
 
         ASSERT(!m_vendedIterators.contains(iterator));
-        m_vendedIterators.set(iterator, localeWithOptionalBreakKeyword);
+        m_vendedIterators.add(iterator, localeWithOptionalBreakKeyword);
         return iterator;
     }
 
     void put(TextBreakIterator* iterator)
     {
-        ASSERT_ARG(iterator, m_vendedIterators.contains(iterator));
-
+        ASSERT(m_vendedIterators.contains(iterator));
         if (m_pool.size() == capacity) {
             closeLineBreakIterator(m_pool[0].second);
             m_pool.remove(0);
         }
-
-        m_pool.append(Entry(m_vendedIterators.take(iterator), iterator));
+        m_pool.uncheckedAppend({ m_vendedIterators.take(iterator), iterator });
     }
 
 private:
-    static const size_t capacity = 4;
+    static constexpr size_t capacity = 4;
 
-    typedef std::pair<AtomicString, TextBreakIterator*> Entry;
-    typedef Vector<Entry, capacity> Pool;
-    Pool m_pool;
+    Vector<std::pair<AtomicString, TextBreakIterator*>, capacity> m_pool;
     HashMap<TextBreakIterator*, AtomicString> m_vendedIterators;
 
     friend WTF::ThreadSpecific<LineBreakIteratorPool>::operator LineBreakIteratorPool*();
 };
 
 }
-
-#endif

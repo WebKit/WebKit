@@ -42,6 +42,7 @@
 #include "FrameSelection.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
@@ -378,22 +379,23 @@ bool TextFieldInputType::shouldUseInputMethod() const
     return true;
 }
 
-static bool isASCIILineBreak(UChar c)
+// FIXME: The name of this function doesn't make clear the two jobs it does:
+// 1) Limits the string to a particular number of grapheme clusters.
+// 2) Truncates the string at the first character which is a control character other than tab.
+// FIXME: TextFieldInputType::sanitizeValue doesn't need a limit on grapheme clusters. A limit on code units would do.
+// FIXME: Where does the "truncate at first control character" rule come from?
+static String limitLength(const String& string, unsigned maxNumGraphemeClusters)
 {
-    return c == '\r' || c == '\n';
-}
-
-static String limitLength(const String& string, int maxLength)
-{
-    unsigned newLength = numCharactersInGraphemeClusters(string, maxLength);
-    for (unsigned i = 0; i < newLength; ++i) {
-        const UChar current = string[i];
-        if (current < ' ' && current != '\t') {
-            newLength = i;
-            break;
-        }
-    }
-    return newLength < string.length() ? string.left(newLength) : string;
+    StringView stringView { string };
+    unsigned firstNonTabControlCharacterIndex = stringView.find([] (UChar character) {
+        return character < ' ' && character != '\t';
+    });
+    unsigned limitedLength;
+    if (stringView.is8Bit())
+        limitedLength = std::min(firstNonTabControlCharacterIndex, maxNumGraphemeClusters);
+    else
+        limitedLength = numCharactersInGraphemeClusters(stringView.substring(0, firstNonTabControlCharacterIndex), maxNumGraphemeClusters);
+    return string.left(limitedLength);
 }
 
 static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
@@ -441,7 +443,7 @@ static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillB
 
 String TextFieldInputType::sanitizeValue(const String& proposedValue) const
 {
-    return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maxEffectiveLength);
+    return limitLength(proposedValue.removeCharacters(isHTMLLineBreak), HTMLInputElement::maxEffectiveLength);
 }
 
 void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& event)
@@ -477,13 +479,12 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     String eventText = event.text();
     unsigned textLength = eventText.length();
-    while (textLength > 0 && isASCIILineBreak(eventText[textLength - 1]))
+    while (textLength > 0 && isHTMLLineBreak(eventText[textLength - 1]))
         textLength--;
     eventText.truncate(textLength);
     eventText.replace("\r\n", " ");
     eventText.replace('\r', ' ');
     eventText.replace('\n', ' ');
-
     event.setText(limitLength(eventText, appendableLength));
 }
 
