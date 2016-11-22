@@ -1,5 +1,12 @@
 2016-11-22  Darin Adler  <darin@apple.com>
 
+        Quick follow-up to previous patch.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::numCharactersInGraphemeClusters): Removed incorrect assertion.
+
+2016-11-22  Darin Adler  <darin@apple.com>
+
         Make normal case fast in the input element limitString function
         https://bugs.webkit.org/show_bug.cgi?id=165023
 

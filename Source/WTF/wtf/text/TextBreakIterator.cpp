@@ -948,10 +948,8 @@ unsigned numCharactersInGraphemeClusters(StringView string, unsigned numGrapheme
     }
 
     for (unsigned i = 0; i < numGraphemeClusters; ++i) {
-        if (textBreakNext(iterator) == TextBreakDone) {
-            ASSERT_NOT_REACHED();
+        if (textBreakNext(iterator) == TextBreakDone)
             return stringLength;
-        }
     }
     return textBreakCurrent(iterator);
 }
