@@ -1,3 +1,14 @@
+2016-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in GetterSetter.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165013
+
+        Reviewed by Saam Barati.
+
+        * runtime/GetterSetter.cpp:
+        (JSC::callGetter):
+        (JSC::callSetter):
+
 2016-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Crash in com.apple.JavaScriptCore: WTF::ThreadSpecific<WTF::WTFThreadData, + 142

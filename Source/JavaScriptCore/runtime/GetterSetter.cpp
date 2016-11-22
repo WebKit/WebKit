@@ -83,6 +83,7 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 
     CallData callData;
     CallType callType = getter->methodTable(vm)->getCallData(getter, callData);
+    scope.release();
     return call(exec, getter, callType, callData, base, ArgList());
 }
 
@@ -103,6 +104,7 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
 
     CallData callData;
     CallType callType = setter->methodTable(vm)->getCallData(setter, callData);
+    scope.release();
     call(exec, setter, callType, callData, base, args);
     return true;
 }
