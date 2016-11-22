@@ -34,8 +34,14 @@
 OBJC_CLASS WKCustomProtocolLoader;
 #endif
 
+namespace IPC {
+class DataReference;
+}
+
 namespace WebCore {
+class ResourceError;
 class ResourceRequest;
+class ResourceResponse;
 } // namespace WebCore
 
 namespace WebKit {
@@ -50,6 +56,15 @@ public:
 
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);
+
+    void processDidClose();
+
+#if USE(SOUP)
+    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&);
+    void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
+    void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
+    void didFinishLoading(uint64_t customProtocolID);
+#endif
 
 private:
     // IPC::MessageReceiver

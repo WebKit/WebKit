@@ -27,7 +27,6 @@
 #define RequestManagerClientEfl_h
 
 #include "WebProcessPool.h"
-#include "WebSoupCustomProtocolRequestManager.h"
 #include "ewk_context_private.h"
 #include "ewk_url_scheme_request_private.h"
 
@@ -37,6 +36,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+class CustomProtocolManagerClient;
 
 class WebKitURISchemeHandler: public RefCounted<WebKitURISchemeHandler> {
 public:
@@ -79,10 +80,9 @@ public:
     void registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
 
 private:
-    static void startLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, WKURLRequestRef, const void* clientInfo);
-    static void stopLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, const void* clientInfo);
+    friend class CustomProtocolManagerClient;
 
-    WKRetainPtr<WKSoupCustomProtocolRequestManagerRef> m_requestManager;
+    WebProcessPool* m_processPool;
     URISchemeHandlerMap m_uriSchemeHandlers;
     URISchemeRequestMap m_uriSchemeRequests;
 };

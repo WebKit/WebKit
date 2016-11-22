@@ -1,3 +1,90 @@
+2016-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Simplify custom protocols handler implementation
+        https://bugs.webkit.org/show_bug.cgi?id=164922
+
+        Reviewed by Michael Catanzaro.
+
+        We are using too many classes for this and also the C API that is not needed, because both GTK+ and EFL have
+        their own APIs and this is not used by WTR at all.
+
+        * PlatformEfl.cmake: Remove files from compilation.
+        * PlatformGTK.cmake: Ditto.
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/soup/WKBaseSoup.h: Removed.
+        * UIProcess/API/APICustomProtocolManagerClient.h: Added.
+        (API::CustomProtocolManagerClient::~CustomProtocolManagerClient):
+        (API::CustomProtocolManagerClient::startLoading):
+        (API::CustomProtocolManagerClient::stopLoading):
+        (API::CustomProtocolManagerClient::invalidate):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/soup/WKAPICastSoup.h: Removed.
+        * UIProcess/API/C/soup/WKContextSoup.h: Removed.
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp: Removed.
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.h: Removed.
+        * UIProcess/API/C/soup/WKSoupRequestManager.h: Removed.
+        * UIProcess/API/efl/ewk_context.cpp: Remove unneeded include.
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp: Use CustomProtocolManagerProxy instead of WKSoupCustomProtocolRequestManagerRef.
+        (EwkUrlSchemeRequest::EwkUrlSchemeRequest):
+        (EwkUrlSchemeRequest::finish):
+        (EwkUrlSchemeRequest::invalidate):
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (EwkUrlSchemeRequest::create):
+        (EwkUrlSchemeRequest::manager):
+        * UIProcess/API/gtk/WebKitCustomProtocolManagerClient.cpp: Added.
+        (attachCustomProtocolManagerClientToContext):
+        * UIProcess/API/gtk/WebKitCustomProtocolManagerClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitRequestManagerClient.h.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp: Removed.
+        * UIProcess/API/gtk/WebKitRequestManagerClient.h: Removed.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp: Use CustomProtocolManagerProxy instead of WebSoupCustomProtocolRequestManager.
+        (webkitURISchemeRequestCreate):
+        (webkitURISchemeRequestCancel):
+        (webkitURISchemeRequestGetManager):
+        (webkitURISchemeRequestInvalidate):
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish_error):
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkitWebContextDispose):
+        (webkit_web_context_register_uri_scheme):
+        (webkitWebContextStartLoadingCustomProtocol):
+        (webkitWebContextInvalidateCustomProtocolRequests):
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::processDidClose):
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        (WebKit::CustomProtocolManagerProxy::processDidClose): Invalidate the client.
+        (WebKit::CustomProtocolManagerProxy::startLoading): Notify the client.
+        (WebKit::CustomProtocolManagerProxy::stopLoading): Ditto.
+        (WebKit::CustomProtocolManagerProxy::didReceiveResponse): Notify the network process.
+        (WebKit::CustomProtocolManagerProxy::didLoadData): Ditto.
+        (WebKit::CustomProtocolManagerProxy::didFailWithError): Ditto.
+        (WebKit::CustomProtocolManagerProxy::didFinishLoading): Ditto.
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp: Removed.
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h: Removed.
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp: Removed.
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.h: Removed.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose): Notify the CustomProtocolManagerProxy.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool): Initialize the CustomProtocolManagerClient and remove the all supplement.
+        (WebKit::WebProcessPool::setCustomProtocolManagerClient):
+        (WebKit::WebProcessPool::registerSchemeForCustomProtocol): In case of soup cache the given protocol.
+        (WebKit::WebProcessPool::unregisterSchemeForCustomProtocol): In case of soup delete the given protocol from the cache.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/efl/RequestManagerClientEfl.cpp: Do not use the C API, but API::CustomProtocolManagerClient.
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::registerURLSchemeHandler):
+        * UIProcess/efl/RequestManagerClientEfl.h:
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Use m_urlSchemesRegisteredForCustomProtocols to
+        build the list of custom protocols to send to the network process.
+
 2016-11-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix Sierra CMake build after r208452

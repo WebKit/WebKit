@@ -20,12 +20,18 @@
 #include "config.h"
 #include "CustomProtocolManagerProxy.h"
 
+#include "APICustomProtocolManagerClient.h"
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerMessages.h"
 #include "CustomProtocolManagerProxyMessages.h"
 #include "WebProcessPool.h"
-#include "WebSoupCustomProtocolRequestManager.h"
 #include <WebCore/ResourceRequest.h>
+
+#if PLATFORM(GTK)
+#include <WebCore/ErrorsGtk.h>
+#elif PLATFORM(EFL)
+#include <WebCore/ErrorsEfl.h>
+#endif
 
 namespace WebKit {
 
@@ -42,14 +48,40 @@ CustomProtocolManagerProxy::~CustomProtocolManagerProxy()
     m_childProcessProxy->removeMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName());
 }
 
+void CustomProtocolManagerProxy::processDidClose()
+{
+    m_processPool.customProtocolManagerClient().invalidate(*this);
+}
+
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_processPool.supplement<WebSoupCustomProtocolRequestManager>()->startLoading(customProtocolID, request);
+    if (!m_processPool.customProtocolManagerClient().startLoading(*this, customProtocolID, request))
+        didFailWithError(customProtocolID, WebCore::cannotShowURLError(request));
 }
 
 void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
 {
-    m_processPool.supplement<WebSoupCustomProtocolRequestManager>()->stopLoading(customProtocolID);
+    m_processPool.customProtocolManagerClient().stopLoading(*this, customProtocolID);
+}
+
+void CustomProtocolManagerProxy::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response)
+{
+    m_childProcessProxy->send(Messages::CustomProtocolManager::DidReceiveResponse(customProtocolID, response, 0), 0);
+}
+
+void CustomProtocolManagerProxy::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
+{
+    m_childProcessProxy->send(Messages::CustomProtocolManager::DidLoadData(customProtocolID, data), 0);
+}
+
+void CustomProtocolManagerProxy::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
+{
+    m_childProcessProxy->send(Messages::CustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
+}
+
+void CustomProtocolManagerProxy::didFinishLoading(uint64_t customProtocolID)
+{
+    m_childProcessProxy->send(Messages::CustomProtocolManager::DidFinishLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

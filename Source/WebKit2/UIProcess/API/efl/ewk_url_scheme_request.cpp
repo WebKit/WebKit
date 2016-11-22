@@ -31,14 +31,13 @@
 #include "WKString.h"
 #include "WKURL.h"
 #include "WebPageProxy.h"
-#include "WebSoupCustomProtocolRequestManager.h"
 
 #include "ewk_url_scheme_request_private.h"
 
 using namespace WebKit;
 
-EwkUrlSchemeRequest::EwkUrlSchemeRequest(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
-    : m_wkRequestManager(manager)
+EwkUrlSchemeRequest::EwkUrlSchemeRequest(CustomProtocolManagerProxy& manager, API::URLRequest* urlRequest, uint64_t requestID)
+    : m_wkRequestManager(&manager)
     , m_requestID(requestID)
 {
     WKURLRef url = toCopiedURLAPI(urlRequest->resourceRequest().url());
@@ -69,6 +68,9 @@ const char* EwkUrlSchemeRequest::path() const
 
 void EwkUrlSchemeRequest::finish(const void* contentData, uint64_t contentLength, const char* mimeType)
 {
+    if (!m_wkRequestManager)
+        return;
+
     WKRetainPtr<WKDataRef> wkData(AdoptWK, WKDataCreate(contentLength ? reinterpret_cast<const unsigned char*>(contentData) : 0, contentLength));
     WKRetainPtr<WKStringRef> wkMimeType = mimeType ? adoptWK(WKStringCreateWithUTF8CString(mimeType)) : 0;
 
@@ -76,10 +78,15 @@ void EwkUrlSchemeRequest::finish(const void* contentData, uint64_t contentLength
     WebCore::ResourceResponse response(WebCore::URL(WebCore::URL(), String::fromUTF8(m_url)),
         String::fromUTF8(mimeType), contentLength, emptyString());
 
-    toImpl(m_wkRequestManager.get())->didReceiveResponse(m_requestID, response);
-    toImpl(m_wkRequestManager.get())->didLoadData(m_requestID, toImpl(wkData.get()));
-    toImpl(m_wkRequestManager.get())->didFinishLoading(m_requestID);
-    toImpl(m_wkRequestManager.get())->stopLoading(m_requestID);
+    m_wkRequestManager->didReceiveResponse(m_requestID, response);
+    m_wkRequestManager->didLoadData(m_requestID, toImpl(wkData.get())->dataReference());
+    m_wkRequestManager->didFinishLoading(m_requestID);
+    m_wkRequestManager->stopLoading(m_requestID);
+}
+
+void EwkUrlSchemeRequest::invalidate()
+{
+    m_wkRequestManager = nullptr;
 }
 
 const char* ewk_url_scheme_request_scheme_get(const Ewk_Url_Scheme_Request* request)

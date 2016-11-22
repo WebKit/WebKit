@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIAutomationClient.h"
+#include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
@@ -88,10 +89,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
-#endif
-
-#if USE(SOUP)
-#include "WebSoupCustomProtocolRequestManager.h"
 #endif
 
 #if OS(LINUX)
@@ -157,6 +154,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_automationClient(std::make_unique<API::AutomationClient>())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
+#if USE(SOUP)
+    , m_customProtocolManagerClient(std::make_unique<API::CustomProtocolManagerClient>())
+#endif
     , m_visitedLinkStore(VisitedLinkStore::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
@@ -165,9 +165,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::create(legacyWebsiteDataStoreConfiguration(m_configuration)).ptr() : nullptr)
-#if USE(SOUP)
-    , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
-#endif
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
     , m_canHandleHTTPSServerTrustEvaluation(true)
@@ -197,9 +194,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     addSupplement<WebCookieManagerProxy>();
     addSupplement<WebGeolocationManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
-#if USE(SOUP)
-    addSupplement<WebSoupCustomProtocolRequestManager>();
-#endif
 #if ENABLE(MEDIA_SESSION)
     addSupplement<WebMediaSessionFocusManager>();
 #endif
@@ -1364,11 +1358,17 @@ void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(
 
 void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
 {
+#if USE(SOUP)
+    m_urlSchemesRegisteredForCustomProtocols.add(scheme);
+#endif
     sendToNetworkingProcess(Messages::CustomProtocolManager::RegisterScheme(scheme));
 }
 
 void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 {
+#if USE(SOUP)
+    m_urlSchemesRegisteredForCustomProtocols.remove(scheme);
+#endif
     sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 

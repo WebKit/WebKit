@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitRequestManagerClient_h
-#define WebKitRequestManagerClient_h
+#pragma once
 
 #include "WebKitWebContext.h"
 
-void attachRequestManagerClientToContext(WebKitWebContext*);
+void attachCustomProtocolManagerClientToContext(WebKitWebContext*);
 
-#endif

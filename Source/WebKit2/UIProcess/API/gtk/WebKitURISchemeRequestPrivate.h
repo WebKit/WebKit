@@ -20,11 +20,15 @@
 #ifndef WebKitURISchemeRequestPrivate_h
 #define WebKitURISchemeRequestPrivate_h
 
+#include "CustomProtocolManagerProxy.h"
 #include "WebKitPrivate.h"
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
+#include <WebCore/ResourceRequest.h>
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext*, API::URLRequest*);
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext*, const WebCore::ResourceRequest&, WebKit::CustomProtocolManagerProxy&);
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
+WebKit::CustomProtocolManagerProxy* webkitURISchemeRequestGetManager(WebKitURISchemeRequest*);
+void webkitURISchemeRequestInvalidate(WebKitURISchemeRequest*);
 
 #endif // WebKitURISchemeRequestPrivate_h

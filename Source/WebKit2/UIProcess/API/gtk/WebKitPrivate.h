@@ -39,7 +39,6 @@
 #include <WebKit/WKInspectorClientGtk.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
-#include <WebKit/WKSoupCustomProtocolRequestManager.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKUserMediaPermissionRequest.h>
 #include <WebKit/WebKit2_C.h>

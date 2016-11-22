@@ -26,11 +26,11 @@
 #ifndef ewk_url_scheme_request_private_h
 #define ewk_url_scheme_request_private_h
 
+#include "CustomProtocolManagerProxy.h"
 #include "WKAPICast.h"
 #include "WKBase.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
-#include "WKSoupCustomProtocolRequestManager.h"
 #include "ewk_object_private.h"
 
 /**
@@ -41,9 +41,9 @@ class EwkUrlSchemeRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlSchemeRequest)
 
-    static RefPtr<EwkUrlSchemeRequest> create(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
+    static RefPtr<EwkUrlSchemeRequest> create(WebKit::CustomProtocolManagerProxy& manager, API::URLRequest* urlRequest, uint64_t requestID)
     {
-        if (!manager || !urlRequest)
+        if (!urlRequest)
             return nullptr;
 
         return adoptRef(new EwkUrlSchemeRequest(manager, urlRequest, requestID));
@@ -56,10 +56,13 @@ public:
 
     void finish(const void* contentData, uint64_t contentLength, const char* mimeType);
 
-private:
-    EwkUrlSchemeRequest(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID);
+    WebKit::CustomProtocolManagerProxy* manager() const { return m_wkRequestManager; }
+    void invalidate();
 
-    WKRetainPtr<WKSoupCustomProtocolRequestManagerRef> m_wkRequestManager;
+private:
+    EwkUrlSchemeRequest(WebKit::CustomProtocolManagerProxy& manager, API::URLRequest* urlRequest, uint64_t requestID);
+
+    WebKit::CustomProtocolManagerProxy* m_wkRequestManager;
     WKEinaSharedString m_url;
     uint64_t m_requestID;
     WKEinaSharedString m_scheme;

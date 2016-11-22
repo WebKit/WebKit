@@ -34,10 +34,6 @@
 #include <WebKit/WKBaseGtk.h>
 #endif
 
-#if defined(USE_SOUP)
-#include <WebKit/WKBaseSoup.h>
-#endif
-
 #if defined(BUILDING_EFL__)
 #include <WebKit/WKBaseEfl.h>
 #endif

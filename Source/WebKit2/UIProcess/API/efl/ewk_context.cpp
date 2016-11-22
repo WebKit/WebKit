@@ -26,7 +26,6 @@
 #include "RequestManagerClientEfl.h"
 #include "WKAPICast.h"
 #include "WKContextPrivate.h"
-#include "WKContextSoup.h"
 #include "WKNumber.h"
 #include "WKString.h"
 #include "WebIconDatabase.h"

@@ -76,7 +76,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/efl/WKViewEfl.cpp
 
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
-    UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp
 
     UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp
 
@@ -131,8 +130,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
 
     UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
-    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
-    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
@@ -256,6 +253,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"
+    "${WEBKIT2_DIR}/UIProcess/API"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"

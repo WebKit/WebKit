@@ -219,6 +219,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 {
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
+    m_customProtocolManagerProxy.processDidClose();
 
     m_tokenForHoldingLockedFiles = nullptr;
 

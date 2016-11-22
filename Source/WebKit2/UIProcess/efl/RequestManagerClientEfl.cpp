@@ -26,52 +26,60 @@
 #include "config.h"
 #include "RequestManagerClientEfl.h"
 
+#include "APICustomProtocolManagerClient.h"
+#include "CustomProtocolManagerProxy.h"
 #include "ewk_context_private.h"
 #include "ewk_url_scheme_request_private.h"
 
 namespace WebKit {
 
-static inline RequestManagerClientEfl* toRequestManagerClientEfl(const void* clientInfo)
-{
-    return static_cast<RequestManagerClientEfl*>(const_cast<void*>(clientInfo));
-}
+class CustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
+public:
+    explicit CustomProtocolManagerClient(RequestManagerClientEfl* client)
+        : m_client(client)
+    {
+    }
+
+private:
+    bool startLoading(CustomProtocolManagerProxy& manager, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest) override
+    {
+        auto urlRequest = API::URLRequest::create(resourceRequest);
+        RefPtr<EwkUrlSchemeRequest> request = EwkUrlSchemeRequest::create(manager, urlRequest.ptr(), customProtocolID);
+        String scheme(String::fromUTF8(request.get()->scheme()));
+        RefPtr<WebKitURISchemeHandler> handler = (m_client->m_uriSchemeHandlers).get(scheme);
+        ASSERT(handler.get());
+        if (!handler->hasCallback())
+            return true;
+
+        (m_client->m_uriSchemeRequests).set(customProtocolID, request);
+        handler->performCallback(request.get());
+        return true;
+    }
+
+    void stopLoading(CustomProtocolManagerProxy&, uint64_t customProtocolID) override
+    {
+        (m_client->m_uriSchemeRequests).remove(customProtocolID);
+    }
+
+    void invalidate(CustomProtocolManagerProxy& manager) override
+    {
+        Vector<RefPtr<EwkUrlSchemeRequest>> requests;
+        copyValuesToVector(m_client->m_uriSchemeRequests, requests);
+        for (auto& request : requests) {
+            if (request->manager() == &manager) {
+                request->invalidate();
+                stopLoading(manager, request->id());
+            }
+        }
+    }
+
+    RequestManagerClientEfl* m_client;
+};
 
 RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
 {
-    m_requestManager = toAPI(toImpl(context)->supplement<WebSoupCustomProtocolRequestManager>());
-    ASSERT(m_requestManager);
-
-    WKSoupCustomProtocolRequestManagerClientV0 wkRequestManagerClient;
-    memset(&wkRequestManagerClient, 0, sizeof(WKSoupCustomProtocolRequestManagerClientV0));
-
-    wkRequestManagerClient.base.version = 0;
-    wkRequestManagerClient.base.clientInfo = this;
-    wkRequestManagerClient.startLoading = startLoading;
-    wkRequestManagerClient.stopLoading = stopLoading;
-
-    WKSoupCustomProtocolRequestManagerSetClient(m_requestManager.get(), &wkRequestManagerClient.base);
-}
-
-void RequestManagerClientEfl::startLoading(WKSoupCustomProtocolRequestManagerRef manager, uint64_t customProtocolID, WKURLRequestRef requestRef, const void* clientInfo)
-{
-    RequestManagerClientEfl* client = toRequestManagerClientEfl(clientInfo);
-    RefPtr<EwkUrlSchemeRequest> request = EwkUrlSchemeRequest::create(manager, toImpl(requestRef), customProtocolID);
-    String scheme(String::fromUTF8(request.get()->scheme()));
-    RefPtr<WebKitURISchemeHandler> handler = (client->m_uriSchemeHandlers).get(scheme);
-    ASSERT(handler.get());
-    if (!handler->hasCallback())
-        return;
-
-    (client->m_uriSchemeRequests).set(customProtocolID, request);
-    handler->performCallback(request.get());
-}
-
-void RequestManagerClientEfl::stopLoading(WKSoupCustomProtocolRequestManagerRef manager, uint64_t customProtocolID, const void* clientInfo)
-{
-    UNUSED_PARAM(manager);
-
-    RequestManagerClientEfl* client = toRequestManagerClientEfl(clientInfo);
-    (client->m_uriSchemeRequests).remove(customProtocolID);
+    m_processPool = toImpl(context);
+    m_processPool->setCustomProtocolManagerClient(std::make_unique<CustomProtocolManagerClient>(this));
 }
 
 void RequestManagerClientEfl::registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
@@ -79,8 +87,9 @@ void RequestManagerClientEfl::registerURLSchemeHandler(const String& scheme, Ewk
     ASSERT(callback);
 
     RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData));
-    m_uriSchemeHandlers.set(scheme, handler);
-    toImpl(m_requestManager.get())->registerSchemeForCustomProtocol(scheme);
+    auto addResult = m_uriSchemeHandlers.set(scheme, handler);
+    if (addResult.isNewEntry)
+        m_processPool->registerSchemeForCustomProtocol(scheme);
 }
 
 } // namespace WebKit

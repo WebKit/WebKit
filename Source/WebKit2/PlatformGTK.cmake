@@ -101,7 +101,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/gtk/WKView.cpp
 
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
-    UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp
 
     UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp
     UIProcess/API/gtk/PageClientImpl.cpp
@@ -134,6 +133,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitCookieManagerPrivate.h
     UIProcess/API/gtk/WebKitCredential.cpp
     UIProcess/API/gtk/WebKitCredential.h
+    UIProcess/API/gtk/WebKitCustomProtocolManagerClient.cpp
+    UIProcess/API/gtk/WebKitCustomProtocolManagerClient.h
     UIProcess/API/gtk/WebKitDefines.h
     UIProcess/API/gtk/WebKitDownload.cpp
     UIProcess/API/gtk/WebKitDownload.h
@@ -210,8 +211,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitPrintOperationPrivate.h
     UIProcess/API/gtk/WebKitPrivate.cpp
     UIProcess/API/gtk/WebKitPrivate.h
-    UIProcess/API/gtk/WebKitRequestManagerClient.cpp
-    UIProcess/API/gtk/WebKitRequestManagerClient.h
     UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp
     UIProcess/API/gtk/WebKitResponsePolicyDecision.h
     UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h
@@ -283,8 +282,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/linux/MemoryPressureMonitor.cpp
 
     UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
-    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
-    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
 
     UIProcess/Plugins/gtk/PluginInfoCache.cpp
 

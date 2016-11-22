@@ -32,7 +32,6 @@
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include "WebSoupCustomProtocolRequestManager.h"
 #include <Efreet.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/IconDatabase.h>

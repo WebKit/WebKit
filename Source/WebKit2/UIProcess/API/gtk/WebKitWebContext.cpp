@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
@@ -30,6 +31,7 @@
 #include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
 #include "WebKitCookieManagerPrivate.h"
+#include "WebKitCustomProtocolManagerClient.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitFaviconDatabasePrivate.h"
@@ -38,7 +40,6 @@
 #include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
-#include "WebKitRequestManagerClient.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
@@ -115,12 +116,6 @@ enum {
 
 class WebKitURISchemeHandler: public RefCounted<WebKitURISchemeHandler> {
 public:
-    WebKitURISchemeHandler()
-        : m_callback(0)
-        , m_userData(0)
-        , m_destroyNotify(0)
-    {
-    }
     WebKitURISchemeHandler(WebKitURISchemeRequestCallback callback, void* userData, GDestroyNotify destroyNotify)
         : m_callback(callback)
         , m_userData(userData)
@@ -147,9 +142,9 @@ public:
     }
 
 private:
-    WebKitURISchemeRequestCallback m_callback;
-    void* m_userData;
-    GDestroyNotify m_destroyNotify;
+    WebKitURISchemeRequestCallback m_callback { nullptr };
+    void* m_userData { nullptr };
+    GDestroyNotify m_destroyNotify { nullptr };
 };
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
@@ -162,7 +157,6 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitCookieManager> cookieManager;
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
-    RefPtr<WebSoupCustomProtocolRequestManager> requestManager;
     URISchemeHandlerMap uriSchemeHandlers;
     URISchemeRequestMap uriSchemeRequests;
 #if ENABLE(GEOLOCATION)
@@ -275,8 +269,6 @@ static void webkitWebContextConstructed(GObject* object)
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration)));
 
-    priv->requestManager = priv->processPool->supplement<WebSoupCustomProtocolRequestManager>();
-
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     priv->processPool->setIgnoreTLSErrors(false);
 
@@ -287,7 +279,7 @@ static void webkitWebContextConstructed(GObject* object)
 
     attachInjectedBundleClientToContext(webContext);
     attachDownloadClientToContext(webContext);
-    attachRequestManagerClientToContext(webContext);
+    attachCustomProtocolManagerClientToContext(webContext);
 
 #if ENABLE(GEOLOCATION)
     priv->geolocationProvider = WebKitGeolocationProvider::create(priv->processPool->supplement<WebGeolocationManagerProxy>());
@@ -304,6 +296,7 @@ static void webkitWebContextDispose(GObject* object)
         priv->clientsDetached = true;
         priv->processPool->initializeInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(nullptr);
+        priv->processPool->setCustomProtocolManagerClient(nullptr);
     }
 
     G_OBJECT_CLASS(webkit_web_context_parent_class)->dispose(object);
@@ -849,8 +842,9 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     g_return_if_fail(callback);
 
     RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData, destroyNotify));
-    context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
-    context->priv->requestManager->registerSchemeForCustomProtocol(String::fromUTF8(scheme));
+    auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
+    if (addResult.isNewEntry)
+        context->priv->processPool->registerSchemeForCustomProtocol(String::fromUTF8(scheme));
 }
 
 /**
@@ -1266,14 +1260,9 @@ WebProcessPool* webkitWebContextGetProcessPool(WebKitWebContext* context)
     return context->priv->processPool.get();
 }
 
-WebSoupCustomProtocolRequestManager* webkitWebContextGetRequestManager(WebKitWebContext* context)
+void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest, CustomProtocolManagerProxy& manager)
 {
-    return context->priv->requestManager.get();
-}
-
-void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, API::URLRequest* urlRequest)
-{
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, urlRequest));
+    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, resourceRequest, manager));
     String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request.get())));
     RefPtr<WebKitURISchemeHandler> handler = context->priv->uriSchemeHandlers.get(scheme);
     ASSERT(handler.get());
@@ -1290,6 +1279,16 @@ void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext* context, uint64
     if (!request.get())
         return;
     webkitURISchemeRequestCancel(request.get());
+}
+
+void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext* context, CustomProtocolManagerProxy& manager)
+{
+    Vector<GRefPtr<WebKitURISchemeRequest>> requests;
+    copyValuesToVector(context->priv->uriSchemeRequests, requests);
+    for (auto& request : requests) {
+        if (webkitURISchemeRequestGetManager(request.get()) == &manager)
+            webkitURISchemeRequestInvalidate(request.get());
+    }
 }
 
 void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)

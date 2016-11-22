@@ -160,4 +160,8 @@ void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
     m_loaderMap.remove(customProtocolID);
 }
 
+void CustomProtocolManagerProxy::processDidClose()
+{
+}
+
 } // namespace WebKit

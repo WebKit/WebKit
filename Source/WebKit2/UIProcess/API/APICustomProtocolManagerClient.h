@@ -1,5 +1,5 @@
 /*
- * Portions Copyright (c) 2012 Igalia S.L.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAPICastSoup_h
-#define WKAPICastSoup_h
+#pragma once
 
-#ifndef WKAPICast_h
-#error "Please #include \"WKAPICast.h\" instead of this file directly."
-#endif
+#include <wtf/Forward.h>
 
 namespace WebKit {
-
-class WebSoupCustomProtocolRequestManager;
-
-WK_ADD_API_MAPPING(WKSoupCustomProtocolRequestManagerRef, WebSoupCustomProtocolRequestManager)
-
+class CustomProtocolManagerProxy;
 }
 
-#endif // WKAPICastSoup_h
+namespace WebCore {
+class ResourceRequest;
+}
+
+namespace API {
+
+class CustomProtocolManagerClient {
+public:
+    virtual ~CustomProtocolManagerClient() { }
+
+    virtual bool startLoading(WebKit::CustomProtocolManagerProxy&, uint64_t /* customProtocolID */, const WebCore::ResourceRequest&) { return false; }
+    virtual void stopLoading(WebKit::CustomProtocolManagerProxy&, uint64_t /* customProtocolID */) { }
+
+    virtual void invalidate(WebKit::CustomProtocolManagerProxy&) { }
+};
+
+} // namespace API

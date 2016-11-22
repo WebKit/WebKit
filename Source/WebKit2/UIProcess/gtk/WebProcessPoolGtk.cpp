@@ -34,7 +34,6 @@
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include "WebSoupCustomProtocolRequestManager.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>

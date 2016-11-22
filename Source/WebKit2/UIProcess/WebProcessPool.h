@@ -70,6 +70,7 @@ OBJC_CLASS NSString;
 
 namespace API {
 class AutomationClient;
+class CustomProtocolManagerClient;
 class DownloadClient;
 class LegacyContextHistoryClient;
 class PageConfiguration;
@@ -135,6 +136,9 @@ public:
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>);
+#if USE(SOUP)
+    void setCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&&);
+#endif
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
@@ -224,6 +228,10 @@ public:
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
+
+#if USE(SOUP)
+    API::CustomProtocolManagerClient& customProtocolManagerClient() const { return *m_customProtocolManagerClient; }
+#endif
 
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
 
@@ -455,6 +463,9 @@ private:
     std::unique_ptr<API::AutomationClient> m_automationClient;
     std::unique_ptr<API::DownloadClient> m_downloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
+#if USE(SOUP)
+    std::unique_ptr<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
+#endif
 
     RefPtr<WebAutomationSession> m_automationSession;
 
@@ -499,7 +510,7 @@ private:
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)
-    HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy;
+    HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain };
 #endif
 
 #if PLATFORM(MAC)
@@ -530,6 +541,7 @@ private:
 
 #if USE(SOUP)
     bool m_ignoreTLSErrors { true };
+    HashSet<String, ASCIICaseInsensitiveHash> m_urlSchemesRegisteredForCustomProtocols;
 #endif
 
     bool m_memoryCacheDisabled;
