@@ -938,7 +938,7 @@ unsigned numCharactersInGraphemeClusters(StringView string, unsigned numGrapheme
         unsigned i, j;
         for (i = 0, j = 0; i < numGraphemeClusters && j + 1 < stringLength; ++i, ++j)
             j += characters[j] == '\r' && characters[j + 1] == '\n';
-        return j + (i < numGraphemeClusters && j < stringLength);
+        return j + (i < numGraphemeClusters);
     }
 
     NonSharedCharacterBreakIterator iterator { string };

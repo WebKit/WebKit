@@ -1,5 +1,12 @@
 2016-11-22  Darin Adler  <darin@apple.com>
 
+        One more tiny bit of follow-up.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::numCharactersInGraphemeClusters): Removed unneeded always-true check.
+
+2016-11-22  Darin Adler  <darin@apple.com>
+
         Quick follow-up to previous patch.
 
         * wtf/text/TextBreakIterator.cpp:
