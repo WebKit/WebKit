@@ -501,7 +501,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
     /**
      * WebKitWebPage::form-controls-associated:
      * @web_page: the #WebKitWebPage on which the signal is emitted
-     * @elements: (element-type WebKit.DOMElement) (transfer none): a #GPtrArray of
+     * @elements: (element-type WebKitDOMElement) (transfer none): a #GPtrArray of
      *     #WebKitDOMElement with the list of forms in the page
      *
      * Emitted after form elements (or form associated elements) are associated to a particular web
