@@ -96,6 +96,8 @@ StyleResolver& Scope::resolver()
         m_resolver = std::make_unique<StyleResolver>(m_document);
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
     }
+    ASSERT(!m_shadowRoot || &m_document == &m_shadowRoot->document());
+    ASSERT(&m_resolver->document() == &m_document);
     return *m_resolver;
 }
 

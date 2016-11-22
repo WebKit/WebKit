@@ -99,6 +99,8 @@ public:
     StyleResolver* resolverIfExists();
     void clearResolver();
 
+    const Document& document() const { return m_document; }
+
     static Scope& forNode(Node&);
 
 private:

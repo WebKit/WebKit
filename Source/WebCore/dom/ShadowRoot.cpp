@@ -102,6 +102,17 @@ void ShadowRoot::removedFrom(ContainerNode& insertionPoint)
         document().didRemoveInDocumentShadowRoot(*this);
 }
 
+void ShadowRoot::didMoveToNewDocument(Document& oldDocument)
+{
+    ASSERT(&document() != &oldDocument);
+    ASSERT(&m_styleScope->document() == &oldDocument);
+
+    // Style scopes are document specific.
+    m_styleScope = std::make_unique<Style::Scope>(*this);
+
+    DocumentFragment::didMoveToNewDocument(oldDocument);
+}
+
 Style::Scope& ShadowRoot::styleScope()
 {
     return *m_styleScope;
