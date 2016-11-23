@@ -5529,7 +5529,9 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         if (Frame* frame = core([self _frame]))
             ret = frame->eventHandler().keyEvent(event);
 
-    if (!ret)
+    if (ret)
+        [NSCursor setHiddenUntilMouseMoves:YES];
+    else
         ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
 
     [self release];

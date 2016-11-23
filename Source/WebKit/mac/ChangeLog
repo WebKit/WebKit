@@ -1,3 +1,15 @@
+2016-11-22  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] In Legacy WebKit, pressing an arrow key in editable content doesn’t hide the mouse cursor
+        https://bugs.webkit.org/show_bug.cgi?id=165036
+        <rdar://problem/5708580>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView performKeyEquivalent:]): Hide the cursor if WebCore handled the event,
+          similarly to what we do in -keyDown: and to what WKWebView does with all key events.
+
 2016-11-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix Sierra CMake build after r208452
