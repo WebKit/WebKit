@@ -1,3 +1,19 @@
+2016-11-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove ENABLE_ASSEMBLER_WX_EXCLUSIVE code
+        https://bugs.webkit.org/show_bug.cgi?id=165027
+
+        Reviewed by Darin Adler.
+
+        Remove the code guarded with ENABLE(ASSEMBLER_WX_EXCLUSIVE).
+        No port enables this and the guarded code doesn't build at all,
+        so it's safe to say it's abandoned.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::reprotectRegion): Deleted.
+
 2016-11-18  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in JSC profiler files.

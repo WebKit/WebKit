@@ -146,11 +146,6 @@ private:
     }
 };
 
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-void ExecutableAllocator::initializeAllocator()
-{
-}
-#else
 static DemandExecutableAllocator* gAllocator;
 
 namespace {
@@ -166,12 +161,8 @@ void ExecutableAllocator::initializeAllocator()
     gAllocator = new DemandExecutableAllocator();
     CodeProfiling::notifyAllocator(gAllocator);
 }
-#endif
 
 ExecutableAllocator::ExecutableAllocator(VM&)
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    : m_allocator(std::make_unique<DemandExecutableAllocator>())
-#endif
 {
     ASSERT(allocator());
 }
@@ -243,32 +234,6 @@ bool ExecutableAllocator::isValidExecutableMemory(const LockHolder& locker, void
 }
 
 #endif // ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
-
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-
-#if OS(WINDOWS)
-#error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
-#endif
-
-void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSetting setting)
-{
-    size_t pageSize = WTF::pageSize();
-
-    // Calculate the start of the page containing this region,
-    // and account for this extra memory within size.
-    intptr_t startPtr = reinterpret_cast<intptr_t>(start);
-    intptr_t pageStartPtr = startPtr & ~(pageSize - 1);
-    void* pageStart = reinterpret_cast<void*>(pageStartPtr);
-    size += (startPtr - pageStartPtr);
-
-    // Round size up
-    size += (pageSize - 1);
-    size &= ~(pageSize - 1);
-
-    mprotect(pageStart, size, (setting == Writable) ? PROTECTION_FLAGS_RW : PROTECTION_FLAGS_RX);
-}
-
-#endif
 
 }
 
