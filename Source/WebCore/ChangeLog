@@ -1,3 +1,38 @@
+2016-11-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Convert grid representation into a class
+        https://bugs.webkit.org/show_bug.cgi?id=165042
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        So far grids are represented as Vectors of Vectors. There are a couple of issues associated
+        to that decision. First or all, the source code in RenderGrid assumes the existence of that
+        data structure, meaning that we cannot eventually change it without changing a lot of
+        code. Apart from the coupling there is another issue, RenderGrid is full of methods to
+        access and manipulate that data structure.
+
+        Instead, it'd be much better to have a Grid class encapsulating both the data structures and
+        the methods required to access/manipulate it. Note that follow-up patches will move even
+        more data and procedures into this new class from the RenderGrid code.
+
+        No new tests required as this is a refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::Grid::ensureGridSize): Moved from RenderGrid.
+        (WebCore::RenderGrid::Grid::insert): Ditto.
+        (WebCore::RenderGrid::Grid::clear): Ditto.
+        (WebCore::RenderGrid::GridIterator::GridIterator):
+        (WebCore::RenderGrid::gridColumnCount): Use Grid's methods.
+        (WebCore::RenderGrid::gridRowCount): Ditto.
+        (WebCore::RenderGrid::placeItemsOnGrid): Use Grid's methods to insert children.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Ditto.
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid): Ditto.
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid): Ditto.
+        (WebCore::RenderGrid::numTracks): Use Grid's methods.
+        (WebCore::RenderGrid::ensureGridSize): Deleted. Moved to Grid class.
+        (WebCore::RenderGrid::insertItemIntoGrid): Deleted. Moved to Grid class.
+        * rendering/RenderGrid.h:
+
 2016-11-24  Antti Koivisto  <antti@apple.com>
 
         Remove unused bool return from Element::willRecalcStyle

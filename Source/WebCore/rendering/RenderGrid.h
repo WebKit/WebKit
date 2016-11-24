@@ -88,9 +88,6 @@ private:
     LayoutUnit computeUsedBreadthOfMaxLength(const GridTrackSize&, LayoutUnit usedBreadth, LayoutUnit maxSize) const;
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&) const;
 
-    void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
-    void insertItemIntoGrid(RenderBox&, const GridArea&);
-
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, SizingOperation) const;
 
     typedef ListHashSet<size_t> OrderedTrackIndexSet;
@@ -200,7 +197,30 @@ private:
     bool isOrthogonalChild(const RenderBox&) const;
     GridTrackSizingDirection flowAwareDirectionForChild(const RenderBox&, GridTrackSizingDirection) const;
 
-    Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
+    typedef Vector<RenderBox*, 1> GridCell;
+    typedef Vector<Vector<GridCell>> GridAsMatrix;
+    class Grid final {
+    public:
+        Grid() { }
+
+        unsigned numColumns() const { return m_grid.size() ? m_grid[0].size() : 0; }
+        unsigned numRows() const { return m_grid.size(); }
+
+        void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
+        void insert(RenderBox&, const GridArea&);
+
+        const GridCell& cell(unsigned row, unsigned column) const { return m_grid[row][column]; }
+
+        void shrinkToFit() { m_grid.shrinkToFit(); }
+
+        void clear();
+
+    private:
+        friend class GridIterator;
+        GridAsMatrix m_grid;
+    };
+    Grid m_grid;
+
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;
     LayoutUnit m_offsetBetweenColumns;
