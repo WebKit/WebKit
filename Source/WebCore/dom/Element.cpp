@@ -3463,10 +3463,9 @@ void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
     document().userActionElements().didDetach(this);
 }
 
-bool Element::willRecalcStyle(Style::Change)
+void Element::willRecalcStyle(Style::Change)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
-    return true;
 }
 
 void Element::didRecalcStyle(Style::Change)

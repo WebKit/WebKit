@@ -236,17 +236,16 @@ bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const
     return HTMLPlugInElement::childShouldCreateRenderer(child);
 }
 
-bool HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
+void HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
 {
     // Make sure style recalcs scheduled by a child shadow tree don't trigger reconstruction and cause flicker.
     if (change == Style::NoChange && styleValidity() == Style::Validity::Valid)
-        return true;
+        return;
 
     // FIXME: There shoudn't be need to force render tree reconstruction here.
     // It is only done because loading and load event dispatching is tied to render tree construction.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
         invalidateStyleAndRenderersForSubtree();
-    return true;
 }
 
 void HTMLPlugInImageElement::didAttachRenderers()

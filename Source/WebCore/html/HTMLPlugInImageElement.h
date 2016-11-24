@@ -117,7 +117,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
-    bool willRecalcStyle(Style::Change) final;
+    void willRecalcStyle(Style::Change) final;
     void didAttachRenderers() final;
     void willDetachRenderers() final;
 

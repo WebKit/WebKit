@@ -406,12 +406,8 @@ void TreeResolver::resolveComposedTree()
         if (shouldResolve) {
             element.resetComputedStyle();
 
-            if (element.hasCustomStyleResolveCallbacks()) {
-                if (!element.willRecalcStyle(parent.change)) {
-                    it.traverseNextSkippingChildren();
-                    continue;
-                }
-            }
+            if (element.hasCustomStyleResolveCallbacks())
+                element.willRecalcStyle(parent.change);
 
             auto elementUpdate = resolveElement(element);
 

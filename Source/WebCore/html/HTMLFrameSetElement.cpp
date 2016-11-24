@@ -200,11 +200,10 @@ void HTMLFrameSetElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-bool HTMLFrameSetElement::willRecalcStyle(Style::Change)
+void HTMLFrameSetElement::willRecalcStyle(Style::Change)
 {
     if (needsStyleRecalc() && renderer())
         renderer()->setNeedsLayout();
-    return true;
 }
 
 Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(ContainerNode& insertionPoint)

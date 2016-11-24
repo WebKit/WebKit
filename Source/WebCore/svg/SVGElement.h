@@ -170,7 +170,7 @@ protected:
     void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement*);
 
-    bool willRecalcStyle(Style::Change) override;
+    void willRecalcStyle(Style::Change) override;
 
     class InstanceInvalidationGuard;
 

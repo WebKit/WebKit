@@ -59,7 +59,7 @@ private:
     
     void defaultEventHandler(Event&) final;
 
-    bool willRecalcStyle(Style::Change) final;
+    void willRecalcStyle(Style::Change) final;
 
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void removedFrom(ContainerNode&) final;

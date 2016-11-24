@@ -299,15 +299,14 @@ int SVGElement::tabIndex() const
     return -1;
 }
 
-bool SVGElement::willRecalcStyle(Style::Change change)
+void SVGElement::willRecalcStyle(Style::Change change)
 {
     if (!m_svgRareData || styleResolutionShouldRecompositeLayer())
-        return true;
+        return;
     // If the style changes because of a regular property change (not induced by SMIL animations themselves)
     // reset the "computed style without SMIL style properties", so the base value change gets reflected.
     if (change > Style::NoChange || needsStyleRecalc())
         m_svgRareData->setNeedsOverrideComputedStyleUpdate();
-    return true;
 }
 
 SVGElementRareData& SVGElement::ensureSVGRareData()
