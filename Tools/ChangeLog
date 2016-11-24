@@ -1,3 +1,12 @@
+2016-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebContext/get-plugins after r208429.
+
+        Test plugin library was renamed as libTestNetscapePlugIn.so in r208429.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextGetPlugins): Update the library name.
+
 2016-11-22  Darin Adler  <darin@apple.com>
 
         Make normal case fast in the input element limitString function

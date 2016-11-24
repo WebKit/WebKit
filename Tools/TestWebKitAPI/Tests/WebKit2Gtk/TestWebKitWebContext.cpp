@@ -175,7 +175,7 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
 
     char normalizedPath[PATH_MAX];
     g_assert(realpath(WEBKIT_TEST_PLUGIN_DIR, normalizedPath));
-    GUniquePtr<char> pluginPath(g_build_filename(normalizedPath, "libTestNetscapePlugin.so", nullptr));
+    GUniquePtr<char> pluginPath(g_build_filename(normalizedPath, "libTestNetscapePlugIn.so", nullptr));
     g_assert_cmpstr(webkit_plugin_get_path(testPlugin.get()), ==, pluginPath.get());
     g_assert_cmpstr(webkit_plugin_get_description(testPlugin.get()), ==, "Simple Netscape® plug-in that handles test content for WebKit");
     GList* mimeInfoList = webkit_plugin_get_mime_info_list(testPlugin.get());
