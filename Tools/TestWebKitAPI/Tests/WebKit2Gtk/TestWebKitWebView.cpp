@@ -677,6 +677,7 @@ public:
 
     static gboolean showNotificationCallback(WebKitWebView*, WebKitNotification* notification, NotificationWebViewTest* test)
     {
+        g_assert(!test->m_notification);
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(notification));
         test->m_notification = notification;
         g_signal_connect(notification, "closed", G_CALLBACK(notificationClosedCallback), test);
@@ -732,6 +733,16 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    void requestNotificationAndWaitUntilShown(const char* title, const char* body, const char* tag)
+    {
+        m_event = None;
+
+        GUniquePtr<char> jscode(g_strdup_printf("n = new Notification('%s', { body: '%s', tag: '%s'});", title, body, tag));
+        webkit_web_view_run_javascript(m_webView, jscode.get(), nullptr, nullptr, nullptr);
+
+        g_main_loop_run(m_mainLoop);
+    }
+
     void clickNotificationAndWaitUntilClicked()
     {
         m_event = None;
@@ -773,12 +784,14 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
 
     static const char* title = "This is a notification";
     static const char* body = "This is the body.";
-    test->requestNotificationAndWaitUntilShown(title, body);
+    static const char* tag = "This is the tag.";
+    test->requestNotificationAndWaitUntilShown(title, body, tag);
 
     g_assert(test->m_event == NotificationWebViewTest::Shown);
     g_assert(test->m_notification);
     g_assert_cmpstr(webkit_notification_get_title(test->m_notification), ==, title);
     g_assert_cmpstr(webkit_notification_get_body(test->m_notification), ==, body);
+    g_assert_cmpstr(webkit_notification_get_tag(test->m_notification), ==, tag);
 
     test->clickNotificationAndWaitUntilClicked();
     g_assert(test->m_event == NotificationWebViewTest::OnClicked);
@@ -788,13 +801,18 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
 
     test->requestNotificationAndWaitUntilShown(title, body);
     g_assert(test->m_event == NotificationWebViewTest::Shown);
+    g_assert_cmpstr(webkit_notification_get_tag(test->m_notification), ==, nullptr);
 
     test->closeNotificationAndWaitUntilOnClosed();
     g_assert(test->m_event == NotificationWebViewTest::OnClosed);
 
-    test->requestNotificationAndWaitUntilShown(title, body);
+    // The first notification should be closed automatically because the tag is
+    // the same. It will crash in showNotificationCallback on failure.
+    test->requestNotificationAndWaitUntilShown(title, body, tag);
+    test->requestNotificationAndWaitUntilShown(title, body, tag);
     g_assert(test->m_event == NotificationWebViewTest::Shown);
 
+    // Notification should be closed when navigating to a different webpage.
     test->loadURI(gServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_event == NotificationWebViewTest::Closed);

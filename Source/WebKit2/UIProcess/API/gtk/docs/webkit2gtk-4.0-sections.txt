@@ -670,6 +670,7 @@ WebKitNotification
 webkit_notification_get_id
 webkit_notification_get_title
 webkit_notification_get_body
+webkit_notification_get_tag
 webkit_notification_close
 webkit_notification_clicked
 

@@ -70,6 +70,9 @@ webkit_notification_get_title                (WebKitNotification *notification);
 WEBKIT_API const gchar *
 webkit_notification_get_body                 (WebKitNotification *notification);
 
+WEBKIT_API const gchar *
+webkit_notification_get_tag                  (WebKitNotification *notification);
+
 WEBKIT_API void
 webkit_notification_close                    (WebKitNotification *notification);
 

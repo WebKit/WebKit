@@ -39,7 +39,8 @@ enum {
 
     PROP_ID,
     PROP_TITLE,
-    PROP_BODY
+    PROP_BODY,
+    PROP_TAG
 };
 
 enum {
@@ -52,6 +53,7 @@ enum {
 struct _WebKitNotificationPrivate {
     CString title;
     CString body;
+    CString tag;
     guint64 id;
 
     WebKitWebView* webView;
@@ -74,6 +76,9 @@ static void webkitNotificationGetProperty(GObject* object, guint propId, GValue*
         break;
     case PROP_BODY:
         g_value_set_string(value, webkit_notification_get_body(notification));
+        break;
+    case PROP_TAG:
+        g_value_set_string(value, webkit_notification_get_tag(notification));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -131,6 +136,21 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
             WEBKIT_PARAM_READABLE));
 
     /**
+     * WebKitNotification:tag:
+     *
+     * The tag identifier for the notification.
+     *
+     * Since: 2.16
+     */
+    g_object_class_install_property(objectClass,
+        PROP_TAG,
+        g_param_spec_string("tag",
+            _("Tag"),
+            _("The tag identifier for the notification"),
+            nullptr,
+            WEBKIT_PARAM_READABLE));
+
+    /**
      * WebKitNotification::closed:
      * @notification: the #WebKitNotification on which the signal is emitted
      *
@@ -176,6 +196,7 @@ WebKitNotification* webkitNotificationCreate(WebKitWebView* webView, const WebKi
     notification->priv->id = webNotification.notificationID();
     notification->priv->title = webNotification.title().utf8();
     notification->priv->body = webNotification.body().utf8();
+    notification->priv->tag = webNotification.tag().utf8();
     notification->priv->webView = webView;
     return notification;
 }
@@ -234,6 +255,24 @@ const gchar* webkit_notification_get_body(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     return notification->priv->body.data();
+}
+
+/**
+ * webkit_notification_get_tag:
+ * @notification: a #WebKitNotification
+ *
+ * Obtains the tag identifier for the notification.
+ *
+ * Returns: (allow-none): the tag for the notification
+ *
+ * Since: 2.16
+ */
+const gchar* webkit_notification_get_tag(WebKitNotification* notification)
+{
+    g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
+
+    const gchar* tag = notification->priv->tag.data();
+    return strlen(tag) > 0 ? tag : nullptr;
 }
 
 /**

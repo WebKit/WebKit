@@ -48,6 +48,8 @@ private:
     static void notificationCloseCallback(WebKitNotification*, WebKitNotificationProvider*);
     static void notificationClickedCallback(WebKitNotification*, WebKitNotificationProvider*);
 
+    void withdrawAnyPreviousNotificationMatchingTag(const String&);
+
     RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<uint64_t, GRefPtr<WebKitNotification>> m_notifications;
 };

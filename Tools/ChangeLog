@@ -1,3 +1,16 @@
+2016-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Notifications API does not expose or respect the "tag" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=164771
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Verify that showing a notification with the same tag as another notification closes the
+        previous notification before the new notification is shown.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewNotification):
+
 2016-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebContext/get-plugins after r208429.

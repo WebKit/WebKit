@@ -102,11 +102,30 @@ void WebKitNotificationProvider::notificationClickedCallback(WebKitNotification*
     provider->m_notificationManager->providerDidClickNotification(webkit_notification_get_id(notification));
 }
 
+void WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag(const String& tag)
+{
+    if (tag.isEmpty())
+        return;
+
+    for (auto& notification : m_notifications.values()) {
+        if (tag == webkit_notification_get_tag(notification.get())) {
+            webkit_notification_close(notification.get());
+            break;
+        }
+    }
+
+#ifndef NDEBUG
+    for (auto& notification : m_notifications.values())
+        ASSERT(tag != webkit_notification_get_tag(notification.get()));
+#endif
+}
+
 void WebKitNotificationProvider::show(WebPageProxy* page, const WebNotification& webNotification)
 {
     GRefPtr<WebKitNotification> notification = m_notifications.get(webNotification.notificationID());
 
     if (!notification) {
+        withdrawAnyPreviousNotificationMatchingTag(webNotification.tag());
         notification = adoptGRef(webkitNotificationCreate(WEBKIT_WEB_VIEW(page->viewWidget()), webNotification));
         g_signal_connect(notification.get(), "closed", G_CALLBACK(notificationCloseCallback), this);
         g_signal_connect(notification.get(), "clicked", G_CALLBACK(notificationClickedCallback), this);

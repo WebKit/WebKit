@@ -1,3 +1,24 @@
+2016-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Notifications API does not expose or respect the "tag" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=164771
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Expose a tag property on WebKitNotification. Ensure that any previous notification with the
+        same tag is closed when showing a new notification with that tag.
+
+        * UIProcess/API/gtk/WebKitNotification.cpp:
+        (webkit_notification_class_init):
+        (webkitNotificationCreate):
+        (webkit_notification_get_tag):
+        * UIProcess/API/gtk/WebKitNotification.h:
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag):
+        (WebKitNotificationProvider::show):
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
 2016-11-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Fix introspection warning
