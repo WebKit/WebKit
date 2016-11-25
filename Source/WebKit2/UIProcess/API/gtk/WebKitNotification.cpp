@@ -272,7 +272,7 @@ const gchar* webkit_notification_get_tag(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     const gchar* tag = notification->priv->tag.data();
-    return strlen(tag) > 0 ? tag : nullptr;
+    return notification->priv->tag.length() ? tag : nullptr;
 }
 
 /**
