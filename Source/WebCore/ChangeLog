@@ -1,3 +1,23 @@
+2016-11-25  Andreas Kling  <akling@apple.com>
+
+        MemoryPressureHandler should only trigger synchronous GC on iOS
+        <https://webkit.org/b/165043>
+        <rdar://problem/29312684>
+
+        Reviewed by Sam Weinig.
+
+        On iOS we know that there is really only one web process in play at a time,
+        so it's okay to do a synchronous GC immediately in response to high memory pressure.
+
+        On other platforms, we may have tens or hundreds of web processes, and if they
+        all start doing full GCs at the same time, it can easily bring a system to its knees
+        if it's already under pressure.
+
+        Fix this by using garbageCollectSoon() on non-iOS platforms.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+
 2016-11-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Convert grid representation into a class
