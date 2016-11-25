@@ -1,3 +1,13 @@
+2016-11-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [CSS Font Loading] FontFace.load() promises don't always fire
+        https://bugs.webkit.org/show_bug.cgi?id=165037
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/fontfaceset-rebuild-during-loading-2-expected.txt: Added.
+        * fast/text/fontfaceset-rebuild-during-loading-2.html: Added.
+
 2016-11-22  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: [USER] com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::ExtensionStyleSheets::pageUserSheet + 14

@@ -356,7 +356,6 @@ auto FontFace::status() const -> LoadStatus
 
 void FontFace::adopt(CSSFontFace& newFace)
 {
-    m_promise = Nullopt;
     m_backing->removeClient(*this);
     m_backing = newFace;
     m_backing->addClient(*this);

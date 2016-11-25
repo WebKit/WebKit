@@ -1,3 +1,43 @@
+2016-11-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [CSS Font Loading] FontFace.load() promises don't always fire
+        https://bugs.webkit.org/show_bug.cgi?id=165037
+
+        Reviewed by Simon Fraser.
+
+        We currently handle web fonts in two phases. The first phase is building up
+        StyleRuleFontFace objects which reflect the style on the page. The second is creating
+        CSSFontFace objects from those StyleRuleFontFace objects. When script modifies the
+        style on the page, we can often update the CSSFontFace objects, but there are some
+        modifications which we don't know how to model. For these operations, we destroy the
+        CSSFontFace objects and rebuild them from the newly modified StyleRuleFontFace objects.
+
+        Normally, this is fine. However, with the CSS font loading API, the CSSFontFaces back
+        Javascript objects which will persist across the rebuilding step mentioned above. This
+        means that the FontFace objects need to adopt the new CSSFontFace objects and forget
+        the old CSSFontFace objects.
+
+        This gets a little tricky because the operation which caused the rebuild may actually
+        be a modification to the specific @font-face block which backs a Javascript FontFace
+        object. Because the CSSOM can be used to change the src: attribute of the FontFace
+        object, I decided in r201971 to clear the FontFace's promise in case an old load would
+        cause the promise to resolve. However, this would never happen because the old
+        CSSFontFace is unparented during the FontFace::adopt()ion of the new CSSFontFace.
+        Therefore, old loads may still complete, but the signal would never make it to the
+        FontFace and therefore would not cause the promise to resolve. In addition, clearing
+        the promise during a rebuild is problematic because that rebuild may be caused by
+        operations which have nothing to do with the specific FontFace object in question (so
+        the FontFace object should be observably uneffected.)
+
+        Because of the above reasons, this patch simply stops clearing the promise during the
+        rebuild phase.
+
+        Tests: fast/text/fontface-rebuild-during-loading.html
+               fast/text/fontface-rebuild-during-loading-2.html
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::adopt):
+
 2016-11-25  Andreas Kling  <akling@apple.com>
 
         MemoryPressureHandler should only trigger synchronous GC on iOS
