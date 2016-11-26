@@ -1,3 +1,12 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert testharnessreport.js to LF linebreaks, from CRLF, which broke patches.
+
+        * resources/testharnessreport.js:
+        (convertResult):
+        (self.testRunner.add_completion_callback.):
+        (self.testRunner.add_completion_callback):
+
 2016-11-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] FontFace.load() promises don't always fire
