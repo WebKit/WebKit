@@ -1,3 +1,13 @@
+2016-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix compile warnings after r208415
+        https://bugs.webkit.org/show_bug.cgi?id=165061
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WTF/Time.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Notifications API does not expose or respect the "tag" attribute

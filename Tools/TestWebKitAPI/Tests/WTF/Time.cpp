@@ -167,116 +167,116 @@ TEST(WTF_Time, divide)
 
 TEST(WTF_Time, less)
 {
-    EXPECT_EQ(false, s(2) < s(1));
-    EXPECT_EQ(false, s(2) < s(2));
-    EXPECT_EQ(true, s(2) < s(3));
-    EXPECT_EQ(false, wt(2) < wt(1));
-    EXPECT_EQ(false, wt(2) < wt(2));
-    EXPECT_EQ(true, wt(2) < wt(3));
-    EXPECT_EQ(false, mt(2) < mt(1));
-    EXPECT_EQ(false, mt(2) < mt(2));
-    EXPECT_EQ(true, mt(2) < mt(3));
-    EXPECT_EQ(false, dtw(2) < dtw(1));
-    EXPECT_EQ(false, dtw(2) < dtw(2));
-    EXPECT_EQ(true, dtw(2) < dtw(3));
-    EXPECT_EQ(false, dtm(2) < dtm(1));
-    EXPECT_EQ(false, dtm(2) < dtm(2));
-    EXPECT_EQ(true, dtm(2) < dtm(3));
+    EXPECT_FALSE(s(2) < s(1));
+    EXPECT_FALSE(s(2) < s(2));
+    EXPECT_TRUE(s(2) < s(3));
+    EXPECT_FALSE(wt(2) < wt(1));
+    EXPECT_FALSE(wt(2) < wt(2));
+    EXPECT_TRUE(wt(2) < wt(3));
+    EXPECT_FALSE(mt(2) < mt(1));
+    EXPECT_FALSE(mt(2) < mt(2));
+    EXPECT_TRUE(mt(2) < mt(3));
+    EXPECT_FALSE(dtw(2) < dtw(1));
+    EXPECT_FALSE(dtw(2) < dtw(2));
+    EXPECT_TRUE(dtw(2) < dtw(3));
+    EXPECT_FALSE(dtm(2) < dtm(1));
+    EXPECT_FALSE(dtm(2) < dtm(2));
+    EXPECT_TRUE(dtm(2) < dtm(3));
 }
 
 TEST(WTF_Time, lessEqual)
 {
-    EXPECT_EQ(false, s(2) <= s(1));
-    EXPECT_EQ(true, s(2) <= s(2));
-    EXPECT_EQ(true, s(2) <= s(3));
-    EXPECT_EQ(false, wt(2) <= wt(1));
-    EXPECT_EQ(true, wt(2) <= wt(2));
-    EXPECT_EQ(true, wt(2) <= wt(3));
-    EXPECT_EQ(false, mt(2) <= mt(1));
-    EXPECT_EQ(true, mt(2) <= mt(2));
-    EXPECT_EQ(true, mt(2) <= mt(3));
-    EXPECT_EQ(false, dtw(2) <= dtw(1));
-    EXPECT_EQ(true, dtw(2) <= dtw(2));
-    EXPECT_EQ(true, dtw(2) <= dtw(3));
-    EXPECT_EQ(false, dtm(2) <= dtm(1));
-    EXPECT_EQ(true, dtm(2) <= dtm(2));
-    EXPECT_EQ(true, dtm(2) <= dtm(3));
+    EXPECT_FALSE(s(2) <= s(1));
+    EXPECT_TRUE(s(2) <= s(2));
+    EXPECT_TRUE(s(2) <= s(3));
+    EXPECT_FALSE(wt(2) <= wt(1));
+    EXPECT_TRUE(wt(2) <= wt(2));
+    EXPECT_TRUE(wt(2) <= wt(3));
+    EXPECT_FALSE(mt(2) <= mt(1));
+    EXPECT_TRUE(mt(2) <= mt(2));
+    EXPECT_TRUE(mt(2) <= mt(3));
+    EXPECT_FALSE(dtw(2) <= dtw(1));
+    EXPECT_TRUE(dtw(2) <= dtw(2));
+    EXPECT_TRUE(dtw(2) <= dtw(3));
+    EXPECT_FALSE(dtm(2) <= dtm(1));
+    EXPECT_TRUE(dtm(2) <= dtm(2));
+    EXPECT_TRUE(dtm(2) <= dtm(3));
 }
 
 TEST(WTF_Time, greater)
 {
-    EXPECT_EQ(true, s(2) > s(1));
-    EXPECT_EQ(false, s(2) > s(2));
-    EXPECT_EQ(false, s(2) > s(3));
-    EXPECT_EQ(true, wt(2) > wt(1));
-    EXPECT_EQ(false, wt(2) > wt(2));
-    EXPECT_EQ(false, wt(2) > wt(3));
-    EXPECT_EQ(true, mt(2) > mt(1));
-    EXPECT_EQ(false, mt(2) > mt(2));
-    EXPECT_EQ(false, mt(2) > mt(3));
-    EXPECT_EQ(true, dtw(2) > dtw(1));
-    EXPECT_EQ(false, dtw(2) > dtw(2));
-    EXPECT_EQ(false, dtw(2) > dtw(3));
-    EXPECT_EQ(true, dtm(2) > dtm(1));
-    EXPECT_EQ(false, dtm(2) > dtm(2));
-    EXPECT_EQ(false, dtm(2) > dtm(3));
+    EXPECT_TRUE(s(2) > s(1));
+    EXPECT_FALSE(s(2) > s(2));
+    EXPECT_FALSE(s(2) > s(3));
+    EXPECT_TRUE(wt(2) > wt(1));
+    EXPECT_FALSE(wt(2) > wt(2));
+    EXPECT_FALSE(wt(2) > wt(3));
+    EXPECT_TRUE(mt(2) > mt(1));
+    EXPECT_FALSE(mt(2) > mt(2));
+    EXPECT_FALSE(mt(2) > mt(3));
+    EXPECT_TRUE(dtw(2) > dtw(1));
+    EXPECT_FALSE(dtw(2) > dtw(2));
+    EXPECT_FALSE(dtw(2) > dtw(3));
+    EXPECT_TRUE(dtm(2) > dtm(1));
+    EXPECT_FALSE(dtm(2) > dtm(2));
+    EXPECT_FALSE(dtm(2) > dtm(3));
 }
 
 TEST(WTF_Time, greaterEqual)
 {
-    EXPECT_EQ(true, s(2) >= s(1));
-    EXPECT_EQ(true, s(2) >= s(2));
-    EXPECT_EQ(false, s(2) >= s(3));
-    EXPECT_EQ(true, wt(2) >= wt(1));
-    EXPECT_EQ(true, wt(2) >= wt(2));
-    EXPECT_EQ(false, wt(2) >= wt(3));
-    EXPECT_EQ(true, mt(2) >= mt(1));
-    EXPECT_EQ(true, mt(2) >= mt(2));
-    EXPECT_EQ(false, mt(2) >= mt(3));
-    EXPECT_EQ(true, dtw(2) >= dtw(1));
-    EXPECT_EQ(true, dtw(2) >= dtw(2));
-    EXPECT_EQ(false, dtw(2) >= dtw(3));
-    EXPECT_EQ(true, dtm(2) >= dtm(1));
-    EXPECT_EQ(true, dtm(2) >= dtm(2));
-    EXPECT_EQ(false, dtm(2) >= dtm(3));
+    EXPECT_TRUE(s(2) >= s(1));
+    EXPECT_TRUE(s(2) >= s(2));
+    EXPECT_FALSE(s(2) >= s(3));
+    EXPECT_TRUE(wt(2) >= wt(1));
+    EXPECT_TRUE(wt(2) >= wt(2));
+    EXPECT_FALSE(wt(2) >= wt(3));
+    EXPECT_TRUE(mt(2) >= mt(1));
+    EXPECT_TRUE(mt(2) >= mt(2));
+    EXPECT_FALSE(mt(2) >= mt(3));
+    EXPECT_TRUE(dtw(2) >= dtw(1));
+    EXPECT_TRUE(dtw(2) >= dtw(2));
+    EXPECT_FALSE(dtw(2) >= dtw(3));
+    EXPECT_TRUE(dtm(2) >= dtm(1));
+    EXPECT_TRUE(dtm(2) >= dtm(2));
+    EXPECT_FALSE(dtm(2) >= dtm(3));
 }
 
 TEST(WTF_Time, equal)
 {
-    EXPECT_EQ(false, s(2) == s(1));
-    EXPECT_EQ(true, s(2) == s(2));
-    EXPECT_EQ(false, s(2) == s(3));
-    EXPECT_EQ(false, wt(2) == wt(1));
-    EXPECT_EQ(true, wt(2) == wt(2));
-    EXPECT_EQ(false, wt(2) == wt(3));
-    EXPECT_EQ(false, mt(2) == mt(1));
-    EXPECT_EQ(true, mt(2) == mt(2));
-    EXPECT_EQ(false, mt(2) == mt(3));
-    EXPECT_EQ(false, dtw(2) == dtw(1));
-    EXPECT_EQ(true, dtw(2) == dtw(2));
-    EXPECT_EQ(false, dtw(2) == dtw(3));
-    EXPECT_EQ(false, dtm(2) == dtm(1));
-    EXPECT_EQ(true, dtm(2) == dtm(2));
-    EXPECT_EQ(false, dtm(2) == dtm(3));
+    EXPECT_FALSE(s(2) == s(1));
+    EXPECT_TRUE(s(2) == s(2));
+    EXPECT_FALSE(s(2) == s(3));
+    EXPECT_FALSE(wt(2) == wt(1));
+    EXPECT_TRUE(wt(2) == wt(2));
+    EXPECT_FALSE(wt(2) == wt(3));
+    EXPECT_FALSE(mt(2) == mt(1));
+    EXPECT_TRUE(mt(2) == mt(2));
+    EXPECT_FALSE(mt(2) == mt(3));
+    EXPECT_FALSE(dtw(2) == dtw(1));
+    EXPECT_TRUE(dtw(2) == dtw(2));
+    EXPECT_FALSE(dtw(2) == dtw(3));
+    EXPECT_FALSE(dtm(2) == dtm(1));
+    EXPECT_TRUE(dtm(2) == dtm(2));
+    EXPECT_FALSE(dtm(2) == dtm(3));
 }
 
 TEST(WTF_Time, notEqual)
 {
-    EXPECT_EQ(true, s(2) != s(1));
-    EXPECT_EQ(false, s(2) != s(2));
-    EXPECT_EQ(true, s(2) != s(3));
-    EXPECT_EQ(true, wt(2) != wt(1));
-    EXPECT_EQ(false, wt(2) != wt(2));
-    EXPECT_EQ(true, wt(2) != wt(3));
-    EXPECT_EQ(true, mt(2) != mt(1));
-    EXPECT_EQ(false, mt(2) != mt(2));
-    EXPECT_EQ(true, mt(2) != mt(3));
-    EXPECT_EQ(true, dtw(2) != dtw(1));
-    EXPECT_EQ(false, dtw(2) != dtw(2));
-    EXPECT_EQ(true, dtw(2) != dtw(3));
-    EXPECT_EQ(true, dtm(2) != dtm(1));
-    EXPECT_EQ(false, dtm(2) != dtm(2));
-    EXPECT_EQ(true, dtm(2) != dtm(3));
+    EXPECT_TRUE(s(2) != s(1));
+    EXPECT_FALSE(s(2) != s(2));
+    EXPECT_TRUE(s(2) != s(3));
+    EXPECT_TRUE(wt(2) != wt(1));
+    EXPECT_FALSE(wt(2) != wt(2));
+    EXPECT_TRUE(wt(2) != wt(3));
+    EXPECT_TRUE(mt(2) != mt(1));
+    EXPECT_FALSE(mt(2) != mt(2));
+    EXPECT_TRUE(mt(2) != mt(3));
+    EXPECT_TRUE(dtw(2) != dtw(1));
+    EXPECT_FALSE(dtw(2) != dtw(2));
+    EXPECT_TRUE(dtw(2) != dtw(3));
+    EXPECT_TRUE(dtm(2) != dtm(1));
+    EXPECT_FALSE(dtm(2) != dtm(2));
+    EXPECT_TRUE(dtm(2) != dtm(3));
 }
 
 } // namespace TestWebKitAPI
