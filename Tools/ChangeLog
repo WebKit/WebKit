@@ -1,3 +1,15 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Add literals for various time units
+        https://bugs.webkit.org/show_bug.cgi?id=165074
+
+        Reviewed by Filip Pizlo.
+        
+        Add tests for new time literals. Add new tests for units.
+
+        * TestWebKitAPI/Tests/WTF/Time.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix compile warnings after r208415

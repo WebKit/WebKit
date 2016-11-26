@@ -1,3 +1,27 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Add literals for various time units
+        https://bugs.webkit.org/show_bug.cgi?id=165074
+
+        Reviewed by Filip Pizlo.
+        
+        Add _min, _s, _ms, _us and _ns literals for easy creation of Seconds from long double
+        and unsigned long long types (those allowed for custom literals).
+        
+        Add minutes-related functions (there are one or two use cases in WebCore).
+
+        * wtf/Seconds.h:
+        (WTF::Seconds::minutes):
+        (WTF::Seconds::fromMinutes):
+        (WTF::Seconds::fromMilliseconds):
+        (WTF::Seconds::fromMicroseconds):
+        (WTF::Seconds::fromNanoseconds):
+        (WTF::operator _min):
+        (WTF::operator _s):
+        (WTF::operator _ms):
+        (WTF::operator _us):
+        (WTF::operator _ns):
+
 2016-11-22  Darin Adler  <darin@apple.com>
 
         One more tiny bit of follow-up.

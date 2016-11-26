@@ -97,6 +97,20 @@ TimeWithDynamicClockType dtm(double value)
 
 } // anonymous namespace
 
+TEST(WTF_Time, units)
+{
+    EXPECT_EQ(s(60), Seconds::fromMinutes(1));
+    EXPECT_EQ(s(0.001), Seconds::fromMilliseconds(1));
+    EXPECT_EQ(s(0.000001), Seconds::fromMicroseconds(1));
+    EXPECT_EQ(s(0.0000005), Seconds::fromNanoseconds(500));
+
+    EXPECT_EQ(s(120).minutes(), 2);
+    EXPECT_EQ(s(2).seconds(), 2);
+    EXPECT_EQ(s(2).milliseconds(), 2000);
+    EXPECT_EQ(s(2).microseconds(), 2000000);
+    EXPECT_EQ(s(2).nanoseconds(), 2000000000);
+}
+
 TEST(WTF_Time, plus)
 {
     EXPECT_EQ(s(6), s(1) + s(5));
@@ -277,6 +291,27 @@ TEST(WTF_Time, notEqual)
     EXPECT_TRUE(dtm(2) != dtm(1));
     EXPECT_FALSE(dtm(2) != dtm(2));
     EXPECT_TRUE(dtm(2) != dtm(3));
+}
+
+TEST(WTF_Time, literals)
+{
+    EXPECT_TRUE(s(120) == 2_min);
+    EXPECT_TRUE(s(2) == 2_s);
+    EXPECT_TRUE(s(2) == 2000_ms);
+    EXPECT_TRUE(s(2) - 1000_ms == s(1));
+    EXPECT_TRUE(2_s - s(1) == 1000_ms);
+
+    EXPECT_TRUE(Seconds::fromMinutes(2) == 2_min);
+    EXPECT_TRUE(Seconds(2) == 2_s);
+    EXPECT_TRUE(Seconds::fromMilliseconds(2) == 2_ms);
+    EXPECT_TRUE(Seconds::fromMicroseconds(2) == 2_us);
+    EXPECT_TRUE(Seconds::fromNanoseconds(2) == 2_ns);
+
+    EXPECT_TRUE(Seconds::fromMinutes(2.5) == 2.5_min);
+    EXPECT_TRUE(Seconds(2.5) == 2.5_s);
+    EXPECT_TRUE(Seconds::fromMilliseconds(2.5) == 2.5_ms);
+    EXPECT_TRUE(Seconds::fromMicroseconds(2.5) == 2.5_us);
+    EXPECT_TRUE(Seconds::fromNanoseconds(2.5) == 2.5_ns);
 }
 
 } // namespace TestWebKitAPI

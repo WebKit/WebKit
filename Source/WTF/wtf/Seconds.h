@@ -46,24 +46,30 @@ public:
     
     double value() const { return m_value; }
     
+    double minutes() const { return m_value / 60; }
     double seconds() const { return m_value; }
     double milliseconds() const { return seconds() * 1000; }
     double microseconds() const { return milliseconds() * 1000; }
     double nanoseconds() const { return microseconds() * 1000; }
     
-    static constexpr Seconds fromMilliseconds(double value)
+    static constexpr Seconds fromMinutes(double minutes)
     {
-        return Seconds(value / 1000);
+        return Seconds(minutes * 60);
+    }
+
+    static constexpr Seconds fromMilliseconds(double milliseconds)
+    {
+        return Seconds(milliseconds / 1000);
     }
     
-    static constexpr Seconds fromMicroseconds(double value)
+    static constexpr Seconds fromMicroseconds(double microseconds)
     {
-        return fromMilliseconds(value / 1000);
+        return fromMilliseconds(microseconds / 1000);
     }
     
-    static constexpr Seconds fromNanoseconds(double value)
+    static constexpr Seconds fromNanoseconds(double nanoseconds)
     {
-        return fromMicroseconds(value / 1000);
+        return fromMicroseconds(nanoseconds / 1000);
     }
     
     static constexpr Seconds infinity()
@@ -194,6 +200,56 @@ public:
 private:
     double m_value { 0 };
 };
+
+constexpr Seconds operator"" _min(long double minutes)
+{
+    return Seconds::fromMinutes(minutes);
+}
+
+constexpr Seconds operator"" _s(long double seconds)
+{
+    return Seconds(seconds);
+}
+
+constexpr Seconds operator"" _ms(long double milliseconds)
+{
+    return Seconds::fromMilliseconds(milliseconds);
+}
+
+constexpr Seconds operator"" _us(long double microseconds)
+{
+    return Seconds::fromMicroseconds(microseconds);
+}
+
+constexpr Seconds operator"" _ns(long double nanoseconds)
+{
+    return Seconds::fromNanoseconds(nanoseconds);
+}
+
+constexpr Seconds operator"" _min(unsigned long long minutes)
+{
+    return Seconds::fromMinutes(minutes);
+}
+
+constexpr Seconds operator"" _s(unsigned long long seconds)
+{
+    return Seconds(seconds);
+}
+
+constexpr Seconds operator"" _ms(unsigned long long milliseconds)
+{
+    return Seconds::fromMilliseconds(milliseconds);
+}
+
+constexpr Seconds operator"" _us(unsigned long long microseconds)
+{
+    return Seconds::fromMicroseconds(microseconds);
+}
+
+constexpr Seconds operator"" _ns(unsigned long long nanoseconds)
+{
+    return Seconds::fromNanoseconds(nanoseconds);
+}
 
 WTF_EXPORT_PRIVATE void sleep(Seconds);
 
