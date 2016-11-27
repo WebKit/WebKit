@@ -49,6 +49,7 @@
 #import "PixelDumpSupport.h"
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
+#import "TestOptions.h"
 #import "TestRunner.h"
 #import "UIDelegate.h"
 #import "WebArchiveDumpSupport.h"
@@ -895,7 +896,7 @@ static NSString *libraryPathForDumpRenderTree()
 }
 
 // Called before each test.
-static void resetWebPreferencesToConsistentValues()
+static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
@@ -998,6 +999,8 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
+
+    preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
@@ -1818,7 +1821,7 @@ static bool shouldMakeViewportFlexible(const char* pathOrURL)
 }
 #endif
 
-static void resetWebViewToConsistentStateBeforeTesting()
+static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& options)
 {
     WebView *webView = [mainFrame webView];
 #if PLATFORM(IOS)
@@ -1851,7 +1854,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
 
     [WebCache clearCachedCredentials];
     
-    resetWebPreferencesToConsistentValues();
+    resetWebPreferencesToConsistentValues(options);
 
     TestRunner::setSerializeHTTPLoads(false);
     TestRunner::setAllowsAnySSLCertificate(false);
@@ -1985,9 +1988,11 @@ static void runTest(const string& inputLine)
     NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
     WKSetCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
+    TestOptions options(url);
+    resetWebViewToConsistentStateBeforeTesting(options);
+
     const char* testURL([[url absoluteString] UTF8String]);
-    
-    resetWebViewToConsistentStateBeforeTesting();
+
 #if !PLATFORM(IOS)
     changeWindowScaleIfNeeded(testURL);
 #endif
@@ -2096,7 +2101,7 @@ static void runTest(const string& inputLine)
         }
     }
 
-    resetWebViewToConsistentStateBeforeTesting();
+    resetWebViewToConsistentStateBeforeTesting(options);
 
     // Loading an empty request synchronously replaces the document with a blank one, which is necessary
     // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.

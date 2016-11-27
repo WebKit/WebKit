@@ -29,7 +29,7 @@
     Conditional=INTERSECTION_OBSERVER,
     Constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options),
     ImplementationLacksVTable,
-    EnabledBySetting=IntersectionObserver
+    EnabledAtRuntime=IntersectionObserver
 ] interface IntersectionObserver {
     readonly attribute Element? root;
     readonly attribute DOMString rootMargin;

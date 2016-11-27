@@ -227,6 +227,11 @@ public:
     bool isCSSGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
 #endif
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    void setIntersectionObserverEnabled(bool isEnabled) { m_intersectionObserverEnabled = isEnabled; }
+    bool intersectionObserverEnabled() const { return m_intersectionObserverEnabled; }
+#endif
+
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
@@ -351,6 +356,10 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool m_encryptedMediaAPIEnabled { false };
+#endif
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    bool m_intersectionObserverEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

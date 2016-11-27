@@ -64,6 +64,8 @@
     macro(IDBVersionChangeEvent) \
     macro(Infinity) \
     macro(InputEvent) \
+    macro(IntersectionObserver) \
+    macro(IntersectionObserverEntry) \
     macro(Intl) \
     macro(JSON) \
     macro(Loader) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestOptions_h
-#define TestOptions_h
-
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace WTR {
+#pragma once
 
 struct TestOptions {
-    bool useThreadedScrolling { false };
-    bool useRemoteLayerTree { false };
-    bool shouldShowWebView { false };
-    bool useFlexibleViewport { false };
-    bool useFixedLayout { false };
-    bool isSVGTest { false };
-    bool useDataDetection { false };
-    bool useMockScrollbars { true };
-    bool needsSiteSpecificQuirks { false };
-    bool ignoresViewportScaleLimits { false };
-    bool useCharacterSelectionGranularity { false };
     bool enableIntersectionObserver { false };
 
-    float deviceScaleFactor { 1 };
-    Vector<String> overrideLanguages;
-    
-    TestOptions(const std::string& pathOrURL);
+    TestOptions(NSURL *testURL);
 };
-
-}
-
-#endif // TestOptions_h

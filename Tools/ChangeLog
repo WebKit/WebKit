@@ -1,3 +1,32 @@
+2016-11-26  Sam Weinig  <sam@webkit.org>
+
+        Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script
+        https://bugs.webkit.org/show_bug.cgi?id=164965
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * DumpRenderTree/TestOptions.h: Added.
+        * DumpRenderTree/TestOptions.mm: Added.
+        (parseBooleanTestHeaderValue):
+        (TestOptions::TestOptions):
+        Port TestOption parsing from WKTR to DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (runTest):
+        * WebKitTestRunner/TestController.cpp:
+        Pass TestOptions down to resetWebPreferencesToConsistentValues to allow setting
+        preferences conditionally.
+
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        Add a new test option header, enableIntersectionObserver, to enable IntersectionObserver.
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime

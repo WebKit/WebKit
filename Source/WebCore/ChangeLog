@@ -1,3 +1,24 @@
+2016-11-26  Sam Weinig  <sam@webkit.org>
+
+        Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script
+        https://bugs.webkit.org/show_bug.cgi?id=164965
+
+        Reviewed by Simon Fraser.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::reset):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIntersectionObserverEnabled):
+        (WebCore::RuntimeEnabledFeatures::intersectionObserverEnabled):
+        Add intersection observer setting.
+
+        * page/IntersectionObserver.idl:
+        * page/IntersectionObserverEntry.idl:
+        Convert to use EnabledAtRuntime extended attribute.
+
+        * page/Settings.in:
+        Remove the old intersection observer setting.
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime

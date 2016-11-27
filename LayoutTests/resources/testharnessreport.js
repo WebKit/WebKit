@@ -90,6 +90,5 @@ if (self.testRunner) {
 
     if (window.internals) {
         internals.setResourceTimingSupport(true);
-        internals.settings.setIntersectionObserverEnabled(true);
     }
 }

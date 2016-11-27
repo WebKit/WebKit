@@ -1,3 +1,19 @@
+2016-11-26  Sam Weinig  <sam@webkit.org>
+
+        Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script
+        https://bugs.webkit.org/show_bug.cgi?id=164965
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIntersectionObserverEnabled):
+        (WKPreferencesGetIntersectionObserverEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add a preference, defaulting to off, for enabling IntersectionObserver.
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime

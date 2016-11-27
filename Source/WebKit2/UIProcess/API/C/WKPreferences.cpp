@@ -1551,6 +1551,16 @@ bool WKPreferencesGetES6ModulesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->es6ModulesEnabled();
 }
 
+void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setIntersectionObserverEnabled(flag);
+}
+
+bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->intersectionObserverEnabled();
+}
+
 void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSelectionPaintingWithoutSelectionGapsEnabled(flag);

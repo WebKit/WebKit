@@ -1,3 +1,19 @@
+2016-11-26  Sam Weinig  <sam@webkit.org>
+
+        Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script
+        https://bugs.webkit.org/show_bug.cgi?id=164965
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences intersectionObserverEnabled]):
+        (-[WebPreferences setIntersectionObserverEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Add a preference, defaulting to off, for enabling IntersectionObserver.
+
 2016-11-22  Dan Bernstein  <mitz@apple.com>
 
         [Mac] In Legacy WebKit, pressing an arrow key in editable content doesn’t hide the mouse cursor

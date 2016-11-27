@@ -109,7 +109,9 @@ void RuntimeEnabledFeatures::reset()
 #if ENABLE(CSS_GRID_LAYOUT)
     m_cssGridLayoutEnabled = true;
 #endif
-
+#if ENABLE(INTERSECTION_OBSERVER)
+    m_intersectionObserverEnabled = false;
+#endif
 }
 
 RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()
