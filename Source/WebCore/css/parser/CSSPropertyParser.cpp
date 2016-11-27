@@ -4710,6 +4710,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
     return true;
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 // FIXME-NEWPARSER: Hack to work around the fact that we aren't using CSSCustomIdentValue
 // for stuff yet. This can be replaced by CSSValue::isCustomIdentValue() once we switch
 // to using CSSCustomIdentValue everywhere.
@@ -4718,7 +4719,6 @@ static bool isCustomIdentValue(const CSSValue& value)
     return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isString();
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
