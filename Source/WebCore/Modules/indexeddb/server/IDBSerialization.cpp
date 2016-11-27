@@ -96,7 +96,9 @@ bool deserializeIDBKeyPath(const uint8_t* data, size_t size, Optional<IDBKeyPath
 
 // This is the magic character that begins serialized PropertyLists, and tells us whether
 // the key we're looking at is an old-style key.
+#if USE(CF)
 static const uint8_t LegacySerializedKeyVersion = 'b';
+#endif
 
 // FIXME: Linux ports uses KeyedEncoderGlib for their IDBKeys.
 // When a Glib maintainer comes along to enable the new serialization they'll need to
@@ -134,6 +136,7 @@ Max:
 
 // FIXME: If the GLib magic character ends up being 0x00, we should consider changing
 // this 0x00 so we can support Glib keyed encoding, also.
+#if USE(CF)
 static const uint8_t SIDBKeyVersion = 0x00;
 enum class SIDBKeyType : uint8_t {
     Min = 0x00,
@@ -168,6 +171,7 @@ static SIDBKeyType serializedTypeForKeyType(IndexedDB::KeyType type)
 
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
 template <typename T> static void writeLittleEndian(Vector<char>& buffer, T value)
@@ -206,6 +210,7 @@ template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const ui
 }
 #endif
 
+#if USE(CF)
 static void writeDouble(Vector<char>& data, double d)
 {
     writeLittleEndian(data, *reinterpret_cast<uint64_t*>(&d));
@@ -264,6 +269,7 @@ static void encodeKey(Vector<char>& data, const IDBKeyData& key)
         break;
     }
 }
+#endif
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
@@ -281,6 +287,7 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 
 }
 
+#if USE(CF)
 static bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& result)
 {
     if (!data || data >= end)
@@ -381,6 +388,7 @@ static bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& resu
         return false;
     }
 }
+#endif
 
 bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
 {
