@@ -155,8 +155,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 
 - (void)_settingsDidChange:(NSNotification *)notification
 {
-    WTFLogAlways("received notification");
-
     _impl->accessibilitySettingsDidChange();
 }
 

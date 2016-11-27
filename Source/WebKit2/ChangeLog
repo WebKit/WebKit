@@ -1,3 +1,10 @@
+2016-11-27  Dean Jackson  <dino@apple.com>
+
+        Removed a WTFLogAlways I left in with a recent commit.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKAccessibilitySettingsObserver _settingsDidChange:]):
+
 2016-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused-private-field build warning in WebKit2/Platform/SharedMemory.h
