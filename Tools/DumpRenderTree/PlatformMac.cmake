@@ -69,7 +69,6 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
 list(APPEND DumpRenderTree_ObjC_SOURCES
     DefaultPolicyDelegate.m
     DumpRenderTreeFileDraggingSource.m
-    TestOptions.mm
 
     mac/AppleScriptController.m
     mac/DumpRenderTreePasteboard.m
@@ -89,6 +88,8 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
 )
 
 list(APPEND DumpRenderTree_ObjCpp_SOURCES
+    TestOptions.mm
+
     mac/AccessibilityCommonMac.mm
     mac/AccessibilityControllerMac.mm
     mac/AccessibilityNotificationHandler.mm

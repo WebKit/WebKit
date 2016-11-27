@@ -1,5 +1,11 @@
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Better fix for the Mac CMake build.
+
+        * DumpRenderTree/PlatformMac.cmake:
+
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
         Attempt to fix Mac CMake build.
 
         * DumpRenderTree/PlatformMac.cmake:
