@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestOptions.h"
 
+#include <Foundation/Foundation.h>
 #include <fstream>
 #include <string>
 

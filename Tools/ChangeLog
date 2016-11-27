@@ -1,3 +1,10 @@
+2016-11-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Another fix for CMake.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Better fix for the Mac CMake build.

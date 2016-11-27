@@ -25,6 +25,8 @@
 
 #pragma once
 
+@class NSURL;
+
 struct TestOptions {
     bool enableIntersectionObserver { false };
 
