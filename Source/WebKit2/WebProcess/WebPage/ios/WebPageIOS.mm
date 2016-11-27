@@ -2137,7 +2137,7 @@ Seconds WebPage::eventThrottlingDelay() const
     if (m_isInStableState || m_estimatedLatency <= Seconds(1.0 / 60))
         return 0_s;
 
-    return std::min(m_estimatedLatency.value() * 2, 1_s);
+    return std::min(m_estimatedLatency * 2, 1_s);
 }
 
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)

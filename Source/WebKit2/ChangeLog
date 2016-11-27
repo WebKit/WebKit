@@ -1,3 +1,10 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::eventThrottlingDelay):
+
 2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Import std::optional reference implementation as WTF::Optional
