@@ -1,3 +1,9 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix Mac CMake build.
+
+        * DumpRenderTree/PlatformMac.cmake:
+
 2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Import std::optional reference implementation as WTF::Optional
