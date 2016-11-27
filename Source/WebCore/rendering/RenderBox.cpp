@@ -130,17 +130,6 @@ static void removeControlStatesForRenderer(const RenderBox& renderer)
 
 bool RenderBox::s_hadOverflowClip = false;
 
-static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
-{
-    ASSERT(bodyElementRenderer->isBody());
-    // The <body> only paints its background if the root element has defined a background independent of the body,
-    // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-    auto documentElementRenderer = bodyElementRenderer->document().documentElement()->renderer();
-    return documentElementRenderer
-        && !documentElementRenderer->hasBackground()
-        && (documentElementRenderer == bodyElementRenderer->parent());
-}
-
 RenderBox::RenderBox(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBoxModelObject(element, WTFMove(style), baseTypeFlags)
 {
@@ -1383,16 +1372,33 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintInfo.context().endTransparencyLayer();
 }
 
+bool RenderBox::paintsOwnBackground() const
+{
+    if (isBody()) {
+        // The <body> only paints its background if the root element has defined a background independent of the body,
+        // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
+        auto documentElementRenderer = document().documentElement()->renderer();
+        return !documentElementRenderer
+            || documentElementRenderer->hasBackground()
+            || (documentElementRenderer != parent());
+    }
+    
+    return true;
+}
+
 void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
 {
     if (isDocumentElementRenderer()) {
         paintRootBoxFillLayers(paintInfo);
         return;
     }
-    if (isBody() && skipBodyBackground(this))
+
+    if (!paintsOwnBackground())
         return;
+
     if (backgroundIsKnownToBeObscured(paintRect.location()) && !boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance))
         return;
+
     paintFillLayers(paintInfo, style().visitedDependentColor(CSSPropertyBackgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance);
 }
 
@@ -1419,7 +1425,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
-    if (isBody() && skipBodyBackground(this))
+    if (!paintsOwnBackground())
         return false;
 
     Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);

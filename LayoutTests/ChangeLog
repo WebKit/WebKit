@@ -1,5 +1,18 @@
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Composited negative z-index elements are hidden behind the body sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=165080
+        rdar://problem/22260229
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/backgrounds/negative-z-index-behind-body-expected.html: Added.
+        * compositing/backgrounds/negative-z-index-behind-body-non-propagated-expected.html: Added.
+        * compositing/backgrounds/negative-z-index-behind-body-non-propagated.html: Added.
+        * compositing/backgrounds/negative-z-index-behind-body.html: Added.
+
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
         Convert testharnessreport.js to LF linebreaks, from CRLF, which broke patches.
 
         * resources/testharnessreport.js:

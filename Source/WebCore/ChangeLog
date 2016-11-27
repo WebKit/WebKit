@@ -1,3 +1,33 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Composited negative z-index elements are hidden behind the body sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=165080
+        rdar://problem/22260229
+
+        Reviewed by Zalan Bujtas.
+
+        If the <body> falls into the "directly composited background color" code path
+        (say, because it's composited because of composited negative z-index children,
+        and has content of its own), then we failed to take root background propagation
+        into account, and put the opaque root background color on the body's layer.
+
+        Fix by sharing some code from RenderBox related to whether the body's renderer
+        paints its background.
+        
+        Tests cover the buggy case, and the case where the <html> has its own background color.
+
+        Tests: compositing/backgrounds/negative-z-index-behind-body-non-propagated.html
+               compositing/backgrounds/negative-z-index-behind-body.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintsOwnBackground):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect):
+        (WebCore::skipBodyBackground): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundColor):
+
 2016-11-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] FontFace.load() promises don't always fire

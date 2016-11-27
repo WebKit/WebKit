@@ -56,6 +56,9 @@ public:
     }
 
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const final;
+    
+    // Returns false for the body renderer if its background is propagated to the root.
+    bool paintsOwnBackground() const;
 
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;

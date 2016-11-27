@@ -1809,7 +1809,7 @@ Color RenderLayerBacking::rendererBackgroundColor() const
 
 void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleContainer, bool& didUpdateContentsRect)
 {
-    if (!isSimpleContainer) {
+    if (!isSimpleContainer || (is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).paintsOwnBackground())) {
         m_graphicsLayer->setContentsToSolidColor(Color());
         return;
     }
