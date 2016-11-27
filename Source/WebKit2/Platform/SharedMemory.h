@@ -110,7 +110,9 @@ private:
 
     size_t m_size;
     void* m_data;
+#if PLATFORM(COCOA)
     Protection m_protection;
+#endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     std::optional<int> m_fileDescriptor;

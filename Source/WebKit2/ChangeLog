@@ -1,3 +1,12 @@
+2016-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix unused-private-field build warning in WebKit2/Platform/SharedMemory.h
+        https://bugs.webkit.org/show_bug.cgi?id=165069
+
+        Reviewed by Darin Adler.
+
+        * Platform/SharedMemory.h:
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.
