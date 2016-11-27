@@ -233,7 +233,7 @@ public:
     virtual void didPreventDefaultForEvent() = 0;
 #endif
 
-    virtual Seconds eventThrottlingDelay() { return Seconds(0); };
+    virtual Seconds eventThrottlingDelay() { return 0_s; };
 
 #if PLATFORM(IOS)
     virtual void didReceiveMobileDocType(bool) = 0;

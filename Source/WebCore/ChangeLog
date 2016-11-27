@@ -1,5 +1,43 @@
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime
+        https://bugs.webkit.org/show_bug.cgi?id=164992
+
+        Reviewed by Darin Adler.
+
+        std::chrono::milliseconds -> Seconds.
+        
+        Rename Document::elapsedTime() to timeSinceDocumentCreation() which is more explicit.
+        
+        Replace INSTRUMENT_LAYOUT_SCHEDULING with LOG(Layout...).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::isLayoutTimerActive):
+        (WebCore::Document::minimumLayoutDelay):
+        (WebCore::Document::timeSinceDocumentCreation):
+        (WebCore::Document::elapsedTime): Deleted.
+        * dom/Document.h:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::layoutTimerFired):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::unscheduleRelayout):
+        * page/Settings.cpp:
+        (WebCore::Settings::setLayoutInterval):
+        * page/Settings.h:
+        (WebCore::Settings::layoutInterval):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::removePendingSheet):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
         Composited negative z-index elements are hidden behind the body sometimes
         https://bugs.webkit.org/show_bug.cgi?id=165080
         rdar://problem/22260229

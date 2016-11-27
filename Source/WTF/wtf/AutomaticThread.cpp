@@ -181,7 +181,7 @@ void AutomaticThread::start(const LockHolder&)
                         RELEASE_ASSERT(result == PollResult::Wait);
                         // Shut the thread down after one second.
                         bool awokenByNotify =
-                            m_condition->m_condition.waitFor(*m_lock, Seconds(1));
+                            m_condition->m_condition.waitFor(*m_lock, 1_s);
                         if (!awokenByNotify) {
                             if (verbose)
                                 dataLog(RawPointer(this), ": Going to sleep!\n");

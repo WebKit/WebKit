@@ -2128,16 +2128,16 @@ Seconds WebPage::eventThrottlingDelay() const
     if (behaviorOverride) {
         switch (behaviorOverride.value()) {
         case EventThrottlingBehavior::Responsive:
-            return Seconds(0);
+            return 0_s;
         case EventThrottlingBehavior::Unresponsive:
-            return Seconds(1);
+            return 1_s;
         }
     }
 
     if (m_isInStableState || m_estimatedLatency <= Seconds(1.0 / 60))
-        return Seconds(0);
+        return 0_s;
 
-    return Seconds(std::min<double>(m_estimatedLatency.value() * 2, 1));
+    return std::min(m_estimatedLatency.value() * 2, 1_s);
 }
 
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)

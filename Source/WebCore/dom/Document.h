@@ -671,11 +671,11 @@ public:
     void setReadyState(ReadyState);
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }
-    std::chrono::milliseconds minimumLayoutDelay();
+    Seconds minimumLayoutDelay();
 
     bool shouldScheduleLayout();
     bool isLayoutTimerActive();
-    std::chrono::milliseconds elapsedTime() const;
+    Seconds timeSinceDocumentCreation() const;
     
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
@@ -1527,7 +1527,7 @@ private:
     bool m_loadEventFinished;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
-    std::chrono::steady_clock::time_point m_startTime;
+    MonotonicTime m_documentCreationTime;
     bool m_overMinimumLayoutThreshold;
     
     std::unique_ptr<ScriptRunner> m_scriptRunner;

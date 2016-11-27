@@ -172,8 +172,8 @@ public:
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(std::chrono::milliseconds); // Initialized to DOMTimer::defaultMinimumInterval().
     std::chrono::milliseconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
-    WEBCORE_EXPORT void setLayoutInterval(std::chrono::milliseconds);
-    std::chrono::milliseconds layoutInterval() const { return m_layoutInterval; }
+    WEBCORE_EXPORT void setLayoutInterval(Seconds);
+    Seconds layoutInterval() const { return m_layoutInterval; }
 
     bool hiddenPageDOMTimerThrottlingEnabled() const { return m_hiddenPageDOMTimerThrottlingEnabled; }
     WEBCORE_EXPORT void setHiddenPageDOMTimerThrottlingEnabled(bool);
@@ -325,7 +325,7 @@ private:
     URL m_userStyleSheetLocation;
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
-    std::chrono::milliseconds m_layoutInterval;
+    Seconds m_layoutInterval;
     std::chrono::milliseconds m_minimumDOMTimerInterval;
 
     SETTINGS_MEMBER_VARIABLES

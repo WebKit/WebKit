@@ -163,8 +163,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
 #if USE(CF)
     CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
-    deadline = WallTime::now() + std::max(
-        Seconds(0), Seconds(timeUntilNextCFRunLoopTimerInSeconds));
+    deadline = WallTime::now() + std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
 #endif
 
     WallTime absoluteTime;

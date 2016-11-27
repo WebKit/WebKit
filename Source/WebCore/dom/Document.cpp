@@ -468,7 +468,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_cssTarget(nullptr)
     , m_processingLoadEvent(false)
     , m_loadEventFinished(false)
-    , m_startTime(std::chrono::steady_clock::now())
+    , m_documentCreationTime(MonotonicTime::now())
     , m_overMinimumLayoutThreshold(false)
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
     , m_moduleLoader(std::make_unique<ScriptModuleLoader>(*this))
@@ -2696,7 +2696,7 @@ void Document::implicitClose()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (frame()->navigationScheduler().locationChangePending() && elapsedTime() < settings()->layoutInterval()) {
+    if (frame()->navigationScheduler().locationChangePending() && timeSinceDocumentCreation() < settings()->layoutInterval()) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         m_processingLoadEvent = false;
@@ -2770,26 +2770,24 @@ bool Document::shouldScheduleLayout()
     
 bool Document::isLayoutTimerActive()
 {
-    return view() && view()->layoutPending() && !minimumLayoutDelay().count();
+    return view() && view()->layoutPending() && !minimumLayoutDelay();
 }
 
-std::chrono::milliseconds Document::minimumLayoutDelay()
+Seconds Document::minimumLayoutDelay()
 {
     if (m_overMinimumLayoutThreshold)
-        return 0ms;
+        return 0_s;
     
-    auto elapsed = elapsedTime();
+    auto elapsed = timeSinceDocumentCreation();
     m_overMinimumLayoutThreshold = elapsed > settings()->layoutInterval();
 
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return std::max(0ms, settings()->layoutInterval() - elapsed);
+    return std::max(0_s, settings()->layoutInterval() - elapsed);
 }
 
-std::chrono::milliseconds Document::elapsedTime() const
+Seconds Document::timeSinceDocumentCreation() const
 {
-    auto elapsedTime = std::chrono::steady_clock::now() - m_startTime;
-
-    return std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime);
+    return MonotonicTime::now() - m_documentCreationTime;
 }
 
 void Document::write(const SegmentedString& text, Document* ownerDocument)

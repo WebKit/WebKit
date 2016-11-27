@@ -149,12 +149,6 @@ void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
     ASSERT(m_pendingStyleSheetCount > 0);
 
     m_pendingStyleSheetCount--;
-    
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Stylesheet loaded at time %d. %d stylesheets still remain.\n", elapsedTime(), m_pendingStylesheets);
-#endif
-
     if (m_pendingStyleSheetCount)
         return;
 

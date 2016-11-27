@@ -1,5 +1,17 @@
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime
+        https://bugs.webkit.org/show_bug.cgi?id=164992
+
+        Reviewed by Darin Adler.
+
+        Add Seconds::zero() as a nicer way to express Seconds(0). 
+
+        * wtf/Seconds.h:
+        (WTF::Seconds::zero):
+
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
         Add literals for various time units
         https://bugs.webkit.org/show_bug.cgi?id=165074
 

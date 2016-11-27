@@ -1,3 +1,17 @@
+2016-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime
+        https://bugs.webkit.org/show_bug.cgi?id=164992
+
+        Reviewed by Darin Adler.
+        
+        No more ugly conversion from seconds to milliseconds.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::eventThrottlingDelay):
+
 2016-11-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Follow-up fixes to r208974

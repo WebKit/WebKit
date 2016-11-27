@@ -44,7 +44,7 @@ public:
     void terminate();
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
-    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, Seconds timeout = Seconds(1), OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
+    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, Seconds timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
 
     IPC::Connection* connection() const
     {

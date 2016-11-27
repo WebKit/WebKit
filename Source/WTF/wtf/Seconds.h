@@ -201,6 +201,8 @@ private:
     double m_value { 0 };
 };
 
+inline namespace seconds_literals {
+
 constexpr Seconds operator"" _min(long double minutes)
 {
     return Seconds::fromMinutes(minutes);
@@ -251,10 +253,13 @@ constexpr Seconds operator"" _ns(unsigned long long nanoseconds)
     return Seconds::fromNanoseconds(nanoseconds);
 }
 
+} // inline seconds_literals
+
 WTF_EXPORT_PRIVATE void sleep(Seconds);
 
-} // namespae WTF
+} // namespace WTF
 
+using namespace WTF::seconds_literals;
 using WTF::Seconds;
 
 #endif // WTF_Seconds_h

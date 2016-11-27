@@ -1398,9 +1398,9 @@ void FrameView::layout(bool allowSubtree)
                 }
             }
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if !LOG_DISABLED
             if (m_firstLayout && !frame().ownerElement())
-                printf("Elapsed time before first layout: %lld\n", document.elapsedTime().count());
+                LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document.timeSinceDocumentCreation().value());
 #endif
         }
 
@@ -2437,9 +2437,9 @@ void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& old
 void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
     Page* page = frame().page();
-    Seconds throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : Seconds(0);
+    Seconds throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : 0_s;
 
-    if (throttlingDelay == Seconds(0)) {
+    if (throttlingDelay == 0_s) {
         m_delayedScrollEventTimer.stop();
         sendScrollEvent();
     } else if (!m_delayedScrollEventTimer.isActive())
@@ -2874,9 +2874,9 @@ void FrameView::convertSubtreeLayoutToFullLayout()
 
 void FrameView::layoutTimerFired()
 {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        printf("Layout timer fired at %lld\n", frame().document()->elapsedTime().count());
+        LOG(Layout, "FrameView %p layout timer fired at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
     layout();
 }
@@ -2901,17 +2901,18 @@ void FrameView::scheduleRelayout()
     if (frame().ownerRenderer() && isInChildFrameWithFrameFlattening())
         frame().ownerRenderer()->setNeedsLayout(MarkContainingBlockChain);
 
-    std::chrono::milliseconds delay = frame().document()->minimumLayoutDelay();
-    if (m_layoutTimer.isActive() && m_delayedLayout && !delay.count())
+    Seconds delay = frame().document()->minimumLayoutDelay();
+    if (m_layoutTimer.isActive() && m_delayedLayout && !delay)
         unscheduleRelayout();
+
     if (m_layoutTimer.isActive())
         return;
 
-    m_delayedLayout = delay.count();
+    m_delayedLayout = delay.value();
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        printf("Scheduling layout for %d\n", delay);
+        LOG(Layout, "FrameView %p scheduling layout for %.3fs", this, delay.value());
 #endif
 
     m_layoutTimer.startOneShot(delay);
@@ -2944,11 +2945,11 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     }
 
     if (!layoutPending() && m_layoutSchedulingEnabled) {
-        std::chrono::milliseconds delay = renderView.document().minimumLayoutDelay();
+        Seconds delay = renderView.document().minimumLayoutDelay();
         ASSERT(!newRelayoutRoot.container() || is<RenderView>(newRelayoutRoot.container()) || !newRelayoutRoot.container()->needsLayout());
         m_layoutRoot = &newRelayoutRoot;
         InspectorInstrumentation::didInvalidateLayout(frame());
-        m_delayedLayout = delay.count();
+        m_delayedLayout = delay.value();
         m_layoutTimer.startOneShot(delay);
         return;
     }
@@ -3041,9 +3042,9 @@ void FrameView::unscheduleRelayout()
     if (!m_layoutTimer.isActive())
         return;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        printf("Layout timer unscheduled at %d\n", frame().document()->elapsedTime());
+        LOG(Layout, "FrameView %p layout timer unscheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
     
     m_layoutTimer.stop();

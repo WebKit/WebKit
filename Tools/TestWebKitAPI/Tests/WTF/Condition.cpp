@@ -81,7 +81,7 @@ void runTest(
     unsigned numMessagesPerProducer,
     NotifyStyle notifyStyle,
     Seconds timeout = Seconds::infinity(),
-    Seconds delay = Seconds(0))
+    Seconds delay = 0_s)
 {
     Deque<unsigned> queue;
     bool shouldContinue = true;

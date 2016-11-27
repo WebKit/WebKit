@@ -339,8 +339,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)_alwaysRequestGeolocationPermission;
 - (void)_setAlwaysUseAcceleratedOverflowScroll:(BOOL)flag;
 - (BOOL)_alwaysUseAcceleratedOverflowScroll;
-- (void)_setLayoutInterval:(int)l;
-- (int)_layoutInterval;
+- (void)_setLayoutInterval:(int)milliseconds;
+- (int)_layoutInterval; // Milliseonds.
 - (void)_setMaxParseDuration:(float)d;
 - (float)_maxParseDuration;
 - (void)_setInterpolationQuality:(int)quality;

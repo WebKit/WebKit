@@ -315,7 +315,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     // exec->argument(3) returns undefined if it's not provided and ToNumber(undefined) returns NaN,
     // so NaN is the only special case.
     if (timeout == timeout)
-        timeout = std::max(Seconds(0), timeout);
+        timeout = std::max(0_s, timeout);
     else
         timeout = Seconds::infinity();
     
