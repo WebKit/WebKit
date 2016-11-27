@@ -88,7 +88,7 @@ private:
     String m_path;
     String m_name;
 
-    Optional<int64_t> m_overrideLastModifiedDate;
+    std::optional<int64_t> m_overrideLastModifiedDate;
 };
 
 } // namespace WebCore

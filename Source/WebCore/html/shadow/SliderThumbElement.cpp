@@ -298,7 +298,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 #if ENABLE(DATALIST_ELEMENT)
     const LayoutUnit snappingThreshold = renderer()->theme().sliderTickSnappingThreshold();
     if (snappingThreshold > 0) {
-        if (Optional<Decimal> closest = input->findClosestTickMarkValue(value)) {
+        if (std::optional<Decimal> closest = input->findClosestTickMarkValue(value)) {
             double closestFraction = stepRange.proportionFromValue(*closest).toDouble();
             double closestRatio = isVertical || !isLeftToRightDirection ? 1.0 - closestFraction : closestFraction;
             LayoutUnit closestPosition = trackLength * closestRatio;
@@ -582,7 +582,7 @@ HTMLInputElement* SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
+std::optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -590,7 +590,7 @@ Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&
     static NeverDestroyed<const AtomicString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return Nullopt;
+        return std::nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -605,7 +605,7 @@ Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&
         m_shadowPseudoId = sliderThumbShadowPseudoId;
     }
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const
@@ -636,7 +636,7 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderSty
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
 }
 
-Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
+std::optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -644,7 +644,7 @@ Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderSt
     static NeverDestroyed<const AtomicString> sliderContainer("-webkit-slider-container", AtomicString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return Nullopt;
+        return std::nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -659,7 +659,7 @@ Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderSt
         m_shadowPseudoId = sliderContainer;
     }
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const

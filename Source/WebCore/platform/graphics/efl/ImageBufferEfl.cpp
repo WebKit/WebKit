@@ -47,12 +47,12 @@ static bool encodeImagePNG(cairo_surface_t* image, Vector<char>* output)
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }
 
-static bool encodeImageJPEG(unsigned char* data, IntSize size, Vector<char>* output, Optional<double> quality)
+static bool encodeImageJPEG(unsigned char* data, IntSize size, Vector<char>* output, std::optional<double> quality)
 {    
     return compressRGBABigEndianToJPEG(data, size, *output, quality);
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, Optional<double> quality, CoordinateSystem) const
+String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 

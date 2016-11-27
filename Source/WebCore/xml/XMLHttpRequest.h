@@ -153,7 +153,7 @@ private:
 
     bool responseIsXML() const;
 
-    Optional<ExceptionOr<void>> prepareToSend();
+    std::optional<ExceptionOr<void>> prepareToSend();
     ExceptionOr<void> sendBytesData(const void*, size_t);
 
     void changeState(State);

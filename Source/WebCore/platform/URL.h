@@ -102,7 +102,7 @@ public:
 
     WEBCORE_EXPORT StringView protocol() const;
     WEBCORE_EXPORT String host() const;
-    WEBCORE_EXPORT Optional<uint16_t> port() const;
+    WEBCORE_EXPORT std::optional<uint16_t> port() const;
     WEBCORE_EXPORT String hostAndPort() const;
     WEBCORE_EXPORT String user() const;
     WEBCORE_EXPORT String pass() const;
@@ -312,7 +312,7 @@ WEBCORE_EXPORT bool protocolIs(const String& url, const char* protocol);
 WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
 WEBCORE_EXPORT bool protocolIsInHTTPFamily(const String& url);
 
-Optional<uint16_t> defaultPortForProtocol(StringView protocol);
+std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WEBCORE_EXPORT bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
 WEBCORE_EXPORT bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
 

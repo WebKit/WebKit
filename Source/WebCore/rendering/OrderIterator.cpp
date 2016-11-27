@@ -73,7 +73,7 @@ RenderBox* OrderIterator::next()
 void OrderIterator::reset()
 {
     m_currentChild = nullptr;
-    m_orderIndex = Nullopt;
+    m_orderIndex = std::nullopt;
 }
 
 OrderIteratorPopulator::OrderIteratorPopulator(OrderIterator& iterator)

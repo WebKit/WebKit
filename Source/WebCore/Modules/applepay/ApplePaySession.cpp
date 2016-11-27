@@ -76,7 +76,7 @@ static bool parseDigit(UChar digit, bool isNegative, int64_t& amount)
 }
 
 // The amount follows the regular expression -?[0-9]+(\.[0-9][0-9])?.
-static Optional<int64_t> parseAmount(const String& amountString)
+static std::optional<int64_t> parseAmount(const String& amountString)
 {
     int64_t amount = 0;
 
@@ -105,13 +105,13 @@ static Optional<int64_t> parseAmount(const String& amountString)
             }
 
             if (!parseDigit(c, isNegative, amount))
-                return Nullopt;
+                return std::nullopt;
             state = State::Digit;
             break;
 
         case State::Sign:
             if (!parseDigit(c, isNegative, amount))
-                return Nullopt;
+                return std::nullopt;
             state = State::Digit;
             break;
 
@@ -122,30 +122,30 @@ static Optional<int64_t> parseAmount(const String& amountString)
             }
 
             if (!parseDigit(c, isNegative, amount))
-                return Nullopt;
+                return std::nullopt;
             break;
 
         case State::Dot:
             if (!parseDigit(c, isNegative, amount))
-                return Nullopt;
+                return std::nullopt;
 
             state = State::DotDigit;
             break;
 
         case State::DotDigit:
             if (!parseDigit(c, isNegative, amount))
-                return Nullopt;
+                return std::nullopt;
 
             state = State::End;
             break;
             
         case State::End:
-            return Nullopt;
+            return std::nullopt;
         }
     }
     
     if (state != State::Digit && state != State::DotDigit && state != State::End)
-        return Nullopt;
+        return std::nullopt;
 
     if (state == State::DotDigit) {
         // There was a single digit after the decimal point.
@@ -163,18 +163,18 @@ static Optional<int64_t> parseAmount(const String& amountString)
     return amount;
 }
 
-static Optional<PaymentRequest::ContactFields> createContactFields(DOMWindow& window, const ArrayValue& contactFieldsArray)
+static std::optional<PaymentRequest::ContactFields> createContactFields(DOMWindow& window, const ArrayValue& contactFieldsArray)
 {
     PaymentRequest::ContactFields result;
 
     size_t contactFieldsCount;
     if (!contactFieldsArray.length(contactFieldsCount))
-        return Nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < contactFieldsCount; ++i) {
         String contactField;
         if (!contactFieldsArray.get(i, contactField))
-            return Nullopt;
+            return std::nullopt;
 
         if (contactField == "postalAddress")
             result.postalAddress = true;
@@ -187,21 +187,21 @@ static Optional<PaymentRequest::ContactFields> createContactFields(DOMWindow& wi
         else {
             auto message = makeString("\"" + contactField, "\" is not a valid contact field.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
     return result;
 }
 
-static Optional<PaymentRequest::LineItem::Type> toLineItemType(const String& type)
+static std::optional<PaymentRequest::LineItem::Type> toLineItemType(const String& type)
 {
     if (type == "pending")
         return PaymentRequest::LineItem::Type::Pending;
     if (type == "final")
         return PaymentRequest::LineItem::Type::Final;
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 static bool isValidLineItemPropertyName(const String& propertyName)
@@ -220,7 +220,7 @@ static bool isValidLineItemPropertyName(const String& propertyName)
     return false;
 }
 
-static Optional<PaymentRequest::LineItem> createLineItem(DOMWindow& window, const Dictionary& total)
+static std::optional<PaymentRequest::LineItem> createLineItem(DOMWindow& window, const Dictionary& total)
 {
     Vector<String> propertyNames;
     total.getOwnPropertyNames(propertyNames);
@@ -229,7 +229,7 @@ static Optional<PaymentRequest::LineItem> createLineItem(DOMWindow& window, cons
         if (!isValidLineItemPropertyName(propertyName)) {
             auto message = makeString("\"" + propertyName, "\" is not a valid line item property name.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
@@ -241,7 +241,7 @@ static Optional<PaymentRequest::LineItem> createLineItem(DOMWindow& window, cons
         if (!type) {
             auto message = makeString("\"" + *typeString, "\" is not a valid line item type.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
 
         result.type = *type;
@@ -255,25 +255,25 @@ static Optional<PaymentRequest::LineItem> createLineItem(DOMWindow& window, cons
         else {
             auto message = makeString("\"" + *amountString, "\" is not a valid amount.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
     return result;
 }
 
-static Optional<Vector<PaymentRequest::LineItem>> createLineItems(DOMWindow& window, const ArrayValue& lineItemsArray)
+static std::optional<Vector<PaymentRequest::LineItem>> createLineItems(DOMWindow& window, const ArrayValue& lineItemsArray)
 {
     Vector<PaymentRequest::LineItem> result;
 
     size_t lineItemCount;
     if (!lineItemsArray.length(lineItemCount))
-        return Nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < lineItemCount; ++i) {
         Dictionary lineItemDictionary;
         if (!lineItemsArray.get(i, lineItemDictionary))
-            return Nullopt;
+            return std::nullopt;
 
         if (auto lineItem = createLineItem(window, lineItemDictionary))
             result.append(*lineItem);
@@ -282,18 +282,18 @@ static Optional<Vector<PaymentRequest::LineItem>> createLineItems(DOMWindow& win
     return result;
 }
 
-static Optional<PaymentRequest::MerchantCapabilities> createMerchantCapabilities(DOMWindow& window, const ArrayValue& merchantCapabilitiesArray)
+static std::optional<PaymentRequest::MerchantCapabilities> createMerchantCapabilities(DOMWindow& window, const ArrayValue& merchantCapabilitiesArray)
 {
     PaymentRequest::MerchantCapabilities result;
 
     size_t merchantCapabilitiesCount;
     if (!merchantCapabilitiesArray.length(merchantCapabilitiesCount))
-        return Nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < merchantCapabilitiesCount; ++i) {
         String merchantCapability;
         if (!merchantCapabilitiesArray.get(i, merchantCapability))
-            return Nullopt;
+            return std::nullopt;
 
         if (merchantCapability == "supports3DS")
             result.supports3DS = true;
@@ -306,30 +306,30 @@ static Optional<PaymentRequest::MerchantCapabilities> createMerchantCapabilities
         else {
             auto message = makeString("\"" + merchantCapability, "\" is not a valid merchant capability.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
     return result;
 }
 
-static Optional<Vector<String>> createSupportedNetworks(unsigned version, DOMWindow& window, const ArrayValue& supportedNetworksArray)
+static std::optional<Vector<String>> createSupportedNetworks(unsigned version, DOMWindow& window, const ArrayValue& supportedNetworksArray)
 {
     Vector<String> result;
 
     size_t supportedNetworksCount;
     if (!supportedNetworksArray.length(supportedNetworksCount))
-        return Nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < supportedNetworksCount; ++i) {
         String supportedNetwork;
         if (!supportedNetworksArray.get(i, supportedNetwork))
-            return Nullopt;
+            return std::nullopt;
 
         if (!PaymentRequest::isValidSupportedNetwork(version, supportedNetwork)) {
             auto message = makeString("\"" + supportedNetwork, "\" is not a valid payment network.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
 
         result.append(WTFMove(supportedNetwork));
@@ -338,7 +338,7 @@ static Optional<Vector<String>> createSupportedNetworks(unsigned version, DOMWin
     return result;
 }
 
-static Optional<PaymentRequest::ShippingType> toShippingType(const String& shippingTypeString)
+static std::optional<PaymentRequest::ShippingType> toShippingType(const String& shippingTypeString)
 {
     if (shippingTypeString == "shipping")
         return PaymentRequest::ShippingType::Shipping;
@@ -349,7 +349,7 @@ static Optional<PaymentRequest::ShippingType> toShippingType(const String& shipp
     if (shippingTypeString == "servicePickup")
         return PaymentRequest::ShippingType::ServicePickup;
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 static bool isValidShippingMethodPropertyName(const String& propertyName)
@@ -369,7 +369,7 @@ static bool isValidShippingMethodPropertyName(const String& propertyName)
     return false;
 }
 
-static Optional<PaymentRequest::ShippingMethod> createShippingMethod(DOMWindow& window, const Dictionary& shippingMethodDictionary)
+static std::optional<PaymentRequest::ShippingMethod> createShippingMethod(DOMWindow& window, const Dictionary& shippingMethodDictionary)
 {
     Vector<String> propertyNames;
     shippingMethodDictionary.getOwnPropertyNames(propertyNames);
@@ -378,7 +378,7 @@ static Optional<PaymentRequest::ShippingMethod> createShippingMethod(DOMWindow& 
         if (!isValidShippingMethodPropertyName(propertyName)) {
             auto message = makeString("\"" + propertyName, "\" is not a valid shipping method property name.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
@@ -387,21 +387,21 @@ static Optional<PaymentRequest::ShippingMethod> createShippingMethod(DOMWindow& 
     auto label = shippingMethodDictionary.get<String>("label");
     if (!label) {
         window.printErrorMessage("Missing shipping method label.");
-        return Nullopt;
+        return std::nullopt;
     }
     result.label = *label;
 
     auto detail = shippingMethodDictionary.get<String>("detail");
     if (!detail) {
         window.printErrorMessage("Missing shipping method detail.");
-        return Nullopt;
+        return std::nullopt;
     }
     result.detail = *detail;
 
     auto amountString = shippingMethodDictionary.get<String>("amount");
     if (!amountString) {
         window.printErrorMessage("Missing shipping method amount.");
-        return Nullopt;
+        return std::nullopt;
     }
 
     if (auto amount = parseAmount(*amountString))
@@ -409,36 +409,36 @@ static Optional<PaymentRequest::ShippingMethod> createShippingMethod(DOMWindow& 
     else {
         auto message = makeString("\"" + *amountString, "\" is not a valid amount.");
         window.printErrorMessage(message);
-        return Nullopt;
+        return std::nullopt;
     }
 
     auto identifier = shippingMethodDictionary.get<String>("identifier");
     if (!identifier) {
         window.printErrorMessage("Missing shipping method identifier.");
-        return Nullopt;
+        return std::nullopt;
     }
     result.identifier = *identifier;
 
     return result;
 }
 
-static Optional<Vector<PaymentRequest::ShippingMethod>> createShippingMethods(DOMWindow& window, const ArrayValue& shippingMethodsArray)
+static std::optional<Vector<PaymentRequest::ShippingMethod>> createShippingMethods(DOMWindow& window, const ArrayValue& shippingMethodsArray)
 {
     Vector<PaymentRequest::ShippingMethod> result;
 
     size_t shippingMethodCount;
     if (!shippingMethodsArray.length(shippingMethodCount))
-        return Nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < shippingMethodCount; ++i) {
         Dictionary shippingMethodDictionary;
         if (!shippingMethodsArray.get(i, shippingMethodDictionary))
-            return Nullopt;
+            return std::nullopt;
 
         if (auto shippingMethod = createShippingMethod(window, shippingMethodDictionary))
             result.append(*shippingMethod);
         else
-            return Nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -470,7 +470,7 @@ static bool isValidPaymentRequestPropertyName(const String& propertyName)
     return false;
 }
 
-static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow& window, const Dictionary& dictionary)
+static std::optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow& window, const Dictionary& dictionary)
 {
     PaymentRequest paymentRequest;
 
@@ -480,25 +480,25 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     for (auto& propertyName : propertyNames) {
         if (propertyName == "requiredShippingAddressFields") {
             window.printErrorMessage("\"requiredShippingAddressFields\" has been deprecated. Please switch to \"requiredShippingContactFields\" instead.");
-            return Nullopt;
+            return std::nullopt;
         }
 
         if (propertyName == "requiredBillingAddressFields") {
             window.printErrorMessage("\"requiredBillingAddressFields\" has been deprecated. Please switch to \"requiredBillingContactFields\" instead.");
-            return Nullopt;
+            return std::nullopt;
         }
 
         if (!isValidPaymentRequestPropertyName(propertyName)) {
             auto message = makeString("\"" + propertyName, "\" is not a valid payment request property name.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
     }
 
     if (auto merchantCapabilitiesArray = dictionary.get<ArrayValue>("merchantCapabilities")) {
         auto merchantCapabilities = createMerchantCapabilities(window, *merchantCapabilitiesArray);
         if (!merchantCapabilities)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setMerchantCapabilities(*merchantCapabilities);
     }
@@ -506,7 +506,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     if (auto supportedNetworksArray = dictionary.get<ArrayValue>("supportedNetworks")) {
         auto supportedNetworks = createSupportedNetworks(version, window, *supportedNetworksArray);
         if (!supportedNetworks)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setSupportedNetworks(*supportedNetworks);
     }
@@ -519,7 +519,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     if (auto requiredBillingContactFieldsArray = dictionary.get<ArrayValue>("requiredBillingContactFields")) {
         auto requiredBillingContactFields = createContactFields(window, *requiredBillingContactFieldsArray);
         if (!requiredBillingContactFields)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setRequiredBillingContactFields(*requiredBillingContactFields);
     }
@@ -529,7 +529,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
         auto billingContact = PaymentContact::fromJS(*JSMainThreadExecState::currentState(), *billingContactValue, errorMessage);
         if (!billingContact) {
             window.printErrorMessage(errorMessage);
-            return Nullopt;
+            return std::nullopt;
         }
 
         paymentRequest.setBillingContact(*billingContact);
@@ -538,7 +538,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     if (auto requiredShippingContactFieldsArray = dictionary.get<ArrayValue>("requiredShippingContactFields")) {
         auto requiredShippingContactFields = createContactFields(window, *requiredShippingContactFieldsArray);
         if (!requiredShippingContactFields)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setRequiredShippingContactFields(*requiredShippingContactFields);
     }
@@ -548,7 +548,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
         auto shippingContact = PaymentContact::fromJS(*JSMainThreadExecState::currentState(), *shippingContactValue, errorMessage);
         if (!shippingContact) {
             window.printErrorMessage(errorMessage);
-            return Nullopt;
+            return std::nullopt;
         }
 
         paymentRequest.setShippingContact(*shippingContact);
@@ -560,7 +560,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
         if (!shippingType) {
             auto message = makeString("\"" + *shippingTypeString, "\" is not a valid shipping type.");
             window.printErrorMessage(message);
-            return Nullopt;
+            return std::nullopt;
         }
         paymentRequest.setShippingType(*shippingType);
     }
@@ -568,7 +568,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     if (auto shippingMethodsArray = dictionary.get<ArrayValue>("shippingMethods")) {
         auto shippingMethods = createShippingMethods(window, *shippingMethodsArray);
         if (!shippingMethods)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setShippingMethods(*shippingMethods);
     }
@@ -576,7 +576,7 @@ static Optional<PaymentRequest> createPaymentRequest(unsigned version, DOMWindow
     if (auto totalDictionary = dictionary.get<Dictionary>("total")) {
         auto total = createLineItem(window, *totalDictionary);
         if (!total)
-            return Nullopt;
+            return std::nullopt;
 
         paymentRequest.setTotal(*total);
     }
@@ -842,7 +842,7 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(const Dictionary& 
     return { };
 }
 
-static Optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(unsigned short status)
+static std::optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(unsigned short status)
 {
     switch (status) {
     case ApplePaySession::STATUS_SUCCESS:
@@ -870,7 +870,7 @@ static Optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(unsigne
         return PaymentAuthorizationStatus::PINLockout;
 
     default:
-        return Nullopt;
+        return std::nullopt;
     }
 }
 

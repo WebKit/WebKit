@@ -99,10 +99,10 @@ public:
         return extractTriState(WritableShift) != MixedTriState;
     }
 
-    Optional<bool> writable() const
+    std::optional<bool> writable() const
     {
         if (!hasWritable())
-            return Nullopt;
+            return std::nullopt;
         return extractTriState(WritableShift) == TrueTriState;
     }
 
@@ -111,10 +111,10 @@ public:
         return extractTriState(ConfigurableShift) != MixedTriState;
     }
 
-    Optional<bool> configurable() const
+    std::optional<bool> configurable() const
     {
         if (!hasConfigurable())
-            return Nullopt;
+            return std::nullopt;
         return extractTriState(ConfigurableShift) == TrueTriState;
     }
 
@@ -123,10 +123,10 @@ public:
         return extractTriState(EnumerableShift) != MixedTriState;
     }
 
-    Optional<bool> enumerable() const
+    std::optional<bool> enumerable() const
     {
         if (!hasEnumerable())
-            return Nullopt;
+            return std::nullopt;
         return extractTriState(EnumerableShift) == TrueTriState;
     }
 

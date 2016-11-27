@@ -723,11 +723,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Database' Domain
 template<>
-Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String&);
+std::optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String&);
 
 } // namespace TestHelpers
 
@@ -795,7 +795,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Database' Domain
 template<>
-Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String& protocolString)
+std::optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Database::PrimaryColors::Red,
@@ -806,7 +806,7 @@ Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Database::PrimaryColors)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 

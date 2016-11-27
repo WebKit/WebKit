@@ -63,7 +63,7 @@ public:
 
     void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
 
-    Optional<int> firstLineBaseline() const override;
+    std::optional<int> firstLineBaseline() const override;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 

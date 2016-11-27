@@ -117,7 +117,7 @@ FloatRect LegacyTileCache::visibleRectInLayer(CALayer *layer) const
     return [layer convertRect:[m_window extendedVisibleRect] fromLayer:hostLayer()];
 }
 
-void LegacyTileCache::setOverrideVisibleRect(Optional<FloatRect> rect)
+void LegacyTileCache::setOverrideVisibleRect(std::optional<FloatRect> rect)
 {
     m_overrideVisibleRect = rect;
 }

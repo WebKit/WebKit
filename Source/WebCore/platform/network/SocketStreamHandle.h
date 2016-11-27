@@ -54,7 +54,7 @@ protected:
     SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
     bool sendPendingData();
-    virtual Optional<size_t> platformSend(const char* data, size_t length) = 0;
+    virtual std::optional<size_t> platformSend(const char* data, size_t length) = 0;
     virtual void platformClose() = 0;
 
     URL m_url;

@@ -362,7 +362,7 @@ bool AVVideoCaptureSource::applyFrameRate(double rate)
     return true;
 }
 
-void AVVideoCaptureSource::applySizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
+void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     setPreset(bestSessionPresetForVideoDimensions(WTFMove(width), WTFMove(height)));
 
@@ -541,7 +541,7 @@ RefPtr<AVMediaSourcePreview> AVVideoCaptureSource::createPreview()
     return AVVideoSourcePreview::create(session(), device(), this);
 }
 
-NSString *AVVideoCaptureSource::bestSessionPresetForVideoDimensions(Optional<int> width, Optional<int> height) const
+NSString *AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const
 {
     if (!width && !height)
         return nil;
@@ -565,7 +565,7 @@ NSString *AVVideoCaptureSource::bestSessionPresetForVideoDimensions(Optional<int
     return nil;
 }
 
-bool AVVideoCaptureSource::supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
+bool AVVideoCaptureSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     if (!height && !width && !frameRate)
         return true;

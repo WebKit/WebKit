@@ -71,10 +71,10 @@ float RenderCombineText::width(unsigned from, unsigned length, const FontCascade
     return RenderText::width(from, length, font, xPosition, fallbackFonts, glyphOverflow);
 }
 
-Optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& boxRect) const
+std::optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& boxRect) const
 {
     if (!m_isCombined)
-        return Nullopt;
+        return std::nullopt;
 
     // Visually center m_combinedTextWidth/Ascent/Descent within boxRect
     FloatPoint result = boxRect.minXMaxYCorner();

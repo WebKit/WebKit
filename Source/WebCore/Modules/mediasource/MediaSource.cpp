@@ -542,7 +542,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     onReadyStateChange(oldState, state);
 }
 
-ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
+ExceptionOr<void> MediaSource::endOfStream(std::optional<EndOfStreamError> error)
 {
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-endOfStream-void-EndOfStreamError-error
     // 1. If the readyState attribute is not in the "open" state then throw an
@@ -561,7 +561,7 @@ ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
     return { };
 }
 
-void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
+void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
 {
     LOG(MediaSource, "MediaSource::streamEndedWithError(%p)", this);
     if (isClosed())

@@ -139,7 +139,7 @@ private:
     private:
         void readAndNotify() const;
 
-        Optional<int> m_fd;
+        std::optional<int> m_fd;
         std::function<void ()> m_notifyHandler;
 #if USE(GLIB)
         GRefPtr<GSource> m_source;
@@ -164,8 +164,8 @@ private:
     CFRunLoopObserverRef m_observer { nullptr };
     Lock m_observerMutex;
 #elif OS(LINUX)
-    Optional<int> m_eventFD;
-    Optional<int> m_pressureLevelFD;
+    std::optional<int> m_eventFD;
+    std::optional<int> m_pressureLevelFD;
     std::unique_ptr<EventFDPoller> m_eventFDPoller;
     RunLoop::Timer<MemoryPressureHandler> m_holdOffTimer;
     void holdOffTimerFired();

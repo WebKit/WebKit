@@ -1,3 +1,20 @@
+2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Import std::optional reference implementation as WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=164199
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        Use WTF::Optional::value_or.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::port):
+
 2016-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] When zoomed in and panning on pages with fixed bars, parts of the bars are sometimes missing

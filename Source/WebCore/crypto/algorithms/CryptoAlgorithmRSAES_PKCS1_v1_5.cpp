@@ -118,7 +118,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
             exceptionCallback(DataError);
             return;
         }
-        result = CryptoKeyRSA::importJwk(parameters->identifier, Nullopt, WTFMove(key), extractable, usages);
+        result = CryptoKeyRSA::importJwk(parameters->identifier, std::nullopt, WTFMove(key), extractable, usages);
         break;
     }
     default:

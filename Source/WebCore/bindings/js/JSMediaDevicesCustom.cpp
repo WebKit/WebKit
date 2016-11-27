@@ -58,7 +58,7 @@ static void initializeStringConstraintWithList(StringConstraint& constraint, voi
     }
 }
 
-static Optional<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static std::optional<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
     auto constraint = StringConstraint(name, type);
 
@@ -85,7 +85,7 @@ static Optional<StringConstraint> createStringConstraint(const Dictionary& media
 
         if (constraint.isEmpty()) {
             LOG(Media, "createStringConstraint() - ignoring string constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return Nullopt;
+            return std::nullopt;
         }
         
         return WTFMove(constraint);
@@ -98,7 +98,7 @@ static Optional<StringConstraint> createStringConstraint(const Dictionary& media
 
         if (constraint.isEmpty()) {
             LOG(Media, "createStringConstraint() - ignoring string constraint '%s' with array value since it is empty.", name.utf8().data());
-            return Nullopt;
+            return std::nullopt;
         }
 
         return WTFMove(constraint);
@@ -117,10 +117,10 @@ static Optional<StringConstraint> createStringConstraint(const Dictionary& media
 
     // Invalid constraint value.
     LOG(Media, "createStringConstraint() - ignoring string constraint '%s' since it has neither a dictionary nor sequence nor scalar value.", name.utf8().data());
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static std::optional<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
     auto constraint = BooleanConstraint(name, type);
 
@@ -137,7 +137,7 @@ static Optional<BooleanConstraint> createBooleanConstraint(const Dictionary& med
 
         if (constraint.isEmpty()) {
             LOG(Media, "createBooleanConstraint() - ignoring boolean constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return Nullopt;
+            return std::nullopt;
         }
 
         return WTFMove(constraint);
@@ -156,10 +156,10 @@ static Optional<BooleanConstraint> createBooleanConstraint(const Dictionary& med
 
     // Invalid constraint value.
     LOG(Media, "createBooleanConstraint() - ignoring boolean constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static std::optional<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
     auto constraint = DoubleConstraint(name, type);
 
@@ -184,7 +184,7 @@ static Optional<DoubleConstraint> createDoubleConstraint(const Dictionary& media
 
         if (constraint.isEmpty()) {
             LOG(Media, "createDoubleConstraint() - ignoring double constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return Nullopt;
+            return std::nullopt;
         }
 
         return WTFMove(constraint);
@@ -203,10 +203,10 @@ static Optional<DoubleConstraint> createDoubleConstraint(const Dictionary& media
 
     // Invalid constraint value.
     LOG(Media, "createDoubleConstraint() - ignoring double constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static std::optional<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
     auto constraint = IntConstraint(name, type);
 
@@ -231,7 +231,7 @@ static Optional<IntConstraint> createIntConstraint(const Dictionary& mediaTrackC
 
         if (constraint.isEmpty()) {
             LOG(Media, "createIntConstraint() - ignoring long constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return Nullopt;
+            return std::nullopt;
         }
 
         return WTFMove(constraint);
@@ -250,7 +250,7 @@ static Optional<IntConstraint> createIntConstraint(const Dictionary& mediaTrackC
 
     // Invalid constraint value.
     LOG(Media, "createIntConstraint() - ignoring long constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return Nullopt;
+    return std::nullopt;
 }
 
 static void parseMediaTrackConstraintSetForKey(const Dictionary& mediaTrackConstraintSet, const String& name, MediaTrackConstraintSetMap& map, ConstraintSetType constraintSetType)

@@ -230,8 +230,8 @@ public:
     NSColor *underlayColor() const;
     NSColor *pageExtendedBackgroundColor() const;
 
-    void setOverlayScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
-    WTF::Optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
+    void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
+    std::optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
 
     void beginDeferringViewInWindowChanges();
     // FIXME: Merge these two?
@@ -686,7 +686,7 @@ private:
     String m_promisedFilename;
     String m_promisedURL;
 
-    WTF::Optional<NSInteger> m_spellCheckerDocumentTag;
+    std::optional<NSInteger> m_spellCheckerDocumentTag;
 
     CGFloat m_totalHeightOfBanners { 0 };
 

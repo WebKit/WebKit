@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-inline Optional<CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+inline std::optional<CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -50,7 +50,7 @@ inline Optional<CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmId
     case CryptoAlgorithmIdentifier::SHA_512:
         return CryptoDigest::Algorithm::SHA_512;
     default:
-        return Nullopt;
+        return std::nullopt;
     }
 }
 

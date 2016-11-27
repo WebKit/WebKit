@@ -63,7 +63,7 @@ private:
 
     IDBKeyRangeData m_remainingRange;
 
-    WTF::Optional<std::set<IDBKeyData>::iterator> m_iterator;
+    std::optional<std::set<IDBKeyData>::iterator> m_iterator;
 
     IDBKeyData m_currentPositionKey;
 };

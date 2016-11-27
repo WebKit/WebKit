@@ -476,7 +476,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
 
     ASSERT(keySerialization);
 
-    Optional<CryptoAlgorithmPair> reconciledResult = keySerialization->reconcileAlgorithm(algorithm.get(), parameters.get());
+    std::optional<CryptoAlgorithmPair> reconciledResult = keySerialization->reconcileAlgorithm(algorithm.get(), parameters.get());
     if (!reconciledResult) {
         if (!scope.exception())
             throwTypeError(&state, scope, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));

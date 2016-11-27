@@ -80,8 +80,8 @@ template<typename Rep, typename Period> struct Coder<std::chrono::duration<Rep, 
     }
 };
 
-template<typename T> struct Coder<Optional<T>> {
-    static void encode(Encoder& encoder, const Optional<T>& optional)
+template<typename T> struct Coder<std::optional<T>> {
+    static void encode(Encoder& encoder, const std::optional<T>& optional)
     {
         if (!optional) {
             encoder << false;
@@ -92,14 +92,14 @@ template<typename T> struct Coder<Optional<T>> {
         encoder << optional.value();
     }
     
-    static bool decode(Decoder& decoder, Optional<T>& optional)
+    static bool decode(Decoder& decoder, std::optional<T>& optional)
     {
         bool isEngaged;
         if (!decoder.decode(isEngaged))
             return false;
         
         if (!isEngaged) {
-            optional = Nullopt;
+            optional = std::nullopt;
             return true;
         }
         

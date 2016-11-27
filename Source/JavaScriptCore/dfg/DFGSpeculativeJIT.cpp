@@ -399,7 +399,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         m_outOfLineStreamIndex = slowPathLambda.streamIndex;
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), currentNode->origin.semantic);
         slowPathLambda.generator();
-        m_outOfLineStreamIndex = Nullopt;
+        m_outOfLineStreamIndex = std::nullopt;
     }
 }
 
@@ -3188,8 +3188,8 @@ void SpeculativeJIT::emitUntypedBitOp(Node* node)
         return;
     }
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -3219,11 +3219,11 @@ void SpeculativeJIT::emitUntypedBitOp(Node* node)
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isConst()) {
-        left = JSValueOperand(this, leftChild);
+        left.emplace(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
     if (!rightOperand.isConst()) {
-        right = JSValueOperand(this, rightChild);
+        right.emplace(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
 
@@ -3335,8 +3335,8 @@ void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
         return;
     }
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -3372,11 +3372,11 @@ void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isConst()) {
-        left = JSValueOperand(this, leftChild);
+        left.emplace(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
     if (!rightOperand.isConst()) {
-        right = JSValueOperand(this, rightChild);
+        right.emplace(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
 
@@ -3497,8 +3497,8 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    Optional<JSValueOperand> left;
-    Optional<JSValueOperand> right;
+    std::optional<JSValueOperand> left;
+    std::optional<JSValueOperand> right;
 
     JSValueRegs leftRegs;
     JSValueRegs rightRegs;
@@ -3511,16 +3511,16 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     GPRReg scratchGPR = InvalidGPRReg;
     FPRReg scratchFPR = InvalidFPRReg;
 
-    Optional<FPRTemporary> fprScratch;
+    std::optional<FPRTemporary> fprScratch;
     if (needsScratchFPRReg) {
-        fprScratch = FPRTemporary(this);
+        fprScratch.emplace(this);
         scratchFPR = fprScratch->fpr();
     }
 
 #if USE(JSVALUE64)
-    Optional<GPRTemporary> gprScratch;
+    std::optional<GPRTemporary> gprScratch;
     if (needsScratchGPRReg) {
-        gprScratch = GPRTemporary(this);
+        gprScratch.emplace(this);
         scratchGPR = gprScratch->gpr();
     }
     GPRTemporary result(this);
@@ -3547,11 +3547,11 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
 
     if (!Generator::isLeftOperandValidConstant(leftOperand)) {
-        left = JSValueOperand(this, leftChild);
+        left.emplace(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
     if (!Generator::isRightOperandValidConstant(rightOperand)) {
-        right = JSValueOperand(this, rightChild);
+        right.emplace(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
 
@@ -3616,10 +3616,10 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
         });
     } else {
         if (Generator::isLeftOperandValidConstant(leftOperand)) {
-            left = JSValueOperand(this, leftChild);
+            left.emplace(this, leftChild);
             leftRegs = left->jsValueRegs();
         } else if (Generator::isRightOperandValidConstant(rightOperand)) {
-            right = JSValueOperand(this, rightChild);
+            right.emplace(this, rightChild);
             rightRegs = right->jsValueRegs();
         }
 
@@ -4258,9 +4258,9 @@ template <typename Generator, typename RepatchingFunction, typename NonRepatchin
 void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC, bool needsScratchGPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
 {
     GPRReg scratchGPR = InvalidGPRReg;
-    Optional<GPRTemporary> gprScratch;
+    std::optional<GPRTemporary> gprScratch;
     if (needsScratchGPRReg) {
-        gprScratch = GPRTemporary(this);
+        gprScratch.emplace(this);
         scratchGPR = gprScratch->gpr();
     }
     JSValueOperand childOperand(this, node->child1());
@@ -4687,8 +4687,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             return;
         }
 
-        Optional<JSValueOperand> left;
-        Optional<JSValueOperand> right;
+        std::optional<JSValueOperand> left;
+        std::optional<JSValueOperand> right;
 
         JSValueRegs leftRegs;
         JSValueRegs rightRegs;
@@ -4735,11 +4735,11 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
         if (!leftOperand.isConst()) {
-            left = JSValueOperand(this, leftChild);
+            left.emplace(this, leftChild);
             leftRegs = left->jsValueRegs();
         }
         if (!rightOperand.isConst()) {
-            right = JSValueOperand(this, rightChild);
+            right.emplace(this, rightChild);
             rightRegs = right->jsValueRegs();
         }
 
@@ -7612,10 +7612,10 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
     SpeculateCellOperand base(this, baseEdge);
     regs.append(DOMJIT::Value(base.gpr(), m_state.forNode(baseEdge).value()));
 
-    Optional<SpeculateCellOperand> globalObject;
+    std::optional<SpeculateCellOperand> globalObject;
     if (patchpoint->requireGlobalObject) {
         Edge& globalObjectEdge = node->child2();
-        globalObject = SpeculateCellOperand(this, globalObjectEdge);
+        globalObject.emplace(this, globalObjectEdge);
         regs.append(DOMJIT::Value(globalObject->gpr(), m_state.forNode(globalObjectEdge).value()));
     }
 

@@ -190,7 +190,7 @@ SimpleStats& timingStats(const char* name, CollectionScope scope)
 
 class TimingScope {
 public:
-    TimingScope(Optional<CollectionScope> scope, const char* name)
+    TimingScope(std::optional<CollectionScope> scope, const char* name)
         : m_scope(scope)
         , m_name(name)
     {
@@ -203,7 +203,7 @@ public:
     {
     }
     
-    void setScope(Optional<CollectionScope> scope)
+    void setScope(std::optional<CollectionScope> scope)
     {
         m_scope = scope;
     }
@@ -224,7 +224,7 @@ public:
         }
     }
 private:
-    Optional<CollectionScope> m_scope;
+    std::optional<CollectionScope> m_scope;
     double m_before;
     const char* m_name;
 };
@@ -1084,7 +1084,7 @@ void Heap::collectAllGarbage()
     sweepAllLogicallyEmptyWeakBlocks();
 }
 
-void Heap::collectAsync(Optional<CollectionScope> scope)
+void Heap::collectAsync(std::optional<CollectionScope> scope)
 {
     if (!m_isSafeToCollect)
         return;
@@ -1092,7 +1092,7 @@ void Heap::collectAsync(Optional<CollectionScope> scope)
     bool alreadyRequested = false;
     {
         LockHolder locker(*m_threadLock);
-        for (Optional<CollectionScope> request : m_requests) {
+        for (std::optional<CollectionScope> request : m_requests) {
             if (scope) {
                 if (scope == CollectionScope::Eden) {
                     alreadyRequested = true;
@@ -1118,7 +1118,7 @@ void Heap::collectAsync(Optional<CollectionScope> scope)
     requestCollection(scope);
 }
 
-void Heap::collectSync(Optional<CollectionScope> scope)
+void Heap::collectSync(std::optional<CollectionScope> scope)
 {
     if (!m_isSafeToCollect)
         return;
@@ -1138,7 +1138,7 @@ void Heap::collectInThread()
 {
     m_currentGCStartTime = MonotonicTime::now();
     
-    Optional<CollectionScope> scope;
+    std::optional<CollectionScope> scope;
     {
         LockHolder locker(*m_threadLock);
         RELEASE_ASSERT(!m_requests.isEmpty());
@@ -1164,7 +1164,7 @@ void Heap::collectInThread()
     
     ASSERT(m_isSafeToCollect);
     if (m_collectionScope) {
-        dataLog("Collection scope already set during GC: ", m_collectionScope, "\n");
+        dataLog("Collection scope already set during GC: ", *m_collectionScope, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
     
@@ -1542,7 +1542,7 @@ void Heap::finalize()
         cache->clear();
 }
 
-Heap::Ticket Heap::requestCollection(Optional<CollectionScope> scope)
+Heap::Ticket Heap::requestCollection(std::optional<CollectionScope> scope)
 {
     stopIfNecessary();
     
@@ -1582,7 +1582,7 @@ void Heap::suspendCompilerThreads()
 #endif
 }
 
-void Heap::willStartCollection(Optional<CollectionScope> scope)
+void Heap::willStartCollection(std::optional<CollectionScope> scope)
 {
     if (Options::logGC())
         dataLog("=> ");
@@ -1789,7 +1789,7 @@ void Heap::didFinishCollection(double gcStartTime)
 
     RELEASE_ASSERT(m_collectionScope);
     m_lastCollectionScope = m_collectionScope;
-    m_collectionScope = Nullopt;
+    m_collectionScope = std::nullopt;
 
     for (auto* observer : m_observers)
         observer->didGarbageCollect(scope);
@@ -1915,7 +1915,7 @@ void Heap::flushWriteBarrierBuffer(JSCell* cell)
     m_writeBarrierBuffer.add(cell);
 }
 
-bool Heap::shouldDoFullCollection(Optional<CollectionScope> scope) const
+bool Heap::shouldDoFullCollection(std::optional<CollectionScope> scope) const
 {
     if (!Options::useGenerationalGC())
         return true;

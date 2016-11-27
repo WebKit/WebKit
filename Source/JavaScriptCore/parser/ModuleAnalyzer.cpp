@@ -82,7 +82,7 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
     // Indirectly exported binding.
     // import a from "mod"
     // export { a }
-    Optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
+    std::optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
     ASSERT(optionalImportEntry);
     const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
     for (auto& exportName : moduleProgramNode.moduleScopeData().exportedBindings().get(localName.get()))

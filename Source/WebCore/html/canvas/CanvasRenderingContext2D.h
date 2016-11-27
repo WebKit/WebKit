@@ -117,12 +117,12 @@ public:
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
     void resetTransform();
 
-    void setStrokeColor(const String& color, Optional<float> alpha = Nullopt);
+    void setStrokeColor(const String& color, std::optional<float> alpha = std::nullopt);
     void setStrokeColor(float grayLevel, float alpha = 1.0);
     void setStrokeColor(float r, float g, float b, float a);
     void setStrokeColor(float c, float m, float y, float k, float a);
 
-    void setFillColor(const String& color, Optional<float> alpha = Nullopt);
+    void setFillColor(const String& color, std::optional<float> alpha = std::nullopt);
     void setFillColor(float grayLevel, float alpha = 1.0f);
     void setFillColor(float r, float g, float b, float a);
     void setFillColor(float c, float m, float y, float k, float a);
@@ -149,7 +149,7 @@ public:
     void fillRect(float x, float y, float width, float height);
     void strokeRect(float x, float y, float width, float height);
 
-    void setShadow(float width, float height, float blur, const String& color = String(), Optional<float> alpha = Nullopt);
+    void setShadow(float width, float height, float blur, const String& color = String(), std::optional<float> alpha = std::nullopt);
     void setShadow(float width, float height, float blur, float grayLevel, float alpha = 1.0);
     void setShadow(float width, float height, float blur, float r, float g, float b, float a);
     void setShadow(float width, float height, float blur, float c, float m, float y, float k, float a);
@@ -214,8 +214,8 @@ public:
     String direction() const;
     void setDirection(const String&);
 
-    void fillText(const String& text, float x, float y, Optional<float> maxWidth = Nullopt);
-    void strokeText(const String& text, float x, float y, Optional<float> maxWidth = Nullopt);
+    void fillText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
+    void strokeText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
     LineCap getLineCap() const { return state().lineCap; }
@@ -331,7 +331,7 @@ private:
     void applyStrokePattern();
     void applyFillPattern();
 
-    void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = Nullopt);
+    void drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
 
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the State.

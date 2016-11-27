@@ -335,12 +335,12 @@ const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel s
 
 void ImageFrameCache::clearMetadata()
 {
-    m_frameCount = Nullopt;
-    m_singlePixelSolidColor = Nullopt;
+    m_frameCount = std::nullopt;
+    m_singlePixelSolidColor = std::nullopt;
 }
 
 template<typename T, T (ImageDecoder::*functor)() const>
-T ImageFrameCache::metadata(const T& defaultValue, Optional<T>* cachedValue)
+T ImageFrameCache::metadata(const T& defaultValue, std::optional<T>* cachedValue)
 {
     if (cachedValue && *cachedValue)
         return cachedValue->value();
@@ -357,7 +357,7 @@ T ImageFrameCache::metadata(const T& defaultValue, Optional<T>* cachedValue)
 }
 
 template<typename T, T (ImageFrame::*functor)() const>
-T ImageFrameCache::frameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching, Optional<T>* cachedValue)
+T ImageFrameCache::frameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching, std::optional<T>* cachedValue)
 {
     if (cachedValue && *cachedValue)
         return cachedValue->value();
@@ -400,9 +400,9 @@ String ImageFrameCache::filenameExtension()
     return metadata<String, (&ImageDecoder::filenameExtension)>(String(), &m_filenameExtension);
 }
 
-Optional<IntPoint> ImageFrameCache::hotSpot()
+std::optional<IntPoint> ImageFrameCache::hotSpot()
 {
-    return metadata<Optional<IntPoint>, (&ImageDecoder::hotSpot)>(Nullopt, &m_hotSpot);
+    return metadata<std::optional<IntPoint>, (&ImageDecoder::hotSpot)>(std::nullopt, &m_hotSpot);
 }
 
 IntSize ImageFrameCache::size()

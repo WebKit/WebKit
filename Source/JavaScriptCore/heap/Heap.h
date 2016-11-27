@@ -146,7 +146,7 @@ public:
     void removeObserver(HeapObserver* observer) { m_observers.removeFirst(observer); }
 
     MutatorState mutatorState() const { return m_mutatorState; }
-    Optional<CollectionScope> collectionScope() const { return m_collectionScope; }
+    std::optional<CollectionScope> collectionScope() const { return m_collectionScope; }
     bool hasHeapAccess() const;
     bool mutatorIsStopped() const;
     bool collectorBelievesThatTheWorldIsStopped() const;
@@ -186,18 +186,18 @@ public:
     bool shouldCollect();
     
     // Queue up a collection. Returns immediately. This will not queue a collection if a collection
-    // of equal or greater strength exists. Full collections are stronger than Nullopt collections
-    // and Nullopt collections are stronger than Eden collections. Nullopt means that the GC can
+    // of equal or greater strength exists. Full collections are stronger than std::nullopt collections
+    // and std::nullopt collections are stronger than Eden collections. std::nullopt means that the GC can
     // choose Eden or Full. This implies that if you request a GC while that GC is ongoing, nothing
     // will happen.
-    JS_EXPORT_PRIVATE void collectAsync(Optional<CollectionScope> = Nullopt);
+    JS_EXPORT_PRIVATE void collectAsync(std::optional<CollectionScope> = std::nullopt);
     
     // Queue up a collection and wait for it to complete. This won't return until you get your own
     // complete collection. For example, if there was an ongoing asynchronous collection at the time
     // you called this, then this would wait for that one to complete and then trigger your
     // collection and then return. In weird cases, there could be multiple GC requests in the backlog
     // and this will wait for that backlog before running its GC and returning.
-    JS_EXPORT_PRIVATE void collectSync(Optional<CollectionScope> = Nullopt);
+    JS_EXPORT_PRIVATE void collectSync(std::optional<CollectionScope> = std::nullopt);
     
     bool collectIfNecessaryOrDefer(GCDeferralContext* = nullptr); // Returns true if it did collect.
     void collectAccordingToDeferGCProbability();
@@ -425,11 +425,11 @@ private:
     void notifyThreadStopping(const LockHolder&);
     
     typedef uint64_t Ticket;
-    Ticket requestCollection(Optional<CollectionScope>);
+    Ticket requestCollection(std::optional<CollectionScope>);
     void waitForCollection(Ticket);
     
     void suspendCompilerThreads();
-    void willStartCollection(Optional<CollectionScope>);
+    void willStartCollection(std::optional<CollectionScope>);
     void flushWriteBarrierBuffer();
     void prepareForMarking();
     
@@ -469,7 +469,7 @@ private:
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
 
-    bool shouldDoFullCollection(Optional<CollectionScope> requestedCollectionScope) const;
+    bool shouldDoFullCollection(std::optional<CollectionScope> requestedCollectionScope) const;
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
@@ -497,8 +497,8 @@ private:
     size_t m_totalBytesVisited;
     size_t m_totalBytesVisitedThisCycle;
     
-    Optional<CollectionScope> m_collectionScope;
-    Optional<CollectionScope> m_lastCollectionScope;
+    std::optional<CollectionScope> m_collectionScope;
+    std::optional<CollectionScope> m_lastCollectionScope;
     MutatorState m_mutatorState { MutatorState::Running };
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
@@ -599,7 +599,7 @@ private:
     bool m_collectorBelievesThatTheWorldIsStopped { false };
     MonotonicTime m_stopTime;
     
-    Deque<Optional<CollectionScope>> m_requests;
+    Deque<std::optional<CollectionScope>> m_requests;
     Ticket m_lastServedTicket { 0 };
     Ticket m_lastGrantedTicket { 0 };
     bool m_threadShouldStop { false };

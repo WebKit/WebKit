@@ -83,21 +83,21 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
-void PaymentCoordinator::completeShippingMethodSelection(PaymentAuthorizationStatus status, Optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completeShippingMethodSelection(PaymentAuthorizationStatus status, std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     ASSERT(m_activeSession);
 
     m_client.completeShippingMethodSelection(status, WTFMove(newTotalAndItems));
 }
 
-void PaymentCoordinator::completeShippingContactSelection(PaymentAuthorizationStatus status, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, Optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completeShippingContactSelection(PaymentAuthorizationStatus status, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     ASSERT(m_activeSession);
 
     m_client.completeShippingContactSelection(status, newShippingMethods, WTFMove(newTotalAndItems));
 }
 
-void PaymentCoordinator::completePaymentMethodSelection(Optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     ASSERT(m_activeSession);
 

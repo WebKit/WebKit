@@ -536,7 +536,7 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
         if (!length)
             return;
 
-        Optional<size_t> optionalLength;
+        std::optional<size_t> optionalLength;
         if (length != -1)
             optionalLength = length;
         
@@ -653,14 +653,14 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_pacRunLoopSource);
 }
 
-Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
-        return Nullopt;
+        return std::nullopt;
 
     CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
     if (result == -1)
-        return Nullopt;
+        return std::nullopt;
 
     ASSERT(result >= 0);
     return static_cast<size_t>(result);

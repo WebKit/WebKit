@@ -34,7 +34,7 @@ class SecurityOrigin;
 
 struct SecurityOriginData {
     SecurityOriginData() = default;
-    SecurityOriginData(const String& protocol, const String& host, Optional<uint16_t> port)
+    SecurityOriginData(const String& protocol, const String& host, std::optional<uint16_t> port)
         : protocol(protocol)
         , host(host)
         , port(port)
@@ -55,21 +55,21 @@ struct SecurityOriginData {
 
     String protocol;
     String host;
-    Optional<uint16_t> port;
+    std::optional<uint16_t> port;
 
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() const;
 
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.
     WEBCORE_EXPORT String databaseIdentifier() const;
-    WEBCORE_EXPORT static Optional<SecurityOriginData> fromDatabaseIdentifier(const String&);
+    WEBCORE_EXPORT static std::optional<SecurityOriginData> fromDatabaseIdentifier(const String&);
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);
 
     bool isEmpty() const
     {
-        return protocol.isNull() && host.isNull() && port == Nullopt;
+        return protocol.isNull() && host.isNull() && port == std::nullopt;
     }
     
     bool isHashTableDeletedValue() const
@@ -117,7 +117,7 @@ struct SecurityOriginDataHash {
         unsigned hashCodes[3] = {
             data.protocol.impl() ? data.protocol.impl()->hash() : 0,
             data.host.impl() ? data.host.impl()->hash() : 0,
-            data.port.valueOr(0)
+            data.port.value_or(0)
         };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }

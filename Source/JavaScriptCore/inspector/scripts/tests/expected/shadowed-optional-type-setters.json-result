@@ -413,11 +413,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String&);
+std::optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String&);
 
 } // namespace TestHelpers
 
@@ -481,7 +481,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String& protocolString)
+std::optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Runtime::KeyPath::Type::Null,
@@ -492,7 +492,7 @@ Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<I
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Runtime::KeyPath::Type)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 

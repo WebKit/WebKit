@@ -175,7 +175,7 @@ public:
         SourceSize(MediaQueryExpression&&, Ref<CSSValue>&&);
     };
     Vector<SourceSize> parseSizesAttribute(StringView);
-    Optional<SourceSize> sourceSize(MediaQueryExpression&&, CSSParserValue&);
+    std::optional<SourceSize> sourceSize(MediaQueryExpression&&, CSSParserValue&);
 
     bool parseFillImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
@@ -214,8 +214,8 @@ public:
     static std::unique_ptr<Vector<double>> parseKeyframeKeyList(const String&);
 
     bool parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>&, RefPtr<CSSPrimitiveValue>&, RefPtr<CSSValue>&);
-    Optional<double> parseCubicBezierTimingFunctionValue(CSSParserValueList&);
-    Optional<double> parseSpringTimingFunctionValue(CSSParserValueList&);
+    std::optional<double> parseCubicBezierTimingFunctionValue(CSSParserValueList&);
+    std::optional<double> parseSpringTimingFunctionValue(CSSParserValueList&);
     bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&, AnimationParseContext&);
     bool parseTransitionShorthand(CSSPropertyID, bool important);
     bool parseAnimationShorthand(CSSPropertyID, bool important);
@@ -280,7 +280,7 @@ public:
 
     bool parseRGBParameters(CSSParserValue&, int* colorValues, bool parseAlpha);
     bool parseHSLParameters(CSSParserValue&, double* colorValues, bool parseAlpha);
-    Optional<std::pair<std::array<double, 4>, ColorSpace>> parseColorFunctionParameters(CSSParserValue&);
+    std::optional<std::pair<std::array<double, 4>, ColorSpace>> parseColorFunctionParameters(CSSParserValue&);
     RefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = nullptr);
     Color parseColorFromValue(CSSParserValue&);
     void parseSelector(const String&, CSSSelectorList&);

@@ -58,8 +58,8 @@ template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
     // added to the window object. This is done to ensure that JSDocument::visit
     // will be called, which will cause the image element to be marked if necessary.
     toJS(state, jsConstructor->globalObject(), *document);
-    Optional<unsigned> width;
-    Optional<unsigned> height;
+    std::optional<unsigned> width;
+    std::optional<unsigned> height;
     if (state->argumentCount() > 0) {
         width = state->uncheckedArgument(0).toUInt32(state);
         if (state->argumentCount() > 1)

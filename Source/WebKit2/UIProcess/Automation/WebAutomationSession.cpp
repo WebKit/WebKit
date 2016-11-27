@@ -47,7 +47,7 @@ using namespace Inspector;
 static const char* const errorNameAndDetailsSeparator = ";";
 
 // Make sure the predefined error name is valid, otherwise use InternalError.
-#define VALIDATED_ERROR_MESSAGE(errorString) Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(errorString).valueOr(Inspector::Protocol::Automation::ErrorMessage::InternalError)
+#define VALIDATED_ERROR_MESSAGE(errorString) Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(errorString).value_or(Inspector::Protocol::Automation::ErrorMessage::InternalError)
 
 // If the error name is incorrect for these macros, it will be a compile-time error.
 #define STRING_FOR_PREDEFINED_ERROR_NAME(errorName) Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::errorName)
@@ -174,14 +174,14 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     return handle;
 }
 
-Optional<uint64_t> WebAutomationSession::webFrameIDForHandle(const String& handle)
+std::optional<uint64_t> WebAutomationSession::webFrameIDForHandle(const String& handle)
 {
     if (handle.isEmpty())
         return 0;
 
     auto iter = m_handleWebFrameMap.find(handle);
     if (iter == m_handleWebFrameMap.end())
-        return Nullopt;
+        return std::nullopt;
 
     return iter->value;
 }
@@ -300,7 +300,7 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
@@ -484,7 +484,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& er
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
@@ -527,7 +527,7 @@ void WebAutomationSession::resolveChildFrameHandle(Inspector::ErrorString& error
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
@@ -570,7 +570,7 @@ void WebAutomationSession::resolveParentFrameHandle(Inspector::ErrorString& erro
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
+    std::optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
@@ -598,7 +598,7 @@ void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorStr
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    Optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
+    std::optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 

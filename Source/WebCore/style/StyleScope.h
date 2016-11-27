@@ -145,7 +145,7 @@ private:
     int m_pendingStyleSheetCount { 0 };
     bool m_didUpdateActiveStyleSheets { false };
 
-    Optional<UpdateType> m_pendingUpdate;
+    std::optional<UpdateType> m_pendingUpdate;
     bool m_hasDescendantWithPendingUpdate { false };
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;

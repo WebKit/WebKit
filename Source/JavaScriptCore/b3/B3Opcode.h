@@ -265,7 +265,7 @@ inline bool isCheckMath(Opcode opcode)
     }
 }
 
-Optional<Opcode> invertedCompare(Opcode, Type);
+std::optional<Opcode> invertedCompare(Opcode, Type);
 
 inline Opcode constPtrOpcode()
 {

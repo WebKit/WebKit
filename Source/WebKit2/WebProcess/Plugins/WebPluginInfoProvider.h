@@ -54,7 +54,7 @@ private:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if PLATFORM(MAC)
-    Optional<WebCore::PluginLoadClientPolicy> pluginLoadClientPolicyForHost(const String&, const WebCore::PluginInfo&) const;
+    std::optional<WebCore::PluginLoadClientPolicy> pluginLoadClientPolicyForHost(const String&, const WebCore::PluginInfo&) const;
     String longestMatchedWildcardHostForHost(const String& host) const;
     bool replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const;
 

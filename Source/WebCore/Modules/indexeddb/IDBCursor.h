@@ -50,7 +50,7 @@ public:
     static const AtomicString& directionPrev();
     static const AtomicString& directionPrevUnique();
 
-    static Optional<IndexedDB::CursorDirection> stringToDirection(const String& modeString);
+    static std::optional<IndexedDB::CursorDirection> stringToDirection(const String& modeString);
     static const AtomicString& directionToString(IndexedDB::CursorDirection mode);
     
     virtual ~IDBCursor();

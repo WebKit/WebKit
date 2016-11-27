@@ -76,10 +76,10 @@ double JSValue::toNumberSlowCase(ExecState* exec) const
     return isUndefined() ? PNaN : 0; // null and false both convert to 0.
 }
 
-Optional<double> JSValue::toNumberFromPrimitive() const
+std::optional<double> JSValue::toNumberFromPrimitive() const
 {
     if (isEmpty())
-        return Nullopt;
+        return std::nullopt;
     if (isNumber())
         return asNumber();
     if (isBoolean())
@@ -88,7 +88,7 @@ Optional<double> JSValue::toNumberFromPrimitive() const
         return PNaN;
     if (isNull())
         return 0;
-    return Nullopt;
+    return std::nullopt;
 }
 
 JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObject) const
@@ -150,7 +150,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
 
     // Check if there are any setters or getters in the prototype chain

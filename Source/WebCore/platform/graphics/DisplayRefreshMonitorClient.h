@@ -56,7 +56,7 @@ public:
 
 private:
     bool m_scheduled { false };
-    Optional<PlatformDisplayID> m_displayID;
+    std::optional<PlatformDisplayID> m_displayID;
 };
 
 }

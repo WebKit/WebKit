@@ -44,7 +44,7 @@ class CryptoAlgorithmRegistry {
 public:
     static CryptoAlgorithmRegistry& singleton();
 
-    Optional<CryptoAlgorithmIdentifier> identifier(const String&);
+    std::optional<CryptoAlgorithmIdentifier> identifier(const String&);
     String name(CryptoAlgorithmIdentifier);
 
     RefPtr<CryptoAlgorithm> create(CryptoAlgorithmIdentifier);

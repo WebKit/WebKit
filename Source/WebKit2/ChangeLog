@@ -1,3 +1,191 @@
+2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Import std::optional reference implementation as WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=164199
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseHasExpired):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        (WebKit::NetworkCache::Coder<std::optional<T>>::encode):
+        (WebKit::NetworkCache::Coder<std::optional<T>>::decode):
+        (WebKit::NetworkCache::Coder<Optional<T>>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<Optional<T>>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::readOrMakeSalt):
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::PreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::revalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::recordNotUsingCacheForRequest):
+        (WebKit::NetworkCache::Statistics::recordRetrievalFailure):
+        (WebKit::NetworkCache::Statistics::queryWasEverRequested):
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::storeBodyAsBlob):
+        (WebKit::NetworkCache::Storage::encodeRecord):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<std::optional<T>>::encode):
+        (IPC::ArgumentCoder<std::optional<T>>::decode):
+        (IPC::ArgumentCoder<WTF::Optional<T>>::encode): Deleted.
+        (IPC::ArgumentCoder<WTF::Optional<T>>::decode): Deleted.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithReply):
+        * Platform/SharedMemory.h:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::map):
+        * Scripts/webkit/messages.py:
+        (class_template_headers):
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::create):
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginGetPort):
+        * Shared/SessionState.h:
+        * Shared/WebPageCreationParameters.h:
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::typeFromObject):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin port]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _navigationGestureDidEnd]):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setCursor):
+        * UIProcess/API/mac/WKView.mm:
+        (toCoreScrollbarStyle):
+        (toAPIScrollbarStyle):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentMethodSelection):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentSummaryItem):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::webFrameIDForHandle):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateViewExposedRect):
+        (WebKit::WebViewImpl::setOverlayScrollbarStyle):
+        (WebKit::WebViewImpl::overlayScrollbarStyle):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setViewExposedRect):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::viewExposedRect):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::didReceiveSocketStreamData):
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::fileCreationTime):
+        (WebKit::fileModificationTime):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backForwardListState):
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setOverlayScrollbarStyle):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::overlayScrollbarStyle):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::transformFromScene):
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _scrollOffsetForEvent:]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFormDataElement):
+        (WebKit::decodeFormDataElement):
+        (WebKit::decodeV1SessionHistory):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setViewExposedRect):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinator::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinator::completePaymentMethodSelection):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEventThrottlingBehaviorOverride):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView):
+        (WebKit::PDFPlugin::convertFromPDFViewToScreen):
+        (WebKit::PDFPlugin::boundsOnScreen):
+        (WebKit::PDFPlugin::geometryDidChange):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::geometryDidChange):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performFrameLoadURLRequest):
+        (WebKit::PluginView::evaluate):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::pluginLoadClientPolicyForHost):
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFormData):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::preferredScrollbarOverlayStyle):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::certificateInfo):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        (WebKit::WebPage::setScrollbarOverlayStyle):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::scrollbarOverlayStyle):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setViewExposedRect):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setViewExposedRect):
+
 2016-11-26  Sam Weinig  <sam@webkit.org>
 
         Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script

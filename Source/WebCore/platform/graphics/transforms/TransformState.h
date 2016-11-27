@@ -80,7 +80,7 @@ public:
         m_lastPlanarQuad = quad;
     }
 
-    // FIXME: webkit.org/b/144226 use Optional<FloatQuad>. 
+    // FIXME: webkit.org/b/144226 use std::optional<FloatQuad>. 
     void setSecondaryQuad(const FloatQuad* quad)
     {
         // We must be in a flattened state (no accumulated offset) when setting this secondary quad.
@@ -91,7 +91,7 @@ public:
             m_lastPlanarSecondaryQuad = nullptr;
     }
 
-    // FIXME: webkit.org/b/144226 use Optional<FloatQuad>.
+    // FIXME: webkit.org/b/144226 use std::optional<FloatQuad>.
     void setLastPlanarSecondaryQuad(const FloatQuad*);
 
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
@@ -113,7 +113,7 @@ public:
     // Return the point or quad mapped through the current transform
     FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
     FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
-    Optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
+    std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
 private:
     void translateTransform(const LayoutSize&);

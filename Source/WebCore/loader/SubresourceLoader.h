@@ -128,7 +128,7 @@ private:
     CachedResource* m_resource;
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
-    Optional<RequestCountTracker> m_requestCountTracker;
+    std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;
     unsigned m_redirectCount { 0 };
 };

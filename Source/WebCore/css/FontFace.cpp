@@ -374,12 +374,12 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         break;
     case CSSFontFace::Status::Success:
         if (m_promise)
-            std::exchange(m_promise, Nullopt)->resolve(*this);
+            std::exchange(m_promise, std::nullopt)->resolve(*this);
         deref();
         return;
     case CSSFontFace::Status::Failure:
         if (m_promise)
-            std::exchange(m_promise, Nullopt)->reject(NETWORK_ERR);
+            std::exchange(m_promise, std::nullopt)->reject(NETWORK_ERR);
         deref();
         return;
     case CSSFontFace::Status::Pending:

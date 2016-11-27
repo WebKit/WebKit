@@ -77,7 +77,7 @@ private:
 #endif
     void willDetachRenderers() override;
 
-    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
+    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
     const AtomicString& shadowPseudoId() const override;
 
     void startDragging();
@@ -134,7 +134,7 @@ public:
 private:
     SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
+    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
     const AtomicString& shadowPseudoId() const override;
 
     AtomicString m_shadowPseudoId;

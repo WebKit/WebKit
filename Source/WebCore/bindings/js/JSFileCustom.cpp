@@ -71,7 +71,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     String normalizedType;
-    Optional<int64_t> lastModified;
+    std::optional<int64_t> lastModified;
 
     arg = exec.argument(2);
     if (!arg.isUndefinedOrNull()) {

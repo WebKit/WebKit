@@ -132,7 +132,7 @@ bool MathMLMencloseElement::hasNotation(MencloseNotationFlag notationFlag)
 void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == notationAttr)
-        m_notationFlags = Nullopt;
+        m_notationFlags = std::nullopt;
 
     MathMLRowElement::parseAttribute(name, value);
 }

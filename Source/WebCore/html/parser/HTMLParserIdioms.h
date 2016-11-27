@@ -62,16 +62,16 @@ double parseToDoubleForNumberType(const String&);
 double parseToDoubleForNumberType(const String&, double fallbackValue);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
-WEBCORE_EXPORT Optional<int> parseHTMLInteger(StringView);
+WEBCORE_EXPORT std::optional<int> parseHTMLInteger(StringView);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-WEBCORE_EXPORT Optional<unsigned> parseHTMLNonNegativeInteger(StringView);
+WEBCORE_EXPORT std::optional<unsigned> parseHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
-Optional<int> parseValidHTMLNonNegativeInteger(StringView);
+std::optional<int> parseValidHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-floating-point-number
-Optional<double> parseValidHTMLFloatingPointNumber(StringView);
+std::optional<double> parseValidHTMLFloatingPointNumber(StringView);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
@@ -153,7 +153,7 @@ inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue
 inline unsigned limitToOnlyHTMLNonNegative(StringView stringValue, unsigned defaultValue = 0)
 {
     ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
-    unsigned value = parseHTMLNonNegativeInteger(stringValue).valueOr(defaultValue);
+    unsigned value = parseHTMLNonNegativeInteger(stringValue).value_or(defaultValue);
     ASSERT(value <= maxHTMLNonNegativeInteger);
     return value;
 }

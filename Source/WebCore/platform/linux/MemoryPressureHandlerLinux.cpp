@@ -119,7 +119,7 @@ MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void (
 
 MemoryPressureHandler::EventFDPoller::~EventFDPoller()
 {
-    m_fd = Nullopt;
+    m_fd = std::nullopt;
 #if USE(GLIB)
     g_source_destroy(m_source.get());
 #else
@@ -164,11 +164,11 @@ inline void MemoryPressureHandler::logErrorAndCloseFDs(const char* log)
 
     if (m_eventFD) {
         close(m_eventFD.value());
-        m_eventFD = Nullopt;
+        m_eventFD = std::nullopt;
     }
     if (m_pressureLevelFD) {
         close(m_pressureLevelFD.value());
-        m_pressureLevelFD = Nullopt;
+        m_pressureLevelFD = std::nullopt;
     }
 }
 
@@ -250,12 +250,12 @@ void MemoryPressureHandler::uninstall()
 
     if (m_pressureLevelFD) {
         close(m_pressureLevelFD.value());
-        m_pressureLevelFD = Nullopt;
+        m_pressureLevelFD = std::nullopt;
 
         // Only close the eventFD used for cgroups.
         if (m_eventFD) {
             close(m_eventFD.value());
-            m_eventFD = Nullopt;
+            m_eventFD = std::nullopt;
         }
     }
 

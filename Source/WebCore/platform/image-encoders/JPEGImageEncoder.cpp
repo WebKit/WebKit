@@ -83,7 +83,7 @@ static void jpegErrorExit(j_common_ptr compressData)
     longjmp(err->m_setjmpBuffer, -1);
 }
 
-bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize& size, Vector<char>& jpegData, Optional<double> quality)
+bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize& size, Vector<char>& jpegData, std::optional<double> quality)
 {
     struct jpeg_compress_struct compressData;
     JPEGCompressErrorMgr err;

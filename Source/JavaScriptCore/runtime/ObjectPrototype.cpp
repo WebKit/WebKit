@@ -102,7 +102,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
 
     Structure* structure = thisObject->structure(vm);
     HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
-    if (Optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
+    if (std::optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
         ASSERT(*result == thisObject->hasOwnProperty(exec, propertyName));
         ASSERT(!scope.exception());
         return JSValue::encode(jsBoolean(*result));

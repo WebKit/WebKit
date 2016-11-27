@@ -117,17 +117,17 @@ void WebPaymentCoordinator::completeMerchantValidation(const WebCore::PaymentMer
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteMerchantValidation(paymentMerchantSession));
 }
 
-void WebPaymentCoordinator::completeShippingMethodSelection(WebCore::PaymentAuthorizationStatus status, Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void WebPaymentCoordinator::completeShippingMethodSelection(WebCore::PaymentAuthorizationStatus status, std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteShippingMethodSelection(static_cast<uint32_t>(status), newTotalAndItems));
 }
 
-void WebPaymentCoordinator::completeShippingContactSelection(WebCore::PaymentAuthorizationStatus status, const Vector<WebCore::PaymentRequest::ShippingMethod>& newShippingMethods, Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void WebPaymentCoordinator::completeShippingContactSelection(WebCore::PaymentAuthorizationStatus status, const Vector<WebCore::PaymentRequest::ShippingMethod>& newShippingMethods, std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteShippingContactSelection(static_cast<uint32_t>(status), newShippingMethods, newTotalAndItems));
 }
 
-void WebPaymentCoordinator::completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void WebPaymentCoordinator::completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodSelection(newTotalAndItems));
 }

@@ -280,7 +280,7 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) override;
     void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle newStyle) override;
 
-    WTF::Optional<WebCore::ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() override;
+    std::optional<WebCore::ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() override;
 
     WebCore::Color underlayColor() const override;
 

@@ -395,7 +395,7 @@ void DrawGlyphs::computeBounds()
     }
 }
 
-Optional<FloatRect> DrawGlyphs::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawGlyphs::localBounds(const GraphicsContext&) const
 {
     FloatRect localBounds = m_bounds;
     localBounds.move(m_blockLocation.x(), m_blockLocation.y());
@@ -575,7 +575,7 @@ static TextStream& operator<<(TextStream& ts, const DrawRect& item)
     return ts;
 }
 
-Optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
 {
     FloatRect bounds;
     bounds.fitToPoints(m_point1, m_point2);
@@ -600,7 +600,7 @@ void DrawLinesForText::apply(GraphicsContext& context) const
     context.drawLinesForText(point(), m_widths, m_printing, m_doubleLines);
 }
 
-Optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
 {
     // This function needs to return a value equal to or enclosing what GraphicsContext::computeLineBoundsAndAntialiasingModeForText() returns.
 
@@ -630,7 +630,7 @@ void DrawLineForDocumentMarker::apply(GraphicsContext& context) const
     context.drawLineForDocumentMarker(m_point, m_width, m_style);
 }
 
-Optional<FloatRect> DrawLineForDocumentMarker::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawLineForDocumentMarker::localBounds(const GraphicsContext&) const
 {
     // This function needs to return a value equal to or enclosing what GraphicsContext::drawLineForDocumentMarker() returns.
 
@@ -679,7 +679,7 @@ void DrawFocusRingPath::apply(GraphicsContext& context) const
     context.drawFocusRing(m_path, m_width, m_offset, m_color);
 }
 
-Optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
 {
     FloatRect result = m_path.fastBoundingRect();
     result.inflate(platformFocusRingWidth);
@@ -701,7 +701,7 @@ void DrawFocusRingRects::apply(GraphicsContext& context) const
     context.drawFocusRing(m_rects, m_width, m_offset, m_color);
 }
 
-Optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&) const
 {
     FloatRect result;
     for (auto& rect : m_rects)
@@ -825,7 +825,7 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
-Optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
 {
     FloatRect bounds = m_rect;
     bounds.expand(m_lineWidth, m_lineWidth);
@@ -845,7 +845,7 @@ static TextStream& operator<<(TextStream& ts, const StrokeRect& item)
     return ts;
 }
 
-Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
 {
     // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
     float strokeThickness = context.strokeThickness();
@@ -867,7 +867,7 @@ static TextStream& operator<<(TextStream& ts, const StrokePath& item)
     return ts;
 }
 
-Optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
+std::optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
 {
     float strokeThickness = context.strokeThickness();
 

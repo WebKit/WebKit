@@ -673,7 +673,7 @@ public:
 
 private:
     std::reference_wrapper<const StringView> m_stringView;
-    Optional<unsigned> m_nextCodePointOffset;
+    std::optional<unsigned> m_nextCodePointOffset;
     UChar32 m_codePoint;
 };
 
@@ -738,7 +738,7 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
     ASSERT(m_nextCodePointOffset);
     if (m_nextCodePointOffset.value() == m_stringView.get().length()) {
-        m_nextCodePointOffset = Nullopt;
+        m_nextCodePointOffset = std::nullopt;
         return *this;
     }
     if (m_stringView.get().is8Bit())

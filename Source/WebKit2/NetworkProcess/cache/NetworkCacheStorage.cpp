@@ -480,7 +480,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
     return Data(encoder.buffer(), encoder.bufferSize());
 }
 
-Optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperation)
+std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperation)
 {
     auto blobPath = blobPathForKey(writeOperation.record.key);
 
@@ -505,7 +505,7 @@ Optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperat
     return blob;
 }
 
-Data Storage::encodeRecord(const Record& record, Optional<BlobStorage::Blob> blob)
+Data Storage::encodeRecord(const Record& record, std::optional<BlobStorage::Blob> blob)
 {
     ASSERT(!blob || bytesEqual(blob.value().data, record.body));
 
@@ -719,7 +719,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
         ++writeOperation.activeCount;
 
         bool shouldStoreAsBlob = shouldStoreBodyAsBlob(writeOperation.record.body);
-        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation) : Nullopt;
+        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation) : std::nullopt;
 
         auto recordData = encodeRecord(writeOperation.record, blob);
 

@@ -90,20 +90,20 @@ void JSModuleRecord::addExportEntry(const ExportEntry& entry)
     ASSERT_UNUSED(isNewEntry, isNewEntry); // This is guaranteed by the parser.
 }
 
-auto JSModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> Optional<ImportEntry>
+auto JSModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> std::optional<ImportEntry>
 {
     const auto iterator = m_importEntries.find(localName);
     if (iterator == m_importEntries.end())
-        return Nullopt;
-    return Optional<ImportEntry>(iterator->value);
+        return std::nullopt;
+    return std::optional<ImportEntry>(iterator->value);
 }
 
-auto JSModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> Optional<ExportEntry>
+auto JSModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> std::optional<ExportEntry>
 {
     const auto iterator = m_exportEntries.find(exportName);
     if (iterator == m_exportEntries.end())
-        return Nullopt;
-    return Optional<ExportEntry>(iterator->value);
+        return std::nullopt;
+    return std::optional<ExportEntry>(iterator->value);
 }
 
 auto JSModuleRecord::ExportEntry::createLocal(const Identifier& exportName, const Identifier& localName) -> ExportEntry
@@ -147,7 +147,7 @@ JSModuleRecord* JSModuleRecord::hostResolveImportedModule(ExecState* exec, const
 
 auto JSModuleRecord::resolveImport(ExecState* exec, const Identifier& localName) -> Resolution
 {
-    Optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
+    std::optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
     if (!optionalImportEntry)
         return Resolution::notFound();
 
@@ -215,12 +215,12 @@ inline bool JSModuleRecord::ResolveQuery::Hash::equal(const ResolveQuery& lhs, c
     return lhs.moduleRecord == rhs.moduleRecord && lhs.exportName == rhs.exportName;
 }
 
-auto JSModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName) -> Optional<Resolution>
+auto JSModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName) -> std::optional<Resolution>
 {
     const auto iterator = m_resolutionCache.find(exportName);
     if (iterator == m_resolutionCache.end())
-        return Nullopt;
-    return Optional<Resolution>(iterator->value);
+        return std::nullopt;
+    return std::optional<Resolution>(iterator->value);
 }
 
 void JSModuleRecord::cacheResolution(UniquedStringImpl* exportName, const Resolution& resolution)
@@ -558,14 +558,14 @@ auto JSModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery& root
 
             //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
             if (!foundStarLinks) {
-                if (Optional<Resolution> cachedResolution = moduleRecord->tryGetCachedResolution(query.exportName.get())) {
+                if (std::optional<Resolution> cachedResolution = moduleRecord->tryGetCachedResolution(query.exportName.get())) {
                     if (!mergeToCurrentTop(*cachedResolution))
                         return Resolution::ambiguous();
                     continue;
                 }
             }
 
-            const Optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
+            const std::optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
             if (!optionalExportEntry) {
                 // If there is no matched exported binding in the current module,
                 // we need to look into the stars.
@@ -648,7 +648,7 @@ auto JSModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery& root
 auto JSModuleRecord::resolveExport(ExecState* exec, const Identifier& exportName) -> Resolution
 {
     // Look up the cached resolution first before entering the resolving loop, since the loop setup takes some cost.
-    if (Optional<Resolution> cachedResolution = tryGetCachedResolution(exportName.impl()))
+    if (std::optional<Resolution> cachedResolution = tryGetCachedResolution(exportName.impl()))
         return *cachedResolution;
     return resolveExportImpl(exec, ResolveQuery(this, exportName.impl()));
 }

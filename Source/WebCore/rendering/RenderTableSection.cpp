@@ -917,16 +917,16 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderEnd = calcOuterBorderEnd();
 }
 
-Optional<int> RenderTableSection::firstLineBaseline() const
+std::optional<int> RenderTableSection::firstLineBaseline() const
 {
     if (!m_grid.size())
-        return Optional<int>();
+        return std::optional<int>();
 
     int firstLineBaseline = m_grid[0].baseline;
     if (firstLineBaseline)
         return firstLineBaseline + roundToInt(m_rowPos[0]);
 
-    Optional<int> result;
+    std::optional<int> result;
     const Row& firstRow = m_grid[0].row;
     for (size_t i = 0; i < firstRow.size(); ++i) {
         const CellStruct& cs = firstRow.at(i);
@@ -934,7 +934,7 @@ Optional<int> RenderTableSection::firstLineBaseline() const
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight()) {
             int candidate = roundToInt(cell->logicalTop() + cell->borderAndPaddingBefore() + cell->contentLogicalHeight());
-            result = std::max(result.valueOr(candidate), candidate);
+            result = std::max(result.value_or(candidate), candidate);
         }
     }
 

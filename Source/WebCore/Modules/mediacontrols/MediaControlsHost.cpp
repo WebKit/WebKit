@@ -102,7 +102,7 @@ Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackL
     return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
 }
 
-String MediaControlsHost::displayNameForTrack(const Optional<TextOrAudioTrack>& track)
+String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTrack>& track)
 {
     if (!track)
         return emptyString();

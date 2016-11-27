@@ -383,7 +383,7 @@ void ScriptController::setupModuleScriptHandlers(CachedModuleScript& moduleScrip
             if (symbol->privateName() == moduleLoaderAlreadyReportedErrorSymbol) {
                 moduleScript->notifyLoadFailed(LoadableScript::Error {
                     LoadableScript::ErrorType::CachedScript,
-                    Nullopt
+                    std::nullopt
                 });
                 return JSValue::encode(jsUndefined());
             }
@@ -637,7 +637,7 @@ void ScriptController::clearScriptObjects()
 
 JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    UserGestureIndicator gestureIndicator(forceUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : Nullopt);
+    UserGestureIndicator gestureIndicator(forceUserGesture ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     ScriptSourceCode sourceCode(script, m_frame.document()->url());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
@@ -663,7 +663,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
 
 JSValue ScriptController::executeScript(const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
 {
-    UserGestureIndicator gestureIndicator(forceUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : Nullopt);
+    UserGestureIndicator gestureIndicator(forceUserGesture ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     return executeScript(ScriptSourceCode(script, m_frame.document()->url()), exceptionDetails);
 }
 

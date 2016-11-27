@@ -256,7 +256,7 @@ void RemoteInspector::updateClientCapabilities()
     std::lock_guard<Lock> lock(m_mutex);
 
     if (!m_client)
-        m_clientCapabilities = Nullopt;
+        m_clientCapabilities = std::nullopt;
     else {
         RemoteInspector::Client::Capabilities updatedCapabilities = {
             m_client->remoteAutomationAllowed() // remoteAutomationAllowed

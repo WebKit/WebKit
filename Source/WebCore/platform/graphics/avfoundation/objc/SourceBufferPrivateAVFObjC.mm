@@ -902,7 +902,7 @@ void SourceBufferPrivateAVFObjC::flush(AtomicString trackIDString)
 void SourceBufferPrivateAVFObjC::flush(AVSampleBufferDisplayLayer *renderer)
 {
     [renderer flush];
-    m_cachedSize = Nullopt;
+    m_cachedSize = std::nullopt;
 
     if (m_mediaSource) {
         m_mediaSource->player()->setHasAvailableVideoFrame(false);
@@ -1001,7 +1001,7 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    return m_cachedSize.valueOr(FloatSize());
+    return m_cachedSize.value_or(FloatSize());
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)

@@ -55,7 +55,7 @@ namespace WebCore {
         // avoid accessing deleted memory, especially when calling this from
         // inside BMPImageReader!
         bool setFailed() override;
-        Optional<IntPoint> hotSpot() const override;
+        std::optional<IntPoint> hotSpot() const override;
 
     private:
         enum ImageType {
@@ -115,8 +115,8 @@ namespace WebCore {
         // could be decoded.
         bool processDirectoryEntries();
 
-        // Returns the hot-spot for |index|, returns Nullopt if there is none.
-        Optional<IntPoint> hotSpotAtIndex(size_t) const;
+        // Returns the hot-spot for |index|, returns std::nullopt if there is none.
+        std::optional<IntPoint> hotSpotAtIndex(size_t) const;
 
         // Reads and returns a directory entry from the current offset into
         // |data|.

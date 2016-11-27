@@ -36,7 +36,7 @@ struct LinkIcon {
     URL url;
     LinkIconType type;
     String mimeType;
-    Optional<unsigned> size;
+    std::optional<unsigned> size;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, LinkIcon&);

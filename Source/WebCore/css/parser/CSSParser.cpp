@@ -4985,29 +4985,29 @@ bool CSSParser::isSpringTimingFunctionEnabled() const
     return m_context.springTimingFunctionEnabled;
 }
 
-Optional<double> CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList& args)
+std::optional<double> CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList& args)
 {
     ValueWithCalculation argumentWithCalculation(*args.current());
     if (!validateUnit(argumentWithCalculation, FNumber))
-        return Nullopt;
-    Optional<double> result = parsedDouble(argumentWithCalculation);
+        return std::nullopt;
+    std::optional<double> result = parsedDouble(argumentWithCalculation);
     CSSParserValue* nextValue = args.next();
     if (!nextValue) {
         // The last number in the function has no comma after it, so we're done.
         return result;
     }
     if (!isComma(nextValue))
-        return Nullopt;
+        return std::nullopt;
     args.next();
     return result;
 }
 
-Optional<double> CSSParser::parseSpringTimingFunctionValue(CSSParserValueList& args)
+std::optional<double> CSSParser::parseSpringTimingFunctionValue(CSSParserValueList& args)
 {
     ValueWithCalculation argumentWithCalculation(*args.current());
     if (!validateUnit(argumentWithCalculation, FNumber))
-        return Nullopt;
-    Optional<double> result = parsedDouble(argumentWithCalculation);
+        return std::nullopt;
+    std::optional<double> result = parsedDouble(argumentWithCalculation);
     args.next();
     return result;
 }
@@ -7671,11 +7671,11 @@ bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool 
     return true;
 }
 
-Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunctionParameters(CSSParserValue& value)
+std::optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunctionParameters(CSSParserValue& value)
 {
     CSSParserValueList* args = value.function->args.get();
     if (!args->size())
-        return Nullopt;
+        return std::nullopt;
 
     ColorSpace colorSpace;
     switch (args->current()->id) {
@@ -7686,7 +7686,7 @@ Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunc
         colorSpace = ColorSpaceDisplayP3;
         break;
     default:
-        return Nullopt;
+        return std::nullopt;
     }
 
     std::array<double, 4> colorValues = { { 0, 0, 0, 1 } };
@@ -7696,7 +7696,7 @@ Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunc
         if (valueOrNull) {
             ValueWithCalculation argumentWithCalculation(*valueOrNull);
             if (!validateUnit(argumentWithCalculation, FNumber))
-                return Nullopt;
+                return std::nullopt;
             colorValues[i] = std::max(0.0, std::min(1.0, parsedDouble(argumentWithCalculation)));
         }
     }
@@ -7706,13 +7706,13 @@ Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunc
         return { { colorValues, colorSpace } };
 
     if (!isForwardSlashOperator(*slashOrNull))
-        return Nullopt;
+        return std::nullopt;
 
     // Handle alpha.
 
     ValueWithCalculation argumentWithCalculation(*args->next());
     if (!validateUnit(argumentWithCalculation, FNumber | FPercent))
-        return Nullopt;
+        return std::nullopt;
     colorValues[3] = std::max(0.0, std::min(1.0, parseColorDouble(argumentWithCalculation)));
 
     // FIXME: Support the comma-separated list of fallback color values.
@@ -7720,7 +7720,7 @@ Optional<std::pair<std::array<double, 4>, ColorSpace>> CSSParser::parseColorFunc
 
     auto commaOrNull = args->next();
     if (commaOrNull && !isComma(commaOrNull))
-        return Nullopt;
+        return std::nullopt;
 
     return { { colorValues, colorSpace } };
 }
@@ -7814,7 +7814,7 @@ Color CSSParser::parseColorFromValue(CSSParserValue& value)
     } else if (value.unit == CSSParserValue::Function
         && value.function->args
         && equalLettersIgnoringASCIICase(value.function->name, "color(")) {
-        Optional<std::pair<std::array<double, 4>, ColorSpace>> colorData = parseColorFunctionParameters(value);
+        std::optional<std::pair<std::array<double, 4>, ColorSpace>> colorData = parseColorFunctionParameters(value);
         if (!colorData)
             return Color();
         return Color(colorData.value().first[0], colorData.value().first[1], colorData.value().first[2], colorData.value().first[3], colorData.value().second);

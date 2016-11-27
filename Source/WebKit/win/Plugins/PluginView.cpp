@@ -406,7 +406,7 @@ void PluginView::performRequest(PluginRequest* request)
     URL requestURL = request->frameLoadRequest().resourceRequest().url();
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
-    UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : Nullopt);
+    UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
 
     if (jsString.isNull()) {
         // if this is not a targeted request, create a stream for it. otherwise,

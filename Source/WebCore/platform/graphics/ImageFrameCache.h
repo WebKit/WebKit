@@ -78,7 +78,7 @@ public:
     size_t frameCount();
     RepetitionCount repetitionCount();
     String filenameExtension();
-    Optional<IntPoint> hotSpot();
+    std::optional<IntPoint> hotSpot();
     
     // Image metadata which is calculated from the first ImageFrame.
     IntSize size();
@@ -106,10 +106,10 @@ private:
     ImageFrameCache(NativeImagePtr&&);
 
     template<typename T, T (ImageDecoder::*functor)() const>
-    T metadata(const T& defaultValue, Optional<T>* cachedValue = nullptr);
+    T metadata(const T& defaultValue, std::optional<T>* cachedValue = nullptr);
 
     template<typename T, T (ImageFrame::*functor)() const>
-    T frameMetadataAtIndex(size_t index, SubsamplingLevel = SubsamplingLevel::Undefinded, ImageFrame::Caching = ImageFrame::Caching::Empty, Optional<T>* = nullptr);
+    T frameMetadataAtIndex(size_t index, SubsamplingLevel = SubsamplingLevel::Undefinded, ImageFrame::Caching = ImageFrame::Caching::Empty, std::optional<T>* = nullptr);
 
     bool isDecoderAvailable() const { return m_decoder; }
     void decodedSizeChanged(long long decodedSize);
@@ -153,16 +153,16 @@ private:
     RefPtr<WorkQueue> m_decodingQueue;
 
     // Image metadata.
-    Optional<bool> m_isSizeAvailable;
-    Optional<size_t> m_frameCount;
-    Optional<RepetitionCount> m_repetitionCount;
-    Optional<String> m_filenameExtension;
-    Optional<Optional<IntPoint>> m_hotSpot;
+    std::optional<bool> m_isSizeAvailable;
+    std::optional<size_t> m_frameCount;
+    std::optional<RepetitionCount> m_repetitionCount;
+    std::optional<String> m_filenameExtension;
+    std::optional<std::optional<IntPoint>> m_hotSpot;
 
     // Image metadata which is calculated from the first ImageFrame.
-    Optional<IntSize> m_size;
-    Optional<IntSize> m_sizeRespectingOrientation;
-    Optional<Color> m_singlePixelSolidColor;
+    std::optional<IntSize> m_size;
+    std::optional<IntSize> m_sizeRespectingOrientation;
+    std::optional<Color> m_singlePixelSolidColor;
 };
     
 }

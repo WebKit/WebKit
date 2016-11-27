@@ -186,7 +186,7 @@ namespace WebCore {
 
         // If the image has a cursor hot-spot, stores it in the argument
         // and returns true. Otherwise returns false.
-        virtual Optional<IntPoint> hotSpot() const { return Nullopt; }
+        virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
 
     protected:
         void prepareScaleDataIfNecessary();

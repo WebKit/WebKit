@@ -137,7 +137,7 @@ private:
     RefPtr<RemoteInspectorXPCConnection> m_relayConnection;
 
     RemoteInspector::Client* m_client { nullptr };
-    Optional<RemoteInspector::Client::Capabilities> m_clientCapabilities;
+    std::optional<RemoteInspector::Client::Capabilities> m_clientCapabilities;
 
     dispatch_queue_t m_xpcQueue;
     unsigned m_nextAvailableTargetIdentifier { 1 };

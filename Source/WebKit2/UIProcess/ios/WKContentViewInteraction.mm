@@ -3188,16 +3188,16 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _uiEventBeingResent = nil;
 }
 
-- (Optional<FloatPoint>)_scrollOffsetForEvent:(WebIOSEvent *)event
+- (std::optional<FloatPoint>)_scrollOffsetForEvent:(WebIOSEvent *)event
 {
     static const unsigned kWebSpaceKey = 0x20;
 
     if (_page->editorState().isContentEditable)
-        return Nullopt;
+        return std::nullopt;
 
     NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
     if (!charactersIgnoringModifiers.length)
-        return Nullopt;
+        return std::nullopt;
 
     enum ScrollingIncrement { Document, Page, Line };
     enum ScrollingDirection { Up, Down, Left, Right };
@@ -3249,7 +3249,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if ([charactersIgnoringModifiers characterAtIndex:0] == kWebSpaceKey)
         return computeOffset(Page, (event.modifierFlags & WebEventFlagMaskShift) ? Up : Down);
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)event isCharEvent:(BOOL)isCharEvent
@@ -3266,7 +3266,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!contentEditable && event.isTabKey)
         return NO;
 
-    if (Optional<FloatPoint> scrollOffset = [self _scrollOffsetForEvent:event]) {
+    if (std::optional<FloatPoint> scrollOffset = [self _scrollOffsetForEvent:event]) {
         [_webView _scrollByContentOffset:*scrollOffset];
         return YES;
     }

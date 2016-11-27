@@ -233,7 +233,7 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
 
-    Optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
+    std::optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
 
     void getStubInfoMap(const ConcurrentJSLocker&, StubInfoMap& result);
     void getStubInfoMap(StubInfoMap& result);
@@ -889,7 +889,7 @@ public:
 
 #if ENABLE(JIT)
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
-    Optional<CodeOrigin> findPC(void* pc);
+    std::optional<CodeOrigin> findPC(void* pc);
 #endif
 
 protected:

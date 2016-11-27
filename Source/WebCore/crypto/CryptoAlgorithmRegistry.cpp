@@ -47,17 +47,17 @@ CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
     platformRegisterAlgorithms();
 }
 
-Optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const String& name)
+std::optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const String& name)
 {
     if (name.isEmpty())
-        return Nullopt;
+        return std::nullopt;
 
     std::lock_guard<StaticLock> lock(registryMutex);
 
     // FIXME: How is it helpful to call isolatedCopy on the argument to find?
     auto identifier = m_identifiers.find(name.isolatedCopy());
     if (identifier == m_identifiers.end())
-        return Nullopt;
+        return std::nullopt;
 
     return identifier->value;
 }

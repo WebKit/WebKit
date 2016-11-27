@@ -48,11 +48,11 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    FractionAlignment cachedFractionAlignment(const QualifiedName&, Optional<FractionAlignment>&);
+    FractionAlignment cachedFractionAlignment(const QualifiedName&, std::optional<FractionAlignment>&);
 
-    Optional<Length> m_lineThickness;
-    Optional<FractionAlignment> m_numeratorAlignment;
-    Optional<FractionAlignment> m_denominatorAlignment;
+    std::optional<Length> m_lineThickness;
+    std::optional<FractionAlignment> m_numeratorAlignment;
+    std::optional<FractionAlignment> m_denominatorAlignment;
 };
 
 }

@@ -92,8 +92,8 @@ public:
 #endif
 
     static String toEncodingMimeType(const String& mimeType);
-    WEBCORE_EXPORT ExceptionOr<String> toDataURL(const String& mimeType, Optional<double> quality);
-    ExceptionOr<String> toDataURL(const String& mimeType) { return toDataURL(mimeType, Nullopt); }
+    WEBCORE_EXPORT ExceptionOr<String> toDataURL(const String& mimeType, std::optional<double> quality);
+    ExceptionOr<String> toDataURL(const String& mimeType) { return toDataURL(mimeType, std::nullopt); }
 
     // Used for rendering
     void didDraw(const FloatRect&);

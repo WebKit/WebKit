@@ -363,11 +363,11 @@ enum class Reason {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Debugger' Domain
 template<>
-Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
+std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
 
 } // namespace TestHelpers
 
@@ -431,7 +431,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Debugger' Domain
 template<>
-Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
+std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Debugger::Reason::Died,
@@ -442,7 +442,7 @@ Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspect
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Debugger::Reason)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 

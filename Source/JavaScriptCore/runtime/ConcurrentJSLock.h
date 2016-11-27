@@ -102,7 +102,7 @@ public:
     ConcurrentJSLocker(ConcurrentJSLock& lockable)
         : ConcurrentJSLockerBase(lockable)
 #if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
-        , m_disallowGC(InPlace)
+        , m_disallowGC(std::in_place)
 #endif
     {
     }
@@ -110,7 +110,7 @@ public:
     ConcurrentJSLocker(ConcurrentJSLock* lockable)
         : ConcurrentJSLockerBase(lockable)
 #if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
-        , m_disallowGC(InPlace)
+        , m_disallowGC(std::in_place)
 #endif
     {
     }
@@ -118,7 +118,7 @@ public:
     ConcurrentJSLocker(NoLockingNecessaryTag)
         : ConcurrentJSLockerBase(NoLockingNecessary)
 #if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
-        , m_disallowGC(Nullopt)
+        , m_disallowGC(std::nullopt)
 #endif
     {
     }
@@ -127,7 +127,7 @@ public:
 
 #if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
 private:
-    Optional<DisallowGC> m_disallowGC;
+    std::optional<DisallowGC> m_disallowGC;
 #endif
 };
 

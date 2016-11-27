@@ -2656,7 +2656,7 @@ public:
         }
     }
 
-    static Optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
+    static std::optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
     {
         switch (cond) {
         case Equal:
@@ -2669,7 +2669,7 @@ public:
             return PositiveOrZero;
             break;
         default:
-            return Nullopt;
+            return std::nullopt;
         }
     }
 

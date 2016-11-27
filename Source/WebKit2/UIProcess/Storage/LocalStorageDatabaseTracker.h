@@ -61,8 +61,8 @@ public:
 
     struct OriginDetails {
         String originIdentifier;
-        Optional<time_t> creationTime;
-        Optional<time_t> modificationTime;
+        std::optional<time_t> creationTime;
+        std::optional<time_t> modificationTime;
     };
     Vector<OriginDetails> originDetails();
 

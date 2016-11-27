@@ -113,7 +113,7 @@ enum class ObjCType {
 #endif
 };
 
-static Optional<ObjCType> typeFromObject(id object)
+static std::optional<ObjCType> typeFromObject(id object)
 {
     ASSERT(object);
 
@@ -137,7 +137,7 @@ static Optional<ObjCType> typeFromObject(id object)
         return ObjCType::WKTypeRefWrapper;
 #endif
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)

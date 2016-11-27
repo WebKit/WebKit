@@ -97,7 +97,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             body_lines = []
             body_lines.extend([
                 'template<>',
-                'Optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                'std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
                 '{',
                 '    static const size_t constantValues[] = {',
             ])
@@ -112,7 +112,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 '        if (protocolString == enum_constant_values[constantValues[i]])',
                 '            return (%s)constantValues[i];' % cpp_protocol_type,
                 '',
-                '    return Nullopt;',
+                '    return std::nullopt;',
                 '}',
                 '',
             ])

@@ -104,20 +104,20 @@ static RetainPtr<PKContact> fromDictionary(NSDictionary *dictionary, String& err
     return result;
 }
 
-Optional<PaymentContact> PaymentContact::fromJS(JSC::ExecState& state, JSC::JSValue value, String& errorMessage)
+std::optional<PaymentContact> PaymentContact::fromJS(JSC::ExecState& state, JSC::JSValue value, String& errorMessage)
 {
     // FIXME: Don't round-trip using NSString.
     auto jsonString = JSONStringify(&state, value, 0);
     if (!jsonString)
-        return Nullopt;
+        return std::nullopt;
 
     auto dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
-        return Nullopt;
+        return std::nullopt;
 
     auto pkContact = fromDictionary(dictionary, errorMessage);
     if (!pkContact)
-        return Nullopt;
+        return std::nullopt;
 
     return PaymentContact(pkContact.get());
 }

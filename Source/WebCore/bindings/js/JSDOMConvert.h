@@ -53,7 +53,7 @@ template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnTyp
 template<typename T> T convertDictionary(JSC::ExecState&, JSC::JSValue);
 
 // Specialized by generated code for IDL enumeration conversion.
-template<typename T> Optional<T> parseEnumeration(JSC::ExecState&, JSC::JSValue);
+template<typename T> std::optional<T> parseEnumeration(JSC::ExecState&, JSC::JSValue);
 template<typename T> T convertEnumeration(JSC::ExecState&, JSC::JSValue);
 template<typename T> const char* expectedEnumerationValues();
 
@@ -1026,7 +1026,7 @@ struct ConditionalConverter;
 
 template<typename ReturnType, typename T>
 struct ConditionalConverter<ReturnType, T, true> {
-    static Optional<ReturnType> convert(JSC::ExecState& state, JSC::JSValue value)
+    static std::optional<ReturnType> convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return ReturnType(Converter<T>::convert(state, value));
     }
@@ -1034,9 +1034,9 @@ struct ConditionalConverter<ReturnType, T, true> {
 
 template<typename ReturnType, typename T>
 struct ConditionalConverter<ReturnType, T, false> {
-    static Optional<ReturnType> convert(JSC::ExecState&, JSC::JSValue)
+    static std::optional<ReturnType> convert(JSC::ExecState&, JSC::JSValue)
     {
-        return Nullopt;
+        return std::nullopt;
     }
 };
 
@@ -1134,7 +1134,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         //         (FIXME: Add support for object and step 4.2)
         if (brigand::any<TypeList, IsIDLInterface<brigand::_1>>::value) {
-            Optional<ReturnType> returnValue;
+            std::optional<ReturnType> returnValue;
             brigand::for_each<InterfaceTypeList>([&](auto&& type) {
                 if (returnValue)
                     return;
@@ -1257,7 +1257,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
     {
         auto index = variant.index();
 
-        Optional<JSC::JSValue> returnValue;
+        std::optional<JSC::JSValue> returnValue;
         brigand::for_each<Sequence>([&](auto&& type) {
             using I = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
             if (I::value == index) {
@@ -1302,13 +1302,13 @@ namespace Detail {
     struct VariadicConverterBase {
         using Item = typename IDLType::ImplementationType;
 
-        static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+        static std::optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
         {
             auto& vm = state.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             auto result = Converter<IDLType>::convert(state, value);
-            RETURN_IF_EXCEPTION(scope, Nullopt);
+            RETURN_IF_EXCEPTION(scope, std::nullopt);
 
             return WTFMove(result);
         }
@@ -1318,12 +1318,12 @@ namespace Detail {
     struct VariadicConverterBase<IDLInterface<T>> {
         using Item = std::reference_wrapper<T>;
 
-        static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+        static std::optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
         {
             auto* result = Converter<IDLInterface<T>>::convert(state, value);
             if (!result)
-                return Nullopt;
-            return Optional<Item>(*result);
+                return std::nullopt;
+            return std::optional<Item>(*result);
         }
     };
 
@@ -1334,7 +1334,7 @@ namespace Detail {
 
         struct Result {
             size_t argumentIndex;
-            Optional<Container> arguments;
+            std::optional<Container> arguments;
         };
     };
 }
@@ -1343,7 +1343,7 @@ template<typename IDLType> typename Detail::VariadicConverter<IDLType>::Result c
 {
     size_t length = state.argumentCount();
     if (startIndex > length)
-        return { 0, Nullopt };
+        return { 0, std::nullopt };
 
     typename Detail::VariadicConverter<IDLType>::Container result;
     result.reserveInitialCapacity(length - startIndex);
@@ -1351,7 +1351,7 @@ template<typename IDLType> typename Detail::VariadicConverter<IDLType>::Result c
     for (size_t i = startIndex; i < length; ++i) {
         auto value = Detail::VariadicConverter<IDLType>::convert(state, state.uncheckedArgument(i));
         if (!value)
-            return { i, Nullopt };
+            return { i, std::nullopt };
         result.uncheckedAppend(WTFMove(*value));
     }
 

@@ -54,7 +54,7 @@ public:
 
         struct KeyValue {
             String key;
-            Optional<HTTPHeaderName> keyAsHTTPHeaderName;
+            std::optional<HTTPHeaderName> keyAsHTTPHeaderName;
             String value;
         };
 
@@ -99,7 +99,7 @@ public:
             if (it == m_table.uncommonHeaders().end())
                 return false;
             m_keyValue.key = it->key;
-            m_keyValue.keyAsHTTPHeaderName = Nullopt;
+            m_keyValue.keyAsHTTPHeaderName = std::nullopt;
             m_keyValue.value = it->value;
             return true;
         }

@@ -458,7 +458,7 @@ String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
     return mimeType.convertToASCIILowercase();
 }
 
-ExceptionOr<String> HTMLCanvasElement::toDataURL(const String& mimeType, Optional<double> quality)
+ExceptionOr<String> HTMLCanvasElement::toDataURL(const String& mimeType, std::optional<double> quality)
 {
     if (!m_originClean)
         return Exception { SECURITY_ERR };

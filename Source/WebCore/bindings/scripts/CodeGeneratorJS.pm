@@ -407,7 +407,7 @@ sub GenerateGetOwnPropertySlotBody
     };
 
     if ($indexedGetterFunction) {
-        push(@getOwnPropertySlotImpl, "    Optional<uint32_t> optionalIndex = parseIndex(propertyName);\n");
+        push(@getOwnPropertySlotImpl, "    std::optional<uint32_t> optionalIndex = parseIndex(propertyName);\n");
 
         # If the item function returns a string then we let the TreatReturnedNullStringAs handle the cases
         # where the index is out of range.
@@ -1000,7 +1000,7 @@ sub GenerateEnumerationImplementationContent
     # FIXME: Change to take VM& instead of ExecState&.
     # FIXME: Consider using toStringOrNull to make exception checking faster.
     # FIXME: Consider finding a more efficient way to match against all the strings quickly.
-    $result .= "template<> Optional<$className> parseEnumeration<$className>(ExecState& state, JSValue value)\n";
+    $result .= "template<> std::optional<$className> parseEnumeration<$className>(ExecState& state, JSValue value)\n";
     $result .= "{\n";
     $result .= "    auto stringValue = value.toWTFString(&state);\n";
     foreach my $value (@{$enumeration->values}) {
@@ -1012,7 +1012,7 @@ sub GenerateEnumerationImplementationContent
         }
         $result .= "        return ${className}::${enumerationValueName};\n";
     }
-    $result .= "    return Nullopt;\n";
+    $result .= "    return std::nullopt;\n";
     $result .= "}\n\n";
 
     $result .= "template<> $className convertEnumeration<$className>(ExecState& state, JSValue value)\n";
@@ -1063,7 +1063,7 @@ sub GenerateEnumerationHeaderContent
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
     $result .= "template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
-    $result .= "template<> Optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
+    $result .= "template<> std::optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
     $result .= "template<> $className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
     $result .= "template<> const char* expectedEnumerationValues<$className>();\n\n";
     $result .= "#endif\n\n" if $conditionalString;
@@ -1118,7 +1118,7 @@ sub GenerateDefaultValue
     }
     if ($defaultValue eq "null") {
         if ($type->isUnion) {
-            return "Nullopt" if $type->isNullable;
+            return "std::nullopt" if $type->isNullable;
 
             my $IDLType = GetIDLType($interface, $type);
             return "convert<${IDLType}>(state, jsNull());";
@@ -1126,7 +1126,7 @@ sub GenerateDefaultValue
         return "jsNull()" if $type->name eq "any";
         return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type);
         return "String()" if $codeGenerator->IsStringType($type);
-        return "Nullopt";
+        return "std::nullopt";
     }
     if ($defaultValue eq "[]") {
         my $nativeType = GetNativeType($interface, $type);
@@ -3423,7 +3423,7 @@ sub GenerateImplementation
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             if ($interface->extendedAttributes->{CustomIndexedSetter}) {
-                push(@implContent, "    if (Optional<uint32_t> index = parseIndex(propertyName)) {\n");
+                push(@implContent, "    if (std::optional<uint32_t> index = parseIndex(propertyName)) {\n");
                 push(@implContent, "        thisObject->indexSetter(state, index.value(), value);\n");
                 push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
@@ -4418,7 +4418,7 @@ sub GenerateParametersCheck
             my $argumentLookupMethod = $argument->isOptional ? "argument" : "uncheckedArgument";
 
             if ($argument->isOptional && !defined($argument->default)) {
-                $nativeType = "Optional<$className>";
+                $nativeType = "std::optional<$className>";
                 $optionalValue = $name;
                 $defineOptionalValue = $name;
             }
@@ -4473,8 +4473,8 @@ sub GenerateParametersCheck
                 $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? $defaultValue : ";
                 $inner = "state->uncheckedArgument($argumentIndex)";
             } elsif ($argument->isOptional && !defined($argument->default)) {
-                # Use WTF::Optional<>() for optional arguments that are missing or undefined and that do not have a default value in the IDL.
-                $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
+                # Use std::optional<>() for optional arguments that are missing or undefined and that do not have a default value in the IDL.
+                $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? std::optional<$nativeType>() : ";
                 $inner = "state->uncheckedArgument($argumentIndex)";
             } elsif (($argument->type->name eq "EventListener" || $argument->type->name eq "XPathNSResolver") && ($argument->isOptional || $type->isNullable)) {
                 $outer = "";

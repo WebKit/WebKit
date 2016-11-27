@@ -64,9 +64,9 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) override { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) override { }
 
-    void completeShippingMethodSelection(PaymentAuthorizationStatus, Optional<PaymentRequest::TotalAndLineItems>) override { }
-    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, Optional<PaymentRequest::TotalAndLineItems>) override { }
-    void completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems>) override { }
+    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems>) override { }
+    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, std::optional<PaymentRequest::TotalAndLineItems>) override { }
+    void completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems>) override { }
     void completePaymentSession(PaymentAuthorizationStatus) override { }
     void abortPaymentSession() override { }
     void paymentCoordinatorDestroyed() override { }

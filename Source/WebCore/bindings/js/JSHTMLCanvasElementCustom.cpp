@@ -110,7 +110,7 @@ JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
     auto type = convert<IDLNullable<IDLDOMString>>(state, state.argument(0));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
-    Optional<double> quality;
+    std::optional<double> quality;
     auto qualityValue = state.argument(1);
     if (qualityValue.isNumber())
         quality = qualityValue.toNumber(&state);

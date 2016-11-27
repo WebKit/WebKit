@@ -70,7 +70,7 @@ RenderTreeUpdater::Parent::Parent(ContainerNode& root)
 RenderTreeUpdater::Parent::Parent(Element& element, Style::Change styleChange)
     : element(&element)
     , styleChange(styleChange)
-    , renderTreePosition(element.renderer() ? makeOptional(RenderTreePosition(*element.renderer())) : Nullopt)
+    , renderTreePosition(element.renderer() ? std::make_optional(RenderTreePosition(*element.renderer())) : std::nullopt)
 {
 }
 

@@ -47,8 +47,8 @@ public:
         {
         }
 
-        Optional<unsigned> selectionStartPos;
-        Optional<unsigned> selectionEndPos;
+        std::optional<unsigned> selectionStartPos;
+        std::optional<unsigned> selectionEndPos;
         SelectedObjectMap selectedObjects;
         SelectedBlockMap selectedBlocks;
     };
@@ -57,7 +57,7 @@ public:
     public:
         SelectionSubtreeData() = default;
 
-        SelectionSubtreeData(RenderObject* selectionStart, Optional<unsigned> selectionStartPos, RenderObject* selectionEnd, Optional<unsigned> selectionEndPos)
+        SelectionSubtreeData(RenderObject* selectionStart, std::optional<unsigned> selectionStartPos, RenderObject* selectionEnd, std::optional<unsigned> selectionEndPos)
             : m_selectionStart(selectionStart)
             , m_selectionStartPos(selectionStartPos)
             , m_selectionEnd(selectionEnd)
@@ -66,9 +66,9 @@ public:
         }
 
         RenderObject* selectionStart() const { return m_selectionStart; }
-        Optional<unsigned> selectionStartPos() const { return m_selectionStartPos; }
+        std::optional<unsigned> selectionStartPos() const { return m_selectionStartPos; }
         RenderObject* selectionEnd() const { return m_selectionEnd; }
-        Optional<unsigned> selectionEndPos() const { return m_selectionEndPos; }
+        std::optional<unsigned> selectionEndPos() const { return m_selectionEndPos; }
         bool selectionClear() const
         {
             return !m_selectionStart
@@ -83,22 +83,22 @@ public:
             endPos = m_selectionEndPos.value();
         }
         void setSelectionStart(RenderObject* selectionStart) { m_selectionStart = selectionStart; }
-        void setSelectionStartPos(Optional<unsigned> selectionStartPos) { m_selectionStartPos = selectionStartPos;}
+        void setSelectionStartPos(std::optional<unsigned> selectionStartPos) { m_selectionStartPos = selectionStartPos;}
         void setSelectionEnd(RenderObject* selectionEnd) { m_selectionEnd = selectionEnd; }
-        void setSelectionEndPos(Optional<unsigned> selectionEndPos) { m_selectionEndPos = selectionEndPos;}
+        void setSelectionEndPos(std::optional<unsigned> selectionEndPos) { m_selectionEndPos = selectionEndPos;}
         void clearSelection()
         {
             m_selectionStart = nullptr;
-            m_selectionStartPos = Nullopt;
+            m_selectionStartPos = std::nullopt;
             m_selectionEnd = nullptr;
-            m_selectionEndPos = Nullopt;
+            m_selectionEndPos = std::nullopt;
         }
 
     private:
         RenderObject* m_selectionStart { nullptr };
-        Optional<unsigned> m_selectionStartPos;
+        std::optional<unsigned> m_selectionStartPos;
         RenderObject* m_selectionEnd { nullptr };
-        Optional<unsigned> m_selectionEndPos;
+        std::optional<unsigned> m_selectionEndPos;
     };
 
     typedef HashMap<SelectionSubtreeRoot*, SelectionSubtreeData> RenderSubtreesMap;

@@ -1522,7 +1522,7 @@ double DOMWindow::devicePixelRatio() const
 
 void DOMWindow::scrollBy(const ScrollToOptions& options) const
 {
-    return scrollBy(options.left.valueOr(0), options.top.valueOr(0));
+    return scrollBy(options.left.value_or(0), options.top.value_or(0));
 }
 
 void DOMWindow::scrollBy(double x, double y) const

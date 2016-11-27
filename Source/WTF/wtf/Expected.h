@@ -406,15 +406,15 @@ template <class T, class E> constexpr bool operator>=(const UnexpectedType<E>& x
 
 template <typename T, typename E> void swap(Expected<T, E>& x, Expected<T, E>& y) { x.swap(y); }
 
-template <class T, class E = WTF::NulloptTag> constexpr Expected<std::decay_t<T>, E> makeExpected(T&& v)
+template <class T, class E = std::nullopt_t> constexpr Expected<std::decay_t<T>, E> makeExpected(T&& v)
 {
     return Expected<typename std::decay<T>::type, E>(std::forward<T>(v));
 }
 template <class T, class E> constexpr Expected<T, std::decay_t<E>> makeExpectedFromError(E&& e) { return Expected<T, std::decay_t<E>>(makeUnexpected(e)); }
 template <class T, class E, class U> constexpr Expected<T, E> makeExpectedFromError(U&& u) { return Expected<T, E>(makeUnexpected(E { std::forward<U>(u) } )); }
-// template <class F, class E = WTF::NulloptTag> constexpr Expected<typename std::result_of<F>::type, E> makeExpected_from_call(F f);
+// template <class F, class E = std::nullopt_t> constexpr Expected<typename std::result_of<F>::type, E> makeExpected_from_call(F f);
 
-inline Expected<void, WTF::NulloptTag> makeExpected() { return Expected<void, WTF::NulloptTag>(); }
+inline Expected<void, std::nullopt_t> makeExpected() { return Expected<void, std::nullopt_t>(); }
 
 } // namespace WTF
 

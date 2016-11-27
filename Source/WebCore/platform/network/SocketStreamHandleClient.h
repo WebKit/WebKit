@@ -44,7 +44,7 @@ public:
 
     virtual void didOpenSocketStream(SocketStreamHandle&) = 0;
     virtual void didCloseSocketStream(SocketStreamHandle&) = 0;
-    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* data, Optional<size_t> length) = 0;
+    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* data, std::optional<size_t> length) = 0;
     virtual void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) = 0;
     virtual void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) = 0;
 };

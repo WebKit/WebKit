@@ -1,3 +1,247 @@
+2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Import std::optional reference implementation as WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=164199
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        Previous WTF::Optional::operator= is not compatible to std::optional::operator=.
+        std::optional::emplace has the same semantics to the previous one.
+        So we change the code to use it.
+
+        * Scripts/builtins/builtins_templates.py:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::commuteCompareToZeroIntoTest):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::commuteCompareToZeroIntoTest):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::shouldTryAliasingDef):
+        * b3/B3CheckSpecial.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::scaleForShl):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::tryAppendLea):
+        * b3/B3Opcode.cpp:
+        (JSC::B3::invertedCompare):
+        * b3/B3Opcode.h:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::invertedCompare):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isValidScale):
+        (JSC::B3::Air::Arg::isValidAddrForm):
+        (JSC::B3::Air::Arg::isValidIndexForm):
+        (JSC::B3::Air::Arg::isValidForm):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::shouldTryAliasingDef):
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::shouldTryAliasingDef):
+        * b3/air/AirSpecial.h:
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::storageForGeneratorLocal):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::ObjectPatternNode::bindValue):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::resolveBreakpoint):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::currentPosition):
+        * debugger/DebuggerParseData.cpp:
+        (JSC::DebuggerPausePositions::breakpointLocationForLineColumn):
+        * debugger/DebuggerParseData.h:
+        * debugger/ScriptProfilingScope.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::findPC):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::emitUntypedBitOp):
+        (JSC::DFG::SpeculativeJIT::emitUntypedRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::findPC):
+        * ftl/FTLJITCode.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::collectInThread):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+        (JSC::Heap::collectionScope):
+        * heap/HeapSnapshot.cpp:
+        (JSC::HeapSnapshot::nodeForCell):
+        (JSC::HeapSnapshot::nodeForObjectIdentifier):
+        * heap/HeapSnapshot.h:
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::dispatch):
+        (Inspector::BackendDispatcher::sendPendingErrors):
+        (Inspector::BackendDispatcher::reportProtocolError):
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::nodeForHeapObjectIdentifier):
+        (Inspector::InspectorHeapAgent::getPreview):
+        (Inspector::InspectorHeapAgent::getRemoteObject):
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteConnectionToTarget.mm:
+        (Inspector::RemoteConnectionToTarget::targetIdentifier):
+        (Inspector::RemoteConnectionToTarget::setup):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_declarations_for_enum_conversion_methods):
+        (_generate_declarations_for_enum_conversion_methods.return_type_with_export_macro):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain.generate_conversion_method_body):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * jit/JITCode.h:
+        (JSC::JITCode::findPC):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITOperations.cpp:
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMap::findPC):
+        * jit/PCToCodeOriginMap.h:
+        * jsc.cpp:
+        (WTF::RuntimeArray::getOwnPropertySlot):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::exportVariable):
+        * runtime/ConcurrentJSLock.h:
+        (JSC::ConcurrentJSLocker::ConcurrentJSLocker):
+        * runtime/DefinePropertyAttributes.h:
+        (JSC::DefinePropertyAttributes::writable):
+        (JSC::DefinePropertyAttributes::configurable):
+        (JSC::DefinePropertyAttributes::enumerable):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::deleteProperty):
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::get):
+        * runtime/HashMapImpl.h:
+        (JSC::concurrentJSMapHash):
+        * runtime/Identifier.h:
+        (JSC::parseIndex):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toNumberFromPrimitive):
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCJSValue.h:
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValueWithoutCoercion):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSModuleRecord.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::putDirectMayBeIndex):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::putOwnDataPropertyMayBeIndex):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInline):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/MathCommon.h:
+        (JSC::safeReciprocalForDivByConst):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        * runtime/PropertyDescriptor.h:
+        (JSC::toPropertyDescriptor):
+        * runtime/PropertyName.h:
+        (JSC::parseIndex):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::isStringOwnProperty):
+        (JSC::StringObject::deleteProperty):
+        * runtime/ToNativeFromValue.h:
+        (JSC::toNativeFromValueWithoutCoercion):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromUint32WithoutCoercion):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromDoubleWithoutCoercion):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromDoubleWithoutCoercion):
+        (JSC::Uint8ClampedAdaptor::toNativeFromInt32WithoutCoercion):
+        (JSC::Uint8ClampedAdaptor::toNativeFromDoubleWithoutCoercion):
+
 2016-11-26  Sam Weinig  <sam@webkit.org>
 
         Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script

@@ -35,7 +35,7 @@
 // function in css/StyleBuilderConverter.h should be used.
 //
 // * ConditionalConverter=XXX:
-// Similar to Converter=XXX but the converter function returns a WTF::Optional<>
+// Similar to Converter=XXX but the converter function returns a std::optional<>
 // to indicate if the property setter should be called or not.
 //
 // * Custom=[Initial|Value|Inherit|All]:

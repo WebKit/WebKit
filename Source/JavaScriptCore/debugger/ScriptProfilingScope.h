@@ -83,7 +83,7 @@ private:
     }
 
     JSGlobalObject* m_globalObject { nullptr };
-    Optional<double> m_startTime;
+    std::optional<double> m_startTime;
     ProfilingReason m_reason;
 };
 

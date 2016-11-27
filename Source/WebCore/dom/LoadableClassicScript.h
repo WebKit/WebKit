@@ -44,7 +44,7 @@ public:
 
     static Ref<LoadableClassicScript> create(CachedResourceHandle<CachedScript>&&);
     bool isLoaded() const final;
-    Optional<Error> error() const final;
+    std::optional<Error> error() const final;
     bool wasCanceled() const final;
 
     CachedScript& cachedScript() { return *m_cachedScript; }
@@ -58,7 +58,7 @@ private:
     void notifyFinished(CachedResource&) final;
 
     CachedResourceHandle<CachedScript> m_cachedScript;
-    Optional<Error> m_error { Nullopt };
+    std::optional<Error> m_error { std::nullopt };
 };
 
 }

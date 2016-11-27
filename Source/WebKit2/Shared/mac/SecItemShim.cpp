@@ -71,9 +71,9 @@ static WorkQueue& workQueue()
     return *workQueue;
 }
 
-static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
+static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
-    Optional<SecItemResponseData> response;
+    std::optional<SecItemResponseData> response;
 
     auto semaphore = adoptOSObject(dispatch_semaphore_create(0));
 

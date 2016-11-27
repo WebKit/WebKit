@@ -50,9 +50,9 @@ CString Special::name() const
     return out.toCString();
 }
 
-Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
+std::optional<unsigned> Special::shouldTryAliasingDef(Inst&)
 {
-    return Nullopt;
+    return std::nullopt;
 }
 
 bool Special::isTerminal(Inst&)

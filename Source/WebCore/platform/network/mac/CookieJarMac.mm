@@ -115,7 +115,7 @@ static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, c
         cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
     // The _getCookiesForURL: method calls the completionHandler synchronously.
-    Optional<RetainPtr<NSArray *>> cookiesPtr;
+    std::optional<RetainPtr<NSArray *>> cookiesPtr;
     [cookieStorage _getCookiesForURL:url mainDocumentURL:firstParty partition:partition completionHandler:[&cookiesPtr](NSArray *cookies) {
         cookiesPtr = retainPtr(cookies);
     }];

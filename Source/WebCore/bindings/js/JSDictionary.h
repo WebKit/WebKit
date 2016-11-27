@@ -105,10 +105,10 @@ private:
     GetPropertyResult tryGetProperty(const char* propertyName, JSC::JSValue&) const;
 
     template <typename T>
-    static void convertValue(JSC::ExecState* execState, JSC::JSValue value, Optional<T>& result)
+    static void convertValue(JSC::ExecState* execState, JSC::JSValue value, std::optional<T>& result)
     {
         if (value.isUndefinedOrNull()) {
-            result = Nullopt;
+            result = std::nullopt;
             return;
         }
 

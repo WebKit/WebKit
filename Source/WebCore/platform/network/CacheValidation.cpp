@@ -104,7 +104,7 @@ std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, st
     // No compensation for latency as that is not terribly important in practice.
     auto dateValue = response.date();
     auto apparentAge = dateValue ? std::max(0us, duration_cast<microseconds>(responseTime - *dateValue)) : 0us;
-    auto ageValue = response.age().valueOr(0us);
+    auto ageValue = response.age().value_or(0us);
     auto correctedInitialAge = std::max(apparentAge, ageValue);
     auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTime);
     return correctedInitialAge + residentTime;
@@ -122,7 +122,7 @@ std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceRe
         return *maxAge;
 
     auto date = response.date();
-    auto effectiveDate = date.valueOr(responseTime);
+    auto effectiveDate = date.value_or(responseTime);
     if (auto expires = response.expires())
         return duration_cast<microseconds>(*expires - effectiveDate);
 

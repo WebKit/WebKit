@@ -109,7 +109,7 @@ RepetitionCount ImageDecoder::repetitionCount() const
     return RepetitionCountNone;
 }
 
-Optional<IntPoint> ImageDecoder::hotSpot() const
+std::optional<IntPoint> ImageDecoder::hotSpot() const
 {
     return IntPoint();
 }

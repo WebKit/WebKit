@@ -71,7 +71,7 @@ private:
     // SuspendableTimer
     void fired() override;
     void didStop() override;
-    Optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
+    std::optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;

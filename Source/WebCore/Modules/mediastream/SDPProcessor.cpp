@@ -327,15 +327,15 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
     return configuration;
 }
 
-static Optional<IceCandidate> iceCandidateFromJSON(const String& json)
+static std::optional<IceCandidate> iceCandidateFromJSON(const String& json)
 {
     RefPtr<InspectorValue> value;
     if (!InspectorValue::parseJSON(json, value))
-        return Nullopt;
+        return std::nullopt;
 
     RefPtr<InspectorObject> candidateObject;
     if (!value->asObject(candidateObject))
-        return Nullopt;
+        return std::nullopt;
 
     return createCandidate(*candidateObject);
 }

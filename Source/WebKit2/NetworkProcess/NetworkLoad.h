@@ -135,7 +135,7 @@ private:
     const NetworkLoadParameters m_parameters;
 #if USE(NETWORK_SESSION)
     RefPtr<NetworkDataTask> m_task;
-    Optional<WebCore::AuthenticationChallenge> m_challenge;
+    std::optional<WebCore::AuthenticationChallenge> m_challenge;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     ChallengeCompletionHandler m_challengeCompletionHandler;
 #endif

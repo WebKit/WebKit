@@ -82,7 +82,7 @@ void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)
     updateContentType();
 }
 
-FetchResponse::FetchResponse(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_response(WTFMove(response))
 {
@@ -93,7 +93,7 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
     ASSERT(scriptExecutionContext());
     ASSERT(!isDisturbedOrLocked());
 
-    auto clone = adoptRef(*new FetchResponse(*scriptExecutionContext(), Nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    auto clone = adoptRef(*new FetchResponse(*scriptExecutionContext(), std::nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
     clone->cloneBody(*this);
     return clone;
 }
@@ -105,9 +105,9 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());
 
-    response->m_bodyLoader = BodyLoader(response.get(), WTFMove(promise));
+    response->m_bodyLoader.emplace(response.get(), WTFMove(promise));
     if (!response->m_bodyLoader->start(context, request))
-        response->m_bodyLoader = Nullopt;
+        response->m_bodyLoader = std::nullopt;
 }
 
 const String& FetchResponse::url() const
@@ -128,7 +128,7 @@ void FetchResponse::BodyLoader::didSucceed()
 #endif
 
     if (m_loader->isStarted())
-        m_response.m_bodyLoader = Nullopt;
+        m_response.m_bodyLoader = std::nullopt;
     m_response.unsetPendingActivity(&m_response);
 }
 
@@ -136,7 +136,7 @@ void FetchResponse::BodyLoader::didFail()
 {
     ASSERT(m_response.hasPendingActivity());
     if (m_promise)
-        std::exchange(m_promise, Nullopt)->reject(TypeError);
+        std::exchange(m_promise, std::nullopt)->reject(TypeError);
 
 #if ENABLE(READABLE_STREAM_API)
     if (m_response.m_readableStreamSource) {
@@ -148,7 +148,7 @@ void FetchResponse::BodyLoader::didFail()
 
     // Check whether didFail is called as part of FetchLoader::start.
     if (m_loader->isStarted())
-        m_response.m_bodyLoader = Nullopt;
+        m_response.m_bodyLoader = std::nullopt;
 
     m_response.unsetPendingActivity(&m_response);
 }
@@ -166,7 +166,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
     m_response.m_response = resourceResponse;
     m_response.m_headers->filterAndFill(resourceResponse.httpHeaderFields(), FetchHeaders::Guard::Response);
 
-    std::exchange(m_promise, Nullopt)->resolve(m_response);
+    std::exchange(m_promise, std::nullopt)->resolve(m_response);
 }
 
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
@@ -204,7 +204,7 @@ bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const Fet
 
 void FetchResponse::BodyLoader::stop()
 {
-    m_promise = Nullopt;
+    m_promise = std::nullopt;
     if (m_loader)
         m_loader->stop();
 }

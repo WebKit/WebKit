@@ -128,7 +128,7 @@ void SocketStreamHandleImpl::readBytes(gssize bytesRead)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protectedThis(this);
-    Optional<size_t> optionalLength;
+    std::optional<size_t> optionalLength;
     if (bytesRead != -1)
         optionalLength = static_cast<size_t>(bytesRead);
     m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), optionalLength);
@@ -171,11 +171,11 @@ void SocketStreamHandleImpl::writeReady()
     sendPendingData();
 }
 
-Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     if (!m_outputStream || !data)
-        return Nullopt;
+        return std::nullopt;
 
     GUniqueOutPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, m_cancellable.get(), &error.outPtr());
@@ -184,7 +184,7 @@ Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t l
             beginWaitingForSocketWritability();
         else
             didFail(SocketStreamError(error->code, String(), error->message));
-        return Nullopt;
+        return std::nullopt;
     }
 
     // If we did not send all the bytes we were given, we know that
@@ -193,7 +193,7 @@ Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t l
         beginWaitingForSocketWritability();
 
     if (written == -1)
-        return Nullopt;
+        return std::nullopt;
 
     return static_cast<size_t>(written);
 }

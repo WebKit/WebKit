@@ -44,8 +44,8 @@ template<typename T>
 struct IDLType {
     using ImplementationType = T;
 
-    using NullableType = Optional<ImplementationType>;
-    static NullableType nullValue() { return Nullopt; }
+    using NullableType = std::optional<ImplementationType>;
+    static NullableType nullValue() { return std::nullopt; }
     static bool isNullValue(const NullableType& value) { return !value; }
     static ImplementationType extractValueFromNullable(const NullableType& value) { return value.value(); }
 };

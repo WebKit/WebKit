@@ -112,7 +112,7 @@ void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID n
     downcast<ScrollingTreeOverflowScrollingNode>(*node).updateLayersAfterDelegatedScroll(scrollPosition);
 
     // Update GraphicsLayers and scroll state.
-    scrollingTreeNodeDidScroll(nodeID, scrollPosition, Nullopt, inUserInteration ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
+    scrollingTreeNodeDidScroll(nodeID, scrollPosition, std::nullopt, inUserInteration ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)

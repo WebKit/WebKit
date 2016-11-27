@@ -33,8 +33,8 @@
 namespace WebCore {
 
 struct ScrollToOptions {
-    Optional<double> left;
-    Optional<double> top;
+    std::optional<double> left;
+    std::optional<double> top;
 };
 
 }

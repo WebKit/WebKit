@@ -60,7 +60,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Offer, WTFMove(sdp)));
-    m_offerAnswerPromise = Nullopt;
+    m_offerAnswerPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::createOfferFailed(Exception&& exception)
@@ -72,7 +72,7 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = Nullopt;
+    m_offerAnswerPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
@@ -93,7 +93,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Answer, WTFMove(sdp)));
-    m_offerAnswerPromise = Nullopt;
+    m_offerAnswerPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
@@ -105,7 +105,7 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = Nullopt;
+    m_offerAnswerPromise = std::nullopt;
 }
 
 static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::SdpType type, PeerConnectionStates::SignalingState state)
@@ -150,7 +150,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = Nullopt;
+    m_setDescriptionPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
@@ -163,7 +163,7 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = Nullopt;
+    m_setDescriptionPromise = std::nullopt;
 }
 
 static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::SdpType type, PeerConnectionStates::SignalingState state)
@@ -208,7 +208,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = Nullopt;
+    m_setDescriptionPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
@@ -221,7 +221,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = Nullopt;
+    m_setDescriptionPromise = std::nullopt;
 }
 
 void PeerConnectionBackend::addIceCandidate(RTCIceCandidate& iceCandidate, PeerConnection::VoidPromise&& promise)
@@ -247,7 +247,7 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
     ASSERT(m_addIceCandidatePromise);
 
     m_addIceCandidatePromise->resolve();
-    m_addIceCandidatePromise = Nullopt;
+    m_addIceCandidatePromise = std::nullopt;
 }
 
 void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
@@ -259,7 +259,7 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
     ASSERT(m_addIceCandidatePromise);
 
     m_addIceCandidatePromise->reject(WTFMove(exception));
-    m_addIceCandidatePromise = Nullopt;
+    m_addIceCandidatePromise = std::nullopt;
 }
 
 void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate)
@@ -289,9 +289,9 @@ void PeerConnectionBackend::updateSignalingState(PeerConnectionStates::Signaling
 
 void PeerConnectionBackend::stop()
 {
-    m_offerAnswerPromise = Nullopt;
-    m_setDescriptionPromise = Nullopt;
-    m_addIceCandidatePromise = Nullopt;
+    m_offerAnswerPromise = std::nullopt;
+    m_setDescriptionPromise = std::nullopt;
+    m_addIceCandidatePromise = std::nullopt;
 
     doStop();
 }

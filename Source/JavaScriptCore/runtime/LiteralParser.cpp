@@ -690,7 +690,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     PutPropertySlot slot(object, codeBlock ? codeBlock->isStrictMode() : false);
                     objectStack.last().put(m_exec, ident, lastValue, slot);
                 } else {
-                    if (Optional<uint32_t> index = parseIndex(ident))
+                    if (std::optional<uint32_t> index = parseIndex(ident))
                         object->putDirectIndex(m_exec, index.value(), lastValue);
                     else
                         object->putDirect(vm, ident, lastValue);

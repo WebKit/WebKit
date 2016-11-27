@@ -287,10 +287,10 @@ LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
     return (m_stretchDepthBelowBaseline - m_stretchHeightAboveBaseline - m_mathOperator.descent() + m_mathOperator.ascent()) / 2;
 }
 
-Optional<int> RenderMathMLOperator::firstLineBaseline() const
+std::optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
     if (useMathOperator())
-        return Optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent() - verticalStretchedOperatorShift())));
+        return std::optional<int>(std::lround(static_cast<float>(m_mathOperator.ascent() - verticalStretchedOperatorShift())));
     return RenderMathMLToken::firstLineBaseline();
 }
 

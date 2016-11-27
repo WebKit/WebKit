@@ -121,7 +121,7 @@ public:
     Type type() const { return m_type; }
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
-    void setLoadPriority(const Optional<ResourceLoadPriority>&);
+    void setLoadPriority(const std::optional<ResourceLoadPriority>&);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);

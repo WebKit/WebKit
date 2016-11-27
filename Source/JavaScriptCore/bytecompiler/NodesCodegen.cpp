@@ -620,7 +620,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         return;
     }
     if (const auto* identifier = node.name()) {
-        Optional<uint32_t> optionalIndex = parseIndex(*identifier);
+        std::optional<uint32_t> optionalIndex = parseIndex(*identifier);
         if (!optionalIndex) {
             generator.emitDirectPutById(newObj, *identifier, value.get(), node.putType());
             return;
@@ -3967,7 +3967,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
         RefPtr<RegisterID> temp = generator.newTemporary();
         if (!target.propertyExpression) {
             // Should not emit get_by_id for indexed ones.
-            Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+            std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
             if (!optionalIndex)
                 generator.emitGetById(temp.get(), rhs, target.propertyName);
             else {

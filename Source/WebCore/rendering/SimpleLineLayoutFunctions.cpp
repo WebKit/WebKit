@@ -94,11 +94,11 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     textPainter.setFont(style.fontCascade());
     textPainter.setTextPaintStyle(computeTextPaintStyle(flow.frame(), style, paintInfo));
 
-    Optional<TextDecorationPainter> textDecorationPainter;
+    std::optional<TextDecorationPainter> textDecorationPainter;
     if (style.textDecorationsInEffect() != TextDecorationNone) {
         const RenderText* textRenderer = childrenOfType<RenderText>(flow).first();
         if (textRenderer) {
-            textDecorationPainter = TextDecorationPainter(paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false);
+            textDecorationPainter.emplace(paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false);
             textDecorationPainter->setFont(style.fontCascade());
             textDecorationPainter->setBaseline(style.fontMetrics().ascent());
         }

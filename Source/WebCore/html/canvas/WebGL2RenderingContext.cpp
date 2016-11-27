@@ -88,12 +88,12 @@ void WebGL2RenderingContext::initializeShaderExtensions()
     m_context->getExtensions().ensureEnabled("GL_EXT_frag_depth");
 }
 
-inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
+inline static std::optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
 {
     switch (data.getType()) {
     case JSC::NotTypedArray:
     case JSC::TypeDataView:
-        return Nullopt;
+        return std::nullopt;
     case JSC::TypeInt8:
     case JSC::TypeUint8:
     case JSC::TypeUint8Clamped:

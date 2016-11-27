@@ -1,3 +1,101 @@
+2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Import std::optional reference implementation as WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=164199
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        Import std::optional reference implementation offered by the C++17
+        original proposal paper. It has the same interface and functionality
+        to the C++17's one. Previous WTF::Optional lacks several functionalities.
+        The largest one is the correct constexpr constructors. This fact prevents
+        us from using Optional<literal type> in constexpr context in WebKit.
+
+        In WebKit, we do not allow global constructors. So only the constexpr
+        constructor is the way to use WTF::Optional in the static const
+        global variables. WTF::Optional is used in DOMJIT::Effect and
+        we would like to emit static const global variables that includes
+        this DOMJIT::Effect. That is the main motivation of this work.
+        This functionality allows the IDL code generator to emit DOMJIT
+        signatures as static const global variables.
+
+        We import the reference implementation one instead of LLVM libc++'s one.
+        This is because LLVM libc++'s one depends on many macro and type_traits
+        offered by libc++ implementation. And adopting it to WebKit requires
+        large modification compared to this reference implementation one.
+        Furthermore, it is difficult to compile libc++'s optional in old GCC and VC++.
+        It also requires some more modifications. To keep the thing simple,
+        we import the reference implementation one now. Once C++17 is released
+        and we update the compiler baseline, we can smoothly switch to the standard
+        library's std::optional.
+
+        We also add support for the environment that does not use exceptions to this
+        reference implementation.
+
+        And we also add valueOrCompute helper function. That keeps the extended
+        functionality that previous WTF::Optional has.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::tryGetMessage):
+        * wtf/Expected.h:
+        (WTF::makeExpected):
+        * wtf/Forward.h:
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<Ref<P>>::take):
+        * wtf/MainThread.cpp:
+        (WTF::initializeGCThreads):
+        (WTF::mayBeGCThread):
+        * wtf/MainThread.h:
+        * wtf/Optional.h:
+        (std::detail_::is_assignable::has_assign):
+        (std::detail_::has_overloaded_addressof::has_overload):
+        (std::detail_::static_addressof):
+        (std::detail_::convert):
+        (std::nullopt_t::nullopt_t):
+        (std::bad_optional_access::bad_optional_access):
+        (std::optional_base::optional_base):
+        (std::optional_base::~optional_base):
+        (std::constexpr_optional_base::constexpr_optional_base):
+        (std::optional::dataptr):
+        (std::optional::contained_val):
+        (std::optional::__NOEXCEPT_):
+        (std::optional::optional):
+        (std::optional::operator=):
+        (std::optional::emplace):
+        (std::optional::operator ->):
+        (std::optional::operator *):
+        (std::optional::value):
+        (std::optional::value_or):
+        (std::operator==):
+        (std::operator!=):
+        (std::operator<):
+        (std::operator>):
+        (std::operator<=):
+        (std::operator>=):
+        (std::__NOEXCEPT_):
+        (std::make_optional):
+        (std::hash<std::optional<T>>::operator()):
+        (WTF::NulloptTag::NulloptTag): Deleted.
+        (WTF::Optional::Optional): Deleted.
+        (WTF::Optional::~Optional): Deleted.
+        (WTF::Optional::operator=): Deleted.
+        (WTF::Optional::operator bool): Deleted.
+        (WTF::Optional::operator->): Deleted.
+        (WTF::Optional::operator*): Deleted.
+        (WTF::Optional::value): Deleted.
+        (WTF::Optional::valueOr): Deleted.
+        (WTF::Optional::valueOrCompute): Deleted.
+        (WTF::Optional::asPtr): Deleted.
+        (WTF::Optional::destroy): Deleted.
+        (WTF::operator==): Deleted.
+        (WTF::operator!=): Deleted.
+        (WTF::makeOptional): Deleted.
+        (WTF::printInternal): Deleted.
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::Impl):
+        (WTF::StringView::GraphemeClusters::Iterator::Iterator):
+        * wtf/text/StringView.h:
+
 2016-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate some layout timer-related code from std::chrono to Seconds and MonotonicTime

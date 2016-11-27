@@ -85,7 +85,7 @@ inline bool needsLineBreakIterator(UChar character)
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
 inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
 {
-    Optional<unsigned> nextBreak;
+    std::optional<unsigned> nextBreak;
 
     CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lazyBreakIterator.secondToLastCharacter());
     CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
@@ -106,7 +106,7 @@ inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreak
                     if (breakIterator) {
                         int candidate = textBreakFollowing(breakIterator, i - 1 + priorContextLength);
                         if (candidate == TextBreakDone)
-                            nextBreak = Nullopt;
+                            nextBreak = std::nullopt;
                         else {
                             unsigned result = candidate;
                             ASSERT(result >= priorContextLength);
@@ -132,7 +132,7 @@ inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreak
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
 static inline unsigned nextBreakablePositionLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
 {
-    Optional<unsigned> nextBreak;
+    std::optional<unsigned> nextBreak;
 
     CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
     unsigned priorContextLength = lazyBreakIterator.priorContextLength();
@@ -152,7 +152,7 @@ static inline unsigned nextBreakablePositionLoosely(LazyLineBreakIterator& lazyB
                     ASSERT(i + priorContextLength >= 1);
                     int candidate = textBreakFollowing(breakIterator, i + priorContextLength - 1);
                     if (candidate == TextBreakDone)
-                        nextBreak = Nullopt;
+                        nextBreak = std::nullopt;
                     else {
                         unsigned result = candidate;
                         ASSERT(result > priorContextLength);
@@ -228,7 +228,7 @@ inline unsigned nextBreakablePositionIgnoringNBSPLoose(LazyLineBreakIterator& la
     return nextBreakablePositionLoosely<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, Optional<unsigned>& nextBreakable, bool breakNBSP, bool isLooseMode, bool keepAllWords)
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool isLooseMode, bool keepAllWords)
 {
     if (nextBreakable && nextBreakable.value() >= startPosition)
         return startPosition == nextBreakable;

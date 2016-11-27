@@ -69,7 +69,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         // Support for document.all(<index>) etc.
         String string = exec->argument(0).toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (Optional<uint32_t> index = parseIndex(*string.impl()))
+        if (std::optional<uint32_t> index = parseIndex(*string.impl()))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index.value())));
 
         // Support for document.images('<name>') etc.
@@ -79,7 +79,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     // The second arg, if set, is the index of the item we want
     String string = exec->argument(0).toString(exec)->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    if (Optional<uint32_t> index = parseIndex(*exec->argument(1).toWTFString(exec).impl())) {
+    if (std::optional<uint32_t> index = parseIndex(*exec->argument(1).toWTFString(exec).impl())) {
         if (auto* item = collection.namedItemWithIndex(string, index.value()))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), *item));
     }
@@ -112,7 +112,7 @@ JSValue JSHTMLAllCollection::item(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String argument = state.uncheckedArgument(0).toWTFString(&state);
-    if (Optional<uint32_t> index = parseIndex(*argument.impl()))
+    if (std::optional<uint32_t> index = parseIndex(*argument.impl()))
         return toJS(&state, globalObject(), wrapped().item(index.value()));
     return namedItems(state, this, Identifier::fromString(&state, argument));
 }

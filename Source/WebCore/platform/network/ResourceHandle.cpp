@@ -154,7 +154,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
 {
     if (response.isHttpVersion0_9()) {
         auto url = response.url();
-        Optional<uint16_t> port = url.port();
+        std::optional<uint16_t> port = url.port();
         if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
             cancel();
             String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";

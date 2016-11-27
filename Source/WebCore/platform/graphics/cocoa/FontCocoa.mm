@@ -404,7 +404,7 @@ static inline bool isTrueTypeFeature(CFDictionaryRef feature)
     return CFDictionaryContainsKey(feature, kCTFontFeatureTypeIdentifierKey) && CFDictionaryContainsKey(feature, kCTFontFeatureSelectorIdentifierKey);
 }
 
-static inline Optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
+static inline std::optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
 {
     ASSERT(isOpenTypeFeature(feature));
     CFStringRef tag = static_cast<CFStringRef>(CFDictionaryGetValue(feature, kCTFontOpenTypeFeatureTag));
@@ -412,7 +412,7 @@ static inline Optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
     CFNumberRef value = static_cast<CFNumberRef>(CFDictionaryGetValue(feature, kCTFontOpenTypeFeatureValue));
     auto success = CFNumberGetValue(value, kCFNumberIntType, &rawValue);
     ASSERT_UNUSED(success, success);
-    return rawValue ? Optional<CFStringRef>(tag) : Nullopt;
+    return rawValue ? std::optional<CFStringRef>(tag) : std::nullopt;
 }
 
 static inline std::pair<int, int> trueTypeFeature(CFDictionaryRef feature)
@@ -592,11 +592,11 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 }
 
 #if !((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000))
-static inline Optional<CGSize> advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph)
+static inline std::optional<CGSize> advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph)
 {
     CTFontRef font = platformData.font();
     if (!font || !platformData.isColorBitmapFont())
-        return Nullopt;
+        return std::nullopt;
     CGSize advance;
     CTFontGetAdvancesForGlyphs(font, kCTFontOrientationDefault, &glyph, &advance, 1);
     return advance;

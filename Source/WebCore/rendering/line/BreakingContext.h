@@ -70,7 +70,7 @@ struct WordTrailingSpace {
     {
     }
 
-    WTF::Optional<float> width(HashSet<const Font*>& fallbackFonts)
+    std::optional<float> width(HashSet<const Font*>& fallbackFonts)
     {
         if (m_state == WordTrailingSpaceState::Computed)
             return m_width;
@@ -85,7 +85,7 @@ struct WordTrailingSpace {
 private:
     enum class WordTrailingSpaceState { Uninitialized, Computed };
     WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
-    WTF::Optional<float> m_width;
+    std::optional<float> m_width;
     const RenderStyle& m_style;
     TextLayout* m_textLayout { nullptr };
 };
@@ -173,7 +173,7 @@ public:
         m_hangsAtEnd = false;
     }
 
-    void commitLineBreakAtCurrentWidth(RenderObject& object, unsigned offset = 0, Optional<unsigned> nextBreak = Optional<unsigned>())
+    void commitLineBreakAtCurrentWidth(RenderObject& object, unsigned offset = 0, std::optional<unsigned> nextBreak = std::optional<unsigned>())
     {
         m_width.commit();
         m_lineBreakHistory.moveTo(object, offset, nextBreak);
@@ -210,14 +210,14 @@ private:
 
         RenderObject* renderer() const { return this->at(0).renderer(); }
         unsigned offset() const { return this->at(0).offset(); }
-        Optional<unsigned> nextBreakablePosition() const { return this->at(0).nextBreakablePosition(); }
+        std::optional<unsigned> nextBreakablePosition() const { return this->at(0).nextBreakablePosition(); }
         bool atTextParagraphSeparator() const { return this->at(0).atTextParagraphSeparator(); }
         UChar previousInSameNode() const { return this->at(0).previousInSameNode(); }
         const InlineIterator& get(size_t i) const { return this->at(i); };
         const InlineIterator& current() const { return get(0); }
         size_t historyLength() const { return this->size(); }
 
-        void moveTo(RenderObject& object, unsigned offset, Optional<unsigned> nextBreak = Nullopt)
+        void moveTo(RenderObject& object, unsigned offset, std::optional<unsigned> nextBreak = std::nullopt)
         {
             push([&](InlineIterator& modifyMe) {
                 modifyMe.moveTo(object, offset, nextBreak);
@@ -662,7 +662,7 @@ inline void ensureCharacterGetsLineBox(LineWhitespaceCollapsingState& lineWhites
     lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset()));
 }
 
-inline void tryHyphenating(RenderText& text, const FontCascade& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, Optional<unsigned> nextBreakable, bool& hyphenated)
+inline void tryHyphenating(RenderText& text, const FontCascade& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, std::optional<unsigned> nextBreakable, bool& hyphenated)
 {
     // Map 'hyphenate-limit-{before,after}: auto;' to 2.
     unsigned minimumPrefixLength;
@@ -740,7 +740,7 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
     wordMeasurement.startOffset = lastSpace;
     
     float additionalTempWidth = 0;
-    WTF::Optional<float> wordTrailingSpaceWidth;
+    std::optional<float> wordTrailingSpaceWidth;
     if (currentCharacter == ' ')
         wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
     if (wordTrailingSpaceWidth)
@@ -870,7 +870,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             midWordBreak = m_width.committedWidth() + wrapW + charWidth > m_width.availableWidth();
         }
 
-        Optional<unsigned> nextBreakablePosition = m_current.nextBreakablePosition();
+        std::optional<unsigned> nextBreakablePosition = m_current.nextBreakablePosition();
         bool betweenWords = c == '\n' || (m_currWS != PRE && !m_atStart && isBreakable(m_renderTextInfo.lineBreakIterator, m_current.offset(), nextBreakablePosition, breakNBSP, isLooseCJKMode, keepAllWords)
             && (style.hyphens() != HyphensNone || (m_current.previousInSameNode() != softHyphen)));
         m_current.setNextBreakablePosition(nextBreakablePosition);
@@ -972,7 +972,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     }
                     // Check if the last breaking position is a soft-hyphen.
                     if (!hyphenated && style.hyphens() != HyphensNone) {
-                        Optional<unsigned> lastBreakingPositon;
+                        std::optional<unsigned> lastBreakingPositon;
                         const RenderObject* rendererAtBreakingPosition = nullptr;
                         if (m_lineBreakHistory.offset() || m_lineBreakHistory.nextBreakablePosition()) {
                             lastBreakingPositon = m_lineBreakHistory.offset();
@@ -983,7 +983,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                             rendererAtBreakingPosition = m_current.renderer();
                         }
                         if (lastBreakingPositon) {
-                            Optional<UChar> characterBeforeBreakingPosition;
+                            std::optional<UChar> characterBeforeBreakingPosition;
                             // When last breaking position points to the start of the current context, we need to look at the last character from
                             // the previous non-empty text renderer.
                             if (!lastBreakingPositon.value())
@@ -1336,7 +1336,7 @@ inline InlineIterator BreakingContext::optimalLineBreakLocationForTrailingWord()
         return lineBreak;
     bool isLooseCJKMode = m_renderTextInfo.text != &renderText && m_renderTextInfo.lineBreakIterator.isLooseCJKMode();
     bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == SPACE;
-    Optional<unsigned> nextBreakablePosition = lineBreak.nextBreakablePosition();
+    std::optional<unsigned> nextBreakablePosition = lineBreak.nextBreakablePosition();
     isBreakable(m_renderTextInfo.lineBreakIterator, lineBreak.offset() + 1, nextBreakablePosition, breakNBSP, isLooseCJKMode, m_currentStyle->wordBreak() == KeepAllWordBreak);
     if (!nextBreakablePosition || nextBreakablePosition.value() != renderText.textLength())
         return lineBreak;

@@ -1715,7 +1715,7 @@ void DocumentLoader::startIconLoading()
     Vector<LinkIcon> icons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
 
     if (icons.isEmpty())
-        icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), Nullopt });
+        icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
 
     for (auto& icon : icons) {
         auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);

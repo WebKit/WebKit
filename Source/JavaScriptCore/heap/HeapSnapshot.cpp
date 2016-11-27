@@ -130,7 +130,7 @@ void HeapSnapshot::finalize()
 #endif
 }
 
-Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
+std::optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
 {
     ASSERT(m_finalized);
 
@@ -142,7 +142,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
             unsigned middle = start + ((end - start) / 2);
             HeapSnapshotNode& node = m_nodes[middle];
             if (cell == node.cell)
-                return Optional<HeapSnapshotNode>(node);
+                return std::optional<HeapSnapshotNode>(node);
             if (cell < node.cell)
                 end = middle;
             else
@@ -153,32 +153,32 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
     if (m_previous)
         return m_previous->nodeForCell(cell);
 
-    return Nullopt;
+    return std::nullopt;
 }
 
-Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned objectIdentifier)
+std::optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned objectIdentifier)
 {
     if (isEmpty()) {
         if (m_previous)
             return m_previous->nodeForObjectIdentifier(objectIdentifier);
-        return Nullopt;
+        return std::nullopt;
     }
 
     if (objectIdentifier > m_lastObjectIdentifier)
-        return Nullopt;
+        return std::nullopt;
 
     if (objectIdentifier < m_firstObjectIdentifier) {
         if (m_previous)
             return m_previous->nodeForObjectIdentifier(objectIdentifier);
-        return Nullopt;
+        return std::nullopt;
     }
 
     for (auto& node : m_nodes) {
         if (node.identifier == objectIdentifier)
-            return Optional<HeapSnapshotNode>(node);
+            return std::optional<HeapSnapshotNode>(node);
     }
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 } // namespace JSC

@@ -77,11 +77,11 @@ void PseudoElement::clearHostElement()
     m_hostElement = nullptr;
 }
 
-Optional<ElementStyle> PseudoElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+std::optional<ElementStyle> PseudoElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     auto* style = m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
     if (!style)
-        return Nullopt;
+        return std::nullopt;
     return ElementStyle(RenderStyle::clonePtr(*style));
 }
 

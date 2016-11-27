@@ -341,10 +341,10 @@ protected:
         }
     }
 
-    Optional<ValueType> m_min;
-    Optional<ValueType> m_max;
-    Optional<ValueType> m_exact;
-    Optional<ValueType> m_ideal;
+    std::optional<ValueType> m_min;
+    std::optional<ValueType> m_max;
+    std::optional<ValueType> m_exact;
+    std::optional<ValueType> m_ideal;
 };
 
 class IntConstraint final : public NumericConstraint<int> {
@@ -474,8 +474,8 @@ public:
     }
 
 private:
-    Optional<bool> m_exact;
-    Optional<bool> m_ideal;
+    std::optional<bool> m_exact;
+    std::optional<bool> m_ideal;
 };
 
 class StringConstraint : public MediaConstraint {
@@ -583,25 +583,25 @@ public:
     bool isEmpty() const;
     WEBCORE_EXPORT size_t size() const;
 
-    WEBCORE_EXPORT void set(MediaConstraintType, Optional<IntConstraint>&&);
-    WEBCORE_EXPORT void set(MediaConstraintType, Optional<DoubleConstraint>&&);
-    WEBCORE_EXPORT void set(MediaConstraintType, Optional<BooleanConstraint>&&);
-    WEBCORE_EXPORT void set(MediaConstraintType, Optional<StringConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, std::optional<IntConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, std::optional<DoubleConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, std::optional<BooleanConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, std::optional<StringConstraint>&&);
 
-    Optional<IntConstraint> width() const { return m_width; }
-    Optional<IntConstraint> height() const { return m_height; }
-    Optional<IntConstraint> sampleRate() const { return m_sampleRate; }
-    Optional<IntConstraint> sampleSize() const { return m_sampleSize; }
+    std::optional<IntConstraint> width() const { return m_width; }
+    std::optional<IntConstraint> height() const { return m_height; }
+    std::optional<IntConstraint> sampleRate() const { return m_sampleRate; }
+    std::optional<IntConstraint> sampleSize() const { return m_sampleSize; }
 
-    Optional<DoubleConstraint> aspectRatio() const { return m_aspectRatio; }
-    Optional<DoubleConstraint> frameRate() const { return m_frameRate; }
-    Optional<DoubleConstraint> volume() const { return m_volume; }
+    std::optional<DoubleConstraint> aspectRatio() const { return m_aspectRatio; }
+    std::optional<DoubleConstraint> frameRate() const { return m_frameRate; }
+    std::optional<DoubleConstraint> volume() const { return m_volume; }
 
-    Optional<BooleanConstraint> echoCancellation() const { return m_echoCancellation; }
+    std::optional<BooleanConstraint> echoCancellation() const { return m_echoCancellation; }
 
-    Optional<StringConstraint> facingMode() const { return m_facingMode; }
-    Optional<StringConstraint> deviceId() const { return m_deviceId; }
-    Optional<StringConstraint> groupId() const { return m_groupId; }
+    std::optional<StringConstraint> facingMode() const { return m_facingMode; }
+    std::optional<StringConstraint> deviceId() const { return m_deviceId; }
+    std::optional<StringConstraint> groupId() const { return m_groupId; }
 
     template <class Encoder> void encode(Encoder& encoder) const
     {
@@ -653,20 +653,20 @@ public:
     }
 
 private:
-    Optional<IntConstraint> m_width;
-    Optional<IntConstraint> m_height;
-    Optional<IntConstraint> m_sampleRate;
-    Optional<IntConstraint> m_sampleSize;
+    std::optional<IntConstraint> m_width;
+    std::optional<IntConstraint> m_height;
+    std::optional<IntConstraint> m_sampleRate;
+    std::optional<IntConstraint> m_sampleSize;
 
-    Optional<DoubleConstraint> m_aspectRatio;
-    Optional<DoubleConstraint> m_frameRate;
-    Optional<DoubleConstraint> m_volume;
+    std::optional<DoubleConstraint> m_aspectRatio;
+    std::optional<DoubleConstraint> m_frameRate;
+    std::optional<DoubleConstraint> m_volume;
 
-    Optional<BooleanConstraint> m_echoCancellation;
+    std::optional<BooleanConstraint> m_echoCancellation;
 
-    Optional<StringConstraint> m_facingMode;
-    Optional<StringConstraint> m_deviceId;
-    Optional<StringConstraint> m_groupId;
+    std::optional<StringConstraint> m_facingMode;
+    std::optional<StringConstraint> m_deviceId;
+    std::optional<StringConstraint> m_groupId;
 };
 
 class FlattenedConstraint {

@@ -73,7 +73,7 @@ RegisterSet StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 
 void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-    Inst& inst, RoleMode roleMode, Optional<unsigned> firstRecoverableIndex,
+    Inst& inst, RoleMode roleMode, std::optional<unsigned> firstRecoverableIndex,
     const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();

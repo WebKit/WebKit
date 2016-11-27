@@ -52,7 +52,7 @@ public:
     virtual ~LinkLoader();
 
     bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& crossOrigin, Document&);
-    static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
+    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
     WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
     void triggerEvents(const CachedResource&);

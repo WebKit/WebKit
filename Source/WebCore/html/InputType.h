@@ -295,7 +295,7 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();
-    virtual Optional<Decimal> findClosestTickMarkValue(const Decimal&);
+    virtual std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

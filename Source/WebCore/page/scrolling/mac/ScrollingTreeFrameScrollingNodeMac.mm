@@ -388,7 +388,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeCons
 {
     updateMainFramePinState(scrollPosition);
 
-    Optional<FloatPoint> layoutViewportOrigin;
+    std::optional<FloatPoint> layoutViewportOrigin;
     if (scrollingTree().visualViewportEnabled()) {
         FloatPoint visibleContentOrigin = scrollPosition;
         float counterScale = 1 / frameScaleFactor();

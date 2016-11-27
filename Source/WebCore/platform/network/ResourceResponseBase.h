@@ -115,7 +115,7 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
 
     WEBCORE_EXPORT void includeCertificateInfo() const;
-    const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
+    const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.
@@ -123,11 +123,11 @@ public:
     WEBCORE_EXPORT bool cacheControlContainsNoStore() const;
     WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
-    WEBCORE_EXPORT Optional<std::chrono::microseconds> cacheControlMaxAge() const;
-    WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> date() const;
-    WEBCORE_EXPORT Optional<std::chrono::microseconds> age() const;
-    WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> expires() const;
-    WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> lastModified() const;
+    WEBCORE_EXPORT std::optional<std::chrono::microseconds> cacheControlMaxAge() const;
+    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> date() const;
+    WEBCORE_EXPORT std::optional<std::chrono::microseconds> age() const;
+    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> expires() const;
+    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> lastModified() const;
     ParsedContentRange& contentRange() const;
 
     // This is primarily for testing support. It is not necessarily accurate in all scenarios.
@@ -189,15 +189,15 @@ protected:
     HTTPHeaderMap m_httpHeaderFields;
     mutable NetworkLoadTiming m_networkLoadTiming;
 
-    mutable Optional<CertificateInfo> m_certificateInfo;
+    mutable std::optional<CertificateInfo> m_certificateInfo;
 
     int m_httpStatusCode;
 
 private:
-    mutable Optional<std::chrono::microseconds> m_age;
-    mutable Optional<std::chrono::system_clock::time_point> m_date;
-    mutable Optional<std::chrono::system_clock::time_point> m_expires;
-    mutable Optional<std::chrono::system_clock::time_point> m_lastModified;
+    mutable std::optional<std::chrono::microseconds> m_age;
+    mutable std::optional<std::chrono::system_clock::time_point> m_date;
+    mutable std::optional<std::chrono::system_clock::time_point> m_expires;
+    mutable std::optional<std::chrono::system_clock::time_point> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
 

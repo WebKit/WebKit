@@ -1949,10 +1949,10 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
 
         bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
-        Optional<GPRTemporary> scratch;
+        std::optional<GPRTemporary> scratch;
         GPRReg scratchGPR = InvalidGPRReg;
         if (shouldCheckMasqueradesAsUndefined) {
-            scratch = GPRTemporary(this);
+            scratch.emplace(this);
             scratchGPR = scratch->gpr();
         }
         bool negateResult = true;
@@ -2103,12 +2103,12 @@ void SpeculativeJIT::emitBranch(Node* node)
             GPRTemporary result(this);
             FPRTemporary fprValue(this);
             FPRTemporary fprTemp(this);
-            Optional<GPRTemporary> scratch;
+            std::optional<GPRTemporary> scratch;
 
             GPRReg scratchGPR = InvalidGPRReg;
             bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
             if (shouldCheckMasqueradesAsUndefined) {
-                scratch = GPRTemporary(this);
+                scratch.emplace(this);
                 scratchGPR = scratch->gpr();
             }
 
@@ -4769,11 +4769,11 @@ void SpeculativeJIT::compile(Node* node)
         case StringUse: {
             SpeculateCellOperand input(this, node->child1());
             GPRTemporary result(this);
-            Optional<GPRTemporary> temp;
+            std::optional<GPRTemporary> temp;
 
             GPRReg tempGPR = InvalidGPRReg;
             if (node->child1().useKind() == CellUse) {
-                temp = GPRTemporary(this);
+                temp.emplace(this);
                 tempGPR = temp->gpr();
             }
 
@@ -5207,15 +5207,15 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary structureID(this);
         GPRTemporary result(this);
 
-        Optional<SpeculateCellOperand> keyAsCell;
-        Optional<JSValueOperand> keyAsValue;
+        std::optional<SpeculateCellOperand> keyAsCell;
+        std::optional<JSValueOperand> keyAsValue;
         GPRReg keyGPR;
         if (node->child2().useKind() == UntypedUse) {
-            keyAsValue = JSValueOperand(this, node->child2());
+            keyAsValue.emplace(this, node->child2());
             keyGPR = keyAsValue->gpr();
         } else {
             ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == SymbolUse);
-            keyAsCell = SpeculateCellOperand(this, node->child2());
+            keyAsCell.emplace(this, node->child2());
             keyGPR = keyAsCell->gpr();
         }
 

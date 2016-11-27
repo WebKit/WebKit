@@ -41,7 +41,7 @@ enum class LinkIconType;
 
 struct LinkRelAttribute {
     bool isStyleSheet { false };
-    Optional<LinkIconType> iconType;
+    std::optional<LinkIconType> iconType;
     bool isAlternate { false };
     bool isDNSPrefetch { false };
     bool isLinkPreload { false };

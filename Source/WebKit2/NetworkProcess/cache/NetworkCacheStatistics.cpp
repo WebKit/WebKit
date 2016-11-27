@@ -216,7 +216,7 @@ void Statistics::recordNotUsingCacheForRequest(uint64_t webPageID, const Key& ke
     ASSERT(retrieveDecision != RetrieveDecision::Yes);
 
     auto hash = key.hashAsString();
-    queryWasEverRequested(hash, NeedUncachedReason::No, [this, hash, requestURL = request.url(), webPageID, retrieveDecision](bool wasEverRequested, const Optional<StoreDecision>&) {
+    queryWasEverRequested(hash, NeedUncachedReason::No, [this, hash, requestURL = request.url(), webPageID, retrieveDecision](bool wasEverRequested, const std::optional<StoreDecision>&) {
         if (wasEverRequested) {
             String diagnosticKey = retrieveDecisionToDiagnosticKey(retrieveDecision);
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously requested but we are not using the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -256,7 +256,7 @@ static String storeDecisionToDiagnosticKey(StoreDecision storeDecision)
 void Statistics::recordRetrievalFailure(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request)
 {
     auto hash = key.hashAsString();
-    queryWasEverRequested(hash, NeedUncachedReason::Yes, [this, hash, requestURL = request.url(), webPageID](bool wasPreviouslyRequested, const Optional<StoreDecision>& storeDecision) {
+    queryWasEverRequested(hash, NeedUncachedReason::Yes, [this, hash, requestURL = request.url(), webPageID](bool wasPreviouslyRequested, const std::optional<StoreDecision>& storeDecision) {
         if (wasPreviouslyRequested) {
             String diagnosticKey = storeDecisionToDiagnosticKey(storeDecision.value());
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously request but is not in the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -351,7 +351,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
     // Query pending writes first.
     bool wasAlreadyRequested = m_hashesToAdd.contains(hash);
     if (wasAlreadyRequested && needUncachedReason == NeedUncachedReason::No) {
-        completionHandler(true, Nullopt);
+        completionHandler(true, std::nullopt);
         return;
     }
     if (needUncachedReason == NeedUncachedReason::Yes && m_storeDecisionsToAdd.contains(hash)) {
@@ -365,7 +365,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
     m_activeQueries.add(WTFMove(everRequestedQuery));
     serialBackgroundIOQueue().dispatch([this, wasAlreadyRequested, &query] () mutable {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
-        Optional<StoreDecision> storeDecision;
+        std::optional<StoreDecision> storeDecision;
         if (m_database.isOpen()) {
             if (!wasAlreadyRequested) {
                 WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT hash FROM AlreadyRequested WHERE hash=?"));

@@ -72,7 +72,7 @@ bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
     if (propertyName == vm.propertyNames->length)
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
-    if (Optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(cell, exec, index.value(), value, slot.isStrictMode());
     return JSObject::put(cell, exec, propertyName, value, slot);
 }
@@ -92,7 +92,7 @@ static bool isStringOwnProperty(ExecState* exec, StringObject* object, PropertyN
 {
     if (propertyName == exec->propertyNames().length)
         return true;
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         if (object->internalValue()->canGetIndex(index.value()))
             return true;
     }
@@ -127,7 +127,7 @@ bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (propertyName == exec->propertyNames().length)
         return false;
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && thisObject->internalValue()->canGetIndex(index.value()))
         return false;
     return JSObject::deleteProperty(thisObject, exec, propertyName);

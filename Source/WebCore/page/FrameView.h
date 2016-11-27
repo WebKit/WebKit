@@ -263,7 +263,7 @@ public:
     
     // If set, overrides the default "m_layoutViewportOrigin, size of initial containing block" rect.
     // Used with delegated scrolling (i.e. iOS).
-    WEBCORE_EXPORT void setLayoutViewportOverrideRect(Optional<LayoutRect>);
+    WEBCORE_EXPORT void setLayoutViewportOverrideRect(std::optional<LayoutRect>);
 
     // These are in document coordinates, unaffected by zooming.
     WEBCORE_EXPORT LayoutRect layoutViewportRect() const;
@@ -569,8 +569,8 @@ public:
     // of the view is actually exposed on screen (taking into account
     // clipping by other UI elements), whereas visibleContentRect is
     // internal to WebCore and doesn't respect those things.
-    WEBCORE_EXPORT void setViewExposedRect(Optional<FloatRect>);
-    Optional<FloatRect> viewExposedRect() const { return m_viewExposedRect; }
+    WEBCORE_EXPORT void setViewExposedRect(std::optional<FloatRect>);
+    std::optional<FloatRect> viewExposedRect() const { return m_viewExposedRect; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() override;
@@ -786,10 +786,10 @@ private:
 
     bool m_shouldUpdateWhileOffscreen;
 
-    Optional<FloatRect> m_viewExposedRect;
+    std::optional<FloatRect> m_viewExposedRect;
     
     LayoutPoint m_layoutViewportOrigin;
-    Optional<LayoutRect> m_layoutViewportOverrideRect;
+    std::optional<LayoutRect> m_layoutViewportOverrideRect;
 
     unsigned m_deferSetNeedsLayoutCount;
     bool m_setNeedsLayoutWasDeferred;

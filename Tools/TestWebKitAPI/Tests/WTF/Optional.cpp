@@ -32,13 +32,13 @@ namespace TestWebKitAPI {
 TEST(WTF_Optional, Disengaged)
 {
     {
-        Optional<int> optional;
+        std::optional<int> optional;
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
 
     {
-        Optional<int> optional { Nullopt };
+        std::optional<int> optional { std::nullopt };
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
@@ -46,7 +46,7 @@ TEST(WTF_Optional, Disengaged)
 
 TEST(WTF_Optional, Engaged)
 {
-    Optional<int> optional { 10 };
+    std::optional<int> optional { 10 };
 
     EXPECT_TRUE(static_cast<bool>(optional));
     EXPECT_EQ(10, optional.value());
@@ -64,7 +64,7 @@ TEST(WTF_Optional, Destructor)
     };
 
     {
-        Optional<A> optional { InPlace };
+        std::optional<A> optional { std::in_place };
 
         EXPECT_TRUE(static_cast<bool>(optional));
     }
@@ -75,8 +75,8 @@ TEST(WTF_Optional, Destructor)
 TEST(WTF_Optional, Callback)
 {
     bool called = false;
-    Optional<int> a;
-    int result = a.valueOrCompute([&] {
+    std::optional<int> a;
+    int result = valueOrCompute(a, [&] {
         called = true;
         return 300;
     });
@@ -85,7 +85,7 @@ TEST(WTF_Optional, Callback)
 
     a = 250;
     called = false;
-    result = a.valueOrCompute([&] {
+    result = valueOrCompute(a, [&] {
         called = true;
         return 300;
     });
@@ -95,22 +95,22 @@ TEST(WTF_Optional, Callback)
 
 TEST(WTF_Optional, Equality)
 {
-    Optional<int> unengaged1;
-    Optional<int> unengaged2;
+    std::optional<int> unengaged1;
+    std::optional<int> unengaged2;
 
-    Optional<int> engaged1 { 1 };
-    Optional<int> engaged2 { 2 };
-    Optional<int> engagedx2 { 2 };
+    std::optional<int> engaged1 { 1 };
+    std::optional<int> engaged2 { 2 };
+    std::optional<int> engagedx2 { 2 };
 
     EXPECT_TRUE(unengaged1 == unengaged2);
     EXPECT_FALSE(engaged1 == engaged2);
     EXPECT_FALSE(engaged1 == unengaged1);
     EXPECT_TRUE(engaged2 == engagedx2);
 
-    EXPECT_TRUE(unengaged1 == Nullopt);
-    EXPECT_FALSE(engaged1 == Nullopt);
-    EXPECT_TRUE(Nullopt == unengaged1);
-    EXPECT_FALSE(Nullopt == engaged1);
+    EXPECT_TRUE(unengaged1 == std::nullopt);
+    EXPECT_FALSE(engaged1 == std::nullopt);
+    EXPECT_TRUE(std::nullopt == unengaged1);
+    EXPECT_FALSE(std::nullopt == engaged1);
 
     EXPECT_TRUE(engaged1 == 1);
     EXPECT_TRUE(1 == engaged1);
@@ -120,22 +120,22 @@ TEST(WTF_Optional, Equality)
 
 TEST(WTF_Optional, Inequality)
 {
-    Optional<int> unengaged1;
-    Optional<int> unengaged2;
+    std::optional<int> unengaged1;
+    std::optional<int> unengaged2;
 
-    Optional<int> engaged1 { 1 };
-    Optional<int> engaged2 { 2 };
-    Optional<int> engagedx2 { 2 };
+    std::optional<int> engaged1 { 1 };
+    std::optional<int> engaged2 { 2 };
+    std::optional<int> engagedx2 { 2 };
 
     EXPECT_FALSE(unengaged1 != unengaged2);
     EXPECT_TRUE(engaged1 != engaged2);
     EXPECT_TRUE(engaged1 != unengaged1);
     EXPECT_FALSE(engaged2 != engagedx2);
 
-    EXPECT_FALSE(unengaged1 != Nullopt);
-    EXPECT_TRUE(engaged1 != Nullopt);
-    EXPECT_FALSE(Nullopt != unengaged1);
-    EXPECT_TRUE(Nullopt != engaged1);
+    EXPECT_FALSE(unengaged1 != std::nullopt);
+    EXPECT_TRUE(engaged1 != std::nullopt);
+    EXPECT_FALSE(std::nullopt != unengaged1);
+    EXPECT_TRUE(std::nullopt != engaged1);
 
     EXPECT_FALSE(engaged1 != 1);
     EXPECT_TRUE(engaged1 != 2);

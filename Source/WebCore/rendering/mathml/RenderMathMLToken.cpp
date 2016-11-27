@@ -516,7 +516,7 @@ void RenderMathMLToken::updateMathVariantGlyph()
 {
     ASSERT(m_mathVariantGlyphDirty);
 
-    m_mathVariantCodePoint = Nullopt;
+    m_mathVariantCodePoint = std::nullopt;
     m_mathVariantGlyphDirty = false;
 
     // Early return if the token element contains RenderElements.
@@ -551,12 +551,12 @@ void RenderMathMLToken::updateFromElement()
     setMathVariantGlyphDirty();
 }
 
-Optional<int> RenderMathMLToken::firstLineBaseline() const
+std::optional<int> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font)
-            return Optional<int>(static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())));
+            return std::optional<int>(static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())));
     }
     return RenderMathMLBlock::firstLineBaseline();
 }

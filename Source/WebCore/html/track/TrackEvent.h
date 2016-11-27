@@ -46,7 +46,7 @@ public:
     using TrackEventTrack = Variant<RefPtr<VideoTrack>, RefPtr<AudioTrack>, RefPtr<TextTrack>>;
 
     struct Init : public EventInit {
-        Optional<TrackEventTrack> track;
+        std::optional<TrackEventTrack> track;
     };
 
     static Ref<TrackEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

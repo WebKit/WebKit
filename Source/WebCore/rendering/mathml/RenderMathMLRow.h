@@ -41,7 +41,7 @@ public:
 
 protected:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
-    Optional<int> firstLineBaseline() const override;
+    std::optional<int> firstLineBaseline() const override;
 
     void layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent);
     void computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit& descent);

@@ -248,14 +248,14 @@ public:
     RenderBlockRareData()
         : m_paginationStrut(0)
         , m_pageLogicalOffset(0)
-        , m_flowThreadContainingBlock(Nullopt)
+        , m_flowThreadContainingBlock(std::nullopt)
     {
     }
 
     LayoutUnit m_paginationStrut;
     LayoutUnit m_pageLogicalOffset;
 
-    Optional<RenderFlowThread*> m_flowThreadContainingBlock;
+    std::optional<RenderFlowThread*> m_flowThreadContainingBlock;
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
@@ -2944,7 +2944,7 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
         bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollOffset().y() != 0)
             : (layer()->horizontalScrollbar() || layer()->scrollOffset().x() != 0)))) || (isWritingModeRoot() && !isRubyRun());
         
-        Optional<int> baselinePos = ignoreBaseline ? Optional<int>() : inlineBlockBaseline(direction);
+        std::optional<int> baselinePos = ignoreBaseline ? std::optional<int>() : inlineBlockBaseline(direction);
         
         if (isDeprecatedFlexibleBox()) {
             // Historically, we did this check for all baselines. But we can't
@@ -2954,7 +2954,7 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
             // For simplicity, we use this for all uses of deprecated flexbox.
             LayoutUnit bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
             if (baselinePos && baselinePos.value() > bottomOfContent)
-                baselinePos = Optional<int>();
+                baselinePos = std::optional<int>();
         }
         if (baselinePos)
             return direction == HorizontalLine ? marginTop() + baselinePos.value() : marginRight() + baselinePos.value();
@@ -2979,43 +2979,43 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
     return std::max<LayoutUnit>(replacedHeight, lineHeight(isFirstLine, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 }
 
-Optional<int> RenderBlock::firstLineBaseline() const
+std::optional<int> RenderBlock::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return Optional<int>();
+        return std::optional<int>();
 
     for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
         if (!curr->isFloatingOrOutOfFlowPositioned()) {
-            if (Optional<int> result = curr->firstLineBaseline())
-                return Optional<int>(curr->logicalTop() + result.value()); // Translate to our coordinate space.
+            if (std::optional<int> result = curr->firstLineBaseline())
+                return std::optional<int>(curr->logicalTop() + result.value()); // Translate to our coordinate space.
         }
     }
 
-    return Optional<int>();
+    return std::optional<int>();
 }
 
-Optional<int> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
+std::optional<int> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return Optional<int>();
+        return std::optional<int>();
 
     bool haveNormalFlowChild = false;
     for (auto* box = lastChildBox(); box; box = box->previousSiblingBox()) {
         if (box->isFloatingOrOutOfFlowPositioned())
             continue;
         haveNormalFlowChild = true;
-        if (Optional<int> result = box->inlineBlockBaseline(lineDirection))
-            return Optional<int>(box->logicalTop() + result.value()); // Translate to our coordinate space.
+        if (std::optional<int> result = box->inlineBlockBaseline(lineDirection))
+            return std::optional<int>(box->logicalTop() + result.value()); // Translate to our coordinate space.
     }
 
     if (!haveNormalFlowChild && hasLineIfEmpty()) {
         auto& fontMetrics = firstLineStyle().fontMetrics();
-        return Optional<int>(fontMetrics.ascent()
+        return std::optional<int>(fontMetrics.ascent()
             + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
             + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight()));
     }
 
-    return Optional<int>();
+    return std::optional<int>();
 }
 
 static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
@@ -3354,7 +3354,7 @@ bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
 void RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate()
 {
     RenderBlockRareData& rareData = ensureBlockRareData(this);
-    rareData.m_flowThreadContainingBlock = Nullopt;
+    rareData.m_flowThreadContainingBlock = std::nullopt;
 }
 
 RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowThread* flowThread) const

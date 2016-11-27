@@ -182,7 +182,7 @@ using namespace WTF;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-static Optional<ContextMenuAction> toAction(NSInteger tag)
+static std::optional<ContextMenuAction> toAction(NSInteger tag)
 {
     if (tag >= ContextMenuItemBaseCustomTag && tag <= ContextMenuItemLastCustomTag) {
         // Just pass these through.
@@ -357,14 +357,14 @@ static Optional<ContextMenuAction> toAction(NSInteger tag)
     case WebMenuItemTagDictationAlternative:
         return ContextMenuItemTagDictationAlternative;
     }
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<NSInteger> toTag(ContextMenuAction action)
+static std::optional<NSInteger> toTag(ContextMenuAction action)
 {
     switch (action) {
     case ContextMenuItemTagNoAction:
-        return Nullopt;
+        return std::nullopt;
 
     case ContextMenuItemTagOpenLinkInNewWindow:
         return WebMenuItemTagOpenLinkInNewWindow;
@@ -547,7 +547,7 @@ static Optional<NSInteger> toTag(ContextMenuAction action)
         ASSERT_NOT_REACHED();
     }
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 static WebMenuTarget* target;

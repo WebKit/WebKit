@@ -158,7 +158,7 @@ private:
     SourceBufferPrivateClient* m_client;
     CDMSessionMediaSourceAVFObjC* m_session { nullptr };
 
-    Optional<FloatSize> m_cachedSize;
+    std::optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;
     bool m_parsingSucceeded;
     bool m_parserStateWasReset { false };

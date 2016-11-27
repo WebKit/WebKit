@@ -87,7 +87,7 @@ public:
     void sendPendingErrors();
 
     void reportProtocolError(CommonErrorCode, const String& errorMessage);
-    void reportProtocolError(Optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+    void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
     template<typename T>
     WTF_HIDDEN_DECLARATION
@@ -114,7 +114,7 @@ private:
 
     // For synchronously handled requests, avoid plumbing requestId through every
     // call that could potentially fail with a protocol error.
-    Optional<long> m_currentRequestId { Nullopt };
+    std::optional<long> m_currentRequestId { std::nullopt };
 };
 
 } // namespace Inspector

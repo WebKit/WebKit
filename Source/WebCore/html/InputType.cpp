@@ -955,10 +955,10 @@ void InputType::listAttributeTargetChanged()
 {
 }
 
-Optional<Decimal> InputType::findClosestTickMarkValue(const Decimal&)
+std::optional<Decimal> InputType::findClosestTickMarkValue(const Decimal&)
 {
     ASSERT_NOT_REACHED();
-    return Nullopt;
+    return std::nullopt;
 }
 #endif
 

@@ -140,7 +140,7 @@ public:
     CALayer* hostLayer() const;
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
-    void setOverrideVisibleRect(Optional<FloatRect>);
+    void setOverrideVisibleRect(std::optional<FloatRect>);
 
     void doPendingRepaints();
 
@@ -185,7 +185,7 @@ private:
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
-    Optional<FloatRect> m_overrideVisibleRect;
+    std::optional<FloatRect> m_overrideVisibleRect;
 
     TilingMode m_tilingMode;
     TilingDirection m_tilingDirection;

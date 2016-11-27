@@ -48,7 +48,7 @@ public:
     {
     }
 
-    static Optional<PaymentContact> fromJS(JSC::ExecState&, JSC::JSValue, String& errorMessage);
+    static std::optional<PaymentContact> fromJS(JSC::ExecState&, JSC::JSValue, String& errorMessage);
     JSC::JSValue toJS(JSC::ExecState&) const;
 
     PKContact *pkContact() const { return m_pkContact.get(); }

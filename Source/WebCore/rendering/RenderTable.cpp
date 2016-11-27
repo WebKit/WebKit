@@ -373,9 +373,9 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         }
         return styleLogicalHeight.value() - borders;
     } else if (styleLogicalHeight.isPercentOrCalculated())
-        return computePercentageLogicalHeight(styleLogicalHeight).valueOr(0);
+        return computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
     else if (styleLogicalHeight.isIntrinsic())
-        return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).valueOr(0);
+        return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).value_or(0);
     else
         ASSERT_NOT_REACHED();
     return LayoutUnit();
@@ -1468,37 +1468,37 @@ void RenderTable::updateFirstLetter(RenderTreeMutationIsAllowed)
 
 int RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    return firstLineBaseline().valueOrCompute([&] {
+    return valueOrCompute(firstLineBaseline(), [&] {
         return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
     });
 }
 
-Optional<int> RenderTable::inlineBlockBaseline(LineDirectionMode) const
+std::optional<int> RenderTable::inlineBlockBaseline(LineDirectionMode) const
 {
     // Tables are skipped when computing an inline-block's baseline.
-    return Optional<int>();
+    return std::optional<int>();
 }
 
-Optional<int> RenderTable::firstLineBaseline() const
+std::optional<int> RenderTable::firstLineBaseline() const
 {
     // The baseline of a 'table' is the same as the 'inline-table' baseline per CSS 3 Flexbox (CSS 2.1
     // doesn't define the baseline of a 'table' only an 'inline-table').
     // This is also needed to properly determine the baseline of a cell if it has a table child.
 
     if (isWritingModeRoot())
-        return Optional<int>();
+        return std::optional<int>();
 
     recalcSectionsIfNeeded();
 
     const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
     if (!topNonEmptySection)
-        return Optional<int>();
+        return std::optional<int>();
 
-    if (Optional<int> baseline = topNonEmptySection->firstLineBaseline())
-        return Optional<int>(topNonEmptySection->logicalTop() + baseline.value());
+    if (std::optional<int> baseline = topNonEmptySection->firstLineBaseline())
+        return std::optional<int>(topNonEmptySection->logicalTop() + baseline.value());
 
     // FIXME: A table row always has a baseline per CSS 2.1. Will this return the right value?
-    return Optional<int>();
+    return std::optional<int>();
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy, PaintPhase phase)

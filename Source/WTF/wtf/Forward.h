@@ -22,13 +22,16 @@
 
 #include <stddef.h>
 
+namespace std {
+template<typename T> class optional;
+}
+
 namespace WTF {
 
 template<typename T> class Function;
 template<typename T> class LazyNeverDestroyed;
 template<typename T> class NeverDestroyed;
 template<typename T> class OptionSet;
-template<typename T> class Optional;
 template<typename T> class PassRefPtr;
 template<typename T> class Ref;
 template<typename T> class RefPtr;
@@ -61,7 +64,6 @@ using WTF::FunctionDispatcher;
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
-using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PassRefPtr;
 using WTF::PrintStream;

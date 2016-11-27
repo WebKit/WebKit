@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value, String& contentType)
+std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value, String& contentType)
 {
     if (value.inherits(JSBlob::info())) {
         auto& blob = *JSBlob::toWrapped(value);
@@ -80,7 +80,7 @@ Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::Exe
     if (value.inherits(JSC::JSArrayBufferView::info()))
         return FetchBody(toUnsharedArrayBufferView(value).releaseConstNonNull());
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)

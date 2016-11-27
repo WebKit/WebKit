@@ -52,7 +52,7 @@ public:
     virtual ~CryptoKeySerialization() { }
 
     // Returns false if suggested algorithm was not compatible with one stored in the serialization.
-    virtual Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParametersDeprecated*) const = 0;
+    virtual std::optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParametersDeprecated*) const = 0;
 
     virtual void reconcileUsages(CryptoKeyUsageBitmap&) const = 0;
     virtual void reconcileExtractable(bool&) const = 0;

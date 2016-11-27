@@ -49,7 +49,7 @@ public:
     template<typename Result> bool get(const char* propertyName, Result&) const;
     template<typename Result> bool get(const String& propertyName, Result&) const;
 
-    template<typename Result> Optional<Result> get(const char* propertyName) const;
+    template<typename Result> std::optional<Result> get(const char* propertyName) const;
 
     template<typename T> RefPtr<EventListener> getEventListener(const char* propertyName, T* target) const;
     template<typename T> RefPtr<EventListener> getEventListener(const String& propertyName, T* target) const;
@@ -79,11 +79,11 @@ template<typename Result> bool Dictionary::get(const String& propertyName, Resul
     return get(propertyName.utf8().data(), result);
 }
 
-template<typename Result> Optional<Result> Dictionary::get(const char* propertyName) const
+template<typename Result> std::optional<Result> Dictionary::get(const char* propertyName) const
 {
     Result result;
     if (!get(propertyName, result))
-        return Nullopt;
+        return std::nullopt;
     return result;
 }
 

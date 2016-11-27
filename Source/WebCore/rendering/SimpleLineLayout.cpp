@@ -400,11 +400,11 @@ public:
     float logicalLeftOffset() const { return m_logicalLeftOffset; }
     const TextFragmentIterator::TextFragment& overflowedFragment() const { return m_overflowedFragment; }
     bool hasTrailingWhitespace() const { return m_trailingWhitespaceLength; }
-    Optional<TextFragmentIterator::TextFragment> lastFragment() const
+    std::optional<TextFragmentIterator::TextFragment> lastFragment() const
     {
         if (m_fragments.size())
             return m_fragments.last();
-        return Nullopt;
+        return std::nullopt;
     }
     bool isWhitespaceOnly() const { return m_trailingWhitespaceWidth && m_runsWidth == m_trailingWhitespaceWidth; }
     bool fits(float extra) const { return m_availableWidth >= m_runsWidth + extra; }
@@ -807,7 +807,7 @@ static ETextAlign textAlignForLine(const TextFragmentIterator::Style& style, boo
     return textAlign;
 }
 
-static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, Optional<unsigned> lastRunIndexOfPreviousLine, unsigned& lineCount,
+static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, std::optional<unsigned> lastRunIndexOfPreviousLine, unsigned& lineCount,
     const TextFragmentIterator& textFragmentIterator, bool lastLineInFlow)
 {
     if (!runs.size() || (lastRunIndexOfPreviousLine && runs.size() - 1 == lastRunIndexOfPreviousLine.value()))
@@ -839,7 +839,7 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
     LineState line;
     bool isEndOfContent = false;
     TextFragmentIterator textFragmentIterator = TextFragmentIterator(flow);
-    Optional<unsigned> lastRunIndexOfPreviousLine;
+    std::optional<unsigned> lastRunIndexOfPreviousLine;
     do {
         flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
         LineState previousLine = line;

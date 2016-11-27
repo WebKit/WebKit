@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
-    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
+    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
 
     ExceptionOr<FetchHeaders&> initializeWith(FetchRequest&, const Dictionary&);
     ExceptionOr<FetchHeaders&> initializeWith(const String&, const Dictionary&);
@@ -93,7 +93,7 @@ public:
     const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
 
 private:
-    FetchRequest(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
+    FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
 
     ExceptionOr<FetchHeaders&> initializeOptions(const Dictionary&);
 
@@ -104,7 +104,7 @@ private:
     mutable String m_requestURL;
 };
 
-inline FetchRequest::FetchRequest(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
+inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_internalRequest(WTFMove(internalRequest))
 {

@@ -418,7 +418,7 @@ CertificateInfo WebFrame::certificateInfo() const
     if (!documentLoader)
         return { };
 
-    return documentLoader->response().certificateInfo().valueOrCompute([] { return CertificateInfo(); });
+    return valueOrCompute(documentLoader->response().certificateInfo(), [] { return CertificateInfo(); });
 }
 
 String WebFrame::innerText() const

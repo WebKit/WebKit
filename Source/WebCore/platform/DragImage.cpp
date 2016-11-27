@@ -143,8 +143,8 @@ struct ScopedFrameSelectionState {
     const Frame& frame;
     RenderObject* startRenderer;
     RenderObject* endRenderer;
-    Optional<unsigned> startOffset;
-    Optional<unsigned> endOffset;
+    std::optional<unsigned> startOffset;
+    std::optional<unsigned> endOffset;
 };
 
 DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)

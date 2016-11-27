@@ -72,7 +72,7 @@ const AtomicString& IDBCursor::directionPrevUnique()
     return prevunique;
 }
 
-Optional<IndexedDB::CursorDirection> IDBCursor::stringToDirection(const String& directionString)
+std::optional<IndexedDB::CursorDirection> IDBCursor::stringToDirection(const String& directionString)
 {
     if (directionString == directionNext())
         return IndexedDB::CursorDirection::Next;
@@ -83,7 +83,7 @@ Optional<IndexedDB::CursorDirection> IDBCursor::stringToDirection(const String& 
     if (directionString == directionPrevUnique())
         return IndexedDB::CursorDirection::PrevNoDuplicate;
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 const AtomicString& IDBCursor::directionToString(IndexedDB::CursorDirection direction)

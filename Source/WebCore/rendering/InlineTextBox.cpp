@@ -650,7 +650,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
     bool respectHyphen = selectionEnd == length && hasHyphen();
     if (respectHyphen)
         hyphenatedString = hyphenatedStringForTextRun(style, length);
-    TextRun textRun = constructTextRun(style, hyphenatedString, Optional<unsigned>(length));
+    TextRun textRun = constructTextRun(style, hyphenatedString, std::optional<unsigned>(length));
     if (respectHyphen)
         selectionEnd = textRun.length();
 
@@ -1015,18 +1015,18 @@ float InlineTextBox::positionForOffset(unsigned offset) const
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
-StringView InlineTextBox::substringToRender(Optional<unsigned> overridingLength) const
+StringView InlineTextBox::substringToRender(std::optional<unsigned> overridingLength) const
 {
-    return StringView(renderer().text()).substring(start(), overridingLength.valueOr(len()));
+    return StringView(renderer().text()).substring(start(), overridingLength.value_or(len()));
 }
 
-String InlineTextBox::hyphenatedStringForTextRun(const RenderStyle& style, Optional<unsigned> alternateLength) const
+String InlineTextBox::hyphenatedStringForTextRun(const RenderStyle& style, std::optional<unsigned> alternateLength) const
 {
     ASSERT(hasHyphen());
     return makeString(substringToRender(alternateLength), style.hyphenString());
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView alternateStringToRender, Optional<unsigned> alternateLength) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView alternateStringToRender, std::optional<unsigned> alternateLength) const
 {
     if (alternateStringToRender.isNull())
         return constructTextRun(style, substringToRender(alternateLength), renderer().textLength() - start());

@@ -3292,7 +3292,7 @@ public:
         return static_cast<RelationalCondition>(ARM64Assembler::invert(static_cast<ARM64Assembler::Condition>(cond)));
     }
 
-    static Optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
+    static std::optional<ResultCondition> commuteCompareToZeroIntoTest(RelationalCondition cond)
     {
         switch (cond) {
         case Equal:
@@ -3305,7 +3305,7 @@ public:
             return PositiveOrZero;
             break;
         default:
-            return Nullopt;
+            return std::nullopt;
         }
     }
 

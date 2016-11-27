@@ -49,13 +49,13 @@ MathMLRowElement& RenderMathMLRow::element() const
     return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
 }
 
-Optional<int> RenderMathMLRow::firstLineBaseline() const
+std::optional<int> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstChildBox();
     if (!baselineChild)
-        return Optional<int>();
+        return std::optional<int>();
 
-    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())));
+    return std::optional<int>(static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())));
 }
 
 void RenderMathMLRow::computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit& descent)

@@ -40,7 +40,7 @@ public:
 private:
     const Document* m_document;
     uint64_t m_initialDOMTreeVersion;
-    Optional<NoEventDispatchAssertion> m_eventDispatchAssertion;
+    std::optional<NoEventDispatchAssertion> m_eventDispatchAssertion;
 };
 
 // FIXME: No real point in doing these as inlines; they are for debugging and we usually turn off inlining in debug builds.
@@ -60,14 +60,14 @@ inline bool ElementIteratorAssertions::domTreeHasMutated() const
 
 inline void ElementIteratorAssertions::dropEventDispatchAssertion()
 {
-    m_eventDispatchAssertion = Nullopt;
+    m_eventDispatchAssertion = std::nullopt;
 }
 
 inline void ElementIteratorAssertions::clear()
 {
     m_document = nullptr;
     m_initialDOMTreeVersion = 0;
-    m_eventDispatchAssertion = Nullopt;
+    m_eventDispatchAssertion = std::nullopt;
 }
 
 } // namespace WebCore

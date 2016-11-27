@@ -56,7 +56,7 @@ private:
     RenderBox* m_currentChild;
 
     Vector<int, 1> m_orderValues;
-    Optional<size_t> m_orderIndex;
+    std::optional<size_t> m_orderIndex;
 };
 
 class OrderIteratorPopulator {

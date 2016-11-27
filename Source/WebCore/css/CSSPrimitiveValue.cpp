@@ -836,7 +836,7 @@ ExceptionOr<float> CSSPrimitiveValue::getFloatValue(unsigned short unitType) con
 
 double CSSPrimitiveValue::doubleValue(UnitTypes unitType) const
 {
-    return doubleValueInternal(unitType).valueOr(0);
+    return doubleValueInternal(unitType).value_or(0);
 }
 
 double CSSPrimitiveValue::doubleValue() const
@@ -871,10 +871,10 @@ CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(Uni
     }
 }
 
-Optional<double> CSSPrimitiveValue::doubleValueInternal(UnitTypes requestedUnitType) const
+std::optional<double> CSSPrimitiveValue::doubleValueInternal(UnitTypes requestedUnitType) const
 {
     if (!isValidCSSUnitTypeForDoubleConversion(static_cast<UnitTypes>(m_primitiveUnitType)) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
-        return Nullopt;
+        return std::nullopt;
 
     UnitTypes sourceUnitType = static_cast<UnitTypes>(primitiveType());
     if (requestedUnitType == sourceUnitType || requestedUnitType == CSS_DIMENSION)
@@ -889,20 +889,20 @@ Optional<double> CSSPrimitiveValue::doubleValueInternal(UnitTypes requestedUnitT
 
     // Cannot convert between unrelated unit categories if one of them is not UNumber.
     if (sourceCategory != targetCategory && sourceCategory != UNumber && targetCategory != UNumber)
-        return Nullopt;
+        return std::nullopt;
 
     if (targetCategory == UNumber) {
         // We interpret conversion to CSS_NUMBER as conversion to a canonical unit in this value's category.
         targetUnitType = canonicalUnitTypeForCategory(sourceCategory);
         if (targetUnitType == CSS_UNKNOWN)
-            return Nullopt;
+            return std::nullopt;
     }
 
     if (sourceUnitType == CSS_NUMBER) {
         // We interpret conversion from CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
         sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
         if (sourceUnitType == CSS_UNKNOWN)
-            return Nullopt;
+            return std::nullopt;
     }
 
     double convertedValue = doubleValue();

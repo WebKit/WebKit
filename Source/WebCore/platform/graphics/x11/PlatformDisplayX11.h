@@ -43,7 +43,7 @@ public:
 
     Display* native() const { return m_display; }
     bool supportsXComposite() const;
-    bool supportsXDamage(Optional<int>& damageEventBase) const;
+    bool supportsXDamage(std::optional<int>& damageEventBase) const;
 
 private:
     Type type() const override { return PlatformDisplay::Type::X11; }
@@ -54,9 +54,9 @@ private:
 
     Display* m_display;
     bool m_ownedDisplay;
-    mutable Optional<bool> m_supportsXComposite;
-    mutable Optional<bool> m_supportsXDamage;
-    mutable Optional<int> m_damageEventBase;
+    mutable std::optional<bool> m_supportsXComposite;
+    mutable std::optional<bool> m_supportsXDamage;
+    mutable std::optional<int> m_damageEventBase;
 };
 
 } // namespace WebCore

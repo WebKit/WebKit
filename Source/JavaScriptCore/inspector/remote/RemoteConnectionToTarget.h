@@ -53,7 +53,7 @@ public:
     void close();
     void targetClosed();
 
-    Optional<unsigned> targetIdentifier() const;
+    std::optional<unsigned> targetIdentifier() const;
     NSString *connectionIdentifier() const;
     NSString *destination() const;
 

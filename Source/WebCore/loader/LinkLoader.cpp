@@ -83,7 +83,7 @@ void LinkLoader::notifyFinished(CachedResource& resource)
     m_cachedLinkResource = nullptr;
 }
 
-Optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
+std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
 {
     if (as.isEmpty())
         return CachedResource::RawResource;
@@ -101,7 +101,7 @@ Optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const Str
     if (equalLettersIgnoringASCIICase(as, "track"))
         return CachedResource::TextTrackResource;
 #endif
-    return Nullopt;
+    return std::nullopt;
 }
 
 static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader, CachedResource::Type type)
@@ -186,7 +186,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         if (!m_client.shouldLoadLink())
             return false;
 
-        Optional<ResourceLoadPriority> priority;
+        std::optional<ResourceLoadPriority> priority;
         CachedResource::Type type = CachedResource::LinkPrefetch;
         if (relAttribute.isLinkSubresource) {
             // We only make one request to the cached resource loader if multiple rel types are specified;

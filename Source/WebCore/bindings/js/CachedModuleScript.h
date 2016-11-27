@@ -45,7 +45,7 @@ public:
     void notifyLoadFailed(LoadableScript::Error&&);
     void notifyLoadWasCanceled();
 
-    const Optional<LoadableScript::Error>& error() const { return m_error; }
+    const std::optional<LoadableScript::Error>& error() const { return m_error; }
     bool wasCanceled() const { return m_wasCanceled; }
     bool isLoaded() const { return m_isLoaded; }
 
@@ -69,7 +69,7 @@ private:
     HashCountedSet<CachedModuleScriptClient*> m_clients;
     String m_nonce;
     String m_crossOriginMode;
-    Optional<LoadableScript::Error> m_error;
+    std::optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };
 };

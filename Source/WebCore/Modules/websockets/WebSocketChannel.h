@@ -82,7 +82,7 @@ public:
     // SocketStreamHandleClient functions.
     void didOpenSocketStream(SocketStreamHandle&) final;
     void didCloseSocketStream(SocketStreamHandle&) final;
-    void didReceiveSocketStreamData(SocketStreamHandle&, const char*, Optional<size_t>) final;
+    void didReceiveSocketStreamData(SocketStreamHandle&, const char*, std::optional<size_t>) final;
     void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) final;
     void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) final;
 

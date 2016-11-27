@@ -374,7 +374,7 @@ Item& Recorder::appendItem(Ref<Item>&& item)
 
 void Recorder::updateItemExtent(DrawingItem& item) const
 {
-    if (Optional<FloatRect> rect = item.localBounds(m_graphicsContext))
+    if (std::optional<FloatRect> rect = item.localBounds(m_graphicsContext))
         item.setExtent(extentFromLocalBounds(rect.value()));
 }
 
@@ -443,7 +443,7 @@ void Recorder::ContextState::rotate(float angleInRadians)
     AffineTransform rotation;
     rotation.rotate(angleInDegrees);
 
-    if (Optional<AffineTransform> inverse = rotation.inverse())
+    if (std::optional<AffineTransform> inverse = rotation.inverse())
         clipBounds = inverse.value().mapRect(clipBounds);
 }
 
@@ -457,7 +457,7 @@ void Recorder::ContextState::concatCTM(const AffineTransform& matrix)
 {
     ctm *= matrix;
 
-    if (Optional<AffineTransform> inverse = matrix.inverse())
+    if (std::optional<AffineTransform> inverse = matrix.inverse())
         clipBounds = inverse.value().mapRect(clipBounds);
 }
 

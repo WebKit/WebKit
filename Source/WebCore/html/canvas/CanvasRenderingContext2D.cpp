@@ -386,7 +386,7 @@ void CanvasRenderingContext2D::restore()
         return;
     m_path.transform(state().transform);
     m_stateStack.removeLast();
-    if (Optional<AffineTransform> inverse = state().transform.inverse())
+    if (std::optional<AffineTransform> inverse = state().transform.inverse())
         m_path.transform(inverse.value());
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -832,7 +832,7 @@ void CanvasRenderingContext2D::resetTransform()
     modifiableState().hasInvertibleTransform = true;
 }
 
-void CanvasRenderingContext2D::setStrokeColor(const String& color, Optional<float> alpha)
+void CanvasRenderingContext2D::setStrokeColor(const String& color, std::optional<float> alpha)
 {
     if (alpha) {
         setStrokeStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value()));
@@ -868,7 +868,7 @@ void CanvasRenderingContext2D::setStrokeColor(float c, float m, float y, float k
     setStrokeStyle(CanvasStyle(c, m, y, k, a));
 }
 
-void CanvasRenderingContext2D::setFillColor(const String& color, Optional<float> alpha)
+void CanvasRenderingContext2D::setFillColor(const String& color, std::optional<float> alpha)
 {
     if (alpha) {
         setFillStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value()));
@@ -1114,7 +1114,7 @@ bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, 
     if (!state().hasInvertibleTransform)
         return false;
 
-    FloatPoint transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+    FloatPoint transformedPoint = state().transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
 
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
@@ -1130,7 +1130,7 @@ bool CanvasRenderingContext2D::isPointInStrokeInternal(const Path& path, float x
     if (!state().hasInvertibleTransform)
         return false;
 
-    FloatPoint transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+    FloatPoint transformedPoint = state().transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1249,7 +1249,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     }
 }
 
-void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& colorString, Optional<float> alpha)
+void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& colorString, std::optional<float> alpha)
 {
     Color color = parseColorOrCurrentColor(colorString, &canvas());
     if (!colorString.isNull() && !color.isValid())
@@ -2257,12 +2257,12 @@ void CanvasRenderingContext2D::setDirection(const String& directionString)
     modifiableState().direction = direction;
 }
 
-void CanvasRenderingContext2D::fillText(const String& text, float x, float y, Optional<float> maxWidth)
+void CanvasRenderingContext2D::fillText(const String& text, float x, float y, std::optional<float> maxWidth)
 {
     drawTextInternal(text, x, y, true, maxWidth);
 }
 
-void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, Optional<float> maxWidth)
+void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, std::optional<float> maxWidth)
 {
     drawTextInternal(text, x, y, false, maxWidth);
 }
@@ -2310,7 +2310,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     return metrics;
 }
 
-void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth)
+void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth)
 {
     const auto& fontProxy = this->fontProxy();
     const FontMetrics& fontMetrics = fontProxy.fontMetrics();

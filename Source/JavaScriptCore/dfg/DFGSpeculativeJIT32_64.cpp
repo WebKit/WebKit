@@ -5050,15 +5050,15 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary structureID(this);
         GPRTemporary result(this);
 
-        Optional<SpeculateCellOperand> keyAsCell;
-        Optional<JSValueOperand> keyAsValue;
+        std::optional<SpeculateCellOperand> keyAsCell;
+        std::optional<JSValueOperand> keyAsValue;
         JSValueRegs keyRegs;
         if (node->child2().useKind() == UntypedUse) {
-            keyAsValue = JSValueOperand(this, node->child2());
+            keyAsValue.emplace(this, node->child2());
             keyRegs = keyAsValue->jsValueRegs();
         } else {
             ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == SymbolUse);
-            keyAsCell = SpeculateCellOperand(this, node->child2());
+            keyAsCell.emplace(this, node->child2());
             keyRegs = JSValueRegs::payloadOnly(keyAsCell->gpr());
         }
 

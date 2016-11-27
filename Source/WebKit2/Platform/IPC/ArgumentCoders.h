@@ -69,8 +69,8 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
     }
 };
 
-template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
-    static void encode(Encoder& encoder, const WTF::Optional<T>& optional)
+template<typename T> struct ArgumentCoder<std::optional<T>> {
+    static void encode(Encoder& encoder, const std::optional<T>& optional)
     {
         if (!optional) {
             encoder << false;
@@ -81,14 +81,14 @@ template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
         encoder << optional.value();
     }
 
-    static bool decode(Decoder& decoder, WTF::Optional<T>& optional)
+    static bool decode(Decoder& decoder, std::optional<T>& optional)
     {
         bool isEngaged;
         if (!decoder.decode(isEngaged))
             return false;
 
         if (!isEngaged) {
-            optional = Nullopt;
+            optional = std::nullopt;
             return true;
         }
 

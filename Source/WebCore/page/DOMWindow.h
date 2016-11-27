@@ -370,7 +370,7 @@ private:
 
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
-    Optional<bool> m_canShowModalDialogOverride;
+    std::optional<bool> m_canShowModalDialogOverride;
 
     HashSet<DOMWindowProperty*> m_properties;
 

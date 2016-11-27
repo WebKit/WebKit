@@ -40,9 +40,9 @@ public:
     }
 
     struct Init : EventInit {
-        Optional<double> value;
-        Optional<double> min;
-        Optional<double> max;
+        std::optional<double> value;
+        std::optional<double> min;
+        std::optional<double> max;
     };
 
     static Ref<DeviceProximityEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

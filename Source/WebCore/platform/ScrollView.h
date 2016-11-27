@@ -462,8 +462,8 @@ private:
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
 
-    Optional<IntSize> m_deferredScrollDelta; // Needed for WebKit scrolling
-    Optional<std::pair<ScrollOffset, ScrollOffset>> m_deferredScrollOffsets; // Needed for platform widget scrolling
+    std::optional<IntSize> m_deferredScrollDelta; // Needed for WebKit scrolling
+    std::optional<std::pair<ScrollOffset, ScrollOffset>> m_deferredScrollOffsets; // Needed for platform widget scrolling
 
     bool m_scrollbarsSuppressed;
 

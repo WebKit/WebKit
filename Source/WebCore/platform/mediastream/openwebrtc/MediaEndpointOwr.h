@@ -128,7 +128,7 @@ private:
     void ensureTransportAgentAndTransceivers(bool isInitiator, const Vector<TransceiverConfig>&);
     void internalAddRemoteCandidate(OwrSession*, const IceCandidate&, const String& ufrag, const String& password);
 
-    Optional<MediaEndpointConfiguration> m_configuration;
+    std::optional<MediaEndpointConfiguration> m_configuration;
     GRegex* m_helperServerRegEx;
 
     OwrTransportAgent* m_transportAgent;

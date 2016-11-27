@@ -206,11 +206,20 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
 template<typename Value> class DOMPromise {
 public:
     DOMPromise(Ref<DeferredPromise>&& genericPromise) : m_promiseDeferred(WTFMove(genericPromise)) { }
-
     DOMPromise(DOMPromise&& promise) : m_promiseDeferred(WTFMove(promise.m_promiseDeferred)) { }
+    DOMPromise(const DOMPromise& other) : m_promiseDeferred(other.m_promiseDeferred.copyRef()) { }
 
-    DOMPromise(const DOMPromise&) = default;
-    DOMPromise& operator=(DOMPromise const&) = default;
+    DOMPromise& operator=(const DOMPromise& other)
+    {
+        m_promiseDeferred = other.copyRef();
+        return *this;
+    }
+
+    DOMPromise& operator=(DOMPromise&& other)
+    {
+        m_promiseDeferred = WTFMove(other.m_promiseDeferred);
+        return *this;
+    }
 
     template<typename T = Value>
     typename std::enable_if<!std::is_void<T>::value, void>::type resolve(typename PromiseResultInspector<Value>::Type value) { m_promiseDeferred->resolve(value); }

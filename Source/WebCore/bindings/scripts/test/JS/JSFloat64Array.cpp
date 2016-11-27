@@ -174,7 +174,7 @@ bool JSFloat64Array::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < static_cast<Float64Array*>(thisObject->impl())->length()) {
         slot.setValue(thisObject, thisObject->getByIndex(exec, index.value()));
         return true;
@@ -186,7 +186,7 @@ bool JSFloat64Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < static_cast<Float64Array*>(thisObject->impl())->length()) {
         descriptor.setDescriptor(thisObject->getByIndex(exec, index.value()), DontDelete);
         return true;
@@ -215,7 +215,7 @@ void JSFloat64Array::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         thisObject->indexSetter(exec, index.value(), value);
         return;
     }

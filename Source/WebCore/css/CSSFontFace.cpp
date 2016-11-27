@@ -124,10 +124,10 @@ bool CSSFontFace::setFamilies(CSSValue& family)
     return true;
 }
 
-Optional<FontTraitsMask> CSSFontFace::calculateStyleMask(CSSValue& style)
+std::optional<FontTraitsMask> CSSFontFace::calculateStyleMask(CSSValue& style)
 {
     if (!is<CSSPrimitiveValue>(style))
-        return Nullopt;
+        return std::nullopt;
 
     switch (downcast<CSSPrimitiveValue>(style).valueID()) {
     case CSSValueNormal:
@@ -159,10 +159,10 @@ bool CSSFontFace::setStyle(CSSValue& style)
     return false;
 }
 
-Optional<FontTraitsMask> CSSFontFace::calculateWeightMask(CSSValue& weight)
+std::optional<FontTraitsMask> CSSFontFace::calculateWeightMask(CSSValue& weight)
 {
     if (!is<CSSPrimitiveValue>(weight))
-        return Nullopt;
+        return std::nullopt;
 
     switch (downcast<CSSPrimitiveValue>(weight).valueID()) {
     case CSSValueBold:

@@ -63,8 +63,8 @@ protected:
     virtual void doCancel() = 0;
 
 private:
-    Optional<DOMPromise<void>> m_promise;
-    Optional<ReadableStreamDefaultController> m_controller;
+    std::optional<DOMPromise<void>> m_promise;
+    std::optional<ReadableStreamDefaultController> m_controller;
 };
 
 inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromise<void>&& promise)
@@ -91,14 +91,14 @@ inline void ReadableStreamSource::pull(DOMPromise<void>&& promise)
 inline void ReadableStreamSource::startFinished()
 {
     ASSERT(m_promise);
-    std::exchange(m_promise, Nullopt).value().resolve();
+    std::exchange(m_promise, std::nullopt).value().resolve();
     setInactive();
 }
 
 inline void ReadableStreamSource::pullFinished()
 {
     ASSERT(m_promise);
-    std::exchange(m_promise, Nullopt).value().resolve();
+    std::exchange(m_promise, std::nullopt).value().resolve();
     setInactive();
 }
 
@@ -111,7 +111,7 @@ inline void ReadableStreamSource::cancel(JSC::JSValue)
 inline void ReadableStreamSource::clean()
 {
     if (m_promise) {
-        m_promise = Nullopt;
+        m_promise = std::nullopt;
         setInactive();
     }
 }

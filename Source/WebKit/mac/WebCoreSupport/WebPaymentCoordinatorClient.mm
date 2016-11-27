@@ -71,15 +71,15 @@ void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::Paym
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingMethodSelection(WebCore::PaymentAuthorizationStatus, Optional<WebCore::PaymentRequest::TotalAndLineItems>)
+void WebPaymentCoordinatorClient::completeShippingMethodSelection(WebCore::PaymentAuthorizationStatus, std::optional<WebCore::PaymentRequest::TotalAndLineItems>)
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingContactSelection(WebCore::PaymentAuthorizationStatus, const Vector<WebCore::PaymentRequest::ShippingMethod>&, Optional<WebCore::PaymentRequest::TotalAndLineItems>)
+void WebPaymentCoordinatorClient::completeShippingContactSelection(WebCore::PaymentAuthorizationStatus, const Vector<WebCore::PaymentRequest::ShippingMethod>&, std::optional<WebCore::PaymentRequest::TotalAndLineItems>)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::PaymentRequest::TotalAndLineItems>)
+void WebPaymentCoordinatorClient::completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems>)
 {
 }
 

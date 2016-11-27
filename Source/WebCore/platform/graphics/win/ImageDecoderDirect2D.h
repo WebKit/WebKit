@@ -56,7 +56,7 @@ public:
     size_t frameCount() const;
 
     RepetitionCount repetitionCount() const;
-    Optional<IntPoint> hotSpot() const;
+    std::optional<IntPoint> hotSpot() const;
     
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
     bool frameIsCompleteAtIndex(size_t) const;

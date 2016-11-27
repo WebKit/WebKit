@@ -139,9 +139,9 @@ protected:
     RTCPeerConnection& m_peerConnection;
 
 private:
-    Optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    Optional<PeerConnection::VoidPromise> m_setDescriptionPromise;
-    Optional<PeerConnection::VoidPromise> m_addIceCandidatePromise;
+    std::optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
+    std::optional<PeerConnection::VoidPromise> m_setDescriptionPromise;
+    std::optional<PeerConnection::VoidPromise> m_addIceCandidatePromise;
 };
 
 } // namespace WebCore

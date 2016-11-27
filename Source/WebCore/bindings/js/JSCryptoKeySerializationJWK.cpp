@@ -177,7 +177,7 @@ static Ref<CryptoAlgorithmParametersDeprecated> createRSAKeyParametersWithHash(C
     return WTFMove(rsaKeyParameters);
 }
 
-Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(CryptoAlgorithm* suggestedAlgorithm, CryptoAlgorithmParametersDeprecated* suggestedParameters) const
+std::optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(CryptoAlgorithm* suggestedAlgorithm, CryptoAlgorithmParametersDeprecated* suggestedParameters) const
 {
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -234,7 +234,7 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
         parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else {
         throwTypeError(m_exec, scope, "Unsupported JWK algorithm " + m_jwkAlgorithmName);
-        return Nullopt;
+        return std::nullopt;
     }
 
     if (!suggestedAlgorithm)
@@ -244,11 +244,11 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
         return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
 
     if (algorithm->identifier() != suggestedAlgorithm->identifier())
-        return Nullopt;
+        return std::nullopt;
 
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC) {
         if (downcast<CryptoAlgorithmHmacParamsDeprecated>(*parameters).hash != downcast<CryptoAlgorithmHmacParamsDeprecated>(*suggestedParameters).hash)
-            return Nullopt;
+            return std::nullopt;
         return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
     }
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5
@@ -258,7 +258,7 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
         ASSERT(rsaKeyParameters.hasHash);
         if (suggestedRSAKeyParameters.hasHash) {
             if (suggestedRSAKeyParameters.hash != rsaKeyParameters.hash)
-                return Nullopt;
+                return std::nullopt;
             return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
         }
         suggestedRSAKeyParameters.hasHash = true;

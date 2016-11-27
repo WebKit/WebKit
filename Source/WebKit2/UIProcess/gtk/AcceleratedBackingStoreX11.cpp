@@ -46,7 +46,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static Optional<int> s_damageEventBase;
+static std::optional<int> s_damageEventBase;
 
 class XDamageNotifier {
     WTF_MAKE_NONCOPYABLE(XDamageNotifier);

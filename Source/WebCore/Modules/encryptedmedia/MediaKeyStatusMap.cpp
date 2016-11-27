@@ -61,9 +61,9 @@ MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap&)
 {
 }
 
-Optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
+std::optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
 {
-    return Nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

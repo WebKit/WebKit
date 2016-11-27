@@ -38,7 +38,7 @@ IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& reques
     if (newVersion)
         m_newVersion = newVersion;
     else
-        m_newVersion = Nullopt;
+        m_newVersion = std::nullopt;
 }
 
 IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomicString& name, const Init& init, IsTrusted isTrusted)

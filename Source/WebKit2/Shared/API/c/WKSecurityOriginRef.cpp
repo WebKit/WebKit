@@ -78,7 +78,7 @@ WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 
 unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
-    return toImpl(securityOrigin)->securityOrigin().port().valueOr(0);
+    return toImpl(securityOrigin)->securityOrigin().port().value_or(0);
 }
 
 // For backwards ABI compatibility.

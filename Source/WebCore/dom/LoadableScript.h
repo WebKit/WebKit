@@ -51,13 +51,13 @@ public:
 
     struct Error {
         ErrorType type;
-        Optional<ConsoleMessage> consoleMessage;
+        std::optional<ConsoleMessage> consoleMessage;
     };
 
     virtual ~LoadableScript() { }
 
     virtual bool isLoaded() const = 0;
-    virtual Optional<Error> error() const = 0;
+    virtual std::optional<Error> error() const = 0;
     virtual bool wasCanceled() const = 0;
 
     virtual void execute(ScriptElement&) = 0;

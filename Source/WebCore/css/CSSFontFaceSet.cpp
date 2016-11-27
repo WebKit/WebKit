@@ -284,7 +284,7 @@ CSSFontFace& CSSFontFaceSet::operator[](size_t i)
     return m_faces[i];
 }
 
-static Optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& style)
+static std::optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& style)
 {
     RefPtr<CSSValue> styleValue = style.getPropertyCSSValue(CSSPropertyFontStyle).get();
     if (!styleValue)
@@ -294,7 +294,7 @@ static Optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& st
     if (auto styleMaskOptional = CSSFontFace::calculateStyleMask(*styleValue))
         styleMask = styleMaskOptional.value();
     else
-        return Nullopt;
+        return std::nullopt;
 
     RefPtr<CSSValue> weightValue = style.getPropertyCSSValue(CSSPropertyFontWeight).get();
     if (!weightValue)
@@ -304,7 +304,7 @@ static Optional<FontTraitsMask> computeFontTraitsMask(MutableStyleProperties& st
     if (auto weightMaskOptional = CSSFontFace::calculateWeightMask(*weightValue))
         weightMask = weightMaskOptional.value();
     else
-        return Nullopt;
+        return std::nullopt;
 
     return static_cast<FontTraitsMask>(static_cast<unsigned>(styleMask) | static_cast<unsigned>(weightMask));
 }

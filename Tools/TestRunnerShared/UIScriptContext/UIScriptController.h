@@ -122,8 +122,8 @@ public:
     double minimumZoomScale() const;
     double maximumZoomScale() const;
     
-    Optional<bool> stableStateOverride() const;
-    void setStableStateOverride(Optional<bool>);
+    std::optional<bool> stableStateOverride() const;
+    void setStableStateOverride(std::optional<bool>);
 
     JSObjectRef contentVisibleRect() const;
     

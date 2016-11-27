@@ -63,7 +63,7 @@ private:
     void clearNotations() { m_notationFlags = 0; }
     void addNotation(MencloseNotationFlag notationFlag) { m_notationFlags.value() |= notationFlag; }
     void addNotationFlags(StringView notation);
-    Optional<uint16_t> m_notationFlags;
+    std::optional<uint16_t> m_notationFlags;
 };
 
 }

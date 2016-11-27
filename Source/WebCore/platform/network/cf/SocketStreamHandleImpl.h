@@ -50,7 +50,7 @@ public:
     virtual ~SocketStreamHandleImpl();
 
 private:
-    virtual Optional<size_t> platformSend(const char* data, size_t length);
+    virtual std::optional<size_t> platformSend(const char* data, size_t length);
     virtual void platformClose();
 
     WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID);

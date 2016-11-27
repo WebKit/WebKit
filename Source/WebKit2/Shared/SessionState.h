@@ -66,8 +66,8 @@ struct HTTPBody {
         // File.
         String filePath;
         int64_t fileStart;
-        Optional<int64_t> fileLength;
-        Optional<double> expectedFileModificationTime;
+        std::optional<int64_t> fileLength;
+        std::optional<double> expectedFileModificationTime;
 
         // Blob.
         String blobURLString;
@@ -90,7 +90,7 @@ struct FrameState {
     String target;
 
     Vector<String> documentState;
-    Optional<Vector<uint8_t>> stateObjectData;
+    std::optional<Vector<uint8_t>> stateObjectData;
 
     int64_t documentSequenceNumber;
     int64_t itemSequenceNumber;
@@ -98,7 +98,7 @@ struct FrameState {
     WebCore::IntPoint scrollPosition;
     float pageScaleFactor;
 
-    Optional<HTTPBody> httpBody;
+    std::optional<HTTPBody> httpBody;
 
     // FIXME: These should not be per frame.
 #if PLATFORM(IOS)
@@ -139,7 +139,7 @@ struct BackForwardListState {
     static bool decode(IPC::Decoder&, BackForwardListState&);
 
     Vector<BackForwardListItemState> items;
-    Optional<uint32_t> currentIndex;
+    std::optional<uint32_t> currentIndex;
 };
 
 struct SessionState {

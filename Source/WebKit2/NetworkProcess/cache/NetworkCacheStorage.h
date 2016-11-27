@@ -124,8 +124,8 @@ private:
     void dispatchPendingWriteOperations();
     void finishWriteOperation(WriteOperation&);
 
-    Optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
-    Data encodeRecord(const Record&, Optional<BlobStorage::Blob>);
+    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
+    Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
 
     void updateFileModificationTime(const String& path);

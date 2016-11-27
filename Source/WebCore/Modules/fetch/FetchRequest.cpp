@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static Optional<Exception> setReferrerPolicy(FetchOptions& options, const String& referrerPolicy)
+static std::optional<Exception> setReferrerPolicy(FetchOptions& options, const String& referrerPolicy)
 {
     if (referrerPolicy.isEmpty())
         options.referrerPolicy = FetchOptions::ReferrerPolicy::EmptyString;
@@ -55,10 +55,10 @@ static Optional<Exception> setReferrerPolicy(FetchOptions& options, const String
         options.referrerPolicy = FetchOptions::ReferrerPolicy::UnsafeUrl;
     else
         return Exception { TypeError, ASCIILiteral("Bad referrer policy value.") };
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setMode(FetchOptions& options, const String& mode)
+static std::optional<Exception> setMode(FetchOptions& options, const String& mode)
 {
     if (mode == "navigate")
         options.mode = FetchOptions::Mode::Navigate;
@@ -70,10 +70,10 @@ static Optional<Exception> setMode(FetchOptions& options, const String& mode)
         options.mode = FetchOptions::Mode::Cors;
     else
         return Exception { TypeError, ASCIILiteral("Bad fetch mode value.") };
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setCredentials(FetchOptions& options, const String& credentials)
+static std::optional<Exception> setCredentials(FetchOptions& options, const String& credentials)
 {
     if (credentials == "omit")
         options.credentials = FetchOptions::Credentials::Omit;
@@ -83,10 +83,10 @@ static Optional<Exception> setCredentials(FetchOptions& options, const String& c
         options.credentials = FetchOptions::Credentials::Include;
     else
         return Exception { TypeError, ASCIILiteral("Bad credentials mode value.") };
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setCache(FetchOptions& options, const String& cache)
+static std::optional<Exception> setCache(FetchOptions& options, const String& cache)
 {
     if (cache == "default")
         options.cache = FetchOptions::Cache::Default;
@@ -102,10 +102,10 @@ static Optional<Exception> setCache(FetchOptions& options, const String& cache)
         options.cache = FetchOptions::Cache::OnlyIfCached;
     else
         return Exception { TypeError, ASCIILiteral("Bad cache mode value.") };
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setRedirect(FetchOptions& options, const String& redirect)
+static std::optional<Exception> setRedirect(FetchOptions& options, const String& redirect)
 {
     if (redirect == "follow")
         options.redirect = FetchOptions::Redirect::Follow;
@@ -115,10 +115,10 @@ static Optional<Exception> setRedirect(FetchOptions& options, const String& redi
         options.redirect = FetchOptions::Redirect::Manual;
     else
         return Exception { TypeError, ASCIILiteral("Bad redirect mode value.") };
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setMethod(ResourceRequest& request, const String& initMethod)
+static std::optional<Exception> setMethod(ResourceRequest& request, const String& initMethod)
 {
     if (!isValidHTTPToken(initMethod))
         return Exception { TypeError, ASCIILiteral("Method is not a valid HTTP token.") };
@@ -129,17 +129,17 @@ static Optional<Exception> setMethod(ResourceRequest& request, const String& ini
 
     request.setHTTPMethod((method == "DELETE" || method == "GET" || method == "HEAD" || method == "OPTIONS" || method == "POST" || method == "PUT") ? method : initMethod);
 
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> setReferrer(FetchRequest::InternalRequest& request, ScriptExecutionContext& context, const Dictionary& init)
+static std::optional<Exception> setReferrer(FetchRequest::InternalRequest& request, ScriptExecutionContext& context, const Dictionary& init)
 {
     String referrer;
     if (!init.get("referrer", referrer))
-        return Nullopt;
+        return std::nullopt;
     if (referrer.isEmpty()) {
         request.referrer = ASCIILiteral("no-referrer");
-        return Nullopt;
+        return std::nullopt;
     }
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
     URL referrerURL = context.completeURL(referrer);
@@ -148,17 +148,17 @@ static Optional<Exception> setReferrer(FetchRequest::InternalRequest& request, S
 
     if (referrerURL.protocolIs("about") && referrerURL.path() == "client") {
         request.referrer = ASCIILiteral("client");
-        return Nullopt;
+        return std::nullopt;
     }
 
     if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL)))
         return Exception { TypeError, ASCIILiteral("Referrer is not same-origin.") };
 
     request.referrer = referrerURL.string();
-    return Nullopt;
+    return std::nullopt;
 }
 
-static Optional<Exception> buildOptions(FetchRequest::InternalRequest& request, ScriptExecutionContext& context, const Dictionary& init)
+static std::optional<Exception> buildOptions(FetchRequest::InternalRequest& request, ScriptExecutionContext& context, const Dictionary& init)
 {
     JSC::JSValue window;
     if (init.get("window", window)) {
@@ -213,7 +213,7 @@ static Optional<Exception> buildOptions(FetchRequest::InternalRequest& request, 
         if (exception)
             return exception;
     }
-    return Nullopt;
+    return std::nullopt;
 }
 
 static bool methodCanHaveBody(const FetchRequest::InternalRequest& internalRequest)
@@ -320,7 +320,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& conte
     if (isDisturbedOrLocked())
         return Exception { TypeError };
 
-    auto clone = adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
+    auto clone = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
     clone->cloneBody(*this);
     return WTFMove(clone);
 }

@@ -211,7 +211,7 @@ bool parseHTTPRefresh(const String& refresh, double& delay, String& url)
     }
 }
 
-Optional<std::chrono::system_clock::time_point> parseHTTPDate(const String& value)
+std::optional<std::chrono::system_clock::time_point> parseHTTPDate(const String& value)
 {
     double dateInMillisecondsSinceEpoch = parseDateFromNullTerminatedCharacters(value.utf8().data());
     if (!std::isfinite(dateInMillisecondsSinceEpoch))

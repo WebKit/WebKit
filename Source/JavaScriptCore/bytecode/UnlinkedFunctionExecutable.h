@@ -106,7 +106,7 @@ public:
         const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
         int overrideLineNumber);
 
-    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode&, Optional<int> overrideLineNumber = Nullopt, Intrinsic = NoIntrinsic);
+    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode&, std::optional<int> overrideLineNumber = std::nullopt, Intrinsic = NoIntrinsic);
 
     void clearCode()
     {

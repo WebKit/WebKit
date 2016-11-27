@@ -47,7 +47,7 @@ public:
     ExceptionOr<void> add(const AtomicString&);
     ExceptionOr<void> remove(const Vector<String>&);
     ExceptionOr<void> remove(const AtomicString&);
-    WEBCORE_EXPORT ExceptionOr<bool> toggle(const AtomicString&, Optional<bool> force);
+    WEBCORE_EXPORT ExceptionOr<bool> toggle(const AtomicString&, std::optional<bool> force);
     ExceptionOr<void> replace(const AtomicString& token, const AtomicString& newToken);
     ExceptionOr<bool> supports(StringView token);
 

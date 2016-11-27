@@ -471,11 +471,11 @@ enum class TypeDomainEnum {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'TypeDomain' Domain
 template<>
-Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
+std::optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
 
 } // namespace TestHelpers
 
@@ -545,7 +545,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'TypeDomain' Domain
 template<>
-Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String& protocolString)
+std::optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Shared,
@@ -557,7 +557,7 @@ Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromStri
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::TypeDomain::TypeDomainEnum)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 

@@ -59,13 +59,13 @@ private:
 
     void updateSettings(RealtimeMediaSourceSettings&) final;
 
-    void applySizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
+    void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
     bool applySize(const IntSize&) final;
     bool applyFrameRate(double) final;
     bool setPreset(NSString*);
 
-    NSString *bestSessionPresetForVideoDimensions(Optional<int> width, Optional<int> height) const;
-    bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
+    NSString *bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const;
+    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
 
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) final;
     void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) final;

@@ -68,7 +68,7 @@ public:
     Exception&& releaseException();
 
 private:
-    Optional<Exception> m_exception;
+    std::optional<Exception> m_exception;
 };
 
 ExceptionOr<void> isolatedCopy(ExceptionOr<void>&&);

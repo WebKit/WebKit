@@ -55,9 +55,9 @@ public:
 
     bool beginPaymentSession(ApplePaySession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
-    void completeShippingMethodSelection(PaymentAuthorizationStatus, Optional<PaymentRequest::TotalAndLineItems> newItems);
-    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, Optional<PaymentRequest::TotalAndLineItems> newItems);
-    void completePaymentMethodSelection(Optional<PaymentRequest::TotalAndLineItems> newItems);
+    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems> newItems);
+    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, std::optional<PaymentRequest::TotalAndLineItems> newItems);
+    void completePaymentMethodSelection(std::optional<PaymentRequest::TotalAndLineItems> newItems);
     void completePaymentSession(PaymentAuthorizationStatus);
     void abortPaymentSession();
 

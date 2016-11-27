@@ -63,7 +63,7 @@ private:
     struct Parent {
         Element* element { nullptr };
         Style::Change styleChange { Style::NoChange };
-        Optional<RenderTreePosition> renderTreePosition;
+        std::optional<RenderTreePosition> renderTreePosition;
 
         Parent(ContainerNode& root);
         Parent(Element&, Style::Change);

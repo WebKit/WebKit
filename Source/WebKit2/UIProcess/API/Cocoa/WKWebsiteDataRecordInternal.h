@@ -40,7 +40,7 @@ inline WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
     return (WKWebsiteDataRecord *)websiteDataRecord.wrapper();
 }
 
-static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
+static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
 {
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeCookies])
         return WebsiteDataType::Cookies;
@@ -71,7 +71,7 @@ static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataT
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeResourceLoadStatistics])
         return WebsiteDataType::WebsiteDataTypeResourceLoadStatistics;
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *websiteDataTypes)

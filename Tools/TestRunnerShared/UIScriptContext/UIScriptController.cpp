@@ -288,12 +288,12 @@ double UIScriptController::maximumZoomScale() const
     return 1;
 }
 
-Optional<bool> UIScriptController::stableStateOverride() const
+std::optional<bool> UIScriptController::stableStateOverride() const
 {
-    return Nullopt;
+    return std::nullopt;
 }
 
-void UIScriptController::setStableStateOverride(Optional<bool>)
+void UIScriptController::setStableStateOverride(std::optional<bool>)
 {
 }
 

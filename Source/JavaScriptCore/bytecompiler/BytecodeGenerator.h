@@ -910,7 +910,7 @@ namespace JSC {
         };
         typedef HashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
         Vector<TDZMap> m_TDZStack;
-        Optional<size_t> m_varScopeSymbolTableIndex;
+        std::optional<size_t> m_varScopeSymbolTableIndex;
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 
         ScopeNode* const m_scopeNode;

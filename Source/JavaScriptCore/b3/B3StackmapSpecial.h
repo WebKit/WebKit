@@ -59,7 +59,7 @@ protected:
     // subclasses that implement that.
     void forEachArgImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-        Air::Inst&, RoleMode, Optional<unsigned> firstRecoverableIndex,
+        Air::Inst&, RoleMode, std::optional<unsigned> firstRecoverableIndex,
         const ScopedLambda<Air::Inst::EachArgCallback>&);
     
     bool isValidImpl(

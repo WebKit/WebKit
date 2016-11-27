@@ -307,11 +307,11 @@ public:
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
-    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = Nullopt; m_position = p; }
+    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = std::nullopt; m_position = p; }
 
     // approximatePosition, if set, overrides position() and is used during coverage rect computation.
     FloatPoint approximatePosition() const { return m_approximatePosition ? m_approximatePosition.value() : m_position; }
-    void setApproximatePosition(Optional<FloatPoint> p) { m_approximatePosition = p; }
+    void setApproximatePosition(std::optional<FloatPoint> p) { m_approximatePosition = p; }
 
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncPosition(const FloatPoint& p) { m_position = p; }
@@ -602,7 +602,7 @@ protected:
     FloatPoint m_position;
 
     // If set, overrides m_position. Only used for coverage computation.
-    Optional<FloatPoint> m_approximatePosition;
+    std::optional<FloatPoint> m_approximatePosition;
 
     FloatPoint3D m_anchorPoint;
     FloatSize m_size;

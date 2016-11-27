@@ -132,7 +132,7 @@ static PassRefPtr<FormData> toFormData(const HTTPBody& httpBody)
             break;
 
         case HTTPBody::Element::Type::File:
-            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.valueOr(BlobDataItem::toEndOfFile), element.expectedFileModificationTime.valueOr(invalidFileTime()));
+            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.value_or(BlobDataItem::toEndOfFile), element.expectedFileModificationTime.value_or(invalidFileTime()));
             break;
 
         case HTTPBody::Element::Type::Blob:

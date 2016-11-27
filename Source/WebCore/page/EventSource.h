@@ -93,7 +93,7 @@ private:
     void scheduleReconnect();
     void abortConnectionAttempt();
     void parseEventStream();
-    void parseEventStreamLine(unsigned position, Optional<unsigned> fieldLength, unsigned lineLength);
+    void parseEventStreamLine(unsigned position, std::optional<unsigned> fieldLength, unsigned lineLength);
     void dispatchMessageEvent();
 
     bool responseIsValid(const ResourceResponse&) const;

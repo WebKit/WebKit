@@ -932,7 +932,7 @@ IntRect PDFPlugin::boundsOnScreen() const
 void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, const AffineTransform& pluginToRootViewTransform)
 {
     m_pluginToRootViewTransform = pluginToRootViewTransform;
-    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().valueOr(AffineTransform());
+    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().value_or(AffineTransform());
     m_size = pluginSize;
 
     FrameView* frameView = webFrame()->coreFrame()->view();

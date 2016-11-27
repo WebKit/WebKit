@@ -74,7 +74,7 @@ public:
     size_t frameCount() const { return m_source.frameCount(); }
     RepetitionCount repetitionCount() const { return m_source.repetitionCount(); }
     String filenameExtension() const override { return m_source.filenameExtension(); }
-    Optional<IntPoint> hotSpot() const override { return m_source.hotSpot(); }
+    std::optional<IntPoint> hotSpot() const override { return m_source.hotSpot(); }
 
     // FloatSize due to override.
     FloatSize size() const override { return m_source.size(); }

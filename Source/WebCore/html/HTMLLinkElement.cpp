@@ -251,7 +251,7 @@ void HTMLLinkElement::process()
 
         bool mediaQueryMatches = true;
         if (!m_media.isEmpty()) {
-            Optional<RenderStyle> documentStyle;
+            std::optional<RenderStyle> documentStyle;
             if (document().hasLivingRenderTree())
                 documentStyle = Style::resolveForDocument(document());
             auto media = MediaQuerySet::create(m_media);
@@ -264,7 +264,7 @@ void HTMLLinkElement::process()
         addPendingSheet(isActive ? ActiveSheet : InactiveSheet);
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
-        Optional<ResourceLoadPriority> priority;
+        std::optional<ResourceLoadPriority> priority;
         if (!isActive)
             priority = ResourceLoadPriority::VeryLow;
         CachedResourceRequest request(url, CachedResourceLoader::defaultCachedResourceOptions(), priority, WTFMove(charset));
@@ -343,7 +343,7 @@ void HTMLLinkElement::finishParsingChildren()
 void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     // FIXME: originClean should be turned to false except if fetch mode is CORS.
-    Optional<bool> originClean;
+    std::optional<bool> originClean;
     if (cachedStyleSheet.options().mode == FetchOptions::Mode::Cors)
         originClean = cachedStyleSheet.isCORSSameOrigin();
 
@@ -513,7 +513,7 @@ const AtomicString& HTMLLinkElement::type() const
     return attributeWithoutSynchronization(typeAttr);
 }
 
-Optional<LinkIconType> HTMLLinkElement::iconType() const
+std::optional<LinkIconType> HTMLLinkElement::iconType() const
 {
     return m_relAttribute.iconType;
 }

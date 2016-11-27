@@ -166,7 +166,7 @@ public:
     void deleteLineBoxesBeforeSimpleLineLayout();
     const SimpleLineLayout::Layout* simpleLineLayout() const;
 
-    StringView stringView(unsigned start = 0, Optional<unsigned> stop = Nullopt) const;
+    StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
 
     LayoutUnit topOfFirstText() const;
     

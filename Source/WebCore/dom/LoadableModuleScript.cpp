@@ -52,7 +52,7 @@ bool LoadableModuleScript::isLoaded() const
     return m_moduleScript->isLoaded();
 }
 
-Optional<LoadableScript::Error> LoadableModuleScript::error() const
+std::optional<LoadableScript::Error> LoadableModuleScript::error() const
 {
     return m_moduleScript->error();
 }

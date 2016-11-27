@@ -58,7 +58,7 @@ public:
     RefPtr<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
-        Optional<IDBKeyPath> keyPath;
+        std::optional<IDBKeyPath> keyPath;
         bool autoIncrement;
     };
 

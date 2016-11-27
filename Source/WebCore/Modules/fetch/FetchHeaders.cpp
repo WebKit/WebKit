@@ -123,7 +123,7 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
     }
 }
 
-Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
+std::optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
 {
     while (m_currentIndex < m_keys.size()) {
         auto key = m_keys[m_currentIndex++];
@@ -131,7 +131,7 @@ Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         if (!value.isNull())
             return WTF::KeyValuePair<String, String> { WTFMove(key), WTFMove(value) };
     }
-    return Nullopt;
+    return std::nullopt;
 }
 
 FetchHeaders::Iterator::Iterator(FetchHeaders& headers)

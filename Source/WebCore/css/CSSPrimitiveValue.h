@@ -360,7 +360,7 @@ private:
     void init(RefPtr<DashboardRegion>&&); // FIXME: Dashboard region should not be a primitive value.
 #endif
 
-    Optional<double> doubleValueInternal(UnitTypes targetUnitType) const;
+    std::optional<double> doubleValueInternal(UnitTypes targetUnitType) const;
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 

@@ -61,8 +61,8 @@ enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRe
 WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
 
 struct CacheControlDirectives {
-    Optional<std::chrono::microseconds> maxAge;
-    Optional<std::chrono::microseconds> maxStale;
+    std::optional<std::chrono::microseconds> maxAge;
+    std::optional<std::chrono::microseconds> maxStale;
     bool noCache { false };
     bool noStore { false };
     bool mustRevalidate { false };

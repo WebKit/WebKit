@@ -4343,7 +4343,7 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
 String Document::lastModified()
 {
     using namespace std::chrono;
-    Optional<system_clock::time_point> dateTime;
+    std::optional<system_clock::time_point> dateTime;
     if (m_frame && loader())
         dateTime = loader()->response().lastModified();
 

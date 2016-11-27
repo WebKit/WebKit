@@ -541,8 +541,8 @@ public:
     bool isResourceCachingDisabled() const { return m_resourceCachingDisabled; }
     void setResourceCachingDisabled(bool disabled) { m_resourceCachingDisabled = disabled; }
 
-    Optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
-    void setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
+    std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
+    void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
 
 private:
     WEBCORE_EXPORT void initGroup();
@@ -562,7 +562,7 @@ private:
 
     unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, ShouldHighlightMatches, ShouldMarkMatches);
 
-    Optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
+    std::optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
 
     Vector<Ref<PluginViewBase>> pluginViews();
 
@@ -737,7 +737,7 @@ private:
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     
     // For testing.
-    Optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
+    std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
 };
 
 inline PageGroup& Page::group()

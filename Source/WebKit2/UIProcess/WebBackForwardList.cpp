@@ -415,7 +415,7 @@ BackForwardListState WebBackForwardList::backForwardListState(const std::functio
     }
 
     if (backForwardListState.items.isEmpty())
-        backForwardListState.currentIndex = Nullopt;
+        backForwardListState.currentIndex = std::nullopt;
     else if (backForwardListState.items.size() <= backForwardListState.currentIndex.value())
         backForwardListState.currentIndex = backForwardListState.items.size() - 1;
 
@@ -432,7 +432,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
         items.uncheckedAppend(WebBackForwardListItem::create(WTFMove(backForwardListItemState), m_page->pageID()));
     }
     m_hasCurrentIndex = !!backForwardListState.currentIndex;
-    m_currentIndex = backForwardListState.currentIndex.valueOr(0);
+    m_currentIndex = backForwardListState.currentIndex.value_or(0);
     m_entries = WTFMove(items);
 }
 

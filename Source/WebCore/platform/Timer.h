@@ -88,7 +88,7 @@ public:
 private:
     virtual void fired() = 0;
 
-    virtual Optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const { return Nullopt; }
+    virtual std::optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const { return std::nullopt; }
 
     void checkConsistency() const;
     void checkHeapIndex() const;

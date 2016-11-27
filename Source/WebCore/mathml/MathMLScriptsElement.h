@@ -44,8 +44,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    Optional<Length> m_subscriptShift;
-    Optional<Length> m_superscriptShift;
+    std::optional<Length> m_subscriptShift;
+    std::optional<Length> m_superscriptShift;
 };
 
 }

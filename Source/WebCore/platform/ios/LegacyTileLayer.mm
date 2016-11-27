@@ -64,7 +64,7 @@ using namespace WebCore;
 
     [super renderInContext:context];
 
-    _tileGrid->tileCache().setOverrideVisibleRect(Nullopt);
+    _tileGrid->tileCache().setOverrideVisibleRect(std::nullopt);
 }
 @end
 

@@ -170,7 +170,7 @@ FloatPoint TransformState::mappedPoint(bool* wasClamped) const
     if (m_direction == ApplyTransformDirection)
         return m_accumulatedTransform->mapPoint(point);
 
-    return m_accumulatedTransform->inverse().valueOr(TransformationMatrix()).projectPoint(point, wasClamped);
+    return m_accumulatedTransform->inverse().value_or(TransformationMatrix()).projectPoint(point, wasClamped);
 }
 
 FloatQuad TransformState::mappedQuad(bool* wasClamped) const
@@ -183,13 +183,13 @@ FloatQuad TransformState::mappedQuad(bool* wasClamped) const
     return quad;
 }
 
-Optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
+std::optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
 {
     if (wasClamped)
         *wasClamped = false;
 
     if (!m_lastPlanarSecondaryQuad)
-        return Optional<FloatQuad>();
+        return std::optional<FloatQuad>();
 
     FloatQuad quad = *m_lastPlanarSecondaryQuad;
     mapQuad(quad, m_direction, wasClamped);
@@ -218,7 +218,7 @@ void TransformState::mapQuad(FloatQuad& quad, TransformDirection direction, bool
     if (direction == ApplyTransformDirection)
         quad = m_accumulatedTransform->mapQuad(quad);
 
-    quad = m_accumulatedTransform->inverse().valueOr(TransformationMatrix()).projectQuad(quad, wasClamped);
+    quad = m_accumulatedTransform->inverse().value_or(TransformationMatrix()).projectQuad(quad, wasClamped);
 }
 
 void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* wasClamped)
@@ -233,7 +233,7 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* w
         }
 
     } else {
-        TransformationMatrix inverseTransform = t.inverse().valueOr(TransformationMatrix());
+        TransformationMatrix inverseTransform = t.inverse().value_or(TransformationMatrix());
         if (m_mapPoint)
             m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
         if (m_mapQuad) {

@@ -219,7 +219,7 @@ void MediaTrackConstraintSetMap::filter(std::function<bool(const MediaConstraint
         return;
 }
 
-void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<IntConstraint>&& constraint)
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::optional<IntConstraint>&& constraint)
 {
     switch (constraintType) {
     case MediaConstraintType::Width:
@@ -248,7 +248,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optiona
     }
 }
 
-void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<DoubleConstraint>&& constraint)
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::optional<DoubleConstraint>&& constraint)
 {
     switch (constraintType) {
     case MediaConstraintType::AspectRatio:
@@ -275,7 +275,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optiona
     }
 }
 
-void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<BooleanConstraint>&& constraint)
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::optional<BooleanConstraint>&& constraint)
 {
     switch (constraintType) {
     case MediaConstraintType::EchoCancellation:
@@ -298,7 +298,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optiona
     }
 }
 
-void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<StringConstraint>&& constraint)
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::optional<StringConstraint>&& constraint)
 {
     switch (constraintType) {
     case MediaConstraintType::FacingMode:

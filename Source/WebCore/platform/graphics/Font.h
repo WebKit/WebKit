@@ -284,10 +284,10 @@ private:
 #if PLATFORM(COCOA)
     mutable RetainPtr<CFDictionaryRef> m_nonKernedCFStringAttributes;
     mutable RetainPtr<CFDictionaryRef> m_kernedCFStringAttributes;
-    mutable Optional<BitVector> m_glyphsSupportedBySmallCaps;
-    mutable Optional<BitVector> m_glyphsSupportedByAllSmallCaps;
-    mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;
-    mutable Optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
+    mutable std::optional<BitVector> m_glyphsSupportedBySmallCaps;
+    mutable std::optional<BitVector> m_glyphsSupportedByAllSmallCaps;
+    mutable std::optional<BitVector> m_glyphsSupportedByPetiteCaps;
+    mutable std::optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)

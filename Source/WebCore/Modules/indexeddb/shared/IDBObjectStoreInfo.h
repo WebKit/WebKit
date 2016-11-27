@@ -37,11 +37,11 @@ namespace WebCore {
 class IDBObjectStoreInfo {
 public:
     WEBCORE_EXPORT IDBObjectStoreInfo();
-    IDBObjectStoreInfo(uint64_t identifier, const String& name, Optional<IDBKeyPath>&&, bool autoIncrement);
+    IDBObjectStoreInfo(uint64_t identifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
 
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
-    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
     uint64_t maxIndexID() const { return m_maxIndexID; }
 
@@ -72,7 +72,7 @@ public:
 private:
     uint64_t m_identifier { 0 };
     String m_name;
-    Optional<IDBKeyPath> m_keyPath;
+    std::optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
     uint64_t m_maxIndexID { 0 };
 

@@ -213,8 +213,8 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
     auto request = UserMediaPermissionCheckProxy::create(*this, userMediaID);
     m_pendingDeviceRequests.add(userMediaID, request.ptr());
 
-    auto userMediaOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier).valueOr(SecurityOriginData()).securityOrigin());
-    auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier).valueOr(SecurityOriginData()).securityOrigin());
+    auto userMediaOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier).value_or(SecurityOriginData()).securityOrigin());
+    auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier).value_or(SecurityOriginData()).securityOrigin());
 
     if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get())) {
         m_pendingDeviceRequests.take(userMediaID);

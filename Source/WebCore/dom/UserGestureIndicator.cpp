@@ -44,7 +44,7 @@ UserGestureToken::~UserGestureToken()
         observer(*this);
 }
 
-UserGestureIndicator::UserGestureIndicator(Optional<ProcessingUserGestureState> state, Document* document)
+UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document)
     : m_previousToken(currentToken())
 {
     // Silently ignore UserGestureIndicators on non main threads.

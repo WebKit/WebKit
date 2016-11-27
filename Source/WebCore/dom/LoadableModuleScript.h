@@ -39,7 +39,7 @@ public:
     static Ref<LoadableModuleScript> create(CachedModuleScript&);
 
     bool isLoaded() const final;
-    Optional<Error> error() const final;
+    std::optional<Error> error() const final;
     bool wasCanceled() const final;
 
     CachedModuleScript& moduleScript() { return m_moduleScript.get(); }

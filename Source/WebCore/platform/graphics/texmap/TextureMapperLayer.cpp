@@ -211,7 +211,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
         TextureMapperPaintOptions replicaOptions(options);
         replicaOptions.transform
             .multiply(m_state.replicaLayer->m_currentTransform.combined())
-            .multiply(m_currentTransform.combined().inverse().valueOr(TransformationMatrix()));
+            .multiply(m_currentTransform.combined().inverse().value_or(TransformationMatrix()));
         paintSelfAndChildren(replicaOptions);
     }
 
@@ -230,7 +230,7 @@ void TextureMapperLayer::setAnimatedOpacity(float opacity)
 
 TransformationMatrix TextureMapperLayer::replicaTransform()
 {
-    return TransformationMatrix(m_state.replicaLayer->m_currentTransform.combined()).multiply(m_currentTransform.combined().inverse().valueOr(TransformationMatrix()));
+    return TransformationMatrix(m_state.replicaLayer->m_currentTransform.combined()).multiply(m_currentTransform.combined().inverse().value_or(TransformationMatrix()));
 }
 
 void TextureMapperLayer::setAnimatedFilters(const FilterOperations& filters)
@@ -731,7 +731,7 @@ TextureMapperLayer* TextureMapperLayer::findScrollableContentsLayerAt(const Floa
 FloatSize TextureMapperLayer::mapScrollOffset(const FloatSize& offset)
 {
     double zeroX, zeroY, offsetX, offsetY;
-    TransformationMatrix transform = m_currentTransform.combined().inverse().valueOr(TransformationMatrix());
+    TransformationMatrix transform = m_currentTransform.combined().inverse().value_or(TransformationMatrix());
     transform.map(0, 0, zeroX, zeroY);
     transform.map(offset.width(), offset.height(), offsetX, offsetY);
     return FloatSize(offsetX - zeroX, offsetY - zeroY);

@@ -53,7 +53,7 @@ public:
     static Ref<SecurityOrigin> createUnique();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, Optional<uint16_t> port);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
 
     // Some URL schemes use nested URLs for their security context. For example,
     // filesystem URLs look like the following:
@@ -81,7 +81,7 @@ public:
     const String& protocol() const { return m_protocol; }
     const String& host() const { return m_host; }
     const String& domain() const { return m_domain; }
-    Optional<uint16_t> port() const { return m_port; }
+    std::optional<uint16_t> port() const { return m_port; }
 
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
@@ -218,7 +218,7 @@ private:
     String m_host;
     String m_domain;
     String m_filePath;
-    Optional<uint16_t> m_port;
+    std::optional<uint16_t> m_port;
     bool m_isUnique { false };
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };

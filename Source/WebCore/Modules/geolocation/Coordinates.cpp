@@ -28,31 +28,31 @@
 
 namespace WebCore {
 
-Optional<double> Coordinates::altitude() const
+std::optional<double> Coordinates::altitude() const
 {
     if (!m_canProvideAltitude)
-        return Nullopt;
+        return std::nullopt;
     return m_altitude;
 }
 
-Optional<double> Coordinates::altitudeAccuracy() const
+std::optional<double> Coordinates::altitudeAccuracy() const
 {
     if (!m_canProvideAltitudeAccuracy)
-        return Nullopt;
+        return std::nullopt;
     return m_altitudeAccuracy;
 }
 
-Optional<double> Coordinates::heading() const
+std::optional<double> Coordinates::heading() const
 {
     if (!m_canProvideHeading)
-        return Nullopt;
+        return std::nullopt;
     return m_heading;
 }
 
-Optional<double> Coordinates::speed() const
+std::optional<double> Coordinates::speed() const
 {
     if (!m_canProvideSpeed)
-        return Nullopt;
+        return std::nullopt;
     return m_speed;
 }
     

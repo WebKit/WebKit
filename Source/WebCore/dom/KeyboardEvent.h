@@ -62,7 +62,7 @@ public:
 
         // Legacy.
         String keyIdentifier;
-        Optional<unsigned> keyLocation;
+        std::optional<unsigned> keyLocation;
     };
 
     static Ref<KeyboardEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

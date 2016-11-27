@@ -845,7 +845,7 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
     }
 }
 
-void RenderView::setSelection(RenderObject* start, Optional<unsigned> startPos, RenderObject* end, Optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
+void RenderView::setSelection(RenderObject* start, std::optional<unsigned> startPos, RenderObject* end, std::optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Make sure both our start and end objects are defined.
     // Check www.msnbc.com and try clicking around to find the case where this happened.
@@ -882,7 +882,7 @@ void RenderView::setSelection(RenderObject* start, Optional<unsigned> startPos, 
     splitSelectionBetweenSubtrees(start, startPos, end, endPos, blockRepaintMode);
 }
 
-void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, Optional<unsigned> startPos, const RenderObject* end, Optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
+void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, std::optional<unsigned> startPos, const RenderObject* end, std::optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Compute the visible selection end points for each of the subtrees.
     RenderSubtreesMap renderSubtreesMap;
@@ -907,7 +907,7 @@ void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, Option
             SelectionSubtreeData selectionData = renderSubtreesMap.get(&root);
             if (selectionData.selectionClear()) {
                 selectionData.setSelectionStart(node->renderer());
-                selectionData.setSelectionStartPos(node == startNode ? startPos : Optional<unsigned>(0));
+                selectionData.setSelectionStartPos(node == startNode ? startPos : std::optional<unsigned>(0));
             }
 
             selectionData.setSelectionEnd(node->renderer());
@@ -1102,7 +1102,7 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         selectedBlockInfo.value->repaint();
 }
 
-void RenderView::getSelection(RenderObject*& startRenderer, Optional<unsigned>& startOffset, RenderObject*& endRenderer, Optional<unsigned>& endOffset) const
+void RenderView::getSelection(RenderObject*& startRenderer, std::optional<unsigned>& startOffset, RenderObject*& endRenderer, std::optional<unsigned>& endOffset) const
 {
     startRenderer = m_selectionUnsplitStart;
     startOffset = m_selectionUnsplitStartPos;
@@ -1113,7 +1113,7 @@ void RenderView::getSelection(RenderObject*& startRenderer, Optional<unsigned>& 
 void RenderView::clearSelection()
 {
     layer()->repaintBlockSelectionGaps();
-    setSelection(nullptr, Nullopt, nullptr, Nullopt, RepaintNewMinusOld);
+    setSelection(nullptr, std::nullopt, nullptr, std::nullopt, RepaintNewMinusOld);
 }
 
 bool RenderView::printing() const

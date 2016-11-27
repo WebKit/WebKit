@@ -49,7 +49,7 @@ ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Dictionary& dict
     String sdpMid;
     dictionary.getWithUndefinedOrNullCheck("sdpMid", sdpMid);
 
-    Optional<unsigned short> sdpMLineIndex;
+    std::optional<unsigned short> sdpMLineIndex;
     String sdpMLineIndexString;
 
     if (dictionary.getWithUndefinedOrNullCheck("sdpMLineIndex", sdpMLineIndexString)) {
@@ -66,12 +66,12 @@ ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Dictionary& dict
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
 }
 
-Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
+Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
 {
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
 }
 
-RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
+RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)

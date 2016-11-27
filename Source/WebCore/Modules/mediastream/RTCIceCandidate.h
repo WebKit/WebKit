@@ -44,18 +44,18 @@ class RTCIceCandidateDescriptor;
 class RTCIceCandidate : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
 public:
     static ExceptionOr<Ref<RTCIceCandidate>> create(const Dictionary&);
-    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
+    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 
     const String& candidate() const { return m_candidate; }
     const String& sdpMid() const { return m_sdpMid; }
-    Optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
+    std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
 private:
-    explicit RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
+    explicit RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 
     String m_candidate;
     String m_sdpMid;
-    Optional<unsigned short> m_sdpMLineIndex;
+    std::optional<unsigned short> m_sdpMLineIndex;
 };
 
 } // namespace WebCore

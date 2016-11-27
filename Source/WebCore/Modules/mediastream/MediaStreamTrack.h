@@ -127,7 +127,7 @@ private:
     Ref<MediaStreamTrackPrivate> m_private;
 
     RefPtr<MediaConstraints> m_constraints;
-    Optional<DOMPromise<void>> m_promise;
+    std::optional<DOMPromise<void>> m_promise;
     WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
 
     bool m_ended { false };

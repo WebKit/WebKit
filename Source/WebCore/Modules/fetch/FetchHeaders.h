@@ -64,7 +64,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        Optional<WTF::KeyValuePair<String, String>> next();
+        std::optional<WTF::KeyValuePair<String, String>> next();
 
     private:
         Ref<FetchHeaders> m_headers;

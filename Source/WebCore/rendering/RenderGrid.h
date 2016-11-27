@@ -77,7 +77,7 @@ private:
     bool isRenderGrid() const override { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
-    Optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
+    std::optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
 
     class GridIterator;
     class GridSizingData;
@@ -228,8 +228,8 @@ private:
     HashMap<const RenderBox*, GridArea> m_gridItemArea;
     OrderIterator m_orderIterator;
 
-    Optional<LayoutUnit> m_minContentHeight;
-    Optional<LayoutUnit> m_maxContentHeight;
+    std::optional<LayoutUnit> m_minContentHeight;
+    std::optional<LayoutUnit> m_maxContentHeight;
 
     int m_smallestColumnStart;
     int m_smallestRowStart;

@@ -582,13 +582,13 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Test' Domain
 template<>
-Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String&);
+std::optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String&);
 template<>
-Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String&);
+std::optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String&);
 
 } // namespace TestHelpers
 
@@ -656,7 +656,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Test' Domain
 template<>
-Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String& protocolString)
+std::optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Test::UncastedAnimals::Pigs,
@@ -668,11 +668,11 @@ Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<In
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Test::UncastedAnimals)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 template<>
-Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String& protocolString)
+std::optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Test::CastedAnimals::Ducks,
@@ -684,7 +684,7 @@ Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Insp
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Test::CastedAnimals)constantValues[i];
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 

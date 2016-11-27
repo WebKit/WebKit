@@ -50,7 +50,7 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
 #if !LOG_DISABLED
 String SecurityOriginData::debugString() const
 {
-    return makeString(protocol, "://", host, ":", String::number(port.valueOr(0)));
+    return makeString(protocol, "://", host, ":", String::number(port.value_or(0)));
 }
 #endif
 
@@ -92,37 +92,37 @@ String SecurityOriginData::databaseIdentifier() const
     stringBuilder.append(separatorCharacter);
     stringBuilder.append(encodeForFileName(host));
     stringBuilder.append(separatorCharacter);
-    stringBuilder.appendNumber(port.valueOr(0));
+    stringBuilder.appendNumber(port.value_or(0));
     
     return stringBuilder.toString();
 }
 
-Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
+std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
 {
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
     if (separator1 == notFound)
-        return Nullopt;
+        return std::nullopt;
     
     // Make sure there's a second separator
     size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
     if (separator2 == notFound)
-        return Nullopt;
+        return std::nullopt;
     
     // Ensure there were at least 2 separator characters. Some hostnames on intranets have
     // underscores in them, so we'll assume that any additional underscores are part of the host.
     if (separator1 == separator2)
-        return Nullopt;
+        return std::nullopt;
     
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
     int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
     bool portAbsent = (separator2 == databaseIdentifier.length() - 1);
     if (!(portOkay || portAbsent))
-        return Nullopt;
+        return std::nullopt;
     
     if (port < 0 || port > std::numeric_limits<uint16_t>::max())
-        return Nullopt;
+        return std::nullopt;
     
     return SecurityOriginData {databaseIdentifier.substring(0, separator1), databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1), static_cast<uint16_t>(port)};
 }

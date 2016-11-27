@@ -115,7 +115,7 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
             callback(inst.args[1 + index], role, type, width);
         });
 
-    Optional<unsigned> firstRecoverableIndex;
+    std::optional<unsigned> firstRecoverableIndex;
     if (m_checkKind.opcode == BranchAdd32 || m_checkKind.opcode == BranchAdd64)
         firstRecoverableIndex = 1;
     forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, firstRecoverableIndex, callback);
@@ -135,11 +135,11 @@ bool CheckSpecial::admitsStack(Inst& inst, unsigned argIndex)
     return admitsStackImpl(numB3Args(inst), m_numCheckArgs + 1, inst, argIndex);
 }
 
-Optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
+std::optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
 {
-    if (Optional<unsigned> branchDef = hiddenBranch(inst).shouldTryAliasingDef())
+    if (std::optional<unsigned> branchDef = hiddenBranch(inst).shouldTryAliasingDef())
         return *branchDef + 1;
-    return Nullopt;
+    return std::nullopt;
 }
 
 CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
+FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(&context)
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
@@ -190,13 +190,13 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
         return;
     }
 
-    m_blobLoader = { *this };
+    m_blobLoader.emplace(*this);
     m_blobLoader->loader = std::make_unique<FetchLoader>(*m_blobLoader, consumer);
 
     m_blobLoader->loader->start(*scriptExecutionContext(), blob);
     if (!m_blobLoader->loader->isStarted()) {
         m_body->loadingFailed();
-        m_blobLoader = Nullopt;
+        m_blobLoader = std::nullopt;
         return;
     }
     setPendingActivity(this);
@@ -206,7 +206,7 @@ void FetchBodyOwner::finishBlobLoading()
 {
     ASSERT(m_blobLoader);
 
-    m_blobLoader = Nullopt;
+    m_blobLoader = std::nullopt;
     unsetPendingActivity(this);
 }
 

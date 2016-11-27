@@ -121,7 +121,7 @@ void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&&
         result = CryptoKeyAES::importRaw(parameters->identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case SubtleCrypto::KeyFormat::Jwk: {
-        auto checkAlgCallback = [](size_t length, const Optional<String>& alg) -> bool {
+        auto checkAlgCallback = [](size_t length, const std::optional<String>& alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
                 return !alg || alg.value() == ALG128;

@@ -44,20 +44,20 @@ protected:
     static bool isPhrasingContent(const Node&);
     static bool isFlowContent(const Node&);
 
-    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? Nullopt : Optional<bool>(value == BooleanValue::True); }
-    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, Optional<BooleanValue>&);
+    static std::optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? std::nullopt : std::optional<bool>(value == BooleanValue::True); }
+    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, std::optional<BooleanValue>&);
 
     static Length parseMathMLLength(const String&);
-    const Length& cachedMathMLLength(const QualifiedName&, Optional<Length>&);
+    const Length& cachedMathMLLength(const QualifiedName&, std::optional<Length>&);
 
     virtual bool acceptsDisplayStyleAttribute();
-    Optional<bool> specifiedDisplayStyle() override;
+    std::optional<bool> specifiedDisplayStyle() override;
 
     virtual bool acceptsMathVariantAttribute() { return false; }
-    Optional<MathVariant> specifiedMathVariant() final;
+    std::optional<MathVariant> specifiedMathVariant() final;
 
-    Optional<BooleanValue> m_displayStyle;
-    Optional<MathVariant> m_mathVariant;
+    std::optional<BooleanValue> m_displayStyle;
+    std::optional<MathVariant> m_mathVariant;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;

@@ -146,23 +146,23 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
     return RegisterSet();
 }
 
-Optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
+std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
 {
     for (OSRExit& exit : osrExit) {
         if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
             if (handle->start() <= pc && pc < handle->end())
-                return Optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
+                return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
         }
     }
 
     for (std::unique_ptr<LazySlowPath>& lazySlowPath : lazySlowPaths) {
         if (ExecutableMemoryHandle* handle = lazySlowPath->stub().executableMemory()) {
             if (handle->start() <= pc && pc < handle->end())
-                return Optional<CodeOrigin>(codeBlock->codeOrigin(lazySlowPath->callSiteIndex()));
+                return std::optional<CodeOrigin>(codeBlock->codeOrigin(lazySlowPath->callSiteIndex()));
         }
     }
 
-    return Nullopt;
+    return std::nullopt;
 }
 
 } } // namespace JSC::FTL

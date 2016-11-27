@@ -88,7 +88,7 @@ public:
         // Stored as a fixed point decimal number with two decimals:
         // 1.23 -> 123.
         // 0.01 -> 1.
-        Optional<int64_t> amount;
+        std::optional<int64_t> amount;
         String label;
     };
 

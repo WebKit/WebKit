@@ -74,7 +74,7 @@ public:
     size_t frameCount() { return m_frameCache->frameCount(); }
     RepetitionCount repetitionCount() { return m_frameCache->repetitionCount(); }
     String filenameExtension() { return m_frameCache->filenameExtension(); }
-    Optional<IntPoint> hotSpot() { return m_frameCache->hotSpot(); }
+    std::optional<IntPoint> hotSpot() { return m_frameCache->hotSpot(); }
 
     // Image metadata which is calculated from the first ImageFrame.
     IntSize size() { return m_frameCache->size(); }
@@ -110,7 +110,7 @@ private:
     Ref<ImageFrameCache> m_frameCache;
     std::unique_ptr<ImageDecoder> m_decoder;
 
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
+    std::optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 
 #if PLATFORM(IOS)
     // FIXME: We should expose a setting to enable/disable progressive loading so that we can remove the PLATFORM(IOS)-guard.

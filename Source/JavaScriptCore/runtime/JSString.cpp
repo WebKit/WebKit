@@ -434,7 +434,7 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propert
         return true;
     }
     
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < length()) {
         descriptor.setDescriptor(getIndex(exec, index.value()), DontDelete | ReadOnly);
         return true;

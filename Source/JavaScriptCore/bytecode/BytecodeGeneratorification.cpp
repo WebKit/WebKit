@@ -117,7 +117,7 @@ private:
 
         if (m_storages.size() <= index)
             m_storages.resize(index + 1);
-        if (Optional<Storage> storage = m_storages[index])
+        if (std::optional<Storage> storage = m_storages[index])
             return *storage;
 
         UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
@@ -138,7 +138,7 @@ private:
 
     unsigned m_enterPoint { 0 };
     BytecodeGraph<UnlinkedCodeBlock> m_graph;
-    Vector<Optional<Storage>> m_storages;
+    Vector<std::optional<Storage>> m_storages;
     Yields m_yields;
     Strong<SymbolTable> m_generatorFrameSymbolTable;
     int m_generatorFrameSymbolTableIndex;

@@ -1,3 +1,36 @@
+2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Import std::optional reference implementation as WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=164199
+
+        Reviewed by Saam Barati and Sam Weinig.
+
+        Use WTF::Optional::value_or.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+        * TestRunnerShared/Bindings/JSWrappable.h:
+        (WTR::JSValueMakeBooleanOrNull):
+        (WTR::JSValueToNullableBoolean):
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * TestWebKitAPI/Tests/WTF/Optional.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/HTMLParserIdioms.cpp:
+        (TestWebKitAPI::testParseHTMLInteger):
+        (TestWebKitAPI::testParseHTMLNonNegativeInteger):
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::stableStateOverride):
+        (WTR::UIScriptController::setStableStateOverride):
+
 2016-11-26  Sam Weinig  <sam@webkit.org>
 
         Convert IntersectionObserver over to using RuntimeEnabledFeatures so it can be properly excluded from script

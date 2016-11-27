@@ -109,7 +109,7 @@ private:
 
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
-    Optional<ReadyPromise> m_promise;
+    std::optional<ReadyPromise> m_promise;
     bool m_isReady { true };
 };
 

@@ -60,7 +60,7 @@ public:
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
 
-    Optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
+    std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
 
     CodeRef b3Code() const { return m_b3Code; }
     

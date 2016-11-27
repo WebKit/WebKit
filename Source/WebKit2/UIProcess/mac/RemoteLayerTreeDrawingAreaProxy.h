@@ -64,7 +64,7 @@ private:
     void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
 
 #if PLATFORM(MAC)
-    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
+    void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
 #endif
 
     float indicatorScale(WebCore::IntSize contentsSize) const;

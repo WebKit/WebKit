@@ -427,12 +427,12 @@ private:
         return true;
     }
     
-    Optional<unsigned> scaleForShl(Value* shl, int32_t offset, Optional<Arg::Width> width = Nullopt)
+    std::optional<unsigned> scaleForShl(Value* shl, int32_t offset, std::optional<Arg::Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
-            return Nullopt;
+            return std::nullopt;
         if (!shl->child(1)->hasInt32())
-            return Nullopt;
+            return std::nullopt;
         unsigned logScale = shl->child(1)->asInt32();
         if (shl->type() == Int32)
             logScale &= 31;
@@ -442,10 +442,10 @@ private:
         // to signed since that's what all of our APIs want.
         int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
         if (!isRepresentableAs<int32_t>(bigScale))
-            return Nullopt;
+            return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
         if (!Arg::isValidIndexForm(scale, offset, width))
-            return Nullopt;
+            return std::nullopt;
         return scale;
     }
 
@@ -470,7 +470,7 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                Optional<unsigned> scale = scaleForShl(index, offset, width);
+                std::optional<unsigned> scale = scaleForShl(index, offset, width);
                 if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
@@ -1934,7 +1934,7 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            Optional<unsigned> scale = scaleForShl(shl, offset);
+            std::optional<unsigned> scale = scaleForShl(shl, offset);
             if (!scale)
                 return false;
             if (!canBeInternal(shl))
