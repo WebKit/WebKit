@@ -80,7 +80,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
     VariableEnvironment declaredVariables;
     VariableEnvironment lexicalVariables;
     auto* moduleRecord = JSModuleRecord::create(state, vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto* moduleNamespaceObject = JSModuleNamespaceObject::create(state, globalObject, globalObject->moduleNamespaceObjectStructure(), moduleRecord, instanceExports);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), globalObject->WebAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

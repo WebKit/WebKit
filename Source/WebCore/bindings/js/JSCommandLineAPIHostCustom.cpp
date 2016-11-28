@@ -91,6 +91,7 @@ static JSArray* getJSListenerFunctions(ExecState& state, Document* document, con
         listenerEntry->putDirect(vm, Identifier::fromString(&state, "listener"), function);
         listenerEntry->putDirect(vm, Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i]->useCapture()));
         result->putDirectIndex(&state, outputIndex++, JSValue(listenerEntry));
+        RETURN_IF_EXCEPTION(scope, nullptr);
     }
     return result;
 }

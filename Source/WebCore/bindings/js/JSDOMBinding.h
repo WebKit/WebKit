@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2006, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *  Copyright (C) 2012 Ericsson AB. All rights reserved.
@@ -658,8 +658,10 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
 
     JSC::JSArray* array = constructEmptyArray(exec, nullptr, vector.size());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    for (size_t i = 0; i < vector.size(); ++i)
+    for (size_t i = 0; i < vector.size(); ++i) {
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i]));
+        RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    }
     return array;
 }
 
@@ -670,8 +672,10 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
 
     JSC::JSArray* array = constructEmptyArray(exec, nullptr, vector.size());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    for (size_t i = 0; i < vector.size(); ++i)
+    for (size_t i = 0; i < vector.size(); ++i) {
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i].get()));
+        RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    }
     return array;
 }
 

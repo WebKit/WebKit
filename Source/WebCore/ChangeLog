@@ -1,3 +1,25 @@
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in more miscellaneous files.
+        https://bugs.webkit.org/show_bug.cgi?id=165102
+
+        Reviewed by Saam Barati.
+
+        No new tests because these are fixes to failures detected by existing tests when
+        exception check verification is enabled.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::buildJSONForRSAComponents):
+        (WebCore::addUsagesToJSON):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+
 2016-11-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix bugs in the @supports parser
