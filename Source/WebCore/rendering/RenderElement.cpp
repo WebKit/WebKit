@@ -104,6 +104,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_hasCounterNodeMap(false)
     , m_isCSSAnimating(false)
     , m_hasContinuation(false)
+    , m_hasValidCachedFirstLineStyle(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
     , m_renderBlockShouldForceRelayoutChildren(false)
@@ -215,48 +216,44 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     return nullptr;
 }
 
-std::unique_ptr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
-{
-    if (!view().usesFirstLineRules())
-        return nullptr;
-
-    RenderElement& rendererForFirstLineStyle = isBeforeOrAfterContent() ? *parent() : const_cast<RenderElement&>(*this);
-
-    if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
-        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
-            return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == this ? style : nullptr);
-    } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
-        if (&parentStyle != &rendererForFirstLineStyle.parent()->style())
-            return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
-    }
-    return nullptr;
-}
-
-const RenderStyle* RenderElement::cachedFirstLineStyle() const
+std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
 {
     ASSERT(view().usesFirstLineRules());
 
     RenderElement& rendererForFirstLineStyle = isBeforeOrAfterContent() ? *parent() : const_cast<RenderElement&>(*this);
 
     if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
-        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
-            return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, &style());
-    } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
-        if (&parentStyle != &rendererForFirstLineStyle.parent()->style()) {
-            // A first-line style is in effect. Cache a first-line style for ourselves.
-            rendererForFirstLineStyle.m_style.setHasPseudoStyle(FIRST_LINE_INHERITED);
-            return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle);
-        }
+        RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock();
+        if (!firstLineBlock)
+            return nullptr;
+        auto* firstLineStyle = firstLineBlock->getCachedPseudoStyle(FIRST_LINE, &style());
+        if (!firstLineStyle)
+            return nullptr;
+        return RenderStyle::clonePtr(*firstLineStyle);
     }
 
-    return &style();
+    if (rendererForFirstLineStyle.isAnonymous() || !rendererForFirstLineStyle.isRenderInline())
+        return nullptr;
+
+    auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+    if (&parentStyle == &rendererForFirstLineStyle.parent()->style())
+        return nullptr;
+    return rendererForFirstLineStyle.element()->styleResolver().styleForElement(*element(), &parentStyle).renderStyle;
 }
 
 const RenderStyle& RenderElement::firstLineStyle() const
 {
-    return view().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
+    if (!view().usesFirstLineRules())
+        return style();
+
+    if (!m_hasValidCachedFirstLineStyle) {
+        auto firstLineStyle = computeFirstLineStyle();
+        if (firstLineStyle || hasRareData())
+            const_cast<RenderElement&>(*this).ensureRareData().cachedFirstLineStyle = WTFMove(firstLineStyle);
+        m_hasValidCachedFirstLineStyle = true;
+    }
+
+    return (hasRareData() && rareData().cachedFirstLineStyle) ? *rareData().cachedFirstLineStyle : style();
 }
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const
@@ -818,6 +815,16 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
     return renderer && renderer->hasBackground();
 }
 
+void RenderElement::invalidateCachedFirstLineStyle()
+{
+    if (!m_hasValidCachedFirstLineStyle)
+        return;
+    m_hasValidCachedFirstLineStyle = false;
+    // Invalidate the subtree as descendant's first line style may depend on ancestor's.
+    for (auto& descendant : descendantsOfType<RenderElement>(*this))
+        descendant.m_hasValidCachedFirstLineStyle = false;
+}
+
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
@@ -877,6 +884,9 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             setFloating(false);
             clearPositionedState();
         }
+        if (newStyle.hasPseudoStyle(FIRST_LINE) || oldStyle->hasPseudoStyle(FIRST_LINE))
+            invalidateCachedFirstLineStyle();
+
         setHorizontalWritingMode(true);
         setHasVisibleBoxDecorations(false);
         setHasOverflowClip(false);
@@ -1545,12 +1555,7 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoS
 
     auto& styleResolver = element()->styleResolver();
 
-    std::unique_ptr<RenderStyle> style;
-    if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        style = styleResolver.styleForElement(*element(), parentStyle).renderStyle;
-        style->setStyleType(FIRST_LINE_INHERITED);
-    } else
-        style = styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
+    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
 
     if (style)
         Style::loadPendingResources(*style, document(), element());

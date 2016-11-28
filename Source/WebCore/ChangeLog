@@ -1,3 +1,48 @@
+2016-11-28  Antti Koivisto  <antti@apple.com>
+
+        Remove FIRST_LINE_INHERITED fake pseudo style
+        https://bugs.webkit.org/show_bug.cgi?id=165071
+
+        Reviewed by Andreas Kling.
+
+        These are create during layout an then cached to the RenderStyle. Cache computed first line style to
+        RenderObject rare data instead, avoiding style mutation an other confusing messiness.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::computeFirstLineStyle):
+        (WebCore::RenderElement::firstLineStyle):
+
+            Cache the first line style.
+
+        (WebCore::RenderElement::invalidateCachedFirstLineStyle):
+        (WebCore::RenderElement::styleWillChange):
+
+            Invalidate subtree if we have cached first line style.
+
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+        (WebCore::RenderElement::uncachedFirstLineStyle): Deleted.
+        (WebCore::RenderElement::cachedFirstLineStyle): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::rareDataMap):
+        (WebCore::RenderObject::rareData):
+        (WebCore::RenderObject::ensureRareData):
+        * rendering/RenderObject.h:
+
+            Stop copying rare data objects.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+
+            Use the normal mechanism for invalidating layout for first-line instead of a hack in pseudoStyleCacheIsInvalid.
+
+        * rendering/style/RenderStyleConstants.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::pseudoStyleCacheIsInvalid):
+
+            Simplify.
+
 2016-11-28  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Dramatic increase on memory usage since 2.14.x

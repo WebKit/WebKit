@@ -1978,24 +1978,22 @@ void RenderObject::setVisibleInViewportState(VisibleInViewportState visible)
         ensureRareData().setVisibleInViewportState(visible);
 }
 
-RenderObject::RareDataHash& RenderObject::rareDataMap()
+RenderObject::RareDataMap& RenderObject::rareDataMap()
 {
-    static NeverDestroyed<RareDataHash> map;
+    static NeverDestroyed<RareDataMap> map;
     return map;
 }
 
-RenderObject::RenderObjectRareData RenderObject::rareData() const
+const RenderObject::RenderObjectRareData& RenderObject::rareData() const
 {
-    if (!hasRareData())
-        return RenderObjectRareData();
-
-    return rareDataMap().get(this);
+    ASSERT(hasRareData());
+    return *rareDataMap().get(this);
 }
 
 RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 {
     setHasRareData(true);
-    return rareDataMap().add(this, RenderObjectRareData()).iterator->value;
+    return *rareDataMap().ensure(this, [] { return std::make_unique<RenderObjectRareData>(); }).iterator->value;
 }
 
 void RenderObject::removeRareData()

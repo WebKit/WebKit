@@ -235,24 +235,12 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
         return false;
 
     for (auto& cache : *pseudoStyleCache) {
-        std::unique_ptr<RenderStyle> newPseudoStyle;
         PseudoId pseudoId = cache->styleType();
-        if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
-            newPseudoStyle = renderer->uncachedFirstLineStyle(newStyle);
-        else
-            newPseudoStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId), newStyle, newStyle);
+        std::unique_ptr<RenderStyle> newPseudoStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId), newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
         if (*newPseudoStyle != *cache) {
-            if (pseudoId < FIRST_INTERNAL_PSEUDOID)
-                newStyle->setHasPseudoStyle(pseudoId);
             newStyle->addCachedPseudoStyle(WTFMove(newPseudoStyle));
-            if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED) {
-                // FIXME: We should do an actual diff to determine whether a repaint vs. layout
-                // is needed, but for now just assume a layout will be required. The diff code
-                // in RenderObject::setStyle would need to be factored out so that it could be reused.
-                renderer->setNeedsLayoutAndPrefWidthsRecalc();
-            }
             return true;
         }
     }

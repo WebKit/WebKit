@@ -970,6 +970,7 @@ private:
 
     RenderObjectBitfields m_bitfields;
 
+    // FIXME: This should be RenderElementRareData.
     class RenderObjectRareData {
     public:
         RenderObjectRareData()
@@ -989,17 +990,16 @@ private:
         // From RenderElement
         ADD_BOOLEAN_BITFIELD(isRegisteredForVisibleInViewportCallback, IsRegisteredForVisibleInViewportCallback);
         ADD_ENUM_BITFIELD(visibleInViewportState, VisibleInViewportState, VisibleInViewportState, 2);
-
+        std::unique_ptr<RenderStyle> cachedFirstLineStyle;
     };
     
-    RenderObjectRareData rareData() const;
+    const RenderObject::RenderObjectRareData& rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
     
-    // Note: RenderObjectRareData is stored by value.
-    typedef HashMap<const RenderObject*, RenderObjectRareData> RareDataHash;
+    typedef HashMap<const RenderObject*, std::unique_ptr<RenderObjectRareData>> RareDataMap;
 
-    static RareDataHash& rareDataMap();
+    static RareDataMap& rareDataMap();
 
 #undef ADD_BOOLEAN_BITFIELD
 };

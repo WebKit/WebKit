@@ -759,7 +759,22 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
                 return true;
         }
     }
-    
+
+    bool hasFirstLineStyle = hasPseudoStyle(FIRST_LINE);
+    if (hasFirstLineStyle != other.hasPseudoStyle(FIRST_LINE))
+        return true;
+    if (hasFirstLineStyle) {
+        auto* firstLineStyle = getCachedPseudoStyle(FIRST_LINE);
+        if (!firstLineStyle)
+            return true;
+        auto* otherFirstLineStyle = other.getCachedPseudoStyle(FIRST_LINE);
+        if (!otherFirstLineStyle)
+            return true;
+        // FIXME: Not all first line style changes actually need layout.
+        if (*firstLineStyle != *otherFirstLineStyle)
+            return true;
+    }
+
     return false;
 }
 

@@ -1,3 +1,15 @@
+2016-11-28  Antti Koivisto  <antti@apple.com>
+
+        Remove FIRST_LINE_INHERITED fake pseudo style
+        https://bugs.webkit.org/show_bug.cgi?id=165071
+
+        Reviewed by Andreas Kling.
+
+        Expand the test case a bit.
+
+        * fast/css/pseudo-cache-stale-expected.html:
+        * fast/css/pseudo-cache-stale.html:
+
 2016-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebCrypto tests are failing.
