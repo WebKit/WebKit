@@ -1,5 +1,26 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in runtime/JSGenericTypedArrayView* files.
+        https://bugs.webkit.org/show_bug.cgi?id=165022
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in runtime/Operations.cpp/h.
         https://bugs.webkit.org/show_bug.cgi?id=165046
 
