@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSScope.h"
 
+#include "Exception.h"
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
@@ -229,19 +230,26 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
         if (++it == end) {
             JSScope* globalScopeExtension = scope->globalObject(vm)->globalScopeExtension();
             if (UNLIKELY(globalScopeExtension)) {
-                if (object->hasProperty(exec, ident))
+                bool hasProperty = object->hasProperty(exec, ident);
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
+                if (hasProperty)
                     return object;
                 JSObject* extensionScopeObject = JSScope::objectAtScope(globalScopeExtension);
-                if (extensionScopeObject->hasProperty(exec, ident))
+                hasProperty = extensionScopeObject->hasProperty(exec, ident);
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
+                if (hasProperty)
                     return extensionScopeObject;
             }
             return object;
         }
 
-        if (object->hasProperty(exec, ident)) {
-            if (!isUnscopable(exec, scope, object, ident))
+        bool hasProperty = object->hasProperty(exec, ident);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        if (hasProperty) {
+            bool unscopable = isUnscopable(exec, scope, object, ident);
+            ASSERT(!throwScope.exception() || !unscopable);
+            if (!unscopable)
                 return object;
-            ASSERT_WITH_MESSAGE_UNUSED(throwScope, !throwScope.exception(), "When an exception occurs, the result of isUnscopable becomes false");
         }
     }
 }
