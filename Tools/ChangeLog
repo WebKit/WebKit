@@ -1,3 +1,26 @@
+2016-11-28  Daniel Bates  <dabates@apple.com>
+
+        Teach webkitpy how to read CSSProperties.json r209001
+        https://bugs.webkit.org/show_bug.cgi?id=165108
+
+        Reviewed by Simon Fraser.
+
+        Fix webkitpy logic so that it can read CSS property names from CSSProperties.json following r209001.
+
+        Following r209001 CSSPropertyNames.in no longer exists as it was replaced with CSSProperties.json.
+        We need to modify the webkitpy machinery that processed CSSPropertyNames.in to process CSSProperties.json.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__): Make self._css_property_file and self._css_property_value_file local
+        variables as it is unnecessary for them to be instance variables. Call read_webkit_prefixed_css_property_list()
+        to read the property names from file CSSProperties.json. Call legacy_read_webkit_prefixed_css_property_list() to
+        read CSS keyword values from CSSValueKeywords.in.
+        (_W3CTestConverter.read_webkit_prefixed_css_property_list): Added.
+        (_W3CTestConverter):
+        (_W3CTestConverter.legacy_read_webkit_prefixed_css_property_list): Renamed from read_webkit_prefixed_css_property_list.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_harnesslinks_conversion): Substitute CSSProperties.json for CSSPropertyNames.in.
+
 2016-11-28  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context

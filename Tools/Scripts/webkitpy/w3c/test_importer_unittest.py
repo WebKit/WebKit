@@ -138,7 +138,7 @@ class TestImporterTest(unittest.TestCase):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
-            '/mock-checkout/Source/WebCore/css/CSSPropertyNames.in': '',
+            '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
             '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
         }
         FAKE_FILES.update(FAKE_REPOSITORY)

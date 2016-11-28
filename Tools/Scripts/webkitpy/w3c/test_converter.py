@@ -27,6 +27,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import json
 import logging
 import re
 
@@ -73,16 +74,16 @@ class _W3CTestConverter(HTMLParser):
         self.convert_test_harness_links = convert_test_harness_links
 
         # These settings might vary between WebKit and Blink
-        self._css_property_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSPropertyNames.in')
-        self._css_property_value_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSValueKeywords.in')
+        css_property_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSProperties.json')
+        css_property_value_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSValueKeywords.in')
 
         self.test_harness_re = re.compile('/resources/testharness')
 
-        self.prefixed_properties = self.read_webkit_prefixed_css_property_list(self._css_property_file)
+        self.prefixed_properties = self.read_webkit_prefixed_css_property_list(css_property_file)
         prop_regex = '([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + ')(\s+:|:)'
         self.prop_re = re.compile(prop_regex)
 
-        self.prefixed_property_values = self.read_webkit_prefixed_css_property_list(self._css_property_value_file)
+        self.prefixed_property_values = self.legacy_read_webkit_prefixed_css_property_list(css_property_value_file)
         prop_value_regex = '(:\s*|^\s*)(' + "|".join(value.replace('-webkit-', '') for value in self.prefixed_property_values) + ')(\s*;|\s*}|\s*$)'
         self.prop_value_re = re.compile(prop_value_regex)
 
@@ -93,6 +94,32 @@ class _W3CTestConverter(HTMLParser):
         return self._filesystem.abspath(self._filesystem.join(self._webkit_root, *comps))
 
     def read_webkit_prefixed_css_property_list(self, file_name):
+        contents = self._filesystem.read_text_file(file_name)
+        if not contents:
+            return []
+        properties = json.loads(contents)['properties']
+        property_names = []
+        for property_name, property_dict in properties.iteritems():
+            property_names.append(property_name)
+            if 'codegen-properties' in property_dict:
+                codegen_options = property_dict['codegen-properties']
+                if 'aliases' in codegen_options:
+                    property_names.extend(codegen_options['aliases'])
+
+        prefixed_properties = []
+        unprefixed_properties = set()
+        for property_name in property_names:
+            # Find properties starting with the -webkit- prefix.
+            match = re.match('-webkit-([\w|-]*)', property_name)
+            if match:
+                prefixed_properties.append(match.group(1))
+            else:
+                unprefixed_properties.add(property_name)
+
+        # Ignore any prefixed properties for which an unprefixed version is supported
+        return [prop for prop in prefixed_properties if prop not in unprefixed_properties]
+
+    def legacy_read_webkit_prefixed_css_property_list(self, file_name):
         contents = self._filesystem.read_text_file(file_name)
         prefixed_properties = []
         unprefixed_properties = set()
