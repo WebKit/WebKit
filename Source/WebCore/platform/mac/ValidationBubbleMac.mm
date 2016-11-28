@@ -51,7 +51,9 @@ ValidationBubble::ValidationBubble(NSView* view, const String& message)
     [label setDrawsBackground:NO];
     [label setBordered:NO];
     [label setStringValue:message];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [label setMaximumNumberOfLines:4];
+#endif
     [popoverView addSubview:label.get()];
     NSSize labelSize = [label sizeThatFits:NSMakeSize(maxLabelWidth, CGFLOAT_MAX)];
     [label setFrame:NSMakeRect(horizontalPadding, verticalPadding, labelSize.width, labelSize.height)];

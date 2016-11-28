@@ -1,3 +1,13 @@
+2016-11-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix crashes on Yosemite after r209009
+
+        NSTextField's maximumNumberOfLines was introduced in ElCapitan so
+        disable it at compile-time on previous OSes for now.
+
+        * platform/mac/ValidationBubbleMac.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2016-11-28  Keith Rollin  <krollin@apple.com>
 
         Unreviewed, rolling out r208607.
