@@ -1,3 +1,15 @@
+2016-11-28  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed, rolling out r208607.
+
+        The actual changes aren't inline with what was requested.
+
+        Reverted changeset:
+
+        "Reduce number of platformMemoryUsage calls"
+        https://bugs.webkit.org/show_bug.cgi?id=164375
+        http://trac.webkit.org/changeset/208607
+
 2016-11-28  Beth Dakin  <bdakin@apple.com>
 
         Blacklist Netflix for TouchBar support
