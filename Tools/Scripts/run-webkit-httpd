@@ -44,6 +44,7 @@ def parse_args(args):
     parser.add_option("-p", "--port", help="Bind to port NNNN", action="store", type="int", dest="http_port")
     parser.add_option("--no-httpd", help="Do not start httpd server", action="store_false", default=True, dest="httpd_server")
     parser.add_option("--no-wpt", help="Do not start web-platform-tests server", action="store_false", default=True, dest="web_platform_test_server")
+    parser.add_option("-D", "--additional-dir", help="Additional directory and alias", action="append", default=[], type="string", nargs=2, dest="additional_dirs")
     return parser.parse_args(args)
 
 def main(argv, stdout, stderr):
@@ -73,7 +74,8 @@ def main(argv, stdout, stderr):
         else:
             print "Starting httpd on <http://127.0.0.1:%s>" % http_port
 
-        port.start_http_server()
+        additionalDirs = {additional_dir[0]: additional_dir[1] for additional_dir in options.additional_dirs}
+        port.start_http_server(additionalDirs)
         port.start_websocket_server()
 
     try:

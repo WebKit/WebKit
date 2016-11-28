@@ -1,3 +1,51 @@
+2016-11-18  Jer Noble  <jer.noble@apple.com>
+
+        Add some performance tests for various aspects of media loading and playback.
+        https://bugs.webkit.org/show_bug.cgi?id=164977
+
+        Reviewed by Darin Adler.
+
+        Add new tests for a few aspects of media playback; namely: how quickly  media elements fire
+        the "canplaythrough" event when all data is immediately available, how quickly HLS playback
+        switches resolutions, and at what playback rate MSE-backed video can play without dropping
+        frames. Skip these tests by default, as they're not runnable on all ports, and they require
+        a webserver (run-webkit-httpd) to complete on macOS.
+
+        * Media/HLSCanPlayThrough.html: Added.
+        * Media/HLSGearChange.html: Added.
+        * Media/MSECanPlayThrough.html: Added.
+        * Media/MSEPlaybackRate.html: Added.
+        * Media/StandardCanPlayThrough.html: Added.
+        * Media/hls/1080p/iframe_index.m3u8: Added.
+        * Media/hls/1080p/prog_index.m3u8: Added.
+        * Media/hls/1080p/test.ts: Added.
+        * Media/hls/480p/iframe_index.m3u8: Added.
+        * Media/hls/480p/prog_index.m3u8: Added.
+        * Media/hls/480p/test.ts: Added.
+        * Media/hls/720p/iframe_index.m3u8: Added.
+        * Media/hls/720p/prog_index.m3u8: Added.
+        * Media/hls/720p/test.ts: Added.
+        * Media/hls/720p/test.ts.back: Added.
+        * Media/hls/index.m3u8: Added.
+        * Media/media-source-loader.js: Added.
+        (MediaSourceLoader):
+        (MediaSourceLoader.prototype.loadManifest):
+        (MediaSourceLoader.prototype.loadManifestSucceeded):
+        (MediaSourceLoader.prototype.loadManifestFailed):
+        (MediaSourceLoader.prototype.loadMediaData):
+        (MediaSourceLoader.prototype.loadMediaDataSucceeded):
+        (MediaSourceLoader.prototype.loadMediaDataFailed):
+        (MediaSourceLoader.prototype.get type):
+        (MediaSourceLoader.prototype.get duration):
+        (MediaSourceLoader.prototype.get initSegment):
+        (MediaSourceLoader.prototype.get mediaSegmentsLength):
+        (MediaSourceLoader.prototype.mediaSegments):
+        (MediaSourceLoader.prototype.get everyMediaSegment):
+        * Media/test-fragmented-video.json: Added.
+        * Media/test-fragmented-video.mp4: Added.
+        * Media/test.mp4: Added.
+        * Skipped:
+
 2016-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be able to run splay in debug mode and earley/raytrace in release mode with no perf regression
