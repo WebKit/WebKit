@@ -83,8 +83,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     JSObject* valueObj = thisValue.toObject(exec);
-    if (!valueObj)
-        return JSValue::encode(JSValue());
+    if (UNLIKELY(!valueObj))
+        return encodedJSValue();
     return JSValue::encode(valueObj);
 }
 
@@ -97,8 +97,9 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
     auto propertyName = exec->argument(0).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSObject* thisObject = thisValue.toObject(exec);
+    ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
-        return JSValue::encode(JSValue());
+        return encodedJSValue();
 
     Structure* structure = thisObject->structure(vm);
     HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
@@ -123,8 +124,9 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     JSObject* thisObj = thisValue.toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
 
     if (!exec->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
@@ -164,6 +166,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
+    scope.release();
     thisObject->methodTable(vm)->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
@@ -191,6 +194,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
+    scope.release();
     thisObject->methodTable(vm)->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
@@ -208,7 +212,9 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    if (thisObject->getPropertySlot(exec, propertyName, slot)) {
+    bool hasProperty = thisObject->getPropertySlot(exec, propertyName, slot);
+    ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
             return getterSetter->isGetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->getter());
@@ -236,7 +242,9 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    if (thisObject->getPropertySlot(exec, propertyName, slot)) {
+    bool hasProperty = thisObject->getPropertySlot(exec, propertyName, slot);
+    ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
             return getterSetter->isSetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->setter());
@@ -278,7 +286,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 2. Let toString be the result of calling the [[Get]] internal method of O passing "toString" as the argument.
-    JSValue toString = object->get(exec, exec->propertyNames().toString);
+    JSValue toString = object->get(exec, vm.propertyNames->toString);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. If IsCallable(toString) is false, throw a TypeError exception.
     CallData callData;
@@ -287,6 +296,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // 4. Return the result of calling the [[Call]] internal method of toString passing O as the this value and no arguments.
+    scope.release();
     return JSValue::encode(call(exec, toString, callType, callData, object, exec->emptyList()));
 }
 
@@ -299,6 +309,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
+    ASSERT(!!scope.exception() == !thisObject);
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
@@ -306,11 +317,12 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (result)
         return JSValue::encode(result);
 
-    PropertyName toStringTagSymbol = exec->propertyNames().toStringTagSymbol;
+    PropertyName toStringTagSymbol = vm.propertyNames->toStringTagSymbol;
+    scope.release();
     return JSValue::encode(thisObject->getPropertySlot(exec, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
         if (found) {
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
-            RETURN_IF_EXCEPTION(scope, JSValue());
+            RETURN_IF_EXCEPTION(scope, { });
             if (stringTag.isString()) {
                 JSRopeString::RopeBuilder ropeBuilder(vm);
                 ropeBuilder.append(vm.smallStrings.objectStringStart());
@@ -323,8 +335,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             }
         }
 
-        String tag = thisObject->methodTable(exec->vm())->toStringName(thisObject, exec);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        String tag = thisObject->methodTable(vm)->toStringName(thisObject, exec);
+        RETURN_IF_EXCEPTION(scope, { });
         String newString = WTF::tryMakeString("[object ", WTFMove(tag), "]");
         if (!newString)
             return throwOutOfMemoryError(exec, scope);

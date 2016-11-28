@@ -1,3 +1,44 @@
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in ObjectConstructor.cpp and ObjectPrototype.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165051
+
+        Reviewed by Saam Barati.
+
+        Also,
+        1. Replaced returning JSValue() with returning { }.
+        2. Replaced uses of exec->propertyNames() with vm.propertyNames.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::ownEnumerablePropertyKeys):
+        (JSC::toPropertyDescriptor):
+        (JSC::defineProperties):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        (JSC::setIntegrityLevel):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::ownPropertyKeys):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+
 2016-11-26  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in miscellaneous files.
