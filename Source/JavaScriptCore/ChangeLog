@@ -1,3 +1,20 @@
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in ReflectObject.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165066
+
+        Reviewed by Saam Barati.
+
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        (JSC::reflectObjectDefineProperty):
+        (JSC::reflectObjectEnumerate):
+        (JSC::reflectObjectGet):
+        (JSC::reflectObjectGetOwnPropertyDescriptor):
+        (JSC::reflectObjectGetPrototypeOf):
+        (JSC::reflectObjectOwnKeys):
+        (JSC::reflectObjectSet):
+
 2016-11-24  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in ArrayConstructor.cpp and ArrayPrototype.cpp.
