@@ -260,6 +260,7 @@ Total elements to be tested: 83.
     childNodeIds.length: 2
     flowedNodeIds.length: 2
     parentNodeId: exists
+    selectedChildNodeIds.length: 1
 
 <div role="option" aria-selected="false">not selected</div>
     exists: true
