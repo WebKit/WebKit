@@ -1,5 +1,28 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in JSTypedArrayViewPrototype.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165049
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncSort):
+        (JSC::typedArrayViewProtoFuncSet):
+        (JSC::typedArrayViewProtoFuncCopyWithin):
+        (JSC::typedArrayViewProtoFuncIncludes):
+        (JSC::typedArrayViewProtoFuncLastIndexOf):
+        (JSC::typedArrayViewProtoFuncIndexOf):
+        (JSC::typedArrayViewProtoFuncJoin):
+        (JSC::typedArrayViewProtoGetterFuncBuffer):
+        (JSC::typedArrayViewProtoGetterFuncLength):
+        (JSC::typedArrayViewProtoGetterFuncByteLength):
+        (JSC::typedArrayViewProtoGetterFuncByteOffset):
+        (JSC::typedArrayViewProtoFuncReverse):
+        (JSC::typedArrayViewPrivateFuncSubarrayCreate):
+        (JSC::typedArrayViewProtoFuncSlice):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in runtime/Map* files.
         https://bugs.webkit.org/show_bug.cgi?id=165050
 

@@ -100,6 +100,7 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->argument(0);
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewPrivateFuncSort);
 }
 
@@ -110,6 +111,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSet(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (UNLIKELY(!thisValue.isObject()))
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSet);
 }
 
@@ -120,6 +122,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncCopyWithin(ExecState*
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin);
 }
 
@@ -130,6 +133,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIncludes(ExecState* e
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMError(exec, scope, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncIncludes);
 }
 
@@ -140,6 +144,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncLastIndexOf(ExecState
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncLastIndexOf);
 }
 
@@ -150,6 +155,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIndexOf(ExecState* ex
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncIndexOf);
 }
 
@@ -160,6 +166,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncJoin(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncJoin);
 }
 
@@ -170,6 +177,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncBuffer(ExecStat
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncBuffer);
 }
 
@@ -180,6 +188,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncLength(ExecStat
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncLength);
 }
 
@@ -190,6 +199,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteLength(Exec
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteLength);
 }
 
@@ -200,6 +210,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteOffset(Exec
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteOffset);
 }
 
@@ -210,6 +221,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncReverse(ExecState* ex
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncReverse);
 }
 
@@ -220,6 +232,7 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(ExecState* 
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewPrivateFuncSubarrayCreate);
 }
 
@@ -230,6 +243,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSlice(ExecState* exec
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view but was not an object"));
+    scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSlice);
 }
 
