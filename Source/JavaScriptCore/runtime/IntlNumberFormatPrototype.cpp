@@ -94,6 +94,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 6. Return FormatNumber(nf, x).
+    scope.release();
     return JSValue::encode(numberFormat->formatNumber(*state, number));
 }
 
@@ -108,8 +109,11 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
-    if (!nf)
-        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+    if (!nf) {
+        JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        nf = jsDynamicCast<IntlNumberFormat*>(value);
+    }
 
     if (!nf)
         return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
@@ -145,12 +149,16 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecSt
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
-    if (!numberFormat)
-        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+    if (!numberFormat) {
+        JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        numberFormat = jsDynamicCast<IntlNumberFormat*>(value);
+    }
 
     if (!numberFormat)
         return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
 
+    scope.release();
     return JSValue::encode(numberFormat->resolvedOptions(*state));
 }
 

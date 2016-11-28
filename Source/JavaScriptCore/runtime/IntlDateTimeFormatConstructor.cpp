@@ -96,6 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state
     ASSERT(dateTimeFormat);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
+    scope.release();
     dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
     return JSValue::encode(dateTimeFormat);
 }
@@ -149,6 +150,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
+    scope.release();
     return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
 }
 

@@ -908,8 +908,10 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
         String availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
 
         // f. If availableLocale is not undefined, then append locale to the end of subset.
-        if (!availableLocale.isNull())
+        if (!availableLocale.isNull()) {
             subset->push(&state, jsString(&state, locale));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
 
         // g. Increment k by 1.
     }

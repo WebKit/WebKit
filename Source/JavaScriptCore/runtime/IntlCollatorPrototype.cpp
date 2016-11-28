@@ -145,6 +145,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(ExecState*
     if (!collator)
         return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator")));
 
+    scope.release();
     return JSValue::encode(collator->resolvedOptions(*state));
 }
 

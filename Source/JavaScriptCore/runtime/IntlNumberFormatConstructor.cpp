@@ -96,6 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* state)
     ASSERT(numberFormat);
 
     // 4. Return InitializeNumberFormat(numberFormat, locales, options).
+    scope.release();
     numberFormat->initializeNumberFormat(*state, state->argument(0), state->argument(1));
     return JSValue::encode(numberFormat);
 }
@@ -149,6 +150,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(E
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
+    scope.release();
     return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
 }
 

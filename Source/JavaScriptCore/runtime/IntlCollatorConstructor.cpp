@@ -96,6 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* state)
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
+    scope.release();
     collator->initializeCollator(*state, state->argument(0), state->argument(1));
     return JSValue::encode(collator);
 }
@@ -148,6 +149,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecS
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
     JSGlobalObject* globalObject = state->callee()->globalObject();
+    scope.release();
     return JSValue::encode(supportedLocales(*state, globalObject->intlCollatorAvailableLocales(), requestedLocales, state->argument(1)));
 }
 
