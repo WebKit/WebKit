@@ -72,7 +72,7 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message)
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
     [label setLineBreakMode:NSLineBreakByWordWrapping];
-    [label setNumberOfLines:0]; // No limit.
+    [label setNumberOfLines:4];
     [popoverView addSubview:label.get()];
 
     CGSize labelSize = [label sizeThatFits:CGSizeMake(maxLabelWidth, CGFLOAT_MAX)];

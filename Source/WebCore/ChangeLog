@@ -1,3 +1,18 @@
+2016-11-28  Chris Dumez  <cdumez@apple.com>
+
+        Limit HTML Form validation popovers to 4 lines
+        https://bugs.webkit.org/show_bug.cgi?id=165098
+        <rdar://problem/29403286>
+
+        Reviewed by Darin Adler.
+
+        Limit HTML Form validation popovers to 4 lines as per recent feedback.
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+        * platform/mac/ValidationBubbleMac.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2016-11-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Filters and Reflections Fixes
