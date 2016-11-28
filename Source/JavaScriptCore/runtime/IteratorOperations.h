@@ -54,7 +54,7 @@ void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& ca
     RETURN_IF_EXCEPTION(scope, void());
     while (true) {
         JSValue next = iteratorStep(exec, iterator);
-        if (next.isFalse() || UNLIKELY(scope.exception()))
+        if (UNLIKELY(scope.exception()) || next.isFalse())
             return;
 
         JSValue nextValue = iteratorValue(exec, next);
@@ -62,6 +62,7 @@ void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& ca
 
         callback(vm, exec, nextValue);
         if (UNLIKELY(scope.exception())) {
+            scope.release();
             iteratorClose(exec, iterator);
             return;
         }

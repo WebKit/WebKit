@@ -1,5 +1,15 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in IteratorOperations.h.
+        https://bugs.webkit.org/show_bug.cgi?id=165015
+
+        Reviewed by Saam Barati.
+
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in JSArray* files.
         https://bugs.webkit.org/show_bug.cgi?id=165016
 
