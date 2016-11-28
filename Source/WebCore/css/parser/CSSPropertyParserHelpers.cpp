@@ -1182,21 +1182,40 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValueWebkitCanvas
         || id == CSSValueCrossFade || id == CSSValueWebkitNamedImage || id == CSSValueWebkitFilter || id == CSSValueFilter;
 }
+    
+static bool isValidPrimitiveFilterFunction(CSSValueID filterFunction)
+{
+    switch (filterFunction) {
+    case CSSValueBlur:
+    case CSSValueBrightness:
+    case CSSValueContrast:
+    case CSSValueDropShadow:
+    case CSSValueGrayscale:
+    case CSSValueHueRotate:
+    case CSSValueInvert:
+    case CSSValueOpacity:
+    case CSSValueSaturate:
+    case CSSValueSepia:
+        return true;
+    default:
+        return false;
+    }
+}
 
 RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID filterType = range.peek().functionId();
-    if (filterType < CSSValueInvert || filterType > CSSValueDropShadow)
+    if (!isValidPrimitiveFilterFunction(filterType))
         return nullptr;
     CSSParserTokenRange args = consumeFunction(range);
-    auto filterValue = CSSFunctionValue::create(filterType);
+    RefPtr<CSSFunctionValue> filterValue = CSSFunctionValue::create(filterType);
     RefPtr<CSSValue> parsedValue;
 
     if (filterType == CSSValueDropShadow)
         parsedValue = consumeSingleShadow(args, context.mode, false, false);
     else {
         if (args.atEnd())
-            return filterValue.ptr();
+            return filterValue;
         if (filterType == CSSValueBrightness) {
             parsedValue = consumePercent(args, ValueRangeAll);
             if (!parsedValue)
@@ -1219,8 +1238,8 @@ RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const
     }
     if (!parsedValue || !args.atEnd())
         return nullptr;
-    filterValue->append(*parsedValue);
-    return filterValue.ptr();
+    filterValue->append(parsedValue.releaseNonNull());
+    return filterValue;
 }
 
 RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContext& context)

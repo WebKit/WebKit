@@ -2620,6 +2620,9 @@ static RefPtr<CSSValue> consumeWebkitBorderImage(CSSPropertyID property, CSSPars
 
 static RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserContext& context)
 {
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    
     RefPtr<CSSPrimitiveValue> direction = consumeIdent<CSSValueAbove, CSSValueBelow, CSSValueLeft, CSSValueRight>(range);
     if (!direction)
         return nullptr;
