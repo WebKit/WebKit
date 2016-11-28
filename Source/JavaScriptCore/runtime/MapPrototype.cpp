@@ -192,12 +192,16 @@ EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(jsDynamicCast<JSMapIterator*>(exec->thisValue()));
     JSMapIterator* iterator = jsCast<JSMapIterator*>(exec->thisValue());
     JSValue key, value;
     if (iterator->nextKeyValue(exec, key, value)) {
         JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
         resultArray->putDirectIndex(exec, 0, key);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        scope.release();
         resultArray->putDirectIndex(exec, 1, value);
         return JSValue::encode(jsBoolean(false));
     }

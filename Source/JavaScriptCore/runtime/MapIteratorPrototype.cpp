@@ -56,8 +56,11 @@ EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(CallFrame* callFrame)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot call MapIterator.next() on a non-MapIterator object")));
 
     JSValue result;
-    if (iterator->next(callFrame, result))
+    if (iterator->next(callFrame, result)) {
+        scope.release();
         return JSValue::encode(createIteratorResultObject(callFrame, result, false));
+    }
+    scope.release();
     return JSValue::encode(createIteratorResultObject(callFrame, jsUndefined(), true));
 }
 

@@ -1,5 +1,19 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in runtime/Map* files.
+        https://bugs.webkit.org/show_bug.cgi?id=165050
+
+        Reviewed by Saam Barati.
+
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototypeFuncNext):
+        * runtime/MapPrototype.cpp:
+        (JSC::privateFuncMapIteratorNext):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in more miscellaneous files.
         https://bugs.webkit.org/show_bug.cgi?id=165102
 
