@@ -209,15 +209,37 @@ private:
         void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
         void insert(RenderBox&, const GridArea&);
 
+        // Note that each in flow child of a grid container becomes a grid item. This means that
+        // this method will return false for a grid container with only out of flow children.
+        bool hasGridItems() const { return !m_gridItemArea.isEmpty(); }
+
+        // FIXME: move this to SizingData once placeItemsOnGrid() takes it as argument.
+        bool hasAnyOrthogonalGridItem() const { return m_hasAnyOrthogonalGridItem; }
+        void setHasAnyOrthogonalGridItem(bool hasAnyOrthogonalGridItem) { m_hasAnyOrthogonalGridItem = hasAnyOrthogonalGridItem; }
+
+        GridArea gridItemArea(const RenderBox& item) const;
+        void setGridItemArea(const RenderBox& item, GridArea);
+
         const GridCell& cell(unsigned row, unsigned column) const { return m_grid[row][column]; }
 
+        int smallestTrackStart(GridTrackSizingDirection) const;
+        void setSmallestTracksStart(int rowStart, int columnStart);
         void shrinkToFit() { m_grid.shrinkToFit(); }
 
         void clear();
 
     private:
         friend class GridIterator;
+
+        int m_smallestColumnStart { 0 };
+        int m_smallestRowStart { 0 };
+
+        bool m_hasAnyOrthogonalGridItem { false };
+
         GridAsMatrix m_grid;
+
+        HashMap<const RenderBox*, GridArea> m_gridItemArea;
+        HashMap<const RenderBox*, size_t> m_gridItemsIndexesMap;
     };
     Grid m_grid;
 
@@ -225,19 +247,13 @@ private:
     Vector<LayoutUnit> m_rowPositions;
     LayoutUnit m_offsetBetweenColumns;
     LayoutUnit m_offsetBetweenRows;
-    HashMap<const RenderBox*, GridArea> m_gridItemArea;
     OrderIterator m_orderIterator;
 
     std::optional<LayoutUnit> m_minContentHeight;
     std::optional<LayoutUnit> m_maxContentHeight;
 
-    int m_smallestColumnStart;
-    int m_smallestRowStart;
-
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
-
-    bool m_hasAnyOrthogonalChild;
 
     bool m_gridIsDirty { true };
 

@@ -1,3 +1,44 @@
+2016-11-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Move attributes from RenderGrid to the new Grid class
+        https://bugs.webkit.org/show_bug.cgi?id=165065
+
+        Reviewed by Darin Adler.
+
+        A new class called Grid was added in 208973. This is the first of a couple of patches moving
+        private attributes from RenderGrid to Grid.
+
+        Apart from that this is adding a couple of new helper functions that will decouple the
+        existence of in-flow items from the actual data structures storing that information.
+
+        Last but not least, the Grid::insert() method does not only insert the item in the m_grid
+        data structure, but also stores the GridArea associated to that item, so there is no need to
+        do it in two different calls.
+
+        No new tests required as this is a refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::Grid::insert): Added a new parameter.
+        (WebCore::RenderGrid::Grid::setSmallestTracksStart):
+        (WebCore::RenderGrid::Grid::smallestTrackStart):
+        (WebCore::RenderGrid::Grid::gridItemArea):
+        (WebCore::RenderGrid::Grid::setGridItemArea):
+        (WebCore::RenderGrid::Grid::clear): Clear the newly added attributes.
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::rawGridTrackSize):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::clearGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::cachedGridSpan):
+        (WebCore::RenderGrid::cachedGridArea): Deleted.
+        * rendering/RenderGrid.h:
+
 2016-11-27  Sam Weinig  <sam@webkit.org>
 
         Remove unused DOMRequestState
