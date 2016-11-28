@@ -814,7 +814,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             return asString(baseValue)->getIndex(exec, i);
-        
+        scope.release();
         return baseValue.get(exec, i);
     }
 
@@ -822,6 +822,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
     RETURN_IF_EXCEPTION(scope, JSValue());
     auto property = subscript.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, JSValue());
+    scope.release();
     return baseValue.get(exec, property);
 }
 
@@ -1306,7 +1307,8 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
         JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        if (error)
+        ASSERT(throwScope.exception() == error);
+        if (UNLIKELY(error))
             LLINT_CALL_THROW(exec, error);
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
@@ -1446,6 +1448,7 @@ inline SlowPathReturnType varargsSetup(ExecState* exec, Instruction* pc, CodeSpe
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     exec->setCurrentVPC(pc);
 
+    throwScope.release();
     return setUpCall(execCallee, pc, kind, calleeAsValue);
 }
 
@@ -1479,8 +1482,10 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
     
-    if (!isHostFunction(calleeAsValue, globalFuncEval))
+    if (!isHostFunction(calleeAsValue, globalFuncEval)) {
+        throwScope.release();
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
+    }
     
     vm.hostCallReturnValue = eval(execCallee);
     LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
@@ -1585,6 +1590,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     }
 
     bool hasProperty = scope->hasProperty(exec, ident);
+    LLINT_CHECK_EXCEPTION();
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
         && !isInitialization(getPutInfo.initializationMode())) {
