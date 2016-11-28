@@ -1,3 +1,16 @@
+2016-11-28  Beth Dakin  <bdakin@apple.com>
+
+        Blacklist Netflix for TouchBar support
+        https://bugs.webkit.org/show_bug.cgi?id=165104
+        -and corresponding-
+        rdar://problem/29404778
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsPlaybackControlsManagerQuirk):
+        (WebCore::HTMLMediaElement::updatePlaybackControlsManager):
+
 2016-11-28  Chris Dumez  <cdumez@apple.com>
 
         Limit HTML Form validation popovers to 4 lines
