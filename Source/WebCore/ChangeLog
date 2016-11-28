@@ -1,3 +1,16 @@
+2016-11-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-animation-trigger
+        https://bugs.webkit.org/show_bug.cgi?id=165095
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitAnimationTrigger):
+        (WebCore::consumeAnimationValue):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-11-28  Antti Koivisto  <antti@apple.com>
 
         Remove FIRST_LINE_INHERITED fake pseudo style

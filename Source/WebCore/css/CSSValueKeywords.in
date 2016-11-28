@@ -1150,6 +1150,7 @@ isolate
 scale-down
 
 // background-image, etc.
+container-scroll
 cross-fade
 image-set
 linear-gradient

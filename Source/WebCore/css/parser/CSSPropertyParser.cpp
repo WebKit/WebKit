@@ -30,6 +30,9 @@
 #include "config.h"
 #include "CSSPropertyParser.h"
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+#include "CSSAnimationTriggerScrollValue.h"
+#endif
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
@@ -1315,6 +1318,40 @@ static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& rang
     return nullptr;
 }
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+static RefPtr<CSSValue> consumeWebkitAnimationTrigger(CSSParserTokenRange& range, CSSParserMode mode)
+{
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
+    
+    if (range.peek().functionId() != CSSValueContainerScroll)
+        return nullptr;
+    
+    CSSParserTokenRange rangeCopy = range;
+    CSSParserTokenRange args = consumeFunction(rangeCopy);
+
+    RefPtr<CSSPrimitiveValue> startValue = consumeLength(args, mode, ValueRangeAll, UnitlessQuirk::Forbid);
+    if (!startValue)
+        return nullptr;
+    
+    if (args.atEnd()) {
+        range = rangeCopy;
+        return CSSAnimationTriggerScrollValue::create(startValue.releaseNonNull());
+    }
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return nullptr;
+
+    RefPtr<CSSPrimitiveValue> endValue = consumeLength(args, mode, ValueRangeAll, UnitlessQuirk::Forbid);
+    if (!endValue || !args.atEnd())
+        return nullptr;
+
+    range = rangeCopy;
+
+    return CSSAnimationTriggerScrollValue::create(startValue.releaseNonNull(), endValue.releaseNonNull());
+}
+#endif
+    
 static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     switch (property) {
@@ -1339,6 +1376,10 @@ static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserT
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
         return consumeAnimationTimingFunction(range, context);
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    case CSSPropertyWebkitAnimationTrigger:
+        return consumeWebkitAnimationTrigger(range, context.mode);
+#endif
     default:
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -3563,6 +3604,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyTransitionProperty:
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    case CSSPropertyWebkitAnimationTrigger:
+#endif
         return consumeAnimationPropertyList(property, m_range, m_context);
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridColumnGap:
