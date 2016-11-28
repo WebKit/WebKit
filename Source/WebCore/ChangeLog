@@ -1,3 +1,13 @@
+2016-11-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] flex-basis should be pixel units not percentages.
+        https://bugs.webkit.org/show_bug.cgi?id=165100
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeFlex):
+
 2016-11-28  Daniel Bates  <dabates@apple.com>
 
         Replace CSSPropertyNames.in with a JSON file

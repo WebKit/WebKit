@@ -4380,7 +4380,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
         if (flexShrink == unsetValue)
             flexShrink = 1;
         if (!flexBasis)
-            flexBasis = CSSPrimitiveValue::create(0, CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE);
+            flexBasis = CSSPrimitiveValue::create(0, CSSPrimitiveValue::UnitTypes::CSS_PX);
     }
 
     if (!m_range.atEnd())
