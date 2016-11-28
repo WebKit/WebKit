@@ -1,3 +1,36 @@
+2016-11-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix bugs in the @supports parser
+        https://bugs.webkit.org/show_bug.cgi?id=165115
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        Clean up the display property to match the old parser to ensure
+        that @supports conditions on display are the same.
+
+        * css/parser/CSSSupportsParser.cpp:
+        (WebCore::CSSSupportsParser::consumeCondition):
+        (WebCore::CSSSupportsParser::consumeNegation):
+        (WebCore::CSSSupportsParser::consumeConditionInParenthesis):
+        * css/parser/CSSSupportsParser.h:
+        What follows are all bugs in Blink that need to be fixed to pass our
+        tests.
+
+        Fix the supports parser to allow the whitespace after not/or/and to
+        be optional. Allow the whitespace following parenthetical conditions
+        to be optional.
+
+        With whitespace being optional, this means that "not(" will parse
+        as a FunctionToken type, as will "or(" and "and(". Handle this situation
+        by checking for FunctionToken along with IdentToken and parameterizing
+        consumeConditionInParenthesis to do the right thing when it starts with
+        a FunctionToken instead of an IdentToken.
+
+        Fix the general enclosure FunctionToken for forward compatibility to require that
+        the function still be enclosed within parentheses.
+
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in ObjectConstructor.cpp and ObjectPrototype.cpp.
