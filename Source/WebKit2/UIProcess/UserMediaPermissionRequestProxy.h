@@ -25,15 +25,19 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
 class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs)
     {
-        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, videoDeviceUIDs, audioDeviceUIDs));
+        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, videoDeviceUIDs, audioDeviceUIDs));
     }
 
     void allow(const String& videoDeviceUID, const String& audioDeviceUID);
@@ -49,11 +53,18 @@ public:
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
 
+    uint64_t frameID() const { return m_frameID; }
+    WebCore::SecurityOrigin* userMediaDocumentSecurityOrigin() { return &m_userMediaDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin* topLevelDocumentSecurityOrigin() { return &m_topLevelDocumentSecurityOrigin.get(); }
+
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t frameID, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
+    uint64_t m_frameID;
+    Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
+    Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;
 };

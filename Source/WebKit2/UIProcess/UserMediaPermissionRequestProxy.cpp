@@ -22,13 +22,20 @@
 
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
     : m_manager(&manager)
     , m_userMediaID(userMediaID)
+    , m_frameID(frameID)
+    , m_userMediaDocumentSecurityOrigin((SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier)->securityOrigin()))
+    , m_topLevelDocumentSecurityOrigin(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier)->securityOrigin())
     , m_videoDeviceUIDs(videoDeviceUIDs)
     , m_audioDeviceUIDs(audioDeviceUIDs)
 {

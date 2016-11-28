@@ -1,3 +1,38 @@
+2016-11-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=164760
+        <rdar://problem/29261266>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::FrameAuthorizationState::FrameAuthorizationState):
+        (WebKit::FrameAuthorizationState::hasPermissionToUseCaptureDevice):
+        (WebKit::FrameAuthorizationState::setHasPermissionToUseCaptureDevice):
+        (WebKit::FrameAuthorizationState::reset):
+        (WebKit::FrameAuthorizationState::securityOriginsAreEqual):
+        (WebKit::UserMediaPermissionRequestManagerProxy::stateForRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::invalidateRequests):
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::FrameAuthorizationState::~FrameAuthorizationState):
+        (WebKit::FrameAuthorizationState::frameID):
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::frameID):
+        (WebKit::UserMediaPermissionRequestProxy::userMediaDocumentSecurityOrigin):
+        (WebKit::UserMediaPermissionRequestProxy::topLevelDocumentSecurityOrigin):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::removeMediaRequestFromMaps):
+
 2016-11-27  Dean Jackson  <dino@apple.com>
 
         Removed a WTFLogAlways I left in with a recent commit.
