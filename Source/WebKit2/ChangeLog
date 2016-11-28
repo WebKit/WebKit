@@ -1,3 +1,48 @@
+2016-11-28  Andrew Gold  <agold@apple.com>
+
+        Support for HTML Media Capture API
+        https://bugs.webkit.org/show_bug.cgi?id=43239
+
+        Reviewed by Tim Horton.
+
+        In order to enable media capture on iOS, we must first use the AVFoundation API to 
+        check/request capture permission from the user for Safari. Then, Safari must request
+        permission on behalf of the webpage to use the capture devices. Additionally, Safari
+        must present UI when the capture is taking place, so WebKit needs to notify the client
+        of a capture session beginning and ending. To do this, we added four methods to 
+        WKUIDelegatePrivate to request permission from the user, check for permissions, notify
+        that a capture session has begun, and notify that a capture session has ended. Additionally,
+        we added a private method to WKWebView that allows the client to stop a capture session.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didBeginCaptureSession): Notifies the client of a capture session beginning.
+        (API::UIClient::didEndCaptureSession): Notifies the client of a capture session ending.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Added new delegate methods to request permission,
+        check for permission, notify of a capture session beginning, and notify of a capture session
+        ending.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _stopMediaCapture]): Cancels a media capture session.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Added the new delegate methods.
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        First checks if the user has authorized the client application access capture devices,
+        then uses the WKUIDelegate to request permission for a site from the user.
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin): Checks the client
+        for permission to access capture devices.
+        (WebKit::UIDelegate::UIClient::didBeginCaptureSession): Notifies the client of a capture
+        session beginning.
+        (WebKit::UIDelegate::UIClient::didEndCaptureSession): Notifies the client of a capture
+        session ending.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Calls UIDelegate method to notify the
+        client of a capture session beginning/ending.
+
 2016-11-28  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context

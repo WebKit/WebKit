@@ -258,6 +258,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, setter=_setFullscreenDelegate:) id<_WKFullscreenDelegate> _fullscreenDelegate WK_API_AVAILABLE(macosx(10.13));
 @property (nonatomic, readonly) BOOL _isInFullscreen WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
+- (void)_stopMediaCapture;
+
 @end
 
 #if !TARGET_OS_IPHONE

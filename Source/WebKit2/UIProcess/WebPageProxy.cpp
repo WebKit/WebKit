@@ -6409,6 +6409,13 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     if (state == m_mediaState)
         return;
 
+    WebCore::MediaProducer::MediaStateFlags oldMediaStateHasActiveCapture = m_mediaState & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
+    WebCore::MediaProducer::MediaStateFlags newMediaStateHasActiveCapture = state & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
+    if (!oldMediaStateHasActiveCapture && newMediaStateHasActiveCapture)
+        m_uiClient->didBeginCaptureSession();
+    if (oldMediaStateHasActiveCapture && !newMediaStateHasActiveCapture)
+        m_uiClient->didEndCaptureSession();
+
     MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
