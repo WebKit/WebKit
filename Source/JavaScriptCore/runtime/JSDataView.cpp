@@ -126,13 +126,16 @@ bool JSDataView::put(
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
+        scope.release();
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+    }
 
     if (propertyName == vm.propertyNames->byteLength
         || propertyName == vm.propertyNames->byteOffset)
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to read-only typed array property."));
 
+    scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
