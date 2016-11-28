@@ -65,7 +65,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(weakSet);
 
-    JSValue adderFunction = weakSet->JSObject::get(exec, exec->propertyNames().add);
+    JSValue adderFunction = weakSet->JSObject::get(exec, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
@@ -73,6 +73,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     if (adderFunctionCallType == CallType::None)
         return JSValue::encode(throwTypeError(exec, scope));
 
+    scope.release();
     forEachInIterable(exec, iterable, [&](VM&, ExecState* exec, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
