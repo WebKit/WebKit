@@ -149,6 +149,9 @@ void ArrayPrototype::destroy(JSC::JSCell* cell)
 
 static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsigned index)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
     if (JSValue result = object->tryGetIndexQuickly(index))
         return result;
     // We want to perform get and has in the same operation.
@@ -156,17 +159,22 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     // only time it is observable is when we encounter an opaque objects (ProxyObject and JSModuleNamespaceObject)
     // somewhere in the prototype chain.
     PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
-    if (!object->getPropertySlot(exec, index, slot))
-        return JSValue();
-    if (UNLIKELY(slot.isTaintedByOpaqueObject()))
+    bool hasProperty = object->getPropertySlot(exec, index, slot);
+    ASSERT(!scope.exception() || !hasProperty);
+    if (!hasProperty)
+        return { };
+    if (UNLIKELY(slot.isTaintedByOpaqueObject())) {
+        scope.release();
         return object->get(exec, index);
+    }
+    scope.release();
     return slot.getValue(exec, index);
 }
 
 static ALWAYS_INLINE bool putLength(ExecState* exec, VM& vm, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
-    return obj->methodTable()->put(obj, exec, vm.propertyNames->length, value, slot);
+    return obj->methodTable(vm)->put(obj, exec, vm.propertyNames->length, value, slot);
 }
 
 static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsigned value)
@@ -185,10 +193,15 @@ static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsi
 
 inline bool speciesWatchpointsValid(ExecState* exec, JSObject* thisObject)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ArrayPrototype* arrayPrototype = thisObject->globalObject()->arrayPrototype();
     ArrayPrototype::SpeciesWatchpointStatus status = arrayPrototype->speciesWatchpointStatus();
-    if (UNLIKELY(status == ArrayPrototype::SpeciesWatchpointStatus::Uninitialized))
+    if (UNLIKELY(status == ArrayPrototype::SpeciesWatchpointStatus::Uninitialized)) {
         status = arrayPrototype->attemptToInitializeSpeciesWatchpoint(exec);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
     ASSERT(status != ArrayPrototype::SpeciesWatchpointStatus::Uninitialized);
     return !thisObject->hasCustomProperties()
         && arrayPrototype == thisObject->getPrototypeDirect()
@@ -212,13 +225,17 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
 
     // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
     JSValue constructor = jsUndefined();
-    if (LIKELY(isArray(exec, thisObject))) {
+    bool thisIsArray = isArray(exec, thisObject);
+    RETURN_IF_EXCEPTION(scope, exceptionResult());
+    if (LIKELY(thisIsArray)) {
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
-        if (LIKELY(speciesWatchpointsValid(exec, thisObject)))
+        bool isValid = speciesWatchpointsValid(exec, thisObject);
+        RETURN_IF_EXCEPTION(scope, exceptionResult());
+        if (LIKELY(isValid))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
-        constructor = thisObject->get(exec, exec->propertyNames().constructor);
+        constructor = thisObject->get(exec, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, exceptionResult());
         if (constructor.isConstructor()) {
             JSObject* constructorObject = jsCast<JSObject*>(constructor);
@@ -226,7 +243,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
         }
         if (constructor.isObject()) {
-            constructor = constructor.get(exec, exec->propertyNames().speciesSymbol);
+            constructor = constructor.get(exec, vm.propertyNames->speciesSymbol);
             RETURN_IF_EXCEPTION(scope, exceptionResult());
             if (constructor.isNull())
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
@@ -294,17 +311,24 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
     for (unsigned k = header; k < length - currentCount; ++k) {
         unsigned from = k + currentCount;
         unsigned to = k + resultCount;
-        if (JSValue value = getProperty(exec, thisObj, from)) {
-            RETURN_IF_EXCEPTION(scope, void());
+        JSValue value = getProperty(exec, thisObj, from);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (value) {
             thisObj->putByIndexInline(exec, to, value, true);
             RETURN_IF_EXCEPTION(scope, void());
-        } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
-            return;
+        } else {
+            bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (!success) {
+                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                return;
+            }
         }
     }
     for (unsigned k = length; k > length - count; --k) {
-        if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, k - 1)) {
+        bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, k - 1);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!success) {
             throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return;
         }
@@ -331,21 +355,30 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
 
     if (isJSArray(thisObj)) {
         JSArray* array = asArray(thisObj);
-        if (array->length() == length && array->unshiftCount<shiftCountMode>(exec, header, count))
-            return;
+        if (array->length() == length) {
+            bool handled = array->unshiftCount<shiftCountMode>(exec, header, count);
+            ASSERT(!scope.exception() || handled);
+            if (handled)
+                return;
+        }
     }
 
     for (unsigned k = length - currentCount; k > header; --k) {
         unsigned from = k + currentCount - 1;
         unsigned to = k + resultCount - 1;
-        if (JSValue value = getProperty(exec, thisObj, from)) {
-            RETURN_IF_EXCEPTION(scope, void());
-            thisObj->putByIndexInline(exec, to, value, true);
-        } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
-            return;
-        }
+        JSValue value = getProperty(exec, thisObj, from);
         RETURN_IF_EXCEPTION(scope, void());
+        if (value) {
+            thisObj->putByIndexInline(exec, to, value, true);
+            RETURN_IF_EXCEPTION(scope, void());
+        } else {
+            bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (UNLIKELY(!success)) {
+                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                return;
+            }
+        }
     }
 }
 
@@ -360,7 +393,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
-    JSValue function = JSValue(thisObject).get(exec, exec->propertyNames().join);
+    JSValue function = JSValue(thisObject).get(exec, vm.propertyNames->join);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
@@ -378,8 +411,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     }
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
-    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
+    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin) {
+        scope.release();
         return JSValue::encode(call(exec, function, callType, callData, thisObject, exec->emptyList()));
+    }
 
     ASSERT(isJSArray(thisValue));
     JSArray* thisArray = asArray(thisValue);
@@ -387,6 +422,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     unsigned length = thisArray->length();
 
     StringRecursionChecker checker(exec, thisArray);
+    ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -403,6 +439,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
+    scope.release();
     return JSValue::encode(joiner.join(*exec));
 }
 
@@ -419,6 +456,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     StringRecursionChecker checker(exec, thisObject);
+    ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -433,7 +471,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         if (element.isUndefinedOrNull())
             element = jsEmptyString(exec);
         else {
-            JSValue conversionFunction = element.get(exec, exec->propertyNames().toLocaleString);
+            JSValue conversionFunction = element.get(exec, vm.propertyNames->toLocaleString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             CallData callData;
             CallType callType = getCallData(conversionFunction, callData);
@@ -451,7 +489,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (element.isUndefinedOrNull())
             continue;
-        JSValue conversionFunction = element.get(exec, exec->propertyNames().toLocaleString);
+        JSValue conversionFunction = element.get(exec, vm.propertyNames->toLocaleString);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         CallData callData;
         CallType callType = getCallData(conversionFunction, callData);
@@ -464,6 +502,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     }
 #endif // !ENABLE(INTL)
 
+    scope.release();
     return JSValue::encode(stringJoiner.join(*exec));
 }
 
@@ -503,7 +542,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
 
     // 6. Let element0 be Get(O, "0").
     JSValue element0 = thisObject->getIndex(&exec, 0);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     // 7. If element0 is undefined or null, let R be the empty String; otherwise, let R be ? ToString(element0).
     JSString* r = nullptr;
@@ -511,7 +550,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
         r = jsEmptyString(&exec);
     else
         r = element0.toString(&exec);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     // 8. Let k be 1.
     // 9. Repeat, while k < len
@@ -519,7 +558,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
     for (uint64_t k = 1; k < length; ++k) {
         // b. Let element be ? Get(O, ! ToString(k)).
         JSValue element = thisObject->get(&exec, Identifier::fromString(&exec, AtomicString::number(k)));
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
 
         // c. If element is undefined or null, let next be the empty String; otherwise, let next be ? ToString(element).
         JSString* next = nullptr;
@@ -529,12 +568,12 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
             next = jsEmptyString(&exec);
         } else
             next = element.toString(&exec);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
 
         // a. Let S be the String value produced by concatenating R and sep.
         // d. Let R be a String value produced by concatenating S and next.
         r = jsString(&exec, r, separator, next);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
     }
     // 10. Return R.
     return r;
@@ -565,7 +604,7 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
         if (length > butterfly.publicLength())
             break;
         JSStringJoiner joiner(state, separator, length);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         auto data = butterfly.contiguous().data();
         bool holesKnownToBeOK = false;
         for (unsigned i = 0; i < length; ++i) {
@@ -581,6 +620,7 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
                 joiner.appendEmptyString();
             }
         }
+        scope.release();
         return joiner.join(state);
     }
     case ALL_DOUBLE_INDEXING_TYPES: {
@@ -588,7 +628,7 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
         if (length > butterfly.publicLength())
             break;
         JSStringJoiner joiner(state, separator, length);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         auto data = butterfly.contiguousDouble().data();
         bool holesKnownToBeOK = false;
         for (unsigned i = 0; i < length; ++i) {
@@ -604,19 +644,21 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
                 joiner.appendEmptyString();
             }
         }
+        scope.release();
         return joiner.join(state);
     }
     }
 
 generalCase:
     JSStringJoiner joiner(state, separator, length);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < length; ++i) {
         JSValue element = thisObject->getIndex(&state, i);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         joiner.append(state, element);
-        RETURN_IF_EXCEPTION(scope, JSValue());
+        RETURN_IF_EXCEPTION(scope, { });
     }
+    scope.release();
     return joiner.join(state);
 }
 
@@ -627,10 +669,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
     // 1. Let O be ? ToObject(this value).
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObject)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObject);
+    if (UNLIKELY(!thisObject))
+        return encodedJSValue();
 
     StringRecursionChecker checker(exec, thisObject);
+    ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -649,11 +693,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
             JSString* jsSeparator = jsSingleCharacterString(exec, comma);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+            scope.release();
             return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
         }
 
         unsigned unsignedLength = static_cast<unsigned>(length);
         ASSERT(static_cast<double>(unsignedLength) == length);
+
+        scope.release();
         return JSValue::encode(fastJoin(*exec, thisObject, { &comma, 1 }, unsignedLength));
     }
 
@@ -664,6 +711,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
         uint64_t length64 = static_cast<uint64_t>(length);
         ASSERT(static_cast<double>(length64) == length);
+
+        scope.release();
         return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
     }
 
@@ -681,28 +730,34 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
 
-    if (isJSArray(thisValue))
+    if (isJSArray(thisValue)) {
+        scope.release();
         return JSValue::encode(asArray(thisValue)->pop(exec));
+    }
 
     JSObject* thisObj = thisValue.toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue result;
     if (length == 0) {
+        scope.release();
         putLength(exec, vm, thisObj, jsNumber(length));
-        result = jsUndefined();
-    } else {
-        result = thisObj->get(exec, length - 1);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, length - 1)) {
-            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
-            return JSValue::encode(jsUndefined());
-        }
-        putLength(exec, vm, thisObj, jsNumber(length - 1));
+        return JSValue::encode(jsUndefined());
     }
+
+    JSValue result = thisObj->get(exec, length - 1);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, length - 1);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (UNLIKELY(!success)) {
+        throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+        return encodedJSValue();
+    }
+    scope.release();
+    putLength(exec, vm, thisObj, jsNumber(length - 1));
     return JSValue::encode(result);
 }
 
@@ -714,29 +769,32 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
 
     if (isJSArray(thisValue) && exec->argumentCount() == 1) {
         JSArray* array = asArray(thisValue);
+        scope.release();
         array->push(exec, exec->uncheckedArgument(0));
         return JSValue::encode(jsNumber(array->length()));
     }
     
     JSObject* thisObj = thisValue.toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     for (unsigned n = 0; n < exec->argumentCount(); n++) {
         // Check for integer overflow; where safe we can do a fast put by index.
         if (length + n >= length)
-            thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
+            thisObj->methodTable(vm)->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
         else {
             PutPropertySlot slot(thisObj);
             Identifier propertyName = Identifier::fromString(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
-            thisObj->methodTable()->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
+            thisObj->methodTable(vm)->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(exec->argumentCount()));
+    scope.release();
     putLength(exec, vm, thisObj, newLength);
     return JSValue::encode(newLength);
 }
@@ -747,8 +805,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObject)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObject);
+    if (UNLIKELY(!thisObject))
+        return encodedJSValue();
 
     unsigned length = getLength(exec, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -809,19 +868,25 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (upperExists) {
             thisObject->putByIndexInline(exec, lower, upperValue, true);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower)) {
-            if (!scope.exception())
+        } else {
+            bool success = thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (UNLIKELY(!success)) {
                 throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
-            return JSValue::encode(JSValue());
+                return encodedJSValue();
+            }
         }
 
         if (lowerExists) {
             thisObject->putByIndexInline(exec, upper, lowerValue, true);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper)) {
-            if (!scope.exception())
+        } else {
+            bool success = thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (UNLIKELY(!success)) {
                 throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
-            return JSValue::encode(JSValue());
+                return encodedJSValue();
+            }
         }
     }
     return JSValue::encode(thisObject);
@@ -832,21 +897,24 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue result;
     if (length == 0) {
+        scope.release();
         putLength(exec, vm, thisObj, jsNumber(length));
-        result = jsUndefined();
-    } else {
-        result = thisObj->getIndex(exec, 0);
-        shift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 1, 0, length);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        putLength(exec, vm, thisObj, jsNumber(length - 1));
+        return JSValue::encode(jsUndefined());
     }
+
+    JSValue result = thisObj->getIndex(exec, 0);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    shift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 1, 0, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
+    putLength(exec, vm, thisObj, jsNumber(length - 1));
     return JSValue::encode(result);
 }
 
@@ -856,20 +924,26 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, end - begin);
     // We can only get an exception if we call some user function.
+    ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
-        return JSValue::encode(jsUndefined());
+        return encodedJSValue();
 
-    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))) {
+    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (LIKELY(okToDoFastPath)) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
             return JSValue::encode(result);
     }
@@ -886,8 +960,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     for (unsigned k = begin; k < end; k++, n++) {
         JSValue v = getProperty(exec, thisObj, k);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (v)
+        if (v) {
             result->putDirectIndex(exec, n, v, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        }
     }
     scope.release();
     setLength(exec, vm, result, n);
@@ -902,15 +978,17 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (!exec->argumentCount()) {
         std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, 0);
-        if (speciesResult.first == SpeciesConstructResult::Exception)
-            return JSValue::encode(jsUndefined());
+        ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+        if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
+            return encodedJSValue();
 
         JSObject* result;
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)
@@ -928,10 +1006,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     }
 
     unsigned actualStart = argumentClampedIndexFromStartOrEnd(exec, 0, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned actualDeleteCount = length - actualStart;
     if (exec->argumentCount() > 1) {
         double deleteCount = exec->uncheckedArgument(1).toInteger(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (deleteCount < 0)
             actualDeleteCount = 0;
         else if (deleteCount > length - actualStart)
@@ -941,11 +1021,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     }
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, actualDeleteCount);
+    ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (speciesResult.first == SpeciesConstructResult::Exception)
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))
+    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (LIKELY(okToDoFastPath))
         result = asArray(thisObj)->fastSlice(*exec, actualStart, actualDeleteCount);
 
     if (!result) {
@@ -1000,8 +1083,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     // 15.4.4.13
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -1015,6 +1099,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     JSValue result = jsNumber(length + nrArgs);
+    scope.release();
     putLength(exec, vm, thisObj, result);
     return JSValue::encode(result);
 }
@@ -1026,8 +1111,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
 
     // 15.4.4.14
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -1053,10 +1139,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 
     // 15.4.4.15
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    if (!thisObj)
-        return JSValue::encode(JSValue());
+    ASSERT(!!scope.exception() == !thisObj);
+    if (UNLIKELY(!thisObj))
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
-    if (!length)
+    if (UNLIKELY(scope.exception()) || !length)
         return JSValue::encode(jsNumber(-1));
 
     unsigned index = length - 1;
@@ -1131,13 +1218,16 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     if (!result)
         return JSValue::encode(throwOutOfMemoryError(exec, scope));
 
-    if (!result->appendMemcpy(exec, vm, 0, first)) {
-        if (!moveElements(exec, vm, result, 0, first, firstArraySize)) {
-            ASSERT(scope.exception());
-            return JSValue::encode(JSValue());
-        }
+    bool success = result->appendMemcpy(exec, vm, 0, first);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (!success) {
+        bool success = moveElements(exec, vm, result, 0, first, firstArraySize);
+        ASSERT(!scope.exception() == success);
+        if (UNLIKELY(!success))
+            return encodedJSValue();
     }
 
+    scope.release();
     result->putDirectIndex(exec, firstArraySize, second);
     return JSValue::encode(result);
 
@@ -1159,12 +1249,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(jsNull());
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    if (UNLIKELY(!speciesWatchpointsValid(exec, firstArray)))
+    bool isValid = speciesWatchpointsValid(exec, firstArray);
+    ASSERT(!scope.exception() || !isValid);
+    if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
 
     JSValue second = exec->uncheckedArgument(1);
-    if (!isJSArray(second))
+    if (!isJSArray(second)) {
+        scope.release();
         return concatAppendOne(exec, vm, firstArray, second);
+    }
 
     JSArray* secondArray = jsCast<JSArray*>(second);
     
@@ -1180,11 +1274,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         JSArray* result = constructEmptyArray(exec, nullptr, firstArraySize + secondArraySize);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        if (!moveElements(exec, vm, result, 0, firstArray, firstArraySize)
-            || !moveElements(exec, vm, result, firstArraySize, secondArray, secondArraySize)) {
-            ASSERT(scope.exception());
-            return JSValue::encode(JSValue());
-        }
+        bool success = moveElements(exec, vm, result, 0, firstArray, firstArraySize);
+        ASSERT(!scope.exception() == success);
+        if (UNLIKELY(!success))
+            return encodedJSValue();
+        success = moveElements(exec, vm, result, firstArraySize, secondArray, secondArraySize);
+        ASSERT(!scope.exception() == success);
+        if (UNLIKELY(!success))
+            return encodedJSValue();
 
         return JSValue::encode(result);
     }
@@ -1250,6 +1347,7 @@ ArrayPrototype::SpeciesWatchpointStatus ArrayPrototype::attemptToInitializeSpeci
     ASSERT(m_speciesWatchpointStatus == SpeciesWatchpointStatus::Uninitialized);
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (verbose)
         dataLog("Attempting to initialize Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
@@ -1267,7 +1365,8 @@ ArrayPrototype::SpeciesWatchpointStatus ArrayPrototype::attemptToInitializeSpeci
 
     PropertySlot constructorSlot(this, PropertySlot::InternalMethodType::VMInquiry);
     JSValue(this).get(exec, vm.propertyNames->constructor, constructorSlot);
-    if (constructorSlot.slotBase() != this
+    if (UNLIKELY(scope.exception())
+        || constructorSlot.slotBase() != this
         || !constructorSlot.isCacheableValue()
         || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor)
         return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
@@ -1278,7 +1377,8 @@ ArrayPrototype::SpeciesWatchpointStatus ArrayPrototype::attemptToInitializeSpeci
 
     PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
     JSValue(arrayConstructor).get(exec, vm.propertyNames->speciesSymbol, speciesSlot);
-    if (speciesSlot.slotBase() != arrayConstructor
+    if (UNLIKELY(scope.exception())
+        || speciesSlot.slotBase() != arrayConstructor
         || !speciesSlot.isCacheableGetter()
         || speciesSlot.getterSetter() != globalObject->speciesGetterSetter())
         return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;

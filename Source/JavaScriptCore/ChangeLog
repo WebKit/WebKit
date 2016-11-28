@@ -1,3 +1,37 @@
+2016-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in ArrayConstructor.cpp and ArrayPrototype.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164972
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        (JSC::putLength):
+        (JSC::speciesWatchpointsValid):
+        (JSC::speciesConstructArray):
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::slowJoin):
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::ArrayPrototype::attemptToInitializeSpeciesWatchpoint):
+
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in LLIntSlowPaths.cpp.
