@@ -11,7 +11,7 @@
 
             if (window.testRunner) {
                 testRunner.setUserMediaPermission(true);
-                testRunner.setUserMediaPersistentPermissionForOrigin(true, "http://localhost:8000", location.href);
+                testRunner.setUserMediaPermissionForOrigin(true, "http://localhost:8000", location.href);
             }
 
             function setup()

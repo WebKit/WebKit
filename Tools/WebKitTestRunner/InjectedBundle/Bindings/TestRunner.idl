@@ -185,9 +185,7 @@ interface TestRunner {
 
     // MediaStream
     void setUserMediaPermission(boolean value);
-    void setUserMediaPersistentPermissionForOrigin(boolean permission, DOMString origin, DOMString parentOrigin);
-    unsigned long userMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
-    void resetUserMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
+    void setUserMediaPermissionForOrigin(boolean permission, DOMString origin, DOMString parentOrigin);
 
     // Audio testing.
     [PassContext] void setAudioResult(object data);
