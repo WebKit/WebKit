@@ -1,5 +1,26 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in JSArray* files.
+        https://bugs.webkit.org/show_bug.cgi?id=165016
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::put):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::put):
+        (JSC::JSArrayBuffer::defineOwnProperty):
+        * runtime/JSArrayInlines.h:
+        (JSC::getLength):
+        (JSC::toLength):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in JSDataView.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=165020
 

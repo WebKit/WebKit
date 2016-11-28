@@ -106,12 +106,15 @@ bool JSArrayBuffer::put(
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
+        scope.release();
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+    }
     
     if (propertyName == vm.propertyNames->byteLength)
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to a read-only array buffer property."));
-    
+
+    scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -125,7 +128,8 @@ bool JSArrayBuffer::defineOwnProperty(
     
     if (propertyName == vm.propertyNames->byteLength)
         return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to define read-only array buffer property."));
-    
+
+    scope.release();
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
