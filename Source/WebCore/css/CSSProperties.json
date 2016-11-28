@@ -1,0 +1,4151 @@
+{
+    "instructions": [
+        "CSS Properties",
+        "",
+        "Some properties are used internally, but are not part of CSS. They are used to get",
+        "HTML4 compatibility in the rendering engine.",
+        "",
+        "Microsoft extensions are documented here:",
+        "http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp",
+        "",
+        "1. Possible Keys",
+        "",
+        "Keys that control CSS behavior:",
+        "",
+        "* inherited:",
+        "Whether the property is inherited.",
+        "",
+        "* animatable:",
+        "Indicates that this CSS property is an animation / transition property.",
+        "It must have corresponding methods on the Animation class.",
+        "",
+        "Keys that control code generation:",
+        "",
+        "* initial:",
+        "Overrides the method name on RenderStyle to get the initial value for",
+        "the property. By default, \"initial\" + PropertyId is used (e.g.",
+        "initialBorderCollapse()).",
+        "",
+        "* getter:",
+        "Overrides the method name on RenderStyle to get the current value for",
+        "the property. By default, the PropertyId with first letter lowercased",
+        "is used (e.g. borderCollapse()).",
+        "",
+        "* setter:",
+        "Overrides the method name on RenderStyle to set the current value for",
+        "the property. By default, \"set\" + PropertyId is used (e.g.",
+        "setBorderCollapse()).",
+        "",
+        "* name-for-methods:",
+        "Overrides the getter / setter / initial method names on RenderStyle.",
+        "For example, '\"name-for-methods\": \"OverflowWrap\"' will use",
+        "\"overflowWrap() / setOverflowWrap() / initialOverflowWrap()\".",
+        "",
+        "* converter:",
+        "The name of the converter helper function in css/StyleBuilderConverter.h",
+        "to use. The converter helper function takes ",
+        "If converting the input CSSValue into the setter method argument type",
+        "is not trivial (i.e. the CSSPrimitiveValue cannot be implicitly converted",
+        "to the expected type), then you can indicate that a converter helper",
+        "function in css/StyleBuilderConverter.h should be used.",
+        "",
+        "* conditional-converter:",
+        "Similar to property converter, but the converter function returns a",
+        "WTF::Optional<> to indicate if the property setter should be called",
+        "or not.",
+        "",
+        "* custom:",
+        "A string that is \"All\", \"Initial\", \"Inherit\", or \"Value\" or some combination",
+        "of the latter three separated by '|' (e.g. \"Inherit|Value\"). These options",
+        "are described as follows:",
+        "",
+        "All - the CSS property requires special handling to set its initial value,",
+        "inherit value, and its value. Prefer this option over listing the individual",
+        "options.",
+        "",
+        "Initial - the CSS property requires special handling to set its initial value.",
+        "",
+        "Inherit - the CSS property requires special handling to set its inherit value.",
+        "",
+        "Value - the CSS property requires special handling to set its value, and a",
+        "regular converter helper cannot be used.",
+        "",
+        "The custom code for the property should be located in css/StyleBuilderCustom.h",
+        "and named applyValue[CSSPropertyName]().",
+        "",
+        "* svg:",
+        "Indicates that this is an SVG CSS property and that the corresponding",
+        "methods are on SVGRenderStyle instead of RenderStyle.",
+        "",
+        "* auto-functions:",
+        "Indicates that this CSS property requires handling of \"auto\" and has",
+        "corresponding hasAutoXXX() / setHasAutoXXX() methods on RenderStyle.",
+        "",
+        "* visited-link-color-support:",
+        "Indicates that this CSS property is a color property with a",
+        "\"setVisitedLinkXXX()\" setter on RenderStyle to be called when",
+        "StyleResolver::applyPropertyToVisitedLinkStyle() return true.",
+        "The regular setter on RenderStyle will only be called if",
+        "StyleResolver::applyPropertyToRegularStyle() returns true.",
+        "",
+        "* no-default-color:",
+        "Should only with used with \"VisitedLinkColorSupport\". It indicates that for",
+        "setting the inherited value, it will not fallback to using the parent's",
+        "\"color\" property if the inherited color is invalid.",
+        "",
+        "* fone-property:",
+        "Indicates that this CSS property is font-related. It must have corresponding",
+        "methods on the FontDescription class.",
+        "",
+        "* fill-layer-property:",
+        "Indicates that this CSS property is a FillLayer property. It must have",
+        "corresponding methods on the FillLayer class.",
+        "",
+        "* skip-builder:",
+        "Ignore this property in the StyleBuilder.",
+        "",
+        "* longhands:",
+        "Indicated the array longhand property names associated with this shorthand",
+        "property. Shorthand properties should not use the StyleBuilder. An",
+        "ASSERT_NOT_REACHED() will be generated for this property in the StyleBuilder.",
+        "property1, property2, ... are the longhands for this shorthand property. A",
+        "corresponding \"StylePropertyShorthand propertyIdShorthand()\" function will be",
+        "generated in StylePropertyShorthandFunctions.h header.",
+        "",
+        "* high-priority:",
+        "Whether the property needs to be applied before non-high-priority properties",
+        "in CSS cascading order.",
+        "",
+        "* aliases:",
+        "An array of the alternative names for this property.",
+        "",
+        "* enable-if:",
+        "Indicates that code should only be generated for this property/value if the",
+        "specified macro define is enabled. Prefix the macro define with '!' to",
+        "generate code when the macro define is not enabled.",
+        "",
+        "2. Lesser known capabilities of this file format",
+        "",
+        "Conditional CSS keyword value:",
+        "",
+        "Typically the value of key \"values\" is an array of strings that represent the",
+        "CSS keyword values that are recognized by a CSS property. This array may also",
+        "contain objects of the form:",
+        "",
+        "    {",
+        "        \"value\": \"awesome\",",
+        "        \"enable-if\": \"ENABLE_AWESOME_FEATURE\"",
+        "    }",
+        "",
+        "The key \"value\" is the name of the conditional keyword and key \"enable-if\"",
+        "describes the code generation criterion. See the documentation for \"enable-if\"",
+        "above for more details.",
+        "",
+        "Conditonal CSS property definition:",
+        "",
+        "A CSS property can have more than one definition so long as the key \"enable-if\"",
+        "differs in each definition. For example, ",
+        "",
+        "    \"awesome-property\": [",
+        "        {",
+        "            \"inherited\": true,",
+        "            ...,",
+        "            \"codegen-properties\": {",
+        "                ...",
+        "                \"enable-if\": \"ENABLE_AWESOME_FEATURE\"",
+        "            }",
+        "        },",
+        "        {",
+        "            \"inherited\": false,",
+        "            ...,",
+        "            \"codegen-properties\": {",
+        "                ...",
+        "                \"enable-if\": \"!ENABLE_AWESOME_FEATURE\"",
+        "            }",
+        "        },",
+        "        ...",
+        "    ],",
+        "",
+        "The first definition in parse order whose \"enable-if\" criterion evaluates",
+        "to true is chosen for code generation."
+    ],
+    "properties": {
+        "color": {
+            "inherited": true,
+            "codegen-properties": {
+                "visited-link-color-support": true,
+                "no-default-color": true,
+                "high-priority": true
+            }
+        },
+        "direction": {
+            "inherited": true,
+            "values": [
+                "ltr",
+                "rtl"
+            ],
+            "codegen-properties": {
+                "custom": "Value",
+                "high-priority": true
+            }
+        },
+        "display": {
+            "values": [
+                "inline",
+                "block",
+                "list-item",
+                "compact",
+                "inline-block",
+                "table",
+                "inline-table",
+                "table-row-group",
+                "table-header-group",
+                "table-footer-group",
+                "table-row",
+                "table-column-group",
+                "table-column",
+                "table-cell",
+                "table-caption",
+                "-webkit-box",
+                "-webkit-inline-box",
+                "flex",
+                "-webkit-flex",
+                "inline-flex",
+                "-webkit-inline-flex",
+                "contents",
+                "none",
+                {
+                    "value": "grid",
+                    "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                },
+                {
+                    "value": "inline-grid",
+                    "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                }
+            ],
+            "codegen-properties": {
+                "custom": "Inherit|Value",
+                "high-priority": true
+            }
+        },
+        "font-family": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "high-priority": true
+            }
+        },
+        "font-size": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "high-priority": true
+            }
+        },
+        "font-style": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "italic",
+                "oblique"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "Italic",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-weight": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "high-priority": true
+            }
+        },
+        "text-rendering": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "optimizespeed",
+                "optimizelegibility",
+                "geometricprecision"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TextRenderingMode",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-feature-settings": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "FeatureSettings",
+                "converter": "FontFeatureSettings",
+                "custom": "Initial|Inherit",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variation-settings": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "VariationSettings",
+                "converter": "FontVariationSettings",
+                "custom": "Initial|Inherit",
+                "font-property": true,
+                "high-priority": true,
+                "enable-if": "ENABLE_VARIATION_FONTS"
+            }
+        },
+        "-webkit-font-kerning": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "normal",
+                "none"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "font-kerning"
+                ],
+                "name-for-methods": "Kerning",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "-webkit-font-smoothing": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none",
+                "antialiased",
+                "subpixel-antialiased"
+            ],
+            "codegen-properties": {
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-ligatures": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "VariantLigatures",
+                "custom": "All",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-position": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "sub",
+                "super"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "VariantPosition",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-caps": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "small-caps",
+                "all-small-caps",
+                "petite-caps",
+                "all-petite-caps",
+                "unicase",
+                "titling-caps"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "VariantCaps",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-numeric": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "VariantNumeric",
+                "custom": "All",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-alternates": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "historical-forms"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "VariantAlternates",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "font-variant-east-asian": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "VariantEastAsian",
+                "custom": "All",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "-webkit-locale": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "Value",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "-webkit-text-orientation": {
+            "inherited": true,
+            "values": [
+                "sideways",
+                "sideways-right",
+                "vertical-right",
+                "mixed",
+                "upright"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-orientation"
+                ],
+                "custom": "Value",
+                "high-priority": true
+            }
+        },
+        "-webkit-text-size-adjust": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "Value",
+                "high-priority": true,
+                "enable-if": "ENABLE_TEXT_AUTOSIZING"
+            }
+        },
+        "writing-mode": {
+            "inherited": true,
+            "values": [
+                "lr-tb",
+                "rl-tb",
+                "tb-rl",
+                "lr",
+                "rl",
+                "tb"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-writing-mode",
+                    "-epub-writing-mode"
+                ],
+                "custom": "Value",
+                "high-priority": true
+            }
+        },
+        "-webkit-text-zoom": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "reset"
+            ],
+            "codegen-properties": {
+                "custom": "Value",
+                "high-priority": true
+            }
+        },
+        "zoom": {
+            "codegen-properties": {
+                "custom": "All",
+                "high-priority": true
+            }
+        },
+        "font-synthesis": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "FontSynthesis",
+                "font-property": true,
+                "high-priority": true
+            }
+        },
+        "-webkit-ruby-position": {
+            "*": [
+                "This is the highest priority property and \"is resolved before all other properties",
+                "to ensure that its value can be checked when determining a smart default font size\"",
+                "(<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>)."
+            ],
+            "inherited": true,
+            "values": [
+                "before",
+                "after",
+                "inter-character"
+            ]
+        },
+        "alignment-baseline": {
+            "values": [
+                "auto",
+                "baseline",
+                "middle",
+                "before-edge",
+                "after-edge",
+                "central",
+                "text-before-edge",
+                "text-after-edge",
+                "ideographic",
+                "hanging",
+                "mathematical"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "all": {
+            "codegen-properties": {
+                "longhands": [
+                    "all"
+                ]
+            }
+        },
+        "animation": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation"
+                ],
+                "longhands": [
+                    "animation-name",
+                    "animation-duration",
+                    "animation-timing-function",
+                    "animation-delay",
+                    "animation-iteration-count",
+                    "animation-direction",
+                    "animation-fill-mode",
+                    "animation-play-state"
+                ]
+            }
+        },
+        "animation-delay": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-delay"
+                ],
+                "name-for-methods": "Delay"
+            }
+        },
+        "animation-direction": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-direction"
+                ],
+                "name-for-methods": "Direction"
+            }
+        },
+        "animation-duration": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-duration"
+                ],
+                "name-for-methods": "Duration"
+            }
+        },
+        "animation-fill-mode": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-fill-mode"
+                ],
+                "name-for-methods": "FillMode"
+            }
+        },
+        "animation-iteration-count": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-iteration-count"
+                ],
+                "name-for-methods": "IterationCount"
+            }
+        },
+        "animation-name": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-name"
+                ],
+                "name-for-methods": "Name"
+            }
+        },
+        "animation-play-state": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-play-state"
+                ],
+                "name-for-methods": "PlayState"
+            }
+        },
+        "animation-timing-function": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-animation-timing-function"
+                ],
+                "name-for-methods": "TimingFunction"
+            }
+        },
+        "background": {
+            "codegen-properties": {
+                "longhands": [
+                    "background-image",
+                    "background-position-x",
+                    "background-position-y",
+                    "background-size",
+                    "background-repeat-x",
+                    "background-repeat-y",
+                    "background-attachment",
+                    "background-origin",
+                    "background-clip",
+                    "background-color"
+                ]
+            }
+        },
+        "background-attachment": {
+            "codegen-properties": {
+                "name-for-methods": "Attachment",
+                "fill-layer-property": true
+            }
+        },
+        "background-blend-mode": {
+            "codegen-properties": {
+                "name-for-methods": "BlendMode",
+                "fill-layer-property": true
+            }
+        },
+        "background-clip": {
+            "codegen-properties": {
+                "name-for-methods": "Clip",
+                "fill-layer-property": true
+            }
+        },
+        "background-color": {
+            "codegen-properties": {
+                "visited-link-color-support": true,
+                "no-default-color": true
+            }
+        },
+        "background-image": {
+            "codegen-properties": {
+                "name-for-methods": "Image",
+                "fill-layer-property": true
+            }
+        },
+        "background-origin": {
+            "codegen-properties": {
+                "name-for-methods": "Origin",
+                "fill-layer-property": true
+            }
+        },
+        "background-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "background-position-x",
+                    "background-position-y"
+                ]
+            }
+        },
+        "background-position-x": {
+            "codegen-properties": {
+                "name-for-methods": "XPosition",
+                "fill-layer-property": true
+            }
+        },
+        "background-position-y": {
+            "codegen-properties": {
+                "name-for-methods": "YPosition",
+                "fill-layer-property": true
+            }
+        },
+        "background-repeat": {
+            "codegen-properties": {
+                "longhands": [
+                    "background-repeat-x",
+                    "background-repeat-y"
+                ]
+            }
+        },
+        "background-repeat-x": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatX",
+                "fill-layer-property": true
+            }
+        },
+        "background-repeat-y": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatY",
+                "fill-layer-property": true
+            }
+        },
+        "background-size": {
+            "codegen-properties": {
+                "name-for-methods": "Size",
+                "fill-layer-property": true
+            }
+        },
+        "baseline-shift": {
+            "codegen-properties": {
+                "custom": "Value",
+                "svg": true
+            }
+        },
+        "border": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-color",
+                    "border-top-style",
+                    "border-top-width",
+                    "border-right-color",
+                    "border-right-style",
+                    "border-right-width",
+                    "border-bottom-color",
+                    "border-bottom-style",
+                    "border-bottom-width",
+                    "border-left-color",
+                    "border-left-style",
+                    "border-left-width"
+                ]
+            }
+        },
+        "border-bottom": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-bottom-width",
+                    "border-bottom-style",
+                    "border-bottom-color"
+                ]
+            }
+        },
+        "border-bottom-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "border-bottom-left-radius": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-border-bottom-left-radius"
+                ],
+                "initial": "initialBorderRadius",
+                "converter": "Radius"
+            }
+        },
+        "border-bottom-right-radius": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-border-bottom-right-radius"
+                ],
+                "initial": "initialBorderRadius",
+                "converter": "Radius"
+            }
+        },
+        "border-bottom-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "initial": "initialBorderStyle"
+            }
+        },
+        "border-bottom-width": {
+            "codegen-properties": {
+                "initial": "initialBorderWidth",
+                "converter": "LineWidth<float>"
+            }
+        },
+        "border-collapse": {
+            "inherited": true,
+            "values": [
+                "collapse",
+                "separate"
+            ]
+        },
+        "border-color": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-color",
+                    "border-right-color",
+                    "border-bottom-color",
+                    "border-left-color"
+                ]
+            }
+        },
+        "border-image": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-image-source",
+                    "border-image-slice",
+                    "border-image-width",
+                    "border-image-outset",
+                    "border-image-repeat"
+                ]
+            }
+        },
+        "border-image-outset": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "border-image-repeat": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "border-image-slice": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "border-image-source": {
+            "codegen-properties": {
+                "converter": "StyleImage<CSSPropertyBorderImageSource>"
+            }
+        },
+        "border-image-width": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "border-left": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-left-width",
+                    "border-left-style",
+                    "border-left-color"
+                ]
+            }
+        },
+        "border-left-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "border-left-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "initial": "initialBorderStyle"
+            }
+        },
+        "border-left-width": {
+            "codegen-properties": {
+                "initial": "initialBorderWidth",
+                "converter": "LineWidth<float>"
+            }
+        },
+        "border-radius": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-left-radius",
+                    "border-top-right-radius",
+                    "border-bottom-right-radius",
+                    "border-bottom-left-radius"
+                ]
+            }
+        },
+        "border-right": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-right-width",
+                    "border-right-style",
+                    "border-right-color"
+                ]
+            }
+        },
+        "border-right-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "border-right-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "initial": "initialBorderStyle"
+            }
+        },
+        "border-right-width": {
+            "codegen-properties": {
+                "initial": "initialBorderWidth",
+                "converter": "LineWidth<float>"
+            }
+        },
+        "border-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-border-horizontal-spacing",
+                    "-webkit-border-vertical-spacing"
+                ]
+            }
+        },
+        "border-style": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-style",
+                    "border-right-style",
+                    "border-bottom-style",
+                    "border-left-style"
+                ]
+            }
+        },
+        "border-top": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-width",
+                    "border-top-style",
+                    "border-top-color"
+                ]
+            }
+        },
+        "border-top-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "border-top-left-radius": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-border-top-left-radius"
+                ],
+                "initial": "initialBorderRadius",
+                "converter": "Radius"
+            }
+        },
+        "border-top-right-radius": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-border-top-right-radius"
+                ],
+                "initial": "initialBorderRadius",
+                "converter": "Radius"
+            }
+        },
+        "border-top-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "initial": "initialBorderStyle"
+            }
+        },
+        "border-top-width": {
+            "codegen-properties": {
+                "initial": "initialBorderWidth",
+                "converter": "LineWidth<float>"
+            }
+        },
+        "border-width": {
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-width",
+                    "border-right-width",
+                    "border-bottom-width",
+                    "border-left-width"
+                ]
+            }
+        },
+        "bottom": {
+            "codegen-properties": {
+                "initial": "initialOffset",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "box-shadow": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "box-sizing": {
+            "*": [
+                "-webkit-box-sizing worked in Safari 4 and earlier."
+            ],
+            "values": [
+                "border-box",
+                "content-box"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-box-sizing"
+                ]
+            }
+        },
+        "break-after": {
+            "values": [
+                "auto",
+                "avoid",
+                "left",
+                "right",
+                "recto",
+                "verso",
+                "column",
+                "page",
+                "region",
+                "avoid-column",
+                "avoid-page",
+                "avoid-region"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween"
+            }
+        },
+        "break-before": {
+            "values": [
+                "auto",
+                "avoid",
+                "left",
+                "right",
+                "recto",
+                "verso",
+                "column",
+                "page",
+                "region",
+                "avoid-column",
+                "avoid-page",
+                "avoid-region"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween"
+            }
+        },
+        "break-inside": {
+            "values": [
+                "auto",
+                "avoid",
+                "avoid-column",
+                "avoid-page",
+                "avoid-region"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakInside"
+            }
+        },
+        "buffered-rendering": {
+            "values": [
+                "auto",
+                "dynamic",
+                "static"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "caption-side": {
+            "inherited": true,
+            "values": [
+                "left",
+                "right",
+                "top",
+                "bottom"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-caption-side"
+                ]
+            }
+        },
+        "clear": {
+            "values": [
+                "none",
+                "left",
+                "right",
+                "both"
+            ]
+        },
+        "clip": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-clip-path": {
+            "codegen-properties": {
+                "converter": "ClipPath"
+            }
+        },
+        "clip-path": {
+            "codegen-properties": {
+                "name-for-methods": "ClipperResource",
+                "converter": "SVGURIReference",
+                "svg": true
+            }
+        },
+        "clip-rule": {
+            "inherited": true,
+            "values": [
+                "nonzero",
+                "evenodd"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "color-interpolation": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "srgb",
+                "linearrgb"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "color-interpolation-filters": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "srgb",
+                "linearrgb"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "color-profile": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "color-rendering": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "optimizespeed",
+                "optimizequality"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "content": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "counter-increment": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "counter-reset": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "cursor": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-cursor-visibility": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "auto-hide"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CURSOR_VISIBILITY"
+            }
+        },
+        "cx": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "cy": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "dominant-baseline": {
+            "values": [
+                "auto",
+                "middle",
+                "use-script",
+                "no-change",
+                "reset-size",
+                "central",
+                "text-before-edge",
+                "text-after-edge",
+                "ideographic",
+                "hanging",
+                "mathematical"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "empty-cells": {
+            "inherited": true,
+            "values": [
+                "show",
+                "hide"
+            ]
+        },
+        "enable-background": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "fill": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "svg": true
+            }
+        },
+        "fill-opacity": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "Opacity",
+                "svg": true
+            }
+        },
+        "fill-rule": {
+            "inherited": true,
+            "values": [
+                "nonzero",
+                "evenodd"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "float": {
+            "values": [
+                "left",
+                "right",
+                "none",
+                "center"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "Floating"
+            }
+        },
+        "flood-color": {
+            "codegen-properties": {
+                "converter": "SVGColor",
+                "svg": true
+            }
+        },
+        "flood-opacity": {
+            "codegen-properties": {
+                "converter": "Opacity",
+                "svg": true
+            }
+        },
+        "font": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "font-family",
+                    "font-size",
+                    "font-style",
+                    "font-variant-caps",
+                    "font-weight",
+                    "line-height"
+                ]
+            }
+        },
+        "font-variant": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "font-variant-ligatures",
+                    "font-variant-position",
+                    "font-variant-caps",
+                    "font-variant-numeric",
+                    "font-variant-alternates",
+                    "font-variant-east-asian"
+                ]
+            }
+        },
+        "font-stretch": {
+            "values": [],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "glyph-orientation-horizontal": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "GlyphOrientation",
+                "svg": true
+            }
+        },
+        "glyph-orientation-vertical": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "GlyphOrientationOrAuto",
+                "svg": true
+            }
+        },
+        "hanging-punctuation": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "HangingPunctuation"
+            }
+        },
+        "height": {
+            "codegen-properties": {
+                "initial": "initialSize",
+                "converter": "LengthSizing"
+            }
+        },
+        "image-orientation": {
+            "inherited": true,
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_IMAGE_ORIENTATION"
+            }
+        },
+        "image-rendering": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "optimizespeed",
+                "optimizequality",
+                "-webkit-crisp-edges",
+                "-webkit-optimize-contrast",
+                "crisp-edges",
+                "pixelated"
+            ]
+        },
+        "image-resolution": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "enable-if": "ENABLE_CSS_IMAGE_RESOLUTION"
+            }
+        },
+        "kerning": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "SVGLengthValue",
+                "svg": true
+            }
+        },
+        "left": {
+            "codegen-properties": {
+                "initial": "initialOffset",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "letter-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "Spacing"
+            }
+        },
+        "lighting-color": {
+            "codegen-properties": {
+                "converter": "SVGColor",
+                "svg": true
+            }
+        },
+        "line-height": [
+            {
+                "inherited": true,
+                "codegen-properties": {
+                    "custom": "All",
+                    "enable-if": "ENABLE_TEXT_AUTOSIZING"
+                }
+            },
+            {
+                "inherited": true,
+                "codegen-properties": {
+                    "getter": "specifiedLineHeight",
+                    "conditional-converter": "LineHeight",
+                    "enable-if": "!ENABLE_TEXT_AUTOSIZING"
+                }
+            }
+        ],
+        "list-style": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "list-style-type",
+                    "list-style-position",
+                    "list-style-image"
+                ]
+            }
+        },
+        "list-style-image": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "StyleImage<CSSPropertyListStyleImage>"
+            }
+        },
+        "list-style-position": {
+            "inherited": true,
+            "values": [
+                "inside",
+                "outside"
+            ]
+        },
+        "list-style-type": {
+            "inherited": true,
+            "values": [
+                "disc",
+                "circle",
+                "square",
+                "decimal",
+                "decimal-leading-zero",
+                "arabic-indic",
+                "binary",
+                "bengali",
+                "cambodian",
+                "khmer",
+                "devanagari",
+                "gujarati",
+                "gurmukhi",
+                "kannada",
+                "lower-hexadecimal",
+                "lao",
+                "malayalam",
+                "mongolian",
+                "myanmar",
+                "octal",
+                "oriya",
+                "persian",
+                "urdu",
+                "telugu",
+                "tibetan",
+                "thai",
+                "upper-hexadecimal",
+                "lower-roman",
+                "upper-roman",
+                "lower-greek",
+                "lower-alpha",
+                "lower-latin",
+                "upper-alpha",
+                "upper-latin",
+                "afar",
+                "ethiopic-halehame-aa-et",
+                "ethiopic-halehame-aa-er",
+                "amharic",
+                "ethiopic-halehame-am-et",
+                "amharic-abegede",
+                "ethiopic-abegede-am-et",
+                "cjk-earthly-branch",
+                "cjk-heavenly-stem",
+                "ethiopic",
+                "ethiopic-halehame-gez",
+                "ethiopic-abegede",
+                "ethiopic-abegede-gez",
+                "hangul-consonant",
+                "hangul",
+                "lower-norwegian",
+                "oromo",
+                "ethiopic-halehame-om-et",
+                "sidama",
+                "ethiopic-halehame-sid-et",
+                "somali",
+                "ethiopic-halehame-so-et",
+                "tigre",
+                "ethiopic-halehame-tig",
+                "tigrinya-er",
+                "ethiopic-halehame-ti-er",
+                "tigrinya-er-abegede",
+                "ethiopic-abegede-ti-er",
+                "tigrinya-et",
+                "ethiopic-halehame-ti-et",
+                "tigrinya-et-abegede",
+                "ethiopic-abegede-ti-et",
+                "upper-greek",
+                "upper-norwegian",
+                "asterisks",
+                "footnotes",
+                "hebrew",
+                "armenian",
+                "lower-armenian",
+                "upper-armenian",
+                "georgian",
+                "cjk-ideographic",
+                "hiragana",
+                "katakana",
+                "hiragana-iroha",
+                "katakana-iroha",
+                "none"
+            ]
+        },
+        "margin": {
+            "codegen-properties": {
+                "longhands": [
+                    "margin-top",
+                    "margin-right",
+                    "margin-bottom",
+                    "margin-left"
+                ]
+            }
+        },
+        "margin-bottom": {
+            "codegen-properties": {
+                "initial": "initialMargin",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "margin-left": {
+            "codegen-properties": {
+                "initial": "initialMargin",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "margin-right": {
+            "codegen-properties": {
+                "initial": "initialMargin",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "margin-top": {
+            "codegen-properties": {
+                "initial": "initialMargin",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "marker": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "marker-start",
+                    "marker-mid",
+                    "marker-end"
+                ]
+            }
+        },
+        "marker-end": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "MarkerEndResource",
+                "converter": "SVGURIReference",
+                "svg": true
+            }
+        },
+        "marker-mid": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "MarkerMidResource",
+                "converter": "SVGURIReference",
+                "svg": true
+            }
+        },
+        "marker-start": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "MarkerStartResource",
+                "converter": "SVGURIReference",
+                "svg": true
+            }
+        },
+        "mask": {
+            "codegen-properties": {
+                "name-for-methods": "MaskerResource",
+                "converter": "SVGURIReference",
+                "svg": true
+            }
+        },
+        "mask-type": {
+            "values": [
+                "luminance",
+                "alpha"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "max-height": {
+            "codegen-properties": {
+                "initial": "initialMaxSize",
+                "converter": "LengthMaxSizing"
+            }
+        },
+        "max-width": {
+            "codegen-properties": {
+                "initial": "initialMaxSize",
+                "converter": "LengthMaxSizing"
+            }
+        },
+        "min-height": {
+            "codegen-properties": {
+                "initial": "initialMinSize",
+                "converter": "LengthSizing"
+            }
+        },
+        "min-width": {
+            "codegen-properties": {
+                "initial": "initialMinSize",
+                "converter": "LengthSizing"
+            }
+        },
+        "object-fit": {
+            "values": [
+                "fill",
+                "contain",
+                "cover",
+                "none",
+                "scale-down"
+            ]
+        },
+        "object-position": {
+            "codegen-properties": {
+                "converter": "ObjectPosition"
+            }
+        },
+        "opacity": {
+            "*": [
+                "Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,",
+                "and may be in use on some websites and widgets."
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-opacity"
+                ]
+            }
+        },
+        "orphans": {
+            "inherited": true,
+            "codegen-properties": {
+                "auto-functions": true
+            }
+        },
+        "outline": {
+            "codegen-properties": {
+                "longhands": [
+                    "outline-color",
+                    "outline-style",
+                    "outline-width"
+                ]
+            }
+        },
+        "outline-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "outline-offset": {
+            "codegen-properties": {
+                "converter": "ComputedLength<float>"
+            }
+        },
+        "outline-style": {
+            "values": [
+                "auto",
+                "none",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "outline-width": {
+            "codegen-properties": {
+                "converter": "LineWidth<float>"
+            }
+        },
+        "overflow": {
+            "codegen-properties": {
+                "longhands": [
+                    "overflow-x",
+                    "overflow-y"
+                ]
+            }
+        },
+        "overflow-wrap": {
+            "values": [
+                "normal",
+                "break-word"
+            ]
+        },
+        "overflow-x": {
+            "values": [
+                "visible",
+                "hidden",
+                "scroll",
+                "auto",
+                "overlay"
+            ]
+        },
+        "overflow-y": {
+            "values": [
+                "visible",
+                "hidden",
+                "scroll",
+                "auto",
+                "overlay",
+                "-webkit-paged-x",
+                "-webkit-paged-y"
+            ]
+        },
+        "padding": {
+            "codegen-properties": {
+                "longhands": [
+                    "padding-top",
+                    "padding-right",
+                    "padding-bottom",
+                    "padding-left"
+                ]
+            }
+        },
+        "padding-bottom": {
+            "codegen-properties": {
+                "initial": "initialPadding",
+                "converter": "Length"
+            }
+        },
+        "padding-left": {
+            "codegen-properties": {
+                "initial": "initialPadding",
+                "converter": "Length"
+            }
+        },
+        "padding-right": {
+            "codegen-properties": {
+                "initial": "initialPadding",
+                "converter": "Length"
+            }
+        },
+        "padding-top": {
+            "codegen-properties": {
+                "initial": "initialPadding",
+                "converter": "Length"
+            }
+        },
+        "page": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "page-break-after": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakAfter",
+                "converter": "PageBreakBetween"
+            }
+        },
+        "page-break-before": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakBefore",
+                "converter": "PageBreakBetween"
+            }
+        },
+        "page-break-inside": {
+            "values": [
+                "auto",
+                "avoid"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakInside",
+                "name-for-methods": "BreakInside",
+                "converter": "PageBreakInside"
+            }
+        },
+        "paint-order": {
+            "codegen-properties": {
+                "converter": "PaintOrder",
+                "svg": true
+            }
+        },
+        "pointer-events": {
+            "inherited": true,
+            "values": [
+                "visible",
+                "none",
+                "all",
+                "auto",
+                "visiblepainted",
+                "visiblefill",
+                "visiblestroke",
+                "painted",
+                "fill",
+                "stroke"
+            ]
+        },
+        "position": {
+            "values": [
+                "static",
+                "relative",
+                "absolute",
+                "fixed",
+                "-webkit-sticky"
+            ]
+        },
+        "quotes": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "Quotes"
+            }
+        },
+        "r": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "resize": {
+            "inherited": true,
+            "values": [
+                "none",
+                "both",
+                "horizontal",
+                "vertical",
+                "auto"
+            ],
+            "codegen-properties": {
+                "converter": "Resize"
+            }
+        },
+        "right": {
+            "codegen-properties": {
+                "initial": "initialOffset",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "rx": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "ry": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "shape-rendering": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "optimizespeed",
+                "crispedges",
+                "geometricprecision"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "size": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "src": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "stop-color": {
+            "codegen-properties": {
+                "converter": "SVGColor",
+                "svg": true
+            }
+        },
+        "stop-opacity": {
+            "codegen-properties": {
+                "converter": "Opacity",
+                "svg": true
+            }
+        },
+        "stroke": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All",
+                "svg": true
+            }
+        },
+        "stroke-dasharray": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "StrokeDashArray",
+                "converter": "StrokeDashArray",
+                "svg": true
+            }
+        },
+        "stroke-dashoffset": {
+            "inherited": true,
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "name-for-methods": "StrokeDashOffset",
+                "converter": "Length"
+            }
+        },
+        "stroke-linecap": {
+            "inherited": true,
+            "values": [
+                "butt",
+                "round",
+                "square"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "CapStyle",
+                "svg": true
+            }
+        },
+        "stroke-linejoin": {
+            "inherited": true,
+            "values": [
+                "miter",
+                "round",
+                "bevel"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "JoinStyle",
+                "svg": true
+            }
+        },
+        "stroke-miterlimit": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "StrokeMiterLimit",
+                "converter": "Number<float>",
+                "svg": true
+            }
+        },
+        "stroke-opacity": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "Opacity",
+                "svg": true
+            }
+        },
+        "stroke-width": {
+            "inherited": true,
+            "codegen-properties": {
+                "initial": "initialOneLength",
+                "converter": "Length"
+            }
+        },
+        "speak": {
+            "inherited": true,
+            "values": [
+                "none",
+                "normal",
+                "spell-out",
+                "digits",
+                "literal-punctuation",
+                "no-punctuation"
+            ]
+        },
+        "table-layout": {
+            "values": [
+                "auto",
+                "fixed"
+            ]
+        },
+        "tab-size": {
+            "inherited": true
+        },
+        "text-align": {
+            "inherited": true,
+            "values": [
+                "-webkit-auto",
+                "left",
+                "right",
+                "center",
+                "justify",
+                "-webkit-left",
+                "-webkit-right",
+                "-webkit-center",
+                "-webkit-match-parent",
+                "start",
+                "end"
+            ],
+            "codegen-properties": {
+                "converter": "TextAlign"
+            }
+        },
+        "text-anchor": {
+            "inherited": true,
+            "values": [
+                "start",
+                "middle",
+                "end"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "text-decoration": {
+            "codegen-properties": {
+                "converter": "TextDecoration"
+            }
+        },
+        "text-indent": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "text-line-through": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-line-through-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-line-through-mode": {
+            "values": [
+                "continuous",
+                "skip-white-space"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-line-through-style": {
+            "values": [
+                "none",
+                "solid",
+                "double",
+                "dashed",
+                "dot-dash",
+                "dot-dot-dash",
+                "wave"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-line-through-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-overflow": {
+            "values": [
+                "clip",
+                "ellipsis"
+            ]
+        },
+        "text-overline": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-overline-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-overline-mode": {
+            "values": [
+                "continuous",
+                "skip-white-space"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-overline-style": {
+            "values": [
+                "none",
+                "solid",
+                "double",
+                "dashed",
+                "dot-dash",
+                "dot-dot-dash",
+                "wave"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-overline-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-shadow": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "text-transform": {
+            "inherited": true,
+            "values": [
+                "capitalize",
+                "uppercase",
+                "lowercase",
+                "none"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-transform"
+                ]
+            }
+        },
+        "text-underline": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-underline-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-underline-mode": {
+            "values": [
+                "continuous",
+                "skip-white-space"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-underline-style": {
+            "values": [
+                "none",
+                "solid",
+                "double",
+                "dashed",
+                "dot-dash",
+                "dot-dot-dash",
+                "wave"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "text-underline-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "top": {
+            "codegen-properties": {
+                "initial": "initialOffset",
+                "converter": "LengthOrAuto"
+            }
+        },
+        "transition": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transition"
+                ],
+                "longhands": [
+                    "transition-property",
+                    "transition-duration",
+                    "transition-timing-function",
+                    "transition-delay"
+                ]
+            }
+        },
+        "transition-delay": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transition-delay"
+                ],
+                "name-for-methods": "Delay"
+            }
+        },
+        "transition-duration": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transition-duration"
+                ],
+                "name-for-methods": "Duration"
+            }
+        },
+        "transition-property": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transition-property"
+                ],
+                "name-for-methods": "Property"
+            }
+        },
+        "transition-timing-function": {
+            "animatable": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transition-timing-function"
+                ],
+                "name-for-methods": "TimingFunction"
+            }
+        },
+        "unicode-bidi": {
+            "values": [
+                "normal",
+                "embed",
+                "bidi-override",
+                "-webkit-isolate",
+                "-webkit-isolate-override",
+                "-webkit-plaintext"
+            ]
+        },
+        "unicode-range": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "vector-effect": {
+            "values": [
+                "none",
+                "non-scaling-stroke"
+            ],
+            "codegen-properties": {
+                "svg": true
+            }
+        },
+        "vertical-align": {
+            "codegen-properties": {
+                "custom": "Value"
+            }
+        },
+        "visibility": {
+            "inherited": true,
+            "values": [
+                "visible",
+                "hidden",
+                "collapse"
+            ]
+        },
+        "white-space": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "pre",
+                "pre-wrap",
+                "pre-line",
+                "nowrap"
+            ]
+        },
+        "widows": {
+            "inherited": true,
+            "codegen-properties": {
+                "auto-functions": true
+            }
+        },
+        "width": {
+            "codegen-properties": {
+                "initial": "initialSize",
+                "converter": "LengthSizing"
+            }
+        },
+        "will-change": {
+            "codegen-properties": {
+                "custom": "Value"
+            }
+        },
+        "word-break": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "break-all",
+                "keep-all",
+                "break-word"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-word-break"
+                ]
+            }
+        },
+        "word-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "conditional-converter": "WordSpacing"
+            }
+        },
+        "word-wrap": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "break-word"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "OverflowWrap"
+            }
+        },
+        "x": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "y": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length"
+            }
+        },
+        "z-index": {
+            "codegen-properties": {
+                "auto-functions": true
+            }
+        },
+        "alt": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-alt"
+                ],
+                "name-for-methods": "ContentAltText",
+                "custom": "Value"
+            }
+        },
+        "-webkit-animation-trigger": {
+            "animatable": true,
+            "codegen-properties": {
+                "name-for-methods": "Trigger",
+                "enable-if": "ENABLE_CSS_ANIMATIONS_LEVEL_2"
+            }
+        },
+        "-webkit-appearance": {
+            "values": [
+                "checkbox",
+                "radio",
+                "push-button",
+                "square-button",
+                "button",
+                "button-bevel",
+                "default-button",
+                "inner-spin-button",
+                "listbox",
+                "listitem",
+                "media-controls-background",
+                "media-controls-dark-bar-background",
+                "media-controls-fullscreen-background",
+                "media-controls-light-bar-background",
+                "media-current-time-display",
+                "media-enter-fullscreen-button",
+                "media-exit-fullscreen-button",
+                "media-fullscreen-volume-slider",
+                "media-fullscreen-volume-slider-thumb",
+                "media-mute-button",
+                "media-overlay-play-button",
+                "media-play-button",
+                "media-return-to-realtime-button",
+                "media-rewind-button",
+                "media-seek-back-button",
+                "media-seek-forward-button",
+                "media-slider",
+                "media-sliderthumb",
+                "media-time-remaining-display",
+                "media-toggle-closed-captions-button",
+                "media-volume-slider",
+                "media-volume-slider-container",
+                "media-volume-slider-mute-button",
+                "media-volume-sliderthumb",
+                "menulist",
+                "menulist-button",
+                "menulist-text",
+                "menulist-textfield",
+                "meter",
+                "progress-bar",
+                "progress-bar-value",
+                "slider-horizontal",
+                "slider-vertical",
+                "sliderthumb-horizontal",
+                "sliderthumb-vertical",
+                "caret",
+                "searchfield",
+                "searchfield-decoration",
+                "searchfield-results-decoration",
+                "searchfield-results-button",
+                "searchfield-cancel-button",
+                "snapshotted-plugin-overlay",
+                "textfield",
+                "relevancy-level-indicator",
+                "continuous-capacity-level-indicator",
+                "discrete-capacity-level-indicator",
+                "rating-level-indicator",
+                "image-controls-button",
+                "-apple-pay-button",
+                "textarea",
+                "attachment",
+                "caps-lock-indicator",
+                "none"
+            ]
+        },
+        "-webkit-aspect-ratio": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-backface-visibility": {
+            "values": [
+                "visible",
+                "hidden"
+            ]
+        },
+        "-webkit-background-clip": {
+            "codegen-properties": {
+                "name-for-methods": "Clip",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-background-composite": {
+            "codegen-properties": {
+                "name-for-methods": "Composite",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-background-origin": {
+            "codegen-properties": {
+                "name-for-methods": "Origin",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-background-size": {
+            "*": [
+                "Differs from background-size only in the interpretation of a single value: \"-webkit-background-size: l;\"",
+                "is equivalent to \"background-size: l l;\" whereas \"background-size: l;\" is equivalent to",
+                "\"background-size: l auto;\""
+            ],
+            "codegen-properties": {
+                "name-for-methods": "Size",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-border-after": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-border-after-width",
+                    "-webkit-border-after-style",
+                    "-webkit-border-after-color"
+                ]
+            }
+        },
+        "-webkit-border-after-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-after-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-after-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-before": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-border-before-width",
+                    "-webkit-border-before-style",
+                    "-webkit-border-before-color"
+                ]
+            }
+        },
+        "-webkit-border-before-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-before-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-before-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-end": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-border-end-width",
+                    "-webkit-border-end-style",
+                    "-webkit-border-end-color"
+                ]
+            }
+        },
+        "-webkit-border-end-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-end-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-end-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-fit": {
+            "values": [
+                "border",
+                "lines"
+            ]
+        },
+        "-webkit-border-horizontal-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "HorizontalBorderSpacing",
+                "converter": "ComputedLength<float>"
+            }
+        },
+        "-webkit-border-image": {
+            "codegen-properties": {
+                "initial": "initialNinePieceImage",
+                "converter": "BorderImage<CSSPropertyWebkitBorderImage>"
+            }
+        },
+        "-webkit-border-radius": {
+            "*": [
+                "Differs from border-radius only in the interpretation of a value consisting of two lengths:",
+                "\"-webkit-border-radius: l1 l2;\" is equivalent to \"border-radius: l1 / l2;\"."
+            ],
+            "codegen-properties": {
+                "longhands": [
+                    "border-top-left-radius",
+                    "border-top-right-radius",
+                    "border-bottom-right-radius",
+                    "border-bottom-left-radius"
+                ]
+            }
+        },
+        "-webkit-border-start": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-border-start-width",
+                    "-webkit-border-start-style",
+                    "-webkit-border-start-color"
+                ]
+            }
+        },
+        "-webkit-border-start-color": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-start-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-start-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-border-vertical-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "VerticalBorderSpacing",
+                "converter": "ComputedLength<float>"
+            }
+        },
+        "-webkit-box-align": {
+            "values": [
+                "stretch",
+                "start",
+                "end",
+                "center",
+                "baseline"
+            ]
+        },
+        "-webkit-box-direction": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "reverse"
+            ]
+        },
+        "-webkit-box-flex": {},
+        "-webkit-box-flex-group": {},
+        "-webkit-box-lines": {
+            "values": [
+                "single",
+                "multiple"
+            ]
+        },
+        "-webkit-box-ordinal-group": {},
+        "-webkit-box-orient": {
+            "values": [
+                "horizontal",
+                "vertical",
+                "inline-axis",
+                "block-axis"
+            ]
+        },
+        "-webkit-box-pack": {
+            "values": [
+                "start",
+                "end",
+                "center",
+                "justify"
+            ]
+        },
+        "-webkit-box-reflect": {
+            "codegen-properties": {
+                "converter": "Reflection"
+            }
+        },
+        "-webkit-box-shadow": {
+            "*": [
+                "Differs from box-shadow in its treatement of blur radii > 8px. Let -webkit-box-shadow blur",
+                "radius be w_r and box-shadow blur radius be b_r. For w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2)."
+            ],
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-column-axis": {
+            "values": [
+                "horizontal",
+                "vertical",
+                "auto"
+            ]
+        },
+        "-webkit-column-break-after": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakAfter",
+                "converter": "ColumnBreakBetween"
+            }
+        },
+        "-webkit-column-break-before": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakBefore",
+                "converter": "ColumnBreakBetween"
+            }
+        },
+        "-webkit-column-break-inside": {
+            "values": [
+                "auto",
+                "avoid"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakInside",
+                "name-for-methods": "BreakInside",
+                "converter": "ColumnBreakInside"
+            }
+        },
+        "column-count": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-count"
+                ],
+                "auto-functions": true
+            }
+        },
+        "column-fill": {
+            "values": [
+                "auto",
+                "balance"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-fill"
+                ]
+            }
+        },
+        "column-gap": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-gap"
+                ],
+                "custom": "All"
+            }
+        },
+        "-webkit-column-progression": {
+            "values": [
+                "normal",
+                "reverse"
+            ]
+        },
+        "column-rule": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-rule"
+                ],
+                "longhands": [
+                    "column-rule-width",
+                    "column-rule-style",
+                    "column-rule-color"
+                ]
+            }
+        },
+        "column-rule-color": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-rule-color"
+                ],
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "column-rule-style": {
+            "values": [
+                "none",
+                "hidden",
+                "inset",
+                "groove",
+                "outset",
+                "ridge",
+                "dotted",
+                "dashed",
+                "solid",
+                "double"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-rule-style"
+                ],
+                "initial": "initialBorderStyle"
+            }
+        },
+        "column-rule-width": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-rule-width"
+                ],
+                "converter": "LineWidth<unsigned short>"
+            }
+        },
+        "column-span": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-span"
+                ]
+            }
+        },
+        "column-width": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-column-width"
+                ],
+                "converter": "ComputedLength<float>",
+                "auto-functions": true
+            }
+        },
+        "columns": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-columns"
+                ],
+                "longhands": [
+                    "column-width",
+                    "column-count"
+                ]
+            }
+        },
+        "-webkit-box-decoration-break": {
+            "values": [
+                "clone",
+                "slice"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_BOX_DECORATION_BREAK"
+            }
+        },
+        "mix-blend-mode": {
+            "values": [
+                "normal",
+                "multiply",
+                "screen",
+                "overlay",
+                "darken",
+                "lighten",
+                "color-dodge",
+                "color-burn",
+                "hard-light",
+                "soft-light",
+                "difference",
+                "exclusion",
+                "plus-darker",
+                "plus-lighter"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "BlendMode",
+                "enable-if": "ENABLE_CSS_COMPOSITING"
+            }
+        },
+        "isolation": {
+            "values": [
+                "auto",
+                "isolate"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_COMPOSITING"
+            }
+        },
+        "filter": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-filter"
+                ],
+                "conditional-converter": "FilterOperations"
+            }
+        },
+        "align-content": {
+            "values": [
+                "flex-start",
+                "flex-end",
+                "center",
+                "space-between",
+                "space-around",
+                "stretch"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-align-content"
+                ],
+                "initial": "initialContentAlignment",
+                "converter": "ContentAlignmentData"
+            }
+        },
+        "align-items": {
+            "values": [
+                "flex-start",
+                "flex-end",
+                "center",
+                "baseline",
+                "stretch"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-align-items"
+                ],
+                "initial": "initialDefaultAlignment",
+                "converter": "SelfOrDefaultAlignmentData"
+            }
+        },
+        "align-self": {
+            "values": [
+                "auto",
+                "flex-start",
+                "flex-end",
+                "center",
+                "baseline",
+                "stretch"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-align-self"
+                ],
+                "initial": "initialSelfAlignment",
+                "converter": "SelfOrDefaultAlignmentData"
+            }
+        },
+        "flex": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex"
+                ],
+                "longhands": [
+                    "flex-grow",
+                    "flex-shrink",
+                    "flex-basis"
+                ]
+            }
+        },
+        "flex-basis": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-basis"
+                ],
+                "converter": "LengthOrAuto"
+            }
+        },
+        "flex-direction": {
+            "values": [
+                "row",
+                "row-reverse",
+                "column",
+                "column-reverse"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-direction"
+                ]
+            }
+        },
+        "flex-flow": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-flow"
+                ],
+                "longhands": [
+                    "flex-direction",
+                    "flex-wrap"
+                ]
+            }
+        },
+        "flex-grow": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-grow"
+                ]
+            }
+        },
+        "flex-shrink": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-shrink"
+                ]
+            }
+        },
+        "flex-wrap": {
+            "values": [
+                "nowrap",
+                "wrap",
+                "wrap-reverse"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-flex-wrap"
+                ]
+            }
+        },
+        "justify-content": {
+            "values": [
+                "flex-start",
+                "flex-end",
+                "center",
+                "space-between",
+                "space-around"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-justify-content"
+                ],
+                "initial": "initialContentAlignment",
+                "converter": "ContentAlignmentData"
+            }
+        },
+        "-webkit-backdrop-filter": {
+            "codegen-properties": {
+                "conditional-converter": "FilterOperations",
+                "enable-if": "ENABLE_FILTERS_LEVEL_2"
+            }
+        },
+        "-webkit-font-size-delta": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "justify-self": {
+            "codegen-properties": {
+                "initial": "initialSelfAlignment",
+                "converter": "SelfOrDefaultAlignmentData",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "justify-items": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-justify-items"
+                ],
+                "initial": "initialSelfAlignment",
+                "converter": "SelfOrDefaultAlignmentData",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-template-rows",
+                    "grid-template-columns",
+                    "grid-template-areas",
+                    "grid-auto-flow",
+                    "grid-auto-rows",
+                    "grid-auto-columns",
+                    "grid-column-gap",
+                    "grid-row-gap"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-area": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-row-start",
+                    "grid-column-start",
+                    "grid-row-end",
+                    "grid-column-end"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-auto-columns": {
+            "codegen-properties": {
+                "converter": "GridTrackSizeList",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-auto-rows": {
+            "codegen-properties": {
+                "converter": "GridTrackSizeList",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-column-end": {
+            "codegen-properties": {
+                "name-for-methods": "GridItemColumnEnd",
+                "conditional-converter": "GridPosition",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-column-gap": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-column-start": {
+            "codegen-properties": {
+                "name-for-methods": "GridItemColumnStart",
+                "conditional-converter": "GridPosition",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-template": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-template-rows",
+                    "grid-template-columns",
+                    "grid-template-areas"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-template-columns": {
+            "codegen-properties": {
+                "custom": "All",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-template-rows": {
+            "codegen-properties": {
+                "custom": "All",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-row-end": {
+            "codegen-properties": {
+                "name-for-methods": "GridItemRowEnd",
+                "conditional-converter": "GridPosition",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-row-gap": {
+            "codegen-properties": {
+                "initial": "initialZeroLength",
+                "converter": "Length",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-row-start": {
+            "codegen-properties": {
+                "name-for-methods": "GridItemRowStart",
+                "conditional-converter": "GridPosition",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-column": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-column-start",
+                    "grid-column-end"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-gap": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-row-gap",
+                    "grid-column-gap"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-row": {
+            "codegen-properties": {
+                "longhands": [
+                    "grid-row-start",
+                    "grid-row-end"
+                ],
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-template-areas": {
+            "codegen-properties": {
+                "custom": "All",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "grid-auto-flow": {
+            "codegen-properties": {
+                "converter": "GridAutoFlow",
+                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+            }
+        },
+        "-webkit-hyphenate-character": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "HyphenationString",
+                "converter": "StringOrAuto"
+            }
+        },
+        "-webkit-hyphenate-limit-after": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "HyphenationLimitAfter",
+                "converter": "NumberOrAuto<short>"
+            }
+        },
+        "-webkit-hyphenate-limit-before": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "HyphenationLimitBefore",
+                "converter": "NumberOrAuto<short>"
+            }
+        },
+        "-webkit-hyphenate-limit-lines": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "HyphenationLimitLines",
+                "converter": "WebkitHyphenateLimitLines"
+            }
+        },
+        "-webkit-hyphens": {
+            "inherited": true,
+            "values": [
+                "none",
+                "manual",
+                "auto"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-hyphens"
+                ]
+            }
+        },
+        "-webkit-initial-letter": {
+            "codegen-properties": {
+                "converter": "InitialLetter"
+            }
+        },
+        "-webkit-line-box-contain": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "LineBoxContain"
+            }
+        },
+        "-webkit-line-align": {
+            "inherited": true,
+            "values": [
+                "none",
+                "edges"
+            ]
+        },
+        "-webkit-line-break": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "loose",
+                "normal",
+                "strict",
+                "after-white-space"
+            ]
+        },
+        "-webkit-line-clamp": {},
+        "-webkit-line-grid": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "StringOrNone"
+            }
+        },
+        "-webkit-line-snap": {
+            "inherited": true,
+            "values": [
+                "none",
+                "baseline",
+                "contain"
+            ]
+        },
+        "-webkit-logical-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-logical-height": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-margin-after-collapse": {
+            "values": [
+                "collapse",
+                "separate",
+                "discard"
+            ]
+        },
+        "-webkit-margin-before-collapse": {
+            "values": [
+                "collapse",
+                "separate",
+                "discard"
+            ]
+        },
+        "-webkit-margin-bottom-collapse": {
+            "values": [
+                "collapse",
+                "separate",
+                "discard"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "MarginAfterCollapse"
+            }
+        },
+        "-webkit-margin-top-collapse": {
+            "values": [
+                "collapse",
+                "separate",
+                "discard"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "MarginBeforeCollapse"
+            }
+        },
+        "-webkit-margin-collapse": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-margin-before-collapse",
+                    "-webkit-margin-after-collapse"
+                ]
+            }
+        },
+        "-webkit-margin-after": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-margin-before": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-margin-end": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-margin-start": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-marquee": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-marquee-direction",
+                    "-webkit-marquee-increment",
+                    "-webkit-marquee-repetition",
+                    "-webkit-marquee-style",
+                    "-webkit-marquee-speed"
+                ]
+            }
+        },
+        "-webkit-marquee-direction": {
+            "values": [
+                "forwards",
+                "backwards",
+                "ahead",
+                "reverse",
+                "left",
+                "right",
+                "down",
+                "up",
+                "auto"
+            ]
+        },
+        "-webkit-marquee-increment": {
+            "codegen-properties": {
+                "conditional-converter": "MarqueeIncrement"
+            }
+        },
+        "-webkit-marquee-repetition": {
+            "codegen-properties": {
+                "name-for-methods": "MarqueeLoopCount",
+                "converter": "MarqueeRepetition"
+            }
+        },
+        "-webkit-marquee-speed": {
+            "codegen-properties": {
+                "converter": "MarqueeSpeed"
+            }
+        },
+        "-webkit-marquee-style": {
+            "values": [
+                "none",
+                "slide",
+                "scroll",
+                "alternate"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "MarqueeBehavior"
+            }
+        },
+        "-webkit-mask": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-image",
+                    "-webkit-mask-source-type",
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y",
+                    "-webkit-mask-size",
+                    "-webkit-mask-repeat-x",
+                    "-webkit-mask-repeat-y",
+                    "-webkit-mask-origin",
+                    "-webkit-mask-clip"
+                ]
+            }
+        },
+        "-webkit-mask-box-image": {
+            "codegen-properties": {
+                "initial": "initialNinePieceImage",
+                "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>"
+            }
+        },
+        "-webkit-mask-box-image-outset": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-mask-box-image-repeat": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-mask-box-image-slice": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-mask-box-image-source": {
+            "codegen-properties": {
+                "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>"
+            }
+        },
+        "-webkit-mask-box-image-width": {
+            "codegen-properties": {
+                "custom": "All"
+            }
+        },
+        "-webkit-mask-clip": {
+            "codegen-properties": {
+                "name-for-methods": "Clip",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-composite": {
+            "codegen-properties": {
+                "name-for-methods": "Composite",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-image": {
+            "codegen-properties": {
+                "name-for-methods": "Image",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-origin": {
+            "codegen-properties": {
+                "name-for-methods": "Origin",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y"
+                ]
+            }
+        },
+        "-webkit-mask-position-x": {
+            "codegen-properties": {
+                "name-for-methods": "XPosition",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-position-y": {
+            "codegen-properties": {
+                "name-for-methods": "YPosition",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-repeat": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-repeat-x",
+                    "-webkit-mask-repeat-y"
+                ]
+            }
+        },
+        "-webkit-mask-repeat-x": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatX",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-repeat-y": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatY",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-size": {
+            "codegen-properties": {
+                "name-for-methods": "Size",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-mask-source-type": {
+            "codegen-properties": {
+                "name-for-methods": "MaskSourceType",
+                "fill-layer-property": true
+            }
+        },
+        "-webkit-max-logical-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-max-logical-height": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-min-logical-width": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-min-logical-height": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-nbsp-mode": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "space"
+            ],
+            "codegen-properties": {
+                "initial": "initialNBSPMode",
+                "setter": "setNBSPMode"
+            }
+        },
+        "order": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-order"
+                ]
+            }
+        },
+        "-webkit-padding-after": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-padding-before": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-padding-end": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-padding-start": {
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "perspective": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-perspective"
+                ],
+                "conditional-converter": "Perspective"
+            }
+        },
+        "perspective-origin": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-perspective-origin"
+                ],
+                "longhands": [
+                    "perspective-origin-x",
+                    "perspective-origin-y"
+                ]
+            }
+        },
+        "perspective-origin-x": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-perspective-origin-x"
+                ],
+                "converter": "PositionComponentX"
+            }
+        },
+        "perspective-origin-y": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-perspective-origin-y"
+                ],
+                "converter": "PositionComponentY"
+            }
+        },
+        "-webkit-print-color-adjust": {
+            "inherited": true,
+            "values": [
+                "exact",
+                "economy"
+            ]
+        },
+        "-webkit-rtl-ordering": {
+            "inherited": true,
+            "values": [
+                "logical",
+                "visual"
+            ],
+            "codegen-properties": {
+                "initial": "initialRTLOrdering",
+                "setter": "setRTLOrdering"
+            }
+        },
+        "-webkit-scroll-snap-points-x": {
+            "codegen-properties": {
+                "converter": "ScrollSnapPoints",
+                "custom": "Initial|Inherit",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "-webkit-scroll-snap-points-y": {
+            "codegen-properties": {
+                "converter": "ScrollSnapPoints",
+                "custom": "Initial|Inherit",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "-webkit-scroll-snap-type": {
+            "values": [
+                "none",
+                "mandatory",
+                "proximity"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "-webkit-scroll-snap-destination": {
+            "codegen-properties": {
+                "converter": "SnapCoordinatePair",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "-webkit-scroll-snap-coordinate": {
+            "codegen-properties": {
+                "name-for-methods": "ScrollSnapCoordinates",
+                "converter": "ScrollSnapCoordinates",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "-webkit-svg-shadow": {
+            "codegen-properties": {
+                "custom": "All",
+                "svg": true
+            }
+        },
+        "-webkit-text-combine": {
+            "inherited": true,
+            "values": [
+                "none",
+                "horizontal"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-combine"
+                ]
+            }
+        },
+        "-webkit-text-align-last": {
+            "inherited": true,
+            "values": [
+                "left",
+                "right",
+                "center",
+                "justify",
+                "start",
+                "end",
+                "auto"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS3_TEXT"
+            }
+        },
+        "-webkit-text-justify": {
+            "inherited": true,
+            "values": [
+                "inter-word",
+                "distribute",
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS3_TEXT"
+            }
+        },
+        "-webkit-text-decoration": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-text-decoration-line",
+                    "-webkit-text-decoration-style",
+                    "-webkit-text-decoration-color"
+                ]
+            }
+        },
+        "-webkit-text-decoration-line": {
+            "codegen-properties": {
+                "name-for-methods": "TextDecoration",
+                "converter": "TextDecoration"
+            }
+        },
+        "-webkit-text-decoration-style": {
+            "values": [
+                "solid",
+                "double",
+                "dotted",
+                "dashed",
+                "wavy"
+            ]
+        },
+        "-webkit-text-decoration-color": {
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "-webkit-text-decoration-skip": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "TextDecorationSkip"
+            }
+        },
+        "-webkit-text-underline-position": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "TextUnderlinePosition"
+            }
+        },
+        "-webkit-text-decorations-in-effect": {
+            "inherited": true,
+            "codegen-properties": {
+                "skip-builder": true
+            }
+        },
+        "-webkit-text-emphasis": {
+            "inherited": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-emphasis",
+                    "text-emphasis"
+                ],
+                "longhands": [
+                    "-webkit-text-emphasis-style",
+                    "-webkit-text-emphasis-color"
+                ]
+            }
+        },
+        "-webkit-text-emphasis-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-emphasis-color",
+                    "text-emphasis-color"
+                ],
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "-webkit-text-emphasis-position": {
+            "inherited": true,
+            "codegen-properties": {
+                "aliases": [
+                    "text-emphasis-position"
+                ],
+                "converter": "TextEmphasisPosition"
+            }
+        },
+        "-webkit-text-emphasis-style": {
+            "inherited": true,
+            "codegen-properties": {
+                "aliases": [
+                    "-epub-text-emphasis-style",
+                    "text-emphasis-style"
+                ],
+                "custom": "All"
+            }
+        },
+        "-webkit-text-fill-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "-webkit-text-security": {
+            "inherited": true,
+            "values": [
+                "disc",
+                "circle",
+                "square",
+                "none"
+            ]
+        },
+        "-webkit-text-stroke": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-text-stroke-width",
+                    "-webkit-text-stroke-color"
+                ]
+            }
+        },
+        "-webkit-text-stroke-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            }
+        },
+        "-webkit-text-stroke-width": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "TextStrokeWidth"
+            }
+        },
+        "transform": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transform"
+                ],
+                "converter": "Transform"
+            }
+        },
+        "transform-origin": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transform-origin"
+                ],
+                "longhands": [
+                    "transform-origin-x",
+                    "transform-origin-y",
+                    "transform-origin-z"
+                ]
+            }
+        },
+        "transform-origin-x": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transform-origin-x"
+                ],
+                "converter": "PositionComponentX"
+            }
+        },
+        "transform-origin-y": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transform-origin-y"
+                ],
+                "converter": "PositionComponentY"
+            }
+        },
+        "transform-origin-z": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-transform-origin-z"
+                ],
+                "converter": "ComputedLength<float>"
+            }
+        },
+        "transform-style": {
+            "values": [
+                "flat",
+                "preserve-3d"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TransformStyle3D"
+            }
+        },
+        "-webkit-transform-style": {
+            "*": [
+                "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point",
+                "we'll have to add a custom builder and a new ETransformStyle3D type."
+            ],
+            "values": [
+                "flat",
+                "preserve-3d"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TransformStyle3D"
+            }
+        },
+        "-webkit-user-drag": {
+            "values": [
+                "auto",
+                "none",
+                "element"
+            ]
+        },
+        "-webkit-user-modify": {
+            "inherited": true,
+            "values": []
+        },
+        "-webkit-user-select": {
+            "inherited": true,
+            "values": []
+        },
+        "-webkit-flow-into": {
+            "codegen-properties": {
+                "name-for-methods": "FlowThread",
+                "converter": "StringOrNone",
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "-webkit-flow-from": {
+            "codegen-properties": {
+                "name-for-methods": "RegionThread",
+                "converter": "StringOrNone",
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "-webkit-region-fragment": {
+            "values": [
+                "auto",
+                "break"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "-webkit-region-break-after": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakAfter",
+                "converter": "RegionBreakBetween",
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "-webkit-region-break-before": {
+            "values": [
+                "auto",
+                "always",
+                "avoid",
+                "left",
+                "right"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakBetween",
+                "name-for-methods": "BreakBefore",
+                "converter": "RegionBreakBetween",
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "-webkit-region-break-inside": {
+            "values": [
+                "auto",
+                "avoid"
+            ],
+            "codegen-properties": {
+                "initial": "initialBreakInside",
+                "name-for-methods": "BreakInside",
+                "converter": "RegionBreakInside",
+                "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "shape-outside": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-shape-outside"
+                ],
+                "converter": "ShapeValue"
+            }
+        },
+        "shape-margin": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-shape-margin"
+                ],
+                "converter": "Length"
+            }
+        },
+        "shape-image-threshold": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-shape-image-threshold"
+                ],
+                "converter": "NumberOrAuto<float>"
+            }
+        },
+        "max-zoom": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
+            }
+        },
+        "min-zoom": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
+            }
+        },
+        "orientation": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
+            }
+        },
+        "user-zoom": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
+            }
+        },
+        "-webkit-tap-highlight-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "TapHighlightColor",
+                "enable-if": "ENABLE_TOUCH_EVENTS"
+            }
+        },
+        "-webkit-dashboard-region": {
+            "codegen-properties": {
+                "name-for-methods": "DashboardRegions",
+                "custom": "Value",
+                "enable-if": "ENABLE_DASHBOARD_SUPPORT"
+            }
+        },
+        "-webkit-overflow-scrolling": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "touch"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "UseTouchOverflowScrolling",
+                "converter": "OverflowScrolling",
+                "enable-if": "ENABLE_ACCELERATED_OVERFLOW_SCROLLING"
+            }
+        },
+        "touch-action": {
+            "values": [
+                "auto",
+                "manipulation"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_TOUCH_EVENTS"
+            }
+        },
+        "-webkit-touch-callout": {
+            "inherited": true,
+            "values": [
+                "default",
+                "none"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TouchCalloutEnabled",
+                "converter": "TouchCallout",
+                "enable-if": "WTF_PLATFORM_IOS"
+            }
+        },
+        "-apple-trailing-word": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "-webkit-partially-balanced"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TrailingWord",
+                "enable-if": "ENABLE_CSS_TRAILING_WORD"
+            }
+        },
+        "-apple-pay-button-style": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_APPLE_PAY"
+            }
+        },
+        "-apple-pay-button-type": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_APPLE_PAY"
+            }
+        }
+    }
+}

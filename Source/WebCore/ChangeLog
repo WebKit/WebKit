@@ -1,3 +1,49 @@
+2016-11-28  Daniel Bates  <dabates@apple.com>
+
+        Replace CSSPropertyNames.in with a JSON file
+        https://bugs.webkit.org/show_bug.cgi?id=164691
+
+        Reviewed by Simon Fraser.
+
+        Convert CSSPropertyNames.in to a structured JSON file. This is the first step towards
+        exposing a CSS feature status dashboard and generating more of the boilerplate code
+        for a CSS property.
+
+        A side effect of this change is that makeprop.pl no longer detects duplicate CSS property
+        definitions. We will look to bring such duplication detection back in a subsequent
+        commit.
+
+        * CMakeLists.txt: Substitute CSSProperties.json for CSSPropertyNames.in and update the
+        invocation of makeprop.pl as we no longer need to pass the bindings/scripts/preprocessor.pm
+        Perl module. Makeprop.pl supports conditional CSS properties and values without the need
+        to preprocess CSSProperties.json using the C preprocessor.
+        * DerivedSources.make: Ditto. Pass WTF_PLATFORM_IOS to makeprop.pl when building for iOS
+        as we no longer make use of bindings/scripts/preprocessor.pm.
+        * css/CSSProperties.json: Added.
+        * css/CSSPropertyNames.in: Removed.
+        * css/StyleResolver.cpp: Remove variable lastHighPriorityProperty as we now generate it.
+        * css/makeprop.pl: Extracted the input file name, now CSSProperties.json, into a global variable
+        and referenced this variable throughout this script instead of hardcoding the input file name at
+        each call site. Updated code to handle CSS longhand names being encoded in a JSON array as opposed
+        to a string of '|'-separated values. I added a FIXME comment to do the same for the codegen property
+        "custom". Fixed Perl uninitialized variable warnings when die()-ing with error "Unknown CSS property
+        used in all shorthand ..." or "Unknown CSS property used in longhands ...".
+        (isPropertyEnabled): Added. Determine whether code should be generated for a property.
+        (addProperty): Added.
+        (sortByDescendingPriorityAndName): Added.
+        (getScopeForFunction): Lowercase option names so that we can use a consistent case throughout
+        the JSON file.
+        (getNameForMethods): Ditto.
+        (generateColorValueSetter):
+        (generateAnimationPropertyInitialValueSetter): Ditto.
+        (generateAnimationPropertyInheritValueSetter): Ditto.
+        (generateFillLayerPropertyInitialValueSetter): Ditto.
+        (generateFillLayerPropertyInheritValueSetter): Ditto.
+        (generateSetValueStatement): Ditto.
+        (generateInitialValueSetter): Ditto.
+        (generateInheritValueSetter): Ditto.
+        (generateValueSetter): Ditto.
+
 2016-11-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support -webkit-animation-trigger

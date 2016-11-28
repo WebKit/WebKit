@@ -932,18 +932,27 @@ endif
 
 # --------
 
+ADDITIONAL_CSS_PROPERTIES_DEFINES :=
+
+ifeq ($(WTF_PLATFORM_IOS), 1)
+    ADDITIONAL_CSS_PROPERTIES_DEFINES := WTF_PLATFORM_IOS
+endif
+
+# --------
+
 # CSS property names and value keywords
 
-WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
+WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSProperties.json
 WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in
 WEBCORE_CSS_VALUE_KEYWORDS_DEFINES := $(FEATURE_DEFINES) $(ADDITIONAL_CSS_VALUE_KEYWORDS_DEFINES)
+WEBCORE_CSS_PROPERTIES_DEFINES := $(FEATURE_DEFINES) $(ADDITIONAL_CSS_PROPERTIES_DEFINES)
 
 CSSPropertyNames.h CSSPropertyNames.cpp StyleBuilder.cpp StylePropertyShorthandFunctions.h StylePropertyShorthandFunctions.cpp : makeprop.intermediate
 .INTERMEDIATE : makeprop.intermediate
-makeprop.intermediate : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
-	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
-	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
+makeprop.intermediate : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
+	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSProperties.json
+	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(WEBCORE_CSS_PROPERTIES_DEFINES)"
 
 CSSValueKeywords.h CSSValueKeywords.cpp : makevalues.intermediate
 .INTERMEDIATE : makevalues.intermediate

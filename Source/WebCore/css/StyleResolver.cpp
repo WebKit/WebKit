@@ -164,7 +164,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const CSSPropertyID lastHighPriorityProperty = CSSPropertyFontSynthesis;
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
 static void extractDirectionAndWritingMode(const RenderStyle&, const StyleResolver::MatchResult&, TextDirection&, WritingMode&);
