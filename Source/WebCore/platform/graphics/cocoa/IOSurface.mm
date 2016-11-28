@@ -91,7 +91,7 @@ std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromImage(CGImageR
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(IntSize(width, height), sRGBColorSpaceRef());
+    auto surface = IOSurface::create(IntSize(width, height), CGImageGetColorSpace(image));
     if (!surface)
         return nullptr;
     auto surfaceContext = surface->ensurePlatformContext();

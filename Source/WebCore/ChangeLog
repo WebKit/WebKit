@@ -1,3 +1,21 @@
+2016-11-28  Tim Horton  <timothy_horton@apple.com>
+
+        Obvious change in saturation/color when swiping to a previously visited page
+        https://bugs.webkit.org/show_bug.cgi?id=165112
+        <rdar://problem/29257229>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::createFromImage):
+        IOSurface::createFromImage should take into account the colorspace of the
+        originating image, instead of just hardcoding sRGB.
+
+        Otherwise, on a non-sRGB display, the display-space snapshot that we take
+        for back-forward swipe is converted to sRGB, then the colorspace information
+        is lost (without a way to maintain it inside the IOSurface), and displayed
+        as layer contents interpreted as display space (instead of sRGB).
+
 2016-11-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix crashes on Yosemite after r209009
