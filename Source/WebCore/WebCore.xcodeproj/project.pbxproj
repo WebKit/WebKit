@@ -2204,7 +2204,6 @@
 		5185FCB21BB4C4E80012898F /* IndexedDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719AE181106E00016DC51 /* IndexedDB.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FCB31BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */; };
 		5185FCB41BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719B2181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h */; };
-		5185FCB71BB4C7670012898F /* DOMRequestState.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185FCB61BB4C7610012898F /* DOMRequestState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FCB91BB4CBF80012898F /* IDBConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58FE1BB07AA500C19282 /* IDBConnectionToClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FCBA1BB4CBF80012898F /* IDBServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510A58EF1BAB720F00C19282 /* IDBServer.cpp */; };
 		5185FCBB1BB4CBF80012898F /* IDBServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58F01BAB720F00C19282 /* IDBServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9399,7 +9398,6 @@
 		517B25A81CC820320061C011 /* IDBConnectionProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionProxy.h; sourceTree = "<group>"; };
 		517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtension.cpp; sourceTree = "<group>"; };
 		517FBA18151AA71B00B57959 /* DOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowExtension.h; sourceTree = "<group>"; };
-		5185FCB61BB4C7610012898F /* DOMRequestState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRequestState.h; sourceTree = "<group>"; };
 		5185FCBC1BB5CB770012898F /* IDBConnectionToServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionToServer.cpp; sourceTree = "<group>"; };
 		5185FCBD1BB5CB770012898F /* IDBConnectionToServerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionToServerDelegate.h; sourceTree = "<group>"; };
 		518864DE1BBAF30F00E540C9 /* UniqueIDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabase.cpp; sourceTree = "<group>"; };
@@ -9739,10 +9737,10 @@
 		5CE5D9A31DB897C300CE7A8D /* TextEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncoder.cpp; sourceTree = "<group>"; };
 		5CE5D9A41DB897C300CE7A8D /* TextEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncoder.h; sourceTree = "<group>"; };
 		5CE5D9A51DB897C300CE7A8D /* TextEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextEncoder.idl; sourceTree = "<group>"; };
-		5CE5D9A71DB899FC00CE7A8D /* JSTextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTextDecoder.cpp; path = JSTextDecoder.cpp; sourceTree = "<group>"; };
-		5CE5D9A81DB899FC00CE7A8D /* JSTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTextDecoder.h; path = JSTextDecoder.h; sourceTree = "<group>"; };
-		5CE5D9A91DB899FC00CE7A8D /* JSTextEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTextEncoder.cpp; path = JSTextEncoder.cpp; sourceTree = "<group>"; };
-		5CE5D9AA1DB899FC00CE7A8D /* JSTextEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTextEncoder.h; path = JSTextEncoder.h; sourceTree = "<group>"; };
+		5CE5D9A71DB899FC00CE7A8D /* JSTextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextDecoder.cpp; sourceTree = "<group>"; };
+		5CE5D9A81DB899FC00CE7A8D /* JSTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextDecoder.h; sourceTree = "<group>"; };
+		5CE5D9A91DB899FC00CE7A8D /* JSTextEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextEncoder.cpp; sourceTree = "<group>"; };
+		5CE5D9AA1DB899FC00CE7A8D /* JSTextEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextEncoder.h; sourceTree = "<group>"; };
 		5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerLockController.cpp; sourceTree = "<group>"; };
 		5CFC434F192406A900A0D3B5 /* PointerLockController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerLockController.h; sourceTree = "<group>"; };
 		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
@@ -21856,7 +21854,6 @@
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
 				316023EF1532C40C00D50FF4 /* Dictionary.h */,
 				B56576E717DA94E200A56BDC /* DOMConstructorWithDocument.h */,
-				5185FCB61BB4C7610012898F /* DOMRequestState.h */,
 				BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */,
 				BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
@@ -25379,7 +25376,6 @@
 				0F4710AF1DB56AFC002DCEC3 /* DOMRect.h in Headers */,
 				0F4710B11DB56AFC002DCEC3 /* DOMRectInit.h in Headers */,
 				0F4710B31DB56AFC002DCEC3 /* DOMRectReadOnly.h in Headers */,
-				5185FCB71BB4C7670012898F /* DOMRequestState.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
 				C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */,
 				BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */,

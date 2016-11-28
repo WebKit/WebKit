@@ -31,8 +31,8 @@
 
 #if ENABLE(FETCH_API)
 
-#include "DOMRequestState.h"
 #include "Dictionary.h"
+#include "Document.h"
 #include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
 #include "FetchResponseSource.h"

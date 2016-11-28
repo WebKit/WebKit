@@ -1,3 +1,16 @@
+2016-11-27  Sam Weinig  <sam@webkit.org>
+
+        Remove unused DOMRequestState
+        https://bugs.webkit.org/show_bug.cgi?id=165085
+
+        Reviewed by Simon Fraser.
+
+        Remove DOMRequestState. It was unused.
+
+        * Modules/fetch/FetchBody.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMRequestState.h: Removed.
+
 2016-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix various --minimal build issues
