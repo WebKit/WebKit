@@ -297,6 +297,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     int32_t left = exec->argument(0).toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     int32_t right = exec->argument(1).toInt32(exec);
     return JSValue::encode(jsNumber(left * right));
 }

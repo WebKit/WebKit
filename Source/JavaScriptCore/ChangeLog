@@ -1,3 +1,29 @@
+2016-11-26  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in miscellaneous files.
+        https://bugs.webkit.org/show_bug.cgi?id=165055
+
+        Reviewed by Saam Barati.
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncIMul):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        (JSC::moduleLoaderPrototypeRequestedModules):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototypeFuncNext):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayEntry::put):
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in ReflectObject.cpp.

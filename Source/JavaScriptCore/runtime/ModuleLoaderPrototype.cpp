@@ -133,6 +133,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     ASSERT(moduleProgramNode);
 
     ModuleAnalyzer moduleAnalyzer(exec, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSModuleRecord* moduleRecord = moduleAnalyzer.analyze(*moduleProgramNode);
 
     return JSValue::encode(moduleRecord);
@@ -143,15 +144,18 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* ex
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
-    if (!moduleRecord)
+    if (!moduleRecord) {
+        scope.release();
         return JSValue::encode(constructEmptyArray(exec, nullptr));
+    }
 
     JSArray* result = constructEmptyArray(exec, nullptr, moduleRecord->requestedModules().size());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t i = 0;
-    for (auto& key : moduleRecord->requestedModules())
+    for (auto& key : moduleRecord->requestedModules()) {
         result->putDirectIndex(exec, i++, jsString(exec, key.get()));
-
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
     return JSValue::encode(result);
 }
 

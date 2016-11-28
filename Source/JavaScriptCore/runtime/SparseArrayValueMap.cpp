@@ -105,6 +105,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
         return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     
+    scope.release();
     return entry.put(exec, array, this, value, shouldThrow);
 }
 
@@ -166,6 +167,7 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
         return true;
     }
 
+    scope.release();
     return callSetter(exec, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode);
 }
 
