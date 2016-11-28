@@ -1436,6 +1436,11 @@ private:
     WebGLRenderingContextBase* m_webglContext;
 
     bool m_isForWebGL2 { false };
+
+#if USE(CAIRO)
+    Platform3DObject m_vao { 0 };
+#endif
+
 };
 
 } // namespace WebCore

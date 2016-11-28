@@ -1,3 +1,53 @@
+2016-11-28  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Dramatic increase on memory usage since 2.14.x
+        https://bugs.webkit.org/show_bug.cgi?id=164049
+
+        Reviewed by Žan Doberšek.
+
+        Use OpenGL version 3.2 Core for rendering when available.
+        Update some operations that have changed when using 3.2 Core:
+        - Use glGetStringi to get the extensions list.
+        - Do not use GL_POINT_SPRITE.
+        - Always use a VAO when rendering.
+        - Use a GLSL 1.50 compatible shader.
+
+        No new tests needed.
+
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::version):
+        Add a method to get OpenGL version we are using.
+        * platform/graphics/GLContext.h:
+        Ditto.
+        * platform/graphics/GraphicsContext3D.h:
+        Add an attribute to store the VAO used for rendering.
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::initializeOpenGLShims):
+        Add glGetStringi to the list of functions.
+        * platform/graphics/OpenGLShims.h:
+        Ditto.
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        Set appropriate output to the shader compiler and initalize the VAO if needed.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        Delete the VAO if needed.
+        (WebCore::GraphicsContext3D::getExtensions):
+        Use glGetExtensionsi for OpenGL versions >= 3.2.
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::hasGLXARBCreateContextExtension):
+        Check whether the GLX_ARB_create_context extension is available.
+        (WebCore::GLContextGLX::createWindowContext):
+        Use glXCreateContextAttribsARB() if possible to request an OpenGL 3.2 context.
+        (WebCore::GLContextGLX::createPbufferContext):
+        Ditto.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+        Enable glGetStringi for GTK.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        Do not use default getExtensions() method for GTK.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        Ditto.
+
 2016-11-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Move attributes from RenderGrid to the new Grid class
