@@ -7347,14 +7347,26 @@ bool HTMLMediaElement::isVisibleInViewport() const
     return renderer && renderer->visibleInViewportState() == RenderElement::VisibleInViewport;
 }
 
+static bool needsPlaybackControlsManagerQuirk(bool needsQuirks, const URL& url)
+{
+    if (!needsQuirks)
+        return false;
+
+    String host = url.host();
+    return equalLettersIgnoringASCIICase(host, "www.netflix.com");
+}
+
 void HTMLMediaElement::updatePlaybackControlsManager()
 {
     Page* page = document().page();
     if (!page)
         return;
 
+    auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager);
+    bool quirkDisablesPlaybackControlsManager = needsPlaybackControlsManagerQuirk(page->settings().needsSiteSpecificQuirks(), page->mainFrame().document()->url());
+
     // FIXME: Ensure that the renderer here should be up to date.
-    if (auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
+    if (bestMediaElement && !quirkDisablesPlaybackControlsManager)
         page->chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
     else
         page->chrome().client().clearPlaybackControlsManager();
