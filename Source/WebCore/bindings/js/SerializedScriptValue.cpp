@@ -2264,10 +2264,10 @@ private:
             return getJSValue(FileList::create(WTFMove(files)).get());
         }
         case ImageDataTag: {
-            int32_t width;
+            uint32_t width;
             if (!read(width))
                 return JSValue();
-            int32_t height;
+            uint32_t height;
             if (!read(height))
                 return JSValue();
             uint32_t length;

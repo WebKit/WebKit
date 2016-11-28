@@ -1,3 +1,25 @@
+2016-11-28  Brent Fulgham  <bfulgham@apple.com>
+
+        ImageData does not match specification
+        https://bugs.webkit.org/show_bug.cgi?id=164663
+
+        Reviewed by Simon Fraser.
+
+        The W3C specification https://www.w3.org/TR/2dcontext/ clearly states that
+        the width and height attributes of the ImageData type should be unsigned.
+        Our current implementation has signed integer values.
+
+        In practice, we have enforced the unsigned requirement by throwing a TypeError
+        if you attempt to construct an ImageData with negative width or height.
+
+        This change simply updates the IDL and impelemntation to match the spec.
+
+        Test coverage is already provided by fast/canvas/canvas-imageData.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal): Serialize as uint32_t values.
+        * html/ImageData.idl: Revise width and height to be unsigned long.
+
 2016-11-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] flex-basis should be pixel units not percentages.
