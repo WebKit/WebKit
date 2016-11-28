@@ -67,13 +67,18 @@ bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
     StringObject* thisObject = jsCast<StringObject*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
+        scope.release();
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+    }
 
     if (propertyName == vm.propertyNames->length)
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        scope.release();
         return putByIndex(cell, exec, index.value(), value, slot.isStrictMode());
+    }
+    scope.release();
     return JSObject::put(cell, exec, propertyName, value, slot);
 }
 
@@ -85,6 +90,7 @@ bool StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNa
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->canGetIndex(propertyName))
         return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+    scope.release();
     return JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
 }
 
@@ -116,9 +122,11 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         ASSERT(isCurrentDefined);
         bool isExtensible = thisObject->isExtensible(exec);
         RETURN_IF_EXCEPTION(scope, false);
+        scope.release();
         return validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
     }
 
+    scope.release();
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 

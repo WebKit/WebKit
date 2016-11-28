@@ -1,5 +1,45 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in runtime/String* files.
+        https://bugs.webkit.org/show_bug.cgi?id=165067
+
+        Reviewed by Saam Barati.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCodePoint):
+        (JSC::constructWithStringConstructor):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::StringObject::putByIndex):
+        (JSC::StringObject::defineOwnProperty):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        (JSC::repeatCharacter):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCodePointAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::splitStringByOneCharacterImpl):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::toLocaleCase):
+        (JSC::trimString):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::builtinStringIncludesInternal):
+        (JSC::stringProtoFuncIterator):
+        (JSC::normalize):
+        (JSC::stringProtoFuncNormalize):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in ObjectConstructor.cpp and ObjectPrototype.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=165051
 
