@@ -126,7 +126,9 @@ ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strin
 
     for (unsigned i = 0; i < count; ++i) {
         JSValue v = strings[-static_cast<int>(i)].jsValue();
-        if (!ropeBuilder.append(v.toString(exec)))
+        JSString* string = v.toString(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!ropeBuilder.append(string))
             return throwOutOfMemoryError(exec, scope);
     }
 
@@ -138,11 +140,15 @@ ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
     JSRopeString::RopeBuilder ropeBuilder(*vm);
-    ropeBuilder.append(thisValue.toString(exec));
+    JSString* str = thisValue.toString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    ropeBuilder.append(str);
 
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         JSValue v = exec->argument(i);
-        if (!ropeBuilder.append(v.toString(exec)))
+        JSString* str = v.toString(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (UNLIKELY(!ropeBuilder.append(str)))
             return throwOutOfMemoryError(exec, scope);
     }
 
@@ -155,6 +161,9 @@ ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
 template<bool leftFirst>
 ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (v1.isInt32() && v2.isInt32())
         return v1.asInt32() < v2.asInt32();
 
@@ -172,11 +181,14 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     bool wasNotString2;
     if (leftFirst) {
         wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        RETURN_IF_EXCEPTION(scope, false);
         wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
     } else {
         wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        RETURN_IF_EXCEPTION(scope, false);
         wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
     }
+    RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2)
         return n1 < n2;
@@ -189,6 +201,9 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
 template<bool leftFirst>
 ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (v1.isInt32() && v2.isInt32())
         return v1.asInt32() <= v2.asInt32();
 
@@ -206,11 +221,14 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     bool wasNotString2;
     if (leftFirst) {
         wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        RETURN_IF_EXCEPTION(scope, false);
         wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
     } else {
         wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        RETURN_IF_EXCEPTION(scope, false);
         wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
     }
+    RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2)
         return n1 <= n2;

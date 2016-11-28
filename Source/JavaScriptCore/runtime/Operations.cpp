@@ -46,17 +46,28 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue p1 = v1.toPrimitive(callFrame);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     JSValue p2 = v2.toPrimitive(callFrame);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
-    if (p1.isString())
-        return jsString(callFrame, asString(p1), p2.toString(callFrame));
+    if (p1.isString()) {
+        JSString* p2String = p2.toString(callFrame);
+        RETURN_IF_EXCEPTION(scope, { });
+        scope.release();
+        return jsString(callFrame, asString(p1), p2String);
+    }
 
-    if (p2.isString())
-        return jsString(callFrame, p1.toString(callFrame), asString(p2));
+    if (p2.isString()) {
+        JSString* p1String = p1.toString(callFrame);
+        RETURN_IF_EXCEPTION(scope, { });
+        scope.release();
+        return jsString(callFrame, p1String, asString(p2));
+    }
 
-    return jsNumber(p1.toNumber(callFrame) + p2.toNumber(callFrame));
+    double p1Number = p1.toNumber(callFrame);
+    RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
+    return jsNumber(p1Number + p2.toNumber(callFrame));
 }
 
 JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
@@ -96,6 +107,7 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
 
 bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
 {
+    VM& vm = callFrame->vm();
     if (!v.isCell())
         return v.isNull();
 
@@ -103,11 +115,11 @@ bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
     if (type == StringType || type == SymbolType)
         return false;
     if (type >= ObjectType) {
-        if (asObject(v)->structure(callFrame->vm())->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
+        if (asObject(v)->structure(vm)->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
             return false;
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable(callFrame->vm())->getCallData(object, callData) != CallType::None)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
             return false;
     }
     return true;

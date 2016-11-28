@@ -1,5 +1,23 @@
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in runtime/Operations.cpp/h.
+        https://bugs.webkit.org/show_bug.cgi?id=165046
+
+        Reviewed by Saam Barati.
+
+        Also switched to using returning { } instead of JSValue().
+
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        (JSC::jsIsObjectTypeOrNull):
+        * runtime/Operations.h:
+        (JSC::jsStringFromRegisterArray):
+        (JSC::jsStringFromArguments):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+
+2016-11-28  Mark Lam  <mark.lam@apple.com>
+
         Fix exception scope verification failures in JSScope.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=165047
 
