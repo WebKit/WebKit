@@ -117,7 +117,7 @@ public:
         void setCalculation(RefPtr<CSSCalcValue>&& calculation)
         {
             ASSERT(isCalculation(m_value));
-            m_calculation = calculation;
+            m_calculation = WTFMove(calculation);
         }
 
     private:
