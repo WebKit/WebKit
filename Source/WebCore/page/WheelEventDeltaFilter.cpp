@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WheelEventDeltaFilter.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if HAVE(NSSCROLLING_FILTERS)
 #include "WheelEventDeltaFilterMac.h"
 #endif
 
@@ -46,7 +46,7 @@ WheelEventDeltaFilter::~WheelEventDeltaFilter()
 
 std::unique_ptr<WheelEventDeltaFilter> WheelEventDeltaFilter::create()
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if HAVE(NSSCROLLING_FILTERS)
     return std::make_unique<WheelEventDeltaFilterMac>();
 #else
     return std::make_unique<BasicWheelEventDeltaFilter>();
@@ -61,6 +61,11 @@ bool WheelEventDeltaFilter::isFilteringDeltas() const
 FloatSize WheelEventDeltaFilter::filteredDelta() const
 {
     return m_currentFilteredDelta;
+}
+
+FloatPoint WheelEventDeltaFilter::filteredVelocity() const
+{
+    return m_currentFilteredVelocity;
 }
 
 BasicWheelEventDeltaFilter::BasicWheelEventDeltaFilter()

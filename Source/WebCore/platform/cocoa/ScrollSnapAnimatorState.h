@@ -31,9 +31,10 @@
 #include "AxisScrollSnapOffsets.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
-#include "LayoutUnit.h"
+#include "LayoutPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
+#include "ScrollingMomentumCalculator.h"
 
 namespace WebCore {
 
@@ -44,56 +45,59 @@ enum class ScrollSnapState {
     UserInteraction
 };
 
-struct ScrollSnapAnimatorState {
-    ScrollSnapAnimatorState(ScrollEventAxis, const Vector<LayoutUnit>&);
+class ScrollSnapAnimatorState {
+public:
+    Vector<LayoutUnit> snapOffsetsForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsX : m_snapOffsetsY;
+    }
 
-    void pushInitialWheelDelta(float);
-    float averageInitialWheelDelta() const;
-    void clearInitialWheelDeltaWindow();
-    bool isSnapping() const;
-    bool canReachTargetWithCurrentInitialScrollDelta() const;
-    bool wheelDeltaTrackingIsInProgress() const;
-    bool hasFinishedTrackingWheelDeltas() const;
-    float interpolatedOffsetAtProgress(float) const;
-    
-    static const int wheelDeltaWindowSize = 3;
+    void setSnapOffsetsForAxis(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets)
+    {
+        if (axis == ScrollEventAxis::Horizontal)
+            m_snapOffsetsX = snapOffsets;
+        else
+            m_snapOffsetsY = snapOffsets;
+    }
 
-    Vector<LayoutUnit> m_snapOffsets;
-    ScrollEventAxis m_axis;
-    // Used to track both snapping and gliding behaviors.
-    ScrollSnapState m_currentState;
-    LayoutUnit m_initialOffset;
-    LayoutUnit m_targetOffset;
-    // Used to track gliding behavior.
-    LayoutUnit m_beginTrackingWheelDeltaOffset;
-    int m_numWheelDeltasTracked { 0 };
-    unsigned m_activeSnapIndex { 0 };
-    float m_wheelDeltaWindow[wheelDeltaWindowSize];
-    float m_initialScrollDelta { 0 };
-    bool m_shouldOverrideWheelEvent { false };
-};
-    
-/**
- * Stores state variables necessary to coordinate snapping animations between
- * horizontal and vertical axes.
- */
-struct ScrollSnapAnimationCurveState {
-    
-    void initializeSnapProgressCurve(const FloatSize&, const FloatSize&, const FloatSize&);
-    void initializeInterpolationCoefficientsIfNecessary(const FloatSize&, const FloatSize&, const FloatSize&);
-    FloatPoint interpolatedPositionAtProgress(float) const;
-    bool shouldCompleteSnapAnimationImmediatelyAtTime(double) const;
-    float animationProgressAtTime(double) const;
+    ScrollSnapState currentState() const { return m_currentState; }
 
-    bool shouldAnimateDirectlyToSnapPoint { false };
-    
+    unsigned activeSnapIndexForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Horizontal ? m_activeSnapIndexX : m_activeSnapIndexY;
+    }
+
+    void setActiveSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+    {
+        if (axis == ScrollEventAxis::Horizontal)
+            m_activeSnapIndexX = index;
+        else
+            m_activeSnapIndexY = index;
+    }
+
+    FloatPoint currentAnimatedScrollOffset(bool& isAnimationComplete) const;
+
+    // State transition helpers.
+    void transitionToSnapAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset);
+    void transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta);
+    void transitionToUserInteractionState();
+    void transitionToDestinationReachedState();
+
 private:
-    double m_startTime { 0 };
-    float m_snapAnimationCurveMagnitude { 0 };
-    float m_snapAnimationDecayFactor { 0 };
-    FloatSize m_snapAnimationCurveCoefficients[4] { };
-};
+    float targetOffsetForStartOffset(ScrollEventAxis, float maxScrollOffset, float startOffset, float pageScale, float delta, unsigned& outActiveSnapIndex) const;
+    void teardownAnimationForState(ScrollSnapState);
+    void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta);
 
+    ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
+
+    Vector<LayoutUnit> m_snapOffsetsX;
+    unsigned m_activeSnapIndexX { 0 };
+    Vector<LayoutUnit> m_snapOffsetsY;
+    unsigned m_activeSnapIndexY { 0 };
+
+    double m_startTime { 0 };
+    std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
+};
 
 } // namespace WebCore
 

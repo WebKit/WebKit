@@ -201,9 +201,9 @@ void ScrollAnimator::updateScrollSnapState()
     m_scrollController.updateScrollSnapState(m_scrollableArea);
 }
 
-LayoutUnit ScrollAnimator::scrollOffsetOnAxis(ScrollEventAxis axis) const
+FloatPoint ScrollAnimator::scrollOffset() const
 {
-    return axis == ScrollEventAxis::Horizontal ? m_currentPosition.x() : m_currentPosition.y();
+    return m_currentPosition;
 }
 
 void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
@@ -221,6 +221,12 @@ LayoutSize ScrollAnimator::scrollExtent() const
 {
     return m_scrollableArea.contentsSize();
 }
+
+FloatSize ScrollAnimator::viewportSize() const
+{
+    return m_scrollableArea.visibleSize();
+}
+
 #endif
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)

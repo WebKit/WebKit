@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,48 +25,27 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include <wtf/Deque.h>
+#include "ScrollingMomentumCalculator.h"
+#include <wtf/RetainPtr.h>
+
+#if HAVE(NSSCROLLING_FILTERS)
+
+@class _NSScrollingMomentumCalculator;
 
 namespace WebCore {
 
-class WheelEventDeltaFilter {
+class ScrollingMomentumCalculatorMac final : public ScrollingMomentumCalculator {
 public:
-    WheelEventDeltaFilter();
-    virtual ~WheelEventDeltaFilter();
-
-    WEBCORE_EXPORT static std::unique_ptr<WheelEventDeltaFilter> create();
-    WEBCORE_EXPORT virtual void updateFromDelta(const FloatSize&) = 0;
-    WEBCORE_EXPORT virtual void beginFilteringDeltas() = 0;
-    WEBCORE_EXPORT virtual void endFilteringDeltas() = 0;
-    WEBCORE_EXPORT FloatPoint filteredVelocity() const;
-    WEBCORE_EXPORT bool isFilteringDeltas() const;
-    WEBCORE_EXPORT FloatSize filteredDelta() const;
-
-protected:
-    FloatSize m_currentFilteredDelta;
-    FloatPoint m_currentFilteredVelocity;
-    bool m_isFilteringDeltas { false };
-};
-
-enum class DominantScrollGestureDirection {
-    None,
-    Vertical,
-    Horizontal
-};
-
-class BasicWheelEventDeltaFilter final : public WheelEventDeltaFilter {
-public:
-    BasicWheelEventDeltaFilter();
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
+    ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity);
 
 private:
-    DominantScrollGestureDirection dominantScrollGestureDirection() const;
+    FloatPoint scrollOffsetAfterElapsedTime(double time) final;
+    double animationDuration() final;
+    _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
 
-    Deque<FloatSize> m_recentWheelEventDeltas;
+    RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;
 };
 
 } // namespace WebCore
+
+#endif // HAVE(NSSCROLLING_FILTERS)

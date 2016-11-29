@@ -1,3 +1,23 @@
+2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll snapping on Mac should use AppKit animations
+        https://bugs.webkit.org/show_bug.cgi?id=147261
+        <rdar://problem/29395293>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes 8 previously failing scroll snapping tests in the tiled-drawing/scrolling/scroll-snap directory and
+        removes them from TestExpectations. Also adds a new layout test. See WebCore/ChangeLog for more details.
+
+        * platform/mac-wk2/TestExpectations:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow-expected.txt:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders-expected.txt:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+
 2016-11-29  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Queue up completed requests in the client, handle them one by one.

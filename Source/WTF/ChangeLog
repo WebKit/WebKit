@@ -1,3 +1,15 @@
+2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll snapping on Mac should use AppKit animations
+        https://bugs.webkit.org/show_bug.cgi?id=147261
+        <rdar://problem/29395293>
+
+        Reviewed by Brent Fulgham.
+
+        Introduce HAVE(NSSCROLLING_FILTERS), which is on for macOS El Capitan and later.
+
+        * wtf/Platform.h:
+
 2016-11-28  Darin Adler  <darin@apple.com>
 
         Streamline and speed up tokenizer and segmented string classes

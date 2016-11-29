@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if HAVE(NSSCROLLING_FILTERS)
 
 #include "WheelEventDeltaFilterMac.h"
 #include "FloatPoint.h"
@@ -55,6 +55,7 @@ void WheelEventDeltaFilterMac::updateFromDelta(const FloatSize& delta)
     NSPoint filteredDeltaResult;
     NSPoint filteredVelocityResult;
     [m_predominantAxisFilter filterInputDelta:NSPoint(FloatPoint(delta.width(), delta.height())) timestamp:monotonicallyIncreasingTime() - m_beginFilteringDeltasTime outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
+    m_currentFilteredVelocity = FloatPoint(filteredVelocityResult);
     m_currentFilteredDelta = FloatSize(filteredDeltaResult.x, filteredDeltaResult.y);
 }
 
@@ -68,4 +69,4 @@ void WheelEventDeltaFilterMac::endFilteringDeltas()
 
 }
 
-#endif /* PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 */
+#endif /* HAVE(NSSCROLLING_FILTERS) */

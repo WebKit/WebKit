@@ -1,3 +1,17 @@
+2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll snapping on Mac should use AppKit animations
+        https://bugs.webkit.org/show_bug.cgi?id=147261
+        <rdar://problem/29395293>
+
+        Reviewed by Brent Fulgham.
+
+        Add some logic to plumb filtered wheel velocity over to WebCore in the case of mainframe scrolling. See
+        WebCore/ChangeLog for more details.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2016-11-21  Brian Burg  <bburg@apple.com>
 
         Web Automation: add ObjC SPI to set whether a page is controlled by automation

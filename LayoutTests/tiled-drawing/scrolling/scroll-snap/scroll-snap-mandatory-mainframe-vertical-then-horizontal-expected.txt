@@ -1,0 +1,5 @@
+PASS scroll offset snapped back to top.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

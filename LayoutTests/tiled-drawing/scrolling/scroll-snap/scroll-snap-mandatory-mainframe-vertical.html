@@ -33,7 +33,7 @@
         function checkForScrollSnap() {
             // The div should have snapped back to the previous position
             if (divTarget.scrollTop != divScrollPositionBeforeSnap)
-                testFailed("div did not snap back to proper location.");
+                testFailed(`div did not snap back to proper location. (${divTarget.scrollTop} vs. ${divScrollPositionBeforeSnap})`);
             else
                 testPassed("div honored snap points.");
 
@@ -63,7 +63,7 @@
             if (divTarget.scrollTop == window.innerHeight)
                 testPassed("div scrolled to next window.");
             else
-                testFailed("div did not honor snap points.");
+                testFailed(`div did not honor snap points. (${divTarget.scrollTop} vs. ${window.innerHeight})`);
 
             setTimeout(scrollSnapTest, 0);
         }

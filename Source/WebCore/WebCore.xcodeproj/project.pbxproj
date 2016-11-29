@@ -2159,6 +2159,8 @@
 		517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517B25A91CC82B2A0061C011 /* IDBConnectionProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */; };
 		517B25AA1CC82B2A0061C011 /* IDBConnectionProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B25A81CC820320061C011 /* IDBConnectionProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517DEEE51DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */; };
+		517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */; };
 		5185FC741BB4C4E80012898F /* DOMWindowIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7196C181106DF0016DC51 /* DOMWindowIndexedDatabase.cpp */; };
 		5185FC751BB4C4E80012898F /* DOMWindowIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7196D181106DF0016DC51 /* DOMWindowIndexedDatabase.h */; };
@@ -2257,6 +2259,8 @@
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
+		51C61B0A1DE536E7008A212D /* ScrollingMomentumCalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */; };
+		51C61B0B1DE536E7008A212D /* ScrollingMomentumCalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C61B091DE536E7008A212D /* ScrollingMomentumCalculator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9396,6 +9400,8 @@
 		517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoderCF.h; sourceTree = "<group>"; };
 		517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionProxy.cpp; sourceTree = "<group>"; };
 		517B25A81CC820320061C011 /* IDBConnectionProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionProxy.h; sourceTree = "<group>"; };
+		517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingMomentumCalculatorMac.mm; sourceTree = "<group>"; };
+		517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculatorMac.h; sourceTree = "<group>"; };
 		517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtension.cpp; sourceTree = "<group>"; };
 		517FBA18151AA71B00B57959 /* DOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowExtension.h; sourceTree = "<group>"; };
 		5185FCBC1BB5CB770012898F /* IDBConnectionToServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionToServer.cpp; sourceTree = "<group>"; };
@@ -9456,6 +9462,9 @@
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
 		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFrame.cpp; sourceTree = "<group>"; };
+		51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingMomentumCalculator.cpp; sourceTree = "<group>"; };
+		51C61B091DE536E7008A212D /* ScrollingMomentumCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculator.h; sourceTree = "<group>"; };
+		51C61B0C1DE5383D008A212D /* NSScrollingMomentumCalculatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollingMomentumCalculatorSPI.h; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
@@ -15945,6 +15954,8 @@
 				0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */,
 				F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */,
 				F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */,
+				51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */,
+				51C61B091DE536E7008A212D /* ScrollingMomentumCalculator.h */,
 				0F605AEA15F94848004DF0C0 /* ScrollingConstraints.cpp */,
 				0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */,
 				1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */,
@@ -15986,6 +15997,8 @@
 		1AF62EE214DA22A70041556C /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */,
+				517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */,
 				9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */,
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
 				0FA88EBC16A8D1BD00F99984 /* ScrollingStateFrameScrollingNodeMac.mm */,
@@ -18503,6 +18516,7 @@
 				93F1E1EB1A40FDDC00348D13 /* NSPopoverSPI.h */,
 				7C0406121C66EE9C00AF0711 /* NSScrollerImpSPI.h */,
 				F40EA8AA1B867D6500CE5581 /* NSScrollingInputFilterSPI.h */,
+				51C61B0C1DE5383D008A212D /* NSScrollingMomentumCalculatorSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,
 				933C7A741C0FBC440034FB97 /* NSSpellCheckerSPI.h */,
@@ -25773,6 +25787,7 @@
 				5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */,
 				516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */,
 				51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */,
+				517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
 				51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */,
@@ -26334,6 +26349,7 @@
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
+				51C61B0B1DE536E7008A212D /* ScrollingMomentumCalculator.h in Headers */,
 				CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */,
 				AA7FEEAD16A4E74B004C0C33 /* JSSpeechSynthesis.h in Headers */,
 				AA2A5AD216A4860A00976A25 /* JSSpeechSynthesisEvent.h in Headers */,
@@ -29355,6 +29371,7 @@
 				46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */,
 				2D5036681BCDDDC400E20BB3 /* GestureEvents.cpp in Sources */,
 				B2AFFC830D00A5C10030074D /* GlyphPageMac.cpp in Sources */,
+				51C61B0A1DE536E7008A212D /* ScrollingMomentumCalculator.cpp in Sources */,
 				BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */,
 				BC53C60B0DA56CF10021EB5D /* GradientCG.cpp in Sources */,
 				2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */,
@@ -30925,6 +30942,7 @@
 				AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */,
 				083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */,
 				083DAEA80F01A7FB00342754 /* RenderTextControlSingleLine.cpp in Sources */,
+				517DEEE51DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm in Sources */,
 				BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
 				E4C91A18180999FB00A17F6D /* RenderTextLineBoxes.cpp in Sources */,
 				BCEA4889097D93020094C9E4 /* RenderTheme.cpp in Sources */,

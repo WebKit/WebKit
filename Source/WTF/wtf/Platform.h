@@ -551,6 +551,12 @@
 #define USE_PLUGIN_HOST_PROCESS 1
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#define HAVE_NSSCROLLING_FILTERS 1
+#else
+#define HAVE_NSSCROLLING_FILTERS 0
+#endif
+
 /* OS X defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
 /* Disable those macros so that we are not limited in how we name methods and functions. */

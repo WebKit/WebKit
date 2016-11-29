@@ -1993,8 +1993,11 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
 
 WheelEventTestTrigger& Page::ensureTestTrigger()
 {
-    if (!m_testTrigger)
+    if (!m_testTrigger) {
         m_testTrigger = adoptRef(new WheelEventTestTrigger());
+        if (auto* frameView = mainFrame().view())
+            frameView->layout();
+    }
 
     return *m_testTrigger;
 }

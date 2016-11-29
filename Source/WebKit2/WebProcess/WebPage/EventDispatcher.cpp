@@ -107,7 +107,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
     if (m_recentWheelEventDeltaFilter->isFilteringDeltas()) {
         m_recentWheelEventDeltaFilter->updateFromDelta(FloatSize(platformWheelEvent.deltaX(), platformWheelEvent.deltaY()));
         FloatSize filteredDelta = m_recentWheelEventDeltaFilter->filteredDelta();
-        platformWheelEvent = platformWheelEvent.copyWithDeltas(filteredDelta.width(), filteredDelta.height());
+        platformWheelEvent = platformWheelEvent.copyWithDeltasAndVelocity(filteredDelta.width(), filteredDelta.height(), m_recentWheelEventDeltaFilter->filteredVelocity());
     }
 #endif
 

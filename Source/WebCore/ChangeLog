@@ -1,3 +1,194 @@
+2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll snapping on Mac should use AppKit animations
+        https://bugs.webkit.org/show_bug.cgi?id=147261
+        <rdar://problem/29395293>
+
+        Reviewed by Brent Fulgham.
+
+        Refactors the scroll snapping animation logic to support arbitrary scrolling momentum calculators and
+        introduces ScrollingMomentumCalculatorMac, which wraps AppKit's _NSScrollingMomentumCalculator. On macOS El
+        Capitan and later, we use the platform scrolling momentum calculator and for all other cases, we fall back to
+        the preexissting platform-invariant momentum calculator.
+
+        Previously, the scroll snapping animation logic was shared between the ScrollSnapAnimatorState and
+        ScrollController -- namely, the ScrollController would update various parameters of the ScrollSnapAnimatorState
+        and then tell it to compute animation-specific constants and coefficients. After this patch, ScrollController
+        will no longer directly set the ScrollSnapAnimatorState's member variables. Instead, it will tell the animator
+        state to transition to a new ScrollSnapState with the necessary parameters, and the ScrollSnapAnimatorState is
+        responsible for modifying itself accordingly. Furthermore, logic pertaining to computing animated scroll offsets
+        is now split out into a new ScrollingMomentumCalculator, which may have different platform-dependent
+        implementations. The correct calculator is initialized via ScrollingMomentumCalculator::create, which currently
+        returns a ScrollingMomentumCalculatorMac on El Capitan and later, and a BasicScrollingMomentumCalculator
+        otherwise.
+
+        The new abstracted ScrollingMomentumCalculator is initialized with various parameters describing the scrolled
+        content and viewport, as well as the initial and target scrolling offsets. The momentum calculator is then able
+        to compute the animated scroll offset at any given elapsed time, as well as the total duration of the snapping
+        animation. The ScrollController's scroll snap timer uses this information (via the ScrollSnapAnimatorState) to
+        animate its client's scroll offset during a snap or glide.
+
+        Also reenables 8 failing and/or flaky scroll snapping tests and adds a new layout test. This patch addresses
+        two causes for failures and flakiness in these scroll snapping tests:
+
+        1.  When starting or stopping the scroll snap animation timer, we call deferTestsForReason and
+            removeTestDeferralForReason, respectively. These were actually noops for the first simulated scroll gesture
+            on each of the failing mainframe scrolling tests due to m_expectsWheelEventTestTrigger being false. This
+            member variable is updated when AsyncScrollingCoordinator::frameViewLayoutUpdated is invoked, wherein we
+            call ScrollingStateFrameScrollingNode::setExpectsWheelEventTestTrigger(true) when the test has started
+            monitoring wheel events. However, if this does not happen before scrolling begins in the test (which is the
+            case here), then the mainframe scrolling node will not expect a wheel event test trigger even though
+            eventSender.monitorWheelEvents() has been called. To fix this, we simply make the Page trigger a layout of
+            the main FrameView when first ensuring the wheel event test trigger on the Page.
+
+        2.  The second reason for flakiness affects both overflow and mainframe scrolling. Previously, due to the way
+            we would wait for multiple momentum scroll events before starting to glide, we would end up starting the
+            scroll snap timer for a snapping animation, stopping it, and then starting it again for the glide animation.
+            Thus, if the wheel event test trigger's timer fires right after the scroll snap timer stops and before it
+            starts again due to a glide animation, it will erroneously think that scroll snapping is complete, even
+            though it's only just about to begin! Now that we know scrolling velocity when we receive the initial
+            "momentum begin", we now directly transition the scroll snap state from a snapping state to a gliding state
+            and no longer stop and start the timer during this transition, which means that the test trigger will be
+            deferred for at least the entire duration of the scroll snapping animation (starting right after the first
+            "drag end" wheel event).
+
+        Test: tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-vertical-then-horizontal.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBox):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/Page.cpp:
+        (WebCore::Page::ensureTestTrigger):
+
+        Addresses test failures by forcing the mainframe scrolling node to expect wheel event test triggers.
+
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::create):
+        (WebCore::WheelEventDeltaFilter::filteredVelocity):
+        * page/WheelEventDeltaFilter.h:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        (WebCore::WheelEventDeltaFilterMac::updateFromDelta):
+
+        Add support for plumbing filtered scrolling velocity over to the ScrollController.
+
+        * page/scrolling/ScrollingMomentumCalculator.cpp: Copied from Source/WebCore/platform/cocoa/ScrollSnapAnimatorState.mm.
+        (WebCore::ScrollingMomentumCalculator::ScrollingMomentumCalculator):
+        (WebCore::ScrollingMomentumCalculator::create):
+
+        Creates a platform-independent BasicScrollingMomentumCalculator.
+
+        (WebCore::BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator):
+        (WebCore::BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress):
+        (WebCore::BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress):
+        (WebCore::BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime):
+        (WebCore::BasicScrollingMomentumCalculator::animationDuration):
+        (WebCore::BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNecessary):
+        (WebCore::BasicScrollingMomentumCalculator::initializeSnapProgressCurve):
+        (WebCore::BasicScrollingMomentumCalculator::animationProgressAfterElapsedTime):
+
+        Interpolation logic ported over from ScrollSnapAnimatorState.
+
+        * page/scrolling/ScrollingMomentumCalculator.h: Added.
+        (WebCore::ScrollingMomentumCalculator::~ScrollingMomentumCalculator):
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h: Copied from Source/WebCore/page/WheelEventDeltaFilter.h.
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm: Added.
+        (WebCore::ScrollingMomentumCalculator::create):
+
+        Creates a ScrollingMomentumCalculatorMac.
+
+        (WebCore::ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac):
+        (WebCore::ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime):
+        (WebCore::ScrollingMomentumCalculatorMac::animationDuration):
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffset):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::viewportSize):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis): Deleted.
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::copyWithDeltasAndVelocity):
+        (WebCore::PlatformWheelEvent::scrollingVelocity):
+        (WebCore::PlatformWheelEvent::copyWithDeltas): Deleted.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scrollOffset):
+        (WebCore::ScrollAnimator::viewportSize):
+        (WebCore::ScrollAnimator::scrollOffsetOnAxis): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::otherScrollEventAxis):
+        (WebCore::ScrollController::ScrollController):
+        (WebCore::ScrollController::shouldOverrideInertialScrolling):
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        (WebCore::ScrollController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollController::startDeferringTestsDueToScrollSnapping):
+        (WebCore::ScrollController::stopDeferringTestsDueToScrollSnapping):
+        (WebCore::ScrollController::processWheelEventForScrollSnap):
+        (WebCore::ScrollController::updateScrollSnapState):
+        (WebCore::ScrollController::updateScrollSnapPoints):
+
+        Update the ScrollController's ScrollSnapAnimationState for both vertical and horizontal axes. If both axes lack
+        any snap points, the pointer to the animation state will be nulled out; otherwise, the animation state will
+        exist.
+
+        (WebCore::ScrollController::startScrollSnapTimer):
+        (WebCore::ScrollController::stopScrollSnapTimer):
+        (WebCore::ScrollController::scrollSnapTimerFired):
+        (WebCore::ScrollController::activeScrollSnapIndexForAxis):
+        (WebCore::ScrollController::setActiveScrollSnapIndexForAxis):
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollController::setActiveScrollSnapIndicesForOffset):
+        (WebCore::ScrollController::scrollSnapPointState): Deleted.
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): Deleted.
+        (WebCore::ScrollController::shouldOverrideWheelEvent): Deleted.
+        (WebCore::projectedInertialScrollDistance): Deleted.
+        (WebCore::ScrollController::beginScrollSnapAnimation): Deleted.
+        (WebCore::ScrollController::endScrollSnapAnimation): Deleted.
+        (WebCore::ScrollController::initializeScrollSnapAnimationParameters): Deleted.
+        (WebCore::ScrollController::isSnappingOnAxis): Deleted.
+        * platform/cocoa/ScrollSnapAnimatorState.h:
+        (WebCore::ScrollSnapAnimatorState::snapOffsetsForAxis):
+        (WebCore::ScrollSnapAnimatorState::setSnapOffsetsForAxis):
+        (WebCore::ScrollSnapAnimatorState::currentState):
+        (WebCore::ScrollSnapAnimatorState::activeSnapIndexForAxis):
+        (WebCore::ScrollSnapAnimatorState::setActiveSnapIndexForAxis):
+        * platform/cocoa/ScrollSnapAnimatorState.mm:
+        (WebCore::projectedInertialScrollDistance):
+        (WebCore::ScrollSnapAnimatorState::transitionToSnapAnimationState):
+        (WebCore::ScrollSnapAnimatorState::transitionToGlideAnimationState):
+        (WebCore::ScrollSnapAnimatorState::transitionToUserInteractionState):
+        (WebCore::ScrollSnapAnimatorState::transitionToDestinationReachedState):
+
+        These methods are used to update the ScrollSnapAnimationState. These state transitions should (and do)
+        encapsulate all changes that need to be made to the animation state; in other words, the ScrollController should
+        no longer be reaching directly into the ScrollSnapAnimatorState to change member variables.
+
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::teardownAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::currentAnimatedScrollOffset):
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset):
+        (WebCore::ScrollSnapAnimatorState::ScrollSnapAnimatorState): Deleted.
+        (WebCore::ScrollSnapAnimatorState::pushInitialWheelDelta): Deleted.
+        (WebCore::ScrollSnapAnimatorState::averageInitialWheelDelta): Deleted.
+        (WebCore::ScrollSnapAnimatorState::clearInitialWheelDeltaWindow): Deleted.
+        (WebCore::ScrollSnapAnimatorState::isSnapping): Deleted.
+        (WebCore::ScrollSnapAnimatorState::canReachTargetWithCurrentInitialScrollDelta): Deleted.
+        (WebCore::ScrollSnapAnimatorState::wheelDeltaTrackingIsInProgress): Deleted.
+        (WebCore::ScrollSnapAnimatorState::hasFinishedTrackingWheelDeltas): Deleted.
+        (WebCore::ScrollSnapAnimatorState::interpolatedOffsetAtProgress): Deleted.
+        (WebCore::ScrollSnapAnimationCurveState::initializeSnapProgressCurve): Deleted.
+        (WebCore::ScrollSnapAnimationCurveState::initializeInterpolationCoefficientsIfNecessary): Deleted.
+        (WebCore::ScrollSnapAnimationCurveState::interpolatedPositionAtProgress): Deleted.
+        (WebCore::ScrollSnapAnimationCurveState::shouldCompleteSnapAnimationImmediatelyAtTime): Deleted.
+        (WebCore::ScrollSnapAnimationCurveState::animationProgressAtTime): Deleted.
+
+        The ScrollSnapAnimatorState now tracks state across both axes. This simplifies coordinating scroll snapping in
+        both horizontal and vertical axes and fixes the issue of the scroll offset not snapping when performing a scroll
+        in one direction without momentum, then scrolling with momentum in the other direction in a single gesture.
+
+        * platform/spi/mac/NSScrollingMomentumCalculatorSPI.h: Added.
+
 2016-11-29  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Queue up completed requests in the client, handle them one by one.
