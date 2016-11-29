@@ -50,18 +50,33 @@ const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
     }
 };
 
-PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display)
+std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
+{
+    struct wl_display* display = wl_display_connect(getenv("DISPLAY"));
+    if (!display)
+        return nullptr;
+
+    return std::make_unique<PlatformDisplayWayland>(display, NativeDisplayOwned::Yes);
+}
+
+PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display, NativeDisplayOwned displayOwned)
+    : PlatformDisplay(displayOwned)
 {
     initialize(display);
 }
 
 PlatformDisplayWayland::~PlatformDisplayWayland()
 {
+    if (m_nativeDisplayOwned == NativeDisplayOwned::Yes)
+        wl_display_destroy(m_display);
 }
 
 void PlatformDisplayWayland::initialize(wl_display* display)
 {
     m_display = display;
+    if (!m_display)
+        return;
+
     m_registry.reset(wl_display_get_registry(m_display));
     wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
     wl_display_roundtrip(m_display);

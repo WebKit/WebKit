@@ -1,3 +1,36 @@
+2016-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash in WebCore::PlatformDisplayX11::supportsXComposite when running under Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=164917
+
+        Reviewed by Michael Catanzaro.
+
+        WebKitGTK+ appplications are expected to call gtk_init(), because WebKitGTK+, like GTK+ itself, requires a
+        display to work. We currently fallback to create a X11 display when X11 is enabled in cases where GTK+ doesn't
+        have a default display (gtk_init() wasn't called or failed). That's why we end up creating an X11 display under
+        Wayland when both Wayland and X11 option are enabled. The code assumes X11 display creation will always work if
+        X11 is enabled, but that's not true now that we support also Wayland at runtime. So, we should try to get a
+        native display before creating the PlatformDisplay. Rendering will not work in any case when gtk_init() is not
+        called, but in most of the cases those applications are not actually going to render anything, so this way at
+        least we will not crash.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay): Use create() method for X11 and Wayland if we couldn't get a
+        native display from GTK+. If everything fails create a display with no native.
+        (WebCore::PlatformDisplay::PlatformDisplay): Add NativeDisplayOwned parameter.
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::create): Try to create a native Wayland display or return nullptr.
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland): Initialize NativeDisplayOwned parameter.
+        (WebCore::PlatformDisplayWayland::~PlatformDisplayWayland): Destroy the display if owned.
+        (WebCore::PlatformDisplayWayland::initialize): Return early if native display is nullptr.
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::create): Try to create a native X11 display or return nullptr.
+        (WebCore::PlatformDisplayX11::PlatformDisplayX11): Use NativeDisplayOwned now.
+        (WebCore::PlatformDisplayX11::~PlatformDisplayX11): Ditto.
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2016-11-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger should have an option for showing asynchronous call stacks
