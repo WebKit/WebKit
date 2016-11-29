@@ -342,7 +342,10 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAll
     if (shouldAllowFromThirdParty == AlwaysAllowFromThirdParty)
         return true;
 
-    if ((m_storageBlockingPolicy == BlockThirdPartyStorage || topOrigin->m_storageBlockingPolicy == BlockThirdPartyStorage) && topOrigin->isThirdParty(this))
+    if (m_universalAccess)
+        return true;
+
+    if ((m_storageBlockingPolicy == BlockThirdPartyStorage || topOrigin->m_storageBlockingPolicy == BlockThirdPartyStorage) && !topOrigin->isSameOriginAs(this))
         return false;
 
     return true;
@@ -357,18 +360,15 @@ SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
     return Ask;
 }
 
-bool SecurityOrigin::isThirdParty(const SecurityOrigin* child) const
+bool SecurityOrigin::isSameOriginAs(const SecurityOrigin* other) const
 {
-    if (child->m_universalAccess)
-        return false;
-
-    if (this == child)
-        return false;
-
-    if (isUnique() || child->isUnique())
+    if (this == other)
         return true;
 
-    return !isSameSchemeHostPort(child);
+    if (isUnique() || other->isUnique())
+        return false;
+
+    return isSameSchemeHostPort(other);
 }
 
 void SecurityOrigin::grantLoadLocalResources()

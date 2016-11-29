@@ -7,13 +7,12 @@ if (window.testRunner) {
 
 window.onload = function(evt) {
     alert("window.onload");
-    if (window.name == 'pageshow/pagehide') {
+    if (window.history.state == 'pageshow/pagehide') {
         // Returned back.
-        window.name = "";
         window.onpagehide = null;
         setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 10);
     } else {
-        window.name = "pageshow/pagehide";
+        window.history.replaceState("pageshow/pagehide", "");
         setTimeout('window.location = "data:text/html,<script>history.back();</scr" + "ipt>"', 0);
     }
 }

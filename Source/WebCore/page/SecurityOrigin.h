@@ -196,6 +196,10 @@ public:
     // (and whether it was set) but considering the host. It is used for postMessage.
     WEBCORE_EXPORT bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
+    // This method implements the "same origin" algorithm from the HTML Standard:
+    // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
+    bool isSameOriginAs(const SecurityOrigin*) const;
+
     static URL urlWithUniqueSecurityOrigin();
 
 private:
@@ -205,7 +209,6 @@ private:
 
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin*) const;
-    bool isThirdParty(const SecurityOrigin*) const;
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.

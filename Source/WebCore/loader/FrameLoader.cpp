@@ -572,6 +572,17 @@ void FrameLoader::cancelAndClear()
     m_frame.script().updatePlatformScriptObjects();
 }
 
+static inline bool shouldClearWindowName(const Frame& frame, const Document& newDocument)
+{
+    if (!frame.isMainFrame())
+        return false;
+
+    if (frame.loader().opener())
+        return false;
+
+    return !newDocument.securityOrigin()->isSameOriginAs(frame.document()->securityOrigin());
+}
+
 void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
 {
     m_frame.editor().clear();
@@ -594,6 +605,9 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
         InspectorInstrumentation::frameWindowDiscarded(m_frame, m_frame.document()->domWindow());
         m_frame.document()->domWindow()->resetUnlessSuspendedForDocumentSuspension();
         m_frame.script().clearWindowShell(newDocument->domWindow(), m_frame.document()->pageCacheState() == Document::AboutToEnterPageCache);
+
+        if (shouldClearWindowName(m_frame, *newDocument))
+            m_frame.tree().setName(nullAtom);
     }
 
     m_frame.selection().prepareForDestruction();

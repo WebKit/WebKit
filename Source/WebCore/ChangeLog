@@ -1,3 +1,38 @@
+2016-11-29  Andy Estes  <aestes@apple.com>
+
+        window.name leaks information across domains
+        https://bugs.webkit.org/show_bug.cgi?id=158216
+        <rdar://problem/14548481>
+
+        Reviewed by Brent Fulgham.
+
+        When updating the history after a cross-origin navigation, the HTML Standard says:
+
+        "If the browsing context is a top-level browsing context, but not an auxiliary browsing
+        context, then set the browsing context's name to the empty string."
+
+        https://html.spec.whatwg.org/multipage/browsers.html#resetBCName
+
+        Tests: http/tests/security/window-name-after-cross-origin-aux-frame-navigation.html
+               http/tests/security/window-name-after-cross-origin-main-frame-navigation.html
+               http/tests/security/window-name-after-cross-origin-sub-frame-navigation.html
+               http/tests/security/window-name-after-same-origin-aux-frame-navigation.html
+               http/tests/security/window-name-after-same-origin-main-frame-navigation.html
+               http/tests/security/window-name-after-same-origin-sub-frame-navigation.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldClearWindowName): Returns true if frame is a main frame with no opener and
+        newDocument does not have the same origin as the frame's current document.
+        (WebCore::FrameLoader::clear): Changed to set m_frame's name to nullAtom if
+        clearWindowProperties and shouldClearWindowName() are true.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccessStorage): Changed to call isSameOriginAs() and check
+        m_universalAccess.
+        (WebCore::SecurityOrigin::isSameOriginAs): Renamed from isThirdParty(); removed the check
+        for m_universalAccess.
+        (WebCore::SecurityOrigin::isThirdParty): Renamed to isSameOriginAs().
+        * page/SecurityOrigin.h: Renamed isThirdParty() to isSameOriginAs() and made it public.
+
 2016-11-29  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix parsing of "all" in transitions
