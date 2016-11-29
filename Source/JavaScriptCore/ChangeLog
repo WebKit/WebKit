@@ -1,3 +1,32 @@
+2016-11-29  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in ProxyConstructor.cpp and ProxyObject.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=165053
+
+        Reviewed by Saam Barati.
+
+        Also replaced returning JSValue() with returning { }.
+
+        * runtime/ProxyConstructor.cpp:
+        (JSC::constructProxyObject):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::structureForTarget):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::putByIndexCommon):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+
 2016-11-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger should have an option for showing asynchronous call stacks
