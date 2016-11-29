@@ -203,6 +203,7 @@ endif
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
 	com.apple.WebKit.Databases.sb \
+	com.apple.WebKit.plugin-common.sb \
 	com.apple.WebKit.NetworkProcess.sb
 
 all: $(SANDBOX_PROFILES)
