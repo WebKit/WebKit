@@ -1,3 +1,21 @@
+2016-11-28  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Clicking on an HTML validation bubble should dismiss it
+        https://bugs.webkit.org/show_bug.cgi?id=165117
+        <rdar://problem/29409837>
+
+        Reviewed by Simon Fraser.
+
+        Clicking on an HTML validation bubble should dismiss it. It previously
+        did nothing.
+
+        No new tests, this is not easily testable as EventSender.keyDown() sends
+        the event to the view, not to a particular screen location.
+
+        * platform/mac/ValidationBubbleMac.mm:
+        (-[WebValidationPopover mouseDown:]):
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2016-11-27  Sam Weinig  <sam@webkit.org>
 
         Make CanvasRenderingContext2D use WebIDL unions / Variants for createPattern and drawImage

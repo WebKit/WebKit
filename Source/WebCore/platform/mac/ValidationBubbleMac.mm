@@ -31,6 +31,19 @@
 #import <AppKit/AppKit.h>
 #import <wtf/text/WTFString.h>
 
+@interface WebValidationPopover : NSPopover
+@end
+
+@implementation WebValidationPopover
+
+- (void)mouseDown:(NSEvent *)event
+{
+    UNUSED_PARAM(event);
+    [self close];
+}
+
+@end
+
 namespace WebCore {
 
 static const CGFloat horizontalPadding = 5;
@@ -59,7 +72,7 @@ ValidationBubble::ValidationBubble(NSView* view, const String& message)
     [label setFrame:NSMakeRect(horizontalPadding, verticalPadding, labelSize.width, labelSize.height)];
     [popoverView setFrame:NSMakeRect(0, 0, labelSize.width + horizontalPadding * 2, labelSize.height + verticalPadding * 2)];
 
-    m_popover = adoptNS([[NSPopover alloc] init]);
+    m_popover = adoptNS([[WebValidationPopover alloc] init]);
     [m_popover setContentViewController:controller.get()];
     [m_popover setBehavior:NSPopoverBehaviorTransient];
     [m_popover setAnimates:NO];
