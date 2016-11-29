@@ -1,3 +1,16 @@
+2016-11-29  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r209058): API test StringBuilderTest.Equal crashing
+        https://bugs.webkit.org/show_bug.cgi?id=165142
+
+        * wtf/text/StringBuilder.h: Added an overload of the equal function just
+        for the case where the arguments are StringBuilder, String. This is needed
+        because of the peculiar behavior of is8Bit in String, different from any of
+        our other string classes. I think we should consider changing String::is8Bit
+        to return true for null strings. We could then remove this overload and
+        probably remove other checks for null and zero length elsewhere that are
+        also needed only to avoid calling is8Bit on a null String.
+
 2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Scroll snapping on Mac should use AppKit animations

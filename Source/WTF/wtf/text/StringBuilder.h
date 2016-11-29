@@ -300,6 +300,7 @@ private:
 };
 
 template<typename StringType> bool equal(const StringBuilder&, const StringType&);
+bool equal(const StringBuilder&, const String&); // Only needed because is8Bit dereferences nullptr when the string is null.
 template<typename CharacterType> bool equal(const StringBuilder&, const CharacterType*, unsigned length);
 
 bool operator==(const StringBuilder&, const StringBuilder&);
@@ -323,6 +324,11 @@ template<typename CharacterType> inline bool equal(const StringBuilder& s, const
 template<typename StringType> inline bool equal(const StringBuilder& a, const StringType& b)
 {
     return equalCommon(a, b);
+}
+
+inline bool equal(const StringBuilder& a, const String& b)
+{
+    return !b.isNull() && equalCommon(a, b);
 }
 
 inline bool operator==(const StringBuilder& a, const StringBuilder& b) { return equal(a, b); }
