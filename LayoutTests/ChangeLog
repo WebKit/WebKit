@@ -1,3 +1,14 @@
+2016-11-28  Antti Koivisto  <antti@apple.com>
+
+        Slotted nodes ignore transition
+        https://bugs.webkit.org/show_bug.cgi?id=160866
+        <rdar://problem/29231901>
+
+        Reviewed by Sam Weinig.
+
+        * fast/shadow-dom/shadow-host-transition-expected.html: Added.
+        * fast/shadow-dom/shadow-host-transition.html: Added.
+
 2016-11-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger should have an option for showing asynchronous call stacks

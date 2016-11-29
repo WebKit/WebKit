@@ -257,14 +257,14 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
     if (shouldTearDownRenderers)
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 
-    bool hasDisplayContest = update.style && update.style->display() == CONTENTS;
-    if (hasDisplayContest != element.hasDisplayContents()) {
-        element.setHasDisplayContents(hasDisplayContest);
+    bool hasDisplayContents = update.style && update.style->display() == CONTENTS;
+    if (hasDisplayContents != element.hasDisplayContents()) {
+        element.setHasDisplayContents(hasDisplayContents);
         // Render tree position needs to be recomputed as rendering siblings may be found from the display:contents subtree.
         renderTreePosition().invalidateNextSibling();
     }
 
-    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasDisplayContest;
+    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasDisplayContents;
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
@@ -479,8 +479,7 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
 {
     PseudoElement* pseudoElement = pseudoId == BEFORE ? current.beforePseudoElement() : current.afterPseudoElement();
 
-    auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr;
-    if (renderer)
+    if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         renderTreePosition().invalidateNextSibling(*renderer);
 
     bool needsPseudoElement = WebCore::needsPseudoElement(current, pseudoId);
@@ -494,21 +493,25 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
         return;
     }
 
+    RefPtr<PseudoElement> newPseudoElement;
+    if (!pseudoElement) {
+        newPseudoElement = PseudoElement::create(current, pseudoId);
+        pseudoElement = newPseudoElement.get();
+    }
+
     auto newStyle = RenderStyle::clonePtr(*current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
 
-    auto elementUpdate = Style::TreeResolver::createAnimatedElementUpdate(WTFMove(newStyle), renderer, m_document);
+    auto elementUpdate = Style::TreeResolver::createAnimatedElementUpdate(WTFMove(newStyle), *pseudoElement, Style::NoChange);
 
     if (elementUpdate.change == Style::NoChange)
         return;
 
-    if (!pseudoElement) {
-        auto newPseudoElement = PseudoElement::create(current, pseudoId);
-        pseudoElement = newPseudoElement.ptr();
-        InspectorInstrumentation::pseudoElementCreated(m_document.page(), newPseudoElement);
+    if (newPseudoElement) {
+        InspectorInstrumentation::pseudoElementCreated(m_document.page(), *newPseudoElement);
         if (pseudoId == BEFORE)
-            current.setBeforePseudoElement(WTFMove(newPseudoElement));
+            current.setBeforePseudoElement(newPseudoElement.releaseNonNull());
         else
-            current.setAfterPseudoElement(WTFMove(newPseudoElement));
+            current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
     }
 
     updateElementRenderer(*pseudoElement, elementUpdate);

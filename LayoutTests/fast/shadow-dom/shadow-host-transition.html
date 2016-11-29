@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.test {
+    width: 100px;
+    height: 25px;
+    background: red;
+    color: green;
+}
+
+#host1.green {
+    transition: background 0.1s;
+    background: green !important;
+}
+
+#host3 .green {
+    transition: background 0.1s;
+    background: green !important;
+    height: 100%;
+}
+
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host1" class="test"><div>text</div></div>
+<div id="host2" class="test"><div>text</div></div>
+<div id="host3" class="test"><div>text</div></div>
+<div id="host4" class="test"><div>text</div></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let expectedEventCount = 0;
+let eventCount = 0;
+
+function transitionEndEvent()
+{
+    ++eventCount;
+    if (eventCount == expectedEventCount) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+{
+    const host = document.getElementById('host1');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+        <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('transitionend', transitionEndEvent);
+    host.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host2');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    :host(.green) {
+        transition: background 0.1s;
+        background: green !important;
+    }
+    </style>
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('transitionend', transitionEndEvent);
+    host.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host3');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('transitionend', transitionEndEvent);
+    host.firstChild.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host4');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    ::slotted(.green) {
+        transition: background 0.1s;
+        background: green !important;
+        height: 100%;
+    }
+    </style>
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('transitionend', transitionEndEvent);
+    host.firstChild.classList.toggle('green');
+}
+
+</script>
+</body>
+</html>

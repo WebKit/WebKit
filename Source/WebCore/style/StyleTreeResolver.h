@@ -32,6 +32,7 @@
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
+#include "StyleValidity.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
@@ -53,7 +54,7 @@ public:
 
     std::unique_ptr<Update> resolve(Change);
 
-    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, RenderElement* existingRenderer, Document&);
+    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, Element&, Change parentChange);
 
 private:
     std::unique_ptr<RenderStyle> styleForElement(Element&, const RenderStyle& inheritedStyle);

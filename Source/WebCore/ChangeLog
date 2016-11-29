@@ -1,3 +1,32 @@
+2016-11-28  Antti Koivisto  <antti@apple.com>
+
+        Slotted nodes ignore transition
+        https://bugs.webkit.org/show_bug.cgi?id=160866
+        <rdar://problem/29231901>
+
+        Reviewed by Sam Weinig.
+
+        The problem is that slot (display:contents) always triggers full render tree rebuild when something
+        changes in the slotted subtree. This causes animation to jump to end (may be another bug).
+
+        Test: fast/shadow-dom/shadow-host-transition.html
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+        * style/StyleChange.h:
+
+            Rearrange so the strongest ('Detach') is the highest.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
+            If style was display:contents and stays that way, use 'Inherit' StyleChange which doesn't force render tree rebuild.
+            Refactor more of the functionality to createAnimatedElementUpdate.
+
+        * style/StyleTreeResolver.h:
+
 2016-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in WebCore::PlatformDisplayX11::supportsXComposite when running under Wayland
