@@ -5,6 +5,7 @@ import json
 import logging
 import platform
 import os
+import sys
 
 from benchmark_runner import BenchmarkRunner
 from browser_driver.browser_driver_factory import BrowserDriverFactory
@@ -13,13 +14,24 @@ from browser_driver.browser_driver_factory import BrowserDriverFactory
 _log = logging.getLogger(__name__)
 
 
+def default_platform():
+    if sys.platform.startswith('linux'):
+        return 'linux'
+    return 'osx'
+
+
+def default_browser():
+    if sys.platform.startswith('linux'):
+        return 'minibrowser-gtk'
+    return 'safari'
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Automate the browser based performance benchmarks')
     parser.add_argument('--output-file', dest='output', default=None)
     parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable. e.g. WebKitBuild/Release/')
-    parser.add_argument('--platform', dest='platform', default='osx', choices=BrowserDriverFactory.available_platforms())
-    # FIXME: Should we add chrome as an option? Well, chrome uses webkit in iOS.
-    parser.add_argument('--browser', dest='browser', default='safari', choices=BrowserDriverFactory.available_browsers())
+    parser.add_argument('--platform', dest='platform', default=default_platform(), choices=BrowserDriverFactory.available_platforms())
+    parser.add_argument('--browser', dest='browser', default=default_browser(), choices=BrowserDriverFactory.available_browsers())
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark. e.g. PerformanceTests/SunSpider/')
     parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark. e.g. 5')

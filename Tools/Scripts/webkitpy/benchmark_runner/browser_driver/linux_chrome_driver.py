@@ -24,30 +24,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import sys
-from gtk_browser_driver import GTKBrowserDriver
-
-_log = logging.getLogger(__name__)
+from linux_browser_driver import LinuxBrowserDriver
 
 
-class GTKMiniBrowserDriver(GTKBrowserDriver):
-    process_name = 'MiniBrowser'
-    browser_name = 'minibrowser'
-
-    def prepare_env(self, device_id):
-        self._minibrowser_process = None
-        super(GTKMiniBrowserDriver, self).prepare_env(device_id)
+class LinuxChromeDriver(LinuxBrowserDriver):
+    browser_name = 'chrome'
+    process_search_list = ['chromium', 'chromium-browser', 'chrome']
 
     def launch_url(self, url, options, browser_build_path):
-        args = ['Tools/Scripts/run-minibrowser', '--gtk']
-        args.append("--geometry=%sx%s" % (self._screen_size().width, self._screen_size().height))
-        args.append(url)
-        _log.info('Launching Minibrowser with url: %s' % url)
-        self._minibrowser_process = GTKBrowserDriver._launch_process(args)
-
-    def close_browsers(self):
-        super(GTKMiniBrowserDriver, self).close_browsers()
-        if self._minibrowser_process and self._minibrowser_process.returncode:
-            _log.error('MiniBrowser crashed with exitcode %d' % self._minibrowser_process.returncode)
-            sys.exit(1)
+        self._browser_arguments = ['--temp-profile', '--start-maximized',
+                                   '--homepage', url]
+        super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path)

@@ -24,43 +24,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import subprocess
-from browser_driver import BrowserDriver
-
-_log = logging.getLogger(__name__)
+from linux_browser_driver import LinuxBrowserDriver
 
 
-class GTKBrowserDriver(BrowserDriver):
-    process_name = None
-    platform = 'gtk'
+class LinuxFirefoxDriver(LinuxBrowserDriver):
+    browser_name = 'firefox'
+    process_search_list = ['firefox']
 
-    def prepare_env(self, device_id):
-        self.close_browsers()
-
-    def restore_env(self):
-        pass
-
-    def close_browsers(self):
-        self._terminate_processes(self.process_name)
-
-    @classmethod
-    def _launch_process(cls, args, env=None):
-        process = subprocess.Popen(args)
-        return process
-
-    @classmethod
-    def _terminate_processes(cls, process_name):
-        _log.info('Closing all processes with name %s' % process_name)
-        subprocess.call(['/usr/bin/killall', process_name])
-
-    @classmethod
-    def _screen_size(cls):
-        # load_subclasses() from __init__.py will load this file to
-        # check the platform defined. Do here a lazy import instead of
-        # trying to import the Gtk module on the global scope of this
-        # file to avoid ImportError errors on other platforms.
-        # Python imports are cached and only run once, so this should be ok.
-        from gi.repository import Gtk
-        screen = Gtk.Window().get_screen()
-        return screen.get_monitor_geometry(screen.get_primary_monitor())
+    def launch_url(self, url, options, browser_build_path):
+        self._browser_arguments = ['-new-instance', '-profile', self._temp_profiledir,
+                                   '-width', str(self._screen_size().width),
+                                   '-height', str(self._screen_size().height),
+                                   url]
+        super(LinuxFirefoxDriver, self).launch_url(url, options, browser_build_path)

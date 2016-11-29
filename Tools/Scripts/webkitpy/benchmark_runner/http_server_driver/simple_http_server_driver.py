@@ -19,7 +19,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     """This class depends on unix environment, need to be modified to achieve crossplatform compability
     """
 
-    platforms = ['osx', 'gtk']
+    platforms = ['osx', 'linux']
 
     def __init__(self):
         self._server_process = None

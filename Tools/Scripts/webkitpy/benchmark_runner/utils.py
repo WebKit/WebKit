@@ -19,7 +19,8 @@ def is_subclass(child, parent_name):
 
 
 def load_subclasses(dirname, base_class_name, base_class_file, loader):
-    filelist = [base_class_file] + [f for f in os.listdir(dirname) if f.endswith('.py') and f not in ['__init__.py', base_class_file]]
+    filelist = [base_class_file] + [f for f in os.listdir(dirname) if f.endswith('_' + base_class_file)]
+    filelist += [f for f in os.listdir(dirname) if f.endswith('.py') and f not in ['__init__.py'] + filelist]
     for filename in filelist:
         module_name = os.path.splitext(filename)[0]
         module = imp.load_source(module_name, os.path.join(dirname, filename))

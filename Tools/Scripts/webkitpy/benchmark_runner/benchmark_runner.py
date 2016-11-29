@@ -107,7 +107,6 @@ class BenchmarkRunner(object):
 
             finally:
                 self._browser_driver.restore_env()
-                self._browser_driver.close_browsers()
 
             _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
 

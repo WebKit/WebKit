@@ -1,3 +1,58 @@
+2016-11-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Linux] run-benchmark should be able to execute the benchmarks with more browsers.
+        https://bugs.webkit.org/show_bug.cgi?id=164792
+
+        Reviewed by Michael Catanzaro.
+
+        This removes the GTKBrowserDriver (and the platform 'gtk') from the run-benchmark script,
+        and adds a new LinuxBrowserDriver with a platform 'linux'.
+
+        It add also drivers for Chrome (Chromium), Firefox, Epiphany and MiniBrowser-GTK (previously MiniBrowser).
+
+        The detection of the platform is now done automatically, so it is not longer needed to pass a "--platform" parameter.
+
+        The tracking of the browser process is now more robust, we track the pid of the browser process and we only try to
+        kill the ones that were executed by this script, instead of doing a 'killall $browser' (like before).
+        We also check for browser process childs and we kill them if they are still alive after the main browser process has been killed.
+        This depends on psutil, so this will only be done if psutil is installed.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunBenchmarkTests.start): The platform is now autodetected and the MiniBrowser driver is renamed to MiniBrowser-GTK.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner._run_benchmark): Fix a bug that caused close_browsers to be called twice. Its already called inside BenchmarkRunner._run_one_test.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py: Added.
+        (LinuxBrowserDriver): Implement base class that has all the needed functionality for driving the browsers.
+        (LinuxBrowserDriver.__init__):
+        (LinuxBrowserDriver.prepare_env):
+        (LinuxBrowserDriver.restore_env):
+        (LinuxBrowserDriver.close_browsers): Made the dependency on psutil optional (because it was listed as such on the README file <Tools/Scripts/webkitpy/benchmark_runner/README.md>)
+        (LinuxBrowserDriver.launch_url):
+        (LinuxBrowserDriver._get_first_executable_path_from_list):
+        (LinuxBrowserDriver._screen_size):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_chrome_driver.py: Copied from Tools/Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py.
+        (LinuxChromeDriver):
+        (LinuxChromeDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_epiphany_driver.py: Renamed from Tools/Scripts/webkitpy/benchmark_runner/browser_driver/gtk_browser_driver.py.
+        (EpiphanyBrowserDriver):
+        (EpiphanyBrowserDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_firefox_driver.py: Copied from Tools/Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py.
+        (LinuxFirefoxDriver):
+        (LinuxFirefoxDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowsergtk_driver.py: Renamed from Tools/Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py.
+        (GTKMiniBrowserDriver):
+        (GTKMiniBrowserDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (getplatform):
+        (getdefaultbrowser):
+        (parse_args):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (load_subclasses): The loading of subclasses was still (even after r196979) sensitive to the order in which the modules are loaded.
+        We have to ensure that the files containing subclasses of the base_class_file are loaded after the base_class_file,
+        we can do that by matching against the base_class_file pattern when the list is created.
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode
