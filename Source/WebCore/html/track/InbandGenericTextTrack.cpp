@@ -185,10 +185,10 @@ void InbandGenericTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPri
     parser().parseCueData(cueData);
 }
 
-void InbandGenericTextTrack::parseWebVTTFileHeader(InbandTextTrackPrivate* trackPrivate, String header)
+void InbandGenericTextTrack::parseWebVTTFileHeader(InbandTextTrackPrivate* trackPrivate, String&& header)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    parser().parseFileHeader(header);
+    parser().parseFileHeader(WTFMove(header));
 }
 
 void InbandGenericTextTrack::newCuesParsed()

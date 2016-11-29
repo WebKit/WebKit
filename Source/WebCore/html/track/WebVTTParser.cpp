@@ -104,24 +104,23 @@ void WebVTTParser::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
     m_regionList.clear();
 }
 
-void WebVTTParser::parseFileHeader(const String& data)
+void WebVTTParser::parseFileHeader(String&& data)
 {
     m_state = Initial;
     m_lineReader.reset();
-    m_lineReader.append(data);
+    m_lineReader.append(WTFMove(data));
     parse();
 }
 
 void WebVTTParser::parseBytes(const char* data, unsigned length)
 {
-    String textData = m_decoder->decode(data, length);
-    m_lineReader.append(textData);
+    m_lineReader.append(m_decoder->decode(data, length));
     parse();
 }
 
 void WebVTTParser::parseCueData(const ISOWebVTTCue& data)
 {
-    RefPtr<WebVTTCueData> cue = WebVTTCueData::create();
+    auto cue = WebVTTCueData::create();
 
     MediaTime startTime = data.presentationTime();
     cue->setStartTime(startTime);
@@ -135,16 +134,15 @@ void WebVTTParser::parseCueData(const ISOWebVTTCue& data)
     if (WebVTTParser::collectTimeStamp(data.originalStartTime(), originalStartTime))
         cue->setOriginalStartTime(originalStartTime);
 
-    m_cuelist.append(cue);
+    m_cuelist.append(WTFMove(cue));
     if (m_client)
         m_client->newCuesParsed();
 }
 
 void WebVTTParser::flush()
 {
-    String textData = m_decoder->flush();
-    m_lineReader.append(textData);
-    m_lineReader.setEndOfStream();
+    m_lineReader.append(m_decoder->flush());
+    m_lineReader.appendEndOfStream();
     parse();
     flushPendingCue();
 }
@@ -153,15 +151,11 @@ void WebVTTParser::parse()
 {    
     // WebVTT parser algorithm. (5.1 WebVTT file parsing.)
     // Steps 1 - 3 - Initial setup.
-    String line;
-    while (m_lineReader.getLine(line)) {
-        if (line.isNull())
-            return;
-
+    while (auto line = m_lineReader.nextLine()) {
         switch (m_state) {
         case Initial:
             // Steps 4 - 9 - Check for a valid WebVTT signature.
-            if (!hasRequiredFileIdentifier(line)) {
+            if (!hasRequiredFileIdentifier(*line)) {
                 if (m_client)
                     m_client->fileFailedToParse();
                 return;
@@ -171,9 +165,9 @@ void WebVTTParser::parse()
             break;
 
         case Header:
-            collectMetadataHeader(line);
+            collectMetadataHeader(*line);
 
-            if (line.isEmpty()) {
+            if (line->isEmpty()) {
                 // Steps 10-14 - Allow a header (comment area) under the WEBVTT line.
                 if (m_client && m_regionList.size())
                     m_client->newRegionsParsed();
@@ -181,43 +175,43 @@ void WebVTTParser::parse()
                 break;
             }
             // Step 15 - Break out of header loop if the line could be a timestamp line.
-            if (line.contains("-->"))
-                m_state = recoverCue(line);
+            if (line->contains("-->"))
+                m_state = recoverCue(*line);
 
             // Step 16 - Line is not the empty string and does not contain "-->".
             break;
 
         case Id:
             // Steps 17 - 20 - Allow any number of line terminators, then initialize new cue values.
-            if (line.isEmpty())
+            if (line->isEmpty())
                 break;
 
             // Step 21 - Cue creation (start a new cue).
             resetCueValues();
 
             // Steps 22 - 25 - Check if this line contains an optional identifier or timing data.
-            m_state = collectCueId(line);
+            m_state = collectCueId(*line);
             break;
 
         case TimingsAndSettings:
             // Steps 26 - 27 - Discard current cue if the line is empty.
-            if (line.isEmpty()) {
+            if (line->isEmpty()) {
                 m_state = Id;
                 break;
             }
 
             // Steps 28 - 29 - Collect cue timings and settings.
-            m_state = collectTimingsAndSettings(line);
+            m_state = collectTimingsAndSettings(*line);
             break;
 
         case CueText:
             // Steps 31 - 41 - Collect the cue text, create a cue, and add it to the output.
-            m_state = collectCueText(line);
+            m_state = collectCueText(*line);
             break;
 
         case BadCue:
             // Steps 42 - 48 - Discard lines until an empty line or a potential timing line is seen.
-            m_state = ignoreBadCue(line);
+            m_state = ignoreBadCue(*line);
             break;
 
         case Finished:

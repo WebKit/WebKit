@@ -1,3 +1,38 @@
+2016-11-28  Darin Adler  <darin@apple.com>
+
+        Streamline and speed up tokenizer and segmented string classes
+        https://bugs.webkit.org/show_bug.cgi?id=165003
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::bufferCharacters<LChar>): Moved this here from
+        the header since it is only used inside the class. Also renamed from
+        getBufferCharacters.
+        (WTF::StringBuilder::bufferCharacters<UChar>): Ditto.
+        (WTF::StringBuilder::appendUninitializedUpconvert): Added. Helper
+        for the upconvert case in the 16-bit overload of StrinBuilder::append.
+        (WTF::StringBuilder::append): Changed to use appendUninitializedUpconvert.
+        (WTF::quotedJSONStringLength): Added. Used in new appendQuotedJSONString
+        implementation below that now correctly determines the size of what will
+        be appended by walking thorugh the string twice.
+        (WTF::appendQuotedJSONStringInternal): Moved the code that writes the
+        quote marks in here. Also made a few coding style tweaks.
+        (WTF::StringBuilder::appendQuotedJSONString): Rewrote to use a much
+        simpler algorithm that grows the string the same way the append function
+        does. The old code would use reserveCapacity in a way that was costly when
+        doing a lot of appends on the same string, and also allocated far too much
+        memory for normal use cases where characters did not need to be turned
+        into escape sequences.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append): Tweaked style a bit, fixed a bug where the
+        m_is8Bit field wasn't set correctly in one case, optimized the function that
+        adds substrings for the case where this is the first append and the substring
+        happens to cover the entire string. Also clarified the assertions and removed
+        an unneeded check from that substring overload.
+        (WTF::equal): Reimplemented, using equalCommon.
+
 2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Import std::optional reference implementation as WTF::Optional
