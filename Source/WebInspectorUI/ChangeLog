@@ -1,3 +1,18 @@
+2016-11-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Breakpoints button enabled state is too subtle
+        https://bugs.webkit.org/show_bug.cgi?id=165153
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/Breakpoints.svg:
+        Change to path so stroke and fill can be styled.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-breakpoints):
+        (.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-breakpoints.activated):
+        Fill and stroke styles for the active and inactive breakpoint button.
+
 2016-11-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger should have an option for showing asynchronous call stacks

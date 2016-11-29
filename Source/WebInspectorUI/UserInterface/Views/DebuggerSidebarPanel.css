@@ -34,6 +34,15 @@
     right: 0;
 }
 
+.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-breakpoints {
+    fill: none;
+    stroke: var(--glyph-color);
+}
+.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-breakpoints.activated {
+    fill: var(--glyph-color-active);
+    stroke: var(--glyph-color-active);
+}
+
 .sidebar > .panel.navigation.debugger .warning-banner {
     text-align: center;
     font-size: 11px;
