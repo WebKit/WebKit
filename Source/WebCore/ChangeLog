@@ -1,3 +1,19 @@
+2016-11-27  Sam Weinig  <sam@webkit.org>
+
+        Make CanvasRenderingContext2D use WebIDL unions / Variants for createPattern and drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=165086
+
+        Reviewed by Darin Adler.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::size):
+        Add overloads of size for each type of CanvasSource.
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        Use variants to reduce code duplication and match spec language in drawImage and createPattern.
+
 2016-11-28  Beth Dakin  <bdakin@apple.com>
 
         Blacklist Netflix for TouchBar support

@@ -55,6 +55,12 @@ class HTMLVideoElement;
 class ImageData;
 class TextMetrics;
 
+#if ENABLE(VIDEO)
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>>;
+#else
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
+#endif
+
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
 public:
     CanvasRenderingContext2D(HTMLCanvasElement&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
@@ -156,21 +162,9 @@ public:
 
     void clearShadow();
 
-    ExceptionOr<void> drawImage(HTMLImageElement&, float x, float y);
-    ExceptionOr<void> drawImage(HTMLImageElement&, float x, float y, float width, float height);
-    ExceptionOr<void> drawImage(HTMLImageElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
-    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(HTMLCanvasElement&, float x, float y);
-    ExceptionOr<void> drawImage(HTMLCanvasElement&, float x, float y, float width, float height);
-    ExceptionOr<void> drawImage(HTMLCanvasElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
-    ExceptionOr<void> drawImage(HTMLCanvasElement&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
-#if ENABLE(VIDEO)
-    ExceptionOr<void> drawImage(HTMLVideoElement&, float x, float y);
-    ExceptionOr<void> drawImage(HTMLVideoElement&, float x, float y, float width, float height);
-    ExceptionOr<void> drawImage(HTMLVideoElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
-    ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
-#endif
+    ExceptionOr<void> drawImage(CanvasImageSource&&, float dx, float dy);
+    ExceptionOr<void> drawImage(CanvasImageSource&&, float dx, float dy, float dw, float dh);
+    ExceptionOr<void> drawImage(CanvasImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
 
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
 
@@ -180,11 +174,7 @@ public:
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, const String& repetitionType);
-    ExceptionOr<Ref<CanvasPattern>> createPattern(HTMLCanvasElement&, const String& repetitionType);
-#if ENABLE(VIDEO)
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, const String& repetitionType);
-#endif
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
 
     ExceptionOr<RefPtr<ImageData>> createImageData(ImageData*) const;
     ExceptionOr<RefPtr<ImageData>> createImageData(float width, float height) const;
@@ -330,6 +320,19 @@ private:
 
     void applyStrokePattern();
     void applyFillPattern();
+
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLCanvasElement&, bool repeatX, bool repeatY);
+#if ENABLE(VIDEO)
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
+#endif
+
+    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
+    ExceptionOr<void> drawImage(HTMLCanvasElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+#if ENABLE(VIDEO)
+    ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+#endif
 
     void drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
 

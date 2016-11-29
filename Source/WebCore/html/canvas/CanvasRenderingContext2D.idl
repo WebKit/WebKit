@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,13 @@
 
 enum ImageSmoothingQuality { "low", "medium", "high" };
 enum CanvasWindingRule { "nonzero", "evenodd" };
+
+// FIXME: This should include SVGImageElement and ImageBitmap.
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement) CanvasImageSource;
+#else
+typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
+#endif
 
 [
     CustomIsReachable,
@@ -52,9 +59,6 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
     attribute unrestricted float globalAlpha;
 
     attribute DOMString globalCompositeOperation;
-
-    [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
-    [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
 
     attribute unrestricted float lineWidth;
     attribute DOMString lineCap;
@@ -132,15 +136,12 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
 
     void strokeRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
-    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y);
-    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
-    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y);
-    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
-    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y);
-    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
-    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+    // FIXME: This should move to the CanvasDrawImage interface.
+    // FIXME: All the unrestricted float arguments below should be unrestricted doubles.
+    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted float x, unrestricted float y);
+    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+
 
     void drawImageFromRect(HTMLImageElement image,
         optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
@@ -162,14 +163,14 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
     void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
     void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [MayThrowException] CanvasPattern createPattern(HTMLCanvasElement canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [MayThrowException] CanvasPattern createPattern(HTMLImageElement image, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [Conditional=VIDEO, MayThrowException] CanvasPattern? createPattern(HTMLVideoElement video, [TreatNullAs=EmptyString] DOMString repetitionType);
     [MayThrowException] ImageData createImageData(ImageData? imagedata);
     [MayThrowException] ImageData createImageData(float sw, float sh);
 
     [Custom] attribute custom strokeStyle;
     [Custom] attribute custom fillStyle;
+    [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
+    [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
 
     // pixel manipulation
     [MayThrowException] ImageData getImageData(float sx, float sy, float sw, float sh);

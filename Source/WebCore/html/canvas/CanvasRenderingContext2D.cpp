@@ -1318,7 +1318,7 @@ enum ImageSizeType {
     ImageSizeBeforeDevicePixelRatio
 };
 
-static LayoutSize size(HTMLImageElement& imageElement, ImageSizeType sizeType)
+static LayoutSize size(HTMLImageElement& imageElement, ImageSizeType sizeType = ImageSizeBeforeDevicePixelRatio)
 {
     LayoutSize size;
     if (CachedImage* cachedImage = imageElement.cachedImage()) {
@@ -1328,6 +1328,11 @@ static LayoutSize size(HTMLImageElement& imageElement, ImageSizeType sizeType)
             size.scale(downcast<RenderImage>(*imageElement.renderer()).imageDevicePixelRatio());
     }
     return size;
+}
+
+static FloatSize size(HTMLCanvasElement& canvasElement)
+{
+    return FloatSize(canvasElement.size());
 }
 
 #if ENABLE(VIDEO)
@@ -1347,21 +1352,38 @@ static inline FloatRect normalizeRect(const FloatRect& rect)
         std::max(rect.height(), -rect.height()));
 }
 
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageElement, float x, float y)
+ExceptionOr<void> CanvasRenderingContext2D::drawImage(CanvasImageSource&& image, float dx, float dy)
 {
-    LayoutSize destRectSize = size(imageElement, ImageSizeAfterDevicePixelRatio);
-    return drawImage(imageElement, x, y, destRectSize.width(), destRectSize.height());
+    return WTF::switchOn(image,
+        [&] (RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<void> {
+            LayoutSize destRectSize = size(*imageElement, ImageSizeAfterDevicePixelRatio);
+            LayoutSize sourceRectSize = size(*imageElement, ImageSizeBeforeDevicePixelRatio);
+            return this->drawImage(*imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
+        },
+        [&] (auto& element) -> ExceptionOr<void> {
+            FloatSize elementSize = size(*element);
+            return this->drawImage(*element, FloatRect { 0, 0, elementSize.width(), elementSize.height() }, FloatRect { dx, dy, elementSize.width(), elementSize.height() });
+        }
+    );
 }
 
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageElement, float x, float y, float width, float height)
+ExceptionOr<void> CanvasRenderingContext2D::drawImage(CanvasImageSource&& image, float dx, float dy, float dw, float dh)
 {
-    LayoutSize sourceRectSize = size(imageElement, ImageSizeBeforeDevicePixelRatio);
-    return drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { x, y, width, height });
+    return WTF::switchOn(image,
+        [&] (auto& element) -> ExceptionOr<void> {
+            FloatSize elementSize = size(*element);
+            return this->drawImage(*element, FloatRect { 0, 0, elementSize.width(), elementSize.height() }, FloatRect { dx, dy, dw, dh });
+        }
+    );
 }
 
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageElement, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh)
+ExceptionOr<void> CanvasRenderingContext2D::drawImage(CanvasImageSource&& image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh)
 {
-    return drawImage(imageElement, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh });
+    return WTF::switchOn(image,
+        [&] (auto& element) -> ExceptionOr<void> {
+            return this->drawImage(*element, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh });
+        }
+    );
 }
 
 ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageElement, const FloatRect& srcRect, const FloatRect& dstRect)
@@ -1446,21 +1468,6 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageEle
     return { };
 }
 
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceCanvas, float x, float y)
-{
-    return drawImage(sourceCanvas, 0, 0, sourceCanvas.width(), sourceCanvas.height(), x, y, sourceCanvas.width(), sourceCanvas.height());
-}
-
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceCanvas, float x, float y, float width, float height)
-{
-    return drawImage(sourceCanvas, FloatRect(0, 0, sourceCanvas.width(), sourceCanvas.height()), FloatRect { x, y, width, height });
-}
-
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceCanvas, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh)
-{
-    return drawImage(sourceCanvas, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh));
-}
-
 ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceCanvas, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     FloatRect srcCanvasRect = FloatRect(FloatPoint(), sourceCanvas.size());
@@ -1517,23 +1524,6 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceC
 }
 
 #if ENABLE(VIDEO)
-
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, float x, float y)
-{
-    FloatSize videoSize = size(video);
-    return drawImage(video, x, y, videoSize.width(), videoSize.height());
-}
-
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, float x, float y, float width, float height)
-{
-    FloatSize videoSize = size(video);
-    return drawImage(video, FloatRect { 0, 0, videoSize.width(), videoSize.height() }, FloatRect { x, y, width, height });
-}
-
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh)
-{
-    return drawImage(video, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh });
-}
 
 ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, const FloatRect& srcRect, const FloatRect& dstRect)
 {
@@ -1748,12 +1738,19 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2D::createRadialGradient(
     return WTFMove(gradient);
 }
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLImageElement& imageElement, const String& repetitionType)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(CanvasImageSource&& image, const String& repetition)
 {
     bool repeatX, repeatY;
-    if (!CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY))
+    if (!CanvasPattern::parseRepetitionType(repetition, repeatX, repeatY))
         return Exception { SYNTAX_ERR };
 
+    return WTF::switchOn(image,
+        [&](auto& element) -> ExceptionOr<RefPtr<CanvasPattern>> { return this->createPattern(*element, repeatX, repeatY); }
+    );
+}
+
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
+{
     auto* cachedImage = imageElement.cachedImage();
 
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
@@ -1777,29 +1774,21 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLI
     return RefPtr<CanvasPattern> { CanvasPattern::create(*cachedImage->imageForRenderer(imageElement.renderer()), repeatX, repeatY, originClean) };
 }
 
-ExceptionOr<Ref<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLCanvasElement& canvas, const String& repetitionType)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLCanvasElement& canvas, bool repeatX, bool repeatY)
 {
     if (!canvas.width() || !canvas.height() || !canvas.buffer())
         return Exception { INVALID_STATE_ERR };
 
-    bool repeatX, repeatY;
-    if (!CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY))
-        return Exception { SYNTAX_ERR };
-
-    return CanvasPattern::create(*canvas.copiedImage(), repeatX, repeatY, canvas.originClean());
+    return RefPtr<CanvasPattern> { CanvasPattern::create(*canvas.copiedImage(), repeatX, repeatY, canvas.originClean()) };
 }
     
 #if ENABLE(VIDEO)
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLVideoElement& videoElement, const String& repetitionType)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLVideoElement& videoElement, bool repeatX, bool repeatY)
 {
     if (videoElement.readyState() < HTMLMediaElement::HAVE_CURRENT_DATA)
         return nullptr;
     
-    bool repeatX, repeatY;
-    if (!CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY))
-        return Exception { SYNTAX_ERR };
-
     checkOrigin(&videoElement);
     bool originClean = canvas().originClean();
 
