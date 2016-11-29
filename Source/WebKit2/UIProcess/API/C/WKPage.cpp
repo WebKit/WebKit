@@ -2632,6 +2632,15 @@ void WKPageDidAllowPointerLock(WKPageRef page)
 #endif
 }
 
+void WKPageClearUserMediaState(WKPageRef page)
+{
+#if ENABLE(MEDIA_STREAM)
+    toImpl(page)->clearUserMediaState();
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
 void WKPageDidDenyPointerLock(WKPageRef page)
 {
 #if ENABLE(POINTER_LOCK)

@@ -286,7 +286,9 @@ public:
 
     // MediaStream
     void setUserMediaPermission(bool);
-    void setUserMediaPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin);
+    void setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin);
+    unsigned userMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin) const;
+    void resetUserMediaPermissionRequestCountForOrigin(JSStringRef origin, JSStringRef parentOrigin);
 
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();
@@ -399,6 +401,8 @@ private:
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
 
     WKRetainPtr<WKArrayRef> m_allowedHosts;
+
+    size_t m_userMediaPermissionRequestCount { 0 };
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };

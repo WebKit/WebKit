@@ -1,3 +1,44 @@
+2016-11-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=164760
+        <rdar://problem/29261266>
+
+        Reviewed by Youenn Fablet.
+        
+        Allow scripts to determine the number of times the user has been prompted for capture device access.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setUserMediaPersistentPermissionForOrigin):
+        (WTR::InjectedBundle::userMediaPermissionRequestCountForOrigin):
+        (WTR::InjectedBundle::resetUserMediaPermissionRequestCountForOrigin):
+        (WTR::InjectedBundle::setUserMediaPermissionForOrigin): Deleted.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUserMediaPersistentPermissionForOrigin):
+        (WTR::TestRunner::userMediaPermissionRequestCountForOrigin):
+        (WTR::TestRunner::resetUserMediaPermissionRequestCountForOrigin):
+        (WTR::TestRunner::setUserMediaPermissionForOrigin): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::OriginSettings::incrementRequestCount):
+        (WTR::OriginSettings::resetRequestCount):
+        (WTR::OriginSettings::requestCount):
+        (WTR::TestController::saltForOrigin):
+        (WTR::TestController::setUserMediaPersistentPermissionForOrigin):
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin):
+        (WTR::TestController::settingsForOrigin):
+        (WTR::TestController::userMediaPermissionRequestCountForOrigin):
+        (WTR::TestController::resetUserMediaPermissionRequestCountForOrigin):
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible):
+        (WTR::TestController::setUserMediaPermissionForOrigin): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2016-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         intersection-observer-entry-interface.html test fails on the bots

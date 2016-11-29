@@ -58,7 +58,7 @@
             {
                 if (window.testRunner) {
                     testRunner.setUserMediaPermission(true);
-                    testRunner.setUserMediaPermissionForOrigin(false, document.location.href, "");
+                    testRunner.setUserMediaPersistentPermissionForOrigin(false, document.location.href, "");
                 }
 
                 navigator.mediaDevices
@@ -77,7 +77,7 @@
             function grantPermission()
             {
                 if (window.testRunner)
-                    testRunner.setUserMediaPermissionForOrigin(true, document.location.href, "");
+                    testRunner.setUserMediaPersistentPermissionForOrigin(true, document.location.href, "");
 
                 debug(`<br>*** Calling mediaDevices.enumerateDevices with persistent access, and without a media stream track<br>`);
                 havePermission = true;
