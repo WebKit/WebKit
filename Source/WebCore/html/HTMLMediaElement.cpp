@@ -631,6 +631,15 @@ HTMLMediaElement::~HTMLMediaElement()
     updatePlaybackControlsManager();
 }
 
+static bool needsPlaybackControlsManagerQuirk(Page& page)
+{
+    if (!page.settings().needsSiteSpecificQuirks())
+        return false;
+
+    String host = page.mainFrame().document()->url().host();
+    return equalLettersIgnoringASCIICase(host, "www.netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
+}
+
 HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
     auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
@@ -655,7 +664,15 @@ HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsMa
     if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
         return nullptr;
 
-    return &strongestSessionCandidate.session->element();
+    HTMLMediaElement* strongestElementCandidate = &strongestSessionCandidate.session->element();
+    if (strongestElementCandidate) {
+        if (Page* page = strongestElementCandidate->document().page()) {
+            if (needsPlaybackControlsManagerQuirk(*page))
+                return nullptr;
+        }
+    }
+
+    return strongestElementCandidate;
 }
 
 void HTMLMediaElement::registerWithDocument(Document& document)
@@ -7347,26 +7364,14 @@ bool HTMLMediaElement::isVisibleInViewport() const
     return renderer && renderer->visibleInViewportState() == RenderElement::VisibleInViewport;
 }
 
-static bool needsPlaybackControlsManagerQuirk(bool needsQuirks, const URL& url)
-{
-    if (!needsQuirks)
-        return false;
-
-    String host = url.host();
-    return equalLettersIgnoringASCIICase(host, "www.netflix.com");
-}
-
 void HTMLMediaElement::updatePlaybackControlsManager()
 {
     Page* page = document().page();
     if (!page)
         return;
 
-    auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager);
-    bool quirkDisablesPlaybackControlsManager = needsPlaybackControlsManagerQuirk(page->settings().needsSiteSpecificQuirks(), page->mainFrame().document()->url());
-
     // FIXME: Ensure that the renderer here should be up to date.
-    if (bestMediaElement && !quirkDisablesPlaybackControlsManager)
+    if (auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
         page->chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
     else
         page->chrome().client().clearPlaybackControlsManager();
