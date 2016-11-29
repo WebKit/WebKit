@@ -1,3 +1,13 @@
+2016-11-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Generated sandbox profile is not being put in the correct Resources directory
+        https://bugs.webkit.org/show_bug.cgi?id=165126
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj: Copy the generated file to the 'PlugInSandboxProfiles'
+        sub-directory.
+
 2016-11-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209008.
