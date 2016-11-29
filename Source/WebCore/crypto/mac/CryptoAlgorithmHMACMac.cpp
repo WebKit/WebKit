@@ -31,6 +31,7 @@
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonHMAC.h>
 #include <wtf/CryptographicUtilities.h>
 
@@ -54,7 +55,9 @@ static std::optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmI
     }
 }
 
-static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
+// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
 {
     size_t digestLength;
     switch (algorithm) {
@@ -79,9 +82,32 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     }
 
     Vector<uint8_t> result(digestLength);
-    const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>(""); // <rdar://problem/15467425> HMAC crashes when key pointer is null.
-    CCHmac(algorithm, keyData, key.size(), data.first, data.second, result.data());
+    CCHmac(algorithm, key.data(), key.size(), data, dataLength, result.data());
     return result;
+}
+
+void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
+        auto algorithm = commonCryptoHMACAlgorithm(hmacKey.hashAlgorithmIdentifier());
+        if (!algorithm) {
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+                exceptionCallback(OperationError);
+                context.deref();
+            });
+            return;
+        }
+        auto result = calculateSignature(*algorithm, hmacKey.key(), data.data(), data.size());
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+
 }
 
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
@@ -89,7 +115,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacPar
     auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
     if (!algorithm)
         return Exception { NOT_SUPPORTED_ERR };
-    callback(calculateSignature(*algorithm, key.key(), data));
+    callback(calculateSignature(*algorithm, key.key(), data.first, data.second));
     return { };
 }
 
@@ -99,7 +125,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacP
     if (!algorithm)
         return Exception { NOT_SUPPORTED_ERR };
 
-    auto signature = calculateSignature(*algorithm, key.key(), data);
+    auto signature = calculateSignature(*algorithm, key.key(), data.first, data.second);
 
     // Using a constant time comparison to prevent timing attacks.
     bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());

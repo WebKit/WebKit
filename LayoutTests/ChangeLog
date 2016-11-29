@@ -1,3 +1,40 @@
+2016-11-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::sign to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164740
+        <rdar://problem/29257864>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/hmac-import-key-sign-sha1-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-sign-sha1.html: Added.
+        * crypto/subtle/hmac-import-key-sign-sha224-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-sign-sha224.html: Added.
+        * crypto/subtle/hmac-import-key-sign-sha256-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-sign-sha256.html: Added.
+        * crypto/subtle/hmac-import-key-sign-sha384-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-sign-sha384.html: Added.
+        * crypto/subtle/hmac-import-key-sign-sha512-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-sign-sha512.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha1-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha1.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha224-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha224.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha256-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha256.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha384-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha384.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha512-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha512.html: Added.
+        * crypto/subtle/sign-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/sign-malformed-parameters.html: Added.
+        * crypto/workers/subtle/hmac-import-key-sign-expected.txt: Added.
+        * crypto/workers/subtle/hmac-import-key-sign.html: Added.
+        * crypto/workers/subtle/resources/hmac-import-key-sign.js: Added.
+        * crypto/workers/subtle/resources/rsassa-pkcs1-v1_5-import-key-sign.js: Added.
+        * crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-sign-expected.txt: Added.
+        * crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-sign.html: Added.
+
 2016-11-29  Chris Dumez  <cdumez@apple.com>
 
         Can't download move.simple.com direct deposit transition PDF: Non user-triggered activations of anchors that have a download attribute are ignored

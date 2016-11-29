@@ -54,6 +54,7 @@ namespace WebCore {
 enum class Operations {
     Encrypt,
     Decrypt,
+    Sign,
     Digest,
     GenerateKey,
     ImportKey,
@@ -112,6 +113,17 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmAesCbcParams>(params);
                 break;
             }
+            default:
+                setDOMException(&state, NOT_SUPPORTED_ERR);
+                return nullptr;
+            }
+            break;
+        case Operations::Sign:
+            switch (*identifier) {
+            case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
+            case CryptoAlgorithmIdentifier::HMAC:
+                result = std::make_unique<CryptoAlgorithmParameters>(params);
+                break;
             default:
                 setDOMException(&state, NOT_SUPPORTED_ERR);
                 return nullptr;
@@ -452,7 +464,7 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
         fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), cipherText.data(), cipherText.size());
         return;
     };
-    auto exceptionCallback = [capturedPromise = promise.copyRef()](ExceptionCode ec) mutable {
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
@@ -493,17 +505,62 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
     auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& cipherText) mutable {
-        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), cipherText.data(), cipherText.size());
+    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& plainText) mutable {
+        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), plainText.data(), plainText.size());
         return;
     };
-    auto exceptionCallback = [capturedPromise = promise.copyRef()](ExceptionCode ec) mutable {
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
     JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
     ASSERT(subtle);
     algorithm->decrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+}
+
+static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 3)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::Sign);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto key = toCryptoKey(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto data = toVector(state, state.uncheckedArgument(2));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (params->identifier != key->algorithmIdentifier()) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        return;
+    }
+
+    if (!key->allows(CryptoKeyUsageSign)) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support signing"));
+        return;
+    }
+
+    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& signature) mutable {
+        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), signature.data(), signature.size());
+        return;
+    };
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
+        rejectWithException(WTFMove(capturedPromise), ec);
+    };
+
+    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    ASSERT(subtle);
+    algorithm->sign(key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
@@ -545,7 +602,7 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
             capturedPromise->resolve(keyPair);
         }
     };
-    auto exceptionCallback = [capturedPromise =  promise.copyRef()](ExceptionCode ec) mutable {
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
@@ -590,7 +647,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
         }
         capturedPromise->resolve(key);
     };
-    auto exceptionCallback = [capturedPromise =  promise.copyRef()](ExceptionCode ec) mutable {
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
@@ -657,7 +714,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
         }
         ASSERT_NOT_REACHED();
     };
-    auto exceptionCallback = [capturedPromise =  promise.copyRef()](ExceptionCode ec) mutable {
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
@@ -675,6 +732,11 @@ JSValue JSSubtleCrypto::encrypt(ExecState& state)
 JSValue JSSubtleCrypto::decrypt(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionDecryptPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::sign(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionSignPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::generateKey(ExecState& state)

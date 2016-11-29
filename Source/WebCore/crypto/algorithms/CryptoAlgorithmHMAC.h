@@ -44,6 +44,7 @@ private:
     CryptoAlgorithmHMAC() = default;
     CryptoAlgorithmIdentifier identifier() const final;
 
+    void sign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
     void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext&) final;
     void importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(SubtleCrypto::KeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
@@ -55,6 +56,7 @@ private:
     ExceptionOr<void> importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&& failureCallback) final;
 
     bool keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDeprecated& algorithmParameters, const CryptoKey&) const;
+    void platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&);
     ExceptionOr<void> platformSign(const CryptoAlgorithmHmacParamsDeprecated&, const CryptoKeyHMAC&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
     ExceptionOr<void> platformVerify(const CryptoAlgorithmHmacParamsDeprecated&, const CryptoKeyHMAC&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback);
 };

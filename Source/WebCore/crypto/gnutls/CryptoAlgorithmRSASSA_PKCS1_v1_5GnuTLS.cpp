@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
+
 ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParamsDeprecated&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test signing with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var text = asciiToUint8Array("Hello, World!");
+var hmacImportParams = {
+    name: "hmac",
+    hash: "sha-1",
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.sign()');
+shouldReject('crypto.subtle.sign(1)');
+shouldReject('crypto.subtle.sign(1, 2)');
+
+crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["sign", "verify"]).then(function(result) {
+    wrongKey = result;
+    // Wrong algorithm identifier.
+    shouldReject('crypto.subtle.sign("rsassa-pkcs1-v1_5", wrongKey, text)');
+
+    return crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["verify"]);
+}).then(function(result) {
+    wrongKey = result;
+    // Wrong usage.
+    return shouldReject('crypto.subtle.sign("hmac", wrongKey, text)');
+}).then(finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

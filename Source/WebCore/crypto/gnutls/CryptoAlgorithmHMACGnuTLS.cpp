@@ -31,6 +31,7 @@
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
+#include "NotImplemented.h"
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
 #include <wtf/CryptographicUtilities.h>
@@ -66,6 +67,11 @@ static Vector<uint8_t> calculateSignature(gnutls_mac_algorithm_t algorithm, cons
     UNUSED_PARAM(ret);
 
     return result;
+}
+
+void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
 }
 
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)

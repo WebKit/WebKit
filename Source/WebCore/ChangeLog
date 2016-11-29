@@ -1,3 +1,72 @@
+2016-11-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::sign to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164740
+        <rdar://problem/29257864>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::sign method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-sign.
+           It also refers to the latest Editor's Draft to a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-sign.
+        2. It implements sign operations of the following algorithms: HMAC, and
+           RSASSA-PKCS1-V1_5.
+        3. It also replaces promise.copyRef() with WTFMove(promise) for all the
+           capture lists of exception callbacks in promise functions.
+
+        Tests: crypto/subtle/hmac-import-key-sign-sha1.html
+               crypto/subtle/hmac-import-key-sign-sha224.html
+               crypto/subtle/hmac-import-key-sign-sha256.html
+               crypto/subtle/hmac-import-key-sign-sha384.html
+               crypto/subtle/hmac-import-key-sign-sha512.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha1.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha224.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha256.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha384.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-sign-sha512.html
+               crypto/subtle/sign-malformed-parameters.html
+               crypto/workers/subtle/hmac-import-key-sign.html
+               crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-sign.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionDecryptPromise):
+        Fix a minor bug.
+        (WebCore::jsSubtleCryptoFunctionEncryptPromise):
+        (WebCore::jsSubtleCryptoFunctionDecryptPromise):
+        (WebCore::jsSubtleCryptoFunctionSignPromise):
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionImportKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+        (WebCore::JSSubtleCrypto::sign):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::sign):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::commonCryptoHMACAlgorithm):
+        (WebCore::calculateSignature):
+        Remove a null guardance since the depending bug is resolved.
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::signRSASSA_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+
 2016-11-29  Chris Dumez  <cdumez@apple.com>
 
         Can't download move.simple.com direct deposit transition PDF: Non user-triggered activations of anchors that have a download attribute are ignored

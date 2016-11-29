@@ -32,6 +32,7 @@
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
+#include "NotImplemented.h"
 #include <gcrypt.h>
 #include <wtf/CryptographicUtilities.h>
 
@@ -94,6 +95,11 @@ cleanup:
         return std::nullopt;
 
     return WTFMove(signature);
+}
+
+void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
 }
 
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)

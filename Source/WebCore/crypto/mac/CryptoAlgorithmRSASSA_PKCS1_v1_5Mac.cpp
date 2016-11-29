@@ -33,6 +33,7 @@
 #include "CryptoDigest.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -54,35 +55,63 @@ inline std::optional<CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgori
     }
 }
 
-ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
+// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
 {
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
-        return Exception { NOT_SUPPORTED_ERR };
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
+        return Exception { OperationError };
 
-    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(parameters.hash);
+    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
     if (!cryptoDigestAlgorithm)
-        return Exception { NOT_SUPPORTED_ERR };
-
+        return Exception { OperationError };
     auto digest = CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
-        return Exception { NOT_SUPPORTED_ERR };
-
-    digest->addBytes(data.first, data.second);
-
+        return Exception { OperationError };
+    digest->addBytes(data, dataLength);
     auto digestData = digest->computeHash();
 
-    Vector<uint8_t> signature(512);
+    Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.2.1
     size_t signatureSize = signature.size();
 
-    CCCryptorStatus status = CCRSACryptorSign(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
-    if (status) {
+    CCCryptorStatus status = CCRSACryptorSign(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
+    if (status)
+        return Exception { OperationError };
+
+    return WTFMove(signature);
+}
+
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
+        auto result = signRSASSA_PKCS1_v1_5(rsaKey.hashAlgorithmIdentifier(), rsaKey.platformKey(), rsaKey.keySizeInBits(), data.data(), data.size());
+        if (result.hasException()) {
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
+ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
+{
+    auto result = signRSASSA_PKCS1_v1_5(parameters.hash, key.platformKey(), key.keySizeInBits(), data.first, data.second);
+    if (result.hasException()) {
         failureCallback();
         return { };
     }
-
-    signature.resize(signatureSize);
-    callback(signature);
+    callback(result.releaseReturnValue());
     return { };
 }
 

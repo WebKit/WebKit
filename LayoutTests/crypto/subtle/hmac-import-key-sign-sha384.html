@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test signing with HMAC SHA-384 using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var text = asciiToUint8Array("Hello, World!");
+var hmacImportParams = {
+    name: "hmac",
+    hash: "sha-384",
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var expectedSignature = "5cfc6cba3135c99cb426d5d59bd33c5e212aac082f5ba57a1f70def2b3e987e3f3078be80f142221b6a8e23768dd994f";
+
+crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["sign", "verify"]).then(function(key) {
+    return crypto.subtle.sign("hmac", key, text);
+}).then(function(result) {
+    signature = result;
+
+    shouldBe("bytesToHexString(signature)", "expectedSignature");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

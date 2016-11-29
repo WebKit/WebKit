@@ -69,6 +69,11 @@ bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDep
     return true;
 }
 
+void CryptoAlgorithmHMAC::sign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    platformSign(WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
 void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(parameters);

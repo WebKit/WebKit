@@ -68,6 +68,15 @@ bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithm
     return true;
 }
 
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    if (key->type() != CryptoKeyType::Private) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    platformSign(WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+}
+
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context)
 {
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedKeyGenParams>(parameters);
