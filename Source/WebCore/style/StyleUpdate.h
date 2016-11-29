@@ -45,6 +45,12 @@ class Text;
 namespace Style {
 
 struct ElementUpdate {
+    ElementUpdate() = default;
+    ElementUpdate(std::unique_ptr<RenderStyle> style, Change change, bool recompositeLayer)
+        : style(WTFMove(style))
+        , change(change)
+        , recompositeLayer(recompositeLayer)
+    { }
     std::unique_ptr<RenderStyle> style;
     Change change { NoChange };
     bool recompositeLayer { false };
