@@ -67,14 +67,14 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(Ref<CryptoKey>&& key, Vect
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
         auto result = encryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
         if (result.hasException()) {
-            // We should only derenference callbacks after being back to the Document/Worker threads.
+            // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
                 exceptionCallback(ec);
                 context.deref();
             });
             return;
         }
-        // We should only derenference callbacks after being back to the Document/Worker threads.
+        // We should only dereference callbacks after being back to the Document/Worker threads.
         context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
             callback(result);
             context.deref();
@@ -89,14 +89,14 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(Ref<CryptoKey>&& key, Vect
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
         auto result = decryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText.data(), cipherText.size());
         if (result.hasException()) {
-            // We should only derenference callbacks after being back to the Document/Worker threads.
+            // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
                 exceptionCallback(ec);
                 context.deref();
             });
             return;
         }
-        // We should only derenference callbacks after being back to the Document/Worker threads.
+        // We should only dereference callbacks after being back to the Document/Worker threads.
         context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
             callback(result);
             context.deref();
