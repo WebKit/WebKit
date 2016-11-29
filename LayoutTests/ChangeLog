@@ -1,3 +1,15 @@
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Status text stuck saying "Loading" after media starts playing
+        https://bugs.webkit.org/show_bug.cgi?id=165162
+
+        Reviewed by Dean Jackson.
+
+        Adding a new test ensuring the status text is the empty string once the media starts playing.
+
+        * media/modern-media-controls/status-support/status-support-playing-expected.txt: Added.
+        * media/modern-media-controls/status-support/status-support-playing.html: Added.
+
 2016-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/dom/modules/module-will-fire-beforeload.html as flaky on mac-wk2 debug.

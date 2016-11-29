@@ -44,10 +44,12 @@ class StatusSupport extends MediaControllerSupport
 
         if (!!media.error)
             this.control.text = "Error";
-        if (media.duration === Number.POSITIVE_INFINITY && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
+        else if (media.duration === Number.POSITIVE_INFINITY && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
             this.control.text = "Live Broadcast";
-        if (media.readyState <= HTMLMediaElement.HAVE_NOTHING && media.networkState === HTMLMediaElement.NETWORK_LOADING)
+        else if (media.readyState <= HTMLMediaElement.HAVE_NOTHING && media.networkState === HTMLMediaElement.NETWORK_LOADING)
             this.control.text = "Loading";
+        else
+            this.control.text = "";
     }
 
 }
