@@ -34,24 +34,9 @@
 
 SOFT_LINK_FRAMEWORK(UIKit);
 SOFT_LINK_CLASS(UIKit, UILabel);
+SOFT_LINK_CLASS(UIKit, UIPopoverPresentationController);
 SOFT_LINK_CLASS(UIKit, UIView);
 SOFT_LINK_CLASS(UIKit, UIViewController);
-
-@interface WebValidationBubbleDelegate : NSObject <UIPopoverPresentationControllerDelegate> {
-}
-@end
-
-@implementation WebValidationBubbleDelegate
-
-- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection
-{
-    UNUSED_PARAM(controller);
-    UNUSED_PARAM(traitCollection);
-    // This is needed to force UIKit to use a popover on iPhone as well.
-    return UIModalPresentationNone;
-}
-
-@end
 
 namespace WebCore {
 
@@ -95,8 +80,8 @@ void ValidationBubble::show()
 void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController)
 {
     UIPopoverPresentationController *presentationController = [m_popoverController popoverPresentationController];
-    m_popoverDelegate = adoptNS([[WebValidationBubbleDelegate alloc] init]);
-    presentationController.delegate = m_popoverDelegate.get();
+    // This is needed to force UIKit to use a popover on iPhone as well.
+    [getUIPopoverPresentationControllerClass() _setAlwaysAllowPopoverPresentations:YES];
     presentationController.passthroughViews = [NSArray arrayWithObjects:presentingViewController.view, m_view, nil];
 
     presentationController.permittedArrowDirections = UIPopoverArrowDirectionUp;
