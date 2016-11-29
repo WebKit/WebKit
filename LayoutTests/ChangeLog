@@ -1,5 +1,14 @@
 2016-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=165165
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking http/tests/storage/callbacks-are-called-in-correct-context.html as a timeout on ios-simulator.
         https://bugs.webkit.org/show_bug.cgi?id=164961
 

@@ -1909,3 +1909,5 @@ webkit.org/b/163362 [ Debug ] platform/ios-simulator/ios/plugin/youtube-flash-pl
 webkit.org/b/164960 [ Release ] http/tests/security/module-correct-mime-types.html [ Slow ]
 
 webkit.org/b/164961 [ Release ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Timeout ]
+
+webkit.org/b/165165 [ Release ] http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html [ Pass Timeout ]
