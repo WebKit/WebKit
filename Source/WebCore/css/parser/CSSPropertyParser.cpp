@@ -1205,6 +1205,12 @@ static RefPtr<CSSValue> consumeTransitionProperty(CSSParserTokenRange& range)
     if (CSSPropertyID property = token.parseAsCSSPropertyID()) {
         range.consumeIncludingWhitespace();
         
+        // FIXME-NEWPARSER: No reason why we can't use the "all" property now that it exists.
+        // The old parser used a value keyword for "all", though, since it predated support for
+        // the property.
+        if (property == CSSPropertyAll)
+            return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
+
         // FIXME-NEWPARSER: Want to use a CSSCustomIdentValue here eventually.
         return CSSValuePool::singleton().createIdentifierValue(property);
     }
