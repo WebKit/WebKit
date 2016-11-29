@@ -1,3 +1,26 @@
+2016-11-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        ASSERTION FAILED: m_scriptExecutionContext->isContextThread() seen with LayoutTest crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt.html
+        https://bugs.webkit.org/show_bug.cgi?id=165124
+        <rdar://problem/29413805>
+
+        Reviewed by Daniel Bates.
+
+        We should only dereference callbacks after being back to the Document/Worker threads as
+        it might destroy promises in the work queue which will then trigger the assertion.
+
+        Covered by existing tests.
+
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+
 2016-11-28  Darin Adler  <darin@apple.com>
 
         Streamline and speed up tokenizer and segmented string classes
