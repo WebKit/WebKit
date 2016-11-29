@@ -383,14 +383,6 @@ void HTMLAnchorElement::handleClick(Event& event)
             downloadAttribute = attributeWithoutSynchronization(downloadAttr);
         else if (hasAttributeWithoutSynchronization(downloadAttr))
             document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin.");
-        // If the a element has a download attribute and the algorithm is not triggered by user activation
-        // then abort these steps.
-        // https://html.spec.whatwg.org/#the-a-element:triggered-by-user-activation
-        if (!downloadAttribute.isNull() && !event.isTrusted() && !ScriptController::processingUserGesture()) {
-            // The specification says to throw an InvalidAccessError but other browsers do not.
-            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Non user-triggered activations of anchors that have a download attribute are ignored.");
-            return;
-        }
     }
 #endif
 

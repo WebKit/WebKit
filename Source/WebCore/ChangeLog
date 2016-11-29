@@ -1,3 +1,30 @@
+2016-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Can't download move.simple.com direct deposit transition PDF: Non user-triggered activations of anchors that have a download attribute are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=165148
+        <rdar://problem/29421771>
+
+        Reviewed by Daniel Bates.
+
+        We were ignoring non user-triggered activations of anchors that have a
+        download attribute which is stricter than Chrome and Firefox and breaks
+        downloads on move.simple.com. This patch relaxes our policy to allow
+        simulated clicks on such links, similarly to other browsers.
+
+        Web authors can anyway already trigger downloads using script by setting
+        window.location to a specific URL and serving to right HTTP headers to
+        trigger a download.
+
+        Note that our previous behavior matches the current version of the
+        specification so I also filed a bug against the HTML specification to
+        see if we can get it changed to match the behavior of browsers:
+        - https://github.com/whatwg/html/issues/2116
+
+        No new tests, updated existing test.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode

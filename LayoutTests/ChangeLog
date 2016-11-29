@@ -1,3 +1,16 @@
+2016-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Can't download move.simple.com direct deposit transition PDF: Non user-triggered activations of anchors that have a download attribute are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=165148
+        <rdar://problem/29421771>
+
+        Reviewed by Daniel Bates.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html:
+
 2016-11-29  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context
