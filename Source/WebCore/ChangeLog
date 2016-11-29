@@ -1,3 +1,44 @@
+2016-11-29  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: The client's transaction operation queue should flush as much to the server as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=164932
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No new test necessary, covered extensively by all existing tests).
+
+        Profiles showed that on tests with lots of rapid IDBRequests in a row, both the main thread and database 
+        threads were largely idle.
+
+        The explanation was simple. Currently the client IDBTransaction queues up operations and only vends them out 
+        to the server 1 at a time, waiting for the previous operation to complete.
+
+        While some operations do need to wait for the server to reply, by making the change to send most operations 
+        (all operations with an associated IDBRequest) to the server without waiting we get rid of most of the idleness.
+
+        It is possible we can find a few other types of operations to send without waiting, but we haven't yet seen any
+        test case where they would show up on profiles.
+
+        Sending more than one operation at a time was actually a very small part of this change.
+        As many "edge case" regression tests revealed, we also needed to start having IDBTransaction track all of their
+        "in progress" operations such that they could be aborted on the client side in exceptional circumstances.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abortInProgressOperations): Abort's all in-progress operations (ones that have already
+          been sent to the server)
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests): Abort in-progress operations before pending ones.
+        (WebCore::IDBTransaction::operationTimerFired): If we just started an operation with an associated IDBRequest,
+          schedule the timer to send another one right away.
+        (WebCore::IDBTransaction::operationDidComplete):
+        (WebCore::IDBTransaction::connectionClosedFromServer): Abort in-progress operations before pending ones.
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        (WebCore::IDBClient::TransactionOperation::TransactionOperation):
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::completed):
+        (WebCore::IDBClient::TransactionOperation::hasIDBRequest):
+
 2016-11-29  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix ::cue parsing

@@ -160,6 +160,7 @@ private:
     void internalAbort();
     void notifyDidAbort(const IDBError&);
     void finishAbortOrCommit();
+    void abortInProgressOperations(const IDBError&);
 
     void scheduleOperation(RefPtr<IDBClient::TransactionOperation>&&);
     void pendingOperationTimerFired();
@@ -243,8 +244,10 @@ private:
     RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
     Deque<RefPtr<IDBClient::TransactionOperation>> m_pendingTransactionOperationQueue;
+    Deque<IDBClient::TransactionOperation*> m_transactionOperationsInProgressQueue;
     Deque<std::pair<RefPtr<IDBClient::TransactionOperation>, IDBResultData>> m_completedOnServerQueue;
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
+
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
     mutable Lock m_referencedObjectStoreLock;

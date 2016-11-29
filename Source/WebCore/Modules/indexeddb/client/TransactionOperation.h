@@ -83,7 +83,13 @@ public:
     void doComplete(const IDBResultData& data)
     {
         ASSERT(m_originThreadID == currentThread());
-        ASSERT(m_completeFunction);
+
+        // Due to race conditions between the server sending an "operation complete" message and the client
+        // forcefully aborting an operation, it's unavoidable that this method might be called twice.
+        // It's okay to handle that gracefully with an early return.
+        if (!m_completeFunction)
+            return;
+
         m_completeFunction(data);
         m_transaction->operationCompletedOnClient(*this);
 
@@ -98,6 +104,9 @@ public:
     ThreadIdentifier originThreadID() const { return m_originThreadID; }
 
     IDBRequest* idbRequest() { return m_idbRequest.get(); }
+
+    bool nextRequestCanGoToServer() const { return m_nextRequestCanGoToServer && m_idbRequest; }
+    void setNextRequestCanGoToServer(bool nextRequestCanGoToServer) { m_nextRequestCanGoToServer = nextRequestCanGoToServer; }
 
 protected:
     TransactionOperation(IDBTransaction& transaction)
@@ -127,6 +136,7 @@ private:
 
     ThreadIdentifier m_originThreadID { currentThread() };
     RefPtr<IDBRequest> m_idbRequest;
+    bool m_nextRequestCanGoToServer { true };
 };
 
 template <typename... Arguments>

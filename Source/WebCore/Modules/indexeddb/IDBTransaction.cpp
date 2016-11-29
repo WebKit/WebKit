@@ -251,6 +251,34 @@ void IDBTransaction::internalAbort()
     scheduleOperation(IDBClient::createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServerAndCancelRequests));
 }
 
+void IDBTransaction::abortInProgressOperations(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::abortInProgressOperations");
+
+    Vector<RefPtr<IDBClient::TransactionOperation>> inProgressAbortVector;
+    inProgressAbortVector.reserveInitialCapacity(m_transactionOperationsInProgressQueue.size());
+    while (!m_transactionOperationsInProgressQueue.isEmpty())
+        inProgressAbortVector.uncheckedAppend(m_transactionOperationsInProgressQueue.takeFirst());
+
+    for (auto& operation : inProgressAbortVector) {
+        m_transactionOperationsInProgressQueue.append(operation.get());
+        m_currentlyCompletingRequest = nullptr;
+        operation->doComplete(IDBResultData::error(operation->identifier(), error));
+    }
+
+    Vector<RefPtr<IDBClient::TransactionOperation>> completedOnServerAbortVector;
+    completedOnServerAbortVector.reserveInitialCapacity(m_completedOnServerQueue.size());
+    while (!m_completedOnServerQueue.isEmpty())
+        completedOnServerAbortVector.uncheckedAppend(m_completedOnServerQueue.takeFirst().first);
+
+    for (auto& operation : completedOnServerAbortVector) {
+        m_currentlyCompletingRequest = nullptr;
+        operation->doComplete(IDBResultData::error(operation->identifier(), error));
+    }
+
+    connectionProxy().forgetActiveOperations(inProgressAbortVector);
+}
+
 void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperation& operation)
 {
     LOG(IndexedDB, "IDBTransaction::abortOnServerAndCancelRequests");
@@ -260,13 +288,19 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
     m_database->connectionProxy().abortTransaction(*this);
 
     ASSERT(m_transactionOperationMap.contains(operation.identifier()));
+    ASSERT(m_transactionOperationsInProgressQueue.last() == &operation);
     m_transactionOperationMap.remove(operation.identifier());
+    m_transactionOperationsInProgressQueue.removeLast();
 
     m_currentlyCompletingRequest = nullptr;
     
     IDBError error(IDBDatabaseException::AbortError);
+
+    abortInProgressOperations(error);
+
     for (auto& operation : m_abortQueue) {
         m_currentlyCompletingRequest = nullptr;
+        m_transactionOperationsInProgressQueue.append(operation.get());
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
 
@@ -367,9 +401,20 @@ void IDBTransaction::pendingOperationTimerFired()
     if (!m_startedOnServer)
         return;
 
+    // If the last in-progress operation we've sent to the server is not an IDBRequest operation,
+    // then we have to wait until it completes before sending any more.
+    if (!m_transactionOperationsInProgressQueue.isEmpty() && !m_transactionOperationsInProgressQueue.last()->nextRequestCanGoToServer())
+        return;
+
     if (!m_pendingTransactionOperationQueue.isEmpty()) {
         auto operation = m_pendingTransactionOperationQueue.takeFirst();
+        m_transactionOperationsInProgressQueue.append(operation.get());
         operation->perform();
+
+        // If this operation we just started has an associated IDBRequest, we might be able to send
+        // another operation to the server before it completes.
+        if (operation->idbRequest() && !m_pendingTransactionOperationQueue.isEmpty())
+            schedulePendingOperationTimer();
 
         return;
     }
@@ -1147,6 +1192,10 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         return;
     }
 
+    // Since this request won't actually go to the server until the blob writes are complete,
+    // stop future requests from going to the server ahead of it.
+    operation.setNextRequestCanGoToServer(false);
+
     value->writeBlobsToDiskForIndexedDB([protectedThis = makeRef(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](const IDBValue& idbValue) mutable {
         ASSERT(currentThread() == originThreadID());
         ASSERT(isMainThread());
@@ -1238,11 +1287,13 @@ void IDBTransaction::operationCompletedOnClient(IDBClient::TransactionOperation&
 {
     LOG(IndexedDB, "IDBTransaction::operationCompletedOnClient");
 
-    ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);
     ASSERT(currentThread() == m_database->originThreadID());
     ASSERT(currentThread() == operation.originThreadID());
+    ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);
+    ASSERT(m_transactionOperationsInProgressQueue.first() == &operation);
 
     m_transactionOperationMap.remove(operation.identifier());
+    m_transactionOperationsInProgressQueue.removeFirst();
 
     schedulePendingOperationTimer();
 }
@@ -1281,11 +1332,15 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 
     m_state = IndexedDB::TransactionState::Aborting;
 
+    abortInProgressOperations(error);
+
     Vector<RefPtr<IDBClient::TransactionOperation>> operations;
     copyValuesToVector(m_transactionOperationMap, operations);
 
     for (auto& operation : operations) {
         m_currentlyCompletingRequest = nullptr;
+        m_transactionOperationsInProgressQueue.append(operation.get());
+        ASSERT(m_transactionOperationsInProgressQueue.first() == operation.get());
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
 
