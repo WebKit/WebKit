@@ -7897,9 +7897,9 @@ struct ShadowParseContext {
         }
     }
 
-    void commitColor(RefPtr<CSSPrimitiveValue>&& val)
+    void commitColor(Ref<CSSPrimitiveValue>&& value)
     {
-        color = val;
+        color = WTFMove(value);
         allowColor = false;
         if (allowX) {
             allowStyle = false;

@@ -1,5 +1,21 @@
 2016-11-29  Daniel Bates  <dabates@apple.com>
 
+        Avoid ref-count churn in ShadowParseContext::commitColor()
+        https://bugs.webkit.org/show_bug.cgi?id=165125
+
+        Reviewed by Simon Fraser.
+
+        Avoid ref-count churn in ShadowParseContext::commitColor() by moving the passed
+        color into its instance variable.
+
+        Also modified ShadowParseContext::commitColor() to take a Ref<> instead of a
+        RefPtr<> because it is never passed a nullptr.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::ShadowParseContext::commitColor):
+
+2016-11-29  Daniel Bates  <dabates@apple.com>
+
         Avoid ref-count churn in CSSParser::ValueWithCalculation::setCalculation()
         https://bugs.webkit.org/show_bug.cgi?id=165127
 
