@@ -1,3 +1,29 @@
+2016-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        intersection-observer-entry-interface.html test fails on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=165133
+
+        Reviewed by Darin Adler.
+        
+        Tests that enabled Intersection Observer via <!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+        would fail sometimes, because TestController::ensureViewSupportsOptionsForTest() failed to check
+        to see if this option required creating a new web view, so would just use the old view without
+        even resetting preferences.
+        
+        In general, TestController doesn't distinguish properly between options that require the creation
+        of a new view (like mock scrollbars), and those that can be simply reset as resetPreferencesToConsistentValues()
+        does.
+        
+        Do the easy fix of having viewSupportsOptions() check options.enableIntersectionObserver. We should probably
+        just call resetPreferencesToConsistentValues() even when re-use the same view.
+        
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+
 2016-11-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209008.
