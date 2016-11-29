@@ -124,6 +124,7 @@ private:
 #endif
     BOOL _initialCapitalizationEnabled;
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
+    BOOL _controlledByAutomation;
 
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
@@ -289,6 +290,7 @@ private:
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
     configuration->_initialCapitalizationEnabled = self->_initialCapitalizationEnabled;
     configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
+    configuration->_controlledByAutomation = self->_controlledByAutomation;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -669,6 +671,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setWaitsForPaintAfterViewDidMoveToWindow:(BOOL)shouldSynchronize
 {
     _waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize;
+}
+
+- (BOOL)_isControlledByAutomation
+{
+    return _controlledByAutomation;
+}
+
+- (void)_setControlledByAutomation:(BOOL)controlledByAutomation
+{
+    _controlledByAutomation = controlledByAutomation;
 }
 
 #if PLATFORM(MAC)

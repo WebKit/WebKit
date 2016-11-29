@@ -1,3 +1,31 @@
+2016-11-21  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add ObjC SPI to set whether a page is controlled by automation
+        https://bugs.webkit.org/show_bug.cgi?id=165001
+        <rdar://problem/29350432>
+
+        Reviewed by Dan Bernstein.
+
+        Add SPI property to WKWebViewConfiguration and plumb it through to
+        initialize WebPageProxy::m_controlledByAutomation. This is propagated
+        to the WebProcess on creation via WebPageCreationParameters.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::isControlledByAutomation):
+        (API::PageConfiguration::setControlledByAutomation):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _isControlledByAutomation]):
+        (-[WKWebViewConfiguration _setControlledByAutomation:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2016-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] BadDamage X Window System error in WebKit::AcceleratedBackingStoreX11::update when called from WebPageProxy::exitAcceleratedCompositingMode
