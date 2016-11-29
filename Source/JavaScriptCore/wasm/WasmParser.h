@@ -49,10 +49,12 @@ protected:
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
     bool WARN_UNUSED_RETURN parseInt7(int8_t&);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
+    bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
 
+    bool WARN_UNUSED_RETURN parseResultType(Type&);
     bool WARN_UNUSED_RETURN parseValueType(Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(External::Kind&);
 
@@ -131,6 +133,14 @@ ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
     return true;
 }
 
+ALWAYS_INLINE bool Parser::parseUInt8(uint8_t& result)
+{
+    if (m_offset >= length())
+        return false;
+    result = source()[m_offset++];
+    return true;
+}
+
 ALWAYS_INLINE bool Parser::parseInt7(int8_t& result)
 {
     if (m_offset >= length())
@@ -157,15 +167,20 @@ ALWAYS_INLINE bool Parser::parseVarUInt1(uint8_t& result)
     return temp <= 1;
 }
 
-ALWAYS_INLINE bool Parser::parseValueType(Type& result)
+ALWAYS_INLINE bool Parser::parseResultType(Type& result)
 {
     uint8_t value;
     if (!parseUInt7(value))
         return false;
-    if (value >= static_cast<uint8_t>(Type::LastValueType))
+    if (value > static_cast<uint8_t>(Type::LastValueType))
         return false;
     result = static_cast<Type>(value);
     return true;
+}
+
+ALWAYS_INLINE bool Parser::parseValueType(Type& result)
+{
+    return parseResultType(result) && isValueType(result);
 }
     
 ALWAYS_INLINE bool Parser::parseExternalKind(External::Kind& result)

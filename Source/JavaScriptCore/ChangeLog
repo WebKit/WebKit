@@ -1,3 +1,58 @@
+2016-11-29  Keith Miller  <keith_miller@apple.com>
+
+        Add simple way to implement Wasm ops that require more than one B3 opcode
+        https://bugs.webkit.org/show_bug.cgi?id=165129
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a simple way to show the B3IRGenerator opcode script how
+        to generate code for Wasm opcodes that do not have a one to one mapping.
+        The syntax is pretty simple right now. There are only three things one
+        can use as of this patch (although more things might be added in the future)
+        1) Wasm opcode arguments: These are referred to as @<argument_number>. For example,
+           I32.sub would map to Sub(@0, @1).
+        2) 32-bit int constants: These are reffered to as i32(<value>). For example, i32.inc
+           would map to Add(@0, i32(1))
+        3) B3 opcodes: These are referred to as the B3 opcode name followed by the B3Value's constructor
+           arguments. A value may take the result of another value as an argument. For example, you can do
+           Div(Mul(@0, Add(@0, i32(1))), i32(2)) if there was a b3 opcode that computed the sum from 1 to n.
+
+        These scripts are used to implement Wasm's eqz and floating point max/min opcodes. This patch
+        also adds missing support for the Wasm Neg opcodes.
+
+        * jsc.cpp:
+        (box):
+        (functionTestWasmModuleFunctions):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::toB3Op): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseType):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::parseUInt8):
+        (JSC::Wasm::Parser::parseValueType):
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        (Source):
+        (Source.__init__):
+        (read):
+        (lex):
+        (CodeGenerator):
+        (CodeGenerator.__init__):
+        (CodeGenerator.advance):
+        (CodeGenerator.token):
+        (CodeGenerator.parseError):
+        (CodeGenerator.consume):
+        (CodeGenerator.generateParameters):
+        (CodeGenerator.generateOpcode):
+        (CodeGenerator.generate):
+        (temp):
+        (generateB3OpCode):
+        (generateI32ConstCode):
+        (generateB3Code):
+        (generateSimpleCode):
+        * wasm/wasm.json:
+
 2016-11-29  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in ProxyConstructor.cpp and ProxyObject.cpp.

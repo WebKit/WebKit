@@ -2509,7 +2509,7 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
         return JSValue::decode(bitwise_cast<uint32_t>(value.toFloat(exec)));
 
     RELEASE_ASSERT(typeString == "f64");
-    return value;
+    return JSValue::decode(bitwise_cast<uint64_t>(value.asNumber()));
 }
 
 static JSValue callWasmFunction(VM* vm, const B3::Compilation& code, Vector<JSValue>& boxedArgs)
@@ -2548,8 +2548,10 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
 
     Wasm::Plan plan(&vm, static_cast<uint8_t*>(source->vector()), source->length());
     plan.run();
-    if (plan.failed())
+    if (plan.failed()) {
+        dataLogLn("failed to parse module: ", plan.errorMessage());
         CRASH();
+    }
 
     if (plan.compiledFunctionCount() != functionCount)
         CRASH();

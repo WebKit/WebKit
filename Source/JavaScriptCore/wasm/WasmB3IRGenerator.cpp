@@ -59,26 +59,6 @@ namespace {
 const bool verbose = false;
 }
 
-inline B3::Opcode toB3Op(BinaryOpType op)
-{
-    switch (op) {
-#define CREATE_CASE(name, op, b3op) case BinaryOpType::name: return b3op;
-    FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
-#undef CREATE_CASE
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-inline B3::Opcode toB3Op(UnaryOpType op)
-{
-    switch (op) {
-#define CREATE_CASE(name, op, b3op) case UnaryOpType::name: return b3op;
-    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
-#undef CREATE_CASE
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 class B3IRGenerator {
 public:
     struct ControlData {

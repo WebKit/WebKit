@@ -185,10 +185,10 @@ bool ModuleParser::parseType()
             return false;
 
         for (unsigned i = 0; i != argumentCount; ++i) {
-            uint8_t argumentType;
-            if (!parseUInt7(argumentType) || !isValueType(static_cast<Type>(argumentType)))
+            Type argumentType;
+            if (!parseResultType(argumentType))
                 return false;
-            argumentTypes.uncheckedAppend(static_cast<Type>(argumentType));
+            argumentTypes.uncheckedAppend(argumentType);
         }
 
         uint8_t returnCount;

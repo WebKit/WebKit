@@ -123,7 +123,7 @@ bool FunctionParser<Context>::parseBody()
 {
     while (true) {
         uint8_t op;
-        if (!parseUInt7(op) || !isValidOpType(op)) {
+        if (!parseUInt8(op) || !isValidOpType(op)) {
             if (verbose)
                 WTF::dataLogLn("attempted to decode invalid op: ", RawPointer(reinterpret_cast<void*>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
             return false;
@@ -350,7 +350,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Block: {
         Type inlineSignature;
-        if (!parseValueType(inlineSignature))
+        if (!parseResultType(inlineSignature))
             return false;
 
         m_controlStack.append({ WTFMove(m_expressionStack), m_context.addBlock(inlineSignature) });
@@ -360,7 +360,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Loop: {
         Type inlineSignature;
-        if (!parseValueType(inlineSignature))
+        if (!parseResultType(inlineSignature))
             return false;
 
         m_controlStack.append({ WTFMove(m_expressionStack), m_context.addLoop(inlineSignature) });
@@ -370,7 +370,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::If: {
         Type inlineSignature;
-        if (!parseValueType(inlineSignature))
+        if (!parseResultType(inlineSignature))
             return false;
 
         ExpressionType condition;
