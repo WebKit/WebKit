@@ -596,3 +596,5 @@ webkit.org/b/163453 [ Sierra Release ] http/tests/security/contentSecurityPolicy
 webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]
 
 webkit.org/b/164870 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass Failure ]
+
+webkit.org/b/164883 [ Debug ] js/dom/modules/module-will-fire-beforeload.html [ Pass Crash ]
