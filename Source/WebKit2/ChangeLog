@@ -1,3 +1,12 @@
+2016-11-29  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Enable two clang warnings recommended by Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=164498
+
+        Reviewed by Mark Lam.
+
+        * Configurations/Base.xcconfig: Enabled CLANG_WARN_INFINITE_RECURSION and CLANG_WARN_SUSPICIOUS_MOVE.
+
 2016-11-29  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Don't request user permission for a device if it has already been granted in the current browsing context
