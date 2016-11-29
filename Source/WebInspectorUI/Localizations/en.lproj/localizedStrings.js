@@ -42,6 +42,7 @@ localizedStrings["%s interval"] = "%s interval";
 localizedStrings["(Index)"] = "(Index)";
 localizedStrings["(Tail Call)"] = "(Tail Call)";
 localizedStrings["(anonymous function)"] = "(anonymous function)";
+localizedStrings["(async)"] = "(async)";
 localizedStrings["(many)"] = "(many)";
 localizedStrings["(modify the boxes below to add a value)"] = "(modify the boxes below to add a value)";
 localizedStrings["(multiple)"] = "(multiple)";

@@ -25,7 +25,7 @@
 
 WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
 {
-    constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
+    constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, callFrames, request)
     {
         super();
 
@@ -49,7 +49,8 @@ WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
         this._repeatCount = repeatCount || 0;
         this._parameters = parameters;
 
-        this._stackTrace = WebInspector.StackTrace.fromPayload(this._target, stackTrace || []);
+        callFrames = callFrames || [];
+        this._stackTrace = WebInspector.StackTrace.fromPayload(this._target, {callFrames});
 
         this._request = request;
     }

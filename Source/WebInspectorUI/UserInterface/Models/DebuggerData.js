@@ -38,6 +38,7 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
         this._pauseReason = null;
         this._pauseData = null;
         this._callFrames = [];
+        this._asyncStackTrace = null;
 
         this._scriptIdMap = new Map;
         this._scriptContentIdentifierMap = new Map;
@@ -53,6 +54,7 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
     get pauseReason() { return this._pauseReason; }
     get pauseData() { return this._pauseData; }
     get callFrames() { return this._callFrames; }
+    get asyncStackTrace() { return this._asyncStackTrace; }
 
     get scripts()
     {
@@ -122,13 +124,14 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
         return this._target.DebuggerAgent.continueUntilNextRunLoop();
     }
 
-    updateForPause(callFrames, pauseReason, pauseData)
+    updateForPause(callFrames, pauseReason, pauseData, asyncStackTrace)
     {
         this._paused = true;
         this._pausing = false;
         this._pauseReason = pauseReason;
         this._pauseData = pauseData;
         this._callFrames = callFrames;
+        this._asyncStackTrace = asyncStackTrace;
 
         // We paused, no need for auto-pausing.
         this._makePausingAfterNextResume = false;
@@ -141,6 +144,7 @@ WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
         this._pauseReason = null;
         this._pauseData = null;
         this._callFrames = [];
+        this._asyncStackTrace = null;
 
         // We resumed, but may be auto-pausing.
         if (this._makePausingAfterNextResume) {

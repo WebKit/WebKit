@@ -53,6 +53,7 @@
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
     --console-prompt-min-height: 30px;
 
+    --text-color-gray-medium: hsl(0, 0%, 50%);
     --error-text-color: hsl(0, 86%, 47%);
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);

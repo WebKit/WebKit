@@ -43,3 +43,35 @@
 .tree-outline:matches(:focus, .force-focus) .item.call-frame.selected .status > .status-image {
     fill: var(--selected-foreground-color);
 }
+
+.tree-outline .item.call-frame.async-boundary {
+    cursor: default;
+    color: var(--text-color-gray-medium);
+    padding-left: 0;
+}
+
+.tree-outline .item.call-frame.async-boundary .icon {
+    float: none;
+    display: inline-block;
+    margin-left: 0 !important;
+}
+
+.tree-outline .item.call-frame.async-boundary::before,
+.tree-outline .item.call-frame.async-boundary::after {
+    content: "";
+    display: inline-block;
+    height: 0;
+    margin-top: 2px;
+    vertical-align: middle;
+    border-bottom: solid 0.5px var(--border-color);
+}
+
+.tree-outline .item.call-frame.async-boundary::after {
+    width: 100%;
+    margin-left: 2px;
+}
+
+.tree-outline .item.call-frame.async-boundary::before {
+    width: 20px;
+    margin-right: 2px;
+}

@@ -50,6 +50,7 @@ public:
     JSC::SourceID sourceID() const { return m_sourceID; }
 
     bool isEqual(const ScriptCallFrame&) const;
+    bool isNative() const;
 
     Ref<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
 

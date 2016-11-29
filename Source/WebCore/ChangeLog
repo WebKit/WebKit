@@ -1,3 +1,30 @@
+2016-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger should have an option for showing asynchronous call stacks
+        https://bugs.webkit.org/show_bug.cgi?id=163230
+        <rdar://problem/28698683>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/debugger/async-stack-trace.html
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::didScheduleAsyncCall):
+        Helper function used by by instrumentation hooks. Informs the debugger
+        agent that an asynchronous call was scheduled for the current script
+        execution state.
+
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl):
+        Asynchronous stack trace plumbing for timers (setTimeout, setInterval).
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameImpl):
+        Asynchronous stack trace plumbing for requestAnimationFrame.
+
 2016-11-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, followup patch after r209059.

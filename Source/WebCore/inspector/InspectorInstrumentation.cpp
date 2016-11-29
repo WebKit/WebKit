@@ -83,11 +83,27 @@ static const char* const setTimerEventName = "setTimer";
 static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
 
+enum AsyncCallType {
+    AsyncCallTypeRequestAnimationFrame,
+    AsyncCallTypeTimer,
+};
+
 namespace {
 static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
 }
 
 int InspectorInstrumentation::s_frontendCounter = 0;
+
+static void didScheduleAsyncCall(InstrumentingAgents& instrumentingAgents, AsyncCallType type, int callbackId, ScriptExecutionContext& context, bool singleShot)
+{
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
+        JSC::ExecState* scriptState = context.execState();
+        if (!scriptState)
+            return;
+
+        debuggerAgent->didScheduleAsyncCall(scriptState, type, callbackId, singleShot);
+    }
+}
 
 static Frame* frameForScriptExecutionContext(ScriptExecutionContext* context)
 {
@@ -323,6 +339,8 @@ void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& i
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, std::chrono::milliseconds timeout, bool singleShot, ScriptExecutionContext& context)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, setTimerEventName, true);
+    didScheduleAsyncCall(instrumentingAgents, AsyncCallTypeTimer, timerId, context, singleShot);
+
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->didInstallTimer(timerId, timeout, singleShot, frameForScriptExecutionContext(context));
 }
@@ -330,6 +348,9 @@ void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrume
 void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, ScriptExecutionContext& context)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, clearTimerEventName, true);
+
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
+        debuggerAgent->didCancelAsyncCall(AsyncCallTypeTimer, timerId);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->didRemoveTimer(timerId, frameForScriptExecutionContext(context));
 }
@@ -423,6 +444,9 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(Instr
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, timerFiredEventName, false);
 
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
+        debuggerAgent->willDispatchAsyncCall(AsyncCallTypeTimer, timerId);
+
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent()) {
         timelineAgent->willFireTimer(timerId, frameForScriptExecutionContext(context));
@@ -433,6 +457,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(Instr
 
 void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCookie& cookie)
 {
+    if (InspectorDebuggerAgent* debuggerAgent = cookie.instrumentingAgents()->inspectorDebuggerAgent())
+        debuggerAgent->didDispatchAsyncCall();
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireTimer();
 }
@@ -1139,6 +1165,7 @@ void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents& i
 void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Frame* frame)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, requestAnimationFrameEventName, true);
+    didScheduleAsyncCall(instrumentingAgents, AsyncCallTypeRequestAnimationFrame, callbackId, *frame->document(), true);
 
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->didRequestAnimationFrame(callbackId, frame);
@@ -1148,6 +1175,8 @@ void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& 
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, cancelAnimationFrameEventName, true);
 
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
+        debuggerAgent->didCancelAsyncCall(AsyncCallTypeRequestAnimationFrame, callbackId);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->didCancelAnimationFrame(callbackId, frame);
 }
@@ -1155,6 +1184,9 @@ void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Frame* frame)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, animationFrameFiredEventName, false);
+
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
+        debuggerAgent->willDispatchAsyncCall(AsyncCallTypeRequestAnimationFrame, callbackId);
 
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent()) {
@@ -1166,6 +1198,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameI
 
 void InspectorInstrumentation::didFireAnimationFrameImpl(const InspectorInstrumentationCookie& cookie)
 {
+    if (InspectorDebuggerAgent* debuggerAgent = cookie.instrumentingAgents()->inspectorDebuggerAgent())
+        debuggerAgent->didDispatchAsyncCall();
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireAnimationFrame();
 }

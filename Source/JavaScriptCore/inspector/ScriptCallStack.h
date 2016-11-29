@@ -57,7 +57,7 @@ public:
 
     bool isEqual(ScriptCallStack*) const;
 
-    Ref<Inspector::Protocol::Console::StackTrace> buildInspectorArray() const;
+    Ref<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> buildInspectorArray() const;
 
 private:
     ScriptCallStack();

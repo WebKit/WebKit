@@ -52,6 +52,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
         this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
         this._assertionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-assertions", false);
+        this._asyncStackTraceDepthSetting = new WebInspector.Setting("async-stack-trace-depth", 200);
 
         let specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
 
@@ -93,6 +94,10 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
         if (DebuggerAgent.setPauseOnAssertions)
             DebuggerAgent.setPauseOnAssertions(this._assertionsBreakpointEnabledSetting.value);
+
+        // COMPATIBILITY (iOS 10): Debugger.setAsyncStackTraceDepth did not exist yet.
+        if (DebuggerAgent.setAsyncStackTraceDepth)
+            DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
@@ -275,6 +280,22 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
 
         return knownScripts;
+    }
+
+    get asyncStackTraceDepth()
+    {
+        return this._asyncStackTraceDepthSetting.value;
+    }
+
+    set asyncStackTraceDepth(x)
+    {
+        if (this._asyncStackTraceDepthSetting.value === x)
+            return;
+
+        this._asyncStackTraceDepthSetting.value = x;
+
+        for (let target of WebInspector.targets)
+            target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
     }
 
     pause()
@@ -484,6 +505,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
         DebuggerAgent.setPauseOnAssertions(this._assertionsBreakpointEnabledSetting.value);
         DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
+        DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
         if (this.paused)
             targetData.pauseIfNeeded();
@@ -550,7 +572,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Resumed);
     }
 
-    debuggerDidPause(target, callFramesPayload, reason, data)
+    debuggerDidPause(target, callFramesPayload, reason, data, asyncStackTracePayload)
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -599,7 +621,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return;
         }
 
-        targetData.updateForPause(callFrames, pauseReason, pauseData);
+        let asyncStackTrace = WebInspector.StackTrace.fromPayload(target, asyncStackTracePayload);
+        targetData.updateForPause(callFrames, pauseReason, pauseData, asyncStackTrace);
 
         // Pause other targets because at least one target has paused.
         // FIXME: Should this be done on the backend?

@@ -16,7 +16,7 @@
                 { "name": "column", "type": "integer", "optional": true, "description": "Column number on the line in the resource that generated this message." },
                 { "name": "repeatCount", "type": "integer", "optional": true, "description": "Repeat count for repeated messages." },
                 { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "optional": true, "description": "Message parameters in case of the formatted message." },
-                { "name": "stackTrace", "$ref": "StackTrace", "optional": true, "description": "JavaScript stack trace for assertions and error messages." },
+                { "name": "stackTrace", "type": "array", "items": { "$ref": "CallFrame" }, "optional": true, "description": "JavaScript stack trace for assertions and error messages." },
                 { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." }
             ]
         },
@@ -34,9 +34,13 @@
         },
         {
             "id": "StackTrace",
-            "type": "array",
-            "items": { "$ref": "CallFrame" },
-            "description": "Call frames for assertions or error messages."
+            "description": "Call frames for async function calls, console assertions, and error messages.",
+            "type": "object",
+            "properties": [
+                { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" } },
+                { "name": "topCallFrameIsBoundary", "type": "boolean", "optional": true, "description": "Whether the first item in <code>callFrames</code> is the native function that scheduled the asynchronous operation (e.g. setTimeout)." },
+                { "name": "parentStackTrace", "$ref": "StackTrace", "optional": true, "description": "Parent StackTrace." }
+            ]
         }
     ],
     "commands": [

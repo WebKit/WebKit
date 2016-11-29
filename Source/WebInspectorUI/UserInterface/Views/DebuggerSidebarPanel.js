@@ -628,6 +628,36 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             if (this._showingSingleThreadCallStack)
                 activeCallFrameTreeElement.select(true, true);
         }
+
+        if (!targetData.asyncStackTrace)
+            return;
+
+        let currentStackTrace = targetData.asyncStackTrace;
+        while (currentStackTrace) {
+            console.assert(currentStackTrace.callFrames.length, "StackTrace should have non-empty call frames array.");
+            if (!currentStackTrace.callFrames.length)
+                break;
+
+            let boundaryCallFrame;
+            if (currentStackTrace.topCallFrameIsBoundary) {
+                boundaryCallFrame = currentStackTrace.callFrames[0];
+                console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
+            } else {
+                // Create a generic native CallFrame for the asynchronous boundary.
+                const functionName = WebInspector.UIString("(async)");
+                const nativeCode = true;
+                boundaryCallFrame = new WebInspector.CallFrame(null, null, null, functionName, null, null, nativeCode);
+            }
+
+            const isAsyncBoundaryCallFrame = true;
+            this._singleThreadCallStackTreeOutline.appendChild(new WebInspector.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
+
+            let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
+            for (let i = startIndex; i < currentStackTrace.callFrames.length; ++i)
+                this._singleThreadCallStackTreeOutline.appendChild(new WebInspector.CallFrameTreeElement(currentStackTrace.callFrames[i]));
+
+            currentStackTrace = currentStackTrace.parentStackTrace;
+        }
     }
 
     _selectActiveCallFrameTreeElement(treeOutline)
@@ -859,8 +889,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (treeElement instanceof WebInspector.CallFrameTreeElement) {
             let callFrame = treeElement.callFrame;
-            WebInspector.debuggerManager.activeCallFrame = callFrame;
-            WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
+            if (callFrame.id)
+                WebInspector.debuggerManager.activeCallFrame = callFrame;
+
+            if (callFrame.sourceCodeLocation)
+                WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
             return;
         }
 

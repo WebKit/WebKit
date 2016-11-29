@@ -59,6 +59,11 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
         && m_column == o.m_column;
 }
 
+bool ScriptCallFrame::isNative() const
+{
+    return m_scriptName == "[native code]";
+}
+
 Ref<Inspector::Protocol::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
 {
     return Inspector::Protocol::Console::CallFrame::create()

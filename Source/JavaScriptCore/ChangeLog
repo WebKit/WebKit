@@ -1,3 +1,70 @@
+2016-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger should have an option for showing asynchronous call stacks
+        https://bugs.webkit.org/show_bug.cgi?id=163230
+        <rdar://problem/28698683>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/ScriptCallFrame.cpp:
+        (Inspector::ScriptCallFrame::isNative):
+        Encapsulate check for native code source URL.
+
+        * inspector/ScriptCallFrame.h:
+        * inspector/ScriptCallStack.cpp:
+        (Inspector::ScriptCallStack::firstNonNativeCallFrame):
+        (Inspector::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        Replace use of Console::StackTrace with Array<Console::CallFrame>.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::setAsyncStackTraceDepth):
+        Set number of async frames to store (including boundary frames).
+        A value of zero disables recording of async call stacks.
+
+        (Inspector::InspectorDebuggerAgent::buildAsyncStackTrace):
+        Helper function for building a linked list StackTraces.
+        (Inspector::InspectorDebuggerAgent::didScheduleAsyncCall):
+        Store a call stack for the script that scheduled the async call.
+        If the call repeats (e.g. setInterval), the starting reference count is
+        set to 1. This ensures that dereffing after dispatch won't clear the stack.
+        If another async call is currently being dispatched, increment the
+        AsyncCallData reference count for that call.
+
+        (Inspector::InspectorDebuggerAgent::didCancelAsyncCall):
+        Decrement the reference count for the canceled call.
+
+        (Inspector::InspectorDebuggerAgent::willDispatchAsyncCall):
+        Set the identifier for the async callback currently being dispatched,
+        so that if the debugger pauses during dispatch a stack trace can be
+        associated with the pause location. If an async call is already being
+        dispatched, which could be the case when a script schedules an async
+        call in a nested runloop, do nothing.
+
+        (Inspector::InspectorDebuggerAgent::didDispatchAsyncCall):
+        Decrement the reference count for the canceled call.
+        (Inspector::InspectorDebuggerAgent::didPause):
+        If a stored stack trace exists for this location, convert to a protocol
+        object and send to the frontend.
+
+        (Inspector::InspectorDebuggerAgent::didClearGlobalObject):
+        (Inspector::InspectorDebuggerAgent::clearAsyncStackTraceData):
+        (Inspector::InspectorDebuggerAgent::refAsyncCallData):
+        Increment AsyncCallData reference count.
+        (Inspector::InspectorDebuggerAgent::derefAsyncCallData):
+        Decrement AsyncCallData reference count. If zero, deref its parent
+        (if it exists) and remove the AsyncCallData entry.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+
+        * inspector/protocol/Console.json:
+        * inspector/protocol/Network.json:
+        Replace use of Console.StackTrace with array of Console.CallFrame.
+
+        * inspector/protocol/Debugger.json:
+        New protocol command and event data.
+
 2016-11-28  Darin Adler  <darin@apple.com>
 
         Streamline and speed up tokenizer and segmented string classes

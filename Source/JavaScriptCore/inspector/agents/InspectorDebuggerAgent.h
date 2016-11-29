@@ -35,6 +35,7 @@
 #include "debugger/Debugger.h"
 #include "inspector/InspectorAgentBase.h"
 #include "inspector/ScriptBreakpoint.h"
+#include "inspector/ScriptCallStack.h"
 #include "inspector/ScriptDebugListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -48,6 +49,7 @@ class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class ScriptDebugServer;
+struct AsyncCallData;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public DebuggerBackendDispatcherHandler {
@@ -63,6 +65,7 @@ public:
 
     void enable(ErrorString&) final;
     void disable(ErrorString&) final;
+    void setAsyncStackTraceDepth(ErrorString&, int depth) final;
     void setBreakpointsActive(ErrorString&, bool active) final;
     void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const Inspector::InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) final;
     void setBreakpoint(ErrorString&, const Inspector::InspectorObject& location, const Inspector::InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) final;
@@ -88,6 +91,11 @@ public:
     void setSuppressAllPauses(bool);
 
     void handleConsoleAssert(const String& message);
+
+    void didScheduleAsyncCall(JSC::ExecState*, int asyncCallType, int callbackIdentifier, bool singleShot);
+    void didCancelAsyncCall(int asyncCallType, int callbackIdentifier);
+    void willDispatchAsyncCall(int asyncCallType, int callbackIdentifier);
+    void didDispatchAsyncCall();
 
     void schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
     void cancelPauseOnNextStatement();
@@ -142,6 +150,7 @@ private:
     void clearInspectorBreakpointState();
     void clearBreakDetails();
     void clearExceptionValue();
+    void clearAsyncStackTraceData();
 
     enum class ShouldDispatchResumed { No, WhenIdle, WhenContinued };
     void registerIdleHandler();
@@ -153,10 +162,31 @@ private:
 
     bool breakpointActionsFromProtocol(ErrorString&, RefPtr<InspectorArray>& actions, BreakpointActions* result);
 
+    typedef std::pair<int, int> AsyncCallIdentifier;
+
+    RefPtr<Inspector::Protocol::Console::StackTrace> buildAsyncStackTrace(const AsyncCallIdentifier&);
+    void refAsyncCallData(const AsyncCallIdentifier&);
+    void derefAsyncCallData(const AsyncCallIdentifier&);
+
     typedef HashMap<JSC::SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
     typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
     typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
+
+    struct AsyncCallData {
+        AsyncCallData(RefPtr<ScriptCallStack> callStack, std::optional<AsyncCallIdentifier> parentAsyncCallIdentifier, bool singleShot)
+            : callStack(callStack)
+            , parentAsyncCallIdentifier(parentAsyncCallIdentifier)
+            , referenceCount(singleShot ? 0 : 1)
+        {
+        }
+
+        AsyncCallData() = default;
+
+        RefPtr<ScriptCallStack> callStack;
+        std::optional<AsyncCallIdentifier> parentAsyncCallIdentifier { std::nullopt };
+        unsigned referenceCount { 0 };
+    };
 
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
@@ -174,12 +204,15 @@ private:
     RefPtr<InspectorObject> m_breakAuxData;
     ShouldDispatchResumed m_conditionToDispatchResumed { ShouldDispatchResumed::No };
     bool m_enablePauseWhenIdle { false };
+    HashMap<AsyncCallIdentifier, AsyncCallData> m_asyncCallIdentifierToData;
+    std::optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier { std::nullopt };
     bool m_enabled { false };
     bool m_javaScriptPauseScheduled { false };
     bool m_hasExceptionValue { false };
     bool m_didPauseStopwatch { false };
     bool m_pauseOnAssertionFailures { false };
     bool m_registeredIdleCallback { false };
+    int m_asyncStackTraceDepth { 0 };
 };
 
 } // namespace Inspector

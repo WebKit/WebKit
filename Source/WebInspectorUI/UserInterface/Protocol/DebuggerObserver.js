@@ -63,9 +63,9 @@ WebInspector.DebuggerObserver = class DebuggerObserver
         WebInspector.debuggerManager.breakpointResolved(this.target, breakpointId, location);
     }
 
-    paused(callFrames, reason, data)
+    paused(callFrames, reason, data, asyncStackTrace)
     {
-        WebInspector.debuggerManager.debuggerDidPause(this.target, callFrames, reason, data);
+        WebInspector.debuggerManager.debuggerDidPause(this.target, callFrames, reason, data, asyncStackTrace);
     }
 
     resumed()

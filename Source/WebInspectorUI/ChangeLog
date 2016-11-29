@@ -1,3 +1,74 @@
+2016-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger should have an option for showing asynchronous call stacks
+        https://bugs.webkit.org/show_bug.cgi?id=163230
+        <rdar://problem/28698683>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string for generic async call stack boundary label: "(async)".
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        Create async stack depth setting and set default depth.
+        (WebInspector.DebuggerManager.prototype.get asyncStackTraceDepth):
+        (WebInspector.DebuggerManager.prototype.set asyncStackTraceDepth):
+        Make async stack depth setting accessible to the frontend.
+        (WebInspector.DebuggerManager.prototype.initializeTarget):
+        Set async stack depth value on the target.
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        Plumbing for the async stack trace payload.
+
+        * UserInterface/Models/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage):
+        Updated for new StackTrace.fromPayload use.
+
+        * UserInterface/Models/DebuggerData.js:
+        (WebInspector.DebuggerData):
+        (WebInspector.DebuggerData.prototype.get asyncStackTrace):
+        (WebInspector.DebuggerData.prototype.updateForPause):
+        (WebInspector.DebuggerData.prototype.updateForResume):
+        More plumbing.
+
+        * UserInterface/Models/StackTrace.js:
+        Update frontend model for use as new protocol object Console.StackTrace,
+        which was previously an alias for a simple array of Console.CallFrames.
+
+        (WebInspector.StackTrace):
+        (WebInspector.StackTrace.fromPayload):
+        (WebInspector.StackTrace.fromString):
+        (WebInspector.StackTrace.prototype.get topCallFrameIsBoundary):
+        (WebInspector.StackTrace.prototype.get parentStackTrace):
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver.prototype.paused):
+        More plumbing.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame.async-boundary):
+        Use default cursor since boundary element is not selectable.
+        (.tree-outline .item.call-frame.async-boundary .icon):
+        (.tree-outline .item.call-frame.async-boundary::before,):
+        (.tree-outline .item.call-frame.async-boundary::after):
+        (.tree-outline .item.call-frame.async-boundary::before):
+        Dimmed text and divider line styles for boundary element.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WebInspector.CallFrameTreeElement):
+        Add a flag denoting whether the call frame is an async call trace
+        boundary, and set styles accordingly.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        Set async stack trace depth, if supported.
+        (WebInspector.DebuggerSidebarPanel.prototype._updateSingleThreadCallStacks):
+        Add call frames for async stack traces to the call stack TreeOutline.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        Ensure that async call frames cannot become the active call frame.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add --text-color-gray-medium, for dimmed text in async boundary element.
+
 2016-11-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineDataGridNode assertions when refreshing page

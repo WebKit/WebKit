@@ -25,7 +25,7 @@
 
 WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(callFrame)
+    constructor(callFrame, isAsyncBoundaryCallFrame)
     {
         console.assert(callFrame instanceof WebInspector.CallFrame);
 
@@ -34,18 +34,26 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
 
         super(["call-frame", className], title, null, callFrame, false);
 
-        if (!callFrame.nativeCode && callFrame.sourceCodeLocation) {
-            let displayScriptURL = callFrame.sourceCodeLocation.displaySourceCode.url;
-            if (displayScriptURL) {
-                this.subtitle = document.createElement("span");
-                callFrame.sourceCodeLocation.populateLiveDisplayLocationString(this.subtitle, "textContent");
-                // Set the tooltip on the entire tree element in onattach, once the element is created.
-                this.tooltipHandledSeparately = true;
-            }
-        }
-
         this._callFrame = callFrame;
         this._isActiveCallFrame = false;
+
+         if (isAsyncBoundaryCallFrame) {
+            this.addClassName("async-boundary");
+            this.selectable = false;
+         }
+
+        if (this._callFrame.nativeCode || !this._callFrame.sourceCodeLocation) {
+            this.subtitle = "";
+            return;
+        }
+
+        let displayScriptURL = this._callFrame.sourceCodeLocation.displaySourceCode.url;
+        if (displayScriptURL) {
+            this.subtitle = document.createElement("span");
+            this._callFrame.sourceCodeLocation.populateLiveDisplayLocationString(this.subtitle, "textContent");
+            // Set the tooltip on the entire tree element in onattach, once the element is created.
+            this.tooltipHandledSeparately = true;
+        }
     }
 
     // Public

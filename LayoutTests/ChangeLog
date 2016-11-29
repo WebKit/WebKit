@@ -1,3 +1,17 @@
+2016-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger should have an option for showing asynchronous call stacks
+        https://bugs.webkit.org/show_bug.cgi?id=163230
+        <rdar://problem/28698683>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add basic tests for async stack trace data included in Debugger.paused, and
+        check that requestAnimationFrame, setTimeout, and setInterval are supported.
+
+        * inspector/debugger/async-stack-trace-expected.txt: Added.
+        * inspector/debugger/async-stack-trace.html: Added.
+
 2016-11-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209008.
