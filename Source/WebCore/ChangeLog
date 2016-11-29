@@ -1,5 +1,18 @@
 2016-11-29  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Inline controls show when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=165161
+
+        Reviewed by Dean Jackson.
+
+        We would error when entering fullscreen due to the TracksSupport having its destroy() method
+        called when tearing down the inline controls and the `mediaController` reference being incorrect.
+
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.destroy):
+
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Status text stuck saying "Loading" after media starts playing
         https://bugs.webkit.org/show_bug.cgi?id=165162
 

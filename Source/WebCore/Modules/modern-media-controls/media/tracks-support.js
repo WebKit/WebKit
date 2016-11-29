@@ -46,7 +46,7 @@ class TracksSupport extends MediaControllerSupport
     {
         super.destroy();
 
-        const media = mediaController.media;
+        const media = this.mediaController.media;
         for (let tracks of [media.audioTracks, media.textTracks]) {
             for (let eventType of ["addtrack", "removetrack"])
                 tracks.removeEventListener(eventType, this);
