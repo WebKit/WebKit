@@ -1,3 +1,16 @@
+2016-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        Safari (WebKit) doesn't wrap element within flex when width comes below min-width
+        https://bugs.webkit.org/show_bug.cgi?id=136041
+        <rdar://problem/25569370>
+
+        Reviewed by Darin Adler.
+
+        * fast/flexbox/flex-wrap-when-min-widht-is-set-1-expected.html: Added.
+        * fast/flexbox/flex-wrap-when-min-widht-is-set-1.html: Added.
+        * fast/flexbox/flex-wrap-when-min-widht-is-set-2-expected.html: Added.
+        * fast/flexbox/flex-wrap-when-min-widht-is-set-2.html: Added.
+
 2016-11-28  Antti Koivisto  <antti@apple.com>
 
         Slotted nodes ignore transition

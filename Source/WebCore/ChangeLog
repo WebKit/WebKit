@@ -1,3 +1,20 @@
+2016-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        Safari (WebKit) doesn't wrap element within flex when width comes below min-width
+        https://bugs.webkit.org/show_bug.cgi?id=136041
+        <rdar://problem/25569370>
+
+        Reviewed by Darin Adler.
+
+        While figuring out whether a particular flex item fits the current line, we need to take
+        the min-width into account too. This matches both FF and Chrome behaviour.
+
+        Tests: fast/flexbox/flex-wrap-when-min-widht-is-set-1.html
+               fast/flexbox/flex-wrap-when-min-widht-is-set-2.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+
 2016-11-29  Antti Koivisto  <antti@apple.com>
 
         Try to fix win/gtk build.

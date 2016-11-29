@@ -983,6 +983,7 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderedFlexItemList& orderedChildren
 
     bool lineHasInFlowItem = false;
 
+    LayoutUnit preferredMainAxisExtentWithMinWidthConstraint;
     for (RenderBox* child = m_orderIterator.currentChild(); child; child = m_orderIterator.next()) {
         if (child->isOutOfFlowPositioned()) {
             orderedChildren.append(child);
@@ -990,19 +991,26 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderedFlexItemList& orderedChildren
         }
 
         LayoutUnit childMainAxisExtent = preferredMainAxisContentExtentForChild(*child, hasInfiniteLineLength);
-        LayoutUnit childMainAxisMarginBoxExtent = mainAxisBorderAndPaddingExtentForChild(*child) + childMainAxisExtent;
-        childMainAxisMarginBoxExtent += isHorizontalFlow() ? child->horizontalMarginExtent() : child->verticalMarginExtent();
+        LayoutUnit borderMarginAndPaddingSpace = mainAxisBorderAndPaddingExtentForChild(*child) + (isHorizontalFlow() ? child->horizontalMarginExtent() : child->verticalMarginExtent());
 
-        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreakLength && lineHasInFlowItem)
+        LayoutUnit childMainAxisExtentWithMinWidthConstraint = childMainAxisExtent;
+        if (child->style().logicalMinWidth().isSpecifiedOrIntrinsic()) {
+            if (auto minWidthForChild = computeMainAxisExtentForChild(*child, MinSize, child->style().logicalMinWidth()))
+                childMainAxisExtentWithMinWidthConstraint = std::max(childMainAxisExtent, minWidthForChild.value());
+        }
+        preferredMainAxisExtentWithMinWidthConstraint += childMainAxisExtentWithMinWidthConstraint + borderMarginAndPaddingSpace;
+
+        if (isMultiline() && preferredMainAxisExtentWithMinWidthConstraint > lineBreakLength && lineHasInFlowItem)
             break;
         orderedChildren.append(child);
         lineHasInFlowItem  = true;
-        preferredMainAxisExtent += childMainAxisMarginBoxExtent;
+
+        preferredMainAxisExtent += childMainAxisExtent + borderMarginAndPaddingSpace;
         totalFlexGrow += child->style().flexGrow();
         totalWeightedFlexShrink += child->style().flexShrink() * childMainAxisExtent;
 
         LayoutUnit childMinMaxAppliedMainAxisExtent = adjustChildSizeForMinAndMax(*child, childMainAxisExtent);
-        minMaxAppliedMainAxisExtent += childMinMaxAppliedMainAxisExtent - childMainAxisExtent + childMainAxisMarginBoxExtent;
+        minMaxAppliedMainAxisExtent += childMinMaxAppliedMainAxisExtent + borderMarginAndPaddingSpace;
     }
     return true;
 }
