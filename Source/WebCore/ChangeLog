@@ -1,5 +1,15 @@
 2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the build after r209070
+
+        -[ScrollingMomentumCalculatorMac calculateToReachDestination] is only available on Sierra.
+
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+        * platform/spi/mac/NSScrollingMomentumCalculatorSPI.h:
+
+2016-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Scroll snapping on Mac should use AppKit animations
         https://bugs.webkit.org/show_bug.cgi?id=147261
         <rdar://problem/29395293>

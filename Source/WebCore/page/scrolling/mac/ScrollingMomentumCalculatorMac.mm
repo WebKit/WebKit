@@ -61,7 +61,9 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
     NSRect contentFrame = NSMakeRect(0, 0, m_contentSize.width(), m_contentSize.height());
     m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:m_initialVelocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_viewportSize tolerance:NSMakeSize(1, 1)]);
     [m_platformMomentumCalculator setDestinationOrigin:NSMakePoint(m_targetScrollOffset.width(), m_targetScrollOffset.height())];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [m_platformMomentumCalculator calculateToReachDestination];
+#endif
     return m_platformMomentumCalculator.get();
 }
 
