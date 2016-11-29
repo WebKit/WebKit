@@ -235,6 +235,8 @@ public:
     CSSSelector::Match match() const { return m_selector->match(); }
     CSSSelector::PseudoElementType pseudoElementType() const { return m_selector->pseudoElementType(); }
     const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
+    
+    void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);

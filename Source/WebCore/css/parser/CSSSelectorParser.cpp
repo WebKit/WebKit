@@ -461,7 +461,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
     return selector;
 }
 
-static bool isPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassType)
+static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassType)
 {
     switch (pseudoClassType) {
     case CSSSelector::PseudoClassNot:
@@ -483,12 +483,10 @@ static bool isPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassType)
     return false;
 }
     
-static bool isPseudoElementFunction(CSSSelector::PseudoElementType pseudoElementType)
+static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElementType pseudoElementType)
 {
+    // Note that we omit cue since it can be both an ident or a function.
     switch (pseudoElementType) {
-#if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoElementCue:
-#endif
     case CSSSelector::PseudoElementSlotted:
         return true;
     default:
@@ -533,16 +531,30 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     if (colons == 1)
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoClassSelectorFromStringView(value));
-    else
+    else {
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoElementSelectorFromStringView(value));
+        if (selector && selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom) {
+            // FIXME-NEWPARSER: The old parser treats cue as two pseudo-element types, because it
+            // is unable to handle a dual pseudo-element (one that can be both an ident or a
+            // function) without splitting them up.
+            //
+            // This means that "cue" is being parsed as PseudoElementWebkitCustom when used as an
+            // identifier, and it's being parsed as PseudoElementCue when used as a function.
+            //
+            // We have to mimic this behavior until the old parser is gone, at which point we can
+            // make all code use PseudoElementCue.
+            if (token.type() == FunctionToken && value.startsWithIgnoringASCIICase("cue"))
+                selector->setPseudoElementType(CSSSelector::PseudoElementCue);
+        }
+    }
 
     if (!selector || (selector->match() == CSSSelector::PseudoElement && m_disallowPseudoElements))
         return nullptr;
 
     if (token.type() == IdentToken) {
         range.consume();
-        if ((selector->match() == CSSSelector::PseudoElement && (selector->pseudoElementType() == CSSSelector::PseudoElementUnknown || isPseudoElementFunction(selector->pseudoElementType())))
-            || (selector->match() == CSSSelector::PseudoClass && (selector->pseudoClassType() == CSSSelector::PseudoClassUnknown || isPseudoClassFunction(selector->pseudoClassType()))))
+        if ((selector->match() == CSSSelector::PseudoElement && (selector->pseudoElementType() == CSSSelector::PseudoElementUnknown || isOnlyPseudoElementFunction(selector->pseudoElementType())))
+            || (selector->match() == CSSSelector::PseudoClass && (selector->pseudoClassType() == CSSSelector::PseudoClassUnknown || isOnlyPseudoClassFunction(selector->pseudoClassType()))))
             return nullptr;
         return selector;
     }
