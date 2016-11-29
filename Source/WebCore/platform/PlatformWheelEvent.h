@@ -120,7 +120,7 @@ namespace WebCore {
             return copy;
         }
 
-        PlatformWheelEvent copyWithDeltasAndVelocity(float deltaX, float deltaY, FloatPoint velocity) const
+        PlatformWheelEvent copyWithDeltasAndVelocity(float deltaX, float deltaY, const FloatSize& velocity) const
         {
             PlatformWheelEvent copy = *this;
             copy.m_deltaX = deltaX;
@@ -168,7 +168,7 @@ namespace WebCore {
         bool useLatchedEventElement() const { return false; }
 #endif
 
-        FloatPoint scrollingVelocity() const { return m_scrollingVelocity; }
+        FloatSize scrollingVelocity() const { return m_scrollingVelocity; }
 
 #if PLATFORM(WIN)
         PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
@@ -184,7 +184,9 @@ namespace WebCore {
         float m_wheelTicksY;
         PlatformWheelEventGranularity m_granularity;
         bool m_directionInvertedFromDevice;
-        FloatPoint m_scrollingVelocity;
+
+        // Scrolling velocity in pixels per second.
+        FloatSize m_scrollingVelocity;
 #if PLATFORM(COCOA)
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;

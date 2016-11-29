@@ -35,6 +35,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include "ScrollingMomentumCalculator.h"
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -79,14 +80,14 @@ public:
 
     // State transition helpers.
     void transitionToSnapAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset);
-    void transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta);
+    void transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void transitionToUserInteractionState();
     void transitionToDestinationReachedState();
 
 private:
     float targetOffsetForStartOffset(ScrollEventAxis, float maxScrollOffset, float startOffset, float pageScale, float delta, unsigned& outActiveSnapIndex) const;
     void teardownAnimationForState(ScrollSnapState);
-    void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta);
+    void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
@@ -95,7 +96,7 @@ private:
     Vector<LayoutUnit> m_snapOffsetsY;
     unsigned m_activeSnapIndexY { 0 };
 
-    double m_startTime { 0 };
+    MonotonicTime m_startTime;
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
 };
 

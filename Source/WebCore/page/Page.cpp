@@ -1995,8 +1995,11 @@ WheelEventTestTrigger& Page::ensureTestTrigger()
 {
     if (!m_testTrigger) {
         m_testTrigger = adoptRef(new WheelEventTestTrigger());
-        if (auto* frameView = mainFrame().view())
-            frameView->layout();
+        // We need to update the scrolling coordinator so that the mainframe scrolling node can expect wheel event test triggers.
+        if (auto* frameView = mainFrame().view()) {
+            if (m_scrollingCoordinator)
+                m_scrollingCoordinator->updateExpectsWheelEventTestTriggerWithFrameView(*frameView);
+        }
     }
 
     return *m_testTrigger;

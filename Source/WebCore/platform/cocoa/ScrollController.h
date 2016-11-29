@@ -190,7 +190,7 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<ScrollSnapAnimatorState> m_scrollSnapState;
 #if PLATFORM(MAC)
-    FloatPoint m_dragEndedScrollingVelocity;
+    FloatSize m_dragEndedScrollingVelocity;
     RunLoop::Timer<ScrollController> m_statelessSnapTransitionTimer;
     RunLoop::Timer<ScrollController> m_scrollSnapTimer;
 #endif

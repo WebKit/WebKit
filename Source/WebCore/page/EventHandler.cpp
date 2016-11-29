@@ -303,7 +303,7 @@ static inline bool didScrollInScrollableArea(ScrollableArea* scrollableArea, Whe
     return didHandleWheelEvent;
 }
 
-static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent& wheelEvent, Element** stopElement, const FloatSize& filteredPlatformDelta, const FloatPoint& filteredVelocity)
+static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent& wheelEvent, Element** stopElement, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if PLATFORM(MAC)
@@ -2758,7 +2758,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     Ref<Frame> protectedFrame(m_frame);
 
     FloatSize filteredPlatformDelta(wheelEvent.deltaX(), wheelEvent.deltaY());
-    FloatPoint filteredVelocity;
+    FloatSize filteredVelocity;
     if (const PlatformWheelEvent* platformWheelEvent = wheelEvent.wheelEvent()) {
         filteredPlatformDelta.setWidth(platformWheelEvent->deltaX());
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());

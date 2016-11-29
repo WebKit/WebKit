@@ -55,7 +55,7 @@ void WheelEventDeltaFilterMac::updateFromDelta(const FloatSize& delta)
     NSPoint filteredDeltaResult;
     NSPoint filteredVelocityResult;
     [m_predominantAxisFilter filterInputDelta:NSPoint(FloatPoint(delta.width(), delta.height())) timestamp:monotonicallyIncreasingTime() - m_beginFilteringDeltasTime outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
-    m_currentFilteredVelocity = FloatPoint(filteredVelocityResult);
+    m_currentFilteredVelocity = FloatSize(filteredVelocityResult.x, filteredVelocityResult.y);
     m_currentFilteredDelta = FloatSize(filteredDeltaResult.x, filteredDeltaResult.y);
 }
 

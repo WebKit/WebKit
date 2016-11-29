@@ -172,6 +172,19 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     node->setScrollableAreaParameters(scrollParameters);
 }
 
+void AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView(const FrameView& frameView)
+{
+    auto* page = frameView.frame().page();
+    if (!page)
+        return;
+
+    auto* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollLayerID()));
+    if (!node)
+        return;
+
+    node->setExpectsWheelEventTestTrigger(page->expectsWheelEventTriggers());
+}
+
 void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(FrameView&)
 {
     if (!m_scrollingStateTree->rootStateNode())

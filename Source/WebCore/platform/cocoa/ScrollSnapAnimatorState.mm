@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "ScrollSnapAnimatorState.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -43,12 +42,12 @@ void ScrollSnapAnimatorState::transitionToSnapAnimationState(const FloatSize& co
     setupAnimationForState(ScrollSnapState::Snapping, contentSize, viewportSize, pageScale, initialOffset, { }, { });
 }
 
-void ScrollSnapAnimatorState::transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta)
+void ScrollSnapAnimatorState::transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
 {
     setupAnimationForState(ScrollSnapState::Gliding, contentSize, viewportSize, pageScale, initialOffset, initialVelocity, initialDelta);
 }
 
-void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatPoint& initialVelocity, const FloatSize& initialDelta)
+void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
 {
     ASSERT(state == ScrollSnapState::Snapping || state == ScrollSnapState::Gliding);
     if (m_currentState == state)
@@ -57,7 +56,7 @@ void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
     float targetOffsetX = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, contentSize.width() - viewportSize.width(), initialOffset.x(), pageScale, initialDelta.width(), m_activeSnapIndexX);
     float targetOffsetY = targetOffsetForStartOffset(ScrollEventAxis::Vertical, contentSize.height() - viewportSize.height(), initialOffset.y(), pageScale, initialDelta.height(), m_activeSnapIndexY);
     m_momentumCalculator = ScrollingMomentumCalculator::create(viewportSize, contentSize, initialOffset, FloatPoint(targetOffsetX, targetOffsetY), initialDelta, initialVelocity);
-    m_startTime = monotonicallyIncreasingTime();
+    m_startTime = MonotonicTime::now();
     m_currentState = state;
 }
 
@@ -78,7 +77,7 @@ void ScrollSnapAnimatorState::teardownAnimationForState(ScrollSnapState state)
         return;
 
     m_momentumCalculator = nullptr;
-    m_startTime = 0;
+    m_startTime = MonotonicTime();
     m_currentState = state;
 }
 
@@ -89,7 +88,7 @@ FloatPoint ScrollSnapAnimatorState::currentAnimatedScrollOffset(bool& isAnimatio
         return { };
     }
 
-    double elapsedTime = monotonicallyIncreasingTime() - m_startTime;
+    Seconds elapsedTime = MonotonicTime::now() - m_startTime;
     isAnimationComplete = elapsedTime >= m_momentumCalculator->animationDuration();
     return m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 }

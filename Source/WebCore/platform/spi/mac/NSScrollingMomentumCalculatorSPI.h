@@ -31,7 +31,7 @@
 
 #else
 
-@interface _NSScrollingMomentumCalculator : NSObject;
+@interface _NSScrollingMomentumCalculator : NSObject
 
 - (instancetype)initWithInitialOrigin:(NSPoint)origin velocity:(NSPoint)velocity documentFrame:(NSRect)docFrame constrainedClippingOrigin:(NSPoint)constrainedClippingOrigin clippingSize:(NSSize)clipViewSize tolerance:(NSSize)tolerance;
 - (NSPoint)positionAfterDuration:(NSTimeInterval)duration;
@@ -39,7 +39,7 @@
 - (void)calculateToReachDestination;
 #endif
 
-@property (atomic) NSPoint destinationOrigin;
+@property NSPoint destinationOrigin;
 @property (readonly) NSTimeInterval durationUntilStop;
 
 @end

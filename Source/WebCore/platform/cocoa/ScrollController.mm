@@ -514,8 +514,8 @@ void ScrollController::scheduleStatelessScrollSnap()
     if (!m_scrollSnapState)
         return;
 
-    static const double statelessScrollSnapDelay = 0.75;
-    m_statelessSnapTransitionTimer.startOneShot(statelessScrollSnapDelay);
+    static const Seconds statelessScrollSnapDelay = 750_ms;
+    m_statelessSnapTransitionTimer.startOneShot(statelessScrollSnapDelay.value());
     startDeferringTestsDueToScrollSnapping();
 }
 

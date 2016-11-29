@@ -1,3 +1,71 @@
+2016-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback following r209070 (AppKit momentum scrolling adoption for scroll snapping)
+        https://bugs.webkit.org/show_bug.cgi?id=165147
+
+        Reviewed by Simon Fraser.
+
+        Addresses some additional review feedback after r209070, which adopts _NSScrollingMomentumCalculator for scroll
+        snapping. See individual changes below for more details. No new tests, since there is no behavior change.
+
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBox):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/Page.cpp:
+        (WebCore::Page::ensureTestTrigger):
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::filteredVelocity):
+        * page/WheelEventDeltaFilter.h:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        (WebCore::WheelEventDeltaFilterMac::updateFromDelta):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView):
+
+        Rather than force a complete layout pass when the Page first acquires a WheelEventTestTrigger, we now simply
+        have the scrolling coordinator update its frame node to expect a wheel event test trigger.
+
+        * page/scrolling/ScrollingMomentumCalculator.cpp:
+        (WebCore::ScrollingMomentumCalculator::ScrollingMomentumCalculator):
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator):
+        (WebCore::BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime):
+        (WebCore::BasicScrollingMomentumCalculator::animationDuration):
+        (WebCore::BasicScrollingMomentumCalculator::initializeSnapProgressCurve):
+        (WebCore::BasicScrollingMomentumCalculator::animationProgressAfterElapsedTime):
+        * page/scrolling/ScrollingMomentumCalculator.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac):
+        (WebCore::ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime):
+        (WebCore::ScrollingMomentumCalculatorMac::animationDuration):
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::copyWithDeltasAndVelocity):
+        (WebCore::PlatformWheelEvent::scrollingVelocity):
+
+        Change scrolling velocity in PlatformWheelEvent to be a FloatSize instead of a FloatPoint. This change
+        propagates to the ScrollController, where state variables and arguments pertaining to scrolling velocity are
+        also now sizes instead of points.
+
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        * platform/cocoa/ScrollSnapAnimatorState.h:
+        * platform/cocoa/ScrollSnapAnimatorState.mm:
+        (WebCore::ScrollSnapAnimatorState::transitionToGlideAnimationState):
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::teardownAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::currentAnimatedScrollOffset):
+
+        Refactor elapsed time to be Seconds instead of double. Additionally, use MonotonicTime::now() instead of
+        monotonicallyIncreasingTime(), and MonotonicTime instead of double for keeping track of the start time.
+
+        * platform/spi/mac/NSScrollingMomentumCalculatorSPI.h:
+
 2016-11-29  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: The client's transaction operation queue should flush as much to the server as possible.

@@ -28,13 +28,12 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-static const double scrollSnapAnimationDuration = 1;
+static const Seconds scrollSnapAnimationDuration = 1_s;
 
-ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity)
+ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : m_initialDelta(initialDelta)
     , m_initialVelocity(initialVelocity)
     , m_initialScrollOffset(initialOffset.x(), initialOffset.y())
@@ -46,14 +45,14 @@ ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewpo
 
 #if !HAVE(NSSCROLLING_FILTERS)
 
-std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity)
+std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
     return std::make_unique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity);
 }
 
 #endif
 
-BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity)
+BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity)
 {
 }
@@ -73,7 +72,7 @@ FloatSize BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgres
     return interpolatedPoint;
 }
 
-FloatPoint BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime(double seconds)
+FloatPoint BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
 {
     if (m_momentumCalculatorRequiresInitialization) {
         initializeSnapProgressCurve();
@@ -81,12 +80,12 @@ FloatPoint BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime(double
         m_momentumCalculatorRequiresInitialization = false;
     }
 
-    float progress = animationProgressAfterElapsedTime(seconds);
+    float progress = animationProgressAfterElapsedTime(elapsedTime);
     auto offsetAsSize = m_forceLinearAnimationCurve ? linearlyInterpolatedOffsetAtProgress(progress) : cubicallyInterpolatedOffsetAtProgress(progress);
     return FloatPoint(offsetAsSize.width(), offsetAsSize.height());
 }
 
-double BasicScrollingMomentumCalculator::animationDuration()
+Seconds BasicScrollingMomentumCalculator::animationDuration()
 {
     return scrollSnapAnimationDuration;
 }
@@ -191,7 +190,7 @@ void BasicScrollingMomentumCalculator::initializeSnapProgressCurve()
     m_snapAnimationCurveMagnitude = initialScrollSnapCurveMagnitude;
     for (int i = 0; i < maxNumScrollSnapParameterEstimationIterations; ++i) {
         m_snapAnimationDecayFactor = m_snapAnimationCurveMagnitude / (m_snapAnimationCurveMagnitude - initialProgress);
-        m_snapAnimationCurveMagnitude = 1.0f / (1.0f - std::pow(m_snapAnimationDecayFactor, -framesPerSecond * scrollSnapAnimationDuration));
+        m_snapAnimationCurveMagnitude = 1.0f / (1.0f - std::pow(m_snapAnimationDecayFactor, -framesPerSecond * scrollSnapAnimationDuration.value()));
         if (std::abs(m_snapAnimationDecayFactor - previousDecayFactor) < scrollSnapDecayFactorConvergenceThreshold)
             break;
 
@@ -199,10 +198,10 @@ void BasicScrollingMomentumCalculator::initializeSnapProgressCurve()
     }
 }
 
-float BasicScrollingMomentumCalculator::animationProgressAfterElapsedTime(double seconds) const
+float BasicScrollingMomentumCalculator::animationProgressAfterElapsedTime(Seconds elapsedTime) const
 {
-    float timeProgress = clampTo<float>(seconds / scrollSnapAnimationDuration, 0, 1);
-    return std::min(1.0, m_snapAnimationCurveMagnitude * (1.0 - std::pow(m_snapAnimationDecayFactor, -framesPerSecond * scrollSnapAnimationDuration * timeProgress)));
+    float timeProgress = clampTo<float>(elapsedTime / scrollSnapAnimationDuration, 0, 1);
+    return std::min(1.0, m_snapAnimationCurveMagnitude * (1.0 - std::pow(m_snapAnimationDecayFactor, -framesPerSecond * scrollSnapAnimationDuration.value() * timeProgress)));
 }
 
 }; // namespace WebCore

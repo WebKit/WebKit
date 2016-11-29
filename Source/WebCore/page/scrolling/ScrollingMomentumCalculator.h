@@ -30,6 +30,7 @@
 #include "AxisScrollSnapOffsets.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -38,16 +39,16 @@ class FloatSize;
 
 class ScrollingMomentumCalculator {
 public:
-    ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity);
-    static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity);
+    ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     virtual ~ScrollingMomentumCalculator() { }
 
-    virtual FloatPoint scrollOffsetAfterElapsedTime(double time) = 0;
-    virtual double animationDuration() = 0;
+    virtual FloatPoint scrollOffsetAfterElapsedTime(Seconds) = 0;
+    virtual Seconds animationDuration() = 0;
 
 protected:
     FloatSize m_initialDelta;
-    FloatPoint m_initialVelocity;
+    FloatSize m_initialVelocity;
     FloatSize m_initialScrollOffset;
     FloatSize m_targetScrollOffset;
     FloatSize m_viewportSize;
@@ -56,14 +57,14 @@ protected:
 
 class BasicScrollingMomentumCalculator final : public ScrollingMomentumCalculator {
 public:
-    BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatPoint& initialVelocity);
+    BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
 private:
-    FloatPoint scrollOffsetAfterElapsedTime(double seconds) final;
-    double animationDuration() final;
+    FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
+    Seconds animationDuration() final;
     void initializeInterpolationCoefficientsIfNecessary();
     void initializeSnapProgressCurve();
-    float animationProgressAfterElapsedTime(double time) const;
+    float animationProgressAfterElapsedTime(Seconds) const;
     FloatSize linearlyInterpolatedOffsetAtProgress(float progress) const;
     FloatSize cubicallyInterpolatedOffsetAtProgress(float progress) const;
 

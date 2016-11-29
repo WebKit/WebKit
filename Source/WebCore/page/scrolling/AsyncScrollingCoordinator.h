@@ -64,6 +64,8 @@ public:
     WEBCORE_EXPORT void updateScrollSnapPropertiesWithFrameView(const FrameView&) override;
 #endif
 
+    WEBCORE_EXPORT void updateExpectsWheelEventTestTriggerWithFrameView(const FrameView&) override;
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 

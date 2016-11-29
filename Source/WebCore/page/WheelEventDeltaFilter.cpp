@@ -63,7 +63,7 @@ FloatSize WheelEventDeltaFilter::filteredDelta() const
     return m_currentFilteredDelta;
 }
 
-FloatPoint WheelEventDeltaFilter::filteredVelocity() const
+FloatSize WheelEventDeltaFilter::filteredVelocity() const
 {
     return m_currentFilteredVelocity;
 }
