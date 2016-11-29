@@ -1,3 +1,20 @@
+2016-11-28  Beth Dakin  <bdakin@apple.com>
+
+        Blacklist Netflix for TouchBar support
+        https://bugs.webkit.org/show_bug.cgi?id=165104
+        -and corresponding-
+        rdar://problem/29404778
+
+        Reviewed by Tim Horton.
+
+        This patch moves the algorithm to 
+        bestMediaElementForShowingPlaybackControlsManager() so that Now Playing can also 
+        use it.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsPlaybackControlsManagerQuirk):
+        (WebCore::HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager):
+        (WebCore::HTMLMediaElement::updatePlaybackControlsManager):
+
 2016-11-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in more miscellaneous files.
