@@ -1,3 +1,13 @@
+2016-11-29  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Queue up completed requests in the client, handle them one by one.
+        https://bugs.webkit.org/show_bug.cgi?id=165000
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/resources/transaction-scheduler-6.js: This test had a bug which was masked by previously
+          synchronous behavior. Fix that bug!
+
 2016-11-29  Zalan Bujtas  <zalan@apple.com>
 
         Safari (WebKit) doesn't wrap element within flex when width comes below min-width

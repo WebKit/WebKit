@@ -87,7 +87,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    void requestCompleted(const IDBResultData&);
+    void completeRequestAndDispatchEvent(const IDBResultData&);
 
     void setResult(const IDBKeyData&);
     void setResult(const Vector<IDBKeyData>&);

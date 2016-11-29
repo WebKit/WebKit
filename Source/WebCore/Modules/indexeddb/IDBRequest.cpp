@@ -304,6 +304,9 @@ bool IDBRequest::dispatchEvent(Event& event)
         m_transaction->abortDueToFailedRequest(*m_domError);
     }
 
+    if (m_transaction)
+        m_transaction->finishedDispatchEventForRequest(*this);
+
     return dontPreventDefault;
 }
 
@@ -465,10 +468,10 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     m_cursorRequestNotifier = nullptr;
     m_pendingCursor = nullptr;
 
-    requestCompleted(resultData);
+    completeRequestAndDispatchEvent(resultData);
 }
 
-void IDBRequest::requestCompleted(const IDBResultData& resultData)
+void IDBRequest::completeRequestAndDispatchEvent(const IDBResultData& resultData)
 {
     ASSERT(currentThread() == originThreadID());
 

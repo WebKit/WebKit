@@ -138,7 +138,10 @@ public:
     void activate();
     void deactivate();
 
-    void operationDidComplete(IDBClient::TransactionOperation&);
+    void operationCompletedOnServer(const IDBResultData&, IDBClient::TransactionOperation&);
+    void operationCompletedOnClient(IDBClient::TransactionOperation&);
+
+    void finishedDispatchEventForRequest(IDBRequest&);
 
     bool isFinishedOrFinishing() const;
     bool isFinished() const { return m_state == IndexedDB::TransactionState::Finished; }
@@ -159,7 +162,8 @@ private:
     void finishAbortOrCommit();
 
     void scheduleOperation(RefPtr<IDBClient::TransactionOperation>&&);
-    void operationTimerFired();
+    void pendingOperationTimerFired();
+    void completedOperationTimerFired();
 
     void fireOnComplete();
     void fireOnAbort();
@@ -217,7 +221,11 @@ private:
 
     void establishOnServer();
 
-    void scheduleOperationTimer();
+    void completeNoncursorRequest(IDBRequest&, const IDBResultData&);
+    void completeCursorRequest(IDBRequest&, const IDBResultData&);
+
+    void schedulePendingOperationTimer();
+    void scheduleCompletedOperationTimer();
 
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
@@ -228,12 +236,14 @@ private:
     IDBError m_idbError;
     RefPtr<DOMError> m_domError;
 
-    Timer m_operationTimer;
+    Timer m_pendingOperationTimer;
+    Timer m_completedOperationTimer;
     std::unique_ptr<Timer> m_activationTimer;
 
     RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
-    Deque<RefPtr<IDBClient::TransactionOperation>> m_transactionOperationQueue;
+    Deque<RefPtr<IDBClient::TransactionOperation>> m_pendingTransactionOperationQueue;
+    Deque<std::pair<RefPtr<IDBClient::TransactionOperation>, IDBResultData>> m_completedOnServerQueue;
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
@@ -242,6 +252,7 @@ private:
     HashMap<uint64_t, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
 
     HashSet<RefPtr<IDBRequest>> m_openRequests;
+    RefPtr<IDBRequest> m_currentlyCompletingRequest;
 
     bool m_contextStopped { false };
 };

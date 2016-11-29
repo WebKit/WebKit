@@ -807,11 +807,8 @@ IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& id
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to abort a transaction that hasn't been established") };
     }
 
-
-    if (transaction->mode() == IDBTransactionMode::Versionchange) {
-        ASSERT(m_originalDatabaseInfoBeforeVersionChange);
+    if (transaction->mode() == IDBTransactionMode::Versionchange && m_originalDatabaseInfoBeforeVersionChange)
         m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
-    }
 
     return transaction->abort();
 }

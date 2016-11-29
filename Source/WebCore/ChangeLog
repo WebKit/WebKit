@@ -1,3 +1,75 @@
+2016-11-29  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Queue up completed requests in the client, handle them one by one.
+        https://bugs.webkit.org/show_bug.cgi?id=165000
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered extensively by every existing test).
+
+        Currently when a TransactionOperation completes on the server, it immediately completes
+        itself on the client side, including scheduling an event dispatch if necessary.
+        
+        This patch changes it so that "server completed operations" instead queue up in the 
+        IDBTransaction and are "client-side completed" asynchronously, 1-by-1.
+        
+        Currently this is a "no behavior change" because only one operation is ever sent to
+        the server at a time.
+        
+        But that will change with https://webkit.org/b/164932
+        And this patch is a pre-requisite for that.
+        
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        (WebCore::IDBRequest::completeRequestAndDispatchEvent):
+        (WebCore::IDBRequest::requestCompleted): Deleted.
+        * Modules/indexeddb/IDBRequest.h:
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::scheduleOperation):
+        (WebCore::IDBTransaction::schedulePendingOperationTimer):
+        (WebCore::IDBTransaction::pendingOperationTimerFired):
+        (WebCore::IDBTransaction::operationCompletedOnServer):
+        (WebCore::IDBTransaction::scheduleCompletedOperationTimer):
+        (WebCore::IDBTransaction::completedOperationTimerFired):
+        (WebCore::IDBTransaction::completeNoncursorRequest):
+        (WebCore::IDBTransaction::completeCursorRequest):
+        (WebCore::IDBTransaction::finishedDispatchEventForRequest):
+        (WebCore::IDBTransaction::didStart):
+        (WebCore::IDBTransaction::didOpenCursorOnServer):
+        (WebCore::IDBTransaction::didIterateCursorOnServer):
+        (WebCore::IDBTransaction::didGetAllRecordsOnServer):
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        (WebCore::IDBTransaction::didGetCountOnServer):
+        (WebCore::IDBTransaction::didDeleteRecordOnServer):
+        (WebCore::IDBTransaction::didClearObjectStoreOnServer):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        (WebCore::IDBTransaction::didPutOrAddOnServer):
+        (WebCore::IDBTransaction::operationCompletedOnClient):
+        (WebCore::IDBTransaction::deactivate):
+        (WebCore::IDBTransaction::connectionClosedFromServer):
+        (WebCore::IDBTransaction::scheduleOperationTimer): Deleted.
+        (WebCore::IDBTransaction::operationTimerFired): Deleted.
+        (WebCore::IDBTransaction::operationDidComplete): Deleted.
+        * Modules/indexeddb/IDBTransaction.h:
+        
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::completeOperation):
+        
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        (WebCore::IDBClient::TransactionOperation::TransactionOperation):
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::transitionToCompleteOnThisThread):
+        (WebCore::IDBClient::TransactionOperation::transitionToComplete):
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+        (WebCore::IDBClient::TransactionOperation::idbRequest):
+        (WebCore::IDBClient::TransactionOperation::performCompleteOnOriginThread): Deleted.
+        (WebCore::IDBClient::TransactionOperation::completed): Deleted.
+
 2016-11-29  Zalan Bujtas  <zalan@apple.com>
 
         Safari (WebKit) doesn't wrap element within flex when width comes below min-width

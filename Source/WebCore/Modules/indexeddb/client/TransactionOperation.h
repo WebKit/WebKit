@@ -61,25 +61,31 @@ public:
         m_performFunction = { };
     }
 
-    void performCompleteOnOriginThread(const IDBResultData& data, RefPtr<TransactionOperation>&& lastRef)
+    void transitionToCompleteOnThisThread(const IDBResultData& data)
+    {
+        ASSERT(m_originThreadID == currentThread());
+        m_transaction->operationCompletedOnServer(data, *this);
+    }
+
+    void transitionToComplete(const IDBResultData& data, RefPtr<TransactionOperation>&& lastRef)
     {
         ASSERT(isMainThread());
 
         if (m_originThreadID == currentThread())
-            completed(data);
+            transitionToCompleteOnThisThread(data);
         else {
-            m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::completed, data);
+            m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::transitionToCompleteOnThisThread, data);
             m_transaction->callFunctionOnOriginThread([lastRef = WTFMove(lastRef)]() {
             });
         }
     }
 
-    void completed(const IDBResultData& data)
+    void doComplete(const IDBResultData& data)
     {
         ASSERT(m_originThreadID == currentThread());
         ASSERT(m_completeFunction);
         m_completeFunction(data);
-        m_transaction->operationDidComplete(*this);
+        m_transaction->operationCompletedOnClient(*this);
 
         // m_completeFunction might be holding the last ref to this TransactionOperation,
         // so we need to do this trick to null it out without first destroying it.
@@ -90,6 +96,8 @@ public:
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
 
     ThreadIdentifier originThreadID() const { return m_originThreadID; }
+
+    IDBRequest* idbRequest() { return m_idbRequest.get(); }
 
 protected:
     TransactionOperation(IDBTransaction& transaction)
@@ -118,6 +126,7 @@ private:
     IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
 
     ThreadIdentifier m_originThreadID { currentThread() };
+    RefPtr<IDBRequest> m_idbRequest;
 };
 
 template <typename... Arguments>

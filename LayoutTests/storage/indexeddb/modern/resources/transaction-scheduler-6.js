@@ -3,6 +3,10 @@ It verifies that the read-write doesn't start until both read-onlys have finishe
 
 indexedDBTest(prepareDatabase);
 
+function log(msg)
+{
+	debug(msg);
+}
 
 function done()
 {
@@ -13,7 +17,7 @@ var database;
 
 function prepareDatabase(event)
 {
-    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    log("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = event.target.transaction;
     database = event.target.result;
@@ -21,22 +25,22 @@ function prepareDatabase(event)
     var request = objectStore.put("foo", "bar");
 
     request.onerror = function(event) {
-        debug("put FAILED - " + event);
+        log("put FAILED - " + event);
         done();
     }
     
     versionTransaction.onabort = function(event) {
-        debug("versionchange transaction aborted");
+        log("versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("versionchange transaction completed");
+        log("versionchange transaction completed");
         continueTest();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("versionchange transaction error'ed - " + event);
+        log("versionchange transaction error'ed - " + event);
         done();
     }
 }
@@ -51,26 +55,26 @@ function continueTest()
     var request = objectStore.put("baz", "foo");
 
     request.onsuccess = function(event) {
-        debug("Write in readwrite transaction succeeded");
+        log("Write in readwrite transaction succeeded");
     }
     
     request.onerror = function(event) {
-        debug("Write in readwrite transaction unexpectedly failed");
+        log("Write in readwrite transaction unexpectedly failed");
         done();
     }
     
     transaction.onabort = function(event) {
-        debug("readwrite transaction expectedly aborted");
+        log("readwrite transaction expectedly aborted");
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("readwrite transaction completed");
+        log("readwrite transaction completed");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("readwrite transaction error'ed - " + event);
+        log("readwrite transaction error'ed - " + event);
         done();
     }
 }
@@ -84,7 +88,7 @@ function startTransactionLoop(transaction, isFirstTime)
     
     request.onsuccess = function(event) {
         if (isFirstTime) {
-            debug("Starting a readonly transaction");
+            log("Starting a readonly transaction");
             numberOfOpenTransactions++;
         }
         
@@ -95,24 +99,22 @@ function startTransactionLoop(transaction, isFirstTime)
     }
 
     request.onerror = function(event) {
-        debug("Unexpected request error - " + event);
+        log("Unexpected request error - " + event);
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("Unexpected transaction error - " + event);
+        log("Unexpected transaction error - " + event);
         done();
     }
 
     transaction.onabort = function(event) {
-        --numberOfOpenTransactions;
-        debug("Unexpected transaction abort - " + event);
+        log("Unexpected transaction abort - " + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        --numberOfOpenTransactions;
-        debug("readonly transaction completed");
+        log("readonly transaction completed");
     }
 }
 
