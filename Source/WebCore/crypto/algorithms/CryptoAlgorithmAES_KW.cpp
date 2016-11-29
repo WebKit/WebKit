@@ -63,15 +63,14 @@ bool CryptoAlgorithmAES_KW::keyAlgorithmMatches(const CryptoKey& key) const
     return true;
 }
 
-void CryptoAlgorithmAES_KW::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
-    ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_KW(usages)) {
         exceptionCallback(SYNTAX_ERR);
         return;
     }
 
-    auto result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_KW, downcast<CryptoAlgorithmAesKeyGenParams>(*parameters).length, extractable, usages);
+    auto result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_KW, downcast<CryptoAlgorithmAesKeyGenParams>(parameters).length, extractable, usages);
     if (!result) {
         exceptionCallback(OperationError);
         return;

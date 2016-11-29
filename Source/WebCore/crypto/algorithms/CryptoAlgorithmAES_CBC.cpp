@@ -88,10 +88,9 @@ void CryptoAlgorithmAES_CBC::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&
     platformDecrypt(WTFMove(parameters), WTFMove(key), WTFMove(cipherText), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
 }
 
-void CryptoAlgorithmAES_CBC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
-    ASSERT(parameters);
-    auto& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(*parameters);
+    const auto& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmAES_CBC(usages)) {
         exceptionCallback(SYNTAX_ERR);

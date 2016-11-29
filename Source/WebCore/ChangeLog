@@ -1,3 +1,39 @@
+2016-11-29  Daniel Bates  <dabates@apple.com>
+
+        CryptoAlgorithm::generateKey() should take lvalue reference to const CryptoAlgorithmParameters
+        https://bugs.webkit.org/show_bug.cgi?id=165111
+
+        Reviewed by Darin Adler.
+
+        CryptoAlgorithm::generateKey() and its overrides always expect to receive a non-null pointer
+        to a CryptoAlgorithmParameter object and never take ownership of it. This kind of relationship
+        is best expressed by modifying CryptoAlgorithm::generateKey() to take a lvalue reference to
+        a const CryptoAlgorithmParameter object.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::generateKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::generateKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         window.name leaks information across domains
