@@ -1,3 +1,17 @@
+2016-11-28  Gavin Barraclough  <barraclough@apple.com>
+
+        HTMLMediaElement::updateVolume should updateIsPlayingMedia
+        https://bugs.webkit.org/show_bug.cgi?id=165132
+
+        Reviewed by Darin Adler & Jer Noble.
+
+        HTMLMediaElement::mediaState takes the volume into account when determining whether media
+        is playing (audio is not considered to be playing if volume is 0). As such, any change to
+        the volume may require mediaState to be recomputed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateVolume):
+
 2016-11-29  Daniel Bates  <dabates@apple.com>
 
         Avoid ref-count churn in ShadowParseContext::commitColor()

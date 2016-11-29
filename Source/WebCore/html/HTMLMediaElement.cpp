@@ -4824,6 +4824,12 @@ void HTMLMediaElement::updateVolume()
         m_player->setVolume(m_volume * volumeMultiplier);
     }
 
+#if ENABLE(MEDIA_SESSION)
+    document().updateIsPlayingMedia(m_elementID);
+#else
+    document().updateIsPlayingMedia();
+#endif
+
     if (hasMediaControls())
         mediaControls()->changedVolume();
 #endif
