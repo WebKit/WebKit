@@ -110,6 +110,31 @@ void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& d
 
 }
 
+void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
+        auto algorithm = commonCryptoHMACAlgorithm(hmacKey.hashAlgorithmIdentifier());
+        if (!algorithm) {
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+                exceptionCallback(OperationError);
+                context.deref();
+            });
+            return;
+        }
+        auto expectedSignature = calculateSignature(*algorithm, hmacKey.key(), data.data(), data.size());
+        // Using a constant time comparison to prevent timing attacks.
+        bool result = signature.size() == expectedSignature.size() && !constantTimeMemcmp(expectedSignature.data(), signature.data(), expectedSignature.size());
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([callback = WTFMove(callback), result, exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
 {
     auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);

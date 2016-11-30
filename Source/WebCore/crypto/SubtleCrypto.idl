@@ -34,6 +34,7 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
     [Custom] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [Custom] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [Custom] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [Custom] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
     // FIXME: Should this return a Promise<(CryptoKey or CryptoKeyPair)>?
     [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
     [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<CryptoKeyUsage> keyUsages);

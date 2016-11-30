@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test verification with RSASSA-PKCS1-v1_5 SHA-512 using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var text = asciiToUint8Array("Hello, World!");
+var rsaImportParams = {
+    name: "RSASSA-PKCS1-v1_5",
+    hash: "SHA-512",
+}
+var jwkKey = {
+    kty: "RSA",
+    alg: "RS512",
+    use: "sig",
+    key_ops: ["verify"],
+    ext: true,
+    n: "rcCUCv7Oc1HVam1DIhCzqknThWawOp8QLk8Ziy2p10ByjQFCajoFiyuAWl-R1WXZaf4xitLRracT9agpzIzc-MbLSHIGgWQGO21lGiImy5ftZ-D8bHAqRz2y15pzD4c4CEou7XSSLDoRnR0QG5MsDhD6s2gV9mwHkrtkCxtMWdBi-77as8wGmlNRldcOSgZDLK8UnCSgA1OguZ989bFyc8tOOEIb0xUSfPSz3LPSCnyYz68aDjmKVeNH-ig857OScyWbGyEy3Biw64qun3juUlNWsJ3zngkOdteYWytx5Qr4XKNs6R-Myyq72KUp02mJDZiiyiglxML_i3-_CeecCw",
+    e: "AQAB",
+};
+var signature = hexStringToUint8Array("04dfcced9635d2208ea05c73ce76745678db57b7575a7ffa9770615a9ef9c68455bb49e9c70a99d053eb91c9dd2ecf09dba2a1334325318a2e75b78f4c4eb63c0d05a2a9418d6aefc5cb97ffbfb8cd06b39f8adaa545ea6b95e09934b0e2ef8e05734dcb1f1a72877f891637a99cd80b2f8a5ad419aebe18fa354bff95141b207f986e60ae16f192011b7f9c97137820a7af77be59d771ad35f51a895a2c5e0aafc96ba8f1f2dfcfbe5257b7b603d37e25670996c6c05f3db940c973f561bac8582659701fad4b4c84faa56af2dfeab450c40714f46bdd1bc6e24a3efc10bf3767ad452a79fb7de5fff282b2302e3f3f98bfdbb4037780e793343358b51cead1");
+
+crypto.subtle.importKey("jwk", jwkKey, rsaImportParams, extractable, ["verify"]).then(function(key) {
+    return crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, signature, text);
+}).then(function(result) {
+    verified = result;
+
+    shouldBeTrue("verified");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

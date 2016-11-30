@@ -29,7 +29,9 @@ crypto.subtle.generateKey(algorithmKeyGen, true, ["decrypt", "encrypt"]).then(fu
     keyPair = result;
     debug("Encrypting...");
     return crypto.subtle.encrypt(rsaOaepParams, keyPair.publicKey, asciiToUint8Array(plainText));
-}).then(function(cipherText) {
+}).then(function(result) {
+    cipherText = result;
+    shouldNotBeEqualToString("bytesToASCIIString(cipherText)", plainText);
     debug("Decrypting...");
     return crypto.subtle.decrypt(rsaOaepParams, keyPair.privateKey, cipherText);
 }).then(function(result) {

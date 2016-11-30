@@ -49,8 +49,8 @@ PASS SubtleCrypto interface: crypto.subtle must inherit property "decrypt" with 
 PASS SubtleCrypto interface: calling decrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError 
 PASS SubtleCrypto interface: crypto.subtle must inherit property "sign" with the proper type (2) 
 PASS SubtleCrypto interface: calling sign(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError 
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "verify" with the proper type (3) assert_inherits: property "verify" not found in prototype chain
-FAIL SubtleCrypto interface: calling verify(AlgorithmIdentifier,CryptoKey,BufferSource,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "verify" not found in prototype chain
+PASS SubtleCrypto interface: crypto.subtle must inherit property "verify" with the proper type (3) 
+PASS SubtleCrypto interface: calling verify(AlgorithmIdentifier,CryptoKey,BufferSource,BufferSource) on crypto.subtle with too few arguments must throw TypeError 
 FAIL SubtleCrypto interface: crypto.subtle must inherit property "digest" with the proper type (4) assert_inherits: property "digest" not found in prototype chain
 FAIL SubtleCrypto interface: calling digest(AlgorithmIdentifier,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "digest" not found in prototype chain
 PASS SubtleCrypto interface: crypto.subtle must inherit property "generateKey" with the proper type (5) 

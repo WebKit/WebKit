@@ -1,3 +1,55 @@
+2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::verify to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164741
+        <rdar://problem/29257935>
+
+        Reviewed by Brent Fulgham.
+
+        Besides adding tests for SubtleCrypto::verify, it also enhances
+        *generate-key-encrypt-decrypt tests.
+
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt.html:
+        * crypto/subtle/hmac-generate-key-sign-verify-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sign-verify.html: Added.
+        * crypto/subtle/hmac-import-key-verify-sha1-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-verify-sha1.html: Added.
+        * crypto/subtle/hmac-import-key-verify-sha224-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-verify-sha224.html: Added.
+        * crypto/subtle/hmac-import-key-verify-sha256-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-verify-sha256.html: Added.
+        * crypto/subtle/hmac-import-key-verify-sha384-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-verify-sha384.html: Added.
+        * crypto/subtle/hmac-import-key-verify-sha512-expected.txt: Added.
+        * crypto/subtle/hmac-import-key-verify-sha512.html: Added.
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-label-expected.txt:
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt-label.html:
+        * crypto/subtle/rsa-oaep-generate-key-encrypt-decrypt.html:
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-encrypt-decrypt.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-sign-verify-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-sign-verify.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha1-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha1.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha224-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha224.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha256-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha256.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha384-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha384.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha512-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha512.html: Added.
+        * crypto/subtle/verify-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/verify-malformed-parameters.html: Added.
+        * crypto/workers/subtle/hmac-import-key-verify-expected.txt: Added.
+        * crypto/workers/subtle/hmac-import-key-verify.html: Added.
+        * crypto/workers/subtle/resources/hmac-import-key-verify.js: Added.
+        * crypto/workers/subtle/resources/rsassa-pkcs1-v1_5-import-key-verify.js: Added.
+        * crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-verify-expected.txt: Added.
+        * crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-verify.html: Added.
+
 2016-11-30  Mark Lam  <mark.lam@apple.com>
 
         Proxy is not allowed in the global prototype chain.

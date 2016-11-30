@@ -1,3 +1,61 @@
+2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::verify to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164741
+        <rdar://problem/29257935>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::verify method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-verify.
+           It also refers to the latest Editor's Draft to a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-verify.
+        2. It implements verify operations of the following algorithms: HMAC, and
+           RSASSA-PKCS1-V1_5.
+
+        Tests: crypto/subtle/hmac-generate-key-sign-verify.html
+               crypto/subtle/hmac-import-key-verify-sha1.html
+               crypto/subtle/hmac-import-key-verify-sha224.html
+               crypto/subtle/hmac-import-key-verify-sha256.html
+               crypto/subtle/hmac-import-key-verify-sha384.html
+               crypto/subtle/hmac-import-key-verify-sha512.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-key-sign-verify.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha1.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha224.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha256.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha384.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-key-verify-sha512.html
+               crypto/subtle/verify-malformed-parameters.html
+               crypto/workers/subtle/hmac-import-key-verify.html
+               crypto/workers/subtle/rsassa-pkcs1-v1_5-import-key-verify.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionVerifyPromise):
+        (WebCore::JSSubtleCrypto::verify):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::verify):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::verifyRSASSA_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+
 2016-11-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix columns shorthand parsing

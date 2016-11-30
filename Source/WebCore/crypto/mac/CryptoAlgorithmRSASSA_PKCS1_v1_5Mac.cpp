@@ -82,12 +82,60 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
     return WTFMove(signature);
 }
 
+// FIXME: We should change signature, data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
+// https://bugs.webkit.org/show_bug.cgi?id=164939
+static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, const uint8_t* signature, size_t signatureLength, const uint8_t* data, size_t dataLength)
+{
+    CCDigestAlgorithm digestAlgorithm;
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
+        return Exception { OperationError };
+
+    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
+    if (!cryptoDigestAlgorithm)
+        return Exception { OperationError };
+    auto digest = CryptoDigest::create(*cryptoDigestAlgorithm);
+    if (!digest)
+        return Exception { OperationError };
+    digest->addBytes(data, dataLength);
+    auto digestData = digest->computeHash();
+
+    auto status = CCRSACryptorVerify(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature, signatureLength);
+    if (!status)
+        return true;
+    if (status == kCCNotVerified || status == kCCDecodeError) // <rdar://problem/15464982> CCRSACryptorVerify returns kCCDecodeError instead of kCCNotVerified sometimes
+        return false;
+
+    return Exception { OperationError };
+}
+
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     context.ref();
     workQueue.dispatch([key = WTFMove(key), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
         auto result = signRSASSA_PKCS1_v1_5(rsaKey.hashAlgorithmIdentifier(), rsaKey.platformKey(), rsaKey.keySizeInBits(), data.data(), data.size());
+        if (result.hasException()) {
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+                exceptionCallback(ec);
+                context.deref();
+            });
+            return;
+        }
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
+}
+
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
+        auto result = verifyRSASSA_PKCS1_v1_5(rsaKey.hashAlgorithmIdentifier(), rsaKey.platformKey(), signature.data(), signature.size(), data.data(), data.size());
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
@@ -117,29 +165,12 @@ ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlg
 
 ExceptionOr<void> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback)
 {
-    CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm))
-        return Exception { NOT_SUPPORTED_ERR };
-
-    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(parameters.hash);
-    if (!cryptoDigestAlgorithm)
-        return Exception { NOT_SUPPORTED_ERR };
-
-    auto digest = CryptoDigest::create(*cryptoDigestAlgorithm);
-    if (!digest)
-        return Exception { NOT_SUPPORTED_ERR };
-
-    digest->addBytes(data.first, data.second);
-
-    auto digestData = digest->computeHash();
-
-    auto status = CCRSACryptorVerify(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
-    if (!status)
-        callback(true);
-    else if (status == kCCNotVerified || status == kCCDecodeError) // <rdar://problem/15464982> CCRSACryptorVerify returns kCCDecodeError instead of kCCNotVerified sometimes
-        callback(false);
-    else
+    auto result = verifyRSASSA_PKCS1_v1_5(parameters.hash, key.platformKey(), signature.first, signature.second, data.first, data.second);
+    if (result.hasException()) {
         failureCallback();
+        return { };
+    }
+    callback(result.releaseReturnValue());
     return { };
 }
 

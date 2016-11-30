@@ -74,6 +74,11 @@ void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, Vect
     notImplemented();
 }
 
+void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
+
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
 {
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
