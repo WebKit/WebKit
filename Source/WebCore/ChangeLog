@@ -1,3 +1,13 @@
+2016-11-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make sure -webkit-background-size coalesces identical values.
+        https://bugs.webkit.org/show_bug.cgi?id=165207
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBackgroundSize):
+
 2016-11-30  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Sync video preview layer and parent layer sizes
