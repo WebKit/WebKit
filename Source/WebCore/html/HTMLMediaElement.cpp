@@ -5777,13 +5777,9 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 MediaControls* HTMLMediaElement::mediaControls() const
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return nullptr;
+    return 0;
 #else
-    ShadowRoot* root = userAgentShadowRoot();
-    if (!root)
-        return nullptr;
-    
-    return childrenOfType<MediaControls>(*root).first();
+    return toMediaControls(userAgentShadowRoot()->firstChild());
 #endif
 }
 
@@ -5794,7 +5790,7 @@ bool HTMLMediaElement::hasMediaControls() const
 #else
 
     if (ShadowRoot* userAgent = userAgentShadowRoot()) {
-        Node* node = childrenOfType<MediaControls>(*root).first();
+        Node* node = userAgent->firstChild();
         ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isMediaControls());
         return node;
     }

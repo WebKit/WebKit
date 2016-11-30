@@ -33,7 +33,6 @@
 #include "RangeInputType.h"
 
 #include "AXObjectCache.h"
-#include "ElementChildIterator.h"
 #include "EventNames.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
@@ -268,15 +267,7 @@ HTMLElement* RangeInputType::sliderTrackElement() const
     ASSERT(element().userAgentShadowRoot()->firstChild()->isHTMLElement());
     ASSERT(element().userAgentShadowRoot()->firstChild()->firstChild()); // track
 
-    ShadowRoot* root = element().userAgentShadowRoot();
-    if (!root)
-        return nullptr;
-    
-    auto* container = childrenOfType<SliderContainerElement>(*root).first();
-    if (!container)
-        return nullptr;
-
-    return childrenOfType<HTMLElement>(*container).first();
+    return downcast<HTMLElement>(element().userAgentShadowRoot()->firstChild()->firstChild());
 }
 
 SliderThumbElement& RangeInputType::typedSliderThumbElement() const
