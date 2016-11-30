@@ -1,3 +1,21 @@
+2016-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] IndexedDB: Switch to use new encoder for IDBKeyData
+        https://bugs.webkit.org/show_bug.cgi?id=165191
+
+        Reviewed by Sergio Villar Senin.
+
+        Instead of using KeyedEncoder.
+
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::isLegacySerializedIDBKeyData): Helper function to check whether the given data were encoded with
+        KeyedEncoder or not.
+        (WebCore::serializedTypeForKeyType): Remove #ifdefs for CF and always use the new encoder.
+        (WebCore::encodeKey): Ditto.
+        (WebCore::serializeIDBKeyData): Ditto.
+        (WebCore::decodeKey): Ditto.
+        (WebCore::deserializeIDBKeyData): Ditto.
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Null ResourceResponse Preflight requests cause crash

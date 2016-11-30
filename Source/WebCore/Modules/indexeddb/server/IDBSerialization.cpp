@@ -31,6 +31,11 @@
 #include "IDBKeyPath.h"
 #include "KeyedCoding.h"
 
+#if USE(GLIB)
+#include <glib.h>
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 enum class KeyPathType { Null, String, Array };
@@ -94,15 +99,25 @@ bool deserializeIDBKeyPath(const uint8_t* data, size_t size, std::optional<IDBKe
     return true;
 }
 
-// This is the magic character that begins serialized PropertyLists, and tells us whether
-// the key we're looking at is an old-style key.
+static bool isLegacySerializedIDBKeyData(const uint8_t* data, size_t size)
+{
 #if USE(CF)
-static const uint8_t LegacySerializedKeyVersion = 'b';
-#endif
+    UNUSED_PARAM(size);
 
-// FIXME: Linux ports uses KeyedEncoderGlib for their IDBKeys.
-// When a Glib maintainer comes along to enable the new serialization they'll need to
-// denote a Glib magic character here.
+    // This is the magic character that begins serialized PropertyLists, and tells us whether
+    // the key we're looking at is an old-style key.
+    static const uint8_t legacySerializedKeyVersion = 'b';
+    if (data[0] == legacySerializedKeyVersion)
+        return true;
+#elif USE(GLIB)
+    // KeyedEncoderGLib uses a GVariant dictionary, so check if the given data is a valid GVariant dictionary.
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data, size));
+    GRefPtr<GVariant> variant = g_variant_new_from_bytes(G_VARIANT_TYPE("a{sv}"), bytes.get(), FALSE);
+    return g_variant_is_normal_form(variant.get());
+#endif
+    return false;
+}
+
 
 /*
 The IDBKeyData serialization format is as follows:
@@ -134,9 +149,6 @@ Max:
 [0 bytes]
 */
 
-// FIXME: If the GLib magic character ends up being 0x00, we should consider changing
-// this 0x00 so we can support Glib keyed encoding, also.
-#if USE(CF)
 static const uint8_t SIDBKeyVersion = 0x00;
 enum class SIDBKeyType : uint8_t {
     Min = 0x00,
@@ -171,7 +183,6 @@ static SIDBKeyType serializedTypeForKeyType(IndexedDB::KeyType type)
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
 template <typename T> static void writeLittleEndian(Vector<char>& buffer, T value)
@@ -210,7 +221,6 @@ template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const ui
 }
 #endif
 
-#if USE(CF)
 static void writeDouble(Vector<char>& data, double d)
 {
     writeLittleEndian(data, *reinterpret_cast<uint64_t*>(&d));
@@ -269,25 +279,16 @@ static void encodeKey(Vector<char>& data, const IDBKeyData& key)
         break;
     }
 }
-#endif
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
-#if USE(CF)
     Vector<char> data;
     data.append(SIDBKeyVersion);
 
     encodeKey(data, key);
     return SharedBuffer::adoptVector(data);
-#else
-    auto encoder = KeyedEncoder::encoder();
-    key.encode(*encoder);
-    return encoder->finishEncoding();
-#endif
-
 }
 
-#if USE(CF)
 static bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& result)
 {
     if (!data || data >= end)
@@ -388,15 +389,13 @@ static bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& resu
         return false;
     }
 }
-#endif
 
 bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
 {
     if (!data || !size)
         return false;
 
-#if USE(CF)
-    if (data[0] == LegacySerializedKeyVersion) {
+    if (isLegacySerializedIDBKeyData(data, size)) {
         auto decoder = KeyedDecoder::decoder(data, size);
         return IDBKeyData::decode(*decoder, result);
     }
@@ -414,10 +413,6 @@ bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
     }
 
     return false;
-#else
-    auto decoder = KeyedDecoder::decoder(data, size);
-    return IDBKeyData::decode(*decoder, result);
-#endif
 }
 
 } // namespace WebCore
