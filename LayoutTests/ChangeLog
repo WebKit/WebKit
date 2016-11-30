@@ -1,3 +1,12 @@
+2016-11-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Mark a bunch of tests as able to fail
+        https://bugs.webkit.org/show_bug.cgi?id=165199
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+
 2016-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, mark tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html as flaky
