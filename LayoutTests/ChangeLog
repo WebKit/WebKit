@@ -1,3 +1,14 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: inspector/sampling-profiler/* LayoutTests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=164388
+        <rdar://problem/29101555>
+
+        Reviewed by Saam Barati.
+
+        * platform/mac/TestExpectations:
+        Unskip now that tests are no longer flakey.
+
 2016-11-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping crashing test js/dom/modules/module-will-fire-beforeload.html.

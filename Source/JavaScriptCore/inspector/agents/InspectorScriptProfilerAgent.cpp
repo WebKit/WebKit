@@ -206,12 +206,13 @@ void InspectorScriptProfilerAgent::trackingComplete()
         JSLockHolder lock(m_environment.scriptDebugServer().vm());
         SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
         RELEASE_ASSERT(samplingProfiler);
+
         LockHolder locker(samplingProfiler->getLock());
         samplingProfiler->pause(locker);
         Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces(locker);
-        Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(m_environment.scriptDebugServer().vm(), WTFMove(stackTraces));
-
         locker.unlockEarly();
+
+        Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(m_environment.scriptDebugServer().vm(), WTFMove(stackTraces));
 
         m_enabledSamplingProfiler = false;
 

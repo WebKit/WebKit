@@ -1,3 +1,26 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: inspector/sampling-profiler/* LayoutTests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=164388
+        <rdar://problem/29101555>
+
+        Reviewed by Saam Barati.
+
+        There was a possibility of a deadlock between the main thread and the GC thread
+        with the SamplingProfiler lock when Inspector is processing samples to send to
+        the frontend. The Inspector (main thread) was holding the SamplingProfiler lock
+        while processing samples, which runs JavaScript that could trigger a GC, and
+        GC then tries to acquire the SamplingProfiler lock to process unprocessed samples.
+
+        A simple solution here is to tighten the bounds of when Inspector holds the
+        SamplingProfiler lock. It only needs the lock when extracting samples from
+        the SamplingProfiler. It doesn't need to hold the lock for processing those
+        samples, which is what can run script and cause a GC.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        Tighten bounds of this lock to only where it is needed.
+
 2016-11-30  Mark Lam  <mark.lam@apple.com>
 
         Proxy is not allowed in the global prototype chain.

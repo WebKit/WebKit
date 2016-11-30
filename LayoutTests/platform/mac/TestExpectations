@@ -1462,6 +1462,4 @@ webkit.org/b/164598 media/modern-media-controls/ios-inline-media-controls/ios-in
 
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
-webkit.org/b/164388 inspector/sampling-profiler [ Pass Timeout ]
-
 webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
