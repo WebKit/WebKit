@@ -46,6 +46,7 @@
 #include <runtime/Error.h>
 #include <runtime/IteratorOperations.h>
 #include <runtime/JSArray.h>
+#include <runtime/JSONObject.h>
 
 using namespace JSC;
 
@@ -59,6 +60,7 @@ enum class Operations {
     Digest,
     GenerateKey,
     ImportKey,
+    WrapKey,
 };
 
 static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParameters(ExecState&, JSValue, Operations);
@@ -218,6 +220,16 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmHmacKeyParams>(params);
                 break;
             }
+            default:
+                setDOMException(&state, NOT_SUPPORTED_ERR);
+                return nullptr;
+            }
+            break;
+        case Operations::WrapKey:
+            switch (*identifier) {
+            case CryptoAlgorithmIdentifier::AES_KW:
+                result = std::make_unique<CryptoAlgorithmParameters>(params);
+                break;
             default:
                 setDOMException(&state, NOT_SUPPORTED_ERR);
                 return nullptr;
@@ -430,6 +442,26 @@ static Vector<uint8_t> toVector(ExecState& state, JSValue value)
     return dataVector;
 }
 
+static void supportExportKeyThrow(ExecState& state, CryptoAlgorithmIdentifier identifier)
+{
+    switch (identifier) {
+    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+    case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
+    case CryptoAlgorithmIdentifier::RSA_PSS:
+    case CryptoAlgorithmIdentifier::RSA_OAEP:
+    case CryptoAlgorithmIdentifier::AES_CTR:
+    case CryptoAlgorithmIdentifier::AES_CBC:
+    case CryptoAlgorithmIdentifier::AES_CMAC:
+    case CryptoAlgorithmIdentifier::AES_GCM:
+    case CryptoAlgorithmIdentifier::AES_CFB:
+    case CryptoAlgorithmIdentifier::AES_KW:
+    case CryptoAlgorithmIdentifier::HMAC:
+        return;
+    default:
+        setDOMException(&state, NOT_SUPPORTED_ERR);
+    }
+}
+
 static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -470,7 +502,7 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
     ASSERT(subtle);
     algorithm->encrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -515,7 +547,7 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
     ASSERT(subtle);
     algorithm->decrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -723,23 +755,8 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     auto key = toCryptoKey(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, void());
 
-    switch (key->algorithmIdentifier()) {
-    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSA_PSS:
-    case CryptoAlgorithmIdentifier::RSA_OAEP:
-    case CryptoAlgorithmIdentifier::AES_CTR:
-    case CryptoAlgorithmIdentifier::AES_CBC:
-    case CryptoAlgorithmIdentifier::AES_CMAC:
-    case CryptoAlgorithmIdentifier::AES_GCM:
-    case CryptoAlgorithmIdentifier::AES_CFB:
-    case CryptoAlgorithmIdentifier::AES_KW:
-    case CryptoAlgorithmIdentifier::HMAC:
-        break;
-    default:
-        promise->reject(NOT_SUPPORTED_ERR, ASCIILiteral("The operation is not supported"));
-        return;
-    }
+    supportExportKeyThrow(state, key->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
 
     if (!key->extractable()) {
         promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable"));
@@ -772,6 +789,105 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     // https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-exportKey
     // It is not beneficial for less time consuming operations. Therefore, we perform it synchronously.
     algorithm->exportKey(format, key.releaseNonNull(), WTFMove(callback), WTFMove(exceptionCallback));
+}
+
+static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 4)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto key = toCryptoKey(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto wrappingKey = toCryptoKey(state, state.uncheckedArgument(2));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    bool isEncryption = false;
+    auto wrapParams = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(3), Operations::WrapKey);
+    if (catchScope.exception()) {
+        catchScope.clearException();
+        wrapParams = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(3), Operations::Encrypt);
+        RETURN_IF_EXCEPTION(scope, void());
+        isEncryption = true;
+    }
+
+    if (wrapParams->identifier != wrappingKey->algorithmIdentifier()) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Wrapping CryptoKey doesn't match AlgorithmIdentifier"));
+        return;
+    }
+
+    if (!wrappingKey->allows(CryptoKeyUsageWrapKey)) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Wrapping CryptoKey doesn't support wrapKey operation"));
+        return;
+    }
+
+    supportExportKeyThrow(state, key->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (!key->extractable()) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable"));
+        return;
+    }
+
+    auto exportAlgorithm = createAlgorithm(state, key->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto wrapAlgorithm = createAlgorithm(state, wrappingKey->algorithmIdentifier());
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto context = scriptExecutionContextFromExecState(&state);
+
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    ASSERT(subtle);
+    auto& workQueue = subtle->wrapped().workQueue();
+
+    auto callback = [promise = promise.copyRef(), wrapAlgorithm, wrappingKey = WTFMove(wrappingKey), wrapParams = WTFMove(wrapParams), isEncryption, context, &workQueue](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
+        Vector<uint8_t> bytes;
+        switch (format) {
+        case SubtleCrypto::KeyFormat::Spki:
+        case SubtleCrypto::KeyFormat::Pkcs8:
+        case SubtleCrypto::KeyFormat::Raw:
+            bytes = WTF::get<Vector<uint8_t>>(key);
+            break;
+        case SubtleCrypto::KeyFormat::Jwk: {
+            auto jwk = toJSValueFromJsonWebKey(*(promise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key)));
+            String jwkString = JSONStringify(promise->globalObject()->globalExec(), jwk, 0);
+            CString jwkUtf8String = jwkString.utf8(StrictConversion);
+            bytes.append(jwkUtf8String.data(), jwkUtf8String.length());
+        }
+        }
+
+        auto callback = [promise = promise.copyRef()](const Vector<uint8_t>& wrappedKey) mutable {
+            fulfillPromiseWithArrayBuffer(WTFMove(promise), wrappedKey.data(), wrappedKey.size());
+            return;
+        };
+        auto exceptionCallback = [promise = WTFMove(promise)](ExceptionCode ec) mutable {
+            rejectWithException(WTFMove(promise), ec);
+        };
+
+        if (!isEncryption) {
+            // The 11 December 2014 version of the specification suggests we should perform the following task asynchronously:
+            // https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-wrapKey
+            // It is not beneficial for less time consuming operations. Therefore, we perform it synchronously.
+            wrapAlgorithm->wrapKey(wrappingKey.releaseNonNull(), WTFMove(bytes), WTFMove(callback), WTFMove(exceptionCallback));
+            return;
+        }
+        wrapAlgorithm->encrypt(WTFMove(wrapParams), wrappingKey.releaseNonNull(), WTFMove(bytes), WTFMove(callback), WTFMove(exceptionCallback), *context, workQueue);
+    };
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
+        rejectWithException(WTFMove(capturedPromise), ec);
+    };
+
+    exportAlgorithm->exportKey(format, key.releaseNonNull(), WTFMove(callback), WTFMove(exceptionCallback));
 }
 
 JSValue JSSubtleCrypto::encrypt(ExecState& state)
@@ -807,6 +923,11 @@ JSValue JSSubtleCrypto::importKey(ExecState& state)
 JSValue JSSubtleCrypto::exportKey(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionExportKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::wrapKey(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionWrapKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 } // namespace WebCore

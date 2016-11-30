@@ -1,3 +1,51 @@
+2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::wrapKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164746
+        <rdar://problem/29258160>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::wrapKey method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-wrapKey.
+           It also refers to the latest Editor's Draft to a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-wrapKey.
+        2. It implements wrapKey operations of the following algorithms: AES-KW.
+        3. It also replaces JSSubtleCrypto* with auto in all promise functions.
+
+        Tests: crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html
+               crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-public.html
+               crypto/subtle/aes-kw-import-key-wrap-raw-key.html
+               crypto/subtle/aes-kw-wrap-key-malformed-parameters.html
+               crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html
+               crypto/subtle/wrapKey-malformed-parameters.html
+               crypto/workers/subtle/aes-cbc-import-key-wrap-key.html
+               crypto/workers/subtle/aes-kw-import-key-wrap-key.html
+               crypto/workers/subtle/rsa-oaep-import-key-wrap-key.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::supportExportKeyThrow):
+        (WebCore::jsSubtleCryptoFunctionEncryptPromise):
+        (WebCore::jsSubtleCryptoFunctionDecryptPromise):
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise):
+        (WebCore::JSSubtleCrypto::wrapKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::wrapKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::wrapKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::wrapKeyAES_KW):
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt):
+
 2016-11-29  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for more missing / exotic IDLTypes

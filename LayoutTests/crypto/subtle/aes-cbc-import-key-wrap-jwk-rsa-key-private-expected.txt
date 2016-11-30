@@ -1,0 +1,10 @@
+Test wrapping a JWK RSA private key with AES-CBC using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToHexString(wrappedKey) is expectWrappedKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

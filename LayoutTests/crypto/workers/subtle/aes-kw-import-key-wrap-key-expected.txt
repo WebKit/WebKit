@@ -1,0 +1,12 @@
+[Worker] Test wrapping a raw key with AES-KW using an imported key in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/aes-kw-import-key-wrap-key.js
+PASS [Worker] bytesToHexString(wrappedKey) is expectWrappedKey
+PASS [Worker] crypto.subtle.wrapKey("jwk", key, wrappingKey, "AES-KW") rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

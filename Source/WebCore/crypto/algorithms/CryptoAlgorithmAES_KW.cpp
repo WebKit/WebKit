@@ -158,6 +158,15 @@ void CryptoAlgorithmAES_KW::exportKey(SubtleCrypto::KeyFormat format, Ref<Crypto
     callback(format, WTFMove(result));
 }
 
+void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    if (data.size() % 8) {
+        exceptionCallback(OperationError);
+        return;
+    }
+    platformWrapKey(WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback));
+}
+
 ExceptionOr<void> CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     if (!keyAlgorithmMatches(key))

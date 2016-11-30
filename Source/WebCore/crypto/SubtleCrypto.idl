@@ -39,4 +39,5 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
     [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
     [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<CryptoKeyUsage> keyUsages);
     [Custom] Promise<any> exportKey(KeyFormat format, CryptoKey key);
+    [Custom] Promise<any> wrapKey(KeyFormat format, CryptoKey key, CryptoKey wrappingKey, AlgorithmIdentifier wrapAlgorithm);
 };

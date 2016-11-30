@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&)
+{
+    notImplemented();
+}
+
 ExceptionOr<void> CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
 {
     notImplemented();

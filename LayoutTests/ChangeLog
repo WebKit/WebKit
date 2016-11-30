@@ -1,3 +1,33 @@
+2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::wrapKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164746
+        <rdar://problem/29258160>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-public-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-public.html: Added.
+        * crypto/subtle/aes-kw-import-key-wrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-key-wrap-raw-key.html: Added.
+        * crypto/subtle/aes-kw-wrap-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-kw-wrap-key-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html: Added.
+        * crypto/subtle/wrapKey-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/wrapKey-malformed-parameters.html: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-wrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-wrap-key.html: Added.
+        * crypto/workers/subtle/aes-kw-import-key-wrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-kw-import-key-wrap-key.html: Added.
+        * crypto/workers/subtle/resources/aes-cbc-import-key-wrap-key.js: Added.
+        * crypto/workers/subtle/resources/aes-kw-import-key-wrap-key.js: Added.
+        * crypto/workers/subtle/resources/rsa-oaep-import-key-wrap-key.js: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-wrap-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-wrap-key.html: Added.
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: inspector/sampling-profiler/* LayoutTests are flaky timeouts
