@@ -67,10 +67,12 @@ static Ref<CSSPrimitiveValue> buildSerializablePositionOffset(CSSPrimitiveValue*
         amount = offset;
 
     auto& cssValuePool = CSSValuePool::singleton();
-    if (side == CSSValueCenter) {
+    if (!amount)
+        amount = cssValuePool.createValue(Length(side == CSSValueCenter ? 50 : 0, Percent));
+    
+    if (side == CSSValueCenter)
         side = defaultSide;
-        amount = cssValuePool.createValue(Length(50, Percent));
-    } else if ((side == CSSValueRight || side == CSSValueBottom)
+    else if ((side == CSSValueRight || side == CSSValueBottom)
         && amount->isPercentage()) {
         side = defaultSide;
         amount = cssValuePool.createValue(Length(100 - amount->floatValue(), Percent));

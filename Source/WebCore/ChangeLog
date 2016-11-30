@@ -1,3 +1,17 @@
+2016-11-30  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix crash in -webkit-shape-outside parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165202
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildSerializablePositionOffset):
+        The old parser never passed in a singleton value ID for top/right/bottom/left.
+        The new parser does, and it exposed a bug in the serialization code for
+        shapes that didn't properly create the offset primitive value as a percentage
+        in those cases.
+
 2016-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] IndexedDB: Switch to use new encoder for IDBKeyData
