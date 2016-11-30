@@ -60,8 +60,6 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
 {
     Frame* frame = loader.document().frame();
     ASSERT(frame);
-    auto cookie = InspectorInstrumentation::willReceiveResourceResponse(frame);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, frame->loader().documentLoader(), response, 0);
 
     if (!response.isSuccessful()) {
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl));
@@ -81,6 +79,13 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
         return;
     }
+
+    // FIXME: <https://webkit.org/b/164889> Web Inspector: Show Preflight Request information in inspector
+    // This is only showing success preflight requests and responses but we should show network events
+    // for preflight failures and distinguish them better from non-preflight requests.
+    auto cookie = InspectorInstrumentation::willReceiveResourceResponse(frame);
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, frame->loader().documentLoader(), response, nullptr);
+    InspectorInstrumentation::didFinishLoading(frame, frame->loader().documentLoader(), identifier, 0);
 
     CrossOriginPreflightResultCache::singleton().appendEntry(loader.securityOrigin().toString(), request.url(), WTFMove(result));
     loader.preflightSuccess(WTFMove(request));

@@ -1,3 +1,19 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Null ResourceResponse Preflight requests cause crash
+        https://bugs.webkit.org/show_bug.cgi?id=165120
+        <rdar://problem/27911350>
+
+        Reviewed by Brian Burg.
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        Only inform Web Inspector about successful responses. Informing with a
+        null response would break the expected Inspector API contract when
+        notifying about did receive response. Also, when informing Web Inspector
+        include a didFinishLoading event so the frontend knows this pre-flight
+        request is complete.
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (209086): IDB tests crash under GuardMalloc.
