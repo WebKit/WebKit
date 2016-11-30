@@ -2791,7 +2791,7 @@ Seconds Document::timeSinceDocumentCreation() const
     return MonotonicTime::now() - m_documentCreationTime;
 }
 
-void Document::write(SegmentedString&& text, Document* ownerDocument)
+void Document::write(const SegmentedString& text, Document* ownerDocument)
 {
     NestingLevelIncrementer nestingLevelIncrementer(m_writeRecursionDepth);
 
@@ -2799,7 +2799,7 @@ void Document::write(SegmentedString&& text, Document* ownerDocument)
     m_writeRecursionIsTooDeep = (m_writeRecursionDepth > cMaxWriteRecursionDepth) || m_writeRecursionIsTooDeep;
 
     if (m_writeRecursionIsTooDeep)
-        return;
+       return;
 
     bool hasInsertionPoint = m_parser && m_parser->hasInsertionPoint();
     if (!hasInsertionPoint && (m_ignoreOpensDuringUnloadCount || m_ignoreDestructiveWriteCount))
@@ -2809,19 +2809,18 @@ void Document::write(SegmentedString&& text, Document* ownerDocument)
         open(ownerDocument);
 
     ASSERT(m_parser);
-    m_parser->insert(WTFMove(text));
+    m_parser->insert(text);
 }
 
 void Document::write(const String& text, Document* ownerDocument)
 {
-    write(SegmentedString { text }, ownerDocument);
+    write(SegmentedString(text), ownerDocument);
 }
 
 void Document::writeln(const String& text, Document* ownerDocument)
 {
-    SegmentedString textWithNewline { text };
-    textWithNewline.append(String { "\n" });
-    write(WTFMove(textWithNewline), ownerDocument);
+    write(text, ownerDocument);
+    write("\n", ownerDocument);
 }
 
 std::chrono::milliseconds Document::minimumTimerInterval() const

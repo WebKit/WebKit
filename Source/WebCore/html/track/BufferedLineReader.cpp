@@ -35,49 +35,49 @@
 
 namespace WebCore {
 
-std::optional<String> BufferedLineReader::nextLine()
+bool BufferedLineReader::getLine(String& line)
 {
     if (m_maybeSkipLF) {
         // We ran out of data after a CR (U+000D), which means that we may be
         // in the middle of a CRLF pair. If the next character is a LF (U+000A)
         // then skip it, and then (unconditionally) return the buffered line.
         if (!m_buffer.isEmpty()) {
-            if (m_buffer.currentCharacter() == newlineCharacter)
-                m_buffer.advancePastNewline();
+            scanCharacter(newlineCharacter);
             m_maybeSkipLF = false;
         }
         // If there was no (new) data available, then keep m_maybeSkipLF set,
-        // and fall through all the way down to the EOS check at the end of the function.
+        // and fall through all the way down to the EOS check at the end of
+        // the method.
     }
 
     bool shouldReturnLine = false;
     bool checkForLF = false;
     while (!m_buffer.isEmpty()) {
-        UChar character = m_buffer.currentCharacter();
+        UChar c = m_buffer.currentChar();
         m_buffer.advance();
 
-        if (character == newlineCharacter || character == carriageReturn) {
+        if (c == newlineCharacter || c == carriageReturn) {
             // We found a line ending. Return the accumulated line.
             shouldReturnLine = true;
-            checkForLF = (character == carriageReturn);
+            checkForLF = (c == carriageReturn);
             break;
         }
 
         // NULs are transformed into U+FFFD (REPLACEMENT CHAR.) in step 1 of
         // the WebVTT parser algorithm.
-        if (character == '\0')
-            character = replacementCharacter;
+        if (c == '\0')
+            c = replacementCharacter;
 
-        m_lineBuffer.append(character);
+        m_lineBuffer.append(c);
     }
 
     if (checkForLF) {
         // May be in the middle of a CRLF pair.
         if (!m_buffer.isEmpty()) {
-            if (m_buffer.currentCharacter() == newlineCharacter)
-                m_buffer.advancePastNewline();
+            // Scan a potential newline character.
+            scanCharacter(newlineCharacter);
         } else {
-            // Check for the newline on the next call (unless we reached EOS, in
+            // Check for the LF on the next call (unless we reached EOS, in
             // which case we'll return the contents of the line buffer, and
             // reset state for the next line.)
             m_maybeSkipLF = true;
@@ -92,13 +92,13 @@ std::optional<String> BufferedLineReader::nextLine()
     }
 
     if (shouldReturnLine) {
-        auto line = m_lineBuffer.toString();
+        line = m_lineBuffer.toString();
         m_lineBuffer.clear();
-        return WTFMove(line);
+        return true;
     }
 
     ASSERT(m_buffer.isEmpty());
-    return std::nullopt;
+    return false;
 }
 
 } // namespace WebCore

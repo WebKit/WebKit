@@ -72,7 +72,7 @@ private:
 
     WebVTTParser& parser();
     void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) final;
-    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String&&) final;
+    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) final;
 
     void newCuesParsed() final;
     void newRegionsParsed() final;

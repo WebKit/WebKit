@@ -61,12 +61,12 @@ public:
         StringBuilder consumedCharacters;
         HTMLEntitySearch entitySearch;
         while (!source.isEmpty()) {
-            cc = source.currentCharacter();
+            cc = source.currentChar();
             entitySearch.advance(cc);
             if (!entitySearch.isEntityPrefix())
                 break;
             consumedCharacters.append(cc);
-            source.advancePastNonNewline();
+            source.advance();
         }
         notEnoughCharacters = source.isEmpty();
         if (notEnoughCharacters) {
@@ -88,13 +88,13 @@ public:
             const int length = entitySearch.mostRecentMatch()->length;
             const LChar* reference = entitySearch.mostRecentMatch()->entity;
             for (int i = 0; i < length; ++i) {
-                cc = source.currentCharacter();
+                cc = source.currentChar();
                 ASSERT_UNUSED(reference, cc == *reference++);
                 consumedCharacters.append(cc);
-                source.advancePastNonNewline();
+                source.advance();
                 ASSERT(!source.isEmpty());
             }
-            cc = source.currentCharacter();
+            cc = source.currentChar();
         }
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter

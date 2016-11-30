@@ -65,7 +65,7 @@ public:
 protected:
     explicit HTMLDocumentParser(HTMLDocument&);
 
-    void insert(SegmentedString&&) final;
+    void insert(const SegmentedString&) final;
     void append(RefPtr<StringImpl>&&) override;
     void finish() override;
 

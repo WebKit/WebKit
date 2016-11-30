@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InputStreamPreprocessor.h"
 #include "SegmentedString.h"
 #include <wtf/text/TextPosition.h>
 
@@ -55,14 +56,14 @@ public:
     {
     }
 
-    void appendToEnd(SegmentedString&& string)
+    void appendToEnd(const SegmentedString& string)
     {
-        m_last->append(WTFMove(string));
+        m_last->append(string);
     }
 
-    void insertAtCurrentInsertionPoint(SegmentedString&& string)
+    void insertAtCurrentInsertionPoint(const SegmentedString& string)
     {
-        m_first.append(WTFMove(string));
+        m_first.append(string);
     }
 
     bool hasInsertionPoint() const
@@ -72,7 +73,7 @@ public:
 
     void markEndOfFile()
     {
-        m_last->append(String { &kEndOfFileMarker, 1 });
+        m_last->append(SegmentedString(String(&kEndOfFileMarker, 1)));
         m_last->close();
     }
 
@@ -91,7 +92,8 @@ public:
 
     void splitInto(SegmentedString& next)
     {
-        next = WTFMove(m_first);
+        next = m_first;
+        m_first = SegmentedString();
         if (m_last == &m_first) {
             // We used to only have one SegmentedString in the InputStream
             // but now we have two.  That means m_first is no longer also

@@ -38,39 +38,50 @@ namespace WebCore {
 // Line collection helper for the WebVTT Parser.
 //
 // Converts a stream of data (== a sequence of Strings) into a set of
-// lines. CR, LR or CRLF are considered line breaks. Normalizes NULs (U+0000)
-// to 'REPLACEMENT CHARACTER' (U+FFFD) and does not return the line breaks as
+// lines. CR, LR or CRLF are considered linebreaks. Normalizes NULs (U+0000)
+// to 'REPLACEMENT CHARACTER' (U+FFFD) and does not return the linebreaks as
 // part of the result.
 class BufferedLineReader {
     WTF_MAKE_NONCOPYABLE(BufferedLineReader);
 public:
-    BufferedLineReader() = default;
-    void reset();
+    BufferedLineReader()
+        : m_endOfStream(false)
+        , m_maybeSkipLF(false) { }
 
-    void append(String&& data)
+    // Append data to the internal buffer.
+    void append(const String& data)
     {
         ASSERT(!m_endOfStream);
-        m_buffer.append(WTFMove(data));
+        m_buffer.append(SegmentedString(data));
     }
 
-    void appendEndOfStream() { m_endOfStream = true; }
+    // Indicate that no more data will be appended. This will cause any
+    // potentially "unterminated" line to be returned from getLine.
+    void setEndOfStream() { m_endOfStream = true; }
+
+    // Attempt to read a line from the internal buffer (fed via append).
+    // If successful, true is returned and |line| is set to the line that was
+    // read. If no line could be read false is returned.
+    bool getLine(String& line);
+
+    // Returns true if EOS has been reached proper.
     bool isAtEndOfStream() const { return m_endOfStream && m_buffer.isEmpty(); }
 
-    std::optional<String> nextLine();
+    void reset() { m_buffer.clear(); }
 
 private:
+    // Consume the next character the buffer if it is the character |c|.
+    void scanCharacter(UChar c)
+    {
+        ASSERT(!m_buffer.isEmpty());
+        if (m_buffer.currentChar() == c)
+            m_buffer.advance();
+    }
+
     SegmentedString m_buffer;
     StringBuilder m_lineBuffer;
-    bool m_endOfStream { false };
-    bool m_maybeSkipLF { false };
+    bool m_endOfStream;
+    bool m_maybeSkipLF;
 };
-
-inline void BufferedLineReader::reset()
-{
-    m_buffer.clear();
-    m_lineBuffer.clear();
-    m_endOfStream = false;
-    m_maybeSkipLF = false;
-}
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2016-11-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r209058 and r209074.
+        https://bugs.webkit.org/show_bug.cgi?id=165188
+
+        These changes caused API test StringBuilderTest.Equal to crash
+        and/or fail. (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "Streamline and speed up tokenizer and segmented string
+        classes"
+        https://bugs.webkit.org/show_bug.cgi?id=165003
+        http://trac.webkit.org/changeset/209058
+
+        "REGRESSION (r209058): API test StringBuilderTest.Equal
+        crashing"
+        https://bugs.webkit.org/show_bug.cgi?id=165142
+        http://trac.webkit.org/changeset/209074
+
 2016-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Allow TracePoint to take arbitrary data

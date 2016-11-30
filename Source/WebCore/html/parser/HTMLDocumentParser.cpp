@@ -328,7 +328,7 @@ bool HTMLDocumentParser::hasInsertionPoint()
     return m_input.hasInsertionPoint() || (wasCreatedByScript() && !m_input.haveSeenEndOfFile());
 }
 
-void HTMLDocumentParser::insert(SegmentedString&& source)
+void HTMLDocumentParser::insert(const SegmentedString& source)
 {
     if (isStopped())
         return;
@@ -337,8 +337,9 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
 
-    source.setExcludeLineNumbers();
-    m_input.insertAtCurrentInsertionPoint(WTFMove(source));
+    SegmentedString excludedLineNumberSource(source);
+    excludedLineNumberSource.setExcludeLineNumbers();
+    m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
     pumpTokenizerIfPossible(ForceSynchronous);
 
     if (isWaitingForScripts()) {
@@ -362,7 +363,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
 
-    String source { WTFMove(inputSource) };
+    String source(WTFMove(inputSource));
 
     if (m_preloadScanner) {
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {

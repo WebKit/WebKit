@@ -49,7 +49,7 @@ private:
         appendBytes(writer, 0, 0);
     }
 
-    void insert(SegmentedString&&) override
+    void insert(const SegmentedString&) override
     {
         // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.
         ASSERT_NOT_REACHED();

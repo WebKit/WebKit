@@ -344,6 +344,8 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
 void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
+    String source(WTFMove(inputSource));
+
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table
     if (!m_tableElement) {
@@ -355,9 +357,9 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     bool foundNewLine = false;
 
     m_dest = m_buffer;
-    SegmentedString string { String { WTFMove(inputSource) } };
-    while (!string.isEmpty()) {
-        UChar c = string.currentCharacter();
+    SegmentedString str = source;
+    while (!str.isEmpty()) {
+        UChar c = str.currentChar();
 
         if (c == '\r') {
             *m_dest++ = '\n';
@@ -374,7 +376,7 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
             m_skipLF = false;
         }
 
-        string.advance();
+        str.advance();
 
         // Maybe enlarge the buffer
         checkBuffer();

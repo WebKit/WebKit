@@ -28,17 +28,22 @@
 #pragma once
 
 #include "SegmentedString.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
+const LChar kEndOfFileMarker = 0;
+
 // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
 template <typename Tokenizer>
 class InputStreamPreprocessor {
+    WTF_MAKE_NONCOPYABLE(InputStreamPreprocessor);
 public:
     explicit InputStreamPreprocessor(Tokenizer& tokenizer)
         : m_tokenizer(tokenizer)
     {
+        reset();
     }
 
     ALWAYS_INLINE UChar nextInputCharacter() const { return m_nextInputCharacter; }
@@ -48,68 +53,75 @@ public:
     // characters in |source| (after collapsing \r\n, etc).
     ALWAYS_INLINE bool peek(SegmentedString& source, bool skipNullCharacters = false)
     {
-        if (UNLIKELY(source.isEmpty()))
+        if (source.isEmpty())
             return false;
 
-        m_nextInputCharacter = source.currentCharacter();
+        m_nextInputCharacter = source.currentChar();
 
         // Every branch in this function is expensive, so we have a
         // fast-reject branch for characters that don't require special
         // handling. Please run the parser benchmark whenever you touch
         // this function. It's very hot.
-        constexpr UChar specialCharacterMask = '\n' | '\r' | '\0';
-        if (LIKELY(m_nextInputCharacter & ~specialCharacterMask)) {
+        static const UChar specialCharacterMask = '\n' | '\r' | '\0';
+        if (m_nextInputCharacter & ~specialCharacterMask) {
             m_skipNextNewLine = false;
             return true;
         }
-
         return processNextInputCharacter(source, skipNullCharacters);
     }
 
     // Returns whether there are more characters in |source| after advancing.
     ALWAYS_INLINE bool advance(SegmentedString& source, bool skipNullCharacters = false)
     {
-        source.advance();
+        source.advanceAndUpdateLineNumber();
         return peek(source, skipNullCharacters);
     }
-    ALWAYS_INLINE bool advancePastNonNewline(SegmentedString& source, bool skipNullCharacters = false)
+
+    bool skipNextNewLine() const { return m_skipNextNewLine; }
+
+    void reset(bool skipNextNewLine = false)
     {
-        source.advancePastNonNewline();
-        return peek(source, skipNullCharacters);
+        m_nextInputCharacter = '\0';
+        m_skipNextNewLine = skipNextNewLine;
     }
 
 private:
     bool processNextInputCharacter(SegmentedString& source, bool skipNullCharacters)
     {
     ProcessAgain:
-        ASSERT(m_nextInputCharacter == source.currentCharacter());
+        ASSERT(m_nextInputCharacter == source.currentChar());
+
         if (m_nextInputCharacter == '\n' && m_skipNextNewLine) {
             m_skipNextNewLine = false;
-            source.advancePastNewline();
+            source.advancePastNewlineAndUpdateLineNumber();
             if (source.isEmpty())
                 return false;
-            m_nextInputCharacter = source.currentCharacter();
+            m_nextInputCharacter = source.currentChar();
         }
         if (m_nextInputCharacter == '\r') {
             m_nextInputCharacter = '\n';
             m_skipNextNewLine = true;
-            return true;
+        } else {
+            m_skipNextNewLine = false;
+            // FIXME: The spec indicates that the surrogate pair range as well as
+            // a number of specific character values are parse errors and should be replaced
+            // by the replacement character. We suspect this is a problem with the spec as doing
+            // that filtering breaks surrogate pair handling and causes us not to match Minefield.
+            if (m_nextInputCharacter == '\0' && !shouldTreatNullAsEndOfFileMarker(source)) {
+                if (skipNullCharacters && !m_tokenizer.neverSkipNullCharacters()) {
+                    source.advancePastNonNewline();
+                    if (source.isEmpty())
+                        return false;
+                    m_nextInputCharacter = source.currentChar();
+                    goto ProcessAgain;
+                }
+                m_nextInputCharacter = replacementCharacter;
+            }
         }
-        m_skipNextNewLine = false;
-        if (m_nextInputCharacter || isAtEndOfFile(source))
-            return true;
-        if (skipNullCharacters && !m_tokenizer.neverSkipNullCharacters()) {
-            source.advancePastNonNewline();
-            if (source.isEmpty())
-                return false;
-            m_nextInputCharacter = source.currentCharacter();
-            goto ProcessAgain;
-        }
-        m_nextInputCharacter = replacementCharacter;
         return true;
     }
 
-    static bool isAtEndOfFile(SegmentedString& source)
+    bool shouldTreatNullAsEndOfFileMarker(SegmentedString& source) const
     {
         return source.isClosed() && source.length() == 1;
     }
@@ -117,8 +129,8 @@ private:
     Tokenizer& m_tokenizer;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
-    UChar m_nextInputCharacter { 0 };
-    bool m_skipNextNewLine { false };
+    UChar m_nextInputCharacter;
+    bool m_skipNextNewLine;
 };
 
 } // namespace WebCore

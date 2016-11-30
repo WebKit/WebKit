@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-inline void unconsumeCharacters(SegmentedString& source, StringBuilder& consumedCharacters)
+inline void unconsumeCharacters(SegmentedString& source, const StringBuilder& consumedCharacters)
 {
-    source.pushBack(consumedCharacters.toString());
+    source.pushBack(SegmentedString(consumedCharacters.toStringPreserveCapacity()));
 }
 
 template <typename ParserFunctions>
@@ -56,7 +56,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
-        UChar character = source.currentCharacter();
+        UChar character = source.currentChar();
         switch (state) {
         case Initial:
             if (character == '\x09' || character == '\x0A' || character == '\x0C' || character == ' ' || character == '<' || character == '&')
@@ -85,21 +85,21 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 state = Decimal;
                 goto Decimal;
             }
-            source.pushBack(ASCIILiteral("#"));
+            source.pushBack(SegmentedString(ASCIILiteral("#")));
             return false;
         case MaybeHexLowerCaseX:
             if (isASCIIHexDigit(character)) {
                 state = Hex;
                 goto Hex;
             }
-            source.pushBack(ASCIILiteral("#x"));
+            source.pushBack(SegmentedString(ASCIILiteral("#x")));
             return false;
         case MaybeHexUpperCaseX:
             if (isASCIIHexDigit(character)) {
                 state = Hex;
                 goto Hex;
             }
-            source.pushBack(ASCIILiteral("#X"));
+            source.pushBack(SegmentedString(ASCIILiteral("#X")));
             return false;
         case Hex:
         Hex:
@@ -110,7 +110,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 break;
             }
             if (character == ';') {
-                source.advancePastNonNewline();
+                source.advance();
                 decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
@@ -129,7 +129,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 break;
             }
             if (character == ';') {
-                source.advancePastNonNewline();
+                source.advance();
                 decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             }
@@ -144,7 +144,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             return ParserFunctions::consumeNamedEntity(source, decodedCharacter, notEnoughCharacters, additionalAllowedCharacter, character);
         }
         consumedCharacters.append(character);
-        source.advancePastNonNewline();
+        source.advance();
     }
     ASSERT(source.isEmpty());
     notEnoughCharacters = true;

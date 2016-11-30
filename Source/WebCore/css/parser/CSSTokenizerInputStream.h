@@ -30,10 +30,9 @@
 #pragma once
 
 #include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-constexpr LChar kEndOfFileMarker = 0;
 
 class CSSTokenizerInputStream {
     WTF_MAKE_NONCOPYABLE(CSSTokenizerInputStream);
