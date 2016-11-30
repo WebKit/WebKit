@@ -1,3 +1,19 @@
+2016-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct plugin sandbox after r208611
+        https://bugs.webkit.org/show_bug.cgi?id=165187
+        <rdar://problem/29431165>
+
+        Reviewed by Alex Christensen.
+
+        In r208611 I removed the 'else' clause of a Scheme conditional
+        that was needed to properly run plugins (such as Flash Player).
+
+        This change retains the relevant current sandbox content, while
+        still stripping out the old code that is no longer needed.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2016-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Database process should not initialize gtk
