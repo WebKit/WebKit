@@ -61,7 +61,9 @@ enum PromotedLocationKind {
     NamedPropertyPLoc,
     PublicLengthPLoc,
     StructurePLoc,
-    VectorLengthPLoc
+    VectorLengthPLoc,
+    SpreadPLoc,
+    NewArrayWithSpreadArgumentPLoc,
 };
 
 class PromotedLocationDescriptor {

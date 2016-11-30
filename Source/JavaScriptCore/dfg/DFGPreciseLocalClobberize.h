@@ -106,41 +106,75 @@ private:
     
     void readTop()
     {
-        switch (m_node->op()) {
-        case GetMyArgumentByVal:
-        case GetMyArgumentByValOutOfBounds:
-        case ForwardVarargs:
-        case CallForwardVarargs:
-        case ConstructForwardVarargs:
-        case TailCallForwardVarargs:
-        case TailCallForwardVarargsInlinedCaller: {
-
-            InlineCallFrame* inlineCallFrame;
-            if (m_node->hasArgumentsChild() && m_node->argumentsChild())
-                inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame;
-            else
-                inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
-
-            unsigned numberOfArgumentsToSkip = 0;
-            if (m_node->op() == GetMyArgumentByVal || m_node->op() == GetMyArgumentByValOutOfBounds) {
-                // The value of numberOfArgumentsToSkip guarantees that GetMyArgumentByVal* will never
-                // read any arguments below the number of arguments to skip. For example, if numberOfArgumentsToSkip is 2,
-                // we will never read argument 0 or argument 1.
-                numberOfArgumentsToSkip = m_node->numberOfArgumentsToSkip();
-            }
-
+        auto readFrame = [&] (InlineCallFrame* inlineCallFrame, unsigned numberOfArgumentsToSkip) {
             if (!inlineCallFrame) {
                 // Read the outermost arguments and argument count.
                 for (unsigned i = 1 + numberOfArgumentsToSkip; i < static_cast<unsigned>(m_graph.m_codeBlock->numParameters()); i++)
                     m_read(virtualRegisterForArgument(i));
                 m_read(VirtualRegister(CallFrameSlot::argumentCount));
-                break;
+                return;
             }
             
             for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->arguments.size(); i++)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
             if (inlineCallFrame->isVarargs())
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+        };
+
+        auto readNewArrayWithSpreadNode = [&] (Node* arrayWithSpread) {
+            ASSERT(arrayWithSpread->op() == NewArrayWithSpread || arrayWithSpread->op() == PhantomNewArrayWithSpread);
+            BitVector* bitVector = arrayWithSpread->bitVector();
+            for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
+                if (bitVector->get(i)) {
+                    Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
+                    if (child->op() == PhantomSpread) {
+                        ASSERT(child->child1()->op() == PhantomCreateRest);
+                        InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
+                        unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
+                        readFrame(inlineCallFrame, numberOfArgumentsToSkip);
+                    }
+                }
+            }
+        };
+
+        bool isForwardingNode = false;
+        switch (m_node->op()) {
+        case ForwardVarargs:
+        case CallForwardVarargs:
+        case ConstructForwardVarargs:
+        case TailCallForwardVarargs:
+        case TailCallForwardVarargsInlinedCaller:
+            isForwardingNode = true;
+            FALLTHROUGH;
+        case GetMyArgumentByVal:
+        case GetMyArgumentByValOutOfBounds: {
+
+            if (isForwardingNode && m_node->hasArgumentsChild() && m_node->argumentsChild() && m_node->argumentsChild()->op() == PhantomNewArrayWithSpread) {
+                Node* arrayWithSpread = m_node->argumentsChild().node();
+                readNewArrayWithSpreadNode(arrayWithSpread);
+            } else {
+                InlineCallFrame* inlineCallFrame;
+                if (m_node->hasArgumentsChild() && m_node->argumentsChild())
+                    inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame;
+                else
+                    inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
+
+                unsigned numberOfArgumentsToSkip = 0;
+                if (m_node->op() == GetMyArgumentByVal || m_node->op() == GetMyArgumentByValOutOfBounds) {
+                    // The value of numberOfArgumentsToSkip guarantees that GetMyArgumentByVal* will never
+                    // read any arguments below the number of arguments to skip. For example, if numberOfArgumentsToSkip is 2,
+                    // we will never read argument 0 or argument 1.
+                    numberOfArgumentsToSkip = m_node->numberOfArgumentsToSkip();
+                }
+
+                readFrame(inlineCallFrame, numberOfArgumentsToSkip);
+            }
+
+            break;
+        }
+        
+        case NewArrayWithSpread: {
+            readNewArrayWithSpreadNode(m_node);
             break;
         }
 

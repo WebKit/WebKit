@@ -5616,6 +5616,8 @@ void SpeculativeJIT::compile(Node* node)
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case PhantomCreateRest:
+    case PhantomSpread:
+    case PhantomNewArrayWithSpread:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

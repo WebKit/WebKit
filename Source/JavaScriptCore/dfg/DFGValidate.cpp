@@ -693,6 +693,39 @@ private:
                     VALIDATE((node), node->child1()->isPhantomAllocation());
                     break;
 
+                case PhantomSpread:
+                    VALIDATE((node), m_graph.m_form == SSA);
+                    // We currently only support PhantomSpread over PhantomCreateRest.
+                    VALIDATE((node), node->child1()->op() == PhantomCreateRest);
+                    break;
+
+                case PhantomNewArrayWithSpread: {
+                    VALIDATE((node), m_graph.m_form == SSA);
+                    BitVector* bitVector = node->bitVector();
+                    for (unsigned i = 0; i < node->numChildren(); i++) {
+                        Node* child = m_graph.varArgChild(node, i).node();
+                        if (bitVector->get(i)) {
+                            // We currently only support PhantomSpread over PhantomCreateRest.
+                            VALIDATE((node), child->op() == PhantomSpread);
+                        } else
+                            VALIDATE((node), !child->isPhantomAllocation());
+                    }
+                    break;
+                }
+
+                case NewArrayWithSpread: {
+                    BitVector* bitVector = node->bitVector();
+                    for (unsigned i = 0; i < node->numChildren(); i++) {
+                        Node* child = m_graph.varArgChild(node, i).node();
+                        if (child->isPhantomAllocation()) {
+                            VALIDATE((node), bitVector->get(i));
+                            VALIDATE((node), m_graph.m_form == SSA);
+                            VALIDATE((node), child->op() == PhantomSpread);
+                        }
+                    }
+                    break;
+                }
+
                 default:
                     m_graph.doToChildren(
                         node,

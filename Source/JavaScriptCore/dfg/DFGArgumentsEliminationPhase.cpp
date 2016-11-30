@@ -91,7 +91,7 @@ private:
     // Just finds nodes that we know how to work with.
     void identifyCandidates()
     {
-        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+        for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
                 case CreateDirectArguments:
@@ -109,6 +109,38 @@ private:
                         m_candidates.add(node);
                     }
                     break;
+
+                case Spread:
+                    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                        // We check ArrayUse here because ArrayUse indicates that the iterator
+                        // protocol for Arrays is non-observable by user code (e.g, it hasn't
+                        // been changed).
+                        if (node->child1().useKind() == ArrayUse && node->child1()->op() == CreateRest && m_candidates.contains(node->child1().node()))
+                            m_candidates.add(node);
+                    }
+                    break;
+
+                case NewArrayWithSpread: {
+                    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                        BitVector* bitVector = node->bitVector();
+                        // We only allow for Spreads to be of rest nodes for now.
+                        bool isOK = true;
+                        for (unsigned i = 0; i < node->numChildren(); i++) {
+                            if (bitVector->get(i)) {
+                                Node* child = m_graph.varArgChild(node, i).node();
+                                isOK = child->op() == Spread && child->child1()->op() == CreateRest && m_candidates.contains(child);
+                                if (!isOK)
+                                    break;
+                            }
+                        }
+
+                        if (!isOK)
+                            break;
+
+                        m_candidates.add(node);
+                    }
+                    break;
+                }
                     
                 case CreateScopedArguments:
                     // FIXME: We could handle this if it wasn't for the fact that scoped arguments are
@@ -126,6 +158,62 @@ private:
         if (verbose)
             dataLog("Candidates: ", listDump(m_candidates), "\n");
     }
+
+    bool isStillValidCandidate(Node* candidate)
+    {
+        switch (candidate->op()) {
+        case Spread:
+            return m_candidates.contains(candidate->child1().node());
+
+        case NewArrayWithSpread: {
+            BitVector* bitVector = candidate->bitVector();
+            for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                if (bitVector->get(i)) {
+                    if (!m_candidates.contains(m_graph.varArgChild(candidate, i).node()))
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        default:
+            return true;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    void removeInvalidCandidates()
+    {
+        bool changed;
+        do {
+            changed = false;
+            Vector<Node*, 1> toRemove;
+
+            for (Node* candidate : m_candidates) {
+                if (!isStillValidCandidate(candidate))
+                    toRemove.append(candidate);
+            }
+
+            if (toRemove.size()) {
+                changed = true;
+                for (Node* node : toRemove)
+                    m_candidates.remove(node);
+            }
+
+        } while (changed);
+    }
+
+    void transitivelyRemoveCandidate(Node* node, Node* source = nullptr)
+    {
+        bool removed = m_candidates.remove(node);
+        if (removed && verbose && source)
+            dataLog("eliminating candidate: ", node, " because it escapes from: ", source, "\n");
+
+        if (removed)
+            removeInvalidCandidates();
+    }
     
     // Look for escaping sites, and remove from the candidates set if we see an escape.
     void eliminateCandidatesThatEscape()
@@ -133,9 +221,7 @@ private:
         auto escape = [&] (Edge edge, Node* source) {
             if (!edge)
                 return;
-            bool removed = m_candidates.remove(edge.node());
-            if (removed && verbose)
-                dataLog("eliminating candidate: ", edge.node(), " because it escapes from: ", source, "\n");
+            transitivelyRemoveCandidate(edge.node(), source);
         };
         
         auto escapeBasedOnArrayMode = [&] (ArrayMode mode, Edge edge, Node* source) {
@@ -187,6 +273,8 @@ private:
                 break;
             }
         };
+
+        removeInvalidCandidates();
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
@@ -201,11 +289,42 @@ private:
                     break;
 
                 case GetArrayLength:
-                    escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
+                    // FIXME: It would not be hard to support NewArrayWithSpread here if it is only over Spread(CreateRest) nodes.
                     escape(node->child2(), node);
                     break;
+                
+                case NewArrayWithSpread: {
+                    BitVector* bitVector = node->bitVector();
+                    bool isWatchingHavingABadTimeWatchpoint = m_graph.isWatchingHavingABadTimeWatchpoint(node); 
+                    for (unsigned i = 0; i < node->numChildren(); i++) {
+                        Edge child = m_graph.varArgChild(node, i);
+                        bool dontEscape;
+                        if (bitVector->get(i)) {
+                            dontEscape = child->op() == Spread
+                                && child->child1().useKind() == ArrayUse
+                                && child->child1()->op() == CreateRest
+                                && isWatchingHavingABadTimeWatchpoint;
+                        } else
+                            dontEscape = false;
+
+                        if (!dontEscape)
+                            escape(child, node);
+                    }
+
+                    break;
+                }
+
+                case Spread: {
+                    bool isOK = node->child1().useKind() == ArrayUse && node->child1()->op() == CreateRest;
+                    if (!isOK)
+                        escape(node->child1(), node);
+                    break;
+                }
+
                     
                 case LoadVarargs:
+                    if (node->loadVarargsData()->offset && node->child1()->op() == NewArrayWithSpread)
+                        escape(node->child1(), node);
                     break;
                     
                 case CallVarargs:
@@ -214,6 +333,8 @@ private:
                 case TailCallVarargsInlinedCaller:
                     escape(node->child1(), node);
                     escape(node->child2(), node);
+                    if (node->callVarargsData()->firstVarArgOffset && node->child3()->op() == NewArrayWithSpread)
+                        escape(node->child3(), node);
                     break;
 
                 case Check:
@@ -262,6 +383,10 @@ private:
                     case CreateRest:
                         ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(node));
                         structure = globalObject->restParameterStructure();
+                        break;
+                    case NewArrayWithSpread:
+                        ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(node));
+                        structure = globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
                         break;
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
@@ -390,7 +515,7 @@ private:
                     if (nodeIndex == block->size() && candidate->owner != block) {
                         if (verbose)
                             dataLog("eliminating candidate: ", candidate, " because it is clobbered by: ", block->at(nodeIndex), "\n");
-                        m_candidates.remove(candidate);
+                        transitivelyRemoveCandidate(candidate);
                         return;
                     }
                     
@@ -417,7 +542,7 @@ private:
                         if (found) {
                             if (verbose)
                                 dataLog("eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex), "\n");
-                            m_candidates.remove(candidate);
+                            transitivelyRemoveCandidate(candidate);
                             return;
                         }
                     }
@@ -460,10 +585,11 @@ private:
                     // We traverse in such a way that we are guaranteed to see a def before a use.
                     // Therefore, we should have already transformed the allocation before the use
                     // of an allocation.
-                    ASSERT(candidate->op() == PhantomCreateRest || candidate->op() == PhantomDirectArguments || candidate->op() == PhantomClonedArguments);
+                    ASSERT(candidate->op() == PhantomCreateRest || candidate->op() == PhantomDirectArguments || candidate->op() == PhantomClonedArguments
+                        || candidate->op() == PhantomSpread || candidate->op() == PhantomNewArrayWithSpread);
                     return true;
                 };
-        
+
                 switch (node->op()) {
                 case CreateDirectArguments:
                     if (!m_candidates.contains(node))
@@ -487,6 +613,20 @@ private:
                         break;
                     
                     node->setOpAndDefaultFlags(PhantomClonedArguments);
+                    break;
+
+                case Spread:
+                    if (!m_candidates.contains(node))
+                        break;
+                    
+                    node->setOpAndDefaultFlags(PhantomSpread);
+                    break;
+
+                case NewArrayWithSpread:
+                    if (!m_candidates.contains(node))
+                        break;
+                    
+                    node->setOpAndDefaultFlags(PhantomNewArrayWithSpread);
                     break;
                     
                 case GetFromArguments: {
@@ -599,94 +739,185 @@ private:
                     if (!isEliminatedAllocation(candidate))
                         break;
                     
+                    // LoadVarargs can exit, so it better be exitOK.
+                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                    bool canExit = true;
                     LoadVarargsData* varargsData = node->loadVarargsData();
-                    unsigned numberOfArgumentsToSkip = 0;
-                    if (candidate->op() == PhantomCreateRest)
-                        numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
-                    varargsData->offset += numberOfArgumentsToSkip;
 
-                    InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                    auto storeArgumentCountIncludingThis = [&] (unsigned argumentCountIncludingThis) {
+                        Node* argumentCountIncludingThisNode = insertionSet.insertConstant(
+                            nodeIndex, node->origin.withExitOK(canExit),
+                            jsNumber(argumentCountIncludingThis));
+                        insertionSet.insertNode(
+                            nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
+                            OpInfo(varargsData->count.offset()), Edge(argumentCountIncludingThisNode));
+                        insertionSet.insertNode(
+                            nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
+                            OpInfo(m_graph.m_stackAccessData.add(varargsData->count, FlushedInt32)),
+                            Edge(argumentCountIncludingThisNode, KnownInt32Use));
+                    };
 
-                    if (inlineCallFrame
-                        && !inlineCallFrame->isVarargs()) {
+                    auto storeValue = [&] (Node* value, unsigned storeIndex) {
+                        VirtualRegister reg = varargsData->start + storeIndex;
+                        StackAccessData* data =
+                            m_graph.m_stackAccessData.add(reg, FlushedJSValue);
+                        
+                        insertionSet.insertNode(
+                            nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
+                            OpInfo(reg.offset()), Edge(value));
+                        insertionSet.insertNode(
+                            nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
+                            OpInfo(data), Edge(value));
+                    };
 
-                        unsigned argumentCountIncludingThis = inlineCallFrame->arguments.size();
-                        if (argumentCountIncludingThis > varargsData->offset)
-                            argumentCountIncludingThis -= varargsData->offset;
-                        else
-                            argumentCountIncludingThis = 1;
-                        RELEASE_ASSERT(argumentCountIncludingThis >= 1);
+                    if (candidate->op() == PhantomNewArrayWithSpread) {
+                        bool canConvertToStaticLoadStores = true;
+                        BitVector* bitVector = candidate->bitVector();
 
-                        if (argumentCountIncludingThis <= varargsData->limit) {
-                            // LoadVarargs can exit, so it better be exitOK.
-                            DFG_ASSERT(m_graph, node, node->origin.exitOK);
-                            bool canExit = true;
-                            
-                            Node* argumentCountIncludingThisNode = insertionSet.insertConstant(
-                                nodeIndex, node->origin.withExitOK(canExit),
-                                jsNumber(argumentCountIncludingThis));
-                            insertionSet.insertNode(
-                                nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
-                                OpInfo(varargsData->count.offset()), Edge(argumentCountIncludingThisNode));
-                            insertionSet.insertNode(
-                                nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
-                                OpInfo(m_graph.m_stackAccessData.add(varargsData->count, FlushedInt32)),
-                                Edge(argumentCountIncludingThisNode, KnownInt32Use));
-                            
-                            DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum);
-                            // Define our limit to exclude "this", since that's a bit easier to reason about.
-                            unsigned limit = varargsData->limit - 1;
-                            Node* undefined = nullptr;
-                            for (unsigned storeIndex = 0; storeIndex < limit; ++storeIndex) {
-                                // First determine if we have an element we can load, and load it if
-                                // possible.
-                                
-                                unsigned loadIndex = storeIndex + varargsData->offset;
-                                
-                                Node* value;
-                                if (loadIndex + 1 < inlineCallFrame->arguments.size()) {
-                                    VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
-                                    StackAccessData* data = m_graph.m_stackAccessData.add(
-                                        reg, FlushedJSValue);
-                                    
-                                    value = insertionSet.insertNode(
-                                        nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
-                                        OpInfo(data));
-                                } else {
-                                    // FIXME: We shouldn't have to store anything if
-                                    // storeIndex >= varargsData->mandatoryMinimum, but we will still
-                                    // have GetStacks in that range. So if we don't do the stores, we'll
-                                    // have degenerate IR: we'll have GetStacks of something that didn't
-                                    // have PutStacks.
-                                    // https://bugs.webkit.org/show_bug.cgi?id=147434
-                                    
+                        for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                            if (bitVector->get(i)) {
+                                Node* child = m_graph.varArgChild(candidate, i).node();
+                                ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
+                                InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
+                                if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
+                                    canConvertToStaticLoadStores = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (canConvertToStaticLoadStores) {
+                            unsigned argumentCountIncludingThis = 1; // |this|
+                            for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                if (bitVector->get(i)) {
+                                    Node* child = m_graph.varArgChild(candidate, i).node();
+                                    ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
+                                    unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
+                                    InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
+                                    unsigned numberOfSpreadArguments;
+                                    unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
+                                    if (frameArgumentCount >= numberOfArgumentsToSkip)
+                                        numberOfSpreadArguments = frameArgumentCount - numberOfArgumentsToSkip;
+                                    else
+                                        numberOfSpreadArguments = 0;
+
+                                    argumentCountIncludingThis += numberOfSpreadArguments;
+                                } else
+                                    ++argumentCountIncludingThis;
+                            }
+
+                            if (argumentCountIncludingThis <= varargsData->limit) {
+                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
+
+                                DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum);
+                                // Define our limit to exclude "this", since that's a bit easier to reason about.
+                                unsigned limit = varargsData->limit - 1;
+                                unsigned storeIndex = 0;
+                                for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                    if (bitVector->get(i)) {
+                                        Node* child = m_graph.varArgChild(candidate, i).node();
+                                        ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
+                                        unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
+                                        InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
+                                        unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
+                                        for (unsigned loadIndex = numberOfArgumentsToSkip; loadIndex < frameArgumentCount; ++loadIndex) {
+                                            VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
+                                            StackAccessData* data = m_graph.m_stackAccessData.add(reg, FlushedJSValue);
+                                            Node* value = insertionSet.insertNode(
+                                                nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
+                                                OpInfo(data));
+                                            storeValue(value, storeIndex);
+                                            ++storeIndex;
+                                        }
+                                    } else {
+                                        Node* value = m_graph.varArgChild(candidate, i).node();
+                                        storeValue(value, storeIndex);
+                                        ++storeIndex;
+                                    }
+                                }
+
+                                RELEASE_ASSERT(storeIndex <= limit);
+                                Node* undefined = nullptr;
+                                for (; storeIndex < limit; ++storeIndex) {
                                     if (!undefined) {
                                         undefined = insertionSet.insertConstant(
                                             nodeIndex, node->origin.withExitOK(canExit), jsUndefined());
                                     }
-                                    value = undefined;
+                                    storeValue(undefined, storeIndex);
                                 }
-                                
-                                // Now that we have a value, store it.
-                                
-                                VirtualRegister reg = varargsData->start + storeIndex;
-                                StackAccessData* data =
-                                    m_graph.m_stackAccessData.add(reg, FlushedJSValue);
-                                
-                                insertionSet.insertNode(
-                                    nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
-                                    OpInfo(reg.offset()), Edge(value));
-                                insertionSet.insertNode(
-                                    nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
-                                    OpInfo(data), Edge(value));
                             }
-                            
+
                             node->remove();
                             node->origin.exitOK = canExit;
                             break;
                         }
+                    } else {
+                        unsigned numberOfArgumentsToSkip = 0;
+                        if (candidate->op() == PhantomCreateRest)
+                            numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
+                        varargsData->offset += numberOfArgumentsToSkip;
+
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+
+                        if (inlineCallFrame
+                            && !inlineCallFrame->isVarargs()) {
+
+                            unsigned argumentCountIncludingThis = inlineCallFrame->arguments.size();
+                            if (argumentCountIncludingThis > varargsData->offset)
+                                argumentCountIncludingThis -= varargsData->offset;
+                            else
+                                argumentCountIncludingThis = 1;
+                            RELEASE_ASSERT(argumentCountIncludingThis >= 1);
+
+                            if (argumentCountIncludingThis <= varargsData->limit) {
+                                
+                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
+
+                                DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum);
+                                // Define our limit to exclude "this", since that's a bit easier to reason about.
+                                unsigned limit = varargsData->limit - 1;
+                                Node* undefined = nullptr;
+                                for (unsigned storeIndex = 0; storeIndex < limit; ++storeIndex) {
+                                    // First determine if we have an element we can load, and load it if
+                                    // possible.
+                                    
+                                    Node* value = nullptr;
+                                    unsigned loadIndex = storeIndex + varargsData->offset;
+
+                                    if (loadIndex + 1 < inlineCallFrame->arguments.size()) {
+                                        VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
+                                        StackAccessData* data = m_graph.m_stackAccessData.add(
+                                            reg, FlushedJSValue);
+                                        
+                                        value = insertionSet.insertNode(
+                                            nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
+                                            OpInfo(data));
+                                    } else {
+                                        // FIXME: We shouldn't have to store anything if
+                                        // storeIndex >= varargsData->mandatoryMinimum, but we will still
+                                        // have GetStacks in that range. So if we don't do the stores, we'll
+                                        // have degenerate IR: we'll have GetStacks of something that didn't
+                                        // have PutStacks.
+                                        // https://bugs.webkit.org/show_bug.cgi?id=147434
+                                        
+                                        if (!undefined) {
+                                            undefined = insertionSet.insertConstant(
+                                                nodeIndex, node->origin.withExitOK(canExit), jsUndefined());
+                                        }
+                                        value = undefined;
+                                    }
+                                    
+                                    // Now that we have a value, store it.
+                                    storeValue(value, storeIndex);
+                                }
+                                
+                                node->remove();
+                                node->origin.exitOK = canExit;
+                                break;
+                            }
+                        }
                     }
-                    
+
                     node->setOpAndDefaultFlags(ForwardVarargs);
                     break;
                 }
@@ -698,27 +929,8 @@ private:
                     Node* candidate = node->child3().node();
                     if (!isEliminatedAllocation(candidate))
                         break;
-                    
-                    unsigned numberOfArgumentsToSkip = 0;
-                    if (candidate->op() == PhantomCreateRest)
-                        numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
-                    CallVarargsData* varargsData = node->callVarargsData();
-                    varargsData->firstVarArgOffset += numberOfArgumentsToSkip;
 
-                    InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
-                    if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-                        Vector<Node*> arguments;
-                        for (unsigned i = 1 + varargsData->firstVarArgOffset; i < inlineCallFrame->arguments.size(); ++i) {
-                            StackAccessData* data = m_graph.m_stackAccessData.add(
-                                virtualRegisterForArgument(i) + inlineCallFrame->stackOffset,
-                                FlushedJSValue);
-                            
-                            Node* value = insertionSet.insertNode(
-                                nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data));
-                            
-                            arguments.append(value);
-                        }
-                        
+                    auto convertToStaticArgumentCountCall = [&] (const Vector<Node*>& arguments) {
                         unsigned firstChild = m_graph.m_varArgChildren.size();
                         m_graph.m_varArgChildren.append(node->child1());
                         m_graph.m_varArgChildren.append(node->child2());
@@ -743,25 +955,95 @@ private:
                         node->children = AdjacencyList(
                             AdjacencyList::Variable,
                             firstChild, m_graph.m_varArgChildren.size() - firstChild);
-                        break;
-                    }
+                    };
+
+                    auto convertToForwardsCall = [&] () {
+                        switch (node->op()) {
+                        case CallVarargs:
+                            node->setOpAndDefaultFlags(CallForwardVarargs);
+                            break;
+                        case ConstructVarargs:
+                            node->setOpAndDefaultFlags(ConstructForwardVarargs);
+                            break;
+                        case TailCallVarargs:
+                            node->setOpAndDefaultFlags(TailCallForwardVarargs);
+                            break;
+                        case TailCallVarargsInlinedCaller:
+                            node->setOpAndDefaultFlags(TailCallForwardVarargsInlinedCaller);
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
+                    };
                     
-                    switch (node->op()) {
-                    case CallVarargs:
-                        node->setOpAndDefaultFlags(CallForwardVarargs);
-                        break;
-                    case ConstructVarargs:
-                        node->setOpAndDefaultFlags(ConstructForwardVarargs);
-                        break;
-                    case TailCallVarargs:
-                        node->setOpAndDefaultFlags(TailCallForwardVarargs);
-                        break;
-                    case TailCallVarargsInlinedCaller:
-                        node->setOpAndDefaultFlags(TailCallForwardVarargsInlinedCaller);
-                        break;
-                    default:
-                        RELEASE_ASSERT_NOT_REACHED();
+                    if (candidate->op() == PhantomNewArrayWithSpread) {
+                        bool canTransformToStaticArgumentCountCall = true;
+                        BitVector* bitVector = candidate->bitVector();
+                        for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                            if (bitVector->get(i)) {
+                                Node* node = m_graph.varArgChild(candidate, i).node();
+                                ASSERT(node->op() == PhantomSpread);
+                                ASSERT(node->child1()->op() == PhantomCreateRest);
+                                InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
+                                if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
+                                    canTransformToStaticArgumentCountCall = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (canTransformToStaticArgumentCountCall) {
+                            Vector<Node*> arguments;
+                            for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                Node* child = m_graph.varArgChild(candidate, i).node();
+                                if (bitVector->get(i)) {
+                                    ASSERT(child->op() == PhantomSpread);
+                                    ASSERT(child->child1()->op() == PhantomCreateRest);
+                                    InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
+                                    unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
+                                    for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->arguments.size(); ++i) {
+                                        StackAccessData* data = m_graph.m_stackAccessData.add(
+                                            virtualRegisterForArgument(i) + inlineCallFrame->stackOffset,
+                                            FlushedJSValue);
+                                        
+                                        Node* value = insertionSet.insertNode(
+                                            nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data));
+                                        
+                                        arguments.append(value);
+                                    }
+                                } else
+                                    arguments.append(child);
+                            }
+
+                            convertToStaticArgumentCountCall(arguments);
+                        } else
+                            convertToForwardsCall();
+                    } else {
+                        unsigned numberOfArgumentsToSkip = 0;
+                        if (candidate->op() == PhantomCreateRest)
+                            numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
+                        CallVarargsData* varargsData = node->callVarargsData();
+                        varargsData->firstVarArgOffset += numberOfArgumentsToSkip;
+
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                        if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+                            Vector<Node*> arguments;
+                            for (unsigned i = 1 + varargsData->firstVarArgOffset; i < inlineCallFrame->arguments.size(); ++i) {
+                                StackAccessData* data = m_graph.m_stackAccessData.add(
+                                    virtualRegisterForArgument(i) + inlineCallFrame->stackOffset,
+                                    FlushedJSValue);
+                                
+                                Node* value = insertionSet.insertNode(
+                                    nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data));
+                                
+                                arguments.append(value);
+                            }
+                            
+                            convertToStaticArgumentCountCall(arguments);
+                        } else
+                            convertToForwardsCall();
                     }
+
                     break;
                 }
                     

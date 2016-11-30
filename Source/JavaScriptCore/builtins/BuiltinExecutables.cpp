@@ -45,7 +45,7 @@ BuiltinExecutables::BuiltinExecutables(VM& vm)
 UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
 {
     static NeverDestroyed<const String> baseConstructorCode(ASCIILiteral("(function () { })"));
-    static NeverDestroyed<const String> derivedConstructorCode(ASCIILiteral("(function () { super(...arguments); })"));
+    static NeverDestroyed<const String> derivedConstructorCode(ASCIILiteral("(function (...args) { super(...args); })"));
 
     switch (constructorKind) {
     case ConstructorKind::None:

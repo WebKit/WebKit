@@ -66,7 +66,7 @@ public:
 
         // This could be made more efficient by processing blocks in reverse postorder.
         
-        LocalOSRAvailabilityCalculator calculator;
+        LocalOSRAvailabilityCalculator calculator(m_graph);
         bool changed;
         do {
             changed = false;
@@ -105,7 +105,8 @@ bool performOSRAvailabilityAnalysis(Graph& graph)
     return runPhase<OSRAvailabilityAnalysisPhase>(graph);
 }
 
-LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator()
+LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator(Graph& graph)
+    : m_graph(graph)
 {
 }
 
@@ -164,7 +165,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         }
         break;
     }
-        
+    
     case PhantomCreateRest:
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
@@ -208,6 +209,17 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
             Availability(node->child2().node()));
         break;
     }
+
+    case PhantomSpread:
+        m_availability.m_heap.set(PromotedHeapLocation(SpreadPLoc, node), Availability(node->child1().node()));
+        break;
+
+    case PhantomNewArrayWithSpread:
+        for (unsigned i = 0; i < node->numChildren(); i++) {
+            Node* child = m_graph.varArgChild(node, i).node();
+            m_availability.m_heap.set(PromotedHeapLocation(NewArrayWithSpreadArgumentPLoc, node, i), Availability(child));
+        }
+        break;
         
     default:
         break;

@@ -46,7 +46,7 @@ bool performOSRAvailabilityAnalysis(Graph&);
 // having run the availability analysis.
 class LocalOSRAvailabilityCalculator {
 public:
-    LocalOSRAvailabilityCalculator();
+    LocalOSRAvailabilityCalculator(Graph&);
     ~LocalOSRAvailabilityCalculator();
     
     void beginBlock(BasicBlock*);
@@ -54,6 +54,7 @@ public:
     void executeNode(Node*);
     
     AvailabilityMap m_availability;
+    Graph& m_graph;
 };
 
 } } // namespace JSC::DFG

@@ -1,3 +1,149 @@
+2016-11-29  Saam Barati  <sbarati@apple.com>
+
+        We should be able optimize the pattern where we spread a function's rest parameter to another call
+        https://bugs.webkit.org/show_bug.cgi?id=163865
+
+        Reviewed by Filip Pizlo.
+
+        This patch optimizes the following patterns to prevent both the allocation
+        of the rest parameter, and the execution of the iterator protocol:
+        
+        ```
+        function foo(...args) {
+            let arr = [...args];
+        }
+        
+        and
+        
+        function foo(...args) {
+            bar(...args);
+        }
+        ```
+        
+        To do this, I've extended the arguments elimination phase to reason
+        about Spread and NewArrayWithSpread. I've added two new nodes, PhantomSpread
+        and PhantomNewArrayWithSpread. PhantomSpread is only allowed over rest
+        parameters that don't escape. If the rest parameter *does* escape, we can't
+        convert the spread into a phantom because it would not be sound w.r.t JS
+        semantics because we would be reading from the call frame even though
+        the rest array may have changed.
+        
+        Note that NewArrayWithSpread also understands what to do when one of its
+        arguments is PhantomSpread(@PhantomCreateRest) even if it itself is escaped.
+        
+        PhantomNewArrayWithSpread is only allowed over a series of
+        PhantomSpread(@PhantomCreateRest) nodes. Like with PhantomSpread, PhantomNewArrayWithSpread
+        is only allowed if none of its arguments that are being spread are escaped
+        and if it itself is not escaped.
+        
+        Because there is a dependency between a node being a candidate and
+        the escaped state of the node's children, I've extended the notion
+        of escaping a node inside the arguments elimination phase. Now, when
+        any node is escaped, we must consider all other candidates that are may
+        now no longer be valid.
+        
+        For example:
+        
+        ```
+        function foo(...args) {
+            escape(args);
+            bar(...args);
+        }
+        ```
+        
+        In the above program, we don't know if the function call to escape()
+        modifies args, therefore, the spread can not become phantom because
+        the execution of the spread may not be as simple as reading the
+        arguments from the call frame.
+        
+        Unfortunately, the arguments elimination phase does not consider control
+        flow when doing its escape analysis. It would be good to integrate this
+        phase with the object allocation sinking phase. To see why, consider
+        an example where we don't eliminate the spread and allocation of the rest
+        parameter even though we could:
+        
+        ```
+        function foo(rareCondition, ...args) {
+            bar(...args);
+            if (rareCondition)
+                baz(args);
+        }
+        ```
+        
+        There are only a few users of the PhantomSpread and PhantomNewArrayWithSpread
+        nodes. PhantomSpread is only used by PhantomNewArrayWithSpread and NewArrayWithSpread.
+        PhantomNewArrayWithSpread is only used by ForwardVarargs and the various
+        *Call*ForwardVarargs nodes. The users of these phantoms know how to produce
+        what the phantom node would have produced. For example, NewArrayWithSpread
+        knows how to produce the values that would have been produced by PhantomSpread(@PhantomCreateRest)
+        by directly reading from the call frame.
+        
+        This patch is a 6% speedup on my MBP on ES6SampleBench.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryAppendLea):
+        * b3/B3ValueRep.h:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKillsInBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::constant):
+        (JSC::DFG::Node::bitVector):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::LowerDFGToB3):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::getSpreadLengthFromInlineCallFrame):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionMaxArguments):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::createFromArray):
+
 2016-11-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209058 and r209074.

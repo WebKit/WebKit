@@ -78,7 +78,7 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
         jit.sub32(CCallHelpers::TrustedImm32(firstVarArgOffset), scratchGPR1);
         endVarArgs.link(&jit);
     }
-    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(maxArguments + 1)));
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments + 1)));
     
     emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
 

@@ -114,6 +114,14 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
     case VectorLengthPLoc:
         out.print("VectorLengthPLoc");
         return;
+
+    case SpreadPLoc:
+        out.print("SpreadPLoc");
+        return;
+
+    case NewArrayWithSpreadArgumentPLoc:
+        out.print("NewArrayWithSpreadArgumentPLoc");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

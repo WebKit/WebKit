@@ -1929,7 +1929,7 @@ private:
             && canBeInternal(value->child(0))
             && value->child(0)->opcode() == Add) {
             innerAdd = value->child(0);
-            offset = value->child(1)->asInt32();
+            offset = static_cast<int32_t>(value->child(1)->asInt());
             value = value->child(0);
         }
         

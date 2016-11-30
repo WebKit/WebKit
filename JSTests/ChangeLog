@@ -1,3 +1,83 @@
+2016-11-29  Saam Barati  <sbarati@apple.com>
+
+        We should be able optimize the pattern where we spread a function's rest parameter to another call
+        https://bugs.webkit.org/show_bug.cgi?id=163865
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/default-derived-constructor.js: Added.
+        (createClassHierarchy.let.currentClass):
+        (createClassHierarchy):
+        * stress/call-varargs-spread.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * stress/load-varargs-on-new-array-with-spread-convert-to-static-loads.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (foo):
+        * stress/new-array-with-spread-with-normal-spread-and-phantom-spread.js: Added.
+        (assert):
+        (foo):
+        (escape):
+        (bar):
+        * stress/phantom-new-array-with-spread-osr-exit.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (effects):
+        (foo):
+        * stress/phantom-spread-forward-varargs.js: Added.
+        (assert):
+        (test1.bar):
+        (test1.foo):
+        (test1):
+        (test2.bar):
+        (test2.foo):
+        (test3.baz):
+        (test3.bar):
+        (test3.foo):
+        (test4.baz):
+        (test4.bar):
+        (test4.foo):
+        (test5.baz):
+        (test5.bar):
+        (test5.foo):
+        * stress/phantom-spread-osr-exit.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (effects):
+        (foo):
+        * stress/spread-call-convert-to-static-call.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (foo):
+        * stress/spread-forward-call-varargs-stack-overflow.js: Added.
+        (assert):
+        (identity):
+        (bar):
+        (foo):
+        * stress/spread-forward-varargs-rest-parameter-change-iterator-protocol-2.js: Added.
+        (assert):
+        (baz.Array.prototype.Symbol.iterator):
+        (baz):
+        (bar):
+        (foo):
+        (test):
+        * stress/spread-forward-varargs-rest-parameter-change-iterator-protocol.js: Added.
+        (assert):
+        (baz.Array.prototype.Symbol.iterator):
+        (baz):
+        (bar):
+        (foo):
+        * stress/spread-forward-varargs-stack-overflow.js: Added.
+        (assert):
+        (bar):
+        (foo):
+
 2016-11-29  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] always wrap AwaitExpression operand in a new Promise

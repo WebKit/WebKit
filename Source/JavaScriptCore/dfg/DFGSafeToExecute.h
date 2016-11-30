@@ -360,6 +360,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MaterializeCreateActivation:
     case PhantomDirectArguments:
     case PhantomCreateRest:
+    case PhantomSpread:
+    case PhantomNewArrayWithSpread:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:

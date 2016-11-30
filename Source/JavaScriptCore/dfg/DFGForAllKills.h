@@ -153,7 +153,7 @@ void forAllKillsInBlock(
     for (Node* node : combinedLiveness.liveAtTail[block])
         functor(block->size(), node);
     
-    LocalOSRAvailabilityCalculator localAvailability;
+    LocalOSRAvailabilityCalculator localAvailability(graph);
     localAvailability.beginBlock(block);
     // Start at the second node, because the functor is expected to only inspect nodes from the start of
     // the block up to nodeIndex (exclusive), so if nodeIndex is zero then the functor has nothing to do.

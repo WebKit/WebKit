@@ -478,6 +478,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
+    case PhantomSpread:
+    case PhantomNewArrayWithSpread:
     case PhantomCreateRest:
         // Even though it's phantom, it still has the property that one can't be replaced with another.
         read(HeapObjectCount);
@@ -1130,6 +1132,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewArrayWithSpread: {
         // This also reads from JSFixedArray's data store, but we don't have any way of describing that yet.
         read(HeapObjectCount);
+        for (unsigned i = 0; i < node->numChildren(); i++) {
+            Node* child = graph.varArgChild(node, i).node();
+            if (child->op() == PhantomSpread) {
+                read(Stack);
+                break;
+            }
+        }
         write(HeapObjectCount);
         return;
     }

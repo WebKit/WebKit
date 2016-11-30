@@ -79,7 +79,11 @@ public:
                 // We may still call into this function when !globalObject->isArrayIteratorProtocolFastAndNonObservable(),
                 // however, if we do that, we ensure we're calling in with an array with all self properties between
                 // [0, length).
-                ASSERT(array->globalObject()->isArrayIteratorProtocolFastAndNonObservable());
+                //
+                // We may also call into this during OSR exit to materialize a phantom fixed array.
+                // We may be creating a fixed array during OSR exit even after the iterator protocol changed.
+                // But, when the phantom would have logically been created, the protocol hadn't been
+                // changed. Therefore, it is sound to assume empty indices are jsUndefined().
                 value = jsUndefined();
             }
             RETURN_IF_EXCEPTION(throwScope, nullptr);

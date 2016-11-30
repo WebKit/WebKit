@@ -78,7 +78,7 @@ public:
         // As an input representation, this forces a particular register and states that
         // the register is used late. This means that the register is used after the result
         // is defined (i.e, the result will interfere with this as an input).
-        // It's not valid for this to be used as a result kind.
+        // It's not a valid output representation.
         LateRegister,
 
         // As an output representation, this tells us what stack slot B3 picked. It's not a valid

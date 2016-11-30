@@ -1644,7 +1644,7 @@ private:
 
         // Place Phis in the right places, replace all uses of any load with the appropriate
         // value, and create the materialization nodes.
-        LocalOSRAvailabilityCalculator availabilityCalculator;
+        LocalOSRAvailabilityCalculator availabilityCalculator(m_graph);
         m_graph.clearReplacements();
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             m_heap = m_heapAtHead[block];

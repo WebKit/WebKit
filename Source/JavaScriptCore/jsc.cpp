@@ -990,6 +990,8 @@ static EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState*);
 #endif
 
+static EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*);
+
 #if ENABLE(WEBASSEMBLY)
 static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState*);
 #endif
@@ -1241,6 +1243,8 @@ protected:
         addFunction(vm, "startSamplingProfiler", functionStartSamplingProfiler, 0);
         addFunction(vm, "samplingProfilerStackTraces", functionSamplingProfilerStackTraces, 0);
 #endif
+
+        addFunction(vm, "maxArguments", functionMaxArguments, 0);
 
 #if ENABLE(WEBASSEMBLY)
         addFunction(vm, "testWasmModuleFunctions", functionTestWasmModuleFunctions, 0);
@@ -2483,6 +2487,11 @@ EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec
     return result;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
+
+EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*)
+{
+    return JSValue::encode(jsNumber(JSC::maxArguments));
+}
 
 #if ENABLE(WEBASSEMBLY)
 
