@@ -47,7 +47,10 @@ function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode
         return promiseCapability.@promise;
     }
 
-    @Promise.@resolve(value).@then(
+    let wrappedValue = @newPromiseCapability(@Promise);
+    wrappedValue.@resolve.@call(@undefined, value);
+
+    wrappedValue.@promise.@then(
         function(value) { @asyncFunctionResume(generator, promiseCapability, value, @GeneratorResumeModeNormal); },
         function(error) { @asyncFunctionResume(generator, promiseCapability, error, @GeneratorResumeModeThrow); });
 

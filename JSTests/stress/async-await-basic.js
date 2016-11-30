@@ -294,3 +294,16 @@ shouldThrowSyntaxError("class C { async ['foo'] : true };", "Unexpected token ':
 shouldThrowSyntaxError("class C { async ['foo'] = true };", "Unexpected token '='. Expected an opening '(' before a async method's parameter list.");
 shouldThrowSyntaxError("class C { async ['foo'] , bar };", "Unexpected token ','. Expected an opening '(' before a async method's parameter list.");
 shouldThrowSyntaxError("class C { async ['foo'] }", "Unexpected token '}'. Expected an opening '(' before a async method's parameter list.");
+
+// Ensure awaited builtin Promise objects are themselves wrapped in a new Promise,
+// per https://tc39.github.io/ecma262/#sec-async-functions-abstract-operations-async-function-await
+log = [];
+async function awaitedPromisesAreWrapped() {
+    log.push("before");
+    await Promise.resolve();
+    log.push("after");
+}
+awaitedPromisesAreWrapped();
+Promise.resolve().then(() => log.push("Promise.resolve()"));
+drainMicrotasks();
+shouldBe("before|Promise.resolve()|after", log.join("|"));

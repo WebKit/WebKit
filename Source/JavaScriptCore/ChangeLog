@@ -1,3 +1,18 @@
+2016-11-29  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] always wrap AwaitExpression operand in a new Promise
+        https://bugs.webkit.org/show_bug.cgi?id=165181
+
+        Reviewed by Yusuke Suzuki.
+
+        Ensure operand of AwaitExpression is wrapped in a new Promise by
+        explicitly creating a new Promise Capability and invoking its
+        resolve callback. This avoids the specified short-circuit for
+        Promise.resolve().
+
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+
 2016-11-29  Saam Barati  <sbarati@apple.com>
 
         We should support CreateThis in the FTL

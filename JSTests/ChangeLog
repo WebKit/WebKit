@@ -1,3 +1,13 @@
+2016-11-29  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] always wrap AwaitExpression operand in a new Promise
+        https://bugs.webkit.org/show_bug.cgi?id=165181
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-await-basic.js:
+        (async.awaitedPromisesAreWrapped):
+
 2016-11-29  Keith Miller  <keith_miller@apple.com>
 
         Add simple way to implement Wasm ops that require more than one B3 opcode
