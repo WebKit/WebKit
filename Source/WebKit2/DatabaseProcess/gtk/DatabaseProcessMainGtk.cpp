@@ -30,24 +30,12 @@
 
 #include "ChildProcessMain.h"
 #include "DatabaseProcess.h"
-#include <gtk/gtk.h>
-
-using namespace WebCore;
 
 namespace WebKit {
 
-class DatabaseProcessMain final: public ChildProcessMainBase {
-public:
-    bool platformInitialize() override
-    {
-        gtk_init(nullptr, nullptr);
-        return true;
-    }
-};
-
 int DatabaseProcessMainUnix(int argc, char** argv)
 {
-    return ChildProcessMain<DatabaseProcess, DatabaseProcessMain>(argc, argv);
+    return ChildProcessMain<DatabaseProcess, ChildProcessMainBase>(argc, argv);
 }
 
 } // namespace WebKit

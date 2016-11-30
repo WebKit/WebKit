@@ -1,3 +1,16 @@
+2016-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Database process should not initialize gtk
+        https://bugs.webkit.org/show_bug.cgi?id=165138
+
+        Reviewed by Sergio Villar Senin.
+
+        It doesn't use GTK+ at all.
+
+        * DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp:
+        (WebKit::DatabaseProcessMainUnix):
+        (): Deleted.
+
 2016-11-29  Gavin Barraclough  <barraclough@apple.com>
 
         Remove WebPage::SetPageSuppressed
