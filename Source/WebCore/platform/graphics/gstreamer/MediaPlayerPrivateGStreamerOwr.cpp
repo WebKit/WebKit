@@ -73,14 +73,11 @@ void MediaPlayerPrivateGStreamerOwr::play()
 
     GST_DEBUG("Connecting to live stream, descriptor: %p", m_streamPrivate.get());
 
-    for (auto track : m_streamPrivate->tracks()) {
-        if (!track->enabled()) {
-            GST_DEBUG("Track %s disabled", track->label().ascii().data());
-            continue;
-        }
+    if (m_videoTrack)
+        maybeHandleChangeMutedState(*m_videoTrack.get());
 
-        maybeHandleChangeMutedState(*track);
-    }
+    if (m_audioTrack)
+        maybeHandleChangeMutedState(*m_audioTrack.get());
 }
 
 void MediaPlayerPrivateGStreamerOwr::pause()
@@ -192,18 +189,37 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
             continue;
         }
 
-        track->addObserver(*this);
+        GST_DEBUG("Processing track %s", track->label().ascii().data());
+
+        bool observeTrack = false;
+
+        // TODO: Support for multiple tracks of the same type.
 
         switch (track->type()) {
         case RealtimeMediaSource::Audio:
-            m_audioTrack = track;
+            if (!m_audioTrack) {
+                String preSelectedDevice = getenv("WEBKIT_AUDIO_DEVICE");
+                if (!preSelectedDevice || (preSelectedDevice == track->label())) {
+                    m_audioTrack = track;
+                    observeTrack = true;
+                }
+            }
             break;
         case RealtimeMediaSource::Video:
-            m_videoTrack = track;
+            if (!m_videoTrack) {
+                String preSelectedDevice = getenv("WEBKIT_VIDEO_DEVICE");
+                if (!preSelectedDevice || (preSelectedDevice == track->label())) {
+                    m_videoTrack = track;
+                    observeTrack = true;
+                }
+            }
             break;
         case RealtimeMediaSource::None:
             GST_WARNING("Loading a track with None type");
         }
+
+        if (observeTrack)
+            track->addObserver(*this);
     }
 
     m_readyState = MediaPlayer::HaveEnoughData;

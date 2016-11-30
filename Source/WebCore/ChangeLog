@@ -1,3 +1,19 @@
+2016-11-29  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][OpenWebRTC] Temporary device selection support
+        https://bugs.webkit.org/show_bug.cgi?id=165141
+
+        Reviewed by Alejandro G. Castro.
+
+        Make sure the player handles only one audio and video track at
+        most for now. The device choice can be influenced with the
+        WEBKIT_VIDEO_DEVICE and WEBKIT_AUDIO_DEVICE environment variables.
+        Each variable optionally holds the name of the device to use.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::play):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load):
+
 2016-11-29  Claudio Saavedra  <csaavedra@igalia.com>
 
         Build fix with !HAVE(ACCESSIBILITY)
