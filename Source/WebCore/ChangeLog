@@ -1,3 +1,25 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Controls are not visible when returning from picture-in-picture playback
+        https://bugs.webkit.org/show_bug.cgi?id=165183
+
+        Reviewed by Dean Jackson.
+
+        We need to call MediaControlsHost::setPreparedToReturnVideoLayerToInline() when we return from
+        picture-in-picture playback such that the video layer is correctly stacked under the media controls.
+        We call that function in a rAF call to ensure it's performed in sync with the next scheduled layout
+        or the media controls would not appear in sync with the video layer.
+
+        We also fix an error from a previous commit in ControlsVisibilitySupport.
+
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype.syncControl):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._returnMediaLayerToInlineIfNeeded):
+
 2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::wrapKey to match the latest spec

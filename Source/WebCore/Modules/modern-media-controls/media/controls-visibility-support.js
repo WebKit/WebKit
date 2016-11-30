@@ -49,7 +49,7 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     syncControl()
     {
         let shouldShowControls = this.mediaController.media.controls;
-        if (media instanceof HTMLVideoElement)
+        if (this.mediaController.media instanceof HTMLVideoElement)
             shouldShowControls = shouldShowControls && this.mediaController.media.readyState > HTMLMediaElement.HAVE_NOTHING;
 
         this.mediaController.controls.startButton.visible = shouldShowControls;

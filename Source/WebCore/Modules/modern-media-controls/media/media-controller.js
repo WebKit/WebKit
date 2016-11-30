@@ -32,6 +32,9 @@ class MediaController
         this.media = media;
         this.host = host;
 
+        if (host)
+            media.addEventListener("webkitpresentationmodechanged", this);
+
         this._updateControlsIfNeeded();
 
         media.addEventListener("resize", this);
@@ -61,10 +64,20 @@ class MediaController
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
+        if (event.currentTarget !== this.media)
+            return;
+
+        switch (event.type) {
+        case "resize":
             this._updateControlsSize();
-        else if (event.type === "webkitfullscreenchange" && event.currentTarget === this.media)
+            break;
+        case "webkitfullscreenchange":
             this._updateControlsIfNeeded();
+            break;
+        case "webkitpresentationmodechanged":
+            this._returnMediaLayerToInlineIfNeeded();
+            break;
+        }
     }
 
     // Private
@@ -101,6 +114,11 @@ class MediaController
     {
         this.controls.width = this.media.offsetWidth;
         this.controls.height = this.media.offsetHeight;
+    }
+
+    _returnMediaLayerToInlineIfNeeded()
+    {
+        window.requestAnimationFrame(() => this.host.setPreparedToReturnVideoLayerToInline(this.media.webkitPresentationMode !== PiPMode));
     }
 
     _controlsClass()
