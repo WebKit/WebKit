@@ -406,17 +406,19 @@ void IDBTransaction::pendingOperationTimerFired()
     if (!m_transactionOperationsInProgressQueue.isEmpty() && !m_transactionOperationsInProgressQueue.last()->nextRequestCanGoToServer())
         return;
 
-    if (!m_pendingTransactionOperationQueue.isEmpty()) {
+    // We want to batch operations together without spinning the runloop for performance,
+    // but don't want to affect responsiveness of the main thread.
+    // This number is a good compromise in ad-hoc testing.
+    static const size_t operationBatchLimit = 128;
+
+    for (size_t iterations = 0; !m_pendingTransactionOperationQueue.isEmpty() && iterations < operationBatchLimit; ++iterations) {
         auto operation = m_pendingTransactionOperationQueue.takeFirst();
         m_transactionOperationsInProgressQueue.append(operation.get());
         operation->perform();
 
-        // If this operation we just started has an associated IDBRequest, we might be able to send
-        // another operation to the server before it completes.
-        if (operation->idbRequest() && !m_pendingTransactionOperationQueue.isEmpty())
-            schedulePendingOperationTimer();
+        if (!operation->nextRequestCanGoToServer())
+            break;
 
-        return;
     }
 
     if (!m_transactionOperationMap.isEmpty() || !m_openRequests.isEmpty())
