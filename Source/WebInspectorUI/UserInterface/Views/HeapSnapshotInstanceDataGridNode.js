@@ -97,6 +97,16 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     get node() { return this._node; }
     get selectable() { return false; }
 
+    get propertyName()
+    {
+        if (!this._edge)
+            return "";
+
+        if (!this._propertyName)
+            this._propertyName = WebInspector.HeapSnapshotRootPath.pathComponentForIndividualEdge(this._edge);
+        return this._propertyName;
+    }
+
     createCells()
     {
         super.createCells();
@@ -146,9 +156,9 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
             if (this._edge) {
                 let nameElement = containerElement.appendChild(document.createElement("span"));
-                let edgeText = WebInspector.HeapSnapshotRootPath.pathComponentForIndividualEdge(this._edge);
-                if (edgeText)
-                    nameElement.textContent = edgeText + ": " + this._node.className + " ";
+                let propertyName = this.propertyName;
+                if (propertyName)
+                    nameElement.textContent = propertyName + ": " + this._node.className + " ";
                 else
                     nameElement.textContent = this._node.className + " ";
             }
@@ -208,14 +218,18 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     {
         this.removeEventListener("populate", this._populate, this);
 
+        function propertyName(edge) {
+            return edge ? WebInspector.HeapSnapshotRootPath.pathComponentForIndividualEdge(edge) : "";
+        }
+
         this._node.retainedNodes((instances, edges) => {
             // Reference edge from instance so we can get it after sorting.
             for (let i = 0; i < instances.length; ++i)
                 instances[i].__edge = edges[i];
 
             instances.sort((a, b) => {
-                let fakeDataGridNodeA = {data: a};
-                let fakeDataGridNodeB = {data: b};
+                let fakeDataGridNodeA = {data: a, propertyName: propertyName(a.__edge)};
+                let fakeDataGridNodeB = {data: b, propertyName: propertyName(b.__edge)};
                 return this._tree._sortComparator(fakeDataGridNodeA, fakeDataGridNodeB);
             });
 

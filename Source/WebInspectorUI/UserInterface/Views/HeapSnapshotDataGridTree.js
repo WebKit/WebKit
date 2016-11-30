@@ -51,7 +51,26 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
     {
         let multiplier = sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
         let numberCompare = (columnIdentifier, a, b) => multiplier * (a.data[columnIdentifier] - b.data[columnIdentifier]);
-        let localeCompare = (columnIdentifier, a, b) => multiplier * (a.data[columnIdentifier].localeCompare(b.data[columnIdentifier]));
+        let nameCompare = (a, b) => {
+            // Sort by property name if available. Property names before no property name.
+            if (a.propertyName || b.propertyName) {
+                if (a.propertyName && !b.propertyName)
+                    return multiplier * -1;
+                if (!a.propertyName && b.propertyName)
+                    return multiplier * 1;
+                let propertyNameCompare = a.propertyName.localeCompare(b.propertyName);
+                console.assert(propertyNameCompare !== 0, "Property names should be unique, we shouldn't have equal property names.");
+                return multiplier * propertyNameCompare;
+            }
+
+            // Sort by class name and object id if no property name.
+            let classNameCompare = a.data.className.localeCompare(b.data.className);
+            if (classNameCompare)
+                return multiplier * classNameCompare;
+            if (a.data.id || b.data.id)
+                return multiplier * (a.data.id - b.data.id);
+            return 0;
+        };
 
         switch (columnIdentifier) {
         case "retainedSize":
@@ -61,7 +80,7 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
         case "count":
             return numberCompare.bind(this, "count");
         case "className":
-            return localeCompare.bind(this, "className");
+            return nameCompare;
         }
     }
 

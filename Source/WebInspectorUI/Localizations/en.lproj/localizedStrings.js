@@ -140,7 +140,6 @@ localizedStrings["Charge ‘%s’ to Callers"] = "Charge ‘%s’ to Callers";
 localizedStrings["Checked"] = "Checked";
 localizedStrings["Child Layers"] = "Child Layers";
 localizedStrings["Children"] = "Children";
-localizedStrings["Class Name"] = "Class Name";
 localizedStrings["Classes"] = "Classes";
 localizedStrings["Clear"] = "Clear";
 localizedStrings["Clear Log"] = "Clear Log";

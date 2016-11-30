@@ -118,7 +118,7 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
                 sortable: true,
             },
             className: {
-                title: WebInspector.UIString("Class Name"),
+                title: WebInspector.UIString("Name"),
                 sortable: true,
                 disclosure: true,
             }
@@ -147,7 +147,7 @@ WebInspector.HeapSnapshotObjectGraphContentView = class HeapSnapshotObjectGraphC
                 sortable: true,
             },
             className: {
-                title: WebInspector.UIString("Class Name"),
+                title: WebInspector.UIString("Name"),
                 sortable: true,
                 disclosure: true,
             }

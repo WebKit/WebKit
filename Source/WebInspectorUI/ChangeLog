@@ -1,3 +1,43 @@
+2016-11-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve name sorting in HeapSnapshot data grids
+        https://bugs.webkit.org/show_bug.cgi?id=165170
+        <rdar://problem/28784421>
+
+        Reviewed by Matt Baker.
+
+        When sorting the Name column, group named properties and unnamed
+        properties and sort them each individually:
+
+          - Sort named properties by their property name (property names will be unique if they exist)
+          - Sort unnamed properties by their class name (guaranteed)
+          - Sort any tied class names by their object id
+
+        This makes using the Object Graph with Name sort easier to follow.
+        In the ascending sort you see all the named properties first,
+        followed by the unnamed (internal) properties.
+
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WebInspector.HeapSnapshotObjectGraphContentView):
+        Since this data grid column now sorts on more than just the "Class Name"
+        rename it to "Name".
+
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WebInspector.HeapSnapshotDataGridTree.buildSortComparator):
+        Make the sort of the `className` column more general to handle sorting
+        by property names, class names, and object identifiers.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.get propertyName):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        Provide a lazy `propertyName` accessor where we compute it once and stash
+        it on the DataGridNode to avoid extra work when resorting.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populate.propertyName):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populate):
+        In the initial populated sort, provide the necessary property name property
+        the sort comparator expects.
+
 2016-11-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Breakpoints button enabled state is too subtle
