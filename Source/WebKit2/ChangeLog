@@ -1,3 +1,16 @@
+2016-11-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Turn on HTML interactive form validation feature
+        https://bugs.webkit.org/show_bug.cgi?id=165212
+        <rdar://problem/29444356>
+
+        Reviewed by Simon Fraser.
+
+        Turn on HTML interactive form validation feature on iOS WK2
+        now that we have a native UI.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-11-30  Brent Fulgham  <bfulgham@apple.com>
 
         Correct plugin sandbox after r208611
