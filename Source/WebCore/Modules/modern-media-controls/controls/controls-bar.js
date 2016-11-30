@@ -23,62 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaControllerSupport
+class ControlsBar extends LayoutNode
 {
 
-    constructor(mediaController)
+    constructor()
     {
-        this.mediaController = mediaController;
-
-        for (let eventType of this.mediaEvents)
-            mediaController.media.addEventListener(eventType, this);
-
-        this.syncControl();
-
-        if (!this.control)
-            return;
-
-        this.control.uiDelegate = this;
+        super(`<div class="controls-bar">`);
     }
 
-    // Public
-
-    destroy()
-    {
-        const media = this.mediaController.media;
-        for (let eventType of this.mediaEvents)
-            media.removeEventListener(eventType, this);
-
-        if (this.control)
-            this.control.uiDelegate = null;
-    }
-
-    // Protected
-
-    get control()
-    {
-        // Implemented by subclasses.
-    }
-
-    get mediaEvents()
-    {
-        // Implemented by subclasses.
-        return [];
-    }
-
-    buttonWasClicked(control)
-    {
-        // Implemented by subclasses.
-    }
-
-    handleEvent(event)
-    {
-        // Implemented by subclasses.
-        this.syncControl();
-    }
-
-    syncControl()
-    {
-        // Implemented by subclasses.
-    }
 }

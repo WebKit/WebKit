@@ -15,7 +15,7 @@
     }
     
 </style>
-<video src="../../content/test.mp4" muted></video>
+<video src="../../content/test.mp4" muted autoplay controls></video>
 <div id="host"></div>
 <script type="text/javascript">
 
@@ -32,6 +32,9 @@ shouldBe("mediaController.controls.volumeSlider.value", "0");
 
 let numberOfFrames = 0;
 scheduler.frameDidFire = function() {
+    if (media.paused)
+        return;
+
     numberOfFrames++;
 
     if (numberOfFrames == 1) {

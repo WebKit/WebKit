@@ -1,3 +1,36 @@
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Only show controls when the controls attribute is set
+        https://bugs.webkit.org/show_bug.cgi?id=165175
+
+        We now respect the value of the media's "controls" attribute so that the start button and the controls
+        bar are only shown when that attribute is set to "true".
+
+        Reviewed by Dean Jackson.
+
+        Tests: media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-audio.html
+               media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off.html
+               media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio.html
+               media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on.html
+               media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js: Added.
+        (ControlsBar):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.): Deleted.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/controls-visibility-support.js: Added.
+        (ControlsVisibilitySupport):
+        (ControlsVisibilitySupport.prototype.destroy):
+        (ControlsVisibilitySupport.prototype.get mediaEvents):
+        (ControlsVisibilitySupport.prototype.syncControl):
+        * Modules/modern-media-controls/media/media-controller-support.js:
+        (MediaControllerSupport):
+        (MediaControllerSupport.prototype.handleEvent):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-11-29  Brady Eidson  <beidson@apple.com>
 
         Followup to:

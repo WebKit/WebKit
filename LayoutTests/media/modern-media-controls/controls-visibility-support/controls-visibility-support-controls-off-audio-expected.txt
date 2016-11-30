@@ -1,0 +1,17 @@
+Testing the ControlsVisibilitySupport behavior for audio without controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Media has not begun loading yet
+PASS mediaController.controls.controlsBar.visible is false
+PASS mediaController.controls.startButton.visible is false
+
+Media has loaded metadata
+PASS mediaController.controls.controlsBar.visible is false
+PASS mediaController.controls.startButton.visible is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

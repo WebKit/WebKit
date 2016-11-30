@@ -45,10 +45,7 @@ class MediaControls extends LayoutNode
         this.statusLabel = new StatusLabel(this)
         this.timeControl = new TimeControl(this);
 
-        this.controlsBar = new LayoutItem({
-            element: `<div class="controls-bar">`,
-            layoutDelegate: this
-        });
+        this.controlsBar = new ControlsBar;
 
         this.airplayPlacard = new AirplayPlacard(this);
         this.pipPlacard = new PiPPlacard(this);

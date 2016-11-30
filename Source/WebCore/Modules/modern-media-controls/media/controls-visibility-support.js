@@ -23,62 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaControllerSupport
+class ControlsVisibilitySupport extends MediaControllerSupport
 {
 
     constructor(mediaController)
     {
-        this.mediaController = mediaController;
+        super(mediaController);
 
-        for (let eventType of this.mediaEvents)
-            mediaController.media.addEventListener(eventType, this);
-
-        this.syncControl();
-
-        if (!this.control)
-            return;
-
-        this.control.uiDelegate = this;
-    }
-
-    // Public
-
-    destroy()
-    {
-        const media = this.mediaController.media;
-        for (let eventType of this.mediaEvents)
-            media.removeEventListener(eventType, this);
-
-        if (this.control)
-            this.control.uiDelegate = null;
+        this._controlsAttributeObserver = new MutationObserver(this.syncControl.bind(this));
+        this._controlsAttributeObserver.observe(mediaController.media, { attributes: true, attributeFilter: ["controls"] });
     }
 
     // Protected
 
-    get control()
+    destroy()
     {
-        // Implemented by subclasses.
+        this._controlsAttributeObserver.disconnect();
     }
 
     get mediaEvents()
     {
-        // Implemented by subclasses.
-        return [];
-    }
-
-    buttonWasClicked(control)
-    {
-        // Implemented by subclasses.
-    }
-
-    handleEvent(event)
-    {
-        // Implemented by subclasses.
-        this.syncControl();
+        return ["loadedmetadata"];
     }
 
     syncControl()
     {
-        // Implemented by subclasses.
+        let shouldShowControls = this.mediaController.media.controls;
+        if (media instanceof HTMLVideoElement)
+            shouldShowControls = shouldShowControls && this.mediaController.media.readyState > HTMLMediaElement.HAVE_NOTHING;
+
+        this.mediaController.controls.startButton.visible = shouldShowControls;
+        this.mediaController.controls.controlsBar.visible = shouldShowControls;
     }
+
 }

@@ -22,7 +22,7 @@ PASS mediaControls.timeControl instanceof TimeControl is true
 PASS mediaControls.airplayPlacard instanceof AirplayPlacard is true
 PASS mediaControls.pipPlacard instanceof PiPPlacard is true
 
-PASS mediaControls.controlsBar instanceof LayoutItem is true
+PASS mediaControls.controlsBar instanceof ControlsBar is true
 PASS mediaControls.controlsBar.element.localName is "div"
 PASS mediaControls.controlsBar.element.className is "controls-bar"
 

@@ -15,7 +15,7 @@
     }
     
 </style>
-<video src="../../content/test.mp4"></video>
+<video src="../../content/test.mp4" controls autoplay></video>
 <div id="host"></div>
 <script type="text/javascript">
 
@@ -29,10 +29,14 @@ const mediaController = createControls(container, media, null);
 
 mediaController.controls.showsStartButton = false;
 
-media.addEventListener("canplaythrough", () => {
+scheduler.frameDidFire = function() {
+    if (media.paused)
+        return;
+
+    media.pause();
 
     media.addEventListener("timeupdate", () => {
-        shouldBe("media.currentTime", "3.1872");
+        shouldBeCloseTo("media.currentTime", 3.1872, 0.2);
         container.remove();
         media.remove();
         finishJSTest();
@@ -46,7 +50,7 @@ media.addEventListener("canplaythrough", () => {
     eventSender.mouseMoveTo(centerX, centerY);
     eventSender.mouseDown();
     eventSender.mouseUp();
-});
+};
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

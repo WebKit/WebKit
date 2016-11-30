@@ -22,6 +22,7 @@ controls/rewind-button.js
 controls/forward-button.js
 controls/buttons-container.js
 controls/status-label.js
+controls/controls-bar.js
 controls/media-controls.js
 controls/ios-inline-media-controls.js
 controls/macos-media-controls.js
@@ -32,6 +33,7 @@ controls/airplay-placard.js
 controls/pip-placard.js
 media/media-controller-support.js
 media/airplay-support.js
+media/controls-visibility-support.js
 media/elapsed-time-support.js
 media/fullscreen-support.js
 media/mute-support.js

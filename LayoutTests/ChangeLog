@@ -1,3 +1,36 @@
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Only show controls when the controls attribute is set
+        https://bugs.webkit.org/show_bug.cgi?id=165175
+
+        We add new tests to check that the media's "control" attribute is respected. We also update a
+        series of tests to be more robust and turn the media "controls" attribute on so that the controls
+        bar is displayed as required by the tests.
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-audio-expected.txt: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-audio.html: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-expected.txt: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off.html: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio-expected.txt: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio.html: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-expected.txt: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on.html: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle-expected.txt: Added.
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle.html: Added.
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-click.html:
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+        * media/modern-media-controls/placard-support/placard-support-airplay.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-click-expected.txt:
+        * media/modern-media-controls/scrubber-support/scrubber-support-click.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag-expected.txt:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html:
+        * media/modern-media-controls/volume-support/volume-support-click.html:
+        * media/modern-media-controls/volume-support/volume-support-drag.html:
+
 2016-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html as flaky on ios-simulator.
