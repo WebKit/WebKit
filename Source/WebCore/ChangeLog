@@ -1,3 +1,19 @@
+2016-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: layoutState->m_renderer == this in WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage
+        https://bugs.webkit.org/show_bug.cgi?id=155364
+        <rdar://problem/27720461>
+
+        Reviewed by David Hyatt.
+
+        RenderNamedFlowThread is considered to be a root for the current renderer context so
+        we need to bail out from the containing block traversal here (like we do for the RenderView). 
+
+        Test: fast/replaced/replaced-element-with-percentage-width-inside-flow-asserts.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Send operations off to the server in batches instead of one at a time.
