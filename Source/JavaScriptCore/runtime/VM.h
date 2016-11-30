@@ -310,6 +310,7 @@ public:
     Strong<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
     Strong<Structure> webAssemblyExecutableStructure;
+    Strong<Structure> webAssemblyFunctionCellStructure;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;
     Strong<Structure> regExpStructure;

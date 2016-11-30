@@ -30,15 +30,17 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
-#include "JSModuleNamespaceObject.h"
-#include "JSModuleRecord.h"
+#include "JSModuleEnvironment.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "WebAssemblyInstancePrototype.h"
+#include "WebAssemblyModuleRecord.h"
 
 #include "WebAssemblyInstanceConstructor.lut.h"
 
 namespace JSC {
+
+static const bool verbose = false;
 
 const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyInstance, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
 
@@ -54,9 +56,10 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
     auto* globalObject = state->lexicalGlobalObject();
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(state->argument(0));
-    if (!module)
+    JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(state->argument(0));
+    if (!jsModule)
         return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(state->argument(0)))));
+    const Wasm::ModuleInformation& moduleInformation = jsModule->moduleInformation();
 
     // If the importObject parameter is not undefined and Type(importObject) is not Object, a TypeError is thrown.
     JSValue importArgument = state->argument(1);
@@ -65,29 +68,33 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
         return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
-    if (module->moduleInformation()->imports.size() && !importObject)
+    if (moduleInformation.imports.size() && !importObject)
         return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be Object because the WebAssembly.Module has imports"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
-    // FIXME String things from https://bugs.webkit.org/show_bug.cgi?id=164023
-    // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
-    IdentifierSet instanceExports;
-    for (const auto& name : instanceExports) {
-        // FIXME validate according to Module.Instance spec.
-        (void)name;
-    }
-    Identifier moduleKey;
+    Identifier moduleKey = Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
     SourceCode sourceCode;
     VariableEnvironment declaredVariables;
     VariableEnvironment lexicalVariables;
-    auto* moduleRecord = JSModuleRecord::create(state, vm, globalObject->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto* moduleNamespaceObject = JSModuleNamespaceObject::create(state, globalObject, globalObject->moduleNamespaceObjectStructure(), moduleRecord, instanceExports);
+    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(state, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), globalObject->WebAssemblyInstanceStructure());
+    Structure* instanceStructure = InternalFunction::createSubclassStructure(state, state->newTarget(), globalObject->WebAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(JSWebAssemblyInstance::create(vm, structure, moduleNamespaceObject));
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(state));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    moduleRecord->link(state, instance);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (verbose)
+        moduleRecord->dump();
+    // FIXME the following should be in JSWebAssemblyInstance instead of here. https://bugs.webkit.org/show_bug.cgi?id=165121
+    instance->putDirect(vm, Identifier::fromString(&vm, "exports"), JSValue(moduleRecord->moduleEnvironment()), None);
+    JSValue startResult = moduleRecord->evaluate(state);
+    UNUSED_PARAM(startResult);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    return JSValue::encode(instance);
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(ExecState* state)

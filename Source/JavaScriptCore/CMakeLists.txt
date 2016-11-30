@@ -644,6 +644,7 @@ set(JavaScriptCore_SOURCES
     profiler/ProfilerProfiledBytecodes.cpp
     profiler/ProfilerUID.cpp
 
+    runtime/AbstractModuleRecord.cpp
     runtime/ArgList.cpp
     runtime/ArrayBuffer.cpp
     runtime/ArrayBufferNeuteringWatchpoint.cpp
@@ -912,12 +913,15 @@ set(JavaScriptCore_SOURCES
     wasm/js/JSWebAssemblyTable.cpp
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
+    wasm/js/WebAssemblyFunction.cpp
+    wasm/js/WebAssemblyFunctionCell.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp
     wasm/js/WebAssemblyInstancePrototype.cpp
     wasm/js/WebAssemblyMemoryConstructor.cpp
     wasm/js/WebAssemblyMemoryPrototype.cpp
     wasm/js/WebAssemblyModuleConstructor.cpp
     wasm/js/WebAssemblyModulePrototype.cpp
+    wasm/js/WebAssemblyModuleRecord.cpp
     wasm/js/WebAssemblyPrototype.cpp
     wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
     wasm/js/WebAssemblyRuntimeErrorPrototype.cpp

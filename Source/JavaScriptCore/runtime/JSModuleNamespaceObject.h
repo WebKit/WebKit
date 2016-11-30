@@ -30,14 +30,14 @@
 
 namespace JSC {
 
-class JSModuleRecord;
+class AbstractModuleRecord;
 
 class JSModuleNamespaceObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | GetOwnPropertySlotIsImpureForPropertyAbsence;
 
-    static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
+    static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
     {
         JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(exec->vm().heap)) JSModuleNamespaceObject(exec->vm(), structure);
         object->finishCreation(exec, globalObject, moduleRecord, exports);
@@ -58,10 +58,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
+    AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
 protected:
-    JS_EXPORT_PRIVATE void finishCreation(ExecState*, JSGlobalObject*, JSModuleRecord*, const IdentifierSet& exports);
+    JS_EXPORT_PRIVATE void finishCreation(ExecState*, JSGlobalObject*, AbstractModuleRecord*, const IdentifierSet& exports);
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
 
 private:
@@ -71,7 +71,7 @@ private:
     typedef WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> OrderedIdentifierSet;
 
     OrderedIdentifierSet m_exports;
-    WriteBarrier<JSModuleRecord> m_moduleRecord;
+    WriteBarrier<AbstractModuleRecord> m_moduleRecord;
 };
 
 } // namespace JSC

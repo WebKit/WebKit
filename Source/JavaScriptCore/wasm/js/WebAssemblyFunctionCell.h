@@ -27,53 +27,31 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmFormat.h"
-#include "WasmOps.h"
-#include "WasmParser.h"
-#include <wtf/Vector.h>
+#include "JSCell.h"
+#include "WebAssemblyFunction.h"
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-class ModuleParser : public Parser {
+class WebAssemblyFunctionCell : public JSCell {
 public:
+    typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static const bool needsDestruction = true;
 
-    static const unsigned magicNumber = 0xc;
+    static WebAssemblyFunctionCell* create(VM&, CallableWebAssemblyFunction&&);
+    static void destroy(JSCell*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(sourceBuffer, sourceLength)
-        , m_vm(vm)
-    {
-    }
-    ModuleParser(VM* vm, const Vector<uint8_t>& sourceBuffer)
-        : ModuleParser(vm, sourceBuffer.data(), sourceBuffer.size())
-    {
-    }
+    DECLARE_INFO;
 
-    bool WARN_UNUSED_RETURN parse();
-    bool WARN_UNUSED_RETURN failed() const { return m_failed; }
-    const String& errorMessage() const
-    {
-        RELEASE_ASSERT(failed());
-        return m_errorMessage;
-    }
-
-    std::unique_ptr<ModuleInformation>& moduleInformation()
-    {
-        RELEASE_ASSERT(!failed());
-        return m_module;
-    }
+    const CallableWebAssemblyFunction& function() const { return m_function; }
 
 private:
-#define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
-    FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
-#undef WASM_SECTION_DECLARE_PARSER
+    WebAssemblyFunctionCell(VM&, CallableWebAssemblyFunction&&);
 
-    VM* m_vm;
-    std::unique_ptr<ModuleInformation> m_module;
-    bool m_failed { true };
-    String m_errorMessage;
+    CallableWebAssemblyFunction m_function;
 };
 
-} } // namespace JSC::Wasm
+} // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

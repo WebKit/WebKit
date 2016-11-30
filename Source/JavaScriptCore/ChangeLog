@@ -1,3 +1,164 @@
+2016-11-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: improve Instance
+        https://bugs.webkit.org/show_bug.cgi?id=164757
+
+        Reviewed by Keith Miller.
+
+        An Instance's `exports` property wasn't populated with exports.
+
+        According to the spec [0], `exports` should present itself as a WebAssembly
+        Module Record. In order to do this we need to split JSModuleRecord into
+        AbstractModuleRecord (without the `link` and `evaluate` functions), and
+        JSModuleRecord (which implements link and evaluate). We can then have a separate
+        WebAssemblyModuleRecord which shares most of the implementation.
+
+        `exports` then maps function names to WebAssemblyFunction and
+        WebAssemblyFunctionCell, which call into the B3-generated WebAssembly code.
+
+        A follow-up patch will do imports.
+
+        A few things of note:
+
+         - Use Identifier instead of String. They get uniqued, we need them for the JSModuleNamespaceObject. This is safe because JSWebAssemblyModule creation is on the main thread.
+         - JSWebAssemblyInstance needs to refer to the JSWebAssemblyModule used to create it, because the module owns the code, identifiers, etc. The world would be very sad if it got GC'd.
+         - Instance.exports shouldn't use putWithoutTransition because it affects all Structures, whereas here each instance needs its own exports.
+         - Expose the compiled functions, and pipe them to the InstanceConstructor. Start moving things around to split JSModuleRecord out into JS and WebAssembly parts.
+
+          [0]: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/AbstractModuleRecord.cpp: Copied from Source/JavaScriptCore/runtime/JSModuleRecord.cpp, which I split in two
+        (JSC::AbstractModuleRecord::AbstractModuleRecord):
+        (JSC::AbstractModuleRecord::destroy):
+        (JSC::AbstractModuleRecord::finishCreation):
+        (JSC::AbstractModuleRecord::visitChildren):
+        (JSC::AbstractModuleRecord::appendRequestedModule):
+        (JSC::AbstractModuleRecord::addStarExportEntry):
+        (JSC::AbstractModuleRecord::addImportEntry):
+        (JSC::AbstractModuleRecord::addExportEntry):
+        (JSC::identifierToJSValue):
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        (JSC::AbstractModuleRecord::ResolveQuery::ResolveQuery):
+        (JSC::AbstractModuleRecord::ResolveQuery::isEmptyValue):
+        (JSC::AbstractModuleRecord::ResolveQuery::isDeletedValue):
+        (JSC::AbstractModuleRecord::ResolveQuery::Hash::hash):
+        (JSC::AbstractModuleRecord::ResolveQuery::Hash::equal):
+        (JSC::AbstractModuleRecord::cacheResolution):
+        (JSC::getExportedNames):
+        (JSC::AbstractModuleRecord::getModuleNamespace):
+        (JSC::printableName):
+        (JSC::AbstractModuleRecord::dump):
+        * runtime/AbstractModuleRecord.h: Copied from Source/JavaScriptCore/runtime/JSModuleRecord.h.
+        (JSC::AbstractModuleRecord::ImportEntry::isNamespace):
+        (JSC::AbstractModuleRecord::sourceCode):
+        (JSC::AbstractModuleRecord::moduleKey):
+        (JSC::AbstractModuleRecord::requestedModules):
+        (JSC::AbstractModuleRecord::exportEntries):
+        (JSC::AbstractModuleRecord::importEntries):
+        (JSC::AbstractModuleRecord::starExportEntries):
+        (JSC::AbstractModuleRecord::declaredVariables):
+        (JSC::AbstractModuleRecord::lexicalVariables):
+        (JSC::AbstractModuleRecord::moduleEnvironment):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::webAssemblyModuleRecordStructure):
+        (JSC::JSGlobalObject::webAssemblyFunctionStructure):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::create):
+        (JSC::JSModuleEnvironment::finishCreation):
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        (JSC::JSModuleEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSModuleEnvironment::put):
+        (JSC::JSModuleEnvironment::deleteProperty):
+        * runtime/JSModuleEnvironment.h:
+        (JSC::JSModuleEnvironment::create):
+        (JSC::JSModuleEnvironment::offsetOfModuleRecord):
+        (JSC::JSModuleEnvironment::allocationSize):
+        (JSC::JSModuleEnvironment::moduleRecord):
+        (JSC::JSModuleEnvironment::moduleRecordSlot):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlot):
+        * runtime/JSModuleNamespaceObject.h:
+        (JSC::JSModuleNamespaceObject::create):
+        (JSC::JSModuleNamespaceObject::moduleRecord):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::createStructure):
+        (JSC::JSModuleRecord::create):
+        (JSC::JSModuleRecord::JSModuleRecord):
+        (JSC::JSModuleRecord::destroy):
+        (JSC::JSModuleRecord::finishCreation):
+        (JSC::JSModuleRecord::visitChildren):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSModuleRecord.h:
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/JSWebAssembly.h:
+        * wasm/WasmFormat.h: use Identifier instead of String
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::ModuleParser::parseType):
+        (JSC::Wasm::ModuleParser::parseImport): fix off-by-one
+        (JSC::Wasm::ModuleParser::parseFunction):
+        (JSC::Wasm::ModuleParser::parseExport):
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::module):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        (JSC::JSWebAssemblyModule::compiledFunctions):
+        (JSC::JSWebAssemblyModule::exportSymbolTable):
+        * wasm/js/WebAssemblyFunction.cpp: Added.
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::createStructure):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::finishCreation):
+        * wasm/js/WebAssemblyFunction.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyModule.h.
+        (JSC::CallableWebAssemblyFunction::CallableWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::webAssemblyFunctionCell):
+        * wasm/js/WebAssemblyFunctionCell.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyInstance.h.
+        (JSC::WebAssemblyFunctionCell::create):
+        (JSC::WebAssemblyFunctionCell::WebAssemblyFunctionCell):
+        (JSC::WebAssemblyFunctionCell::destroy):
+        (JSC::WebAssemblyFunctionCell::createStructure):
+        * wasm/js/WebAssemblyFunctionCell.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyInstance.h.
+        (JSC::WebAssemblyFunctionCell::function):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp: Added.
+        (JSC::WebAssemblyModuleRecord::createStructure):
+        (JSC::WebAssemblyModuleRecord::create):
+        (JSC::WebAssemblyModuleRecord::WebAssemblyModuleRecord):
+        (JSC::WebAssemblyModuleRecord::destroy):
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::visitChildren):
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyModuleRecord.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyModule.h.
+
 2016-11-29  Saam Barati  <sbarati@apple.com>
 
         We should be able optimize the pattern where we spread a function's rest parameter to another call

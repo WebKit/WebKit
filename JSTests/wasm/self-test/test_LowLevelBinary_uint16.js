@@ -1,7 +1,7 @@
 import LowLevelBinary from '../LowLevelBinary.js';
 
 let values = [];
-for (let i = 0; i !== 0xFFFF; ++i) values.push(i);
+for (let i = 0; i <= 0xFFFF; ++i) values.push(i);
 
 for (const i of values) {
     let b = new LowLevelBinary();

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "IdentifierInlines.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include "WasmOps.h"
@@ -123,7 +124,8 @@ bool ModuleParser::parse()
                 m_errorMessage = "couldn't parse section " #NAME ": " DESCRIPTION; \
                 return false; \
             } \
-        } break;
+            break; \
+        }
         FOR_EACH_WASM_SECTION(WASM_SECTION_PARSE)
 #undef WASM_SECTION_PARSE
 
@@ -167,7 +169,7 @@ bool ModuleParser::parseType()
         int8_t type;
         if (!parseInt7(type))
             return false;
-        if (type != -0x20) // Function type constant.
+        if (type != -0x20) // Function type constant. FIXME auto-generate from JSON file.
             return false;
 
         if (verbose)
@@ -221,41 +223,49 @@ bool ModuleParser::parseImport()
         return false;
 
     for (uint32_t importNumber = 0; importNumber != importCount; ++importNumber) {
-        Import i;
+        Import imp;
         uint32_t moduleLen;
         uint32_t fieldLen;
         if (!parseVarUInt32(moduleLen))
             return false;
-        if (!consumeUTF8String(i.module, moduleLen))
+        String moduleString;
+        if (!consumeUTF8String(moduleString, moduleLen))
             return false;
+        imp.module = Identifier::fromString(m_vm, moduleString);
         if (!parseVarUInt32(fieldLen))
             return false;
-        if (!consumeUTF8String(i.field, fieldLen))
+        String fieldString;
+        if (!consumeUTF8String(fieldString, fieldLen))
             return false;
-        if (!parseExternalKind(i.kind))
+        imp.field = Identifier::fromString(m_vm, fieldString);
+        if (!parseExternalKind(imp.kind))
             return false;
-        switch (i.kind) {
+        switch (imp.kind) {
         case External::Function: {
             uint32_t functionSignatureIndex;
             if (!parseVarUInt32(functionSignatureIndex))
                 return false;
-            if (functionSignatureIndex > m_module->signatures.size())
+            if (functionSignatureIndex >= m_module->signatures.size())
                 return false;
-            i.functionSignature = &m_module->signatures[functionSignatureIndex];
-        } break;
-        case External::Table:
+            imp.functionSignature = &m_module->signatures[functionSignatureIndex];
+            break;
+        }
+        case External::Table: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
             break;
-        case External::Memory:
+        }
+        case External::Memory: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
             break;
-        case External::Global:
+        }
+        case External::Global: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
             // In the MVP, only immutable global variables can be imported.
             break;
         }
+        }
 
-        m_module->imports.uncheckedAppend(i);
+        m_module->imports.uncheckedAppend(imp);
     }
 
     return true;
@@ -277,7 +287,10 @@ bool ModuleParser::parseFunction()
         if (typeNumber >= m_module->signatures.size())
             return false;
 
-        m_module->functions.uncheckedAppend({ &m_module->signatures[typeNumber], 0, 0 });
+        // The Code section fixes up start and end.
+        size_t start = 0;
+        size_t end = 0;
+        m_module->functions.uncheckedAppend({ &m_module->signatures[typeNumber], start, end });
     }
 
     return true;
@@ -339,36 +352,40 @@ bool ModuleParser::parseExport()
         return false;
 
     for (uint32_t exportNumber = 0; exportNumber != exportCount; ++exportNumber) {
-        Export e;
+        Export exp;
         uint32_t fieldLen;
         if (!parseVarUInt32(fieldLen))
             return false;
-        if (!consumeUTF8String(e.field, fieldLen))
+        String fieldString;
+        if (!consumeUTF8String(fieldString, fieldLen))
             return false;
-        if (!parseExternalKind(e.kind))
+        exp.field = Identifier::fromString(m_vm, fieldString);
+        if (!parseExternalKind(exp.kind))
             return false;
-        switch (e.kind) {
+        switch (exp.kind) {
         case External::Function: {
-            uint32_t functionSignatureIndex;
-            if (!parseVarUInt32(functionSignatureIndex))
+            if (!parseVarUInt32(exp.functionIndex))
                 return false;
-            if (functionSignatureIndex >= m_module->signatures.size())
+            if (exp.functionIndex >= m_module->functions.size())
                 return false;
-            e.functionSignature = &m_module->signatures[functionSignatureIndex];
-        } break;
-        case External::Table:
+            break;
+        }
+        case External::Table: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
             break;
-        case External::Memory:
+        }
+        case External::Memory: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
             break;
-        case External::Global:
+        }
+        case External::Global: {
             // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
             // In the MVP, only immutable global variables can be exported.
             break;
         }
+        }
 
-        m_module->exports.uncheckedAppend(e);
+        m_module->exports.uncheckedAppend(exp);
     }
 
     return true;

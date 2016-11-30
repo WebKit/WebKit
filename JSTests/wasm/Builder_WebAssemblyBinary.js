@@ -82,7 +82,20 @@ const emitters = {
     },
 
     Global: (section, bin) => { throw new Error(`Not yet implemented`); },
-    Export: (section, bin) => { throw new Error(`Not yet implemented`); },
+    Export: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const entry of section.data) {
+            put(bin, "string", entry.field);
+            put(bin, "uint8", WASM.externalKindValue[entry.kind]);
+            switch (entry.kind) {
+            default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
+            case "Function": put(bin, "varuint32", entry.index); break;
+            case "Table": throw new Error(`Not yet implemented`);
+            case "Memory": throw new Error(`Not yet implemented`);
+            case "Global": throw new Error(`Not yet implemented`);
+            }
+        }
+    },
     Start: (section, bin) => { throw new Error(`Not yet implemented`); },
     Element: (section, bin) => { throw new Error(`Not yet implemented`); },
 

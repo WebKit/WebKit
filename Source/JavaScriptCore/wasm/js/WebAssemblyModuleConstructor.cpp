@@ -35,8 +35,10 @@
 #include "JSTypedArrays.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyModule.h"
+#include "SymbolTable.h"
 #include "WasmPlan.h"
 #include "WebAssemblyModulePrototype.h"
+#include <wtf/StdLibExtras.h>
 
 #include "WebAssemblyModuleConstructor.lut.h"
 
@@ -78,7 +80,14 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyModuleStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), plan.getCompiledFunctions()));
+    // The export symbol table is the same for all Instances of a Module.
+    SymbolTable* exportSymbolTable = SymbolTable::create(vm);
+    for (auto& exp : plan.getModuleInformation()->exports) {
+        auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
+        exportSymbolTable->set(NoLockingNecessary, exp.field.impl(), SymbolTableEntry(VarOffset(offset)));
+    }
+
+    return JSValue::encode(JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), plan.getCompiledFunctions(), exportSymbolTable));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)

@@ -342,6 +342,8 @@ public:
     
 #if ENABLE(WEBASSEMBLY)
     WriteBarrier<Structure> m_webAssemblyStructure;
+    WriteBarrier<Structure> m_webAssemblyModuleRecordStructure;
+    WriteBarrier<Structure> m_webAssemblyFunctionStructure;
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 
@@ -625,6 +627,10 @@ public:
     Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(); }
     Structure* moduleLoaderStructure() const { return m_moduleLoaderStructure.get(); }
     Structure* restParameterStructure() const { return arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous); }
+#if ENABLE(WEBASSEMBLY)
+    Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(); }
+    Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(); }
+#endif // ENABLE(WEBASSEMBLY)
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

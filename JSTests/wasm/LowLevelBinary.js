@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as assert from 'assert.js';
 import * as WASM from 'WASM.js';
 
 const _initialAllocationSize = 1024;
@@ -104,6 +105,14 @@ export default class LowLevelBinary {
         this._push8(v);
         this._push8(v >>> 8);
     }
+    uint24(v) {
+        if ((v & 0xFFFFFF) >>> 0 !== v)
+            throw new RangeError(`Invalid uint24 ${v}`);
+        this._maybeGrow(3);
+        this._push8(v);
+        this._push8(v >>> 8);
+        this._push8(v >>> 16);
+    }
     uint32(v) {
         if ((v & 0xFFFFFFFF) >>> 0 !== v)
             throw new RangeError(`Invalid uint32 ${v}`);
@@ -155,8 +164,24 @@ export default class LowLevelBinary {
     }
     string(str) {
         let patch = this.newPatchable("varuint32");
-        for (const char of str)
-            patch.uint16(char.charCodeAt());
+        for (const char of str) {
+            // Encode UTF-8 2003 code points.
+            const code = char.codePointAt();
+            if (code <= 0x007F) {
+                const utf8 = code;
+                patch.uint8(utf8);
+            } else if (code <= 0x07FF) {
+                const utf8 = 0x80C0 | ((code & 0x7C0) >> 6) | ((code & 0x3F) << 8);
+                patch.uint16(utf8);
+            } else if (code <= 0xFFFF) {
+                const utf8 = 0x8080E0 | ((code & 0xF000) >> 12) | ((code & 0xFC0) << 2) | ((code & 0x3F) << 16);
+                patch.uint24(utf8);
+            } else if (code <= 0x10FFFF) {
+                const utf8 = (0x808080F0 | ((code & 0x1C0000) >> 18) | ((code & 0x3F000) >> 4) | ((code & 0xFC0) << 10) | ((code & 0x3F) << 24)) >>> 0;
+                patch.uint32(utf8);
+            } else
+                throw new Error(`Unexpectedly large UTF-8 character code point '${char}' 0x${code.toString(16)}`);
+        }
         patch.apply();
     }
 
@@ -169,6 +194,10 @@ export default class LowLevelBinary {
     getUint16(at) {
         _getterRangeCheck(this, at, 2);
         return this._buf[at] | (this._buf[at + 1] << 8);
+    }
+    getUint24(at) {
+        _getterRangeCheck(this, at, 3);
+        return this._buf[at] | (this._buf[at + 1] << 8) | (this._buf[at + 2] << 16);
     }
     getUint32(at) {
         _getterRangeCheck(this, at, 4);
@@ -205,6 +234,11 @@ export default class LowLevelBinary {
         }
         return { value: v, next: at };
     }
+    getVaruint1(at) {
+        const res = this.getVaruint32(at);
+        if (res.value !== 0 && res.value !== 1) throw new Error(`Expected a varuint1, got value ${res.value}`);
+        return res;
+    }
     getVaruint7(at) {
         const res = this.getVaruint32(at);
         if (res.value > varuint7Max) throw new Error(`Expected a varuint7, got value ${res.value}`);
@@ -212,9 +246,39 @@ export default class LowLevelBinary {
     }
     getString(at) {
         const size = this.getVaruint32(at);
+        const last = size.next + size.value;
+        let i = size.next;
         let str = "";
-        for (let i = size.next; i !== size.next + size.value; i += 2)
-            str += String.fromCharCode(this.getUint16(i));
+        while (i < last) {
+            // Decode UTF-8 2003 code points.
+            const peek = this.getUint8(i);
+            let code;
+            if ((peek & 0x80) === 0x0) {
+                const utf8 = this.getUint8(i);
+                assert.eq(utf8 & 0x80, 0x00);
+                i += 1;
+                code = utf8;
+            } else if ((peek & 0xE0) === 0xC0) {
+                const utf8 = this.getUint16(i);
+                assert.eq(utf8 & 0xC0E0, 0x80C0);
+                i += 2;
+                code = ((utf8 & 0x1F) << 6) | ((utf8 & 0x3F00) >> 8);
+            } else if ((peek & 0xF0) === 0xE0) {
+                const utf8 = this.getUint24(i);
+                assert.eq(utf8 & 0xC0C0F0, 0x8080E0);
+                i += 3;
+                code = ((utf8 & 0xF) << 12) | ((utf8 & 0x3F00) >> 2) | ((utf8 & 0x3F0000) >> 16);
+            } else if ((peek & 0xF8) === 0xF0) {
+                const utf8 = this.getUint32(i);
+                assert.eq((utf8 & 0xC0C0C0F8) | 0, 0x808080F0 | 0);
+                i += 4;
+                code = ((utf8 & 0x7) << 18) | ((utf8 & 0x3F00) << 4) | ((utf8 & 0x3F0000) >> 10) | ((utf8 & 0x3F000000) >> 24);
+            } else
+                throw new Error(`Unexpectedly large UTF-8 initial byte 0x${peek.toString(16)}`);
+            str += String.fromCodePoint(code);
+        }
+        if (i !== last)
+            throw new Error(`String decoding read up to ${i}, expected ${last}, UTF-8 decoding was too greedy`);
         return str;
     }
 };

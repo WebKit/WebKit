@@ -27,36 +27,62 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
-#include "WasmFormat.h"
+#include "JSFunction.h"
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
-class SymbolTable;
+class JSGlobalObject;
+class WebAssemblyFunctionCell;
+class WebAssemblyInstance;
 
-class JSWebAssemblyModule : public JSDestructibleObject {
+namespace B3 {
+class Compilation;
+}
+
+namespace Wasm {
+struct Signature;
+}
+
+class CallableWebAssemblyFunction {
+    WTF_MAKE_NONCOPYABLE(CallableWebAssemblyFunction);
+    CallableWebAssemblyFunction() = delete;
+
 public:
-    typedef JSDestructibleObject Base;
+    CallableWebAssemblyFunction(CallableWebAssemblyFunction&&) = default;
 
-    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, Wasm::CompiledFunctions&, SymbolTable*);
+    const B3::Compilation* jsEntryPoint;
+    const Wasm::Signature* signature;
+    CallableWebAssemblyFunction(const B3::Compilation* jsEntryPoint, const Wasm::Signature* signature)
+        : jsEntryPoint(jsEntryPoint)
+        , signature(signature)
+    {
+    }
+};
+
+class WebAssemblyFunction : public JSFunction {
+public:
+    typedef JSFunction Base;
+
+    const static unsigned StructureFlags = Base::StructureFlags;
+
+    DECLARE_EXPORT_INFO;
+
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, int, const String&, JSWebAssemblyInstance*, CallableWebAssemblyFunction&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    DECLARE_INFO;
-
-    const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
-    const Wasm::CompiledFunctions& compiledFunctions() const { return m_compiledFunctions; }
-    SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
+    const WebAssemblyFunctionCell* webAssemblyFunctionCell() const { return m_functionCell.get(); }
 
 protected:
-    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, Wasm::CompiledFunctions&);
-    void finishCreation(VM&, SymbolTable*);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    void finishCreation(VM&, NativeExecutable*, int length, const String& name, JSWebAssemblyInstance*, WebAssemblyFunctionCell*);
+
 private:
-    std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
-    Wasm::CompiledFunctions m_compiledFunctions;
-    WriteBarrier<SymbolTable> m_exportSymbolTable;
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
+
+    WriteBarrier<JSWebAssemblyInstance> m_instance;
+    WriteBarrier<WebAssemblyFunctionCell> m_functionCell;
 };
 
 } // namespace JSC

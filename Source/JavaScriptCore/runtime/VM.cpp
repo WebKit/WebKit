@@ -72,6 +72,7 @@
 #include "JSPromiseDeferred.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSTemplateRegistryKey.h"
+#include "JSWebAssembly.h"
 #include "JSWithScope.h"
 #include "LLIntData.h"
 #include "Lexer.h"
@@ -259,6 +260,7 @@ VM::VM(VMType vmType, HeapType heapType)
     functionCodeBlockStructure.set(*this, FunctionCodeBlock::createStructure(*this, 0, jsNull()));
 #if ENABLE(WEBASSEMBLY)
     webAssemblyCodeBlockStructure.set(*this, WebAssemblyCodeBlock::createStructure(*this, 0, jsNull()));
+    webAssemblyFunctionCellStructure.set(*this, WebAssemblyFunctionCell::createStructure(*this, 0, jsNull()));
 #endif
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, 0, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));

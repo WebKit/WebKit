@@ -27,53 +27,38 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmFormat.h"
-#include "WasmOps.h"
-#include "WasmParser.h"
-#include <wtf/Vector.h>
+#include "AbstractModuleRecord.h"
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-class ModuleParser : public Parser {
+class JSWebAssemblyInstance;
+
+// Based on the WebAssembly.Instance specification
+// https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
+class WebAssemblyModuleRecord : public AbstractModuleRecord {
+    friend class LLIntOffsetsExtractor;
 public:
+    typedef AbstractModuleRecord Base;
 
-    static const unsigned magicNumber = 0xc;
+    DECLARE_EXPORT_INFO;
 
-    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(sourceBuffer, sourceLength)
-        , m_vm(vm)
-    {
-    }
-    ModuleParser(VM* vm, const Vector<uint8_t>& sourceBuffer)
-        : ModuleParser(vm, sourceBuffer.data(), sourceBuffer.size())
-    {
-    }
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 
-    bool WARN_UNUSED_RETURN parse();
-    bool WARN_UNUSED_RETURN failed() const { return m_failed; }
-    const String& errorMessage() const
-    {
-        RELEASE_ASSERT(failed());
-        return m_errorMessage;
-    }
-
-    std::unique_ptr<ModuleInformation>& moduleInformation()
-    {
-        RELEASE_ASSERT(!failed());
-        return m_module;
-    }
+    void link(ExecState*, JSWebAssemblyInstance*);
+    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
 private:
-#define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
-    FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
-#undef WASM_SECTION_DECLARE_PARSER
+    WebAssemblyModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 
-    VM* m_vm;
-    std::unique_ptr<ModuleInformation> m_module;
-    bool m_failed { true };
-    String m_errorMessage;
+    void finishCreation(ExecState*, VM&);
+    static void destroy(JSCell*);
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<JSWebAssemblyInstance> m_instance;
 };
 
-} } // namespace JSC::Wasm
+} // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

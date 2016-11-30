@@ -27,6 +27,6 @@ import Builder from '../Builder.js';
         .End()
         .WebAssembly();
     assert.eq(bin.hexdump().trim(),
-              ["00000000 00 61 73 6d 0c 00 00 00 00 0f 0a 4f 00 48 00 48  |·asm·······O·H·H|",
-               "00000010 00 41 00 49 00 de ad c0 fe                       |·A·I·····       |"].join("\n"));
+              ["00000000 00 61 73 6d 0c 00 00 00 00 0a 05 4f 48 48 41 49  |·asm·······OHHAI|",
+               "00000010 de ad c0 fe                                      |····            |"].join("\n"));
 })();

@@ -876,6 +876,8 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     if (Options::useWebAssembly()) {
         auto* webAssemblyPrototype = WebAssemblyPrototype::create(vm, this, WebAssemblyPrototype::createStructure(vm, this, m_objectPrototype.get()));
         m_webAssemblyStructure.set(vm, this, JSWebAssembly::createStructure(vm, this, webAssemblyPrototype));
+        m_webAssemblyModuleRecordStructure.set(vm, this, WebAssemblyModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
+        m_webAssemblyFunctionStructure.set(vm, this, WebAssemblyFunction::createStructure(vm, this, m_objectPrototype.get()));
         auto* webAssembly = JSWebAssembly::create(vm, this, m_webAssemblyStructure.get());
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), webAssembly, DontEnum);
 
@@ -1253,6 +1255,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
 #if ENABLE(WEBASSEMBLY)
     visitor.append(&thisObject->m_webAssemblyStructure);
+    visitor.append(&thisObject->m_webAssemblyModuleRecordStructure);
+    visitor.append(&thisObject->m_webAssemblyFunctionStructure);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_SIMPLE_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 

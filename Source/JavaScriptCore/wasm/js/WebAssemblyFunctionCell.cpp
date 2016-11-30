@@ -23,57 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebAssemblyFunctionCell.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmFormat.h"
-#include "WasmOps.h"
-#include "WasmParser.h"
-#include <wtf/Vector.h>
+#include "JSCInlines.h"
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-class ModuleParser : public Parser {
-public:
+const ClassInfo WebAssemblyFunctionCell::s_info = { "WebAssemblyFunctionCell", nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionCell) };
 
-    static const unsigned magicNumber = 0xc;
+WebAssemblyFunctionCell* WebAssemblyFunctionCell::create(VM& vm, CallableWebAssemblyFunction&& callable)
+{
+    WebAssemblyFunctionCell* nativeFunction = new (NotNull, allocateCell<WebAssemblyFunctionCell>(vm.heap)) WebAssemblyFunctionCell(vm, WTFMove(callable));
+    nativeFunction->finishCreation(vm);
+    return nativeFunction;
+}
 
-    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(sourceBuffer, sourceLength)
-        , m_vm(vm)
-    {
-    }
-    ModuleParser(VM* vm, const Vector<uint8_t>& sourceBuffer)
-        : ModuleParser(vm, sourceBuffer.data(), sourceBuffer.size())
-    {
-    }
+WebAssemblyFunctionCell::WebAssemblyFunctionCell(VM& vm, CallableWebAssemblyFunction&& callable)
+    : Base(vm, vm.webAssemblyFunctionCellStructure.get())
+    , m_function(WTFMove(callable))
+{
+}
 
-    bool WARN_UNUSED_RETURN parse();
-    bool WARN_UNUSED_RETURN failed() const { return m_failed; }
-    const String& errorMessage() const
-    {
-        RELEASE_ASSERT(failed());
-        return m_errorMessage;
-    }
+void WebAssemblyFunctionCell::destroy(JSCell* cell)
+{
+    WebAssemblyFunctionCell* nativeFunction = static_cast<WebAssemblyFunctionCell*>(cell);
+    nativeFunction->WebAssemblyFunctionCell::~WebAssemblyFunctionCell();
+}
 
-    std::unique_ptr<ModuleInformation>& moduleInformation()
-    {
-        RELEASE_ASSERT(!failed());
-        return m_module;
-    }
+Structure* WebAssemblyFunctionCell::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+}
 
-private:
-#define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
-    FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
-#undef WASM_SECTION_DECLARE_PARSER
-
-    VM* m_vm;
-    std::unique_ptr<ModuleInformation> m_module;
-    bool m_failed { true };
-    String m_errorMessage;
-};
-
-} } // namespace JSC::Wasm
+}
 
 #endif // ENABLE(WEBASSEMBLY)

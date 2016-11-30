@@ -26,10 +26,10 @@
 #include "config.h"
 #include "JSModuleNamespaceObject.h"
 
+#include "AbstractModuleRecord.h"
 #include "Error.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
-#include "JSModuleRecord.h"
 #include "JSPropertyNameIterator.h"
 
 namespace JSC {
@@ -45,7 +45,7 @@ JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
+void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -120,12 +120,12 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
     case PropertySlot::InternalMethodType::GetOwnProperty: {
-        JSModuleRecord* moduleRecord = thisObject->moduleRecord();
+        AbstractModuleRecord* moduleRecord = thisObject->moduleRecord();
 
-        JSModuleRecord::Resolution resolution = moduleRecord->resolveExport(exec, Identifier::fromUid(exec, propertyName.uid()));
-        ASSERT(resolution.type != JSModuleRecord::Resolution::Type::NotFound && resolution.type != JSModuleRecord::Resolution::Type::Ambiguous);
+        AbstractModuleRecord::Resolution resolution = moduleRecord->resolveExport(exec, Identifier::fromUid(exec, propertyName.uid()));
+        ASSERT(resolution.type != AbstractModuleRecord::Resolution::Type::NotFound && resolution.type != AbstractModuleRecord::Resolution::Type::Ambiguous);
 
-        JSModuleRecord* targetModule = resolution.moduleRecord;
+        AbstractModuleRecord* targetModule = resolution.moduleRecord;
         JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
 
         PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);

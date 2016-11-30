@@ -35,10 +35,10 @@
 
 namespace JSC {
 
-JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions)
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions, SymbolTable* exportSymbolTable)
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, moduleInformation, compiledFunctions);
-    instance->finishCreation(vm);
+    instance->finishCreation(vm, exportSymbolTable);
     return instance;
 }
 
@@ -54,10 +54,11 @@ JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::uniq
 {
 }
 
-void JSWebAssemblyModule::finishCreation(VM& vm)
+void JSWebAssemblyModule::finishCreation(VM& vm, SymbolTable* exportSymbolTable)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+    m_exportSymbolTable.set(vm, this, exportSymbolTable);
 }
 
 void JSWebAssemblyModule::destroy(JSCell* cell)
@@ -71,6 +72,7 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_exportSymbolTable);
 }
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyModule) };

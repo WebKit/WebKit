@@ -7,9 +7,8 @@ const values = [
     "Il dit non avec la tête, mais il dit oui avec le cœur",
     "焼きたて!! ジャぱん",
     "(╯°□°）╯︵ ┻━┻",
-    "�",
-    // Should we use code points instead of UTF-16?
-    //        The following doesn't work: "👨‍❤️‍💋‍👨",
+    "$¢€𐍈�",
+    "👨‍❤️‍💋‍👨",
 ];
 
 for (const i of values) {

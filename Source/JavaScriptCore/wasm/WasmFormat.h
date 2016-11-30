@@ -30,8 +30,8 @@
 #include "B3Compilation.h"
 #include "B3Type.h"
 #include "CodeLocation.h"
+#include "Identifier.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -115,8 +115,8 @@ struct Signature {
 };
     
 struct Import {
-    String module;
-    String field;
+    Identifier module;
+    Identifier field;
     External::Kind kind;
     union {
         Signature* functionSignature;
@@ -135,10 +135,10 @@ struct FunctionInformation {
 class Memory;
 
 struct Export {
-    String field;
+    Identifier field;
     External::Kind kind;
     union {
-        Signature* functionSignature;
+        uint32_t functionIndex;
         // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
         // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
         // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
@@ -155,9 +155,6 @@ struct ModuleInformation {
     ~ModuleInformation();
 };
 
-struct FunctionCompilation;
-typedef Vector<std::unique_ptr<FunctionCompilation>> CompiledFunctions;
-
 struct UnlinkedCall {
     CodeLocationCall callLocation;
     size_t functionIndex;
@@ -168,6 +165,8 @@ struct FunctionCompilation {
     std::unique_ptr<B3::Compilation> code;
     std::unique_ptr<B3::Compilation> jsEntryPoint;
 };
+
+typedef Vector<std::unique_ptr<FunctionCompilation>> CompiledFunctions;
 
 } } // namespace JSC::Wasm
 

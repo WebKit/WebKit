@@ -66,5 +66,25 @@ const _json = filename => {
     }
 }
 
+const _dump = (what, name, pad = '    ') => {
+    const value = v => {
+        try { return `"${v}"`; }
+        catch (e) { return `Error: "${e.message}"`; }
+    };
+    let s = `${pad}${name} ${typeof what}: ${value(what)}`;
+    for (let p in what) {
+        s += `\n${pad}${pad}${p}: ${value(what[p])} ${typeof v}`;
+        s += '\n' + _dump(what[p], p, pad + pad);
+    }
+    return s;
+};
+
 // Use underscore names to avoid clashing with builtin names.
-export { _eval as eval, _read as read, _load as load, _json as json, _global as global };
+export {
+    _dump as dump,
+    _eval as eval,
+    _read as read,
+    _load as load,
+    _json as json,
+    _global as global
+};

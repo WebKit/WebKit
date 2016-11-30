@@ -26,11 +26,11 @@
 #include "config.h"
 #include "JSScope.h"
 
+#include "AbstractModuleRecord.h"
 #include "Exception.h"
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
-#include "JSModuleRecord.h"
 #include "JSWithScope.h"
 #include "JSCInlines.h"
 #include "VariableEnvironment.h"
@@ -78,10 +78,10 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
 
         if (scope->type() == ModuleEnvironmentType) {
             JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
-            JSModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
-            JSModuleRecord::Resolution resolution = moduleRecord->resolveImport(exec, ident);
-            if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
-                JSModuleRecord* importedRecord = resolution.moduleRecord;
+            AbstractModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
+            AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(exec, ident);
+            if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
+                AbstractModuleRecord* importedRecord = resolution.moduleRecord;
                 JSModuleEnvironment* importedEnvironment = importedRecord->moduleEnvironment();
                 SymbolTable* symbolTable = importedEnvironment->symbolTable();
                 ConcurrentJSLocker locker(symbolTable->m_lock);
@@ -278,7 +278,7 @@ void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, VariableEnvironmen
             continue;
 
         if (scope->isModuleScope()) {
-            JSModuleRecord* moduleRecord = jsCast<JSModuleEnvironment*>(scope)->moduleRecord();
+            AbstractModuleRecord* moduleRecord = jsCast<JSModuleEnvironment*>(scope)->moduleRecord();
             for (const auto& pair : moduleRecord->importEntries())
                 result.add(pair.key);
         }

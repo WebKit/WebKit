@@ -28,15 +28,18 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AbstractModuleRecord.h"
 #include "JSCInlines.h"
+#include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSWebAssemblyModule.h"
 
 namespace JSC {
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSModuleNamespaceObject* moduleNamespaceObject)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, structure);
-    instance->finishCreation(vm, moduleNamespaceObject);
+    instance->finishCreation(vm, module, moduleNamespaceObject);
     return instance;
 }
 
@@ -50,11 +53,12 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure)
 {
 }
 
-void JSWebAssemblyInstance::finishCreation(VM& vm, JSModuleNamespaceObject* moduleNamespaceObject)
+void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     Base::finishCreation(vm);
+    m_module.set(vm, this, module);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "exports"), m_moduleNamespaceObject.get(), None);
+    // FIXME this should put the module namespace object onto the exports object, instead of moduleEnvironment in WebAssemblyInstanceConstructor. https://bugs.webkit.org/show_bug.cgi?id=165121
     ASSERT(inherits(info()));
 }
 
@@ -69,6 +73,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_module);
     visitor.append(&thisObject->m_moduleNamespaceObject);
 }
 

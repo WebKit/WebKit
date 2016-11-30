@@ -1,3 +1,43 @@
+2016-11-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: improve Instance
+        https://bugs.webkit.org/show_bug.cgi?id=164757
+
+        Reviewed by Keith Miller.
+
+        An Instance's `exports` property wasn't populated with exports.
+
+        A follow-up patch will do imports.
+
+        A few things of note:
+
+         - LowLevelBinary: support 3-byte integers.
+         - LowLevelBinary: support proper UTF-8 2003 code points (instead of UTF-16).
+
+        * wasm/Builder.js:
+        * wasm/Builder_WebAssemblyBinary.js: wire up exports, stub other things out some more
+        (const.emitters.Export):
+        * wasm/LowLevelBinary.js:
+        (export.default.LowLevelBinary.prototype.uint24): add, used for UTF-8
+        (export.default.LowLevelBinary.prototype.string): support UTF-8
+        (export.default.LowLevelBinary.prototype.getUint24): add, used for UTF-8
+        (export.default.LowLevelBinary.prototype.getVaruint1): was missing
+        (export.default.LowLevelBinary.prototype.getString): support UTF-8
+        (export.default.LowLevelBinary):
+        * wasm/js-api/test_Instance.js: instance.exports.answer() // <-- this is where the magic of this entire patch is
+        (ExportedAnswerI32):
+        * wasm/js-api/test_basic_api.js: punt test to later
+        (const.c.in.constructorProperties.switch):
+        * wasm/self-test/test_BuilderWebAssembly.js: UTF-8
+        (CustomSection):
+        * wasm/self-test/test_LowLevelBinary_string.js: UTF-8 now works
+        * wasm/self-test/test_LowLevelBinary_uint16.js: was missing one value
+        * wasm/self-test/test_LowLevelBinary_uint24.js: Copied from JSTests/wasm/self-test/test_LowLevelBinary_uint8.js.
+        * wasm/self-test/test_LowLevelBinary_uint8.js: was missing one value
+        * wasm/self-test/test_LowLevelBinary_varuint1.js: Added.
+        * wasm/utilities.js: this `dump` thing was useful
+        (const._dump):
+
 2016-11-29  Saam Barati  <sbarati@apple.com>
 
         We should be able optimize the pattern where we spread a function's rest parameter to another call

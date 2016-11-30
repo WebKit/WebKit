@@ -58,7 +58,7 @@ void Plan::run()
     if (verbose)
         dataLogLn("Starting plan.");
     {
-        ModuleParser moduleParser(m_source, m_sourceLength);
+        ModuleParser moduleParser(m_vm, m_source, m_sourceLength);
         if (!moduleParser.parse()) {
             if (verbose)
                 dataLogLn("Parsing module failed: ", moduleParser.errorMessage());

@@ -216,7 +216,10 @@ const _checkImms = (op, imms, expectedImms, ret) => {
             // Control:
         case "default_target": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
         case "relative_depth": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
-        case "sig": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
+        case "sig":
+            // FIXME this should be isValidBlockType https://bugs.webkit.org/show_bug.cgi?id=164724
+            assert.truthy(WASM.isValidValueType(imms[idx]), `Invalid block type on ${op}: "${imms[idx]}"`);
+            break;
         case "target_count": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
         case "target_table": throw new Error(`Unimplemented: "${expect.name}" on "${op}"`);
         default: throw new Error(`Implementation problem: unhandled immediate "${expect.name}" on "${op}"`);
@@ -355,6 +358,7 @@ export default class Builder {
                     return typeBuilder;
                 };
                 break;
+
             case "Import":
                 this[section] = function() {
                     const s = this._addSection(section);
@@ -367,6 +371,41 @@ export default class Builder {
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
                     return importBuilder;
                 };
+                break;
+
+            case "Function":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this
+                        // FIXME: add ability to add this with whatever.
+                    };
+                    return exportBuilder;
+                };
+                break;
+
+            case "Table":
+                // FIXME Implement table https://bugs.webkit.org/show_bug.cgi?id=164135
+                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                break;
+
+            case "Memory":
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this,
+                        InitialMaxPages: (initial, max) => {
+                            s.data.push({ initial, max });
+                            return exportBuilder;
+                        }
+                    };
+                    return exportBuilder;
+                };
+                break;
+
+            case "Global":
+                // FIXME implement global https://bugs.webkit.org/show_bug.cgi?id=164133
+                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
                 break;
 
             case "Export":
@@ -383,29 +422,14 @@ export default class Builder {
                 };
                 break;
 
-            case "Memory":
-                this[section] = function() {
-                    const s = this._addSection(section);
-                    const exportBuilder = {
-                        End: () => this,
-                        InitialMaxPages: (initial, max) => {
-                            s.data.push({ initial, max });
-                            return exportBuilder;
-                        }
-                    };
-                    return exportBuilder;
-                }
+            case "Start":
+                // FIXME implement start https://bugs.webkit.org/show_bug.cgi?id=161709
+                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
                 break;
 
-            case "Function":
-                this[section] = function() {
-                    const s = this._addSection(section);
-                    const exportBuilder = {
-                        End: () => this
-                        // FIXME: add ability to add this with whatever.
-                    }
-                    return exportBuilder;
-                }
+            case "Element":
+                // FIXME implement element https://bugs.webkit.org/show_bug.cgi?id=161709
+                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
                 break;
 
             case "Code":
@@ -453,11 +477,17 @@ export default class Builder {
                 };
                 break;
 
-            default:
+            case "Data":
+                // FIXME implement data https://bugs.webkit.org/show_bug.cgi?id=161709
                 this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                break;
+
+            default:
+                this[section] = () => { throw new Error(`Unknown section type "${section}"`); };
                 break;
             }
         }
+
         this.Unknown = function(name) {
             const s = this._addSection(name);
             const builder = this;

@@ -75,7 +75,7 @@ inline NO_RETURN_DUE_TO_CRASH void Throw() { RELEASE_ASSERT_NOT_REACHED(); }
 static constexpr enum class ValueTagType { } ValueTag { };
 static constexpr enum class ErrorTagType { } ErrorTag { };
 
-template<class T, std::enable_if_t<std::is_trivially_destructible<T>::value>* = nullptr> void destroy(T& t) { }
+template<class T, std::enable_if_t<std::is_trivially_destructible<T>::value>* = nullptr> void destroy(T&) { }
 template<class T, std::enable_if_t<!std::is_trivially_destructible<T>::value && (std::is_class<T>::value || std::is_union<T>::value)>* = nullptr> void destroy(T& t) { t.~T(); }
 
 template <class T, class E>
