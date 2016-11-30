@@ -3,6 +3,16 @@
         Remove WebPage::SetPageSuppressed
         https://bugs.webkit.org/show_bug.cgi?id=165158
 
+        Unreviewed revert accidental change.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActivityState):
+
+2016-11-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove WebPage::SetPageSuppressed
+        https://bugs.webkit.org/show_bug.cgi?id=165158
+
         Reviewed by Tim Horton.
 
         This was scaffolding. We've now refactored to the point that the information driving throttling originates

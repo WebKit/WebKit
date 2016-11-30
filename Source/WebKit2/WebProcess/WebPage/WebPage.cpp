@@ -2549,8 +2549,7 @@ void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDid
     ActivityState::Flags changed = m_activityState ^ activityState;
     m_activityState = activityState;
 
-    if (!changed)
-        return;
+    if (changed)
         updateThrottleState();
 
     m_page->setActivityState(activityState);
