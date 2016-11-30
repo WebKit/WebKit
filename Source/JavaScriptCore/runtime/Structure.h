@@ -405,6 +405,11 @@ public:
         return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::structureIDOffset();
     }
 
+    static ptrdiff_t inlineCapacityOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_inlineCapacity);
+    }
+
     static ptrdiff_t prototypeOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_prototype);
