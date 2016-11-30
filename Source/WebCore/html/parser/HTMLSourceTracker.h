@@ -36,7 +36,7 @@ class HTMLTokenizer;
 class HTMLSourceTracker {
     WTF_MAKE_NONCOPYABLE(HTMLSourceTracker);
 public:
-    HTMLSourceTracker();
+    HTMLSourceTracker() = default;
 
     void startToken(SegmentedString&, HTMLTokenizer&);
     void endToken(SegmentedString&, HTMLTokenizer&);

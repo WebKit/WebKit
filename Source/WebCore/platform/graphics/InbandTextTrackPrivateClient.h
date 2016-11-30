@@ -180,7 +180,7 @@ public:
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
 
-    virtual void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) { ASSERT_NOT_REACHED(); }
+    virtual void parseWebVTTFileHeader(InbandTextTrackPrivate*, String&&) { ASSERT_NOT_REACHED(); }
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) = 0;
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) = 0;
 };

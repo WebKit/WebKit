@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
@@ -31,7 +31,7 @@
 #include "HTMLEntityParser.h"
 #include "HTMLNames.h"
 #include "MarkupTokenizerInlines.h"
-#include <wtf/ASCIICType.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
@@ -96,7 +96,7 @@ inline bool HTMLTokenizer::emitAndResumeInDataState(SegmentedString& source)
 {
     saveEndTagNameIfNeeded();
     m_state = DataState;
-    source.advanceAndUpdateLineNumber();
+    source.advancePastNonNewline();
     return true;
 }
 
@@ -157,9 +157,9 @@ void HTMLTokenizer::flushBufferedEndTag()
 
 bool HTMLTokenizer::commitToPartialEndTag(SegmentedString& source, UChar character, State state)
 {
-    ASSERT(source.currentChar() == character);
+    ASSERT(source.currentCharacter() == character);
     appendToTemporaryBuffer(character);
-    source.advanceAndUpdateLineNumber();
+    source.advancePastNonNewline();
 
     if (haveBufferedCharacterToken()) {
         // Emit the buffered character token.
@@ -174,9 +174,9 @@ bool HTMLTokenizer::commitToPartialEndTag(SegmentedString& source, UChar charact
 
 bool HTMLTokenizer::commitToCompleteEndTag(SegmentedString& source)
 {
-    ASSERT(source.currentChar() == '>');
+    ASSERT(source.currentCharacter() == '>');
     appendToTemporaryBuffer('>');
-    source.advance();
+    source.advancePastNonNewline();
 
     m_state = DataState;
 
@@ -212,11 +212,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(DataState)
         if (character == '&')
-            ADVANCE_TO(CharacterReferenceInDataState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInDataState);
         if (character == '<') {
             if (haveBufferedCharacterToken())
                 RETURN_IN_CURRENT_STATE(true);
-            ADVANCE_TO(TagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(TagOpenState);
         }
         if (character == kEndOfFileMarker)
             return emitEndOfFile(source);
@@ -232,9 +232,9 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(RCDATAState)
         if (character == '&')
-            ADVANCE_TO(CharacterReferenceInRCDATAState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInRCDATAState);
         if (character == '<')
-            ADVANCE_TO(RCDATALessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RCDATALessThanSignState);
         if (character == kEndOfFileMarker)
             RECONSUME_IN(DataState);
         bufferCharacter(character);
@@ -249,7 +249,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(RAWTEXTState)
         if (character == '<')
-            ADVANCE_TO(RAWTEXTLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RAWTEXTLessThanSignState);
         if (character == kEndOfFileMarker)
             RECONSUME_IN(DataState);
         bufferCharacter(character);
@@ -258,7 +258,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(ScriptDataState)
         if (character == '<')
-            ADVANCE_TO(ScriptDataLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataLessThanSignState);
         if (character == kEndOfFileMarker)
             RECONSUME_IN(DataState);
         bufferCharacter(character);
@@ -274,12 +274,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(TagOpenState)
         if (character == '!')
-            ADVANCE_TO(MarkupDeclarationOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(MarkupDeclarationOpenState);
         if (character == '/')
-            ADVANCE_TO(EndTagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(EndTagOpenState);
         if (isASCIIAlpha(character)) {
             m_token.beginStartTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(TagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(TagNameState);
         }
         if (character == '?') {
             parseError();
@@ -297,11 +297,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             m_token.beginEndTag(convertASCIIAlphaToLower(character));
             m_appropriateEndTagName.clear();
-            ADVANCE_TO(TagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(TagNameState);
         }
         if (character == '>') {
             parseError();
-            ADVANCE_TO(DataState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DataState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -317,7 +317,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(BeforeAttributeNameState);
         if (character == '/')
-            ADVANCE_TO(SelfClosingStartTagState);
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -327,14 +327,14 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             RECONSUME_IN(DataState);
         }
         m_token.appendToName(toASCIILower(character));
-        ADVANCE_TO(TagNameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(TagNameState);
     END_STATE()
 
     BEGIN_STATE(RCDATALessThanSignState)
         if (character == '/') {
             m_temporaryBuffer.clear();
             ASSERT(m_bufferedEndTagName.isEmpty());
-            ADVANCE_TO(RCDATAEndTagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RCDATAEndTagOpenState);
         }
         bufferASCIICharacter('<');
         RECONSUME_IN(RCDATAState);
@@ -344,7 +344,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(RCDATAEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RCDATAEndTagNameState);
         }
         bufferASCIICharacter('<');
         bufferASCIICharacter('/');
@@ -355,7 +355,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(RCDATAEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RCDATAEndTagNameState);
         }
         if (isTokenizerWhitespace(character)) {
             if (isAppropriateEndTag()) {
@@ -385,7 +385,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '/') {
             m_temporaryBuffer.clear();
             ASSERT(m_bufferedEndTagName.isEmpty());
-            ADVANCE_TO(RAWTEXTEndTagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RAWTEXTEndTagOpenState);
         }
         bufferASCIICharacter('<');
         RECONSUME_IN(RAWTEXTState);
@@ -395,7 +395,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(RAWTEXTEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RAWTEXTEndTagNameState);
         }
         bufferASCIICharacter('<');
         bufferASCIICharacter('/');
@@ -406,7 +406,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(RAWTEXTEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(RAWTEXTEndTagNameState);
         }
         if (isTokenizerWhitespace(character)) {
             if (isAppropriateEndTag()) {
@@ -436,12 +436,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '/') {
             m_temporaryBuffer.clear();
             ASSERT(m_bufferedEndTagName.isEmpty());
-            ADVANCE_TO(ScriptDataEndTagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEndTagOpenState);
         }
         if (character == '!') {
             bufferASCIICharacter('<');
             bufferASCIICharacter('!');
-            ADVANCE_TO(ScriptDataEscapeStartState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapeStartState);
         }
         bufferASCIICharacter('<');
         RECONSUME_IN(ScriptDataState);
@@ -451,7 +451,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEndTagNameState);
         }
         bufferASCIICharacter('<');
         bufferASCIICharacter('/');
@@ -462,7 +462,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEndTagNameState);
         }
         if (isTokenizerWhitespace(character)) {
             if (isAppropriateEndTag()) {
@@ -491,7 +491,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataEscapeStartState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataEscapeStartDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapeStartDashState);
         } else
             RECONSUME_IN(ScriptDataState);
     END_STATE()
@@ -499,7 +499,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataEscapeStartDashState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataEscapedDashDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedDashDashState);
         } else
             RECONSUME_IN(ScriptDataState);
     END_STATE()
@@ -507,10 +507,10 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataEscapedState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataEscapedDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedDashState);
         }
         if (character == '<')
-            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedLessThanSignState);
         if (character == kEndOfFileMarker) {
             parseError();
             RECONSUME_IN(DataState);
@@ -522,10 +522,10 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataEscapedDashState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataEscapedDashDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedDashDashState);
         }
         if (character == '<')
-            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedLessThanSignState);
         if (character == kEndOfFileMarker) {
             parseError();
             RECONSUME_IN(DataState);
@@ -537,13 +537,13 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataEscapedDashDashState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataEscapedDashDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedDashDashState);
         }
         if (character == '<')
-            ADVANCE_TO(ScriptDataEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedLessThanSignState);
         if (character == '>') {
             bufferASCIICharacter('>');
-            ADVANCE_TO(ScriptDataState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -557,14 +557,14 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '/') {
             m_temporaryBuffer.clear();
             ASSERT(m_bufferedEndTagName.isEmpty());
-            ADVANCE_TO(ScriptDataEscapedEndTagOpenState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedEndTagOpenState);
         }
         if (isASCIIAlpha(character)) {
             bufferASCIICharacter('<');
             bufferASCIICharacter(character);
             m_temporaryBuffer.clear();
             appendToTemporaryBuffer(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataDoubleEscapeStartState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapeStartState);
         }
         bufferASCIICharacter('<');
         RECONSUME_IN(ScriptDataEscapedState);
@@ -574,7 +574,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataEscapedEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedEndTagNameState);
         }
         bufferASCIICharacter('<');
         bufferASCIICharacter('/');
@@ -585,7 +585,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             appendToTemporaryBuffer(character);
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataEscapedEndTagNameState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedEndTagNameState);
         }
         if (isTokenizerWhitespace(character)) {
             if (isAppropriateEndTag()) {
@@ -622,7 +622,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             bufferASCIICharacter(character);
             appendToTemporaryBuffer(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataDoubleEscapeStartState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapeStartState);
         }
         RECONSUME_IN(ScriptDataEscapedState);
     END_STATE()
@@ -630,11 +630,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataDoubleEscapedState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataDoubleEscapedDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedDashState);
         }
         if (character == '<') {
             bufferASCIICharacter('<');
-            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedLessThanSignState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -647,11 +647,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataDoubleEscapedDashState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedDashDashState);
         }
         if (character == '<') {
             bufferASCIICharacter('<');
-            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedLessThanSignState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -664,15 +664,15 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataDoubleEscapedDashDashState)
         if (character == '-') {
             bufferASCIICharacter('-');
-            ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedDashDashState);
         }
         if (character == '<') {
             bufferASCIICharacter('<');
-            ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapedLessThanSignState);
         }
         if (character == '>') {
             bufferASCIICharacter('>');
-            ADVANCE_TO(ScriptDataState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -686,7 +686,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '/') {
             bufferASCIICharacter('/');
             m_temporaryBuffer.clear();
-            ADVANCE_TO(ScriptDataDoubleEscapeEndState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapeEndState);
         }
         RECONSUME_IN(ScriptDataDoubleEscapedState);
     END_STATE()
@@ -702,7 +702,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isASCIIAlpha(character)) {
             bufferASCIICharacter(character);
             appendToTemporaryBuffer(convertASCIIAlphaToLower(character));
-            ADVANCE_TO(ScriptDataDoubleEscapeEndState);
+            ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataDoubleEscapeEndState);
         }
         RECONSUME_IN(ScriptDataDoubleEscapedState);
     END_STATE()
@@ -711,7 +711,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(BeforeAttributeNameState);
         if (character == '/')
-            ADVANCE_TO(SelfClosingStartTagState);
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -724,16 +724,16 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
         m_token.beginAttribute(source.numberOfCharactersConsumed());
         m_token.appendToAttributeName(toASCIILower(character));
-        ADVANCE_TO(AttributeNameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(AttributeNameState);
     END_STATE()
 
     BEGIN_STATE(AttributeNameState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(AfterAttributeNameState);
         if (character == '/')
-            ADVANCE_TO(SelfClosingStartTagState);
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '=')
-            ADVANCE_TO(BeforeAttributeValueState);
+            ADVANCE_PAST_NON_NEWLINE_TO(BeforeAttributeValueState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -745,16 +745,16 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '"' || character == '\'' || character == '<' || character == '=')
             parseError();
         m_token.appendToAttributeName(toASCIILower(character));
-        ADVANCE_TO(AttributeNameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(AttributeNameState);
     END_STATE()
 
     BEGIN_STATE(AfterAttributeNameState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(AfterAttributeNameState);
         if (character == '/')
-            ADVANCE_TO(SelfClosingStartTagState);
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '=')
-            ADVANCE_TO(BeforeAttributeValueState);
+            ADVANCE_PAST_NON_NEWLINE_TO(BeforeAttributeValueState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -767,18 +767,18 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
         m_token.beginAttribute(source.numberOfCharactersConsumed());
         m_token.appendToAttributeName(toASCIILower(character));
-        ADVANCE_TO(AttributeNameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(AttributeNameState);
     END_STATE()
 
     BEGIN_STATE(BeforeAttributeValueState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(BeforeAttributeValueState);
         if (character == '"')
-            ADVANCE_TO(AttributeValueDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueDoubleQuotedState);
         if (character == '&')
             RECONSUME_IN(AttributeValueUnquotedState);
         if (character == '\'')
-            ADVANCE_TO(AttributeValueSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueSingleQuotedState);
         if (character == '>') {
             parseError();
             return emitAndResumeInDataState(source);
@@ -790,17 +790,17 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '<' || character == '=' || character == '`')
             parseError();
         m_token.appendToAttributeValue(character);
-        ADVANCE_TO(AttributeValueUnquotedState);
+        ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueUnquotedState);
     END_STATE()
 
     BEGIN_STATE(AttributeValueDoubleQuotedState)
         if (character == '"') {
             m_token.endAttribute(source.numberOfCharactersConsumed());
-            ADVANCE_TO(AfterAttributeValueQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterAttributeValueQuotedState);
         }
         if (character == '&') {
             m_additionalAllowedCharacter = '"';
-            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInAttributeValueState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -814,11 +814,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(AttributeValueSingleQuotedState)
         if (character == '\'') {
             m_token.endAttribute(source.numberOfCharactersConsumed());
-            ADVANCE_TO(AfterAttributeValueQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterAttributeValueQuotedState);
         }
         if (character == '&') {
             m_additionalAllowedCharacter = '\'';
-            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInAttributeValueState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -836,7 +836,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         if (character == '&') {
             m_additionalAllowedCharacter = '>';
-            ADVANCE_TO(CharacterReferenceInAttributeValueState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInAttributeValueState);
         }
         if (character == '>') {
             m_token.endAttribute(source.numberOfCharactersConsumed());
@@ -850,7 +850,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '"' || character == '\'' || character == '<' || character == '=' || character == '`')
             parseError();
         m_token.appendToAttributeValue(character);
-        ADVANCE_TO(AttributeValueUnquotedState);
+        ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueUnquotedState);
     END_STATE()
 
     BEGIN_STATE(CharacterReferenceInAttributeValueState)
@@ -882,7 +882,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(BeforeAttributeNameState);
         if (character == '/')
-            ADVANCE_TO(SelfClosingStartTagState);
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -932,7 +932,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             if (result == SegmentedString::NotEnoughCharacters)
                 RETURN_IN_CURRENT_STATE(haveBufferedCharacterToken());
         } else if (isASCIIAlphaCaselessEqual(character, 'd')) {
-            auto result = source.advancePastIgnoringCase("doctype");
+            auto result = source.advancePastLettersIgnoringASCIICase("doctype");
             if (result == SegmentedString::DidMatch)
                 SWITCH_TO(DOCTYPEState);
             if (result == SegmentedString::NotEnoughCharacters)
@@ -950,7 +950,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CommentStartState)
         if (character == '-')
-            ADVANCE_TO(CommentStartDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentStartDashState);
         if (character == '>') {
             parseError();
             return emitAndResumeInDataState(source);
@@ -965,7 +965,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CommentStartDashState)
         if (character == '-')
-            ADVANCE_TO(CommentEndState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndState);
         if (character == '>') {
             parseError();
             return emitAndResumeInDataState(source);
@@ -981,7 +981,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CommentState)
         if (character == '-')
-            ADVANCE_TO(CommentEndDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndDashState);
         if (character == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeInDataState();
@@ -992,7 +992,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CommentEndDashState)
         if (character == '-')
-            ADVANCE_TO(CommentEndState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndState);
         if (character == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeInDataState();
@@ -1007,12 +1007,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndResumeInDataState(source);
         if (character == '!') {
             parseError();
-            ADVANCE_TO(CommentEndBangState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndBangState);
         }
         if (character == '-') {
             parseError();
             m_token.appendToComment('-');
-            ADVANCE_TO(CommentEndState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -1030,7 +1030,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             m_token.appendToComment('-');
             m_token.appendToComment('-');
             m_token.appendToComment('!');
-            ADVANCE_TO(CommentEndDashState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CommentEndDashState);
         }
         if (character == '>')
             return emitAndResumeInDataState(source);
@@ -1074,7 +1074,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         m_token.beginDOCTYPE(toASCIILower(character));
-        ADVANCE_TO(DOCTYPENameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPENameState);
     END_STATE()
 
     BEGIN_STATE(DOCTYPENameState)
@@ -1088,7 +1088,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         m_token.appendToName(toASCIILower(character));
-        ADVANCE_TO(DOCTYPENameState);
+        ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPENameState);
     END_STATE()
 
     BEGIN_STATE(AfterDOCTYPENameState)
@@ -1102,13 +1102,13 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         if (isASCIIAlphaCaselessEqual(character, 'p')) {
-            auto result = source.advancePastIgnoringCase("public");
+            auto result = source.advancePastLettersIgnoringASCIICase("public");
             if (result == SegmentedString::DidMatch)
                 SWITCH_TO(AfterDOCTYPEPublicKeywordState);
             if (result == SegmentedString::NotEnoughCharacters)
                 RETURN_IN_CURRENT_STATE(haveBufferedCharacterToken());
         } else if (isASCIIAlphaCaselessEqual(character, 's')) {
-            auto result = source.advancePastIgnoringCase("system");
+            auto result = source.advancePastLettersIgnoringASCIICase("system");
             if (result == SegmentedString::DidMatch)
                 SWITCH_TO(AfterDOCTYPESystemKeywordState);
             if (result == SegmentedString::NotEnoughCharacters)
@@ -1116,7 +1116,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(AfterDOCTYPEPublicKeywordState)
@@ -1125,12 +1125,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '"') {
             parseError();
             m_token.setPublicIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             parseError();
             m_token.setPublicIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
         }
         if (character == '>') {
             parseError();
@@ -1144,7 +1144,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(BeforeDOCTYPEPublicIdentifierState)
@@ -1152,11 +1152,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_TO(BeforeDOCTYPEPublicIdentifierState);
         if (character == '"') {
             m_token.setPublicIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPEPublicIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             m_token.setPublicIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPEPublicIdentifierSingleQuotedState);
         }
         if (character == '>') {
             parseError();
@@ -1170,12 +1170,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(DOCTYPEPublicIdentifierDoubleQuotedState)
         if (character == '"')
-            ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterDOCTYPEPublicIdentifierState);
         if (character == '>') {
             parseError();
             m_token.setForceQuirks();
@@ -1192,7 +1192,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(DOCTYPEPublicIdentifierSingleQuotedState)
         if (character == '\'')
-            ADVANCE_TO(AfterDOCTYPEPublicIdentifierState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterDOCTYPEPublicIdentifierState);
         if (character == '>') {
             parseError();
             m_token.setForceQuirks();
@@ -1215,12 +1215,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '"') {
             parseError();
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             parseError();
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierSingleQuotedState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -1229,7 +1229,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(BetweenDOCTYPEPublicAndSystemIdentifiersState)
@@ -1239,11 +1239,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndResumeInDataState(source);
         if (character == '"') {
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierSingleQuotedState);
         }
         if (character == kEndOfFileMarker) {
             parseError();
@@ -1252,7 +1252,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(AfterDOCTYPESystemKeywordState)
@@ -1261,12 +1261,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         if (character == '"') {
             parseError();
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             parseError();
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierSingleQuotedState);
         }
         if (character == '>') {
             parseError();
@@ -1280,7 +1280,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(BeforeDOCTYPESystemIdentifierState)
@@ -1288,11 +1288,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_TO(BeforeDOCTYPESystemIdentifierState);
         if (character == '"') {
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierDoubleQuotedState);
         }
         if (character == '\'') {
             m_token.setSystemIdentifierToEmptyString();
-            ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DOCTYPESystemIdentifierSingleQuotedState);
         }
         if (character == '>') {
             parseError();
@@ -1306,12 +1306,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.setForceQuirks();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(DOCTYPESystemIdentifierDoubleQuotedState)
         if (character == '"')
-            ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterDOCTYPESystemIdentifierState);
         if (character == '>') {
             parseError();
             m_token.setForceQuirks();
@@ -1328,7 +1328,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(DOCTYPESystemIdentifierSingleQuotedState)
         if (character == '\'')
-            ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
+            ADVANCE_PAST_NON_NEWLINE_TO(AfterDOCTYPESystemIdentifierState);
         if (character == '>') {
             parseError();
             m_token.setForceQuirks();
@@ -1354,7 +1354,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         parseError();
-        ADVANCE_TO(BogusDOCTYPEState);
+        ADVANCE_PAST_NON_NEWLINE_TO(BogusDOCTYPEState);
     END_STATE()
 
     BEGIN_STATE(BogusDOCTYPEState)
@@ -1367,7 +1367,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CDATASectionState)
         if (character == ']')
-            ADVANCE_TO(CDATASectionRightSquareBracketState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CDATASectionRightSquareBracketState);
         if (character == kEndOfFileMarker)
             RECONSUME_IN(DataState);
         bufferCharacter(character);
@@ -1376,14 +1376,14 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(CDATASectionRightSquareBracketState)
         if (character == ']')
-            ADVANCE_TO(CDATASectionDoubleRightSquareBracketState);
+            ADVANCE_PAST_NON_NEWLINE_TO(CDATASectionDoubleRightSquareBracketState);
         bufferASCIICharacter(']');
         RECONSUME_IN(CDATASectionState);
     END_STATE()
 
     BEGIN_STATE(CDATASectionDoubleRightSquareBracketState)
         if (character == '>')
-            ADVANCE_TO(DataState);
+            ADVANCE_PAST_NON_NEWLINE_TO(DataState);
         bufferASCIICharacter(']');
         bufferASCIICharacter(']');
         RECONSUME_IN(CDATASectionState);

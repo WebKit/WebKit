@@ -35,6 +35,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizerInputStream.h"
 #include "HTMLParserIdioms.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

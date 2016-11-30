@@ -1,3 +1,49 @@
+2016-11-30  Darin Adler  <darin@apple.com>
+
+        Streamline and speed up tokenizer and segmented string classes
+        https://bugs.webkit.org/show_bug.cgi?id=165003
+
+        And do it without re-introducing:
+
+        REGRESSION (r209058): API test StringBuilderTest.Equal crashing
+        https://bugs.webkit.org/show_bug.cgi?id=165142
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::bufferCharacters<LChar>): Moved this here from
+        the header since it is only used inside the class. Also renamed from
+        getBufferCharacters.
+        (WTF::StringBuilder::bufferCharacters<UChar>): Ditto.
+        (WTF::StringBuilder::appendUninitializedUpconvert): Added. Helper
+        for the upconvert case in the 16-bit overload of StrinBuilder::append.
+        (WTF::StringBuilder::append): Changed to use appendUninitializedUpconvert.
+        (WTF::quotedJSONStringLength): Added. Used in new appendQuotedJSONString
+        implementation below that now correctly determines the size of what will
+        be appended by walking thorugh the string twice.
+        (WTF::appendQuotedJSONStringInternal): Moved the code that writes the
+        quote marks in here. Also made a few coding style tweaks.
+        (WTF::StringBuilder::appendQuotedJSONString): Rewrote to use a much
+        simpler algorithm that grows the string the same way the append function
+        does. The old code would use reserveCapacity in a way that was costly when
+        doing a lot of appends on the same string, and also allocated far too much
+        memory for normal use cases where characters did not need to be turned
+        into escape sequences.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append): Tweaked style a bit, fixed a bug where the
+        m_is8Bit field wasn't set correctly in one case, optimized the function that
+        adds substrings for the case where this is the first append and the substring
+        happens to cover the entire string. Also clarified the assertions and removed
+        an unneeded check from that substring overload.
+        (WTF::equal): Reimplemented, using equalCommon. Added an overload of the equal
+        function just for the case where the arguments are StringBuilder, String.
+        This is needed because of the peculiar behavior of is8Bit in String, different
+        from any of our other string classes. I think we should consider changing
+        String::is8Bit to return true for null strings. We could then remove this
+        overload and probably remove other checks for null and zero length elsewhere
+        that are also needed only to avoid calling is8Bit on a null String.
+
 2016-11-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: improve Instance

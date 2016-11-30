@@ -1,3 +1,281 @@
+2016-11-30  Darin Adler  <darin@apple.com>
+
+        Streamline and speed up tokenizer and segmented string classes
+        https://bugs.webkit.org/show_bug.cgi?id=165003
+
+        Reviewed by Sam Weinig.
+
+        Profiling Speedometer on my iMac showed the tokenizer as one of the
+        hottest functions. This patch streamlines the segmented string class,
+        removing various unused features, and also improves some other functions
+        seen on the Speedometer profile. On my iMac I measured a speedup of
+        about 3%. Changes include:
+
+        - Removed m_pushedChar1, m_pushedChar2, and m_empty data members from the
+          SegmentedString class and all the code that used to handle them.
+
+        - Simplified the SegmentedString advance functions so they are small
+          enough to get inlined in the HTML tokenizer.
+
+        - Updated callers to call the simpler SegmentedString advance functions
+          that don't handle newlines in as many cases as possible.
+
+        - Cut down on allocations of SegmentedString and made code move the
+          segmented string and the strings that are moved into it rather than
+          copying them whenever possible.
+
+        - Simplified segmented string functions, removing some branches, mostly
+          from the non-fast paths.
+
+        - Removed small unused functions and small functions used in only one
+          or two places, made more functions private and renamed for clarity.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite): Moved a little more of the common code in here
+        from the two functions belwo. Removed obsolete comment saying this was not
+        following the DOM specification because it is. Removed unneeded special
+        cases for 1 argument and no arguments. Take a reference instead of a pointer.
+        (WebCore::JSHTMLDocument::write): Updated for above.
+        (WebCore::JSHTMLDocument::writeln): Ditto.
+
+        * css/parser/CSSTokenizer.cpp: Added now-needed include.
+        * css/parser/CSSTokenizer.h: Removed unneeded include.
+
+        * css/parser/CSSTokenizerInputStream.h: Added definition of kEndOfFileMarker
+        here; this is now separate from the use in the HTMLParser. In the long run,
+        unclear to me whether it is really needed in either.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareToWrite): Added. Helper function used by the three
+        different variants of write. Using this may prevent us from having to construct
+        a SegmentedString just to append one string after future refactoring.
+        (WebCore::Document::write): Updated to take an rvalue reference and move the
+        value through.
+        (WebCore::Document::writeln): Use a single write call instead of two.
+
+        * dom/Document.h: Changed write to take an rvalue reference to SegmentedString
+        rather than a const reference.
+
+        * dom/DocumentParser.h: Changed insert to take an rvalue reference to
+        SegmentedString. In the future, should probably overload to take a single
+        string since that is the normal case.
+
+        * dom/RawDataDocumentParser.h: Updated for change to DocumentParser.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::append): Refactored a bit, just enough
+        so that we don't need an assignment operator for SegmentedString that can
+        copy a String.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::insert): Updated to take an rvalue reference,
+        and move the value through.
+        * html/parser/HTMLDocumentParser.h: Updated for the above.
+
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::HTMLEntityParser::consumeNamedEntity): Updated for name changes.
+        Changed the twao calls to advance here to call advancePastNonNewline; no
+        change in behavior, but asserts what the code was assuming before, that the
+        character was not a newline.
+
+        * html/parser/HTMLInputStream.h:
+        (WebCore::HTMLInputStream::appendToEnd): Updated to take an rvalue reference,
+        and move the value through.
+        (WebCore::HTMLInputStream::insertAtCurrentInsertionPoint): Ditto.
+        (WebCore::HTMLInputStream::markEndOfFile): Removed the code to construct a
+        SegmentedString, overkill since we can just append an individual string.
+        (WebCore::HTMLInputStream::splitInto): Rewrote the move idiom here to actually
+        use move, which will reduce reference count churn and other unneeded work.
+
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset): Removed unneeded
+        construction of a SegmentedString, just to append a string.
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::HTMLSourceTracker): Moved to the class definition.
+        (WebCore::HTMLSourceTracker::source): Updated for function name change.
+        * html/parser/HTMLSourceTracker.h: Updated for above.
+
+        * html/parser/HTMLTokenizer.cpp: Added now-needed include.
+        (WebCore::HTMLTokenizer::emitAndResumeInDataState): Use advancePastNonNewline,
+        since this function is never called in response to a newline character.
+        (WebCore::HTMLTokenizer::commitToPartialEndTag): Ditto.
+        (WebCore::HTMLTokenizer::commitToCompleteEndTag): Ditto.
+        (WebCore::HTMLTokenizer::processToken): Use ADVANCE_PAST_NON_NEWLINE_TO macro
+        instead of ADVANCE_TO in cases where the character we are advancing past is
+        known not to be a newline, so we can use the more efficient advance function
+        that doesn't check for the newline character.
+
+        * html/parser/InputStreamPreprocessor.h: Moved kEndOfFileMarker to
+        SegmentedString.h; not sure that's a good place for it either. In the long run,
+        unclear to me whether this is really needed.
+        (WebCore::InputStreamPreprocessor::peek): Added UNLIKELY for the empty check.
+        Added LIKELY for the not-special character check.
+        (WebCore::InputStreamPreprocessor::advance): Updated for the new name of the
+        advanceAndUpdateLineNumber function.
+        (WebCore::InputStreamPreprocessor::advancePastNonNewline): Added. More
+        efficient than advance for cases where the last characer is known not to be
+        a newline character.
+        (WebCore::InputStreamPreprocessor::skipNextNewLine): Deleted. Was unused.
+        (WebCore::InputStreamPreprocessor::reset): Deleted. Was unused except in the
+        constructor; added initial values for the data members to replace.
+        (WebCore::InputStreamPreprocessor::processNextInputCharacter): Removed long
+        FIXME comment that didn't really need to be here. Reorganized a bit.
+        (WebCore::InputStreamPreprocessor::isAtEndOfFile): Renamed and made static.
+
+        * html/track/BufferedLineReader.cpp:
+        (WebCore::BufferedLineReader::nextLine): Updated to not use the poorly named
+        scanCharacter function to advance past a newline. Also renamed from getLine
+        and changed to return Optional<String> instead of using a boolean to indicate
+        failure and an out argument.
+
+        * html/track/BufferedLineReader.h:
+        (WebCore::BufferedLineReader::BufferedLineReader): Use the default, putting
+        initial values on each data member below.
+        (WebCore::BufferedLineReader::append): Updated to take an rvalue reference,
+        and move the value through.
+        (WebCore::BufferedLineReader::scanCharacter): Deleted. Was poorly named,
+        and easy to replace with two lines of code at its two call sites.
+        (WebCore::BufferedLineReader::reset): Rewrote to correctly clear all the
+        data members of the class, not just the segmented string.
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::parseWebVTTFileHeader): Updated to take
+        an rvalue reference and move the value through.
+        * html/track/InbandGenericTextTrack.h: Updated for the above.
+
+        * html/track/InbandTextTrack.h: Updated since parseWebVTTFileHeader now
+        takes an rvalue reference.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseFileHeader): Updated to take an rvalue reference
+        and move the value through.
+        (WebCore::WebVTTParser::parseBytes): Updated to pass ownership of the string
+        in to the line reader append function.
+        (WebCore::WebVTTParser::parseCueData): Use auto and WTFMove for WebVTTCueData.
+        (WebCore::WebVTTParser::flush): More of the same.
+        (WebCore::WebVTTParser::parse): Changed to use nextLine instead of getLine.
+        * html/track/WebVTTParser.h: Updated for the above.
+
+        * html/track/WebVTTTokenizer.cpp:
+        (WebCore::advanceAndEmitToken): Use advanceAndUpdateLineNumber by its new
+        name, just advance. No change in behavior.
+        (WebCore::WebVTTTokenizer::WebVTTTokenizer): Pass a String, not a
+        SegmentedString, to add the end of file marker.
+
+        * platform/graphics/InbandTextTrackPrivateClient.h: Updated since
+        parseWebVTTFileHeader takes an rvalue reference.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::Substring::appendTo): Moved here from the header.
+        The only caller is SegmentedString::toString, inside this file.
+        (WebCore::SegmentedString::SegmentedString): Deleted the copy constructor.
+        No longer needed.
+        (WebCore::SegmentedString::operator=): Defined a move assignment operator
+        rather than an ordinary assignment operator, since that's what the call
+        sites really need.
+        (WebCore::SegmentedString::length): Simplified since we no longer need to
+        support pushed characters.
+        (WebCore::SegmentedString::setExcludeLineNumbers): Simplified, since we
+        can just iterate m_otherSubstrings without an extra check. Also changed to
+        write directly to the data member of Substring instead of using a function.
+        (WebCore::SegmentedString::updateAdvanceFunctionPointersForEmptyString):
+        Added. Used when we run out of characters.
+        (WebCore::SegmentedString::clear): Removed code to clear now-deleted members.
+        Updated for changes to other member names.
+        (WebCore::SegmentedString::appendSubstring): Renamed from just append to
+        avoid ambiguity with the public append function. Changed to take an rvalue
+        reference, and move in, and added code to set m_currentCharacter properly,
+        so the caller doesn't have to deal with that.
+        (WebCore::SegmentedString::close): Updated to use m_isClosed by its new name.
+        Also removed unneeded comment about assertion that fires when trying to close
+        an already closed string.
+        (WebCore::SegmentedString::append): Added overloads for rvalue references of
+        both entire SegmentedString objects and of String. Streamlined to just call
+        appendSubstring and append to the deque.
+        (WebCore::SegmentedString::pushBack): Tightened up since we don't allow empty
+        strings and changed to take just a string, not an entire segmented string.
+        (WebCore::SegmentedString::advanceSubstring): Moved logic into the
+        advancePastSingleCharacterSubstringWithoutUpdatingLineNumber function.
+        (WebCore::SegmentedString::toString): Simplified now that we don't need to
+        support pushed characters.
+        (WebCore::SegmentedString::advancePastNonNewlines): Deleted.
+        (WebCore::SegmentedString::advance8): Deleted.
+        (WebCore::SegmentedString::advanceWithoutUpdatingLineNumber16): Renamed from
+        advance16. Simplified now that there are no pushed characters. Also changed to
+        access data members of m_currentSubstring directly instead of calling a function.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber8): Deleted.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber16): Ditto.
+        (WebCore::SegmentedString::advancePastSingleCharacterSubstringWithoutUpdatingLineNumber):
+        Renamed from advanceSlowCase. Removed uneeded logic to handle pushed characters.
+        Moved code in here from advanceSubstring.
+        (WebCore::SegmentedString::advancePastSingleCharacterSubstring): Renamed from
+        advanceAndUpdateLineNumberSlowCase. Simplified by calling the function above.
+        (WebCore::SegmentedString::advanceEmpty): Broke assertion up into two.
+        (WebCore::SegmentedString::updateSlowCaseFunctionPointers): Updated for name changes.
+        (WebCore::SegmentedString::advancePastSlowCase): Changed name and meaning of
+        boolean argument. Rewrote to use the String class less; it's now used only when
+        we fail to match after the first character rather than being used for the actual
+        comparison with the literal.
+
+        * platform/text/SegmentedString.h: Moved all non-trivial function bodies out of
+        the class definition to make things easier to read. Moved the SegmentedSubstring
+        class inside the SegmentedString class, making it a private struct named Substring.
+        Removed the m_ prefix from data members of the struct, removed many functions from
+        the struct and made its union be anonymous instead of naming it m_data. Removed
+        unneeded StringBuilder.h include.
+        (WebCore::SegmentedString::isEmpty): Changed to use the length of the substring
+        instead of a separate boolean. We never create an empty substring, nor leave one
+        in place as the current substring unless the entire segmented string is empty.
+        (WebCore::SegmentedString::advancePast): Updated to use the new member function
+        template instead of a non-template member function. The new member function is
+        entirely rewritten and does the matching directly rather than allocating a string
+        just to do prefix matching.
+        (WebCore::SegmentedString::advancePastLettersIgnoringASCIICase): Renamed to make
+        it clear that the literal must be all non-letters or lowercase letters as with
+        the other "letters ignoring ASCII case" functions. The three call sites all fit
+        the bill. Implement by calling the new function template.
+        (WebCore::SegmentedString::currentCharacter): Renamed from currentChar.
+        (WebCore::SegmentedString::Substring::Substring): Use an rvalue reference and
+        move the string in.
+        (WebCore::SegmentedString::Substring::currentCharacter): Simplified since this
+        is never used on an empty substring.
+        (WebCore::SegmentedString::Substring::incrementAndGetCurrentCharacter): Ditto.
+        (WebCore::SegmentedString::SegmentedString): Overload to take an rvalue reference.
+        Simplified since there are now fewer data members.
+        (WebCore::SegmentedString::advanceWithoutUpdatingLineNumber): Renamed from
+        advance, since this is only safe to use if there is some reason it is OK to skip
+        updating the line number.
+        (WebCore::SegmentedString::advance): Renamed from advanceAndUpdateLineNumber,
+        since doing that is the normal desired behavior and not worth mentioning in the
+        public function name.
+        (WebCore::SegmentedString::advancePastNewline): Renamed from
+        advancePastNewlineAndUpdateLineNumber.
+        (WebCore::SegmentedString::numberOfCharactersConsumed): Greatly simplified since
+        pushed characters are no longer supported.
+        (WebCore::SegmentedString::characterMismatch): Added. Used by advancePast.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::unconsumeCharacters): Use toString rather than toStringPreserveCapacity
+        because the SegmentedString is going to take ownership of the string.
+        (WebCore::consumeCharacterReference): Updated to use the pushBack that takes just
+        a String, not a SegmentedString. Also use advancePastNonNewline.
+
+        * xml/parser/MarkupTokenizerInlines.h: Added ADVANCE_PAST_NON_NEWLINE_TO.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::insert): Updated since this takes an rvalue reference.
+        (WebCore::XMLDocumentParser::append): Removed unnecessary code to create a
+        SegmentedString.
+        * xml/parser/XMLDocumentParser.h: Updated for above. Also fixed indentation
+        and initialized most data members.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Moved most data member
+        initialization into the class definition.
+        (WebCore::XMLDocumentParser::resumeParsing): Removed code that copied a
+        segmented string, but converted the whole thing into a string before using it.
+        Now we convert to a string right away.
+
 2016-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative cmake buildfix after r209070.

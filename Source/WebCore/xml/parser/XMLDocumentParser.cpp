@@ -100,14 +100,15 @@ void XMLDocumentParser::clearCurrentNodeStack()
     }
 }
 
-void XMLDocumentParser::insert(const SegmentedString&)
+void XMLDocumentParser::insert(SegmentedString&&)
 {
     ASSERT_NOT_REACHED();
 }
 
 void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    SegmentedString source(WTFMove(inputSource));
+    String source { WTFMove(inputSource) };
+
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform.append(source);
 
@@ -119,7 +120,7 @@ void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
         return;
     }
 
-    doWrite(source.toString());
+    doWrite(source);
 
     // After parsing, dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();
@@ -151,7 +152,6 @@ static inline String toString(const xmlChar* string, size_t size)
 { 
     return String::fromUTF8(reinterpret_cast<const char*>(string), size); 
 }
-
 
 bool XMLDocumentParser::updateLeafTextNode()
 {

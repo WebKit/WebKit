@@ -32,10 +32,6 @@
 
 namespace WebCore {
 
-HTMLSourceTracker::HTMLSourceTracker()
-{
-}
-
 void HTMLSourceTracker::startToken(SegmentedString& currentInput, HTMLTokenizer& tokenizer)
 {
     if (!m_started) {
@@ -78,12 +74,12 @@ String HTMLSourceTracker::source(const HTMLToken& token)
 
     unsigned i = 0;
     for ( ; i < length && !m_previousSource.isEmpty(); ++i) {
-        source.append(m_previousSource.currentChar());
+        source.append(m_previousSource.currentCharacter());
         m_previousSource.advance();
     }
     for ( ; i < length; ++i) {
         ASSERT(!m_currentSource.isEmpty());
-        source.append(m_currentSource.currentChar());
+        source.append(m_currentSource.currentCharacter());
         m_currentSource.advance();
     }
 

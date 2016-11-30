@@ -602,7 +602,7 @@ public:
 
     void cancelParsing();
 
-    void write(const SegmentedString& text, Document* ownerDocument = nullptr);
+    void write(SegmentedString&& text, Document* ownerDocument = nullptr);
     WEBCORE_EXPORT void write(const String& text, Document* ownerDocument = nullptr);
     WEBCORE_EXPORT void writeln(const String& text, Document* ownerDocument = nullptr);
 

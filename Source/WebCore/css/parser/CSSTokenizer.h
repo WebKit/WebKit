@@ -30,7 +30,6 @@
 #pragma once
 
 #include "CSSParserToken.h"
-#include "InputStreamPreprocessor.h"
 #include <climits>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

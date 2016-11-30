@@ -1,3 +1,15 @@
+2016-11-30  Darin Adler  <darin@apple.com>
+
+        Streamline and speed up tokenizer and segmented string classes
+        https://bugs.webkit.org/show_bug.cgi?id=165003
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue): Use viewWithUnderlyingString when calling
+        StringBuilder::appendQuotedJSONString, since it now takes a StringView and there is
+        no benefit in creating a String for that function if one doesn't already exist.
+
 2016-11-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: improve Instance

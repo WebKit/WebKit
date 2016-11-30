@@ -133,7 +133,7 @@ public:
 
     // Input data to the parser to parse.
     void parseBytes(const char*, unsigned);
-    void parseFileHeader(const String&);
+    void parseFileHeader(String&&);
     void parseCueData(const ISOWebVTTCue&);
     void flush();
     void fileFinished();

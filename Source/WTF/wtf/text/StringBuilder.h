@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, 2012-2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,55 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringBuilder_h
-#define StringBuilder_h
+#pragma once
 
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
 class StringBuilder {
-    // Disallow copying since it's expensive and we don't want code to do it by accident.
+    // Disallow copying since it's expensive and we don't want anyone to do it by accident.
     WTF_MAKE_NONCOPYABLE(StringBuilder);
 
 public:
-    StringBuilder()
-        : m_length(0)
-        , m_is8Bit(true)
-        , m_bufferCharacters8(0)
-    {
-    }
+    StringBuilder() = default;
 
     WTF_EXPORT_PRIVATE void append(const UChar*, unsigned);
     WTF_EXPORT_PRIVATE void append(const LChar*, unsigned);
 
     ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
 
-    void append(const AtomicString& atomicString)
-    {
-        append(atomicString.string());
-    }
+    void append(const AtomicString& atomicString) { append(atomicString.string()); }
 
     void append(const String& string)
     {
-        if (!string.length())
+        unsigned length = string.length();
+        if (!length)
             return;
 
-        // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
-        // then just retain the string.
+        // If we're appending to an empty string, and there is not a buffer
+        // (reserveCapacity has not been called) then just retain the string.
         if (!m_length && !m_buffer) {
             m_string = string;
-            m_length = string.length();
-            m_is8Bit = m_string.is8Bit();
+            m_length = length;
+            m_is8Bit = string.is8Bit();
             return;
         }
 
         if (string.is8Bit())
-            append(string.characters8(), string.length());
+            append(string.characters8(), length);
         else
-            append(string.characters16(), string.length());
+            append(string.characters16(), length);
     }
 
     void append(const StringBuilder& other)
@@ -80,11 +70,12 @@ public:
         if (!other.m_length)
             return;
 
-        // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
-        // then just retain the string.
+        // If we're appending to an empty string, and there is not a buffer
+        // (reserveCapacity has not been called) then just retain the string.
         if (!m_length && !m_buffer && !other.m_string.isNull()) {
             m_string = other.m_string;
             m_length = other.m_length;
+            m_is8Bit = other.m_is8Bit;
             return;
         }
 
@@ -105,17 +96,27 @@ public:
 #if USE(CF)
     WTF_EXPORT_PRIVATE void append(CFStringRef);
 #endif
+
 #if USE(CF) && defined(__OBJC__)
     void append(NSString *string) { append((__bridge CFStringRef)string); }
 #endif
     
     void append(const String& string, unsigned offset, unsigned length)
     {
-        if (!string.length())
+        ASSERT(offset <= string.length());
+        ASSERT(offset + length <= string.length());
+
+        if (!length)
             return;
 
-        if ((offset + length) > string.length())
+        // If we're appending to an empty string, and there is not a buffer
+        // (reserveCapacity has not been called) then just retain the string.
+        if (!offset && !m_length && !m_buffer && length == string.length()) {
+            m_string = string;
+            m_length = length;
+            m_is8Bit = string.is8Bit();
             return;
+        }
 
         if (string.is8Bit())
             append(string.characters8() + offset, length);
@@ -129,37 +130,33 @@ public:
             append(characters, strlen(characters));
     }
 
-    void append(UChar c)
+    void append(UChar character)
     {
         if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
             if (!m_is8Bit) {
-                m_bufferCharacters16[m_length++] = c;
+                m_bufferCharacters16[m_length++] = character;
                 return;
             }
-
-            if (!(c & ~0xff)) {
-                m_bufferCharacters8[m_length++] = static_cast<LChar>(c);
+            if (!(character & ~0xFF)) {
+                m_bufferCharacters8[m_length++] = static_cast<LChar>(character);
                 return;
             }
         }
-        append(&c, 1);
+        append(&character, 1);
     }
 
-    void append(LChar c)
+    void append(LChar character)
     {
         if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
             if (m_is8Bit)
-                m_bufferCharacters8[m_length++] = c;
+                m_bufferCharacters8[m_length++] = character;
             else
-                m_bufferCharacters16[m_length++] = c;
+                m_bufferCharacters16[m_length++] = character;
         } else
-            append(&c, 1);
+            append(&character, 1);
     }
 
-    void append(char c)
-    {
-        append(static_cast<LChar>(c));
-    }
+    void append(char character) { append(static_cast<LChar>(character)); }
 
     void append(UChar32 c)
     {
@@ -171,10 +168,9 @@ public:
         append(U16_TRAIL(c));
     }
 
-    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
+    WTF_EXPORT_PRIVATE void appendQuotedJSONString(StringView);
 
-    template<unsigned charactersCount>
-    ALWAYS_INLINE void appendLiteral(const char (&characters)[charactersCount]) { append(characters, charactersCount - 1); }
+    template<unsigned charactersCount> ALWAYS_INLINE void appendLiteral(const char (&characters)[charactersCount]) { append(characters, charactersCount - 1); }
 
     WTF_EXPORT_PRIVATE void appendNumber(int);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned int);
@@ -220,24 +216,15 @@ public:
         return AtomicString(m_buffer.get(), 0, m_length);
     }
 
-    unsigned length() const
-    {
-        return m_length;
-    }
-
+    unsigned length() const { return m_length; }
     bool isEmpty() const { return !m_length; }
 
     WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
 
-    unsigned capacity() const
-    {
-        return m_buffer ? m_buffer->length() : m_length;
-    }
+    unsigned capacity() const { return m_buffer ? m_buffer->length() : m_length; }
 
     WTF_EXPORT_PRIVATE void resize(unsigned newSize);
-
     WTF_EXPORT_PRIVATE bool canShrink() const;
-
     WTF_EXPORT_PRIVATE void shrinkToFit();
 
     UChar operator[](unsigned i) const
@@ -294,43 +281,36 @@ public:
 private:
     void allocateBuffer(const LChar* currentCharacters, unsigned requiredLength);
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
-    void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
-    template <typename CharType>
-    void reallocateBuffer(unsigned requiredLength);
-    template <typename CharType>
-    ALWAYS_INLINE CharType* appendUninitialized(unsigned length);
-    template <typename CharType>
-    CharType* appendUninitializedSlow(unsigned length);
-    template <typename CharType>
-    ALWAYS_INLINE CharType * getBufferCharacters();
+    void allocateBufferUpconvert(const LChar* currentCharacters, unsigned requiredLength);
+    template<typename CharacterType> void reallocateBuffer(unsigned requiredLength);
+    UChar* appendUninitializedUpconvert(unsigned length);
+    template<typename CharacterType> CharacterType* appendUninitialized(unsigned length);
+    template<typename CharacterType> CharacterType* appendUninitializedSlow(unsigned length);
+    template<typename CharacterType> CharacterType* bufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
 
-    unsigned m_length;
+    unsigned m_length { 0 };
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
-    bool m_is8Bit;
+    bool m_is8Bit { true };
     union {
-        LChar* m_bufferCharacters8;
+        LChar* m_bufferCharacters8 { nullptr };
         UChar* m_bufferCharacters16;
     };
 };
 
-template <>
-ALWAYS_INLINE LChar* StringBuilder::getBufferCharacters<LChar>()
-{
-    ASSERT(m_is8Bit);
-    return m_bufferCharacters8;
-}
+template<typename StringType> bool equal(const StringBuilder&, const StringType&);
+bool equal(const StringBuilder&, const String&); // Only needed because is8Bit dereferences nullptr when the string is null.
+template<typename CharacterType> bool equal(const StringBuilder&, const CharacterType*, unsigned length);
 
-template <>
-ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
-{
-    ASSERT(!m_is8Bit);
-    return m_bufferCharacters16;
-}    
+bool operator==(const StringBuilder&, const StringBuilder&);
+bool operator!=(const StringBuilder&, const StringBuilder&);
+bool operator==(const StringBuilder&, const String&);
+bool operator!=(const StringBuilder&, const String&);
+bool operator==(const String&, const StringBuilder&);
+bool operator!=(const String&, const StringBuilder&);
 
-template <typename CharType>
-bool equal(const StringBuilder& s, const CharType* buffer, unsigned length)
+template<typename CharacterType> inline bool equal(const StringBuilder& s, const CharacterType* buffer, unsigned length)
 {
     if (s.length() != length)
         return false;
@@ -341,24 +321,18 @@ bool equal(const StringBuilder& s, const CharType* buffer, unsigned length)
     return equal(s.characters16(), buffer, length);
 }
 
-template <typename StringType>
-bool equal(const StringBuilder& a, const StringType& b)
+template<typename StringType> inline bool equal(const StringBuilder& a, const StringType& b)
 {
-    if (a.length() != b.length())
-        return false;
+    return equalCommon(a, b);
+}
 
-    if (!a.length())
-        return true;
-
-    if (a.is8Bit()) {
-        if (b.is8Bit())
-            return equal(a.characters8(), b.characters8(), a.length());
-        return equal(a.characters8(), b.characters16(), a.length());
-    }
-
-    if (b.is8Bit())
-        return equal(a.characters16(), b.characters8(), a.length());
-    return equal(a.characters16(), b.characters16(), a.length());
+inline bool equal(const StringBuilder& a, const String& b)
+{
+    // FIXME: This preserves historic behavior where an empty StringBuilder compares as equal
+    // to a null String. This does not seem like desirable behavior since a null String and
+    // an empty String do not compare as equal, but we have regression tests expecting it,
+    // and there is a slim chance we also have code depending on it.
+    return b.isNull() ? a.isEmpty() : equalCommon(a, b);
 }
 
 inline bool operator==(const StringBuilder& a, const StringBuilder& b) { return equal(a, b); }
@@ -371,5 +345,3 @@ inline bool operator!=(const String& a, const StringBuilder& b) { return !equal(
 } // namespace WTF
 
 using WTF::StringBuilder;
-
-#endif // StringBuilder_h

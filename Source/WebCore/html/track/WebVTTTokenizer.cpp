@@ -30,10 +30,9 @@
  */
 
 #include "config.h"
+#include "WebVTTTokenizer.h"
 
 #if ENABLE(VIDEO_TRACK)
-
-#include "WebVTTTokenizer.h"
 
 #include "MarkupTokenizerInlines.h"
 #include <wtf/text/StringBuilder.h>
@@ -48,7 +47,7 @@ namespace WebCore {
         character = m_preprocessor.nextInputCharacter();    \
         goto stateName;                                     \
     } while (false)
-    
+
 template<unsigned charactersCount> ALWAYS_INLINE bool equalLiteral(const StringBuilder& s, const char (&characters)[charactersCount])
 {
     return WTF::equal(s, reinterpret_cast<const LChar*>(characters), charactersCount - 1);
@@ -69,7 +68,7 @@ inline bool emitToken(WebVTTToken& resultToken, const WebVTTToken& token)
 
 inline bool advanceAndEmitToken(SegmentedString& source, WebVTTToken& resultToken, const WebVTTToken& token)
 {
-    source.advanceAndUpdateLineNumber();
+    source.advance();
     return emitToken(resultToken, token);
 }
 
@@ -79,7 +78,7 @@ WebVTTTokenizer::WebVTTTokenizer(const String& input)
 {
     // Append an EOF marker and close the input "stream".
     ASSERT(!m_input.isClosed());
-    m_input.append(SegmentedString(String(&kEndOfFileMarker, 1)));
+    m_input.append(String { &kEndOfFileMarker, 1 });
     m_input.close();
 }
 

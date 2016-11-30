@@ -43,7 +43,7 @@ public:
     virtual bool hasInsertionPoint() { return true; }
 
     // insert is used by document.write.
-    virtual void insert(const SegmentedString&) = 0;
+    virtual void insert(SegmentedString&&) = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
     virtual void appendBytes(DocumentWriter&, const char* bytes, size_t length) = 0;
