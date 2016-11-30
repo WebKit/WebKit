@@ -1,3 +1,14 @@
+2016-11-29  Nan Wang  <n_wang@apple.com>
+
+        AX: ARIA tree & treeitem roles & aria-expanded state not spoken to VoiceOver iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=164936
+        <rdar://problem/29334274>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/treeitem-expanded-expected.txt: Added.
+        * accessibility/ios-simulator/treeitem-expanded.html: Added.
+
 2016-11-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209096, r209104, and r209114.

@@ -531,6 +531,18 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }    
 }
 
+- (AccessibilityObjectWrapper*)_accessibilityTreeAncestor
+{
+    auto matchFunc = [] (const AccessibilityObject& object) {
+        AccessibilityRole role = object.roleValue();
+        return role == TreeRole;
+    };
+    
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, matchFunc))
+        return parent->wrapper();
+    return nil;
+}
+
 - (AccessibilityObjectWrapper*)_accessibilityListAncestor
 {
     auto matchFunc = [] (const AccessibilityObject& object) {
@@ -1848,6 +1860,16 @@ static RenderObject* rendererForView(WAKView* view)
     return nil;
 }
 
+- (AccessibilityObject*)treeItemParentForObject:(AccessibilityObject*)object
+{
+    // Use this to check if an object is inside a treeitem object.
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*object, true, [] (const AccessibilityObject& object) {
+        return object.roleValue() == TreeItemRole;
+    }))
+        return const_cast<AccessibilityObject*>(parent);
+    return nil;
+}
+
 - (void)accessibilityElementDidBecomeFocused
 {
     if (![self _prepareAccessibilityCall])
@@ -2708,6 +2730,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (AccessibilityObject* detailParent = [self detailParentForSummaryObject:m_object])
         return detailParent->supportsExpanded();
     
+    if (AccessibilityObject* treeItemParent = [self treeItemParentForObject:m_object])
+        return treeItemParent->supportsExpanded();
+    
     return m_object->supportsExpanded();
 }
 
@@ -2720,6 +2745,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     // summary's accessible children.
     if (AccessibilityObject* detailParent = [self detailParentForSummaryObject:m_object])
         return detailParent->isExpanded();
+    
+    if (AccessibilityObject* treeItemParent = [self treeItemParentForObject:m_object])
+        return treeItemParent->isExpanded();
     
     return m_object->isExpanded();
 }
