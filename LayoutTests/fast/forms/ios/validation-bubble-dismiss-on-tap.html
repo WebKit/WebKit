@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    function getValidationBubbleContents()
+    {
+        return `
+        (function() {
+            return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
+        })();`
+    }
+
+    function getTapAtPointUIScript(x, y)
+    {
+        return `
+            (function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`
+    }
+
+    function doTest()
+    {
+        if (!testRunner.runUIScript)
+            return;
+
+        description("Tests that tapping the view dismisses the HTML form validation popover.");
+
+        document.getElementById("testSubmitButton").click();
+
+        testRunner.runUIScript(getValidationBubbleContents(), function(result) {
+            validationBubbleContents = JSON.parse(result).validationBubble;
+            shouldBeEqualToString("validationBubbleContents.message", "Check this box");
+
+            testRunner.runUIScript(getTapAtPointUIScript(0, 0), function() {
+                testRunner.runUIScript(getValidationBubbleContents(), function(result) {
+                    validationBubbleContents = JSON.parse(result).validationBubble;
+                    shouldBeEqualToString("validationBubbleContents.message", ""); // Not visible.
+                    finishJSTest();
+                });
+            });
+        });
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<form>
+<input type="checkbox" id="testInput" required><input type="submit" id="testSubmitButton">
+<script src="../../../resources/js-test-post.js"></script>
+</form>
+</body>
+</html>

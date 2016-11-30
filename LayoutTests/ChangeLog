@@ -1,3 +1,16 @@
+2016-11-29  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Add test for HTML form validation popover dismissal on tap
+        https://bugs.webkit.org/show_bug.cgi?id=165185
+
+        Reviewed by Simon Fraser.
+
+        Add test for HTML form validation popover dismissal on tap outside the
+        popover.
+
+        * fast/forms/ios/validation-bubble-dismiss-on-tap-expected.txt: Added.
+        * fast/forms/ios/validation-bubble-dismiss-on-tap.html: Added.
+
 2016-11-29  Nan Wang  <n_wang@apple.com>
 
         AX: ARIA tree & treeitem roles & aria-expanded state not spoken to VoiceOver iOS 10
