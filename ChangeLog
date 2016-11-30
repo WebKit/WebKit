@@ -1,3 +1,16 @@
+2016-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Apple build is using incorrect ICU library (if present)
+        https://bugs.webkit.org/show_bug.cgi?id=164934
+        <rdar://problem/29329654>
+
+        Reviewed by Alex Christensen.
+
+        Move the 'icuuc.lib' and 'icuin.lib' library names to the end of the set of choices when searching for ICU.
+        so that we preferentially select the 'new' version of these libraries if they are available.
+
+        * Source/cmake/FindICU.cmake:
+
 2016-11-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ENABLE_ASSEMBLER_WX_EXCLUSIVE code
