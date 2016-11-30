@@ -1,3 +1,50 @@
+2016-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Use 'childOfType' template when retrieving Shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=165145
+        <rdar://problem/29331830>
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/shadow-dom/color-input-element-shadow-manipulation.html
+               fast/shadow-dom/file-input-element-shadow-manipulation.html
+               fast/shadow-dom/keygen-shadow-manipulation.html
+               fast/shadow-dom/media-shadow-manipulation.html
+               fast/shadow-dom/range-input-element-shadow-manipulation.html
+               fast/shadow-dom/textarea-shadow-manipulation.html
+
+        Switch to using 'childOfType' when retrieving Shadow DOM elements, rather
+        than relying on expected element positions, as these can be changed by
+        JavaScript.
+
+        Drive by fix: Make more use of is<> and downcast<> templates rather than blindly casting.
+
+        * dom/Element.h:
+        (WebCore::Element::isUploadButton): Added.
+        (WebCore::Element::isSliderContainerElement): Added.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::shadowColorSwatch): Use 'childOfType' rather than assuming
+        the first child is the one we want.
+        * html/FileInputType.cpp:
+        (isType): Added.
+        (WebCore::FileInputType::disabledAttributeChanged): Use 'childOfType' rather than assuming
+        the first child is the one we want.
+        (WebCore::FileInputType::multipleAttributeChanged): Ditto.
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaControls): Ditto.
+        (WebCore::HTMLMediaElement::hasMediaControls): Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElement): Ditto.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::sliderTrackElement): Ditto.
+        * html/shadow/SliderThumbElement.h:
+        (isType): Added.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::targetClone): Use 'childOfType' rather than assuming
+        the first child is the one we want.
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Cache and reuse SQLiteStatements in the SQLite backend.

@@ -1,3 +1,24 @@
+2016-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Use 'childOfType' template when retrieving Shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=165145
+        <rdar://problem/29331830>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/shadow-dom/color-input-element-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/color-input-element-shadow-manipulation.html: Added.
+        * fast/shadow-dom/file-input-element-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/file-input-element-shadow-manipulation.html: Added.
+        * fast/shadow-dom/keygen-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/keygen-shadow-manipulation.html: Added.
+        * fast/shadow-dom/media-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/media-shadow-manipulation.html: Added.
+        * fast/shadow-dom/range-input-element-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/range-input-element-shadow-manipulation.html: Added.
+        * fast/shadow-dom/textarea-shadow-manipulation-expected.txt: Added.
+        * fast/shadow-dom/textarea-shadow-manipulation.html: Added.
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clicking on link in Web Inspector can cause UIProcess to crash
