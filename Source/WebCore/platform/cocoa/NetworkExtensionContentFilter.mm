@@ -33,6 +33,7 @@
 #import "NEFilterSourceSPI.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
 #import "URL.h"
@@ -73,6 +74,11 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
 #if HAVE(MODERN_NE_FILTER_SOURCE)
     ASSERT_UNUSED(url, !url);
     m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithDecisionQueue:m_queue.get()]);
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    // FIXME: Remove the -respondsToSelector: check once -setSourceAppBundleID: is in an SDK (<rdar://problem/29147174>).
+    if ([m_neFilterSource respondsToSelector:@selector(setSourceAppBundleID:)])
+        [m_neFilterSource setSourceAppBundleID:applicationBundleIdentifier()];
+#endif
 #else
     ASSERT_ARG(url, url);
     m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithURL:*url direction:NEFilterSourceDirectionInbound socketIdentifier:0]);

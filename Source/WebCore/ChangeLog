@@ -1,3 +1,21 @@
+2016-11-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Pass the embedding app's bundle ID to new instances of NEFilterSource
+        https://bugs.webkit.org/show_bug.cgi?id=165168
+        <rdar://problem/29003618>
+
+        Reviewed by Simon Fraser.
+
+        * platform/RuntimeApplicationChecks.h: Declared applicationBundleIdentifier().
+        * platform/RuntimeApplicationChecks.mm:
+        (WebCore::applicationBundleIdentifier): Made non-static.
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize): If the new NEFilterSource instance
+        responds to -setSourceAppBundleID:, call it with applicationBundleIdentifier().
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Moved NEFilterSourceOptionsRedirectURL into the
+        !USE(APPLE_INTERNAL_SDK) section and unconditionally declared @property sourceAppBundleID in
+        a new category on NEFilterSource.
+
 2016-11-30  Brent Fulgham  <bfulgham@apple.com>
 
         Use 'childOfType' template when retrieving Shadow DOM elements

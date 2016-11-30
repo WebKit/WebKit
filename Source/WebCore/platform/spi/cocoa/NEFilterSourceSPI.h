@@ -62,6 +62,7 @@ typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
 #if HAVE(MODERN_NE_FILTER_SOURCE)
 
 #define NEFilterSourceOptionsPageData @"PageData"
+#define NEFilterSourceOptionsRedirectURL @"RedirectURL"
 
 typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary *);
 
@@ -78,7 +79,9 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 
-// FIXME: Remove once NEFilterSourceOptionsRedirectURL is defined in the SDK.
-#ifndef NEFilterSourceOptionsRedirectURL
-#define NEFilterSourceOptionsRedirectURL @"RedirectURL"
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+// FIXME: Confine this to the !USE(APPLE_INTERNAL_SDK) section once this is defined in an SDK (<rdar://problem/29147174>).
+@interface NEFilterSource (WKStaging)
+@property (copy) NSString *sourceAppBundleID;
+@end
 #endif

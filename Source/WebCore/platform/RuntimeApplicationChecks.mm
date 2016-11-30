@@ -48,7 +48,7 @@ static String& applicationBundleIdentifierOverride()
     return identifier;
 }
 
-static String applicationBundleIdentifier()
+String applicationBundleIdentifier()
 {
     // The override only gets set in WebKit2's WebProcess and NetworkProcess. If unset, we use the main bundle identifier.
     const auto& identifier = applicationBundleIdentifierOverride();

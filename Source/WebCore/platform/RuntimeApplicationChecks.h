@@ -32,6 +32,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
+String applicationBundleIdentifier();
 
 #if PLATFORM(MAC)
 
