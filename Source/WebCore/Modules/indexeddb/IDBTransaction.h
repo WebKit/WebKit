@@ -244,7 +244,7 @@ private:
     RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
     Deque<RefPtr<IDBClient::TransactionOperation>> m_pendingTransactionOperationQueue;
-    Deque<IDBClient::TransactionOperation*> m_transactionOperationsInProgressQueue;
+    Deque<RefPtr<IDBClient::TransactionOperation>> m_transactionOperationsInProgressQueue;
     Deque<std::pair<RefPtr<IDBClient::TransactionOperation>, IDBResultData>> m_completedOnServerQueue;
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
 
