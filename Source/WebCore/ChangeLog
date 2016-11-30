@@ -1,3 +1,9 @@
+2016-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative cmake buildfix after r209070.
+
+        * PlatformMac.cmake: New sources added.
+
 2016-11-29  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][OpenWebRTC] Temporary device selection support

@@ -277,10 +277,12 @@ list(APPEND WebCore_SOURCES
     page/mac/WheelEventDeltaFilterMac.mm
 
     page/scrolling/AsyncScrollingCoordinator.cpp
+    page/scrolling/ScrollingMomentumCalculator.cpp
 
     page/scrolling/cocoa/ScrollingStateNode.mm
 
     page/scrolling/mac/ScrollingCoordinatorMac.mm
+    page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
     page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
     page/scrolling/mac/ScrollingThreadMac.mm
     page/scrolling/mac/ScrollingTreeFixedNode.mm
