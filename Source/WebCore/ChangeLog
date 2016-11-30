@@ -1,3 +1,24 @@
+2016-11-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Sync video preview layer and parent layer sizes
+        https://bugs.webkit.org/show_bug.cgi?id=165139
+
+        Reviewed by Jer Noble.
+
+        CALayer auto-resizing doesn't work on iOS, so manually reize the video capture preview layer
+        whenever the background layer's bounds change.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoSourcePreview::AVVideoSourcePreview): Create layer observer.
+        (WebCore::AVVideoSourcePreview::backgroundLayerBoundsChanged): Sync preview layer and background
+          layer sizes.
+        (WebCore::AVVideoSourcePreview::invalidate): Invalidate and clear observer.
+        (-[WebCoreAVVideoCaptureSourceObserver initWithParent:]):
+        (-[WebCoreAVVideoCaptureSourceObserver setParent:]): Add KVO bounds observer.
+        (-[WebCoreAVVideoCaptureSourceObserver observeValueForKeyPath:ofObject:change:context:]): Call
+        parent when "bounds" changes.
+        (-[WebCoreAVVideoCaptureSourceObserver actionForKey:]): Return nil to disable all animations.
+
 2016-11-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix crash in -webkit-shape-outside parsing

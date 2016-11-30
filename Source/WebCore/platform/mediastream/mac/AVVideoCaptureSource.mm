@@ -40,8 +40,14 @@
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourcePreview.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "WebActionDisablingCALayerDelegate.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
+
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#include "WebCoreThreadRun.h"
+#endif
 
 #import "CoreMediaSoftLink.h"
 #import "CoreVideoSoftLink.h"
@@ -79,7 +85,7 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset1280x720, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset960x540, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset640x480, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset352x288, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset320x240, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset320x240, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
 
 #define AVCaptureSessionPreset1280x720 getAVCaptureSessionPreset1280x720()
@@ -89,14 +95,28 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
 #define AVCaptureSessionPreset320x240 getAVCaptureSessionPreset320x240()
 #define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
 
+using namespace WebCore;
+
+@interface WebCoreAVVideoCaptureSourceObserver : NSObject<CALayerDelegate> {
+    AVVideoSourcePreview *_parent;
+    BOOL _hasObserver;
+}
+
+- (void)setParent:(AVVideoSourcePreview *)parent;
+- (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+@end
+
 namespace WebCore {
 
 class AVVideoSourcePreview: public AVMediaSourcePreview {
 public:
-    static RefPtr<AVMediaSourcePreview> create(AVCaptureSession *, AVCaptureDeviceTypedef *, AVVideoCaptureSource*);
+    static RefPtr<AVMediaSourcePreview> create(AVCaptureSession*, AVCaptureDeviceTypedef*, AVVideoCaptureSource*);
+
+    void backgroundLayerBoundsChanged();
+    PlatformLayer* platformLayer() const final { return m_previewBackgroundLayer.get(); }
 
 private:
-    AVVideoSourcePreview(AVCaptureSession *, AVCaptureDeviceTypedef *, AVVideoCaptureSource*);
+    AVVideoSourcePreview(AVCaptureSession*, AVCaptureDeviceTypedef*, AVVideoCaptureSource*);
 
     void invalidate() final;
 
@@ -104,13 +124,12 @@ private:
     void pause() const final;
     void setVolume(double) const final { };
     void setEnabled(bool) final;
-    PlatformLayer* platformLayer() const final { return m_previewBackgroundLayer.get(); }
-    
     void setPaused(bool) const;
 
     RetainPtr<AVCaptureVideoPreviewLayerType> m_previewLayer;
     RetainPtr<PlatformLayer> m_previewBackgroundLayer;
     RetainPtr<AVCaptureDeviceTypedef> m_device;
+    RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
 };
 
 RefPtr<AVMediaSourcePreview> AVVideoSourcePreview::create(AVCaptureSession *session, AVCaptureDeviceTypedef* device, AVVideoCaptureSource* parent)
@@ -120,33 +139,40 @@ RefPtr<AVMediaSourcePreview> AVVideoSourcePreview::create(AVCaptureSession *sess
 
 AVVideoSourcePreview::AVVideoSourcePreview(AVCaptureSession *session, AVCaptureDeviceTypedef* device, AVVideoCaptureSource* parent)
     : AVMediaSourcePreview(parent)
+    , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] init]))
 {
     m_device = device;
     m_previewLayer = adoptNS([allocAVCaptureVideoPreviewLayerInstance() initWithSession:session]);
-#ifndef NDEBUG
-    m_previewLayer.get().name = @"AVVideoCaptureSource preview layer";
-#endif
-
     m_previewLayer.get().contentsGravity = kCAGravityResize;
     m_previewLayer.get().anchorPoint = CGPointZero;
-#if !PLATFORM(IOS)
-    m_previewLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
-#endif
+    [m_previewLayer.get() setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     m_previewBackgroundLayer = adoptNS([[CALayer alloc] init]);
-    m_previewBackgroundLayer.get().name = @"AVVideoSourcePreview parent layer";
     m_previewBackgroundLayer.get().contentsGravity = kCAGravityResizeAspect;
     m_previewBackgroundLayer.get().anchorPoint = CGPointZero;
     m_previewBackgroundLayer.get().needsDisplayOnBoundsChange = YES;
-#if !PLATFORM(IOS)
-    m_previewBackgroundLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+    [m_previewBackgroundLayer.get() setDelegate:[WebActionDisablingCALayerDelegate shared]];
+
+#ifndef NDEBUG
+    m_previewLayer.get().name = @"AVVideoCaptureSource preview layer";
+    m_previewBackgroundLayer.get().name = @"AVVideoSourcePreview parent layer";
 #endif
 
     [m_previewBackgroundLayer addSublayer:m_previewLayer.get()];
+
+    [m_objcObserver.get() setParent:this];
+}
+
+void AVVideoSourcePreview::backgroundLayerBoundsChanged()
+{
+    if (m_previewBackgroundLayer && m_previewLayer)
+        [m_previewLayer.get() setBounds:m_previewBackgroundLayer.get().bounds];
 }
 
 void AVVideoSourcePreview::invalidate()
 {
+    [m_objcObserver.get() setParent:nil];
+    m_objcObserver = nullptr;
     m_previewLayer = nullptr;
     m_previewBackgroundLayer = nullptr;
     m_device = nullptr;
@@ -586,5 +612,47 @@ bool AVVideoCaptureSource::supportsSizeAndFrameRate(std::optional<int> width, st
 }
 
 } // namespace WebCore
+
+@implementation WebCoreAVVideoCaptureSourceObserver
+
+static NSString * const KeyValueBoundsChangeKey = @"bounds";
+
+- (void)setParent:(AVVideoSourcePreview *)parent
+{
+    if (_parent && _hasObserver && _parent->platformLayer()) {
+        _hasObserver = false;
+        [_parent->platformLayer() removeObserver:self forKeyPath:KeyValueBoundsChangeKey];
+    }
+
+    _parent = parent;
+
+    if (_parent && _parent->platformLayer()) {
+        _hasObserver = true;
+        [_parent->platformLayer() addObserver:self forKeyPath:KeyValueBoundsChangeKey options:0 context:nullptr];
+    }
+}
+
+- (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(context);
+
+    if (!_parent)
+        return;
+
+    if ([[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
+        return;
+
+#if PLATFORM(IOS)
+    WebThreadRun(^ {
+        if ([keyPath isEqual:KeyValueBoundsChangeKey] && object == _parent->platformLayer())
+            _parent->backgroundLayerBoundsChanged();
+    });
+#else
+    if ([keyPath isEqual:KeyValueBoundsChangeKey] && object == _parent->platformLayer())
+        _parent->backgroundLayerBoundsChanged();
+#endif
+}
+
+@end
 
 #endif // ENABLE(MEDIA_STREAM)
