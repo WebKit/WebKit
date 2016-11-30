@@ -1,3 +1,12 @@
+2016-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, mark tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html as flaky
+
+        It seems there are additional causes of test failures when scrolling in iframes. webkit.org/b/165196 will be
+        used to track this.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-11-29  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add test for HTML form validation popover dismissal on tap
