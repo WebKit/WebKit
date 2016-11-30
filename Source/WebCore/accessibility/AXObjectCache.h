@@ -441,6 +441,8 @@ bool isNodeAriaVisible(Node*);
     
 #if !HAVE(ACCESSIBILITY)
 inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID) const { return DefaultBehavior; }
+inline AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection&) { }
+inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&) { }
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
 inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(nullptr), m_passwordNotificationPostTimer(nullptr), m_liveRegionChangedPostTimer(nullptr) { }
 inline AXObjectCache::~AXObjectCache() { }
