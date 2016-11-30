@@ -183,6 +183,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
         return throwVMError(exec, scope, createSyntaxError(exec, regExp->errorMessage()));
 
     asRegExpObject(thisValue)->setRegExp(vm, regExp);
+    scope.release();
     asRegExpObject(thisValue)->setLastIndex(exec, 0);
     return JSValue::encode(thisValue);
 }
@@ -197,15 +198,15 @@ static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue globalValue = regexp->get(exec, exec->propertyNames().global);
+    JSValue globalValue = regexp->get(exec, vm.propertyNames->global);
     RETURN_IF_EXCEPTION(scope, string);
-    JSValue ignoreCaseValue = regexp->get(exec, exec->propertyNames().ignoreCase);
+    JSValue ignoreCaseValue = regexp->get(exec, vm.propertyNames->ignoreCase);
     RETURN_IF_EXCEPTION(scope, string);
-    JSValue multilineValue = regexp->get(exec, exec->propertyNames().multiline);
+    JSValue multilineValue = regexp->get(exec, vm.propertyNames->multiline);
     RETURN_IF_EXCEPTION(scope, string);
-    JSValue unicodeValue = regexp->get(exec, exec->propertyNames().unicode);
+    JSValue unicodeValue = regexp->get(exec, vm.propertyNames->unicode);
     RETURN_IF_EXCEPTION(scope, string);
-    JSValue stickyValue = regexp->get(exec, exec->propertyNames().sticky);
+    JSValue stickyValue = regexp->get(exec, vm.propertyNames->sticky);
     RETURN_IF_EXCEPTION(scope, string);
 
     unsigned index = 0;
@@ -236,6 +237,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     JSObject* thisObject = asObject(thisValue);
 
     StringRecursionChecker checker(exec, thisObject);
+    ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -621,8 +623,10 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         // b. If z is not null, return A.
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
-        if (!regexp->match(vm, input, 0))
+        if (!regexp->match(vm, input, 0)) {
             result->putDirectIndex(exec, 0, inputString);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        }
         return JSValue::encode(result);
     }
 
@@ -643,16 +647,19 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         },
         [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
             result->putDirectIndex(exec, resultLength++, isDefined ? JSRopeString::createSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            RETURN_IF_EXCEPTION(scope, AbortSplit);
             if (resultLength >= limit)
                 return AbortSplit;
             return ContinueSplit;
         });
-    
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
     if (resultLength >= limit)
         return JSValue::encode(result);
     if (resultLength < maxSizeForDirectPath) {
         // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
         // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+        scope.release();
         result->putDirectIndex(exec, resultLength, JSRopeString::createSubstringOfResolved(vm, inputString, position, inputSize - position));
         
         // 22. Return A.
@@ -679,7 +686,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     
     if (resultLength + dryRunCount >= MAX_STORAGE_VECTOR_LENGTH) {
         throwOutOfMemoryError(exec, scope);
-        return JSValue::encode(jsUndefined());
+        return encodedJSValue();
     }
     
     // OK, we know that if we finish the split, we won't have to OOM.
@@ -693,16 +700,19 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         },
         [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
             result->putDirectIndex(exec, resultLength++, isDefined ? JSRopeString::createSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            RETURN_IF_EXCEPTION(scope, AbortSplit);
             if (resultLength >= limit)
                 return AbortSplit;
             return ContinueSplit;
         });
-    
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
     if (resultLength >= limit)
         return JSValue::encode(result);
     
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+    scope.release();
     result->putDirectIndex(exec, resultLength, JSRopeString::createSubstringOfResolved(vm, inputString, position, inputSize - position));
     // 22. Return A.
     return JSValue::encode(result);

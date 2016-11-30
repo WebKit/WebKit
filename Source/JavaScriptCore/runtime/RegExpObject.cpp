@@ -119,13 +119,16 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
                 return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyChangeError));
             return true;
         }
-        if (descriptor.value())
+        if (descriptor.value()) {
             regExp->setLastIndex(exec, descriptor.value(), false);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
         if (descriptor.writablePresent() && !descriptor.writable())
             regExp->m_lastIndexIsWritable = false;
         return true;
     }
 
+    scope.release();
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
@@ -179,12 +182,17 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
     static unsigned maxSizeForDirectPath = 100000;
     
     JSArray* array = constructEmptyArray(exec, nullptr);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
+    bool hasException = false;
     auto iterate = [&] () {
         size_t end = result.end;
         size_t length = end - result.start;
         array->push(exec, JSRopeString::createSubstringOfResolved(vm, string, result.start, length));
+        if (UNLIKELY(scope.exception())) {
+            hasException = true;
+            return;
+        }
         if (!length)
             end = fixEnd(end);
         result = constructor->performMatch(vm, regExp, string, s, end);
@@ -216,9 +224,12 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
             
             // OK, we have a sensible number of matches. Now we can create them for reals.
             result = savedResult;
-            do
+            do {
                 iterate();
-            while (result);
+                ASSERT(!!scope.exception() == hasException);
+                if (UNLIKELY(hasException))
+                    return { };
+            } while (result);
             
             return array;
         }
@@ -238,20 +249,22 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
     ASSERT(regExp->global());
 
     setLastIndex(exec, 0);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     String s = string->value(exec);
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
+        scope.release();
         return collectMatches(
             vm, exec, string, s, regExpConstructor, regExp,
             [&] (size_t end) -> size_t {
                 return advanceStringUnicode(s, stringLength, end);
             });
     }
-    
+
+    scope.release();
     return collectMatches(
         vm, exec, string, s, regExpConstructor, regExp,
         [&] (size_t end) -> size_t {

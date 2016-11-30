@@ -214,11 +214,10 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
 
     if (flags.isUndefined())
         return NoFlags;
-    JSString* flagsString = flags.toString(exec);
-    ASSERT(scope.exception() || flagsString);
-    if (!flagsString) {
+    JSString* flagsString = flags.toStringOrNull(exec);
+    ASSERT(!!scope.exception() == !flagsString);
+    if (UNLIKELY(!flagsString))
         return InvalidFlags;
-    }
 
     RegExpFlags result = regExpFlags(flagsString->value(exec));
     RETURN_IF_EXCEPTION(scope, InvalidFlags);
@@ -236,7 +235,8 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     RegExpFlags flags = toFlags(exec, flagsArg);
-    if (flags == InvalidFlags)
+    ASSERT(!!scope.exception() == (flags == InvalidFlags));
+    if (UNLIKELY(flags == InvalidFlags))
         return nullptr;
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
@@ -257,6 +257,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
 
     bool isPatternRegExp = patternArg.inherits(RegExpObject::info());
     bool constructAsRegexp = isRegExp(vm, exec, patternArg);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (newTarget.isUndefined() && constructAsRegexp && flagsArg.isUndefined()) {
         JSValue constructor = patternArg.get(exec, vm.propertyNames->constructor);
@@ -274,21 +275,26 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
 
         if (!flagsArg.isUndefined()) {
             RegExpFlags flags = toFlags(exec, flagsArg);
+            ASSERT(!!scope.exception() == (flags == InvalidFlags));
             if (flags == InvalidFlags)
                 return nullptr;
             regExp = RegExp::create(vm, regExp->pattern(), flags);
         }
 
-        return RegExpObject::create(exec->vm(), structure, regExp);
+        return RegExpObject::create(vm, structure, regExp);
     }
 
     if (constructAsRegexp) {
         JSValue pattern = patternArg.get(exec, vm.propertyNames->source);
-        if (flagsArg.isUndefined())
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (flagsArg.isUndefined()) {
             flagsArg = patternArg.get(exec, vm.propertyNames->flags);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
         patternArg = pattern;
     }
 
+    scope.release();
     return regExpCreate(exec, globalObject, newTarget, patternArg, flagsArg);
 }
 

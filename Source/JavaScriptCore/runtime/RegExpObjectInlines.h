@@ -36,17 +36,22 @@ namespace JSC {
 ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     ExecState* exec, RegExpObject* regExpObject, const String& input)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue jsLastIndex = regExpObject->getLastIndex();
     unsigned lastIndex;
     if (LIKELY(jsLastIndex.isUInt32())) {
         lastIndex = jsLastIndex.asUInt32();
         if (lastIndex > input.length()) {
+            scope.release();
             regExpObject->setLastIndex(exec, 0);
             return UINT_MAX;
         }
     } else {
         double doubleLastIndex = jsLastIndex.toInteger(exec);
+        RETURN_IF_EXCEPTION(scope, UINT_MAX);
         if (doubleLastIndex < 0 || doubleLastIndex > input.length()) {
+            scope.release();
             regExpObject->setLastIndex(exec, 0);
             return UINT_MAX;
         }
@@ -63,13 +68,14 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     bool globalOrSticky = regExp->globalOrSticky();
 
     unsigned lastIndex;
     if (globalOrSticky) {
         lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
+        ASSERT(!scope.exception() || lastIndex == UINT_MAX);
         if (lastIndex == UINT_MAX)
             return jsNull();
     } else
@@ -79,6 +85,7 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     JSArray* array =
         createRegExpMatchesArray(vm, globalObject, string, input, regExp, lastIndex, result);
     if (!array) {
+        scope.release();
         if (globalOrSticky)
             setLastIndex(exec, 0);
         return jsNull();
@@ -86,6 +93,7 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
 
     if (globalOrSticky)
         setLastIndex(exec, result.end);
+    RETURN_IF_EXCEPTION(scope, { });
     regExpConstructor->recordMatch(vm, regExp, string, result);
     return array;
 }
@@ -100,16 +108,18 @@ MatchResult RegExpObject::matchInline(
     RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec);
-    RETURN_IF_EXCEPTION(scope, MatchResult());
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (!regExp->global() && !regExp->sticky())
         return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
+    ASSERT(!scope.exception() || (lastIndex == UINT_MAX));
     if (lastIndex == UINT_MAX)
         return MatchResult::failed();
     
     MatchResult result = regExpConstructor->performMatch(vm, regExp, string, input, lastIndex);
+    scope.release();
     setLastIndex(exec, result.end);
     return result;
 }

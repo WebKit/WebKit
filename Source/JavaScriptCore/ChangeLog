@@ -1,3 +1,30 @@
+2016-11-29  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in runtime/RegExp* files.
+        https://bugs.webkit.org/show_bug.cgi?id=165054
+
+        Reviewed by Saam Barati.
+
+        Also replaced returning JSValue() with returning { }.
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::toFlags):
+        (JSC::regExpCreate):
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::collectMatches):
+        (JSC::RegExpObject::matchGlobal):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::getRegExpObjectLastIndexAsUnsigned):
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::flagsString):
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoFuncSplitFast):
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode
