@@ -43,12 +43,12 @@ public:
     virtual bool handleEvent(Vector<int32_t> sequenceArg, int32_t longArg);
 
 private:
-    JSTestCallbackFunctionWithTypedefs(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunctionWithTypedefs&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunctionWithTypedefs&);
+inline JSC::JSValue toJS(TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore

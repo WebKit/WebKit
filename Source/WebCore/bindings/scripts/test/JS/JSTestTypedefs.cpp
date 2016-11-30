@@ -134,13 +134,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto hello = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(!state->uncheckedArgument(1).isFunction()))
-        return throwArgumentMustBeFunctionError(*state, throwScope, 1, "testCallbackFunction", "TestTypedefs", nullptr);
-    auto testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    if (UNLIKELY(!state->uncheckedArgument(2).isObject()))
-        return throwArgumentMustBeFunctionError(*state, throwScope, 2, "testCallbackInterface", "TestTypedefs", nullptr);
-    auto testCallbackInterface = JSTestCallbackInterface::create(asObject(state->uncheckedArgument(2)), castedThis->globalObject());
-    auto object = TestTypedefs::create(WTFMove(hello), WTFMove(testCallbackFunction), WTFMove(testCallbackInterface));
+    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*state, state->uncheckedArgument(1), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*state, state->uncheckedArgument(2), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto object = TestTypedefs::create(WTFMove(hello), testCallbackFunction.releaseNonNull(), testCallbackInterface.releaseNonNull());
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
@@ -263,7 +261,7 @@ static inline JSValue jsTestTypedefsImmutableSerializedScriptValueGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(state, thisObject.globalObject()) : jsNull();
+    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, *thisObject.globalObject(), impl.immutableSerializedScriptValue());
     return result;
 }
 
@@ -400,7 +398,7 @@ static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecS
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = SerializedScriptValue::create(state, value);
+    auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setImmutableSerializedScriptValue(WTFMove(nativeValue));
     return true;
@@ -548,7 +546,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSeque
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto sequenceArg = convert<IDLSequence<IDLInterface<SerializedScriptValue>>>(*state, state->uncheckedArgument(0));
+    auto sequenceArg = convert<IDLSequence<IDLSerializedScriptValue<SerializedScriptValue>>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLUnsignedLongLong>(impl.methodWithSequenceArg(WTFMove(sequenceArg))));
 }

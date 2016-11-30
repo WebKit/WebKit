@@ -91,7 +91,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto arrayBufferView = convert<IDLInterface<ArrayBufferView>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestOverloadedConstructors::create(*arrayBufferView);
+    auto object = TestOverloadedConstructors::create(arrayBufferView.releaseNonNull());
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 

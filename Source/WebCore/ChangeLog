@@ -1,3 +1,130 @@
+2016-11-29  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for more missing / exotic IDLTypes
+        https://bugs.webkit.org/show_bug.cgi?id=165156
+
+        Reviewed by Alex Christensen.
+
+        - Adds JSDOMConvert support for WebIDL's 'callback interface' and 'callback function'.
+        - Adds JSDOMConvert support for WebIDL extensions for SerializedScriptValue, Dictionary, 
+          EventListener and XPathNSResolver (moving much of their special casing out of perl and
+          into JSDOMConvert).
+
+        * DerivedSources.make:
+        Adds $(WebCore)/testing to the list of available IDL directories to keep internals
+        compiling.
+
+        * Modules/webaudio/WaveShaperNode.cpp:
+        * Modules/webaudio/WaveShaperNode.h:
+        Update to take curve by reference.
+
+        * bindings/generic/IDLTypes.h:
+        (WebCore::IDLWrapper):
+        Add helper type, IDLWrapper, which serves as a base type for all IDLTypes that are
+        RefCounted.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert):
+        (WebCore::Converter<IDLNullable<T>>::convert):
+        (WebCore::Converter<IDLCallbackFunction<T>>::convert):
+        (WebCore::JSConverter<IDLCallbackFunction<T>>::convert):
+        (WebCore::JSConverter<IDLCallbackFunction<T>>::convertNewlyCreated):
+        (WebCore::Converter<IDLCallbackInterface<T>>::convert):
+        (WebCore::JSConverter<IDLCallbackInterface<T>>::convert):
+        (WebCore::JSConverter<IDLCallbackInterface<T>>::convertNewlyCreated):
+        (WebCore::Converter<IDLSerializedScriptValue<T>>::convert):
+        (WebCore::JSConverter<IDLSerializedScriptValue<T>>::convert):
+        (WebCore::Converter<IDLLegacyDictionary<T>>::convert):
+        (WebCore::Converter<IDLEventListener<T>>::convert):
+        (WebCore::Converter<IDLXPathNSResolver<T>>::convert):
+        (WebCore::JSConverter<IDLXPathNSResolver<T>>::convert):
+        (WebCore::JSConverter<IDLXPathNSResolver<T>>::convertNewlyCreated):
+        Add converters for the new types. IDLSerializedScriptValue, IDLLegacyDictionary, IDLEventListener and IDLXPathNSResolver
+        have been templatized to avoid including their implementation classes everywhere. We can improve this in the future by
+        splitting JSDOMConvert up into to separate files.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        (IsInterfaceType):
+        (IsWrapperType):
+        (ComputeIsCallbackInterface):
+        (ComputeIsCallbackFunction):
+        Add new predicates, IsBuiltinType and IsInterfaceType, and re-work IsWrapperType to determine all types that
+        have a JS wrapper (and consequently a JS{name}.h file).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        Update to add include for EventListener.
+
+        (GetArgumentExceptionFunction):
+        (GetArgumentExceptionThrower):
+        (GetAttributeExceptionFunction):
+        (GetAttributeExceptionThrower):
+        Add support for exceptions for callbacks.
+
+        (PassArgumentExpression):
+        Factor out logic on how to pass arguments to C++.
+
+        (GenerateHeader):
+        Make toWrapped and JSDOMWrapperConverterTraits work with XPathNSResolver.
+
+        (GenerateImplementation):
+        Update to use PassArgumentExpression and pass a global object reference to JSValueToNative.
+
+        (GenerateParametersCheck):
+        Remove special casing for callbacks.
+
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        Simplify toJS functions. State and global object are not necessary.
+
+        (GetBaseIDLType):
+        Add support for new types. Add assertion so that unknown types can't get through.
+
+        (ShouldPassArgumentByReference):
+        Rename from ShouldPassWrapperByReference, and merge in CodeGenerator's ShouldPassWrapperByReference.
+
+        (JSValueToNativeDOMConvertNeedsThisObject):
+        Added. Predicate to determine types that need a this object for conversion.
+
+        (JSValueToNativeDOMConvertNeedsGlobalObject):
+        Added. Predicate to determine types that need a global object for conversion.
+
+        (JSValueToNative):
+        Remove special cases for new types.
+
+        (NativeToJSValueDOMConvertNeedsState):
+        Add SerializedScriptValue and XPathNSResolver.
+
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Add SerializedScriptValue and XPathNSResolver.
+
+        (NativeToJSValueUsingReferences):
+        (NativeToJSValueUsingPointers):
+        (NativeToJSValue):
+        Remove unused $statePointer and replace $globalObject with $globalObjectReference. Remove
+        special cases for new types.
+
+        (GenerateConstructorDefinition):
+        Use PassArgumentExpression.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        Update tests. Remove test for a readonly attribute returning a Promise, which is not supported
+        yet (this was caught by the assertion added to GetBaseIDLType). Add tests for passing and returning 
+        SerializedScriptValues from functions.
+
 2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::verify to match the latest spec

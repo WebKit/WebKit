@@ -52,13 +52,13 @@ public:
     virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
 
 private:
-    JSTestCallbackInterface(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackInterface&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackInterface* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackInterface&);
+inline JSC::JSValue toJS(TestCallbackInterface* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore
 

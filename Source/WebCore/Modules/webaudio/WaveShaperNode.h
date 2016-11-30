@@ -38,7 +38,7 @@ public:
     }
 
     // setCurve() is called on the main thread.
-    void setCurve(Float32Array*);
+    void setCurve(Float32Array&);
     Float32Array* curve();
 
     enum class OverSampleType { None, _2x, _4x };

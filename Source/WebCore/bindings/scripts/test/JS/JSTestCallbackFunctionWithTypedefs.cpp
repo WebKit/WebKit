@@ -72,7 +72,7 @@ bool JSTestCallbackFunctionWithTypedefs::handleEvent(Vector<int32_t> sequenceArg
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunctionWithTypedefs& impl)
+JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)
 {
     if (!static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData())
         return jsNull();

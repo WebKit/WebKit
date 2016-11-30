@@ -23,6 +23,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSMediaQueryListListener.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
@@ -177,10 +178,9 @@ static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionM
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    if (UNLIKELY(!state->uncheckedArgument(0).isFunction()))
-        return throwArgumentMustBeFunctionError(*state, throwScope, 0, "listener", "TestMediaQueryListListener", "method");
-    auto listener = JSMediaQueryListListener::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    impl.method(WTFMove(listener));
+    auto listener = convert<IDLCallbackFunction<JSMediaQueryListListener>>(*state, state->uncheckedArgument(0), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 0, "listener", "TestMediaQueryListListener", "method"); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.method(listener.releaseNonNull());
     return JSValue::encode(jsUndefined());
 }
 

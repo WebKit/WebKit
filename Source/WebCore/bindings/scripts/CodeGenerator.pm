@@ -91,12 +91,6 @@ my %primitiveTypeHash = (
     "Date" => 1
 );
 
-# WebCore types used directly in IDL files.
-my %webCoreTypeHash = (
-    "Dictionary" => 1,
-    "SerializedScriptValue" => 1,
-);
-
 my %dictionaryTypeImplementationNameOverrides = ();
 my %enumTypeImplementationNameOverrides = ();
 
@@ -855,18 +849,52 @@ sub SetterExpression
     return ($functionName, $contentAttributeName);
 }
 
+sub IsBuiltinType
+{
+    my ($object, $type) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    return 1 if $object->IsPrimitiveType($type);
+    return 1 if $object->IsSequenceOrFrozenArrayType($type);
+    return 1 if $object->IsRecordType($type);
+    return 1 if $object->IsStringType($type);
+    return 1 if $object->IsTypedArrayType($type);
+    return 1 if $type->isUnion;
+    return 1 if $type->name eq "any";
+    return 1 if $type->name eq "BufferSource";
+    return 1 if $type->name eq "Promise";
+    return 1 if $type->name eq "XPathNSResolver";    
+    return 1 if $type->name eq "EventListener";    
+    return 1 if $type->name eq "Dictionary";    
+    return 1 if $type->name eq "SerializedScriptValue";    
+
+    return 0;
+}
+
+sub IsInterfaceType
+{
+    my ($object, $type) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    return 0 if $object->IsBuiltinType($type);
+    return 0 if $object->IsDictionaryType($type);
+    return 0 if $object->IsEnumType($type);
+
+    return 1;
+}
+
 sub IsWrapperType
 {
     my ($object, $type) = @_;
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return 0 if !$object->IsRefPtrType($type);
-    return 0 if $object->IsTypedArrayType($type);
-    return 0 if $type->name eq "BufferSource";
-    return 0 if $webCoreTypeHash{$type->name};
+    return 1 if $object->IsInterfaceType($type);
+    return 1 if $type->name eq "XPathNSResolver";
 
-    return 1;
+    return 0;
 }
 
 sub GetInterfaceExtendedAttributesFromName
@@ -907,7 +935,7 @@ sub ComputeIsCallbackInterface
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return 0 unless $object->IsWrapperType($type);
+    return 0 unless $object->IsInterfaceType($type);
 
     my $typeName = $type->name;
     my $idlFile = $object->IDLFileForInterface($typeName) or assert("Could NOT find IDL file for interface \"$typeName\"!\n");
@@ -944,7 +972,7 @@ sub ComputeIsCallbackFunction
 
     assert("Not a type") if ref($type) ne "IDLType";
 
-    return 0 unless $object->IsWrapperType($type);
+    return 0 unless $object->IsInterfaceType($type);
 
     my $typeName = $type->name;
     my $idlFile = $object->IDLFileForInterface($typeName) or assert("Could NOT find IDL file for interface \"$typeName\"!\n");
@@ -1092,14 +1120,5 @@ sub InheritsExtendedAttribute
     return $found;
 }
 
-sub ShouldPassWrapperByReference
-{
-    my ($object, $argument) = @_;
-
-    return 0 if $argument->type->isNullable;
-    return 0 if !$object->IsWrapperType($argument->type) && !$object->IsTypedArrayType($argument->type);
-
-    return 1;
-}
 
 1;

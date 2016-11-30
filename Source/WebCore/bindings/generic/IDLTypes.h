@@ -38,6 +38,10 @@ class JSValue;
 
 namespace WebCore {
 
+class Dictionary;
+class EventListener;
+class XPathNSResolver;
+
 template <typename Value> class DOMPromise;
 
 template<typename T>
@@ -92,18 +96,21 @@ struct IDLUSVString : IDLString { };
 
 struct IDLObject : IDLUnsupportedType { };
 
-template<typename T> struct IDLInterface : IDLType<RefPtr<T>> {
+template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;
-
     using NullableType = RefPtr<T>;
-    static std::nullptr_t nullValue() { return nullptr; }
-    static bool isNullValue(const RefPtr<T>& value) { return !value; }
-    template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
+
+    static inline std::nullptr_t nullValue() { return nullptr; }
+    template<typename U> static inline bool isNullValue(U&& value) { return !value; }
+    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
+
+template<typename T> struct IDLInterface : IDLWrapper<T> { };
+template<typename T> struct IDLCallbackInterface : IDLWrapper<T> { };
+template<typename T> struct IDLCallbackFunction : IDLWrapper<T> { };
 
 template<typename T> struct IDLDictionary : IDLType<T> { };
 template<typename T> struct IDLEnumeration : IDLType<T> { };
-template<typename T> struct IDLCallbackFunction : IDLUnsupportedType { };
 
 template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
     using InnerType = T;
@@ -143,7 +150,16 @@ struct IDLDate : IDLType<double> {
     static double extractValueFromNullable(double value) { return value; }
 };
 
+template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
+template<typename T> struct IDLLegacyDictionary : IDLType<T> { };
+template<typename T> struct IDLEventListener : IDLWrapper<T> { };
+template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
+
+
+// Non-WebIDL convenience type aliases
+
 using IDLBufferSource = IDLUnion<IDLInterface<JSC::ArrayBufferView>, IDLInterface<JSC::ArrayBuffer>>;
+
 
 // Helper predicates
 

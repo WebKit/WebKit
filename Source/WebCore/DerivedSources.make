@@ -1290,6 +1290,7 @@ IDL_INCLUDES = \
     $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/svg \
+    $(WebCore)/testing \
     $(WebCore)/workers \
     $(WebCore)/xml
 

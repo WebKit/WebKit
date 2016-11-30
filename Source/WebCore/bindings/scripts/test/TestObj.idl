@@ -391,8 +391,9 @@ enum TestConfidence { "high", "kinda-low" };
     attribute _optional                attributeWithReservedEnumType;
     void _any(unrestricted float a, long b);
 
-
-    readonly attribute Promise<void> testReadOnlyPromiseAttribute;
+    // FIXME: Add support for Promise attributes.
+    // readonly attribute Promise<void> testReadOnlyPromiseAttribute;
+    
     // Promise function
     Promise<void> testPromiseFunction();
     Promise<void> testPromiseFunctionWithFloatArgument(float a);

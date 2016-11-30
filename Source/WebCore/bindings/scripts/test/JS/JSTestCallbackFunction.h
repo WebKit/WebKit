@@ -45,13 +45,13 @@ public:
     virtual bool handleEvent(RefPtr<Float32Array> arrayParam, RefPtr<SerializedScriptValue>&& srzParam, const String& strArg, bool boolParam, int32_t longParam, TestNode* testNodeParam);
 
 private:
-    JSTestCallbackFunction(JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSTestCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallbackFunction* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunction&);
+inline JSC::JSValue toJS(TestCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore
 

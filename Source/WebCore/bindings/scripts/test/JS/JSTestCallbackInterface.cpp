@@ -142,7 +142,7 @@ bool JSTestCallbackInterface::callbackWithSerializedScriptValueParam(RefPtr<Seri
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(srzParam ? srzParam->deserialize(*state, m_data->globalObject()) : jsNull());
+    args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*state, *m_data->globalObject(), srzParam));
     args.append(toJS<IDLDOMString>(*state, strParam));
 
     NakedPtr<JSC::Exception> returnedException;
@@ -213,7 +213,7 @@ bool JSTestCallbackInterface::callbackRequiresThisToPass(int32_t longParam, Test
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackInterface& impl)
+JSC::JSValue toJS(TestCallbackInterface& impl)
 {
     if (!static_cast<JSTestCallbackInterface&>(impl).callbackData())
         return jsNull();

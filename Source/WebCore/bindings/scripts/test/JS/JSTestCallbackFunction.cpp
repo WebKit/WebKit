@@ -67,7 +67,7 @@ bool JSTestCallbackFunction::handleEvent(RefPtr<Float32Array> arrayParam, RefPtr
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLInterface<Float32Array>>(*state, *m_data->globalObject(), arrayParam));
-    args.append(srzParam ? srzParam->deserialize(*state, m_data->globalObject()) : jsNull());
+    args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*state, *m_data->globalObject(), srzParam));
     args.append(toJS<IDLDOMString>(*state, strArg));
     args.append(toJS<IDLBoolean>(boolParam));
     args.append(toJS<IDLLong>(longParam));
@@ -80,7 +80,7 @@ bool JSTestCallbackFunction::handleEvent(RefPtr<Float32Array> arrayParam, RefPtr
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction& impl)
+JSC::JSValue toJS(TestCallbackFunction& impl)
 {
     if (!static_cast<JSTestCallbackFunction&>(impl).callbackData())
         return jsNull();
