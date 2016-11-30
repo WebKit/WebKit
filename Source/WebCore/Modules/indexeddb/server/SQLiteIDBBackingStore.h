@@ -39,7 +39,6 @@ namespace WebCore {
 
 class IndexKey;
 class SQLiteDatabase;
-class SQLiteStatement;
 
 namespace IDBServer {
 
@@ -116,56 +115,6 @@ private:
 
     IDBError getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
-
-    void closeSQLiteDB();
-
-    enum class SQL : size_t {
-        CreateObjectStoreInfo,
-        CreateObjectStoreKeyGenerator,
-        DeleteObjectStoreInfo,
-        DeleteObjectStoreKeyGenerator,
-        DeleteObjectStoreRecords,
-        DeleteObjectStoreIndexInfo,
-        DeleteObjectStoreIndexRecords,
-        DeleteObjectStoreBlobRecords,
-        RenameObjectStore,
-        ClearObjectStoreRecords,
-        ClearObjectStoreIndexRecords,
-        CreateIndexInfo,
-        DeleteIndexInfo,
-        HasIndexRecord,
-        PutIndexRecord,
-        DeleteIndexRecords,
-        RenameIndex,
-        KeyExistsInObjectStore,
-        GetUnusedBlobFilenames,
-        DeleteUnusedBlobs,
-        GetObjectStoreRecordID,
-        DeleteBlobRecord,
-        DeleteObjectStoreRecord,
-        DeleteObjectStoreIndexRecord,
-        AddObjectStoreRecord,
-        AddBlobRecord,
-        BlobFilenameForBlobURL,
-        AddBlobFilename,
-        GetBlobURL,
-        GetKeyGeneratorValue,
-        SetKeyGeneratorValue,
-        GetAllKeyRecordsLowerOpenUpperOpen,
-        GetAllKeyRecordsLowerOpenUpperClosed,
-        GetAllKeyRecordsLowerClosedUpperOpen,
-        GetAllKeyRecordsLowerClosedUpperClosed,
-        GetValueRecordsLowerOpenUpperOpen,
-        GetValueRecordsLowerOpenUpperClosed,
-        GetValueRecordsLowerClosedUpperOpen,
-        GetValueRecordsLowerClosedUpperClosed,
-        Count
-    };
-
-    SQLiteStatement* cachedStatement(SQL, const char*);
-    SQLiteStatement* cachedStatementForGetAllObjectStoreRecords(const IDBGetAllRecordsData&);
-
-    std::unique_ptr<SQLiteStatement> m_cachedStatements[static_cast<int>(SQL::Count)];
 
     JSC::VM& vm();
     JSC::JSGlobalObject& globalObject();

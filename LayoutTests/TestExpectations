@@ -995,7 +995,3 @@ webkit.org/b/162828 [ Debug ] tables/table-section-overflow-clip-crash.html  [ S
 
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]
-
-
-webkit.org/b/165186 storage/indexeddb/modern/gc-closes-database.html [ Skip ]
-webkit.org/b/165186 storage/indexeddb/modern/gc-closes-database-private.html [ Skip ]
