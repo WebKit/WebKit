@@ -1,3 +1,16 @@
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Localization
+        https://bugs.webkit.org/show_bug.cgi?id=165176
+
+        Reviewed by Dean Jackson.
+
+        Using the modern media controls module loader to ensure we pick up main.js,
+        and also because it's the right thing to do.
+
+        * media/modern-media-controls/airplay-placard/airplay-placard.html:
+        * media/modern-media-controls/pip-placard/pip-placard.html:
+
 2016-11-29  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r209104): storage/indexeddb/modern/gc-closes-database(-private).html timeout.

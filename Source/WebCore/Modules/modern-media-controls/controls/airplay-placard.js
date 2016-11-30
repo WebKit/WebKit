@@ -30,8 +30,8 @@ class AirplayPlacard extends Placard
     {
         super({
             iconName: Icons.AirplayPlacard,
-            title: "AirPlay",
-            description: "This video is playing on your Apple TV",
+            title: UIString("AirPlay"),
+            description: UIString("This video is playing on your Apple TV"),
             layoutDelegate
         });
     }

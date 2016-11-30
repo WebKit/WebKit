@@ -1,5 +1,29 @@
 2016-11-29  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Localization
+        https://bugs.webkit.org/show_bug.cgi?id=165176
+
+        Reviewed by Dean Jackson.
+
+        We add a new localization file for the purpose of modern media controls, since we may
+        require different strings than the legacy one.
+
+        * English.lproj/modern-media-controls-localized-strings.js: Added.
+        * Modules/modern-media-controls/controls/airplay-placard.js:
+        (AirplayPlacard):
+        * Modules/modern-media-controls/controls/pip-placard.js:
+        (PiPPlacard):
+        * Modules/modern-media-controls/main.js:
+        (UIString):
+        * Modules/modern-media-controls/media/status-support.js:
+        (StatusSupport.prototype.syncControl):
+        (StatusSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Show an invalid placard when we fail to load a media file
         https://bugs.webkit.org/show_bug.cgi?id=165180
 

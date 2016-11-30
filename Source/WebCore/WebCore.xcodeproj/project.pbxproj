@@ -2724,6 +2724,7 @@
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */ = {isa = PBXBuildFile; fileRef = 715379FF146BD9D6008BD615 /* SVGPathData.h */; };
 		7157F062150B6564006EAABD /* SVGAnimatedTransformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */; };
+		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */; };
@@ -10095,6 +10096,7 @@
 		717F90581DC4BB600006F520 /* airplay-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-support.js"; sourceTree = "<group>"; };
 		718C7F561DD385C500B733C8 /* status-label.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "status-label.css"; sourceTree = "<group>"; };
 		718C7F571DD385C500B733C8 /* status-label.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-label.js"; sourceTree = "<group>"; };
+		71A1B6071DEE5A820073BCFB /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = "English.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
@@ -15561,6 +15563,7 @@
 				93153BE114195A5700FCF5BE /* missingImage.png */,
 				93153BD914181F7A00FCF5BE /* missingImage@2x.png */,
 				CDF419991AB0DA14004E64E1 /* missingImage@3x.png */,
+				71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */,
 				A11E8C011B1E28BE0003A7C7 /* moveCursor.png */,
 				A11E8C021B1E28BE0003A7C7 /* northEastSouthWestResizeCursor.png */,
 				A11E8C031B1E28BE0003A7C7 /* northSouthResizeCursor.png */,
@@ -28472,6 +28475,7 @@
 				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
 				93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */,
 				318891611AB7EEA100EA627B /* missingImage@3x.png in Resources */,
+				71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */,
 				A11E8C061B1E28FA0003A7C7 /* moveCursor.png in Resources */,
 				A11E8C071B1E28FE0003A7C7 /* northEastSouthWestResizeCursor.png in Resources */,
 				A11E8C081B1E29020003A7C7 /* northSouthResizeCursor.png in Resources */,
@@ -31864,6 +31868,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */ = {
+			isa = PBXVariantGroup;
+			children = (
+				71A1B6071DEE5A820073BCFB /* English */,
+			);
+			name = "modern-media-controls-localized-strings.js";
+			sourceTree = "<group>";
+		};
 		7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */ = {
 			isa = PBXVariantGroup;
 			children = (

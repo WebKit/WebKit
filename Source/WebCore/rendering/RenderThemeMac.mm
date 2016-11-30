@@ -252,9 +252,10 @@ String RenderThemeMac::mediaControlsScript()
     if (m_mediaControlsScript.isEmpty()) {
         StringBuilder scriptBuilder;
         NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-        if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
+        if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings.js" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
-        else {
+        } else {
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
         }

@@ -33,3 +33,15 @@ function createControls(shadowRoot, media, host)
 
     return new MediaController(shadowRoot, media, host);
 }
+
+function UIString(string)
+{
+    if (!("UIStrings" in window))
+        return string;
+
+    if (string in UIStrings)
+        return UIStrings[string];
+
+    console.error(`Localization for "${string}" not found.`);
+    return "LOCALIZED STRING NOT FOUND";
+}
