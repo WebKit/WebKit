@@ -103,6 +103,14 @@ class IOSSimulatorPort(DarwinPort):
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
+        self._current_device = Simulator().current_device()
+        if not self._current_device:
+            self.set_option('dedicated_simulators', True)
+        if not self.get_option('dedicated_simulators'):
+            if self.get_option('child_processes') > 1:
+                _log.warn('Cannot have more than one child process when using a running simulator.  Setting child_processes to 1.')
+            self.set_option('child_processes', 1)
+
     def driver_name(self):
         if self.get_option('driver_name'):
             return self.get_option('driver_name')
@@ -276,15 +284,21 @@ class IOSSimulatorPort(DarwinPort):
                 _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
                 _log.warn("This is very likely to fail.")
 
-        self._createSimulatorApps()
+        if self._using_dedicated_simulators():
+            self._createSimulatorApps()
 
-        for i in xrange(self.child_processes()):
-            self._create_device(i)
+            for i in xrange(self.child_processes()):
+                self._create_device(i)
 
-        for i in xrange(self.child_processes()):
-            device_udid = self._testing_device(i).udid
-            Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
-            Simulator.reset_device(device_udid)
+            for i in xrange(self.child_processes()):
+                device_udid = self._testing_device(i).udid
+                Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
+                Simulator.reset_device(device_udid)
+        else:
+            assert(self._current_device)
+            if self._current_device.name != self.simulator_device_type().name:
+                _log.warn("Expected simulator of type '" + self.simulator_device_type().name + "' but found simulator of type '" + self._current_device.name + "'")
+                _log.warn('The next block of tests may fail due to device mis-match')
 
     def setup_test_run(self, device_class=None):
         mac_os_version = self.host.platform.os_version
@@ -295,6 +309,9 @@ class IOSSimulatorPort(DarwinPort):
         _log.debug('setup_test_run for %s', self._device_class)
 
         self._create_simulators()
+
+        if not self._using_dedicated_simulators():
+            return
 
         for i in xrange(self.child_processes()):
             device_udid = self._testing_device(i).udid
@@ -313,6 +330,8 @@ class IOSSimulatorPort(DarwinPort):
             Simulator.wait_until_device_is_booted(self._testing_device(i).udid)
 
     def _quit_ios_simulator(self):
+        if not self._using_dedicated_simulators():
+            return
         _log.debug("_quit_ios_simulator killing all Simulator processes")
         # FIXME: We should kill only the Simulators we started.
         subprocess.call(["killall", "-9", "-m", "Simulator"])
@@ -328,6 +347,9 @@ class IOSSimulatorPort(DarwinPort):
             except OSError:
                 _log.warning('Unable to remove ' + fifo)
                 pass
+
+        if not self._using_dedicated_simulators():
+            return
 
         for i in xrange(self.child_processes()):
             simulator_path = self.get_simulator_path(i)
@@ -379,6 +401,9 @@ class IOSSimulatorPort(DarwinPort):
 
     SUBPROCESS_CRASH_REGEX = re.compile('#CRASHED - (?P<subprocess_name>\S+) \(pid (?P<subprocess_pid>\d+)\)')
 
+    def _using_dedicated_simulators(self):
+        return self.get_option('dedicated_simulators')
+
     def _create_device(self, number):
         return Simulator.create_device(number, self.simulator_device_type(), self.simulator_runtime)
 
@@ -392,7 +417,9 @@ class IOSSimulatorPort(DarwinPort):
     def device_id_for_worker_number(self, number):
         if self._printing_cmd_line:
             return '<dummy id>'
-        return self._testing_device(number).udid
+        if self._using_dedicated_simulators():
+            return self._testing_device(number).udid
+        return self._current_device.udid
 
     def get_simulator_path(self, suffix=""):
         return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")
