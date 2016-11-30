@@ -4285,37 +4285,48 @@ bool CSSPropertyParser::parseViewportDescriptor(CSSPropertyID propId, bool impor
 
 #endif
 
-static bool consumeColumnWidthOrCount(CSSParserTokenRange& range, RefPtr<CSSValue>& columnWidth, RefPtr<CSSValue>& columnCount)
-{
-    if (range.peek().id() == CSSValueAuto) {
-        consumeIdent(range);
-        return true;
-    }
-    if (!columnWidth) {
-        columnWidth = consumeColumnWidth(range);
-        if (columnWidth)
-            return true;
-    }
-    if (!columnCount)
-        columnCount = consumeColumnCount(range);
-    return columnCount;
-}
-
 bool CSSPropertyParser::consumeColumns(bool important)
 {
     RefPtr<CSSValue> columnWidth;
     RefPtr<CSSValue> columnCount;
-    if (!consumeColumnWidthOrCount(m_range, columnWidth, columnCount))
-        return false;
-    consumeColumnWidthOrCount(m_range, columnWidth, columnCount);
+    bool hasPendingExplicitAuto = false;
+    
+    for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !m_range.atEnd(); ++propertiesParsed) {
+        if (!propertiesParsed && m_range.peek().id() == CSSValueAuto) {
+            // 'auto' is a valid value for any of the two longhands, and at this point
+            // we don't know which one(s) it is meant for. We need to see if there are other values first.
+            consumeIdent(m_range);
+            hasPendingExplicitAuto = true;
+        } else {
+            if (!columnWidth) {
+                if ((columnWidth = consumeColumnWidth(m_range)))
+                    continue;
+            }
+            if (!columnCount) {
+                if ((columnCount = consumeColumnCount(m_range)))
+                    continue;
+            }
+            // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
+            return false;
+        }
+    }
+    
     if (!m_range.atEnd())
         return false;
-    if (!columnWidth)
-        columnWidth = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-    if (!columnCount)
-        columnCount = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-    addProperty(CSSPropertyColumnWidth, CSSPropertyInvalid, columnWidth.releaseNonNull(), important);
-    addProperty(CSSPropertyColumnCount, CSSPropertyInvalid, columnCount.releaseNonNull(), important);
+    
+    // Any unassigned property at this point will become implicit 'auto'.
+    if (columnWidth)
+        addProperty(CSSPropertyColumnWidth, CSSPropertyInvalid, columnWidth.releaseNonNull(), important);
+    else {
+        addProperty(CSSPropertyColumnWidth, CSSPropertyInvalid, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
+        hasPendingExplicitAuto = false;
+    }
+    
+    if (columnCount)
+        addProperty(CSSPropertyColumnCount, CSSPropertyInvalid, columnCount.releaseNonNull(), important);
+    else
+        addProperty(CSSPropertyColumnCount, CSSPropertyInvalid, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important, !hasPendingExplicitAuto /* implicit */);
+    
     return true;
 }
 
