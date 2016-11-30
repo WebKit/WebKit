@@ -54,6 +54,8 @@
     margin-bottom: 10px;
 
     transform: translateX(-50%);
+
+    pointer-events: none;
 }
 
 .placard .title,

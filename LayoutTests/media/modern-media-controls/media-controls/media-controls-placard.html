@@ -18,6 +18,12 @@ shouldBeTrue("mediaControls.showsPlacard");
 shouldBe("mediaControls.children", "[mediaControls.airplayPlacard, mediaControls.controlsBar]");
 
 debug("");
+debug("Showing the Invalid placard, hides the controls bar");
+mediaControls.showPlacard(mediaControls.invalidPlacard);
+shouldBeTrue("mediaControls.showsPlacard");
+shouldBe("mediaControls.children", "[mediaControls.invalidPlacard]");
+
+debug("");
 debug("Showing the PiP placard, hides the controls bar");
 mediaControls.showPlacard(mediaControls.pipPlacard);
 shouldBeTrue("mediaControls.showsPlacard");

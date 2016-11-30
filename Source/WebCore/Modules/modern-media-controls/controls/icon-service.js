@@ -30,6 +30,7 @@ const Icons = {
     EnterPiP        : "pip-in",
     ExitFullscreen  : "exit-fullscreen",
     Forward         : "forward",
+    InvalidPlacard  : "invalid-placard",
     Pause           : "pause",
     PiPPlacard      : "pip-placard",
     Play            : "play",

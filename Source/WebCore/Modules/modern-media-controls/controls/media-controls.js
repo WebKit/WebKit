@@ -48,6 +48,7 @@ class MediaControls extends LayoutNode
         this.controlsBar = new ControlsBar;
 
         this.airplayPlacard = new AirplayPlacard(this);
+        this.invalidPlacard = new InvalidPlacard(this);
         this.pipPlacard = new PiPPlacard(this);
 
         this.showsStartButton = false;
@@ -57,17 +58,21 @@ class MediaControls extends LayoutNode
 
     get showsStartButton()
     {
-        return this.children.includes(this.startButton);
+        return !!this._showsStartButton;
     }
 
-    set showsStartButton(showsStartButton)
+    set showsStartButton(flag)
     {
-        this.children = [showsStartButton ? this.startButton : this.controlsBar];
+        if (this._showsStartButton === flag)
+            return;
+       
+        this._showsStartButton = flag;
+        this._invalidateChildren();
     }
 
     get showsPlacard()
     {
-        return this.children.includes(this.airplayPlacard) || this.children.includes(this.pipPlacard);
+        return this.children[0] instanceof Placard;
     }
 
     showPlacard(placard)
@@ -81,7 +86,17 @@ class MediaControls extends LayoutNode
 
     hidePlacard()
     {
-        this.children = [this.controlsBar];
+        if (this.showsPlacard)
+            this.children[0].remove();
+        this._invalidateChildren();
+    }
+
+    // Private
+
+    _invalidateChildren()
+    {
+        if (!this.showsPlacard)
+            this.children = [this._showsStartButton ? this.startButton : this.controlsBar];
     }
 
 }

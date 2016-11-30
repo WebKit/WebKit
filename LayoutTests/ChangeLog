@@ -1,5 +1,23 @@
 2016-11-29  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Show an invalid placard when we fail to load a media file
+        https://bugs.webkit.org/show_bug.cgi?id=165180
+
+        Reviewed by Dean Jackson.
+
+        We add tests for the new InvalidPlacard class.
+
+        * media/modern-media-controls/invalid-placard/invalid-placard-expected.txt: Added.
+        * media/modern-media-controls/invalid-placard/invalid-placard.html: Added.
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/media-controls/media-controls-placard-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-placard.html:
+        * media/modern-media-controls/placard-support/placard-support-error-expected.txt: Added.
+        * media/modern-media-controls/placard-support/placard-support-error.html: Added.
+
+2016-11-29  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Only show controls when the controls attribute is set
         https://bugs.webkit.org/show_bug.cgi?id=165175
 

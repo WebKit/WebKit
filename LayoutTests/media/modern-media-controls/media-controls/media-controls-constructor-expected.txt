@@ -20,6 +20,7 @@ PASS mediaControls.fullscreenButton instanceof FullscreenButton is true
 PASS mediaControls.statusLabel instanceof StatusLabel is true
 PASS mediaControls.timeControl instanceof TimeControl is true
 PASS mediaControls.airplayPlacard instanceof AirplayPlacard is true
+PASS mediaControls.invalidPlacard instanceof InvalidPlacard is true
 PASS mediaControls.pipPlacard instanceof PiPPlacard is true
 
 PASS mediaControls.controlsBar instanceof ControlsBar is true

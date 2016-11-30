@@ -23,42 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class PlacardSupport extends MediaControllerSupport
+class InvalidPlacard extends Placard
 {
 
-    constructor(mediaController)
+    constructor(layoutDelegate)
     {
-        super(mediaController);
-        this._updatePlacard();
-    }
-
-    // Protected
-
-    get mediaEvents()
-    {
-        return ["error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
-    }
-
-    handleEvent(event)
-    {
-        this._updatePlacard();
-    }
-
-    // Private
-
-    _updatePlacard()
-    {
-        const controls = this.mediaController.controls;
-
-        const media = this.mediaController.media;
-        if (media.webkitPresentationMode === "picture-in-picture")
-            controls.showPlacard(controls.pipPlacard);
-        else if (media.webkitCurrentPlaybackTargetIsWireless)
-            controls.showPlacard(controls.airplayPlacard);
-        else if (media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
-            controls.showPlacard(controls.invalidPlacard);
-        else
-            controls.hidePlacard();    
+        super({
+            iconName: Icons.InvalidPlacard,
+            layoutDelegate
+        });
     }
 
 }

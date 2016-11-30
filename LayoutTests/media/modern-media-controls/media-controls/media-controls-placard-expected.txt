@@ -11,6 +11,10 @@ Showing the Airplay placard
 PASS mediaControls.showsPlacard is true
 PASS mediaControls.children is [mediaControls.airplayPlacard, mediaControls.controlsBar]
 
+Showing the Invalid placard, hides the controls bar
+PASS mediaControls.showsPlacard is true
+PASS mediaControls.children is [mediaControls.invalidPlacard]
+
 Showing the PiP placard, hides the controls bar
 PASS mediaControls.showsPlacard is true
 PASS mediaControls.children is [mediaControls.pipPlacard]
