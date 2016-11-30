@@ -1,3 +1,17 @@
+2016-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow TracePoint to take arbitrary data
+        https://bugs.webkit.org/show_bug.cgi?id=165182
+
+        Reviewed by Tim Horton.
+
+        Allow TracePoint() to take four numeric arguments, for arbitrary data.
+
+        #pragma once
+
+        * wtf/SystemTracing.h:
+        (WTF::TracePoint):
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode

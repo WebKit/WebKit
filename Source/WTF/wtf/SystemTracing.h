@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SystemTracing_h
-#define SystemTracing_h
+#pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <System/sys/kdebug.h>
@@ -79,12 +78,16 @@ enum TracePointCode {
 
 namespace WTF {
 
-inline void TracePoint(TracePointCode code)
+inline void TracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 = 0, uint64_t data3 = 0, uint64_t data4 = 0)
 {
 #if HAVE(KDEBUG_H)
-    kdebug_trace(ARIADNEDBG_CODE(WEBKIT_COMPONENT, code), 0, 0, 0, 0);
+    kdebug_trace(ARIADNEDBG_CODE(WEBKIT_COMPONENT, code), data1, data2, data3, data4);
 #else
     UNUSED_PARAM(code);
+    UNUSED_PARAM(data1);
+    UNUSED_PARAM(data2);
+    UNUSED_PARAM(data3);
+    UNUSED_PARAM(data4);
 #endif
 }
 
@@ -112,6 +115,3 @@ using WTF::TraceScope;
 using WTF::TracePoint;
 
 #endif // __cplusplus
-
-#endif // SystemTracing_h
-
