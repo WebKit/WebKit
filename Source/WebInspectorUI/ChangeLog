@@ -1,3 +1,20 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Clicking on link in Web Inspector can cause UIProcess to crash
+        https://bugs.webkit.org/show_bug.cgi?id=165157
+        <rdar://problem/27896562>
+
+        Reviewed by Brian Burg.
+
+        By correctly disallowing slashes in the scheme Web Inspector resolves
+        the correct absolute URL and doesn't end up trying to navigate to an
+        incorrect file URL.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+        Disallow "/" characters in the scheme portion. (/http://example.com)
+        Allow path to be optional before a fragment portion. (http://example.com#frag)
+
 2016-11-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve name sorting in HeapSnapshot data grids

@@ -1,3 +1,17 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Clicking on link in Web Inspector can cause UIProcess to crash
+        https://bugs.webkit.org/show_bug.cgi?id=165157
+        <rdar://problem/27896562>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/url-utilities-expected.txt:
+        * inspector/unit-tests/url-utilities.html:
+        Add some tests for expected valid and invalid parseURL cases.
+        Note some cases that we don't handle properly and would benefit
+        by switching to URL constructor which is a much larger change.
+
 2016-11-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix a typo in a layout test for transforms

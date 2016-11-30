@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
+
 function removeURLFragment(url)
 {
     var hashIndex = url.indexOf("#");
@@ -96,7 +98,7 @@ function parseURL(url)
     if (url.startsWith("data:"))
         return {scheme: "data", host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
-    var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
+    var match = url.match(/^([^\/:]+):\/\/([^\/#:]*)(?::([\d]+))?(?:(\/[^#]*)?(?:#(.*))?)?$/i);
     if (!match)
         return {scheme: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 

@@ -8,16 +8,255 @@ function test()
     let suite = InspectorTest.createSyncSuite("URLUtilities");
 
     suite.addTestCase({
-        name: "parseDataURL",
-        test: () => {
+        name: "parseURL",
+        test() {
             function testInvalid(url) {
-                InspectorTest.log("Test: " + url);
+                InspectorTest.log("");
+                InspectorTest.log("Test Invalid: " + url);
+                InspectorTest.expectThat(parseURL(url).scheme === null, "Should not be a complete URL");
+
+                try {
+                    new URL(url);
+                    InspectorTest.fail("URL constructor thinks this is valid");
+                } catch (e) {
+                    InspectorTest.pass("URL constructor thinks this is invalid");
+                }
+            }
+
+            function testValid(url, expected) {
+                InspectorTest.log("");
+                InspectorTest.log("Test Valid: " + url);
+
+                let {scheme: expectedScheme, host: expectedHost, port: expectedPort, path: expectedPath, queryString: expectedQueryString, fragment: expectedFragment, lastPathComponent: expectedLastPathComponent} = expected;
+                let {scheme: actualScheme, host: actualHost, port: actualPort, path: actualPath, queryString: actualQueryString, fragment: actualFragment, lastPathComponent: actualLastPathComponent} = parseURL(url);
+
+                InspectorTest.expectEqual(actualScheme, expectedScheme, `scheme should be: '${expectedScheme}'`);
+                InspectorTest.expectEqual(actualHost, expectedHost, `host should be: '${expectedHost}'`);
+                InspectorTest.expectEqual(actualPort, expectedPort, `port should be: '${expectedPort}'`);
+                InspectorTest.expectEqual(actualPath, expectedPath, `path should be: '${expectedPath}'`);
+                InspectorTest.expectEqual(actualQueryString, expectedQueryString, `queryString should be: '${expectedQueryString}'`);
+                InspectorTest.expectEqual(actualFragment, expectedFragment, `fragment should be: '${expectedFragment}'`);
+                InspectorTest.expectEqual(actualLastPathComponent, expectedLastPathComponent, `lastPathComponent should be: '${expectedLastPathComponent}'`);
+            }
+
+            testInvalid("a");
+            testInvalid("/http://example.com");
+
+            testValid("http://example.com", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example.com/", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example.com:80/", {
+                scheme: "http",
+                host: "example.com",
+                port: 80,
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example.com/path/to/page.html", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com/path/to/page.html?", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: "",
+                fragment: null,
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com/path/to/page.html?a=1", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: "a=1",
+                fragment: null,
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com/path/to/page.html?a=1&b=2", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: "a=1&b=2",
+                fragment: null,
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com/path/to/page.html?a=1&b=2#test", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: "a=1&b=2",
+                fragment: "test",
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com:123/path/to/page.html?a=1&b=2#test", {
+                scheme: "http",
+                host: "example.com",
+                port: 123,
+                path: "/path/to/page.html",
+                queryString: "a=1&b=2",
+                fragment: "test",
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com/path/to/page.html#test", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/path/to/page.html",
+                queryString: null,
+                fragment: "test",
+                lastPathComponent: "page.html",
+            });
+
+            testValid("http://example.com#alpha/beta", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: "alpha/beta",
+                lastPathComponent: null,
+            });
+
+            testValid("app-specific://example.com", {
+                scheme: "app-specific",
+                host: "example.com",
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example", {
+                scheme: "http",
+                host: "example",
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://my.example.com", {
+                scheme: "http",
+                host: "my.example.com",
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            // Data URLs just spit back the scheme.
+            testValid("data:text/plain,test", {
+                scheme: "data",
+                host: null,
+                port: null,
+                path: null,
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            // FIXME: <https://webkit.org/b/165155> Web Inspector: Use URL constructor to better handle all kinds of URLs
+            InspectorTest.log("");
+            InspectorTest.log("-- Known issues <https://webkit.org/b/165155>");
+
+            testInvalid("http://");
+            testInvalid("http://example.com:999999999");
+
+            testValid("http:example.com/", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http:/example.com/", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://user@pass:example.com/", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: "/",
+                queryString: null,
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            testValid("http://example.com?key=alpha/beta", {
+                scheme: "http",
+                host: "example.com",
+                port: null,
+                path: null,
+                queryString: "key=alpha/beta",
+                fragment: null,
+                lastPathComponent: null,
+            });
+
+            return true;
+        }
+    });
+
+
+    suite.addTestCase({
+        name: "parseDataURL",
+        test() {
+            function testInvalid(url) {
+                InspectorTest.log("");
+                InspectorTest.log("Test Invalid: " + url);
                 InspectorTest.expectThat(parseDataURL(url) === null, "Should not be a data URL");
             }
 
             function testValid(url, expected) {
                 InspectorTest.log("");
-                InspectorTest.log("Test: " + url);
+                InspectorTest.log("Test Valid: " + url);
 
                 let {mimeType: expectedMimeType, charset: expectedCharset, base64: expectedBase64, data: expectedData, content: expectedContent} = expected;
                 let {mimeType: actualMimeType, charset: actualCharset, base64: actualBase64, data: actualData, scheme: actualScheme} = parseDataURL(url);
@@ -25,11 +264,11 @@ function test()
                 if (actualBase64)
                     actualContent = atob(actualContent);
 
-                InspectorTest.assert(actualScheme === "data", "scheme should always be 'data'");
-                InspectorTest.expectThat(actualMimeType === expectedMimeType, `mimeType should be: '${expectedMimeType}'`);
-                InspectorTest.expectThat(actualCharset === expectedCharset, `charset should be: '${expectedCharset}'`);
-                InspectorTest.expectThat(actualBase64 === expectedBase64, `base64 should be: '${expectedBase64}'`);
-                InspectorTest.expectThat(actualData === expectedData, `data should be: '${expectedData}'`);
+                InspectorTest.expectEqual(actualScheme, "data", "scheme should always be 'data'");
+                InspectorTest.expectEqual(actualMimeType, expectedMimeType, `mimeType should be: '${expectedMimeType}'`);
+                InspectorTest.expectEqual(actualCharset, expectedCharset, `charset should be: '${expectedCharset}'`);
+                InspectorTest.expectEqual(actualBase64, expectedBase64, `base64 should be: '${expectedBase64}'`);
+                InspectorTest.expectEqual(actualData, expectedData, `data should be: '${expectedData}'`);
                 if (expectedContent !== null)
                     InspectorTest.expectThat(actualContent === expectedContent, `Resolved content should be: '${expectedContent}'`);
             }
