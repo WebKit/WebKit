@@ -24,7 +24,6 @@ messages -> WebPage LegacyReceiver {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, uint64_t callbackID)
     SetActivityState(unsigned activityState, bool wantsDidUpdateActivityState, Vector<uint64_t> callbackIDs)
     SetLayerHostingMode(enum WebKit::LayerHostingMode layerHostingMode)
-    SetPageSuppressed(bool pageSuppressed)
 
     SetDrawsBackground(bool drawsBackground)
 

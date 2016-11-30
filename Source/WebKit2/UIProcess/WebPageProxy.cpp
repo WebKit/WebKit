@@ -1609,15 +1609,6 @@ void WebPageProxy::updateThrottleState()
     else if (!m_preventProcessSuppressionCount)
         m_preventProcessSuppressionCount = nullptr;
 
-    // We should suppress if the page is not active, is visually idle, and supression is enabled.
-    bool isLoading = m_activityState & ActivityState::IsLoading;
-    bool isPlayingAudio = m_activityState & ActivityState::IsAudible;
-    bool pageShouldBeSuppressed = !isLoading && !isPlayingAudio && processSuppressionEnabled && (m_activityState & ActivityState::IsVisuallyIdle);
-    if (m_pageSuppressed != pageShouldBeSuppressed) {
-        m_pageSuppressed = pageShouldBeSuppressed;
-        m_process->send(Messages::WebPage::SetPageSuppressed(m_pageSuppressed), m_pageID);
-    }
-
     if (m_activityState & ActivityState::IsVisuallyIdle)
         m_pageIsUserObservableCount = nullptr;
     else if (!m_pageIsUserObservableCount)

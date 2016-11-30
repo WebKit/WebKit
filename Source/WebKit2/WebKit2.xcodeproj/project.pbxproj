@@ -1088,7 +1088,7 @@
 		75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2D4187D1C0100C39C9E /* WKWebsiteDataStoreInternal.h */; };
 		762B748D120BC75C00819339 /* WKPreferencesRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A5E394A1D5BD8BE00B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb in Resources */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
-		7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Resources */ = {isa = PBXBuildFile; fileRef = 7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */; };
+		7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */; };
 		7A791EFA1C7CFCF100C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */; };
 		7A791EFB1C7CFD0100C4C52B /* WebResourceLoadStatisticsStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */; };
 		7A791EFC1C7D08C500C4C52B /* WebResourceLoadStatisticsStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */; };

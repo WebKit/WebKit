@@ -929,8 +929,6 @@ public:
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
-    void setPageSuppressed(bool);
-
     void postMessage(const String& messageName, API::Object* messageBody);
     void postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
 
@@ -978,6 +976,7 @@ public:
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
+    void updateThrottleState();
     void updateUserActivity();
 
     // IPC::MessageSender
@@ -1490,6 +1489,7 @@ private:
 
     WebCore::ActivityState::Flags m_activityState;
 
+    bool m_processSuppressionEnabled;
     UserActivity m_userActivity;
     WebCore::HysteresisActivity m_userActivityHysteresis;
 

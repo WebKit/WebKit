@@ -1,3 +1,34 @@
+2016-11-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove WebPage::SetPageSuppressed
+        https://bugs.webkit.org/show_bug.cgi?id=165158
+
+        Reviewed by Tim Horton.
+
+        This was scaffolding. We've now refactored to the point that the information driving throttling originates
+        from the UI process (so UI and web processes can have a consistent view of what should throttle), but we
+        don't need a separate message to handle this - necessary state to determine is provided in ActivityState.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateThrottleState):
+            - used to send SetPageSuppressed; no longer does.
+        * UIProcess/WebPageProxy.h:
+            - removed m_pageSuppressed (was used to avoid duplicated messages).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState):
+            - compute throttle state based on m_activityState.
+        (WebKit::WebPage::setActivityState):
+            - update throttle state whenever activity state changes.
+        (WebKit::WebPage::updatePreferences):
+            - update throttle state whenever preferences change (throttling can be disabled via preference).
+        (WebKit::WebPage::setPageSuppressed): Deleted.
+            - Removed WebPage::SetPageSuppressed.
+        * WebProcess/WebPage/WebPage.h:
+            - Removed WebPage::SetPageSuppressed.
+            - Added m_processSuppressionEnabled, to cache preference state.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - Removed WebPage::SetPageSuppressed.
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode

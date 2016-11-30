@@ -1763,7 +1763,6 @@ private:
     WebCore::PolicyAction m_syncNavigationActionPolicyAction;
     DownloadID m_syncNavigationActionPolicyDownloadID;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
-    bool m_pageSuppressed { false };
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     Deque<NativeWebWheelEvent> m_wheelEventQueue;

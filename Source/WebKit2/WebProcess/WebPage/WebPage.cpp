@@ -324,6 +324,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)
+    , m_processSuppressionEnabled(true)
     , m_userActivity("Process suppression disabled for page.")
     , m_userActivityHysteresis([this](HysteresisState) { updateUserActivity(); })
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
@@ -438,7 +439,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setActivityState(m_activityState);
     if (!isVisible())
         m_page->setIsPrerender();
-    setPageSuppressed(false);
 
     updateIsInWindow(true);
 
@@ -525,8 +525,13 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
         setLayerHostingMode(parameters.layerHostingMode);
 }
 
-void WebPage::setPageSuppressed(bool pageSuppressed)
+void WebPage::updateThrottleState()
 {
+    // We should suppress if the page is not active, is visually idle, and supression is enabled.
+    bool isLoading = m_activityState & ActivityState::IsLoading;
+    bool isPlayingAudio = m_activityState & ActivityState::IsAudible;
+    bool pageSuppressed = !isLoading && !isPlayingAudio && m_processSuppressionEnabled && (m_activityState & ActivityState::IsVisuallyIdle);
+
     // The UserActivity keeps the processes runnable. So if the page should be suppressed, stop the activity.
     // If the page should not be supressed, start it.
     if (pageSuppressed)
@@ -2544,6 +2549,10 @@ void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDid
     ActivityState::Flags changed = m_activityState ^ activityState;
     m_activityState = activityState;
 
+    if (!changed)
+        return;
+        updateThrottleState();
+
     m_page->setActivityState(activityState);
     for (auto* pluginView : m_pluginViews)
         pluginView->activityStateDidChange(changed);
@@ -3194,6 +3203,12 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(INTERSECTION_OBSERVER)
     RuntimeEnabledFeatures::sharedFeatures().setIntersectionObserverEnabled(store.getBoolValueForKey(WebPreferencesKey::intersectionObserverEnabledKey()));
 #endif
+
+    bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
+    if (m_processSuppressionEnabled != processSuppressionEnabled) {
+        m_processSuppressionEnabled = processSuppressionEnabled;
+        updateThrottleState();
+    }
 
     platformPreferencesDidChange(store);
 
