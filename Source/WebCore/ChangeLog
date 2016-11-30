@@ -1,3 +1,18 @@
+2016-11-30  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (209086): IDB tests crash under GuardMalloc.
+        https://bugs.webkit.org/show_bug.cgi?id=165201
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Covered by literally every IDB test when run under GuardMalloc).
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::commitOnServer): "Commit on Server" operations are special, in that they
+          are the last operation a transaction does, and they remove themselves from the protector map right away.
+          So when we remove them from the protector map we also need to remove their raw-pointer from the 
+          "in-progress" queue.
+
 2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Some animated image do not animate after reseting their animations

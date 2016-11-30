@@ -506,6 +506,10 @@ void IDBTransaction::commitOnServer(IDBClient::TransactionOperation& operation)
 
     m_database->connectionProxy().commitTransaction(*this);
 
+    ASSERT(!m_transactionOperationsInProgressQueue.isEmpty());
+    ASSERT(m_transactionOperationsInProgressQueue.last() == &operation);
+    m_transactionOperationsInProgressQueue.removeLast();
+
     ASSERT(m_transactionOperationMap.contains(operation.identifier()));
     m_transactionOperationMap.remove(operation.identifier());
 }
