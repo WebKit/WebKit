@@ -1074,9 +1074,6 @@ private:
         case CallDOMGetter:
             compileCallDOMGetter();
             break;
-        case CreateThis:
-            compileCreateThis();
-            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -4921,7 +4918,7 @@ private:
         DFG_ASSERT(m_graph, m_node, allocator);
         
         LValue result = allocateCell(
-            m_out.constIntPtr(allocator), m_out.constIntPtr(vm().stringStructure.get()), slowPath);
+            m_out.constIntPtr(allocator), vm().stringStructure.get(), slowPath);
         
         m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSString_value);
         for (unsigned i = 0; i < numKids; ++i)
@@ -8617,7 +8614,7 @@ private:
                 m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
                 
                 LValue fastObjectValue = allocateObject(
-                    m_out.constIntPtr(cellAllocator), m_out.constIntPtr(structure), fastButterflyValue, slowPath);
+                    m_out.constIntPtr(cellAllocator), structure, fastButterflyValue, slowPath);
 
                 ValueFromBlock fastObject = m_out.anchor(fastObjectValue);
                 ValueFromBlock fastButterfly = m_out.anchor(fastButterflyValue);
@@ -9964,40 +9961,6 @@ private:
         patchpoint->effects = Effects::forCall();
         setJSValue(patchpoint);
     }
-
-    void compileCreateThis()
-    {
-        LValue callee = lowCell(m_node->child1());
-
-        LBasicBlock isFunctionBlock = m_out.newBlock();
-        LBasicBlock hasRareData = m_out.newBlock();
-        LBasicBlock slowPath = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowPath));
-
-        LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
-        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
-        m_out.branch(m_out.isZero64(rareData), rarely(slowPath), usually(hasRareData));
-
-        m_out.appendTo(hasRareData, slowPath);
-        LValue allocator = m_out.loadPtr(rareData, m_heaps.FunctionRareData_allocator);
-        LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_structure);
-        LValue butterfly = m_out.constIntPtr(0);
-        ValueFromBlock fastResult = m_out.anchor(allocateObject(allocator, structure, butterfly, slowPath));
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowPath, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(
-            Int64, m_out.operation(operationCreateThis), m_callFrame, callee, m_out.constInt32(m_node->inlineCapacity())));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        LValue result = m_out.phi(Int64, fastResult, slowResult);
-
-        mutatorFence();
-        setJSValue(result);
-    }
     
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)
     {
@@ -10418,24 +10381,16 @@ private:
         m_out.appendTo(continuation, lastNext);
         return patchpoint;
     }
-
-    void storeStructure(LValue object, LValue structure)
+    
+    void storeStructure(LValue object, Structure* structure)
     {
-        LValue id;
-        LValue blob;
-        if (structure->hasIntPtr()) {
-            Structure* actualStructure = bitwise_cast<Structure*>(structure->asIntPtr());
-            id = m_out.constInt32(actualStructure->id());
-            blob = m_out.constInt32(actualStructure->objectInitializationBlob());
-        } else {
-            id = m_out.load32(structure, m_heaps.Structure_structureID);
-            blob = m_out.load32(structure, m_heaps.Structure_initializationBlob);
-        }
-        m_out.store32(id, object, m_heaps.JSCell_structureID);
-        m_out.store32(blob, object, m_heaps.JSCell_usefulBytes);
+        m_out.store32(m_out.constInt32(structure->id()), object, m_heaps.JSCell_structureID);
+        m_out.store32(
+            m_out.constInt32(structure->objectInitializationBlob()),
+            object, m_heaps.JSCell_usefulBytes);
     }
 
-    LValue allocateCell(LValue allocator, LValue structure, LBasicBlock slowPath)
+    LValue allocateCell(LValue allocator, Structure* structure, LBasicBlock slowPath)
     {
         LValue result = allocateHeapCell(allocator, slowPath);
         storeStructure(result, structure);
@@ -10443,22 +10398,14 @@ private:
     }
 
     LValue allocateObject(
-        LValue allocator, LValue structure, LValue butterfly, LBasicBlock slowPath)
+        LValue allocator, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
         if (useGCFences()) {
-            LValue start = m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8);
-            LValue end;
-            if (structure->hasIntPtr()) {
-                Structure* actualStructure = bitwise_cast<Structure*>(structure->asIntPtr());
-                end = m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + actualStructure->inlineCapacity());
-            } else
-                end = m_out.add(start, m_out.load8ZeroExt32(structure, m_heaps.Structure_inlineCapacity));
-
             splatWords(
                 result,
-                start,
-                end,
+                m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8),
+                m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + structure->inlineCapacity()),
                 m_out.int64Zero,
                 m_heaps.properties.atAnyNumber());
         }
@@ -10471,7 +10418,7 @@ private:
         size_t size, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         MarkedAllocator* allocator = vm().heap.allocatorForObjectOfType<ClassType>(size);
-        return allocateObject(m_out.constIntPtr(allocator), m_out.constIntPtr(structure), butterfly, slowPath);
+        return allocateObject(m_out.constIntPtr(allocator), structure, butterfly, slowPath);
     }
     
     template<typename ClassType>
@@ -10535,7 +10482,7 @@ private:
     {
         LValue allocator = allocatorForSize(
             vm().heap.subspaceForObjectOfType<ClassType>(), size, slowPath);
-        return allocateObject(allocator, m_out.constIntPtr(structure), butterfly, slowPath);
+        return allocateObject(allocator, structure, butterfly, slowPath);
     }
 
     template<typename ClassType>
@@ -10544,7 +10491,7 @@ private:
     {
         LValue allocator = allocatorForSize(
             vm().heap.subspaceForObjectOfType<ClassType>(), size, slowPath);
-        return allocateCell(allocator, m_out.constIntPtr(structure), slowPath);
+        return allocateCell(allocator, structure, slowPath);
     }
     
     LValue allocateObject(Structure* structure)
@@ -10562,7 +10509,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constIntPtr(allocator), m_out.constIntPtr(structure), m_out.intPtrZero, slowPath));
+            m_out.constIntPtr(allocator), structure, m_out.intPtrZero, slowPath));
         
         m_out.jump(continuation);
         

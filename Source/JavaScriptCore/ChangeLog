@@ -1,3 +1,17 @@
+2016-11-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r209112.
+        https://bugs.webkit.org/show_bug.cgi?id=165208
+
+        "It regressed Octane/Raytrace and JetStream" (Requested by
+        saamyjoon on #webkit).
+
+        Reverted changeset:
+
+        "We should support CreateThis in the FTL"
+        https://bugs.webkit.org/show_bug.cgi?id=164904
+        http://trac.webkit.org/changeset/209112
+
 2016-11-30  Darin Adler  <darin@apple.com>
 
         Streamline and speed up tokenizer and segmented string classes
