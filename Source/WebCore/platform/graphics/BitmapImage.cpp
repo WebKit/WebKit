@@ -278,7 +278,7 @@ BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
     // it will be decoded on a separate work queue. When decoding nextFrame finishes, we will be notified
     // through the callback newFrameNativeImageAvailableAtIndex(). Otherwise, advanceAnimation() will be called
     // when the timer fires and m_currentFrame will be advanced to nextFrame since it is not being decoded.
-    if ((allowAsyncImageDecoding() && m_source.isAsyncDecodingRequired()) || isAsyncDecodingForcedForTesting()) {
+    if ((allowAnimatedImageAsyncDecoding() && m_source.isAsyncDecodingRequired()) || isAsyncDecodingForcedForTesting()) {
         if (!m_source.requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel))
             LOG(Images, "BitmapImage %p %s - cachedFrameCount %ld nextFrame %ld", this, __FUNCTION__, ++m_cachedFrameCount, nextFrame);
         m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0.0f);

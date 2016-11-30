@@ -242,7 +242,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitMediaStreamEnabled, MediaStreamEnabled, mediaStreamEnabled) \
     macro(WebKitHTTPEquivEnabled, HttpEquivEnabled, httpEquivEnabled) \
     macro(WebKitVisualViewportEnabled, VisualViewportEnabled, visualViewportEnabled) \
-    macro(WebKitAsyncImageDecodingEnabled, AsyncImageDecodingEnabled, asyncImageDecodingEnabled) \
+    macro(WebKitLargeImageAsyncDecodingEnabled, LargeImageAsyncDecodingEnabled, largeImageAsyncDecodingEnabled) \
+    macro(WebKitAnimatedImageAsyncDecodingEnabled, AnimatedImageAsyncDecodingEnabled, animatedImageAsyncDecodingEnabled) \
     macro(WebKitES6ModulesEnabled, Es6ModulesEnabled, es6ModulesEnabled) \
     \
 

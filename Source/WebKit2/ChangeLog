@@ -1,3 +1,26 @@
+2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add separate settings and preferences to enable/disable async decoding for large images and animated images
+        https://bugs.webkit.org/show_bug.cgi?id=165177
+
+        Reviewed by Simon Fraser.
+        
+        Hook up the async image decoding settings for WebKit2.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _largeImageAsyncDecodingEnabled]):
+        (-[WKPreferences _setLargeImageAsyncDecodingEnabled:]):
+        (-[WKPreferences _animatedImageAsyncDecodingEnabled]):
+        (-[WKPreferences _setAnimatedImageAsyncDecodingEnabled:]):
+        (-[WKPreferences _asyncImageDecodingEnabled]): Deleted.
+        (-[WKPreferences _setAsyncImageDecodingEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-11-30  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Turn on HTML interactive form validation feature

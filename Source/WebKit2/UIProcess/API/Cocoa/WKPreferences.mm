@@ -325,14 +325,24 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setVisualViewportEnabled(_visualViewportEnabled);
 }
 
-- (BOOL)_asyncImageDecodingEnabled
+- (BOOL)_largeImageAsyncDecodingEnabled
 {
-    return _preferences->asyncImageDecodingEnabled();
+    return _preferences->largeImageAsyncDecodingEnabled();
 }
 
-- (void)_setAsyncImageDecodingEnabled:(BOOL)_asyncImageDecodingEnabled
+- (void)_setLargeImageAsyncDecodingEnabled:(BOOL)_largeImageAsyncDecodingEnabled
 {
-    _preferences->setAsyncImageDecodingEnabled(_asyncImageDecodingEnabled);
+    _preferences->setLargeImageAsyncDecodingEnabled(_largeImageAsyncDecodingEnabled);
+}
+
+- (BOOL)_animatedImageAsyncDecodingEnabled
+{
+    return _preferences->animatedImageAsyncDecodingEnabled();
+}
+
+- (void)_setAnimatedImageAsyncDecodingEnabled:(BOOL)_animatedImageAsyncDecodingEnabled
+{
+    _preferences->setAnimatedImageAsyncDecodingEnabled(_animatedImageAsyncDecodingEnabled);
 }
 
 - (BOOL)_textAutosizingEnabled

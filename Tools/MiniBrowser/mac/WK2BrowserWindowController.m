@@ -375,7 +375,8 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._resourceUsageOverlayVisible = settings.resourceUsageOverlayVisible;
     preferences._displayListDrawingEnabled = settings.displayListDrawingEnabled;
     preferences._visualViewportEnabled = settings.visualViewportEnabled;
-    preferences._asyncImageDecodingEnabled = settings.asyncImageDecodingEnabled;
+    preferences._largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
+    preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
 
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 

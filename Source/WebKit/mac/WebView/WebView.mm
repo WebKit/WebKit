@@ -2900,7 +2900,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setShouldConvertInvalidURLsToBlank(shouldConvertInvalidURLsToBlank());
 
-    settings.setAsyncImageDecodingEnabled([preferences asyncImageDecodingEnabled]);
+    settings.setLargeImageAsyncDecodingEnabled([preferences largeImageAsyncDecodingEnabled]);
+    settings.setAnimatedImageAsyncDecodingEnabled([preferences animatedImageAsyncDecodingEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

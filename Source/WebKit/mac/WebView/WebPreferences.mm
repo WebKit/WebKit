@@ -507,7 +507,8 @@ public:
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitResourceLoadStatisticsEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitAsyncImageDecodingEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitLargeImageAsyncDecodingEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitFrameFlatteningEnabledPreferenceKey,
 #else
@@ -1887,14 +1888,24 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitResourceLoadStatisticsEnabledPreferenceKey];
 }
 
-- (BOOL)asyncImageDecodingEnabled
+- (BOOL)largeImageAsyncDecodingEnabled
 {
-    return [self _boolValueForKey:WebKitAsyncImageDecodingEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitLargeImageAsyncDecodingEnabledPreferenceKey];
 }
 
-- (void)setAsyncImageDecodingEnabled:(BOOL)enabled
+- (void)setLargeImageAsyncDecodingEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitAsyncImageDecodingEnabledPreferenceKey];
+    [self _setBoolValue:enabled forKey:WebKitLargeImageAsyncDecodingEnabledPreferenceKey];
+}
+
+- (BOOL)animatedImageAsyncDecodingEnabled
+{
+    return [self _boolValueForKey:WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey];
+}
+
+- (void)setAnimatedImageAsyncDecodingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey];
 }
 
 - (BOOL)canvasUsesAcceleratedDrawing

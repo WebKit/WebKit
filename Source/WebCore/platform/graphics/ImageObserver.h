@@ -38,7 +38,8 @@ protected:
     virtual ~ImageObserver() {}
 public:
     virtual bool allowSubsampling() const = 0;
-    virtual bool allowAsyncImageDecoding() const = 0;
+    virtual bool allowLargeImageAsyncDecoding() const = 0;
+    virtual bool allowAnimatedImageAsyncDecoding() const = 0;
     virtual bool showDebugBackground() const = 0;
     virtual void decodedSizeChanged(const Image*, long long delta) = 0;
 

@@ -92,7 +92,8 @@ void CachedImage::load(CachedResourceLoader& loader)
 
     if (m_loader) {
         m_allowSubsampling = m_loader->frameLoader()->frame().settings().imageSubsamplingEnabled();
-        m_allowAsyncImageDecoding = m_loader->frameLoader()->frame().settings().asyncImageDecodingEnabled();
+        m_allowLargeImageAsyncDecoding = m_loader->frameLoader()->frame().settings().largeImageAsyncDecodingEnabled();
+        m_allowAnimatedImageAsyncDecoding = m_loader->frameLoader()->frame().settings().animatedImageAsyncDecodingEnabled();
         m_showDebugBackground = m_loader->frameLoader()->frame().settings().showDebugBorders();
     }
 }

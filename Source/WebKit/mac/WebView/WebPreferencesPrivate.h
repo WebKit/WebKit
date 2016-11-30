@@ -513,7 +513,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)modernMediaControlsEnabled;
 
 @property (nonatomic) BOOL visualViewportEnabled;
-@property (nonatomic) BOOL asyncImageDecodingEnabled;
+@property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
+@property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 @property (nonatomic) BOOL attachmentElementEnabled;

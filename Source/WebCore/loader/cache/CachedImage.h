@@ -118,7 +118,8 @@ private:
 
     // ImageObserver
     bool allowSubsampling() const override { return m_allowSubsampling; }
-    bool allowAsyncImageDecoding() const override { return m_allowAsyncImageDecoding; }
+    bool allowLargeImageAsyncDecoding() const override { return m_allowLargeImageAsyncDecoding; }
+    bool allowAnimatedImageAsyncDecoding() const override { return m_allowAnimatedImageAsyncDecoding; }
     bool showDebugBackground() const override { return m_showDebugBackground; }
     void decodedSizeChanged(const Image*, long long delta) override;
     void didDraw(const Image*) override;
@@ -145,7 +146,8 @@ private:
 #else
     bool m_allowSubsampling { false };
 #endif
-    bool m_allowAsyncImageDecoding { true };
+    bool m_allowLargeImageAsyncDecoding { true };
+    bool m_allowAnimatedImageAsyncDecoding { true };
     bool m_showDebugBackground { false };
 };
 

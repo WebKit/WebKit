@@ -1,3 +1,27 @@
+2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add separate settings and preferences to enable/disable async decoding for large images and animated images
+        https://bugs.webkit.org/show_bug.cgi?id=165177
+
+        Reviewed by Simon Fraser.
+        
+        Pref and a menu item to toggle async image decoding settings for WebKits 1 and 2.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleLargeImageAsyncDecodingEnabled:]):
+        (-[SettingsController largeImageAsyncDecodingEnabled]):
+        (-[SettingsController toggleAnimatedImageAsyncDecodingEnabled:]):
+        (-[SettingsController animatedImageAsyncDecodingEnabled]):
+        (-[SettingsController toggleAsyncImageDecodingEnabled:]): Deleted.
+        (-[SettingsController asyncImageDecodingEnabled]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2016-11-30  Jonathan Bedard  <jbedard@apple.com>
 
         Make it possible to use an existing simulator instance for one-off testing

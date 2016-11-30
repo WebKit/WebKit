@@ -1,3 +1,27 @@
+2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add separate settings and preferences to enable/disable async decoding for large images and animated images
+        https://bugs.webkit.org/show_bug.cgi?id=165177
+
+        Reviewed by Simon Fraser.
+
+        Instead of having the async image decoding be controlled by one setting,
+        two separate settings are added:
+            largeImageAsyncDecodingEnabled
+            animatedImageAsyncDecodingEnabled
+            
+        And an existing setting is removed:
+            asyncImageDecodingEnabled
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        * loader/cache/CachedImage.h:
+        * page/Settings.in:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalStartAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageObserver.h:
+
 2016-11-30  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: layoutState->m_renderer == this in WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage

@@ -56,7 +56,8 @@ static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
 static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEnabled";
-static NSString * const AsyncImageDecodingEnabledPreferenceKey = @"AsyncImageDecodingEnabled";
+static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
+static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -128,7 +129,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Visual Viewport" action:@selector(toggleVisualViewportEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Async Image Decoding" action:@selector(toggleAsyncImageDecodingEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Large Image Async Decoding" action:@selector(toggleLargeImageAsyncDecodingEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Animated Image Async Decoding" action:@selector(toggleAnimatedImageAsyncDecodingEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -203,8 +205,10 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self displayListDrawingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
         [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleAsyncImageDecodingEnabled:))
-        [menuItem setState:[self asyncImageDecodingEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleLargeImageAsyncDecodingEnabled:))
+        [menuItem setState:[self largeImageAsyncDecodingEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleAnimatedImageAsyncDecodingEnabled:))
+        [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleVisualViewportEnabled:))
         [menuItem setState:[self visualViewportEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -412,14 +416,24 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ResourceLoadStatisticsEnabledPreferenceKey];
 }
 
-- (void)toggleAsyncImageDecodingEnabled:(id)sender
+- (void)toggleLargeImageAsyncDecodingEnabled:(id)sender
 {
-    [self _toggleBooleanDefault:AsyncImageDecodingEnabledPreferenceKey];
+    [self _toggleBooleanDefault:LargeImageAsyncDecodingEnabledPreferenceKey];
 }
 
-- (BOOL)asyncImageDecodingEnabled
+- (BOOL)largeImageAsyncDecodingEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:AsyncImageDecodingEnabledPreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:LargeImageAsyncDecodingEnabledPreferenceKey];
+}
+
+- (void)toggleAnimatedImageAsyncDecodingEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:AnimatedImageAsyncDecodingEnabledPreferenceKey];
+}
+
+- (BOOL)animatedImageAsyncDecodingEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AnimatedImageAsyncDecodingEnabledPreferenceKey];
 }
 
 - (void)toggleEnableSubPixelCSSOMMetrics:(id)sender

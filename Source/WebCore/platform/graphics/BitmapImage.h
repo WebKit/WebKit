@@ -134,7 +134,8 @@ protected:
     NativeImagePtr frameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
     bool allowSubsampling() const { return imageObserver() && imageObserver()->allowSubsampling(); }
-    bool allowAsyncImageDecoding() const { return imageObserver() && imageObserver()->allowAsyncImageDecoding(); }
+    bool allowLargeImageAsyncDecoding() const { return imageObserver() && imageObserver()->allowLargeImageAsyncDecoding(); }
+    bool allowAnimatedImageAsyncDecoding() const { return imageObserver() && imageObserver()->allowAnimatedImageAsyncDecoding(); }
     bool showDebugBackground() const { return imageObserver() && imageObserver()->showDebugBackground(); }
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out

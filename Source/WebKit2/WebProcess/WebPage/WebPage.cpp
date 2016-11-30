@@ -3219,7 +3219,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_viewportConfiguration.setCanIgnoreScalingConstraints(m_ignoreViewportScalingConstraints);
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 #endif
-    settings.setAsyncImageDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::asyncImageDecodingEnabledKey()));
+    settings.setLargeImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::largeImageAsyncDecodingEnabledKey()));
+    settings.setAnimatedImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::animatedImageAsyncDecodingEnabledKey()));
 }
 
 #if ENABLE(DATA_DETECTION)

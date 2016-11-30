@@ -1,3 +1,25 @@
+2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add separate settings and preferences to enable/disable async decoding for large images and animated images
+        https://bugs.webkit.org/show_bug.cgi?id=165177
+
+        Reviewed by Simon Fraser.
+        
+        Hook up the async image decoding settings for WebKit1.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences largeImageAsyncDecodingEnabled]):
+        (-[WebPreferences setLargeImageAsyncDecodingEnabled:]):
+        (-[WebPreferences animatedImageAsyncDecodingEnabled]):
+        (-[WebPreferences setAnimatedImageAsyncDecodingEnabled:]):
+        (-[WebPreferences asyncImageDecodingEnabled]): Deleted.
+        (-[WebPreferences setAsyncImageDecodingEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Enable two clang warnings recommended by Xcode
