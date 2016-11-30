@@ -1,3 +1,49 @@
+2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Some animated image do not animate after reseting their animations
+        https://bugs.webkit.org/show_bug.cgi?id=165131
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/images/reset-image-animation.html
+
+        The bug happens because the ImageFrameCache does not reset its cached
+        frames properly when the BitmapImage rests its animation.
+
+        -- We need to ignore caching the new NativeImage of an ImageFrame if the
+        decoding thread is terminated after asynchronously calling  
+        cacheFrameNativeImageAtIndex() on the main thread through callOnMainThread().
+        Although the decoding thread was terminated this call is still scheduled
+        to be executed later on the main thread.
+
+        -- We need to open the m_frameRequestQueue before starting a new decoding
+        thread. Opening m_frameRequestQueue clears the enqueued requests from the 
+        previous decoding thread and allows enqueueing requests for the new thread.
+
+        -- We need to clear the ImageFrames which were being decoded at the time
+        the decoding queue was closing and their new NativeImages were not cached.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheFrameNativeImageAtIndex): Assert the NativeImage
+        is cached for an ImageFrame which is still being decoded.
+
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue): Open the m_frameRequestQueue
+        before starting the decoding thread. Don't cache the NativeImage of an ImageFrame
+        unless the decoding thread is still alive and it the same as the one that makes
+        the asynchronous call to cacheFrameNativeImageAtIndex().
+        
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Don't request an
+        image frame to be be asynchronously decoded if it is already being decoded.
+        
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue): Clear the ImageFrames that
+        were being decoded when the decoding thread terminates.
+        
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetImageAnimation):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Expose BitmapImage::resetAnimation() through Internals so tests can force it.
+
 2016-11-29  Brent Fulgham  <bfulgham@apple.com>
 
         Use 'childOfType' template when retrieving Shadow DOM elements

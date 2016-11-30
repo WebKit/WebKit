@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        description("Ensure the image animation is played in order after the animation is reset.");
+        jsTestIsAsync = true;
+
+        internals.clearMemoryCache();
+
+        var image = new Image;
+        image.onload = imageLoaded;
+        image.src = "resources/animated-red-green-blue.gif";
+        
+        function imageLoaded()
+        {
+            if (!window.internals)
+                return;
+            internals.setImageFrameDecodingDuration(image, 0.040);
+            drawImage();
+            drawLoop();
+        }
+
+        function drawImage()
+        {
+            if (drawImage.count == undefined)
+                drawImage.count = 0;
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            return ++drawImage.count;
+        }
+                
+        function drawLoop()
+        {
+            setTimeout(function() {
+                switch (drawImage()) {
+                case 2:
+                    shouldBe("internals.imageFrameIndex(image)", "1");
+                    internals.resetImageAnimation(image);
+                    drawLoop();
+                    break;
+
+                case 5:
+                    // The animation was reset at drawCount = 2. Three more
+                    // drawings should make current_frame = 2.
+                    shouldBe("internals.imageFrameIndex(image)", "2");
+                    finishJSTest();
+                    break;
+                    
+                default:
+                    drawLoop();
+                }
+            }, 50);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

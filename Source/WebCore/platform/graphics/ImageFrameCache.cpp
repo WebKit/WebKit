@@ -242,6 +242,9 @@ void ImageFrameCache::cacheFrameNativeImageAtIndex(NativeImagePtr&& nativeImage,
     if (!isDecoderAvailable())
         return;
 
+    ASSERT(index < m_frames.size());
+    ASSERT(m_frames[index].isBeingDecoded());
+
     // Clean the old native image and set a new one
     replaceFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel);
 
@@ -263,6 +266,8 @@ void ImageFrameCache::startAsyncDecodingQueue()
     if (hasDecodingQueue() || !isDecoderAvailable())
         return;
 
+    m_frameRequestQueue.open();
+
     Ref<ImageFrameCache> protectedThis = Ref<ImageFrameCache>(*this);
     Ref<WorkQueue> protectedQueue = decodingQueue();
 
@@ -275,9 +280,9 @@ void ImageFrameCache::startAsyncDecodingQueue()
             NativeImagePtr nativeImage = m_decoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, DecodingMode::Immediate);
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
-            callOnMainThread([this, nativeImage, frameRequest] () mutable {
+            callOnMainThread([this, protectedQueue = protectedQueue.copyRef(), nativeImage, frameRequest] () mutable {
                 // The queue may be closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called
-                if (hasDecodingQueue())
+                if (protectedQueue.ptr() == m_decodingQueue)
                     cacheFrameNativeImageAtIndex(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel);
             });
         }
@@ -294,13 +299,19 @@ bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
 
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
-    
+
+    // We need to coalesce multiple requests for decoding the same ImageFrame while it
+    // is still being decoded. This may happen if the image rectangle is repainted
+    // multiple times while the ImageFrame has not finished decoding.
+    if (frame.isBeingDecoded())
+        return true;
+
     if (subsamplingLevel == SubsamplingLevel::Undefinded)
         subsamplingLevel = frame.subsamplingLevel();
-    
+
     if (frame.hasValidNativeImage(subsamplingLevel))
         return false;
-    
+
     frame.setDecoding(ImageFrame::Decoding::BeingDecoded);
     m_frameRequestQueue.enqueue({ index, subsamplingLevel });
     return true;
@@ -313,6 +324,11 @@ void ImageFrameCache::stopAsyncDecodingQueue()
     
     m_frameRequestQueue.close();
     m_decodingQueue = nullptr;
+
+    for (ImageFrame& frame : m_frames) {
+        if (frame.isBeingDecoded())
+            frame.clear();
+    }
 }
 
 const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching)

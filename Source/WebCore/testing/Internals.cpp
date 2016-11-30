@@ -662,6 +662,19 @@ void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float d
     downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(duration);
 }
 
+void Internals::resetImageAnimation(HTMLImageElement& element)
+{
+    auto* cachedImage = element.cachedImage();
+    if (!cachedImage)
+        return;
+
+    auto* image = cachedImage->image();
+    if (!is<BitmapImage>(image))
+        return;
+
+    image->resetAnimation();
+}
+
 void Internals::clearPageCache()
 {
     PageCache::singleton().pruneToSizeNow(0, PruningReason::None);

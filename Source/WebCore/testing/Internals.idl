@@ -227,6 +227,7 @@ enum EventThrottlingBehavior {
 
     unsigned long imageFrameIndex(HTMLImageElement element);
     void setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
+    void resetImageAnimation(HTMLImageElement element);
 
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;

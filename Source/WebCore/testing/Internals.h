@@ -104,6 +104,7 @@ public:
 
     unsigned imageFrameIndex(HTMLImageElement&);
     void setImageFrameDecodingDuration(HTMLImageElement&, float duration);
+    void resetImageAnimation(HTMLImageElement&);
 
     void clearPageCache();
     unsigned pageCacheSize() const;
