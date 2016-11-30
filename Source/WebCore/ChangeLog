@@ -1,3 +1,47 @@
+2016-11-30  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Cache and reuse SQLiteStatements in the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=164974
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change other than being faster).
+
+        Instead of building new SQLiteStatements from scratch each time they're needed and then
+        finalizing them after they're used for a single operation, we cache them.
+
+        For tests that do puts and/or gets in tight loops, this shows up as a 5%-20% speedup on profiles.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::~SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteUnusedBlobFileRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatementForGetAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatement):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::closeSQLiteDB):
+        (WebCore::IDBServer::queryForGetAllObjectStoreRecords): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2016-11-30  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure -webkit-background-size coalesces identical values.
