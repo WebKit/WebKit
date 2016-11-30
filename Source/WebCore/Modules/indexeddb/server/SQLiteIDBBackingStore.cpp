@@ -2388,12 +2388,12 @@ SQLiteStatement* SQLiteIDBBackingStore::cachedStatement(SQLiteIDBBackingStore::S
 
 void SQLiteIDBBackingStore::closeSQLiteDB()
 {
-    ASSERT(m_sqliteDB);
-
     for (size_t i = 0; i < static_cast<int>(SQL::Count); ++i)
         m_cachedStatements[i] = nullptr;
 
-    m_sqliteDB->close();
+    if (m_sqliteDB)
+        m_sqliteDB->close();
+
     m_sqliteDB = nullptr;
 }
 

@@ -1,3 +1,13 @@
+2016-11-30  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r209144): API test IndexedDB.DeleteRecovery failing.
+        https://bugs.webkit.org/show_bug.cgi?id=165216
+
+        Rubberstamped by Tim Horton.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::closeSQLiteDB): Change invalid ASSERT into a null check.
+
 2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add separate settings and preferences to enable/disable async decoding for large images and animated images
