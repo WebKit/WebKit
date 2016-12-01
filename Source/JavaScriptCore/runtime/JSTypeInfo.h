@@ -54,11 +54,12 @@ static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero
 class TypeInfo {
 public:
     typedef uint8_t InlineTypeFlags;
-    typedef uint8_t OutOfLineTypeFlags;
+    typedef uint16_t OutOfLineTypeFlags;
 
     TypeInfo(JSType type, unsigned flags = 0)
         : TypeInfo(type, flags & 0xff, flags >> 8)
     {
+        ASSERT(!(flags >> 24));
     }
 
     TypeInfo(JSType type, InlineTypeFlags inlineTypeFlags, OutOfLineTypeFlags outOfLineTypeFlags)
@@ -110,9 +111,9 @@ private:
     bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
     bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
 
-    unsigned char m_type;
-    unsigned char m_flags;
-    unsigned char m_flags2;
+    uint8_t m_type;
+    uint8_t m_flags;
+    uint16_t m_flags2;
 };
 
 } // namespace JSC

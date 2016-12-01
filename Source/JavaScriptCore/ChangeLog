@@ -1,3 +1,17 @@
+2016-11-30  Mark Lam  <mark.lam@apple.com>
+
+        TypeInfo::OutOfLineTypeFlags should be 16 bits in size.
+        https://bugs.webkit.org/show_bug.cgi?id=165224
+
+        Reviewed by Saam Barati.
+
+        There's no reason for OutOfLineTypeFlags to be constraint to 8 bits since the
+        space is available to us.  Making OutOfLineTypeFlags 16 bits brings TypeInfo up
+        to 32 bits in size from the current 24 bits.
+
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: inspector/sampling-profiler/* LayoutTests are flaky timeouts
