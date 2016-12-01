@@ -24,6 +24,7 @@
 
 #include "Chrome.h"
 #include "DragData.h"
+#include "ElementChildIterator.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
@@ -39,7 +40,18 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
+#include <wtf/TypeCasts.h>
 #include <wtf/text/StringBuilder.h>
+
+
+namespace WebCore {
+class UploadButtonElement;
+}
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::UploadButtonElement)
+    static bool isType(const WebCore::Element& element) { return element.isUploadButton(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WebCore {
 
@@ -51,6 +63,8 @@ public:
     static Ref<UploadButtonElement> createForMultiple(Document&);
 
 private:
+    bool isUploadButton() const override { return true; }
+    
     UploadButtonElement(Document&);
 };
 
@@ -277,16 +291,24 @@ void FileInputType::createShadowSubtree()
 void FileInputType::disabledAttributeChanged()
 {
     ASSERT(element().shadowRoot());
-    UploadButtonElement* button = static_cast<UploadButtonElement*>(element().userAgentShadowRoot()->firstChild());
-    if (button)
+
+    ShadowRoot* root = element().userAgentShadowRoot();
+    if (!root)
+        return;
+    
+    if (auto* button = childrenOfType<UploadButtonElement>(*root).first())
         button->setBooleanAttribute(disabledAttr, element().isDisabledFormControl());
 }
 
 void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element().shadowRoot());
-    UploadButtonElement* button = static_cast<UploadButtonElement*>(element().userAgentShadowRoot()->firstChild());
-    if (button)
+
+    ShadowRoot* root = element().userAgentShadowRoot();
+    if (!root)
+        return;
+
+    if (auto* button = childrenOfType<UploadButtonElement>(*root).first())
         button->setValue(element().multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }
 

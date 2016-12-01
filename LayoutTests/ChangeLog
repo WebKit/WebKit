@@ -1,5 +1,30 @@
 2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r209145. rdar://problem/29404231
+
+    2016-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+            Use 'childOfType' template when retrieving Shadow DOM elements
+            https://bugs.webkit.org/show_bug.cgi?id=165145
+            <rdar://problem/29331830>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/shadow-dom/color-input-element-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/color-input-element-shadow-manipulation.html: Added.
+            * fast/shadow-dom/file-input-element-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/file-input-element-shadow-manipulation.html: Added.
+            * fast/shadow-dom/keygen-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/keygen-shadow-manipulation.html: Added.
+            * fast/shadow-dom/media-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/media-shadow-manipulation.html: Added.
+            * fast/shadow-dom/range-input-element-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/range-input-element-shadow-manipulation.html: Added.
+            * fast/shadow-dom/textarea-shadow-manipulation-expected.txt: Added.
+            * fast/shadow-dom/textarea-shadow-manipulation.html: Added.
+
+2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r208745. rdar://problem/29277336
 
     2016-11-14  Brent Fulgham  <bfulgham@apple.com>

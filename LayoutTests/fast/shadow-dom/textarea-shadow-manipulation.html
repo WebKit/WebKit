@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    var bounds = textarea_element.getBoundingClientRect();
+    var range = document.caretRangeFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    var shadow_tree_container = range.commonAncestorContainer;
+    shadow_tree_container.prepend("foo");
+    textarea_element.disabled = true;
+    testPassed("Passes if we did not debug assert.");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <textarea id="textarea_element" style="position:absolute; height: 100px; width: 100px;">Text Area</textarea>
+</body>
+</html>
