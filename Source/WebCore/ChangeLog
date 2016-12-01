@@ -1,3 +1,13 @@
+2016-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-overflow-scrolling: touch
+        https://bugs.webkit.org/show_bug.cgi?id=165275
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::unwrapKey to match the latest spec
