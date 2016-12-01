@@ -1,3 +1,18 @@
+2016-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove webkitpy dependency on Eliza
+        https://bugs.webkit.org/show_bug.cgi?id=164979
+
+        Reviewed by Daniel Bates.
+
+        This module is not on pypi, so installing it is a challenge. The jokes feel pretty old too!
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        * Scripts/webkitpy/thirdparty/__init___unittest.py: Changed mock import hook to
+        test buildbot instead of eliza.
+        * Scripts/webkitpy/tool/bot/ircbot.py:
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+
 2016-12-01  Beth Dakin  <bdakin@apple.com>
 
         Force clicking tests fail on some machines

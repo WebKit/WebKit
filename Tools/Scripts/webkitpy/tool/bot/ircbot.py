@@ -52,16 +52,9 @@ class _IRCThreadTearoff(IRCBotDelegate):
         return self._password
 
 
-class Eliza(IRCCommand):
-    therapist = None
-
-    def __init__(self):
-        if not self.therapist:
-            import webkitpy.thirdparty.autoinstalled.eliza as eliza
-            Eliza.therapist = eliza.eliza()
-
+class UnknownCommand(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
-        return "%s: %s" % (nick, self.therapist.respond(" ".join(args)))
+        return "%s: %s" % (nick, "...")
 
 
 class IRCBot(object):
@@ -82,7 +75,7 @@ class IRCBot(object):
         args = tokenized_request[1:]
         if not command:
             # Give the peoples someone to talk with.
-            command = Eliza
+            command = UnknownCommand
             args = tokenized_request
         return (command, args)
 

@@ -34,7 +34,7 @@ from webkitpy.tool.bot import irc_command
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.ircbot import IRCBot
-from webkitpy.tool.bot.ircbot import Eliza
+from webkitpy.tool.bot.ircbot import UnknownCommand
 from webkitpy.tool.bot.sheriff_unittest import MockSheriffBot
 from webkitpy.tool.mocktool import MockTool
 
@@ -48,16 +48,11 @@ def run(message):
 
 
 class IRCBotTest(unittest.TestCase):
-    def test_eliza(self):
-        eliza = Eliza()
-        eliza.execute("tom", "hi", None, None)
-        eliza.execute("tom", "bye", None, None)
-
     def test_parse_command_and_args(self):
         tool = MockTool()
         bot = IRCBot("sheriffbot", tool, Sheriff(tool, MockSheriffBot()), irc_command.commands)
-        self.assertEqual(bot._parse_command_and_args(""), (Eliza, [""]))
-        self.assertEqual(bot._parse_command_and_args("   "), (Eliza, [""]))
+        self.assertEqual(bot._parse_command_and_args(""), (UnknownCommand, [""]))
+        self.assertEqual(bot._parse_command_and_args("   "), (UnknownCommand, [""]))
         self.assertEqual(bot._parse_command_and_args(" hi "), (irc_command.Hi, []))
         self.assertEqual(bot._parse_command_and_args(" hi there "), (irc_command.Hi, ["there"]))
 
