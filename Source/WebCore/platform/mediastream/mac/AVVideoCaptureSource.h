@@ -86,6 +86,7 @@ private:
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<CGImageRef> m_lastImage;
+    RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
 
     Vector<Float64> m_videoFrameTimeStamps;
     Float64 m_frameRate { 0 };

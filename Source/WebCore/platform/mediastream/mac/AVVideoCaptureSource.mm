@@ -333,18 +333,47 @@ bool AVVideoCaptureSource::applySize(const IntSize& size)
     return setPreset(preset);
 }
 
+static IntSize sizeForPreset(NSString* preset)
+{
+    if (!preset)
+        return { };
+
+    if ([preset isEqualToString:AVCaptureSessionPreset1280x720])
+        return { 1280, 720 };
+
+    if ([preset isEqualToString:AVCaptureSessionPreset960x540])
+        return { 960, 540 };
+
+    if ([preset isEqualToString:AVCaptureSessionPreset640x480])
+        return { 640, 480 };
+
+    if ([preset isEqualToString:AVCaptureSessionPreset352x288])
+        return { 352, 288 };
+
+    if ([preset isEqualToString:AVCaptureSessionPreset320x240])
+        return { 320, 240 };
+    
+    return { };
+    
+}
+
 bool AVVideoCaptureSource::setPreset(NSString *preset)
 {
     if (!session()) {
         m_pendingPreset = preset;
         return true;
     }
-    m_pendingPreset = nullptr;
-    if (!preset)
+
+    auto size = sizeForPreset(preset);
+    if (size.width() == m_width && size.height() == m_height)
         return true;
 
     @try {
         session().sessionPreset = preset;
+#if PLATFORM(MAC)
+        auto settingsDictionary = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat), (NSString*)kCVPixelBufferWidthKey: @(size.width()), (NSString*)kCVPixelBufferHeightKey: @(size.height()), };
+        [m_videoOutput setVideoSettings:settingsDictionary];
+#endif
     } @catch(NSException *exception) {
         LOG(Media, "AVVideoCaptureSource::applySize(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
         return false;
@@ -398,9 +427,6 @@ void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::
 
 void AVVideoCaptureSource::setupCaptureSession()
 {
-    if (m_pendingPreset)
-        setPreset(m_pendingPreset.get());
-
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
@@ -414,17 +440,30 @@ void AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addInput:videoIn.get()];
 
-    RetainPtr<AVCaptureVideoDataOutputType> videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
-    RetainPtr<NSDictionary> settingsDictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:videoCaptureFormat], kCVPixelBufferPixelFormatTypeKey, nil]);
-    [videoOutput setVideoSettings:settingsDictionary.get()];
-    [videoOutput setAlwaysDiscardsLateVideoFrames:YES];
-    setVideoSampleBufferDelegate(videoOutput.get());
+    m_videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
+    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:videoCaptureFormat], kCVPixelBufferPixelFormatTypeKey, nil]);
+    if (m_pendingPreset) {
+#if PLATFORM(MAC)
+        auto size = sizeForPreset(m_pendingPreset.get());
+        [settingsDictionary.get() setObject:[NSNumber numberWithInt:size.width()] forKey:(NSString*)kCVPixelBufferWidthKey];
+        [settingsDictionary.get() setObject:[NSNumber numberWithInt:size.height()] forKey:(NSString*)kCVPixelBufferHeightKey];
+#endif
+    }
 
-    if (![session() canAddOutput:videoOutput.get()]) {
+    [m_videoOutput setVideoSettings:settingsDictionary.get()];
+    [m_videoOutput setAlwaysDiscardsLateVideoFrames:YES];
+    setVideoSampleBufferDelegate(m_videoOutput.get());
+
+    if (![session() canAddOutput:m_videoOutput.get()]) {
         LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
         return;
     }
-    [session() addOutput:videoOutput.get()];
+    [session() addOutput:m_videoOutput.get()];
+
+#if PLATFORM(IOS)
+    setPreset(m_pendingPreset.get());
+#endif
+
 }
 
 void AVVideoCaptureSource::shutdownCaptureSession()
@@ -567,7 +606,7 @@ RefPtr<AVMediaSourcePreview> AVVideoCaptureSource::createPreview()
     return AVVideoSourcePreview::create(session(), device(), this);
 }
 
-NSString *AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const
+NSString* AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const
 {
     if (!width && !height)
         return nil;

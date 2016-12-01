@@ -1,3 +1,19 @@
+2016-12-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream][Mac] Video presets sometimes don't work
+        https://bugs.webkit.org/show_bug.cgi?id=165214
+        <rdar://problem/29444533>
+
+        Reviewed by Jer Noble.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setPreset): Set videoSettings width and height.
+        (WebCore::AVVideoCaptureSource::setupCaptureSession): Store videoSettings object for later use.
+          Set videoSettings width and height.
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions):
+        (WebCore::AVVideoCaptureSource::sizeForPreset): New.
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Promote the "on" property from AirPlayButton to IconButton
