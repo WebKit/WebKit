@@ -1,3 +1,21 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Fix media/modern-media-controls/status-label/status-label.html
+        https://bugs.webkit.org/show_bug.cgi?id=165259
+
+        Reviewed by Dean Jackson.
+
+        We broke the test at media/modern-media-controls/status-label/status-label.html with the
+        fix for https://bugs.webkit.org/show_bug.cgi?id=165239 since the test would test the
+        font-family for a StatusLabel which would only inherited to be -apple-system when hosted
+        in a MediaControls instance. We now remove this assertion and added a dedicated test
+        for when a StatusLabel is hosted in a MediaControls.
+
+        * media/modern-media-controls/status-label/status-label-expected.txt:
+        * media/modern-media-controls/status-label/status-label-font-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label-font.html: Added.
+        * media/modern-media-controls/status-label/status-label.html:
+
 2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html as failing on mac-wk1.
