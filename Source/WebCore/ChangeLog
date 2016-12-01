@@ -1,3 +1,66 @@
+2016-11-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Move more attributes from RenderGrid to the new Grid class
+        https://bugs.webkit.org/show_bug.cgi?id=165094
+
+        Reviewed by Darin Adler.
+
+        Moved more attributes from RenderGrid to Grid as they are not really part of the state of
+        the RenderGrid object. In particular m_autoRepeat{Columns|Rows},
+        m_autoRepeatEmpty{Columns|Rows} and m_orderIterator. All of them are now private attributes
+        of the Grid class so clients should use the getters/setters provided by this patch.
+
+        This change allows to definitely remove the grid{Column|Row}Count() methods from
+        RenderGrid. These two became Grid::numTracks() which returns the number of tracks in the
+        data structure used to represent the grid (currently a matrix). Contrary to that,
+        RenderGrid::numTracks() returns the actual size of the grid.
+
+        No new tests as this is a refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::Grid::numTracks):
+        (WebCore::RenderGrid::Grid::ensureGridSize):
+        (WebCore::RenderGrid::Grid::setAutoRepeatTracks):
+        (WebCore::RenderGrid::Grid::autoRepeatTracks):
+        (WebCore::RenderGrid::Grid::setAutoRepeatEmptyColumns):
+        (WebCore::RenderGrid::Grid::setAutoRepeatEmptyRows):
+        (WebCore::RenderGrid::Grid::hasAutoRepeatEmptyTracks):
+        (WebCore::RenderGrid::Grid::isEmptyAutoRepeatTrack):
+        (WebCore::RenderGrid::Grid::autoRepeatEmptyTracks):
+        (WebCore::RenderGrid::Grid::gridItemSpan):
+        (WebCore::RenderGrid::Grid::clear):
+        (WebCore::RenderGrid::RenderGrid):
+        (WebCore::RenderGrid::computeTrackSizesForDirection):
+        (WebCore::RenderGrid::guttersSize):
+        (WebCore::RenderGrid::computeIntrinsicLogicalHeight):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::rawGridTrackSize):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::trackSizesForComputedStyle):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::assumedRowsSizeForOrthogonalChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::numTracks):
+        (WebCore::RenderGrid::paintChildren):
+        (WebCore::RenderGrid::gridColumnCount): Deleted.
+        (WebCore::RenderGrid::gridRowCount): Deleted.
+        (WebCore::RenderGrid::hasAutoRepeatEmptyTracks): Deleted.
+        (WebCore::RenderGrid::isEmptyAutoRepeatTrack): Deleted.
+        (WebCore::RenderGrid::cachedGridSpan): Deleted.
+        * rendering/RenderGrid.h:
+        (WebCore::RenderGrid::autoRepeatCountForDirection): Deleted.
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r209168.
