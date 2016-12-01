@@ -533,6 +533,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoClassSelectorFromStringView(value));
     else {
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoElementSelectorFromStringView(value));
+#if ENABLE(VIDEO_TRACK)
         if (selector && selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom) {
             // FIXME-NEWPARSER: The old parser treats cue as two pseudo-element types, because it
             // is unable to handle a dual pseudo-element (one that can be both an ident or a
@@ -546,6 +547,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (token.type() == FunctionToken && value.startsWithIgnoringASCIICase("cue"))
                 selector->setPseudoElementType(CSSSelector::PseudoElementCue);
         }
+#endif
     }
 
     if (!selector || (selector->match() == CSSSelector::PseudoElement && m_disallowPseudoElements))
