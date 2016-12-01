@@ -760,6 +760,48 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
     return result;
 }
 
+// Custom wasm ops. These are the ones too messy to do in wasm.json.
+
+template<>
+bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
+    if (isX86())
+        patchpoint->numGPScratchRegisters = 1;
+    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+#if CPU(X86_64)
+        jit.convertUInt64ToDouble(params[1].gpr(), params[0].fpr(), params.gpScratch(0));
+#else
+        jit.convertUInt64ToDouble(params[1].gpr(), params[0].fpr());
+#endif
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
+    if (isX86())
+        patchpoint->numGPScratchRegisters = 1;
+    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+#if CPU(X86_64)
+        jit.convertUInt64ToFloat(params[1].gpr(), params[0].fpr(), params.gpScratch(0));
+#else
+        jit.convertUInt64ToFloat(params[1].gpr(), params[0].fpr());
+#endif
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
 } } // namespace JSC::Wasm
 
 #include "WasmB3IRGeneratorInlines.h"

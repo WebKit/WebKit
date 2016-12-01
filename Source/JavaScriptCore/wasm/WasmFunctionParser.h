@@ -211,6 +211,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
+    case OpType::F32ConvertUI64: return unaryCase<OpType::F32ConvertUI64>();
+    case OpType::F64ConvertUI64: return unaryCase<OpType::F64ConvertUI64>();
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name: return unaryCase<OpType::name>();
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE

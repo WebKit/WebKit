@@ -1305,6 +1305,47 @@ public:
         m_assembler.cvtsi2ssq_mr(src.offset, src.base, dest);
     }
 
+    // One of scratch or scratch2 may be the same as src
+    void convertUInt64ToDouble(RegisterID src, FPRegisterID dest, RegisterID scratch)
+    {
+        RegisterID scratch2 = scratchRegister();
+
+        m_assembler.testq_rr(src, src);
+        AssemblerLabel signBitSet = m_assembler.jCC(x86Condition(Signed));
+        m_assembler.cvtsi2sdq_rr(src, dest);
+        AssemblerLabel done = m_assembler.jmp();
+        m_assembler.linkJump(signBitSet, m_assembler.label());
+        if (scratch != src)
+            m_assembler.movq_rr(src, scratch);
+        m_assembler.movq_rr(src, scratch2);
+        m_assembler.shrq_i8r(1, scratch);
+        m_assembler.andq_ir(1, scratch2);
+        m_assembler.orq_rr(scratch, scratch2);
+        m_assembler.cvtsi2sdq_rr(scratch2, dest);
+        m_assembler.addsd_rr(dest, dest);
+        m_assembler.linkJump(done, m_assembler.label());
+    }
+
+    // One of scratch or scratch2 may be the same as src
+    void convertUInt64ToFloat(RegisterID src, FPRegisterID dest, RegisterID scratch)
+    {
+        RegisterID scratch2 = scratchRegister();
+        m_assembler.testq_rr(src, src);
+        AssemblerLabel signBitSet = m_assembler.jCC(x86Condition(Signed));
+        m_assembler.cvtsi2ssq_rr(src, dest);
+        AssemblerLabel done = m_assembler.jmp();
+        m_assembler.linkJump(signBitSet, m_assembler.label());
+        if (scratch != src)
+            m_assembler.movq_rr(src, scratch);
+        m_assembler.movq_rr(src, scratch2);
+        m_assembler.shrq_i8r(1, scratch);
+        m_assembler.andq_ir(1, scratch2);
+        m_assembler.orq_rr(scratch, scratch2);
+        m_assembler.cvtsi2ssq_rr(scratch2, dest);
+        m_assembler.addss_rr(dest, dest);
+        m_assembler.linkJump(done, m_assembler.label());
+    }
+
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }

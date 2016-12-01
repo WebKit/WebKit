@@ -75,6 +75,7 @@
 #include <string.h>
 #include <thread>
 #include <type_traits>
+#include <wtf/CommaPrinter.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -2495,6 +2496,18 @@ EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*)
 
 #if ENABLE(WEBASSEMBLY)
 
+static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, JSValue wasmValue)
+{
+    JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
+
+    const String& typeString = type->value(exec);
+    if (typeString == "i64" || typeString == "i32")
+        return toCString(typeString, " ", RawPointer(bitwise_cast<void*>(value)));
+    if (typeString == "f32")
+        return toCString(typeString, " hex: ", RawPointer(bitwise_cast<void*>(value)), ", float: ", bitwise_cast<float>(static_cast<uint32_t>(JSValue::encode(value))));
+    return toCString(typeString, " hex: ", RawPointer(bitwise_cast<void*>(value)), ", double: ", bitwise_cast<double>(value));
+}
+
 static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 {
     JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
@@ -2502,9 +2515,14 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 
     const String& typeString = type->value(exec);
     if (typeString == "i64") {
-        RELEASE_ASSERT(value.isString());
         int64_t result;
-        RELEASE_ASSERT(sscanf(bitwise_cast<const char*>(jsCast<JSString*>(value)->value(exec).characters8()), "%lld", &result) != EOF);
+        const char* str = toCString(jsCast<JSString*>(value)->value(exec)).data();
+        int scanResult;
+        if (std::strlen(str) > 2 && str[0] == '0' && str[1] == 'x')
+            scanResult = sscanf(str, "%llx", &result);
+        else
+            scanResult = sscanf(str, "%lld", &result);
+        RELEASE_ASSERT(scanResult != EOF);
         return JSValue::decode(result);
     }
     RELEASE_ASSERT(value.isNumber());
@@ -2582,7 +2600,13 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
             JSValue callResult = callWasmFunction(&vm, *plan.compiledFunction(i)->jsEntryPoint, boxedArgs);
             JSValue expected = box(exec, vm, result);
             if (callResult != expected) {
-                WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(" (callResult == ", RawPointer(bitwise_cast<void*>(callResult)), ", expected == ", RawPointer(bitwise_cast<void*>(expected)), ")").data());
+                dataLog("Arguments: ");
+                CommaPrinter comma(", ");
+                for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
+                    dataLog(comma, valueWithTypeOfWasmValue(exec, vm, boxedArgs[argIndex], arguments->getIndexQuickly(argIndex)));
+                dataLogLn();
+
+                WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(" (callResult == ", valueWithTypeOfWasmValue(exec, vm, callResult, result), ", expected == ", valueWithTypeOfWasmValue(exec, vm, expected, result), ")").data());
                 CRASH();
             }
         }

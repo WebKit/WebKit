@@ -1,3 +1,33 @@
+2016-12-01  Keith Miller  <keith_miller@apple.com>
+
+        Add wasm int to floating point opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=165252
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds support for the Wasm integral type => floating point
+        type conversion opcodes. Most of these were already supported by B3
+        however there was no support for uint64 to float/double. Unfortunately,
+        AFAIK x86_64 does not have a single instruction that performs this
+        conversion. Since there is a signed conversion instruction on x86 we
+        use that for all uint64s that don't have the top bit set. If they do have
+        the top bit set we need to divide by 2 (rounding up) then convert the number
+        with the signed conversion then double the result.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::convertUInt64ToDouble):
+        (JSC::MacroAssemblerX86_64::convertUInt64ToFloat):
+        * jsc.cpp:
+        (valueWithTypeOfWasmValue):
+        (box):
+        (functionTestWasmModuleFunctions):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<F64ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32ConvertUI64>):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/wasm.json:
+
 2016-12-01  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed EvalCodeCache => DirectEvalCodeCache
