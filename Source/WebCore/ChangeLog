@@ -1,3 +1,19 @@
+2016-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix font-variant parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165266
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontVariantEastAsian):
+        (WebCore::consumeFontVariantAlternates):
+        (WebCore::consumeFontVariantPosition):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        (WebCore::CSSPropertyParser::consumeFontVariantShorthand):
+        (WebCore::consumeFontVariantList): Deleted.
+
 2016-12-01  Brian Burg  <bburg@apple.com>
 
         Web Automation: expose navigator.webdriver if the page is controlled by automation

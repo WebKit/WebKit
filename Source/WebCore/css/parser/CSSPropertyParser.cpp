@@ -648,11 +648,118 @@ static RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange& range)
     return ligaturesParser.finalizeValue();
 }
 
+static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNormal)
+        return consumeIdent(range);
+    
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
+    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
+    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
+    
+    while (!range.atEnd()) {
+        if (range.peek().type() != IdentToken)
+            return nullptr;
+        
+        auto id = range.peek().id();
+        range.consumeIncludingWhitespace();
+
+        switch (id) {
+        case CSSValueJis78:
+            variant = FontVariantEastAsianVariant::Jis78;
+            break;
+        case CSSValueJis83:
+            variant = FontVariantEastAsianVariant::Jis83;
+            break;
+        case CSSValueJis90:
+            variant = FontVariantEastAsianVariant::Jis90;
+            break;
+        case CSSValueJis04:
+            variant = FontVariantEastAsianVariant::Jis04;
+            break;
+        case CSSValueSimplified:
+            variant = FontVariantEastAsianVariant::Simplified;
+            break;
+        case CSSValueTraditional:
+            variant = FontVariantEastAsianVariant::Traditional;
+            break;
+        case CSSValueFullWidth:
+            width = FontVariantEastAsianWidth::Full;
+            break;
+        case CSSValueProportionalWidth:
+            width = FontVariantEastAsianWidth::Proportional;
+            break;
+        case CSSValueRuby:
+            ruby = FontVariantEastAsianRuby::Yes;
+            break;
+        default:
+            return nullptr;
+        }
+    }
+        
+    switch (variant) {
+    case FontVariantEastAsianVariant::Normal:
+        break;
+    case FontVariantEastAsianVariant::Jis78:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis78));
+        break;
+    case FontVariantEastAsianVariant::Jis83:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis83));
+        break;
+    case FontVariantEastAsianVariant::Jis90:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis90));
+        break;
+    case FontVariantEastAsianVariant::Jis04:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis04));
+        break;
+    case FontVariantEastAsianVariant::Simplified:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSimplified));
+        break;
+    case FontVariantEastAsianVariant::Traditional:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTraditional));
+        break;
+    }
+        
+    switch (width) {
+    case FontVariantEastAsianWidth::Normal:
+        break;
+    case FontVariantEastAsianWidth::Full:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueFullWidth));
+        break;
+    case FontVariantEastAsianWidth::Proportional:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueProportionalWidth));
+        break;
+    }
+        
+    switch (ruby) {
+    case FontVariantEastAsianRuby::Normal:
+        break;
+    case FontVariantEastAsianRuby::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueRuby));
+    }
+
+    if (!values->length())
+        return nullptr;
+
+    return values;
+}
+    
 static RefPtr<CSSPrimitiveValue> consumeFontVariantCaps(CSSParserTokenRange& range)
 {
     return consumeIdent<CSSValueNormal, CSSValueSmallCaps, CSSValueAllSmallCaps,
         CSSValuePetiteCaps, CSSValueAllPetiteCaps,
         CSSValueUnicase, CSSValueTitlingCaps>(range);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueNormal, CSSValueHistoricalForms>(range);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontVariantPosition(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueNormal, CSSValueSub, CSSValueSuper>(range);
 }
 
 class FontVariantNumericParser {
@@ -747,30 +854,6 @@ static RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange& range)
 static RefPtr<CSSPrimitiveValue> consumeFontVariantCSS21(CSSParserTokenRange& range)
 {
     return consumeIdent<CSSValueNormal, CSSValueSmallCaps>(range);
-}
-
-static RefPtr<CSSValue> consumeFontVariantList(CSSParserTokenRange& range)
-{
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-    do {
-        if (range.peek().id() == CSSValueAll) {
-            // FIXME: CSSPropertyParser::parseFontVariant() implements
-            // the old css3 draft:
-            // http://www.w3.org/TR/2002/WD-css3-webfonts-20020802/#font-variant
-            // 'all' is only allowed in @font-face and with no other values.
-            if (values->length())
-                return nullptr;
-            return consumeIdent(range);
-        }
-        RefPtr<CSSPrimitiveValue> fontVariant = consumeFontVariantCSS21(range);
-        if (fontVariant)
-            values->append(fontVariant.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-
-    if (values->length())
-        return values;
-
-    return nullptr;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
@@ -3485,6 +3568,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontVariantLigatures(m_range);
     case CSSPropertyFontVariantNumeric:
         return consumeFontVariantNumeric(m_range);
+    case CSSPropertyFontVariantEastAsian:
+        return consumeFontVariantEastAsian(m_range);
     case CSSPropertyFontFeatureSettings:
         return consumeFontFeatureSettings(m_range);
     case CSSPropertyFontFamily:
@@ -4007,9 +4092,26 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = CSSValuePool::singleton().createIdentifierValue(id);
         break;
     }
-    case CSSPropertyFontVariant:
-        parsedValue = consumeFontVariantList(m_range);
+    case CSSPropertyFontVariantCaps:
+        parsedValue = consumeFontVariantCaps(m_range);
         break;
+    case CSSPropertyFontVariantLigatures:
+        parsedValue = consumeFontVariantLigatures(m_range);
+        break;
+    case CSSPropertyFontVariantNumeric:
+        parsedValue = consumeFontVariantNumeric(m_range);
+        break;
+    case CSSPropertyFontVariantEastAsian:
+        parsedValue = consumeFontVariantEastAsian(m_range);
+        break;
+    case CSSPropertyFontVariantAlternates:
+        parsedValue = consumeFontVariantAlternates(m_range);
+        break;
+    case CSSPropertyFontVariantPosition:
+        parsedValue = consumeFontVariantPosition(m_range);
+        break;
+    case CSSPropertyFontVariant:
+        return consumeFontVariantShorthand(false);
     case CSSPropertyFontWeight:
         parsedValue = consumeFontWeight(m_range);
         break;
@@ -4142,10 +4244,16 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     if (identMatches<CSSValueNormal, CSSValueNone>(m_range.peek().id())) {
         addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, consumeIdent(m_range).releaseNonNull(), important);
         addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+        addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+        addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
         return m_range.atEnd();
     }
 
     RefPtr<CSSPrimitiveValue> capsValue;
+    RefPtr<CSSPrimitiveValue> alternatesValue;
+    RefPtr<CSSPrimitiveValue> positionValue;
+
+    RefPtr<CSSValue> eastAsianValue;
     FontVariantLigaturesParser ligaturesParser;
     FontVariantNumericParser numericParser;
     do {
@@ -4159,27 +4267,45 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
             || numericParseResult == FontVariantNumericParser::ParseResult::DisallowedValue)
             return false;
 
-        CSSValueID id = m_range.peek().id();
-        switch (id) {
-        case CSSValueSmallCaps:
-        case CSSValueAllSmallCaps:
-        case CSSValuePetiteCaps:
-        case CSSValueAllPetiteCaps:
-        case CSSValueUnicase:
-        case CSSValueTitlingCaps:
-            // Only one caps value permitted in font-variant grammar.
-            if (capsValue)
-                return false;
-            capsValue = consumeIdent(m_range);
-            break;
-        default:
-            return false;
+        if (!eastAsianValue) {
+            eastAsianValue = consumeFontVariantEastAsian(m_range);
+            if (eastAsianValue)
+                continue;
         }
+        
+        if (!capsValue) {
+            capsValue = consumeFontVariantCaps(m_range);
+            if (capsValue)
+                continue;
+        }
+        
+        if (!alternatesValue) {
+            alternatesValue = consumeFontVariantAlternates(m_range);
+            if (alternatesValue)
+                continue;
+        }
+        
+        if (!positionValue) {
+            positionValue = consumeFontVariantPosition(m_range);
+            if (positionValue)
+                continue;
+        }
+        
+        // Saw some value that didn't match anything else.
+        return false;
+
     } while (!m_range.atEnd());
 
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, ligaturesParser.finalizeValue().releaseNonNull(), important);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, numericParser.finalizeValue().releaseNonNull(), important);
     addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue ? capsValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue ? alternatesValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue ? positionValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    
+    if (!eastAsianValue)
+        eastAsianValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, eastAsianValue.releaseNonNull(), important);
+    
     return true;
 }
 

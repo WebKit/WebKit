@@ -1012,6 +1012,7 @@ webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass 
 
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
+webkit.org/b/165195 css3/font-variant-parsing.html [ Pass Failure ]
 webkit.org/b/165195 css3/supports-cssom.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/attr-parsing.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Pass Failure ]
@@ -1051,9 +1052,4 @@ webkit.org/b/165195 fast/text/text-combine-crash.html [ Pass Failure ]
 # the new CSS Parser turns on.
 webkit.org/b/165195 svg/dom/SVGColor.html [ Pass Failure ]
 webkit.org/b/165195 svg/dom/SVGPaint.html [ Pass Failure ]
-
-
-
-
-
 
