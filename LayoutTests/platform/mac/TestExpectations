@@ -1456,6 +1456,7 @@ webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/sc
 
 webkit.org/b/164616 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Failure ]
 webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]
+webkit.org/b/165243 media/modern-media-controls/audio/audio-controls-buttons.html [ Timeout ]
 webkit.org/b/164325 [ ElCapitan ] media/modern-media-controls/pip-support/pip-support-click.html [ Timeout ]
 webkit.org/b/164326 [ ElCapitan ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Failure ]
 webkit.org/b/164298 media/modern-media-controls/placard-support/placard-support-airplay.html [ Pass Timeout ]

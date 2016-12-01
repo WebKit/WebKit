@@ -1,3 +1,12 @@
+2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/modern-media-controls/audio/audio-controls-buttons.html as a timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=165234
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Provide a UI object to show a list of tracks
