@@ -27,6 +27,7 @@ button.icon {
     -webkit-mask-repeat: no-repeat;
 }
 
-button.icon:active {
-    background-color: white;
+button.icon:active,
+button.icon.on {
+    background-color: white !important;
 }

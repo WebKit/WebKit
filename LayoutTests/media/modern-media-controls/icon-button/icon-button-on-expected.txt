@@ -1,0 +1,11 @@
+Testing an IconButton has a white background-color when set to `on`.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(iconButton.element).backgroundColor is "rgb(255, 255, 255)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

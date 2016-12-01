@@ -1,5 +1,18 @@
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Promote the "on" property from AirPlayButton to IconButton
+        https://bugs.webkit.org/show_bug.cgi?id=165260
+
+        Reviewed by Dean Jackson.
+
+        New test for the "on" property on IconButton.
+
+        * media/modern-media-controls/airplay-button/airplay-button-on.html:
+        * media/modern-media-controls/icon-button/icon-button-on-expected.txt: Added.
+        * media/modern-media-controls/icon-button/icon-button-on.html: Added.
+
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Fix media/modern-media-controls/status-label/status-label.html
         https://bugs.webkit.org/show_bug.cgi?id=165259
 

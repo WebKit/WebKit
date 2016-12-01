@@ -1,3 +1,29 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Promote the "on" property from AirPlayButton to IconButton
+        https://bugs.webkit.org/show_bug.cgi?id=165260
+
+        Reviewed by Dean Jackson.
+
+        With the fix for https://bugs.webkit.org/show_bug.cgi?id=165239 we now set the "on"
+        property for the TracksButton as well, so it makes sense to provide that property
+        for all IconButton subclasses, not just AirplayButton.
+
+        Test: media/modern-media-controls/icon-button/icon-button-on.html
+
+        * Modules/modern-media-controls/controls/airplay-button.css:
+        (button.airplay.on):
+        * Modules/modern-media-controls/controls/airplay-button.js:
+        (AirplayButton):
+        (AirplayButton.prototype.get on): Deleted.
+        (AirplayButton.prototype.set on): Deleted.
+        * Modules/modern-media-controls/controls/icon-button.css:
+        (button.icon:active,):
+        (button.icon:active): Deleted.
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype.get on):
+        (IconButton.prototype.set on):
+
 2016-11-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for File and Blob constructors

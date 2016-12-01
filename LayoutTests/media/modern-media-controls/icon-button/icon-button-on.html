@@ -1,0 +1,26 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing an <code>IconButton</code> has a white background-color when set to `on`.");
+
+window.jsTestIsAsync = true;
+
+const iconButton = new IconButton({ layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
+iconButton.iconName = Icons.Pause;
+iconButton.on = true;
+document.body.appendChild(iconButton.element);
+
+scheduler.frameDidFire = function()
+{
+    shouldBeEqualToString("window.getComputedStyle(iconButton.element).backgroundColor", "rgb(255, 255, 255)");
+
+    iconButton.element.remove();
+    debug("");
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

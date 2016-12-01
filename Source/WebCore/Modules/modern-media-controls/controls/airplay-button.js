@@ -35,15 +35,4 @@ class AirplayButton extends IconButton
         });
     }
 
-    // Public
-
-    get on()
-    {
-        return this.element.classList.contains("on");
-    }
-
-    set on(flag) {
-        this.element.classList.toggle("on", flag);
-    }
-
 }

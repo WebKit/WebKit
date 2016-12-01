@@ -66,6 +66,15 @@ class IconButton extends Button
             this._image.addEventListener("load", this);
     }
 
+    get on()
+    {
+        return this.element.classList.contains("on");
+    }
+
+    set on(flag) {
+        this.element.classList.toggle("on", flag);
+    }
+
     // Protected
 
     handleEvent(event)
