@@ -23,6 +23,7 @@ controls/forward-button.js
 controls/buttons-container.js
 controls/status-label.js
 controls/controls-bar.js
+controls/tracks-panel.js
 controls/media-controls.js
 controls/ios-inline-media-controls.js
 controls/macos-media-controls.js

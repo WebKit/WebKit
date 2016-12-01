@@ -1,3 +1,32 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Provide a UI object to show a list of tracks
+        https://bugs.webkit.org/show_bug.cgi?id=165239
+
+        Reviewed by Dean Jackson.
+
+        Adding new tests to cover new TracksPanel functionality.
+
+        * media/modern-media-controls/resources/media-controls-loader.js:
+        * media/modern-media-controls/tracks-panel/tracks-panel-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-esc-key-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-esc-key.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-population-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-population.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-right-x-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-right-x.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Specifying same module entry point multiple times cause TypeError

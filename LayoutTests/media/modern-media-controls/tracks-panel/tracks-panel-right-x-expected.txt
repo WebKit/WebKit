@@ -1,0 +1,12 @@
+Testing the TracksPanel class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+tracksPanel.rightX = 10
+PASS tracksPanel.element.style.right is "10px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

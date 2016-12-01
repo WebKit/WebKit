@@ -1,0 +1,19 @@
+Selecting a track in a TracksPanel with the keyboard.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.showTracksPanel()
+
+Focusing the second track by pressing the down arrow key twice
+Obtained focus event
+
+Activating the focused track by pressing the Enter key
+mediaControls.tracksPanel.uiDelegate.tracksPanelSelectionDidChange() called
+sectionIndex = 0
+trackIndex = 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

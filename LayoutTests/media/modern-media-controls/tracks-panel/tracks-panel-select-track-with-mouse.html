@@ -1,0 +1,92 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+    .media-controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+</style>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Selecting a track in a <code>TracksPanel</code> with the mouse.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+
+mediaControls.tracksPanel.dataSource = {
+    tracksPanelNumberOfSections: function()
+    {
+        return 1;
+    },
+
+    tracksPanelTitleForSection: function(sectionIndex)
+    {
+        return `Title`;
+    },
+
+    tracksPanelNumberOfTracksInSection: function(sectionIndex)
+    {
+        return 3;
+    },
+
+    tracksPanelTitleForTrackInSection: function(trackIndex, sectionIndex)
+    {
+        return `Track`;
+    },
+
+    tracksPanelIsTrackInSectionSelected: function(trackIndex, sectionIndex)
+    {
+        return false;
+    }
+};
+
+mediaControls.tracksPanel.uiDelegate = {
+    tracksPanelSelectionDidChange: function(trackIndex, sectionIndex)
+    {
+        debug("mediaControls.tracksPanel.uiDelegate.tracksPanelSelectionDidChange() called");
+        debug(`sectionIndex = ${sectionIndex}`);
+        debug(`trackIndex = ${trackIndex}`);
+
+        debug("");
+        mediaControls.element.remove();
+        finishJSTest();
+    }
+};
+
+document.body.appendChild(mediaControls.element);
+
+let trackElement;
+
+debug("mediaControls.showTracksPanel()");
+mediaControls.showTracksPanel();
+
+scheduler.frameDidFire = function()
+{
+    window.requestAnimationFrame(() => {
+        debug("");
+        debug("Mousing over the second track in the panel");
+
+        trackElement = mediaControls.tracksPanel.element.querySelectorAll("li")[1];
+        trackElement.addEventListener("focus", () => {
+            debug("Obtained focus event");
+
+            debug("");
+            debug("Clicking on focused track");
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        });
+
+        const bounds = trackElement.getBoundingClientRect();
+        eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    });
+    scheduler.frameDidFire = null;
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

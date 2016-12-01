@@ -1,0 +1,16 @@
+Testing a TracksPanel is hidden upon clicking outside of it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.showTracksPanel()
+
+Clicking outside of the panel
+
+Transition ended
+PASS mediaControls.tracksPanel.presented is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

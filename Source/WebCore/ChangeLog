@@ -1,3 +1,91 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Provide a UI object to show a list of tracks
+        https://bugs.webkit.org/show_bug.cgi?id=165239
+
+        Reviewed by Dean Jackson.
+
+        We add a new TracksPanel object which we will be using to display a list of
+        audio and text tracks. The tracks panel can be shown by calling showTracksPanel()
+        on a MacOSMediaControls object and will be dismissed by hitting the Escape key
+        or mousing down outside of the panel's bounds. While the tracks panel is up,
+        arrows can be used to focus individual tracks which can be activated by either
+        pressing the Space bar or Enter key.
+
+        Activating a track will briefly animate its background to indicate selection and
+        dismissing the tracks panel is also animated with a quick fade-out animation.
+
+        Data for the tracks panel is provided by specifying a dataSource property and
+        implementing the required methods to provide the number of sections in the panel,
+        the number of tracks in each section, etc.
+
+        Tests: media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html
+               media/modern-media-controls/tracks-panel/tracks-panel-hide-esc-key.html
+               media/modern-media-controls/tracks-panel/tracks-panel-hide.html
+               media/modern-media-controls/tracks-panel/tracks-panel-population.html
+               media/modern-media-controls/tracks-panel/tracks-panel-right-x.html
+               media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html
+               media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse.html
+               media/modern-media-controls/tracks-panel/tracks-panel.html
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen):
+        (.media-controls.mac.fullscreen > .controls-bar):
+        (.media-controls.mac.fullscreen .tracks-panel):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.css:
+        (.media-controls.mac.inline .tracks-panel):
+        * Modules/modern-media-controls/controls/macos-media-controls.js:
+        (MacOSMediaControls.prototype.showTracksPanel):
+        (MacOSMediaControls.prototype.hideTracksPanel):
+        (MacOSMediaControls):
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls):
+        * Modules/modern-media-controls/controls/placard.css:
+        (.placard):
+        * Modules/modern-media-controls/controls/status-label.css:
+        (.status-label):
+        * Modules/modern-media-controls/controls/tracks-panel.css: Added.
+        (.tracks-panel):
+        (.tracks-panel *):
+        (.tracks-panel.fade-out):
+        (.tracks-panel-section):
+        (.tracks-panel-section:first-of-type):
+        (.tracks-panel-section > h3):
+        (.tracks-panel-section > ul):
+        (.tracks-panel-section > ul > li):
+        (.tracks-panel-section > ul > li:focus):
+        (.tracks-panel-section > ul > li.selected:before):
+        (.tracks-panel-section > ul > li.animated):
+        (@keyframes tracks-panel-item-selection):
+        (22.22%):
+        * Modules/modern-media-controls/controls/tracks-panel.js: Added.
+        (TracksPanel.prototype.get presented):
+        (TracksPanel.prototype.presentInParent):
+        (TracksPanel.prototype.hide):
+        (TracksPanel.prototype.get rightX):
+        (TracksPanel.prototype.set rightX):
+        (TracksPanel.prototype.trackNodeSelectionAnimationDidEnd):
+        (TracksPanel.prototype.mouseMovedOverTrackNode):
+        (TracksPanel.prototype.mouseExitedTrackNode):
+        (TracksPanel.prototype.commitProperty):
+        (TracksPanel.prototype.handleEvent):
+        (TracksPanel.prototype._childrenFromDataSource.):
+        (TracksPanel.prototype._childrenFromDataSource):
+        (TracksPanel.prototype._handleMousedown):
+        (TracksPanel.prototype._handleKeydown):
+        (TracksPanel.prototype._dismiss):
+        (TracksPanel.prototype._focusTrackNode):
+        (TracksPanel.prototype._focusPreviousTrackNode):
+        (TracksPanel.prototype._focusNextTrackNode):
+        (TracksPanel.prototype._focusFirstTrackNode):
+        (TracksPanel.prototype._focusLastTrackNode):
+        (TrackNode):
+        (TrackNode.prototype.activate):
+        (TrackNode.prototype.handleEvent):
+        (TrackNode.prototype._animationDidEnd):
+        * Modules/modern-media-controls/js-files:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-01  Andreas Kling  <akling@apple.com>
 
         Log some basic memory usage stats at interesting points in time

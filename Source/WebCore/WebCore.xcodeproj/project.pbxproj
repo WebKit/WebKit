@@ -10038,6 +10038,8 @@
 		713E70AF1733E8B300A22D00 /* plugIns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = plugIns.js; sourceTree = "<group>"; };
 		714131471DC9D6AF00336107 /* fullscreen-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "fullscreen-support.js"; sourceTree = "<group>"; };
 		714131481DC9D6EF00336107 /* js-files */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "js-files"; sourceTree = "<group>"; };
+		7146DF8B1DEFC2ED0046F98B /* tracks-panel.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "tracks-panel.css"; sourceTree = "<group>"; };
+		7146DF8C1DEFC2ED0046F98B /* tracks-panel.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "tracks-panel.js"; sourceTree = "<group>"; };
 		714F5B051DEE5F740075BD17 /* invalid-placard.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "invalid-placard.js"; sourceTree = "<group>"; };
 		714F5B061DEE5F8A0075BD17 /* invalid-placard@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "invalid-placard@1x.png"; sourceTree = "<group>"; };
 		714F5B071DEE5F8A0075BD17 /* invalid-placard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "invalid-placard@2x.png"; sourceTree = "<group>"; };
@@ -18065,6 +18067,8 @@
 		716FA0D71DB26591007323CC /* controls */ = {
 			isa = PBXGroup;
 			children = (
+				7146DF8B1DEFC2ED0046F98B /* tracks-panel.css */,
+				7146DF8C1DEFC2ED0046F98B /* tracks-panel.js */,
 				716FA0D81DB26591007323CC /* airplay-button.css */,
 				716FA0D91DB26591007323CC /* airplay-button.js */,
 				716FA0DA1DB26591007323CC /* airplay-placard.js */,

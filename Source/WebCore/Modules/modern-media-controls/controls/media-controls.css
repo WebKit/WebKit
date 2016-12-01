@@ -31,6 +31,7 @@
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls {
     position: relative;
+    font-family: -apple-system;
 }
 
 .media-controls > .controls-bar {

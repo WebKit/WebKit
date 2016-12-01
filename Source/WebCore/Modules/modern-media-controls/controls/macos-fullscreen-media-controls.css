@@ -25,10 +25,15 @@
 
 /* Controls bar */
 
+.media-controls.mac.fullscreen {
+    --controls-bar-width: 468px;
+    --tracks-panel-right-margin: 40px;
+}
+
 .media-controls.mac.fullscreen > .controls-bar {
     left: 50%;
     bottom: 25px;
-    width: 468px;
+    width: var(--controls-bar-width);
     height: 75px;
     transform: translateX(-50%);
     overflow: hidden;
@@ -124,4 +129,12 @@
 
 .media-controls.mac.fullscreen .scrubber {
     top: 7px;
+}
+
+/* Tracks Panel */
+
+.media-controls.mac.fullscreen .tracks-panel {
+    /* Half of the screen width minus half of the controls bar width minus the distance to the right edge of the tracks button */
+    right: calc(50% - var(--controls-bar-width) / 2 + var(--tracks-panel-right-margin));
+    bottom: 234px;
 }
