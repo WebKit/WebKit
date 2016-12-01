@@ -277,7 +277,8 @@ bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
         || m_options.overrideLanguages != options.overrideLanguages
         || m_options.useMockScrollbars != options.useMockScrollbars
         || m_options.needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
-        || m_options.enableIntersectionObserver != options.enableIntersectionObserver)
+        || m_options.enableIntersectionObserver != options.enableIntersectionObserver
+        || m_options.enableModernMediaControls != options.enableModernMediaControls)
         return false;
 
     return true;

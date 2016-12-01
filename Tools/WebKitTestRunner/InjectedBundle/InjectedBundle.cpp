@@ -322,8 +322,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setWebGL2Enabled(true);
 
-    m_testRunner->setModernMediaControlsEnabled(false);
-
     m_testRunner->setFetchAPIEnabled(true);
 
     m_testRunner->setDownloadAttributeEnabled(true);

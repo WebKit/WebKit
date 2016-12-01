@@ -78,6 +78,8 @@ TestOptions::TestOptions(NSURL *testURL)
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "enableIntersectionObserver")
             this->enableIntersectionObserver = parseBooleanTestHeaderValue(value);
+        else if (key == "enableModernMediaControls")
+            this->enableModernMediaControls = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

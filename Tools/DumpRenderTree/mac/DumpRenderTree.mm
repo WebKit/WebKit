@@ -995,12 +995,11 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     [preferences setES6ModulesEnabled:YES];
 
-    [preferences setModernMediaControlsEnabled:NO];
-
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
 
     preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
+    preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

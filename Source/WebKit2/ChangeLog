@@ -1,3 +1,17 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Add an HTML comment flag to turn the feature on
+        https://bugs.webkit.org/show_bug.cgi?id=165226
+
+        Reviewed by Dean Jackson.
+
+        Add new methods to set the Modern Media Controls preference.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetModernMediaControlsEnabled):
+        (WKPreferencesGetModernMediaControlsEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2016-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add separate settings and preferences to enable/disable async decoding for large images and animated images

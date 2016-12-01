@@ -29,6 +29,7 @@
 
 struct TestOptions {
     bool enableIntersectionObserver { false };
+    bool enableModernMediaControls { false };
 
     TestOptions(NSURL *testURL);
 };

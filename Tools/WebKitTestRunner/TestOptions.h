@@ -44,6 +44,7 @@ struct TestOptions {
     bool ignoresViewportScaleLimits { false };
     bool useCharacterSelectionGranularity { false };
     bool enableIntersectionObserver { false };
+    bool enableModernMediaControls { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
