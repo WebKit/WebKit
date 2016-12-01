@@ -54,7 +54,6 @@ bool ModuleParser::parse()
         return false;
     }
 
-    // Skip the version number for now since we don't do anything with it.
     uint32_t versionNumber;
     if (!parseUInt32(versionNumber)) {
         // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
@@ -62,7 +61,7 @@ bool ModuleParser::parse()
         return false;
     }
 
-    if (versionNumber != magicNumber) {
+    if (versionNumber != expectedVersionNumber) {
         // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
         m_errorMessage = "unexpected version number";
         return false;
@@ -169,7 +168,7 @@ bool ModuleParser::parseType()
         int8_t type;
         if (!parseInt7(type))
             return false;
-        if (type != -0x20) // Function type constant. FIXME auto-generate from JSON file.
+        if (type != Func)
             return false;
 
         if (verbose)

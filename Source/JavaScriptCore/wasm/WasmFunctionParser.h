@@ -207,11 +207,11 @@ template<typename Context>
 bool FunctionParser<Context>::parseExpression(OpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op) case OpType::name: return binaryCase<OpType::name>();
+#define CREATE_CASE(name, id, b3op, inc) case OpType::name: return binaryCase<OpType::name>();
     FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3op) case OpType::name: return unaryCase<OpType::name>();
+#define CREATE_CASE(name, id, b3op, inc) case OpType::name: return unaryCase<OpType::name>();
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
@@ -236,7 +236,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
-#define CREATE_CASE(name, id, b3op) case OpType::name:
+#define CREATE_CASE(name, id, b3op, inc) case OpType::name:
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE) {
         uint32_t alignment;
         if (!parseVarUInt32(alignment))

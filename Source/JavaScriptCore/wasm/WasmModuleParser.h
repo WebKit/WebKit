@@ -37,8 +37,6 @@ namespace JSC { namespace Wasm {
 class ModuleParser : public Parser {
 public:
 
-    static const unsigned magicNumber = 0xc;
-
     ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
         : Parser(sourceBuffer, sourceLength)
         , m_vm(vm)

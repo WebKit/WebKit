@@ -51,7 +51,7 @@ const _normalizeFunctionSignature = (params, ret) => {
     if (typeof(ret) === "undefined")
         ret = "void";
     assert.isNotArray(ret, `Multiple return values not supported by WebAssembly yet`);
-    assert.falsy(ret !== "void" && !WASM.isValidValueType(ret), `Type return ${ret} must be valid value type`);
+    assert.truthy(WASM.isValidBlockType(ret), `Type return ${ret} must be valid block type`);
     return [params, ret];
 };
 
@@ -156,7 +156,7 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
 
 const _checkStackArgs = (op, param) => {
     for (let expect of param) {
-        if (WASM.isValidValueType(expect)) {
+        if (WASM.isValidType(expect)) {
             // FIXME implement stack checks for arguments. https://bugs.webkit.org/show_bug.cgi?id=163421
         } else {
             // Handle our own meta-types.
@@ -177,7 +177,7 @@ const _checkStackArgs = (op, param) => {
 
 const _checkStackReturn = (op, ret) => {
     for (let expect of ret) {
-        if (WASM.isValidValueType(expect)) {
+        if (WASM.isValidType(expect)) {
             // FIXME implement stack checks for return. https://bugs.webkit.org/show_bug.cgi?id=163421
         } else {
             // Handle our own meta-types.
@@ -221,8 +221,7 @@ const _checkImms = (op, imms, expectedImms, ret) => {
         case "default_target": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "relative_depth": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "sig":
-            // FIXME this should be isValidBlockType https://bugs.webkit.org/show_bug.cgi?id=164724
-            assert.truthy(imms[idx] === "void" || WASM.isValidValueType(imms[idx]), `Invalid block type on ${op}: "${imms[idx]}"`);
+            assert.truthy(WASM.isValidBlockType(imms[idx]), `Invalid block type on ${op}: "${imms[idx]}"`);
             break;
         case "target_count": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "target_table": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421

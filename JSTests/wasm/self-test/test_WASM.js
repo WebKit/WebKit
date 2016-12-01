@@ -2,17 +2,16 @@ import * as assert from '../assert.js';
 import * as WASM from '../WASM.js';
 
 assert.isNotUndef(WASM.description);
-assert.isNotUndef(WASM.valueType);
-assert.ge(WASM.valueType.length, 4);
+assert.isNotUndef(WASM.type);
+assert.ge(WASM.type.length, 7);
 
-for (const v of WASM.valueType)
-    if (!WASM.isValidValueType(v))
-        throw new Error(`Expected value ${v} to be a valid value type`);
+for (const v of WASM.type)
+    if (!WASM.isValidType(v))
+        throw new Error(`Expected value ${v} to be a valid type`);
 
 const expectedFields = [
     "preamble",
-    "value_type",
-    "inline_signature_type",
+    "type",
     "external_kind",
     "section",
     "opcode",
