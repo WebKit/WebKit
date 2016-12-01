@@ -1451,6 +1451,7 @@ webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/sc
 [ Yosemite ] media/modern-media-controls/pip-support [ Skip ]
 [ Yosemite ] media/modern-media-controls/placard-support [ Skip ]
 [ Yosemite ] media/modern-media-controls/audio [ Skip ]
+[ Yosemite ] media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Skip ]
 
 webkit.org/b/164616 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Failure ]
 webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]

@@ -46,6 +46,10 @@
     top: 23px;
 }
 
+.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider {
+    transform: scaleX(-1);
+}
+
 /* Button containers */
 
 .media-controls.mac.fullscreen .buttons-container {

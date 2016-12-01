@@ -70,6 +70,16 @@ class MediaControls extends LayoutNode
         this._invalidateChildren();
     }
 
+    get usesLTRUserInterfaceLayoutDirection()
+    {
+        return this.element.classList.contains("uses-ltr-user-interface-layout-direction");
+    }
+
+    set usesLTRUserInterfaceLayoutDirection(flag)
+    {
+        this.element.classList.toggle("uses-ltr-user-interface-layout-direction", flag);
+    }
+
     get showsPlacard()
     {
         return this.children[0] instanceof Placard;

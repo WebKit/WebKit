@@ -2747,8 +2747,9 @@ media/modern-media-controls/pip-support [ Skip ]
 media/modern-media-controls/placard-support [ Skip ]
 media/modern-media-controls/audio [ Skip ]
 
-# This test is Mac-specific since it checks that we have custom controls in fullscreen.
+# Mac-specific tests for fullscreen.
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html  [ Skip ]
 
 webkit.org/b/164594 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Timeout ]
 

@@ -1,5 +1,19 @@
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Add support for right-to-left layouts
+        https://bugs.webkit.org/show_bug.cgi?id=165229
+
+        Reviewed by Dean Jackson.
+
+        Add a test that toggles the layout direction and checks we correctly flip the volume slider.
+
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] LayoutNode: only mark properties as dirty if different than current value
         https://bugs.webkit.org/show_bug.cgi?id=165236
 

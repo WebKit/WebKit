@@ -1,0 +1,71 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing ltr is set correctly when entering fullscreen.");
+
+const media = document.querySelector("video");
+const button = document.body.appendChild(document.createElement("button"));
+let shadowRoot = window.internals.shadowRoot(media);
+let mediaControlsElement, volumeSliderElement;
+
+media.addEventListener("webkitfullscreenchange", function() {
+    if (media.webkitDisplayingFullscreen) {
+        window.requestAnimationFrame(() => {
+            debug("Media entered fullscreen");
+
+            mediaControlsElement = shadowRoot.lastChild;
+            volumeSliderElement = mediaControlsElement.querySelector(".volume.slider");
+        
+            shouldBeTrue("mediaControlsElement.classList.contains('uses-ltr-user-interface-layout-direction')");
+            shouldBeEqualToString("document.defaultView.getComputedStyle(volumeSliderElement).transform", "none");
+
+            debug("");
+            debug("Setting layout direction to RTL");
+            window.internals.setUserInterfaceLayoutDirection("RTL");
+            shouldBeFalse("mediaControlsElement.classList.contains('uses-ltr-user-interface-layout-direction')");
+            shouldBeEqualToString("document.defaultView.getComputedStyle(volumeSliderElement).transform", "matrix(-1, 0, 0, 1, 0, 0)");
+
+            debug("");
+            debug("Setting layout direction back to LTR");
+            window.internals.setUserInterfaceLayoutDirection("LTR");
+            shouldBeTrue("mediaControlsElement.classList.contains('uses-ltr-user-interface-layout-direction')");
+            shouldBeEqualToString("document.defaultView.getComputedStyle(volumeSliderElement).transform", "none");
+
+            debug("");
+            media.remove();
+            button.remove();
+            finishJSTest();
+        });
+    }
+});
+
+media.addEventListener("loadedmetadata", () => {
+    if (!("eventSender" in window)) {
+        debug("This test is designed to run in DRT");
+        return;
+    }
+
+    // Click a button so we may enter fullscreen.
+    button.addEventListener("click", event => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed");
+            finishJSTest();
+        }
+    });
+
+    eventSender.mouseMoveTo(button.offsetLeft + 1, button.offsetTop + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

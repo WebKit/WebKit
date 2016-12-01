@@ -1,3 +1,25 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Add support for right-to-left layouts
+        https://bugs.webkit.org/show_bug.cgi?id=165229
+
+        Reviewed by Dean Jackson.
+
+        We implement the "usesLTRUserInterfaceLayoutDirection" property which is set by HTMLMediaElement
+        and set a CSS class when the layout is left-to-right, flipping the fullscreen volume slider in the
+        case that it would not be present (right-to-left).
+
+        Test: media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get usesLTRUserInterfaceLayoutDirection):
+        (MediaControls.prototype.set usesLTRUserInterfaceLayoutDirection):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.set usesLTRUserInterfaceLayoutDirection):
+        (MediaController.prototype._updateControlsIfNeeded):
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused parameter of InspectorInstrumentation::didFinishXHRLoading
