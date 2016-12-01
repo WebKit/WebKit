@@ -1,3 +1,15 @@
+2016-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Land a test case for <rdar://problem/27889416>
+        https://bugs.webkit.org/show_bug.cgi?id=165272
+
+        Reviewed by Saam Barati.
+
+        * stress/marked-argument-buffer.js: Added.
+        (allocate):
+        (test.o.toString):
+        (test):
+
 2016-11-29  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Skip failing JSC tests.
