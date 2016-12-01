@@ -1,3 +1,48 @@
+2016-12-01  Andreas Kling  <akling@apple.com>
+
+        Log some basic memory usage stats at interesting points in time
+        <https://webkit.org/b/165206>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds a mechanism to mark points of interests where we might
+        want to do performance-related logging:
+
+            class PerformanceLogging {
+                enum PointOfInterest {
+                    MainFrameLoadStarted,
+                    MainFrameLoadCompleted,
+                }
+                void didReachPointOfInterest(PointOfInterest)
+            }
+
+        You get to this object via MainFrame::performanceLogging().
+
+        We respond to these callbacks by logging some basic data about memory usage
+        to the PerformanceLogging channel.
+
+        More PointOfInterest values will be added soon.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::setState):
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame):
+        * page/MainFrame.h:
+        * page/PerformanceLogging.cpp: Added.
+        (WebCore::toString):
+        (WebCore::getMemoryUsageStatistics):
+        (WebCore::PerformanceLogging::PerformanceLogging):
+        (WebCore::writeLog):
+        (WebCore::PerformanceLogging::didReachPointOfInterest):
+        (WebCore::PerformanceLogging::getPlatformMemoryUsageStatistics):
+        * page/PerformanceLogging.h: Added.
+        * page/cocoa/PerformanceLoggingCocoa.mm: Added.
+        (WebCore::PerformanceLogging::getPlatformMemoryUsageStatistics):
+        * platform/Logging.h:
+
 2016-11-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Move more attributes from RenderGrid to the new Grid class

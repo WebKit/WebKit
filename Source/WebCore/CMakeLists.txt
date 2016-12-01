@@ -2067,6 +2067,7 @@ set(WebCore_SOURCES
     page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceEntry.cpp
+    page/PerformanceLogging.cpp
     page/PerformanceNavigation.cpp
     page/PerformanceResourceTiming.cpp
     page/PerformanceTiming.cpp

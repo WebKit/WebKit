@@ -4511,6 +4511,9 @@
 		AD4495F3141FC08900541EDF /* EventListenerMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4495F1141FC08900541EDF /* EventListenerMap.cpp */; };
 		AD4495F4141FC08900541EDF /* EventListenerMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4495F2141FC08900541EDF /* EventListenerMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AD49914118F0815100BF0092 /* HTMLUnknownElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD5A0C231DECACC000707054 /* PerformanceLoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD5A0C221DECA37E00707054 /* PerformanceLoggingCocoa.mm */; };
+		AD5A0C241DECACC400707054 /* PerformanceLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD5A0C211DECA10100707054 /* PerformanceLogging.cpp */; };
+		AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5A0C201DECA0B500707054 /* PerformanceLogging.h */; };
 		AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */; };
 		AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */ = {isa = PBXBuildFile; fileRef = AD6E71AB1668899D00320C13 /* DocumentSharedObjectPool.h */; };
 		AD726FED16DA1171003A4E6D /* JSCSSStyleDeclarationCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12210,6 +12213,9 @@
 		AD4495F2141FC08900541EDF /* EventListenerMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListenerMap.h; sourceTree = "<group>"; };
 		AD49914118F0815100BF0092 /* HTMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLUnknownElement.h; sourceTree = "<group>"; };
 		AD49914218F0815100BF0092 /* HTMLUnknownElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLUnknownElement.idl; sourceTree = "<group>"; };
+		AD5A0C201DECA0B500707054 /* PerformanceLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceLogging.h; sourceTree = "<group>"; };
+		AD5A0C211DECA10100707054 /* PerformanceLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceLogging.cpp; sourceTree = "<group>"; };
+		AD5A0C221DECA37E00707054 /* PerformanceLoggingCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PerformanceLoggingCocoa.mm; sourceTree = "<group>"; };
 		AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentSharedObjectPool.cpp; sourceTree = "<group>"; };
 		AD6E71AB1668899D00320C13 /* DocumentSharedObjectPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentSharedObjectPool.h; sourceTree = "<group>"; };
 		AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaListCustom.h; sourceTree = "<group>"; };
@@ -17364,6 +17370,7 @@
 		5D5975B5196362BE00D00878 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				AD5A0C221DECA37E00707054 /* PerformanceLoggingCocoa.mm */,
 				413E007B1DB0E707002341D2 /* MemoryReleaseCocoa.mm */,
 				ADFE2B541BD5F41200DAB457 /* ResourceUsageOverlayCocoa.mm */,
 				A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */,
@@ -17819,6 +17826,8 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				AD5A0C211DECA10100707054 /* PerformanceLogging.cpp */,
+				AD5A0C201DECA0B500707054 /* PerformanceLogging.h */,
 				316FE1060E6E1D8400BF6088 /* animation */,
 				5D5975B5196362BE00D00878 /* cocoa */,
 				CE17AD141C58522F005F4799 /* csp */,
@@ -27921,6 +27930,7 @@
 				A77D0012133B0AEB00D6658C /* TextChecking.h in Headers */,
 				A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */,
 				B2C3DA3A0D006C1D00EF6F26 /* TextCodec.h in Headers */,
+				AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */,
 				26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */,
 				B2C3DA3C0D006C1D00EF6F26 /* TextCodecICU.h in Headers */,
 				B2C3DA3E0D006C1D00EF6F26 /* TextCodecLatin1.h in Headers */,
@@ -30246,6 +30256,7 @@
 				B2FA3D860AB75A6F000E5AC4 /* JSSVGFEMergeElement.cpp in Sources */,
 				B2FA3D880AB75A6F000E5AC4 /* JSSVGFEMergeNodeElement.cpp in Sources */,
 				84224183107E77F400766A87 /* JSSVGFEMorphologyElement.cpp in Sources */,
+				AD5A0C241DECACC400707054 /* PerformanceLogging.cpp in Sources */,
 				B2FA3D8A0AB75A6F000E5AC4 /* JSSVGFEOffsetElement.cpp in Sources */,
 				B2FA3D8C0AB75A6F000E5AC4 /* JSSVGFEPointLightElement.cpp in Sources */,
 				B2FA3D8E0AB75A6F000E5AC4 /* JSSVGFESpecularLightingElement.cpp in Sources */,
@@ -31318,6 +31329,7 @@
 				B222798F0D00BF220071B782 /* SVGAnimateElement.cpp in Sources */,
 				832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */,
 				B22279920D00BF220071B782 /* SVGAnimateMotionElement.cpp in Sources */,
+				AD5A0C231DECACC000707054 /* PerformanceLoggingCocoa.mm in Sources */,
 				B22279940D00BF220071B782 /* SVGAnimateTransformElement.cpp in Sources */,
 				B22279970D00BF220071B782 /* SVGAnimationElement.cpp in Sources */,
 				08FB17C113BC7E9100040086 /* SVGAttributeToPropertyMap.cpp in Sources */,

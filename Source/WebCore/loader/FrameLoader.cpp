@@ -89,6 +89,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
+#include "PerformanceLogging.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -1421,8 +1422,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         m_previousURL = m_frame.document()->url();
 
     // Log main frame navigation types.
-    if (m_frame.isMainFrame())
+    if (m_frame.isMainFrame()) {
         logNavigation(static_cast<MainFrame&>(m_frame), type);
+        static_cast<MainFrame&>(m_frame).performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadStarted);
+    }
 
     policyChecker().setLoadType(type);
     RefPtr<FormState> formState = prpFormState;
@@ -1728,7 +1731,8 @@ void FrameLoader::setProvisionalDocumentLoader(DocumentLoader* loader)
 }
 
 void FrameLoader::setState(FrameState newState)
-{    
+{
+    FrameState oldState = m_state;
     m_state = newState;
     
     if (newState == FrameStateProvisional)
@@ -1737,6 +1741,8 @@ void FrameLoader::setState(FrameState newState)
         frameLoadCompleted();
         if (m_documentLoader)
             m_documentLoader->stopRecordingResponses();
+        if (m_frame.isMainFrame() && oldState != newState)
+            static_cast<MainFrame&>(m_frame).performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadCompleted);
     }
 }
 
