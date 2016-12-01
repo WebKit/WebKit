@@ -1,3 +1,14 @@
+2016-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Only allow a single font-family in @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=165278
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontFamilyDescriptor):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+
 2016-12-01  Beth Dakin  <bdakin@apple.com>
 
         Blacklist Netflix for TouchBar support

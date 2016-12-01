@@ -923,6 +923,24 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
     return list;
 }
 
+static RefPtr<CSSValueList> consumeFontFamilyDescriptor(CSSParserTokenRange& range)
+{
+    // FIXME-NEWPARSER: For compatibility with the old parser, we have to make
+    // a list here, even though the list always contains only a single family name.
+    // Once the old parser is gone, we can delete this function, make the caller
+    // use consumeFamilyName instead, and then patch the @font-face code to
+    // not expect a list with a single name in it.
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    RefPtr<CSSValue> parsedValue = consumeFamilyName(range);
+    if (parsedValue)
+        list->append(parsedValue.releaseNonNull());
+    
+    if (!range.atEnd() || !list->length())
+        return nullptr;
+
+    return list;
+}
+
 static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
 {
     // none | [ weight || style ]
@@ -4076,7 +4094,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
     case CSSPropertyFontFamily:
-        parsedValue = consumeFontFamily(m_range);
+        parsedValue = consumeFontFamilyDescriptor(m_range);
         break;
     case CSSPropertySrc: // This is a list of urls or local references.
         parsedValue = consumeFontFaceSrc(m_range, m_context);
