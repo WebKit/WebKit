@@ -32,7 +32,7 @@ namespace WebKit {
 class BlobRegistryProxy final : public WebCore::BlobRegistry {
 public:
     void registerFileBlobURL(const WebCore::URL&, Ref<WebCore::BlobDataFileReference>&&, const String& contentType) override;
-    void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType) override;
+    void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>&&, const String& contentType) override;
     void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL) override;
     void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) override;
     void unregisterBlobURL(const WebCore::URL&) override;

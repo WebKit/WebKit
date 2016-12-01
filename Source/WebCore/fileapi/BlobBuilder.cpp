@@ -29,49 +29,26 @@
  */
 
 #include "config.h"
-#include "WebKitBlobBuilder.h"
+#include "BlobBuilder.h"
 
 #include "Blob.h"
-#include "Document.h"
-#include "File.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-enum BlobConstructorArrayBufferOrView {
-    BlobConstructorArrayBuffer,
-    BlobConstructorArrayBufferView,
-    BlobConstructorArrayBufferOrViewMax,
-};
-
-BlobBuilder::BlobBuilder()
+BlobBuilder::BlobBuilder(BlobLineEndings endings)
+    : m_endings(endings)
 {
 }
 
-void BlobBuilder::append(const String& text, const String& endingType)
-{
-    CString utf8Text = UTF8Encoding().encode(text, EntitiesForUnencodables);
-
-    if (endingType == "native")
-        normalizeLineEndingsToNative(utf8Text, m_appendableData);
-    else {
-        ASSERT(endingType == "transparent");
-        m_appendableData.append(utf8Text.data(), utf8Text.length());
-    }
-}
-
-void BlobBuilder::append(ArrayBuffer* arrayBuffer)
+void BlobBuilder::append(RefPtr<ArrayBuffer>&& arrayBuffer)
 {
     if (!arrayBuffer)
         return;
-
     m_appendableData.append(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
 }
 
@@ -79,17 +56,28 @@ void BlobBuilder::append(RefPtr<ArrayBufferView>&& arrayBufferView)
 {
     if (!arrayBufferView)
         return;
-
     m_appendableData.append(static_cast<const char*>(arrayBufferView->baseAddress()), arrayBufferView->byteLength());
 }
 
-void BlobBuilder::append(Blob* blob)
+void BlobBuilder::append(RefPtr<Blob>&& blob)
 {
     if (!blob)
         return;
     if (!m_appendableData.isEmpty())
         m_items.append(BlobPart(WTFMove(m_appendableData)));
     m_items.append(BlobPart(blob->url()));
+}
+
+void BlobBuilder::append(const String& text)
+{
+    CString utf8Text = UTF8Encoding().encode(text, EntitiesForUnencodables);
+
+    if (m_endings == BlobLineEndings::Native)
+        normalizeLineEndingsToNative(utf8Text, m_appendableData);
+    else {
+        ASSERT(m_endings == BlobLineEndings::Transparent);
+        m_appendableData.append(utf8Text.data(), utf8Text.length());
+    }
 }
 
 Vector<BlobPart> BlobBuilder::finalize()

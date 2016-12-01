@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,63 +25,14 @@
 
 #pragma once
 
-#include "URL.h"
+#include "BlobLineEndings.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class BlobPart {
-public:
-    enum Type {
-        Data,
-        Blob
-    };
-
-    BlobPart()
-        : m_type(Data)
-    {
-    }
-
-    BlobPart(Vector<uint8_t>&& data)
-        : m_type(Data)
-        , m_data(WTFMove(data))
-    {
-    }
-
-    BlobPart(const URL& url)
-        : m_type(Blob)
-        , m_url(url)
-    {
-    }
-
-    Type type() const { return m_type; }
-
-    const Vector<uint8_t>& data() const
-    {
-        ASSERT(m_type == Data);
-        return m_data;
-    }
-
-    Vector<uint8_t> moveData()
-    {
-        ASSERT(m_type == Data);
-        return WTFMove(m_data);
-    }
-
-    const URL& url() const
-    {
-        ASSERT(m_type == Blob);
-        return m_url;
-    }
-
-    void detachFromCurrentThread()
-    {
-        m_url = m_url.isolatedCopy();
-    }
-
-private:
-    Type m_type;
-    Vector<uint8_t> m_data;
-    URL m_url;
+struct BlobPropertyBag {
+    String type;
+    BlobLineEndings endings = BlobLineEndings::Transparent;
 };
 
 }

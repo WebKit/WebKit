@@ -59,7 +59,7 @@ private:
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
     void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) override;
-    void registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) override;
+    void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) override;
     void registerBlobURL(const URL&, const URL& srcURL) override;
     void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) override;
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) override;

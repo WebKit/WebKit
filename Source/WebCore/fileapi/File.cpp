@@ -64,10 +64,17 @@ File::File(DeserializationContructor, const String& path, const URL& url, const 
 {
 }
 
-File::File(Vector<BlobPart>&& blobParts, const String& filename, const String& contentType, int64_t lastModified)
-    : Blob(WTFMove(blobParts), contentType)
+static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
+{
+    BlobPropertyBag bag;
+    bag.type = initialBag.type;
+    return bag;
+}
+
+File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+    : Blob(WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
     , m_name(filename)
-    , m_overrideLastModifiedDate(lastModified)
+    , m_overrideLastModifiedDate(propertyBag.lastModified.value_or(currentTimeMS()))
 {
 }
 

@@ -468,6 +468,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/XMLDocument.idl
 
     fileapi/Blob.idl
+    fileapi/BlobLineEndings.idl
+    fileapi/BlobPropertyBag.idl
     fileapi/File.idl
     fileapi/FileError.idl
     fileapi/FileException.idl
@@ -1135,7 +1137,6 @@ set(WebCore_SOURCES
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
     bindings/js/JSExceptionBase.cpp
-    bindings/js/JSFileCustom.cpp
     bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
@@ -1615,6 +1616,7 @@ set(WebCore_SOURCES
 
     fileapi/AsyncFileStream.cpp
     fileapi/Blob.cpp
+    fileapi/BlobBuilder.cpp
     fileapi/BlobURL.cpp
     fileapi/File.cpp
     fileapi/FileException.cpp
@@ -1623,7 +1625,6 @@ set(WebCore_SOURCES
     fileapi/FileReaderLoader.cpp
     fileapi/FileReaderSync.cpp
     fileapi/ThreadableBlobRegistry.cpp
-    fileapi/WebKitBlobBuilder.cpp
 
     history/BackForwardController.cpp
     history/CachedFrame.cpp

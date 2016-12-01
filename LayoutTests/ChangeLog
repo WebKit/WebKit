@@ -1,3 +1,21 @@
+2016-11-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for File and Blob constructors
+        https://bugs.webkit.org/show_bug.cgi?id=165218
+
+        Reviewed by Darin Adler.
+
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/file-constructor-expected.txt:
+        * fast/files/file-constructor.html:
+        * fast/files/script-tests/blob-constructor.js:
+        Update for stricter parsing and changed error text. (The error text
+        is regressed, but consistent with all generated bindings. I will work
+        on making improvements on this soon.)
+
+        * http/tests/fetch/fetch-as-blob.js:
+        Update to account for stricter rules about dictionary default values.
+
 2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/audio/audio-controls-buttons.html as a timeout.

@@ -60,7 +60,7 @@ void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* con
     mapIterator->value.add(url);
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart> blobParts, const String& contentType)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart>&& blobParts, const String& contentType)
 {
     blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
 

@@ -92,7 +92,7 @@ void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& p
     }
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     if (isMainThread())
         blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);

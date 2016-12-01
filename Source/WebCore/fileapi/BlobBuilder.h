@@ -31,6 +31,7 @@
 #pragma once
 
 #include "BlobPart.h"
+#include "BlobPropertyBag.h"
 
 namespace JSC {
 class ArrayBuffer;
@@ -43,16 +44,17 @@ class Blob;
 
 class BlobBuilder {
 public:
-    BlobBuilder();
+    BlobBuilder(BlobLineEndings);
 
-    void append(Blob*);
-    void append(const String& text, const String& ending);
-    void append(JSC::ArrayBuffer*);
+    void append(RefPtr<JSC::ArrayBuffer>&&);
     void append(RefPtr<JSC::ArrayBufferView>&&);
+    void append(RefPtr<Blob>&&);
+    void append(const String& text);
 
     Vector<BlobPart> finalize();
 
 private:
+    BlobLineEndings m_endings;
     Vector<BlobPart> m_items;
     Vector<uint8_t> m_appendableData;
 };

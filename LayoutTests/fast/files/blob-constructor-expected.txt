@@ -24,20 +24,20 @@ PASS (new Blob([document])).size is 21
 PASS (new Blob([toStringingObj])).size is 8
 PASS new Blob([throwingObj]) threw exception Error.
 PASS (new Blob([], {unknownKey:'value'})) instanceof window.Blob is true
-PASS new Blob([], {endings:'illegalValue'}) threw exception TypeError: The endings property must be either "transparent" or "native".
-PASS new Blob([], {endings:throwingObj}) threw exception Error.
+PASS new Blob([], {endings:'illegalValue'}) threw exception TypeError: Type error.
+PASS new Blob([], {endings:throwingObj}) threw exception TypeError: Type error.
 PASS new Blob([], {type:throwingObj}) threw exception Error.
-PASS new Blob([], {endings:throwingObj1, type:throwingObj2}) threw exception Error 1.
-PASS new Blob([], {type:throwingObj2, endings:throwingObj1}) threw exception Error 1.
-PASS new Blob([], {type:throwingObj2, endings:'illegal'}) threw exception TypeError: The endings property must be either "transparent" or "native".
-PASS (new Blob([], null)) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
-PASS (new Blob([], undefined)) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
-PASS (new Blob([], 123)) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
-PASS (new Blob([], 123.4)) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
-PASS (new Blob([], true)) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
-PASS (new Blob([], 'abc')) instanceof window.Blob threw exception TypeError: Second argument of the constructor is not of type Object.
+PASS new Blob([], {endings:throwingObj1, type:throwingObj2}) threw exception TypeError: Type error.
+PASS new Blob([], {type:throwingObj2, endings:throwingObj1}) threw exception TypeError: Type error.
+PASS new Blob([], {type:throwingObj2, endings:'illegal'}) threw exception TypeError: Type error.
+PASS (new Blob([], null)) instanceof window.Blob is true
+PASS (new Blob([], undefined)) instanceof window.Blob is true
+PASS (new Blob([], 123)) instanceof window.Blob threw exception TypeError: Type error.
+PASS (new Blob([], 123.4)) instanceof window.Blob threw exception TypeError: Type error.
+PASS (new Blob([], true)) instanceof window.Blob threw exception TypeError: Type error.
+PASS (new Blob([], 'abc')) instanceof window.Blob threw exception TypeError: Type error.
 PASS (new Blob([], [])) instanceof window.Blob is true
-PASS (new Blob([], /abc/)) instanceof window.Blob is true
+PASS (new Blob([], /abc/)) threw exception TypeError: Type error.
 PASS (new Blob([], function () {})) instanceof window.Blob is true
 PASS (new Blob([], {type:'text/html'})).type is 'text/html'
 PASS (new Blob([], {type:'text/html'})).size is 0
@@ -72,13 +72,6 @@ PASS new Blob([(new Float32Array(100)).buffer]).size is 400
 PASS new Blob([(new Float64Array(100)).buffer]).size is 800
 PASS new Blob([(new Float64Array(100)).buffer, (new Int32Array(100)).buffer, (new Uint8Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size is 1400
 PASS new Blob([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size is 1000
-PASS new Blob({length: 0}) instanceof window.Blob is true
-PASS new Blob({length: 0}).size is 0
-PASS new Blob({length: 1, 0: 'string'}).size is 6
-PASS new Blob({length: 2, 0: new Uint8Array(100), 1: new Int16Array(100)}).size is 300
-PASS new Blob({length: 1, 0: 'string'}, {type: 'text/html'}).type is 'text/html'
-PASS new Blob({length: 0}, {endings:'illegal'}) threw exception TypeError: The endings property must be either "transparent" or "native".
-PASS new Blob(throwingSequence) threw exception Error: Misbehaving property.
 PASS successfullyParsed is true
 
 TEST COMPLETE

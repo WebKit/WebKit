@@ -45,6 +45,8 @@
 #include "JSBiquadFilterNode.cpp"
 #endif
 #include "JSBlob.cpp"
+#include "JSBlobLineEndings.cpp"
+#include "JSBlobPropertyBag.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasProxy.cpp"

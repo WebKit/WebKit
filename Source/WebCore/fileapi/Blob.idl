@@ -28,16 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (ArrayBufferView or ArrayBuffer) BufferSource;
+typedef (BufferSource or Blob or USVString) BlobPart;
+
 [
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     CustomToJSObject,
-    CustomConstructor,
-    CustomConstructor(sequence<any> blobParts, optional BlobPropertyBag options),
+    Constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options),
 ] interface Blob {
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;
 
+    // slice Blob into byte-ranged chunks
     Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString? contentType = null);
-};
 
+    // FIXME: Implement:
+    // readonly attribute boolean isClosed;
+    // void close();
+
+};

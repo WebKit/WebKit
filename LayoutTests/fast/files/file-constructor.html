@@ -16,8 +16,8 @@ shouldBeTrue("(new File(['hello'], 'world.html', {type:'text/html', endings:'tra
 shouldBeTrue("(new File([], 'world.html')) instanceof window.File")
 
 // Verify that the file name argument is required.
-shouldThrow("(new File())", "'TypeError: Argument 1 (\\'fileBits\\') to the File constructor must be an instance of sequence'");
-shouldThrow("(new File([]))", "'TypeError: Argument 2 (\\'filename\\') to the File constructor must be an instance of DOMString'");
+shouldThrow("(new File())", "'TypeError: Not enough arguments'");
+shouldThrow("(new File([]))", "'TypeError: Not enough arguments'");
 
 // Test valid file names.
 shouldBeTrue("(new File([], null)) instanceof window.File");
@@ -28,7 +28,7 @@ shouldBeTrue("(new File([], document)) instanceof window.File");
 // Test invalid file parts.
 shouldThrow("new File('hello', 'world.html')", '"TypeError: Value is not a sequence"');
 shouldThrow("new File(0, 'world.html')", '"TypeError: Value is not a sequence"');
-shouldThrow("new File(null, 'world.html')", "'TypeError: Argument 1 (\\'fileBits\\') to the File constructor must be an instance of sequence'");
+shouldThrow("new File(null, 'world.html')", "'TypeError: Value is not a sequence'");
 
 // Test valid file parts.
 shouldBeTrue("(new File([], 'world.html')) instanceof window.File");
@@ -72,24 +72,24 @@ shouldThrow("new File([], 'world.html', {type:throwingObj})", "'Error'");
 shouldBeTrue("(new File([], 'world.html', {type:'hello\u00EE'})) instanceof window.File");
 shouldBe("(new File([], 'world.html', {type:'hello\u00EE'})).type", "''");
 
-// FilePropertyBag  substeps: Type with non-ascii characters should prevent lastModified from being extracted.
+// FilePropertyBag  substeps: Type with non-ascii characters should not prevent lastModified from being extracted.
 shouldBe("(new File([], 'world.html', {lastModified: 555, type:'goodbye'})).lastModified", "555");
-shouldNotBe("(new File([], 'world.html', {lastModified: 555, type:'goodbye\u00EE'})).lastModified", "555");
+shouldBe("(new File([], 'world.html', {lastModified: 555, type:'goodbye\u00EE'})).lastModified", "555");
 
 // Test various non-object literals being used as property bags.
 shouldBeTrue("(new File([], 'world.html', null)) instanceof window.File");
 shouldBeTrue("(new File([], 'world.html', undefined)) instanceof window.File");
-shouldThrow("(new File([], 'world.html', 123)) instanceof window.File", "'TypeError: Argument 3 (\\'options\\') to the File constructor must be an instance of FilePropertyBag'");
-shouldThrow("(new File([], 'world.html', 123.4)) instanceof window.File", "'TypeError: Argument 3 (\\'options\\') to the File constructor must be an instance of FilePropertyBag'");
-shouldThrow("(new File([], 'world.html', true)) instanceof window.File", "'TypeError: Argument 3 (\\'options\\') to the File constructor must be an instance of FilePropertyBag'");
-shouldThrow("(new File([], 'world.html', 'abc')) instanceof window.File", "'TypeError: Argument 3 (\\'options\\') to the File constructor must be an instance of FilePropertyBag'");
+shouldThrow("(new File([], 'world.html', 123)) instanceof window.File", "'TypeError: Type error'");
+shouldThrow("(new File([], 'world.html', 123.4)) instanceof window.File", "'TypeError: Type error'");
+shouldThrow("(new File([], 'world.html', true)) instanceof window.File", "'TypeError: Type error'");
+shouldThrow("(new File([], 'world.html', 'abc')) instanceof window.File", "'TypeError: Type error'");
 shouldBeTrue("(new File([], 'world.html', [])) instanceof window.File");
-shouldBeTrue("(new File([], 'world.html', /abc/)) instanceof window.File");
+shouldThrow("(new File([], 'world.html', /abc/)) instanceof window.File", "'TypeError: Type error'");
 shouldBeTrue("(new File([], 'world.html', function () {})) instanceof window.File");
 
 // Test that the name/type/size are correctly added to the File.
 shouldBe("(new File([], 'world.html')).name", "'world.html'");
-shouldBe("(new File([], 'w/orld/ht/m.l')).name", "'w:orld:ht:m.l'");
+shouldBe("(new File([], 'w/orld/ht/m.l')).name", "'w/orld/ht/m.l'");
 shouldBe("(new File([], 'world.html', {type:'text/html'})).name", "'world.html'");
 shouldBe("(new File([], 'world.html', {type:'text/html'})).type", "'text/html'");
 shouldBe("(new File([], 'world.html', {type:'text/html'})).size", "0");
@@ -141,9 +141,4 @@ shouldBe("new File([new Blob([(new Int32Array(100)).buffer]), new File([new Uint
 // Test building Blobs with ArrayBuffer / ArrayBufferView parts enclosed in files.
 shouldBe("new Blob([new Blob([new Int32Array(100)]), new File([new Uint16Array(100)], 'world.txt'), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size", "1200");
 shouldBe("new Blob([new Blob([(new Int32Array(100)).buffer]), new File([new Uint16Array(100).buffer], 'world.txt'), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1200");
-
-// Test passing blob parts in objects with indexed properties.
-// (This depends on the bindings code handling of sequence<T>)
-shouldBe("new File({length: 0}, 'world.txt').size", "0");
-shouldBe("new File({length: 1, 0: 'string'}, 'world.txt').size", "6");
 </script>

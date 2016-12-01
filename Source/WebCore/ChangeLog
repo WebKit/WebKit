@@ -1,3 +1,60 @@
+2016-11-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for File and Blob constructors
+        https://bugs.webkit.org/show_bug.cgi?id=165218
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add/remove new files.
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob): Deleted.
+        * bindings/js/JSFileCustom.cpp: Removed.
+        Remove custom constructors.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        (GenerateDictionaryImplementationContent):
+        (GenerateParametersCheck):
+        Add support for optional sequences without default values. Move string default value
+        optimizations into GenerateDefaultValue.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        * fileapi/Blob.idl:
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * fileapi/File.h:
+        * fileapi/File.idl:
+        Add support for the generated constructors.
+
+        * fileapi/BlobBuilder.cpp: Copied from Source/WebCore/fileapi/WebKitBlobBuilder.cpp.
+        * fileapi/BlobBuilder.h: Copied from Source/WebCore/fileapi/WebKitBlobBuilder.h.
+        * fileapi/WebKitBlobBuilder.cpp: Removed.
+        * fileapi/WebKitBlobBuilder.h: Removed.
+        Rename WebKitBlobBuilder to BlobBuilder, and update to work with generated constructor.
+
+        * fileapi/BlobPropertyBag.h: Added.
+        * fileapi/BlobPropertyBag.idl: Added.
+        Added.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        * platform/network/BlobRegistryImpl.h:
+        Avoid copies of the BlobPart Vector.
+
+        * platform/network/BlobPart.h:
+        Replace header-guards with #pragma once.
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Provide a UI object to show a list of tracks

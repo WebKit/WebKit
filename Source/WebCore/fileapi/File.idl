@@ -23,14 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+typedef (ArrayBufferView or ArrayBuffer) BufferSource;
+typedef (BufferSource or Blob or USVString) BlobPart;
+
+// FIXME: This should be exposed on Workers as well.
 [
-    Exposed=(Window),
-    JSGenerateToNativeObject,
-    JSGenerateToJSObject,
+    Constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options),
     ExportMacro=WEBCORE_EXPORT,
-    CustomConstructor(sequence<any> fileBits, DOMString fileName, optional FilePropertyBag options),
+    Exposed=(Window),
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] interface File : Blob {
     readonly attribute DOMString name;
     readonly attribute long long lastModified;
 };
 
+dictionary FilePropertyBag : BlobPropertyBag {
+    long long lastModified;
+};

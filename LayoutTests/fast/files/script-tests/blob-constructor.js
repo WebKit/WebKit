@@ -34,26 +34,26 @@ shouldThrow("new Blob([throwingObj])", "'Error'");
 
 // Test some invalid property bags
 shouldBeTrue("(new Blob([], {unknownKey:'value'})) instanceof window.Blob");    // Ignore invalid keys
-shouldThrow("new Blob([], {endings:'illegalValue'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
-shouldThrow("new Blob([], {endings:throwingObj})", "'Error'");
+shouldThrow("new Blob([], {endings:'illegalValue'})", "'TypeError: Type error'");
+shouldThrow("new Blob([], {endings:throwingObj})", "'TypeError: Type error'");
 shouldThrow("new Blob([], {type:throwingObj})", "'Error'");
 
 // Test that order of property bag evaluation is lexigraphical
 var throwingObj1 = { toString: function() { throw "Error 1"; } };
 var throwingObj2 = { toString: function() { throw "Error 2"; } };
-shouldThrow("new Blob([], {endings:throwingObj1, type:throwingObj2})", "'Error 1'");
-shouldThrow("new Blob([], {type:throwingObj2, endings:throwingObj1})", "'Error 1'");
-shouldThrow("new Blob([], {type:throwingObj2, endings:'illegal'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
+shouldThrow("new Blob([], {endings:throwingObj1, type:throwingObj2})", "'TypeError: Type error'");
+shouldThrow("new Blob([], {type:throwingObj2, endings:throwingObj1})", "'TypeError: Type error'");
+shouldThrow("new Blob([], {type:throwingObj2, endings:'illegal'})", "'TypeError: Type error'");
 
 // Test various non-object literals being used as property bags
-shouldThrow("(new Blob([], null)) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
-shouldThrow("(new Blob([], undefined)) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
-shouldThrow("(new Blob([], 123)) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
-shouldThrow("(new Blob([], 123.4)) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
-shouldThrow("(new Blob([], true)) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
-shouldThrow("(new Blob([], 'abc')) instanceof window.Blob", "'TypeError: Second argument of the constructor is not of type Object'");
+shouldBeTrue("(new Blob([], null)) instanceof window.Blob");
+shouldBeTrue("(new Blob([], undefined)) instanceof window.Blob");
+shouldThrow("(new Blob([], 123)) instanceof window.Blob", "'TypeError: Type error'");
+shouldThrow("(new Blob([], 123.4)) instanceof window.Blob", "'TypeError: Type error'");
+shouldThrow("(new Blob([], true)) instanceof window.Blob", "'TypeError: Type error'");
+shouldThrow("(new Blob([], 'abc')) instanceof window.Blob", "'TypeError: Type error'");
 shouldBeTrue("(new Blob([], [])) instanceof window.Blob");
-shouldBeTrue("(new Blob([], /abc/)) instanceof window.Blob");
+shouldThrow("(new Blob([], /abc/))", "'TypeError: Type error'");
 shouldBeTrue("(new Blob([], function () {})) instanceof window.Blob");
 
 // Test that the type/size is correctly added to the Blob
@@ -98,23 +98,3 @@ shouldBe("new Blob([(new Float32Array(100)).buffer]).size", "400");
 shouldBe("new Blob([(new Float64Array(100)).buffer]).size", "800");
 shouldBe("new Blob([(new Float64Array(100)).buffer, (new Int32Array(100)).buffer, (new Uint8Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1400");
 shouldBe("new Blob([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1000");
-
-// Test passing blob parts in sequences.
-shouldBeTrue("new Blob({length: 0}) instanceof window.Blob");
-shouldBe("new Blob({length: 0}).size", "0");
-shouldBe("new Blob({length: 1, 0: 'string'}).size", "6");
-shouldBe("new Blob({length: 2, 0: new Uint8Array(100), 1: new Int16Array(100)}).size", "300");
-shouldBe("new Blob({length: 1, 0: 'string'}, {type: 'text/html'}).type", "'text/html'");
-shouldThrow("new Blob({length: 0}, {endings:'illegal'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
-
-// Test passing blog parts in a sequence-like object that throws on property access.
-var throwingSequence = {length: 4, 0: 'hello', 3: 'world'};
-Object.defineProperty(throwingSequence, "1", {
-    get: function() { throw new Error("Misbehaving property"); },
-    enumerable: true, configurable: true
-});
-Object.defineProperty(throwingSequence, "2", {
-    get: function() { throw new Error("This should not be thrown"); },
-    enumerable: true, configurable: true
-});
-shouldThrow("new Blob(throwingSequence)", "'Error: Misbehaving property'");

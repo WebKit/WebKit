@@ -498,7 +498,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncCaller(JSC:
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto x = state->argument(0).isUndefined() ? Vector<int32_t>() : convert<IDLSequence<IDLLong>>(*state, state->uncheckedArgument(0));
+    auto x = state->argument(0).isUndefined() ? Converter<IDLSequence<IDLLong>>::ReturnType{ } : convert<IDLSequence<IDLLong>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.func(WTFMove(x));
     return JSValue::encode(jsUndefined());

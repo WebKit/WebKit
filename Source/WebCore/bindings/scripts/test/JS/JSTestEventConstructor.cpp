@@ -68,13 +68,13 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
         result.attr2 = convert<IDLDOMString>(state, attr2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.attr2 = "";
+        result.attr2 = emptyString();
     JSValue attr3Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr3"));
     if (!attr3Value.isUndefined()) {
         result.attr3 = convert<IDLDOMString>(state, attr3Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.attr3 = "";
+        result.attr3 = emptyString();
     return result;
 }
 

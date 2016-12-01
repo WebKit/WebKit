@@ -47,7 +47,7 @@ void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, Ref<BlobDat
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, file->path(), extensionHandle, contentType), 0);
 }
 
-void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), 0);
 }

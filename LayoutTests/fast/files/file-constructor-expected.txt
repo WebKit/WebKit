@@ -10,15 +10,15 @@ PASS (new File(['hello'], 'world.html', {type:'text/html'})) instanceof window.F
 PASS (new File(['hello'], 'world.html', {type:'text/html', endings:'native'})) instanceof window.File is true
 PASS (new File(['hello'], 'world.html', {type:'text/html', endings:'transparent'})) instanceof window.File is true
 PASS (new File([], 'world.html')) instanceof window.File is true
-PASS (new File()) threw exception TypeError: Argument 1 ('fileBits') to the File constructor must be an instance of sequence.
-PASS (new File([])) threw exception TypeError: Argument 2 ('filename') to the File constructor must be an instance of DOMString.
+PASS (new File()) threw exception TypeError: Not enough arguments.
+PASS (new File([])) threw exception TypeError: Not enough arguments.
 PASS (new File([], null)) instanceof window.File is true
 PASS (new File([], 1)) instanceof window.File is true
 PASS (new File([], '')) instanceof window.File is true
 PASS (new File([], document)) instanceof window.File is true
 PASS new File('hello', 'world.html') threw exception TypeError: Value is not a sequence.
 PASS new File(0, 'world.html') threw exception TypeError: Value is not a sequence.
-PASS new File(null, 'world.html') threw exception TypeError: Argument 1 ('fileBits') to the File constructor must be an instance of sequence.
+PASS new File(null, 'world.html') threw exception TypeError: Value is not a sequence.
 PASS (new File([], 'world.html')) instanceof window.File is true
 PASS (new File(['stringPrimitive'], 'world.html')) instanceof window.File is true
 PASS (new File([String('stringObject')], 'world.html')) instanceof window.File is true
@@ -46,18 +46,18 @@ PASS new File([], 'world.html', {type:throwingObj}) threw exception Error.
 PASS (new File([], 'world.html', {type:'helloî'})) instanceof window.File is true
 PASS (new File([], 'world.html', {type:'helloî'})).type is ''
 PASS (new File([], 'world.html', {lastModified: 555, type:'goodbye'})).lastModified is 555
-PASS (new File([], 'world.html', {lastModified: 555, type:'goodbyeî'})).lastModified is not 555
+PASS (new File([], 'world.html', {lastModified: 555, type:'goodbyeî'})).lastModified is 555
 PASS (new File([], 'world.html', null)) instanceof window.File is true
 PASS (new File([], 'world.html', undefined)) instanceof window.File is true
-PASS (new File([], 'world.html', 123)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
-PASS (new File([], 'world.html', 123.4)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
-PASS (new File([], 'world.html', true)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
-PASS (new File([], 'world.html', 'abc')) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
+PASS (new File([], 'world.html', 123)) instanceof window.File threw exception TypeError: Type error.
+PASS (new File([], 'world.html', 123.4)) instanceof window.File threw exception TypeError: Type error.
+PASS (new File([], 'world.html', true)) instanceof window.File threw exception TypeError: Type error.
+PASS (new File([], 'world.html', 'abc')) instanceof window.File threw exception TypeError: Type error.
 PASS (new File([], 'world.html', [])) instanceof window.File is true
-PASS (new File([], 'world.html', /abc/)) instanceof window.File is true
+PASS (new File([], 'world.html', /abc/)) instanceof window.File threw exception TypeError: Type error.
 PASS (new File([], 'world.html', function () {})) instanceof window.File is true
 PASS (new File([], 'world.html')).name is 'world.html'
-PASS (new File([], 'w/orld/ht/m.l')).name is 'w:orld:ht:m.l'
+PASS (new File([], 'w/orld/ht/m.l')).name is 'w/orld/ht/m.l'
 PASS (new File([], 'world.html', {type:'text/html'})).name is 'world.html'
 PASS (new File([], 'world.html', {type:'text/html'})).type is 'text/html'
 PASS (new File([], 'world.html', {type:'text/html'})).size is 0
@@ -96,8 +96,6 @@ PASS new File([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).b
 PASS new File([new Blob([(new Int32Array(100)).buffer]), new File([new Uint16Array(100).buffer], 'world.txt'), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer], 'world.html').size is 1200
 PASS new Blob([new Blob([new Int32Array(100)]), new File([new Uint16Array(100)], 'world.txt'), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size is 1200
 PASS new Blob([new Blob([(new Int32Array(100)).buffer]), new File([new Uint16Array(100).buffer], 'world.txt'), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size is 1200
-PASS new File({length: 0}, 'world.txt').size is 0
-PASS new File({length: 1, 0: 'string'}, 'world.txt').size is 6
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -251,7 +251,7 @@ void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const St
     NetworkBlobRegistry::singleton().registerFileBlobURL(this, url, path, WTFMove(extension), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     NetworkBlobRegistry::singleton().registerBlobURL(this, url, WTFMove(blobParts), contentType);
 }

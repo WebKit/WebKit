@@ -1149,7 +1149,18 @@ sub GetDictionaryClassName
 
 sub GenerateDefaultValue
 {
-    my ($interface, $type, $defaultValue) = @_;
+    my ($interface, $context, $type, $defaultValue) = @_;
+
+    if ($codeGenerator->IsStringType($type)) {
+        my $useAtomicString = $context->extendedAttributes->{AtomicString};
+        if ($defaultValue eq "null") {
+            return $useAtomicString ? "nullAtom" : "String()";
+        } elsif ($defaultValue eq "\"\"") {
+            return $useAtomicString ? "emptyAtom" : "emptyString()";
+        } else {
+            return $useAtomicString ? "AtomicString(${defaultValue}, AtomicString::ConstructFromLiteral)" : "ASCIILiteral(${defaultValue})";
+        }
+    }
 
     if ($codeGenerator->IsEnumType($type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
@@ -1165,12 +1176,17 @@ sub GenerateDefaultValue
             my $IDLType = GetIDLType($interface, $type);
             return "convert<${IDLType}>(state, jsNull());";
         }
+
         return "jsNull()" if $type->name eq "any";
         return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type);
         return "String()" if $codeGenerator->IsStringType($type);
         return "std::nullopt";
     }
+
     if ($defaultValue eq "[]") {
+        my $IDLType = GetIDLType($interface, $type);
+        return "Converter<${IDLType}>::ReturnType{ }" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+
         my $nativeType = GetNativeType($interface, $type);
         return "$nativeType()"
     }
@@ -1288,7 +1304,7 @@ sub GenerateDictionaryImplementationContent
             # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
                 $result .= "    } else\n";
-                $result .= "        result.$key = " . GenerateDefaultValue($interface, $member->type, $member->default) . ";\n";
+                $result .= "        result.$key = " . GenerateDefaultValue($interface, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
@@ -4382,6 +4398,9 @@ sub GenerateParametersCheck
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.
             $argument->default("[]") if $type->name eq "Dictionary" or $codeGenerator->IsDictionaryType($type);
 
+            # Treat undefined the same as an empty sequence Or frozen array.
+            $argument->default("[]") if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+
             # We use undefined as default value for optional arguments of type 'any' unless specified otherwise.
             $argument->default("undefined") if $type->name eq "any";
 
@@ -4436,7 +4455,7 @@ sub GenerateParametersCheck
                     push(@$outputArray, "    if (!${name}Value.isUndefined()) {\n");
                 } else {
                     push(@$outputArray, "    if (${name}Value.isUndefined())\n");
-                    push(@$outputArray, "        $name = " . GenerateDefaultValue($interface, $argument->type, $argument->default) . ";\n");
+                    push(@$outputArray, "        $name = " . GenerateDefaultValue($interface, $argument, $argument->type, $argument->default) . ";\n");
                     push(@$outputArray, "    else {\n");
                 }
                 $indent = "    ";
@@ -4461,19 +4480,7 @@ sub GenerateParametersCheck
             if ($argument->isOptional && defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
                 my $defaultValue = $argument->default;
 
-                # String-related optimizations.
-                if ($codeGenerator->IsStringType($type)) {
-                    my $useAtomicString = $argument->extendedAttributes->{AtomicString};
-                    if ($defaultValue eq "null") {
-                        $defaultValue = $useAtomicString ? "nullAtom" : "String()";
-                    } elsif ($defaultValue eq "\"\"") {
-                        $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
-                    } else {
-                        $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
-                    }
-                } else {
-                    $defaultValue = GenerateDefaultValue($interface, $argument->type, $argument->default);
-                }
+                $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
 
                 $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? $defaultValue : ";
                 $inner = "state->uncheckedArgument($argumentIndex)";

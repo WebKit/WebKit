@@ -30,15 +30,23 @@
 
 #pragma once
 
-#include "BlobPart.h"
+#include "BlobPropertyBag.h"
 #include "ScriptWrappable.h"
+#include "URL.h"
 #include "URLRegistry.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Variant.h>
+
+namespace JSC {
+class ArrayBufferView;
+class ArrayBuffer;
+}
 
 namespace WebCore {
 
+class Blob;
 class ScriptExecutionContext;
+
+using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob> {
 public:
@@ -47,14 +55,14 @@ public:
         return adoptRef(*new Blob);
     }
 
+    static Ref<Blob> create(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+    {
+        return adoptRef(*new Blob(WTFMove(blobPartVariants), propertyBag));
+    }
+
     static Ref<Blob> create(Vector<uint8_t>&& data, const String& contentType)
     {
         return adoptRef(*new Blob(WTFMove(data), contentType));
-    }
-
-    static Ref<Blob> create(Vector<BlobPart>&& blobParts, const String& contentType)
-    {
-        return adoptRef(*new Blob(WTFMove(blobParts), contentType));
     }
 
     static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
@@ -90,8 +98,8 @@ public:
 
 protected:
     Blob();
+    Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
     Blob(Vector<uint8_t>&&, const String& contentType);
-    Blob(Vector<BlobPart>&&, const String& contentType);
 
     enum UninitializedContructor { uninitializedContructor };
     Blob(UninitializedContructor);
