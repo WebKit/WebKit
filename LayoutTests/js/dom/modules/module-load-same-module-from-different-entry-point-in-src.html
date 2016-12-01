@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('2 different module tag will attempt to load the same module with "src" attribute.');
+window.jsTestIsAsync = true;
+window.moduleExecutedCount = 0;
+debug('Module is not executed yet.');
+shouldBe(`window.moduleExecutedCount`, `0`);
+var counter = 0;
+function onLoad() {
+    shouldBe(`window.moduleExecutedCount`, `1`);
+    ++counter;
+}
+function finish() {
+    shouldBe(`counter`, `2`);
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module" src="./script-tests/module-load-same-module-from-different-entry-point.js" onload="onLoad()"></script>
+<script type="module" src="./script-tests/module-load-same-module-from-different-entry-point.js" onload="onLoad()"></script>
+<script type="module">
+finish();
+</script>
+</body>
+</html>

@@ -1,3 +1,13 @@
+2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Specifying same module entry point multiple times cause TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=164858
+
+        Reviewed by Saam Barati.
+
+        * js/dom/modules/module-load-same-module-from-different-entry-point-in-src-expected.txt: Added.
+        * js/dom/modules/module-load-same-module-from-different-entry-point-in-src.html: Added.
+
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add support for right-to-left layouts

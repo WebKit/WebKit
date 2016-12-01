@@ -230,12 +230,6 @@ function requestFetch(key, initiator)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > @ModuleLink) {
-        var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
-        return deferred.@promise;
-    }
-
     if (entry.fetch)
         return entry.fetch;
 
@@ -260,12 +254,6 @@ function requestTranslate(key, initiator)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > @ModuleLink) {
-        var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
-        return deferred.@promise;
-    }
-
     if (entry.translate)
         return entry.translate;
 
@@ -291,12 +279,6 @@ function requestInstantiate(key, initiator)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > @ModuleLink) {
-        var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
-        return deferred.@promise;
-    }
-
     if (entry.instantiate)
         return entry.instantiate;
 
@@ -324,12 +306,6 @@ function requestSatisfy(key, initiator)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state > @ModuleLink) {
-        var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
-        return deferred.@promise;
-    }
-
     if (entry.satisfy)
         return entry.satisfy;
 

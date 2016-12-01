@@ -1,5 +1,21 @@
 2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Specifying same module entry point multiple times cause TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=164858
+
+        Reviewed by Saam Barati.
+
+        Allow importing the same module multiple times. Previously, when specifying the same
+        module in the <script type="module" src="here">, it throws TypeError.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (requestFetch):
+        (requestTranslate):
+        (requestInstantiate):
+        (requestSatisfy):
+
+2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         WebAssembly JS API: export a module namespace object instead of a module environment
         https://bugs.webkit.org/show_bug.cgi?id=165121
 
