@@ -101,6 +101,8 @@ void StringStats::printStats()
 }
 #endif
 
+StringImpl::StaticStringImpl StringImpl::s_atomicNullString("", StringImpl::StringAtomic);
+StringImpl::StaticStringImpl StringImpl::s_atomicEmptyString("", StringImpl::StringAtomic);
 
 StringImpl::~StringImpl()
 {

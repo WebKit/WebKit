@@ -1,3 +1,56 @@
+2016-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce StringImpl::StaticStringImpl with constexpr constructor
+        https://bugs.webkit.org/show_bug.cgi?id=165093
+
+        Reviewed by Darin Adler.
+
+        This patch adds new class, StringImpl::StaticStringImpl.
+        By using this class, we can easily create static StringImpls.
+        This class has constexpr constructor. You can initialize instances
+        of this class as global static variables without invoking global
+        constructors.
+
+        We already have similar system, StaticASCIILiteral. But using it
+        requires some special perl script since we need to calculate
+        hash value. On the other hand, we can use StaticStringImpl without
+        any script supports since we implement constexpr hash function.
+        In the future, we will replace all the use of StaticASCIILiteral
+        with this StaticStringImpl.
+
+        We define empty / null strings as StaticStringImpl. And we make
+        StringImpl::empty() & StringImpl::null() inline functions.
+
+        * wtf/Hasher.h:
+        (WTF::StringHasher::hashWithTop8BitsMasked):
+        (WTF::StringHasher::hash):
+        (WTF::StringHasher::finalize):
+        (WTF::StringHasher::finalizeAndMaskTop8Bits):
+        (WTF::StringHasher::computeLiteralHash):
+        (WTF::StringHasher::computeLiteralHashAndMaskTop8Bits):
+        (WTF::StringHasher::avalancheBits3):
+        (WTF::StringHasher::avalancheBits2):
+        (WTF::StringHasher::avalancheBits1):
+        (WTF::StringHasher::avalancheBits0):
+        (WTF::StringHasher::avalancheBits):
+        (WTF::StringHasher::avoidZero):
+        (WTF::StringHasher::processPendingCharacter):
+        (WTF::StringHasher::calculateWithRemainingLastCharacter1):
+        (WTF::StringHasher::calculateWithRemainingLastCharacter0):
+        (WTF::StringHasher::calculateWithRemainingLastCharacter):
+        (WTF::StringHasher::calculate1):
+        (WTF::StringHasher::calculate0):
+        (WTF::StringHasher::calculate):
+        (WTF::StringHasher::computeLiteralHashImpl):
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StaticStringImpl::StaticStringImpl):
+        (WTF::StringImpl::null):
+        (WTF::StringImpl::empty):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::null): Deleted.
+        (WTF::StringImpl::empty): Deleted.
+
 2016-11-30  Darin Adler  <darin@apple.com>
 
         Roll out StringBuilder changes from the previous patch.

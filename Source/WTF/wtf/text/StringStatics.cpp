@@ -41,18 +41,6 @@
 
 namespace WTF {
 
-StringImpl* StringImpl::null()
-{
-    static NeverDestroyed<StringImpl> nullString(ConstructEmptyString);
-    return &nullString.get();
-}
-
-StringImpl* StringImpl::empty()
-{
-    static NeverDestroyed<StringImpl> emptyString(ConstructEmptyString);
-    return &emptyString.get();
-}
-
 // In addition to the normal hash value, store specialized hash value for
 // symbolized StringImpl*. And don't use the normal hash value for symbolized
 // StringImpl* when they are treated as Identifiers. Unique nature of these

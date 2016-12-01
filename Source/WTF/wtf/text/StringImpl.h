@@ -149,43 +149,24 @@ private:
 
     // The bottom 6 bits in the hash are flags.
 public:
-    static const unsigned s_flagCount = 6;
+    static constexpr const unsigned s_flagCount = 6;
 private:
-    static const unsigned s_flagMask = (1u << s_flagCount) - 1;
-    COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
-    static const unsigned s_flagStringKindCount = 4;
+    static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;
+    static_assert(s_flagCount <= StringHasher::flagCount, "StringHasher reserves enough bits for StringImpl flags");
+    static constexpr const unsigned s_flagStringKindCount = 4;
 
-    static const unsigned s_hashFlagStringKindIsAtomic = 1u << (s_flagStringKindCount);
-    static const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
-    static const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtomic | s_hashFlagStringKindIsSymbol;
-    static const unsigned s_hashFlag8BitBuffer = 1u << 3;
-    static const unsigned s_hashFlagDidReportCost = 1u << 2;
-    static const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
+    static constexpr const unsigned s_hashFlagStringKindIsAtomic = 1u << (s_flagStringKindCount);
+    static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
+    static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtomic | s_hashFlagStringKindIsSymbol;
+    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 3;
+    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 2;
+    static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
 
     enum StringKind {
         StringNormal = 0u, // non-symbol, non-atomic
         StringAtomic = s_hashFlagStringKindIsAtomic, // non-symbol, atomic
         StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
     };
-
-    // Used to construct static strings, which have an special refCount that can never hit zero.
-    // This means that the static string will never be destroyed, which is important because
-    // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-    friend class NeverDestroyed<StringImpl>;
-    enum ConstructEmptyStringTag { ConstructEmptyString };
-    StringImpl(ConstructEmptyStringTag)
-        : m_refCount(s_refCountFlagIsStaticString)
-        , m_length(0)
-        , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(s_hashFlag8BitBuffer | StringAtomic | BufferOwned)
-    {
-        // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
-        // with impunity. The empty string is special because it is never entered into
-        // AtomicString's HashKey, but still needs to compare correctly.
-        STRING_STATS_ADD_8BIT_STRING(m_length);
-
-        hash();
-    }
 
     // FIXME: there has to be a less hacky way to do this.
     enum Force8Bit { Force8BitConstructor };
@@ -606,7 +587,43 @@ public:
         m_refCount = tempRefCount;
     }
 
-    WTF_EXPORT_PRIVATE static StringImpl* empty();
+    class StaticStringImpl {
+    public:
+        // Used to construct static strings, which have an special refCount that can never hit zero.
+        // This means that the static string will never be destroyed, which is important because
+        // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+        template<unsigned charactersCount>
+        constexpr StaticStringImpl(const char (&characters)[charactersCount], StringKind stringKind = StringNormal)
+            : m_refCount(s_refCountFlagIsStaticString)
+            , m_length(charactersCount - 1)
+            , m_data8(characters)
+            , m_hashAndFlags(s_hashFlag8BitBuffer | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount))
+        {
+        }
+
+        template<unsigned charactersCount>
+        constexpr StaticStringImpl(const char16_t (&characters)[charactersCount], StringKind stringKind = StringNormal)
+            : m_refCount(s_refCountFlagIsStaticString)
+            , m_length(charactersCount - 1)
+            , m_data16(characters)
+            , m_hashAndFlags(stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount))
+        {
+        }
+
+        // These member variables must match the layout of StringImpl.
+        unsigned m_refCount;
+        unsigned m_length;
+        union {
+            const char* m_data8;
+            const char16_t* m_data16;
+        };
+        unsigned m_hashAndFlags;
+    };
+
+    WTF_EXPORTDATA static StaticStringImpl s_atomicNullString;
+    WTF_EXPORTDATA static StaticStringImpl s_atomicEmptyString;
+    ALWAYS_INLINE static StringImpl* null() { return reinterpret_cast<StringImpl*>(&s_atomicNullString); }
+    ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_atomicEmptyString); }
 
     // FIXME: Does this really belong in StringImpl?
     template <typename T> static void copyChars(T* destination, const T* source, unsigned numCharacters)
@@ -866,7 +883,6 @@ private:
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
-    WTF_EXPORT_PRIVATE static StringImpl* null();
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;
@@ -877,6 +893,8 @@ private:
 #endif
 
 public:
+    // FIXME: It should be replaced with StaticStringImpl.
+    // https://bugs.webkit.org/show_bug.cgi?id=165134
     struct StaticASCIILiteral {
         // These member variables must match the layout of StringImpl.
         unsigned m_refCount;
@@ -899,7 +917,7 @@ public:
 #endif
 
 private:
-    // These member variables must match the layout of StaticASCIILiteral.
+    // These member variables must match the layout of StaticASCIILiteral and StaticStringImpl.
     unsigned m_refCount;
     unsigned m_length;
     union {
@@ -910,6 +928,7 @@ private:
 };
 
 static_assert(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), "");
+static_assert(sizeof(StringImpl) == sizeof(StringImpl::StaticStringImpl), "");
 
 #if !ASSERT_DISABLED
 // StringImpls created from StaticASCIILiteral will ASSERT

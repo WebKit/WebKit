@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <wtf/Hasher.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -572,6 +573,22 @@ TEST(WTF, StringImplNullSymbolToAtomicString)
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
+}
+
+TEST(WTF, StringImplConstexprHasher)
+{
+    ASSERT_EQ(stringFromUTF8("")->hash(), StringHasher::computeLiteralHashAndMaskTop8Bits(""));
+    ASSERT_EQ(stringFromUTF8("A")->hash(), StringHasher::computeLiteralHashAndMaskTop8Bits("A"));
+    ASSERT_EQ(stringFromUTF8("AA")->hash(), StringHasher::computeLiteralHashAndMaskTop8Bits("AA"));
+    ASSERT_EQ(stringFromUTF8("Cocoa")->hash(), StringHasher::computeLiteralHashAndMaskTop8Bits("Cocoa"));
+    ASSERT_EQ(stringFromUTF8("Cappuccino")->hash(), StringHasher::computeLiteralHashAndMaskTop8Bits("Cappuccino"));
+}
+
+TEST(WTF, StringImplEmpty)
+{
+    ASSERT_FALSE(StringImpl::empty()->length());
+    ASSERT_FALSE(StringImpl::null()->length());
+    ASSERT_NE(StringImpl::null(), StringImpl::empty());
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,13 @@
+2016-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce StringImpl::StaticStringImpl with constexpr constructor
+        https://bugs.webkit.org/show_bug.cgi?id=165093
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add an HTML comment flag to turn the feature on
