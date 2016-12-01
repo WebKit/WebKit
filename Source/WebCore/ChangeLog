@@ -1,3 +1,22 @@
+2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SubtleCrypto::deriveBits always return NOT_SUPPORTED_ERR for now
+        https://bugs.webkit.org/show_bug.cgi?id=164745
+        <rdar://problem/29258118>
+
+        Reviewed by Darin Adler.
+
+        Since we don't support any cryptography algorithms that has deriveBits operations,
+        SubtleCrypto::deriveBits will always return NOT_SUPPORTED_ERR for now.
+
+        Test: crypto/subtle/deriveBits-malformed-parameters.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionDeriveBitsPromise):
+        (WebCore::JSSubtleCrypto::deriveBits):
+        * crypto/SubtleCrypto.idl:
+
 2016-12-01  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream][Mac] Video presets sometimes don't work

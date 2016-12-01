@@ -59,6 +59,7 @@ enum class Operations {
     Verify,
     Digest,
     DeriveKey,
+    DeriveBits,
     GenerateKey,
     ImportKey,
     WrapKey,
@@ -149,6 +150,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             break;
         case Operations::DeriveKey:
+        case Operations::DeriveBits:
             setDOMException(&state, NOT_SUPPORTED_ERR);
             return nullptr;
         case Operations::GenerateKey:
@@ -698,6 +700,23 @@ static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<Deferre
     ASSERT_NOT_REACHED();
 }
 
+static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 3)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveBits);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    // We should always return a NOT_SUPPORTED_ERR since we currently don't support any algorithms that has deriveBits operation.
+    ASSERT_NOT_REACHED();
+}
+
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -971,6 +990,11 @@ JSValue JSSubtleCrypto::digest(ExecState& state)
 JSValue JSSubtleCrypto::deriveKey(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionDeriveKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::deriveBits(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionDeriveBitsPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::generateKey(ExecState& state)

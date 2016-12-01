@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test deriveBits operation with malformed parameters");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.deriveBits()');
+shouldReject('crypto.subtle.deriveBits(1)');
+shouldReject('crypto.subtle.deriveBits(1, 2)');
+// Not support.
+shouldReject('crypto.subtle.deriveBits("ECDH", 2, 3)');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
