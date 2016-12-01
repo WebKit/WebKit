@@ -1,3 +1,17 @@
+2016-12-01  Beth Dakin  <bdakin@apple.com>
+
+        Force clicking tests fail on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=165263
+
+        Reviewed by Tim Horton.
+
+        Initialize com.apple.trackpad.forceClick to 1 so that we don’t have to depend on 
+        the user account having this feature enabled. 
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/mac/main.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
 2016-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce StringImpl::StaticStringImpl with constexpr constructor
