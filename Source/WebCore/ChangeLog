@@ -1,3 +1,18 @@
+2016-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Parameter to DOMStringList.contains() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=165257
+
+        Reviewed by Alex Christensen.
+
+        Parameter to DOMStringList.contains() should be mandatory.
+        Gecko and Blink have it mandatory but WebKit had it optional and the
+        string 'undefined" was used by default, which is not helpful.
+
+        No new tests, updated existing test.
+
+        * dom/DOMStringList.idl:
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         SubtleCrypto::deriveBits always return NOT_SUPPORTED_ERR for now

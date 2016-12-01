@@ -32,6 +32,7 @@ function checkObjectStore()
     shouldBe("db.objectStoreNames.contains('')", "false");
     shouldBe("db.objectStoreNames.contains('test456')", "false");
     shouldBe("db.objectStoreNames.contains('test123')", "true");
+    shouldThrow("db.objectStoreNames.contains()");
 }
 
 

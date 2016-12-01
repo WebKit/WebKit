@@ -26,6 +26,7 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
+PASS db.objectStoreNames.contains() threw exception TypeError: Not enough arguments.
 db.close()
 request = indexedDB.open(dbname, 2)
 db = event.target.result
@@ -36,6 +37,7 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
+PASS db.objectStoreNames.contains() threw exception TypeError: Not enough arguments.
 db.createObjectStore("test456")
 setVersionTrans = event.target.transaction
 PASS setVersionTrans is non-null.
@@ -46,6 +48,7 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
+PASS db.objectStoreNames.contains() threw exception TypeError: Not enough arguments.
 db.close()
 Now that the connection is closed, transaction creation should fail
 Expecting exception from db.transaction('test123')

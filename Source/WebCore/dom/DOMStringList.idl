@@ -29,7 +29,6 @@
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean contains(optional DOMString string = "undefined");
+    boolean contains(DOMString string);
 };
 
