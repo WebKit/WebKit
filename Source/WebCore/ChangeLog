@@ -1,3 +1,19 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn off text selection
+        https://bugs.webkit.org/show_bug.cgi?id=165261
+
+        Reviewed by Dean Jackson.
+
+        We turn off text selection and force a non-text cursor for all text in media controls.
+
+        Tests: media/modern-media-controls/airplay-placard/airplay-placard-text-section.html
+               media/modern-media-controls/pip-placard/pip-placard-text-section.html
+               media/modern-media-controls/status-label/status-label-text-selection.html
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls):
+
 2016-12-01  Chris Dumez  <cdumez@apple.com>
 
         Parameter to DOMStringList.contains() should be mandatory

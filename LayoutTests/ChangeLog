@@ -1,3 +1,19 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn off text selection
+        https://bugs.webkit.org/show_bug.cgi?id=165261
+
+        Reviewed by Dean Jackson.
+
+        New tests to check that text selection is turned off for StatusLabel, AirplayPlacard and PiPPlacard.
+
+        * media/modern-media-controls/airplay-placard/airplay-placard-text-section-expected.txt: Added.
+        * media/modern-media-controls/airplay-placard/airplay-placard-text-section.html: Added.
+        * media/modern-media-controls/pip-placard/pip-placard-text-section-expected.txt: Added.
+        * media/modern-media-controls/pip-placard/pip-placard-text-section.html: Added.
+        * media/modern-media-controls/status-label/status-label-text-selection-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label-text-selection.html: Added.
+
 2016-12-01  Chris Dumez  <cdumez@apple.com>
 
         Parameter to DOMStringList.contains() should be mandatory

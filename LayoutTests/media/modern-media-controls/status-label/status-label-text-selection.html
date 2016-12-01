@@ -1,0 +1,26 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that text selection is turned off for <code>StatusLabel</code>.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
+mediaControls.showsStartButton = false;
+mediaControls.statusLabel.text = "Hello";
+document.body.appendChild(mediaControls.element);
+
+scheduler.frameDidFire = function()
+{
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).webkitUserSelect", "none");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).cursor", "default");
+    mediaControls.element.remove();
+    debug("");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

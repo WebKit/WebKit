@@ -32,6 +32,8 @@
 .media-controls {
     position: relative;
     font-family: -apple-system;
+    -webkit-user-select: none;
+    cursor: default;
 }
 
 .media-controls > .controls-bar {
