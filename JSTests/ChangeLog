@@ -1,3 +1,13 @@
+2016-11-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Skip failing JSC tests.
+        https://bugs.webkit.org/show_bug.cgi?id=165140
+
+        Reviewed by Mark Lam.
+
+        * ChakraCore.yaml:
+        * microbenchmarks/tan.js:
+
 2016-11-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: update binary format to 0xD version

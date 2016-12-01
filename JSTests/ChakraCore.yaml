@@ -75,8 +75,14 @@
   cmd: runChakra :pass, "NoException", "shift_unshift.baseline", []
 - path: ChakraCore/test/Array/toString.js
   cmd: runChakra :baseline, "NoException", "toString.baseline", []
+  # FIXME: unskip the following test on Windows when INTL is reenabled (https://bugs.webkit.org/show_bug.cgi?id=159084).
 - path: ChakraCore/test/Array/toLocaleString.js
-  cmd: runChakra :baseline, "NoException", "toLocaleString.baseline-jsc", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "toLocaleString.baseline-jsc", []
+      end
 - path: ChakraCore/test/Array/array_slice.js
   cmd: runChakra :baseline, "NoException", "array_slice.baseline", []
 - path: ChakraCore/test/Array/array_slice2.js
@@ -487,8 +493,14 @@
   cmd: runChakra :baseline, "NoException", "dateutc.baseline", []
 - path: ChakraCore/test/Date/MillisecondTruncationCheckAfterCopyConstructor.js
   cmd: runChakra :baseline, "NoException", "MillisecondTruncationCheckAfterCopyConstructor.es6.baseline", []
+  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=165193 is fixed.
 - path: ChakraCore/test/Date/date_cache_bug.js
-  cmd: runChakra :baseline, "NoException", "date_cache_bug.baseline", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "date_cache_bug.baseline", []
+      end
 - path: ChakraCore/test/EH/capture.js
   cmd: runChakra :baseline, "NoException", "capture.baseline", []
 - path: ChakraCore/test/EH/oos2.js
@@ -960,8 +972,14 @@
 - path: ChakraCore/test/Object/toLocaleString2.js
   # Bad test, checks hard coded exceptions.
   cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+  # FIXME: unskip the following test on Windows when INTL is reenabled (https://bugs.webkit.org/show_bug.cgi?id=159084).
 - path: ChakraCore/test/Object/toLocaleStringBasics.js
-  cmd: runChakra :baseline, "NoException", "toLocaleStringBasics.baseline", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "toLocaleStringBasics.baseline", []
+      end
 - path: ChakraCore/test/Object/toString1.js
   cmd: runChakra :baseline, "NoException", "toString3.baseline", []
 - path: ChakraCore/test/Object/toString2.js
