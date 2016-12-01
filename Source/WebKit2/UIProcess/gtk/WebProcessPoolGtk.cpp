@@ -130,4 +130,8 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
     return API::WebsiteDataStore::defaultNetworkCacheDirectory();
 }
 
+void WebProcessPool::platformResolvePathsForSandboxExtensions()
+{
+}
+
 } // namespace WebKit

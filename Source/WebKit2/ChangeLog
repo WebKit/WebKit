@@ -1,5 +1,14 @@
 2016-12-01  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the EFL/Gtk build
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+
+2016-12-01  Tim Horton  <timothy_horton@apple.com>
+
         Every WKWebView initialization spends a few milliseconds hitting the disk
         https://bugs.webkit.org/show_bug.cgi?id=165268
         <rdar://problem/29010113>
