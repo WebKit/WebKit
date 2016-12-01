@@ -1552,7 +1552,7 @@
 		969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07280ED1CE6900F1F681 /* RegisterID.h */; };
 		969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07910ED1D3AE00F1F681 /* CodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		969A07980ED1D3AE00F1F681 /* DirectEvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07920ED1D3AE00F1F681 /* DirectEvalCodeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07930ED1D3AE00F1F681 /* Instruction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; };
@@ -4015,7 +4015,7 @@
 		969A07280ED1CE6900F1F681 /* RegisterID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterID.h; sourceTree = "<group>"; };
 		969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeBlock.cpp; sourceTree = "<group>"; };
 		969A07910ED1D3AE00F1F681 /* CodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlock.h; sourceTree = "<group>"; };
-		969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvalCodeCache.h; sourceTree = "<group>"; };
+		969A07920ED1D3AE00F1F681 /* DirectEvalCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectEvalCodeCache.h; sourceTree = "<group>"; };
 		969A07930ED1D3AE00F1F681 /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruction.h; sourceTree = "<group>"; };
 		969A07940ED1D3AE00F1F681 /* Opcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Opcode.cpp; sourceTree = "<group>"; };
 		969A07950ED1D3AE00F1F681 /* Opcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opcode.h; sourceTree = "<group>"; };
@@ -7201,7 +7201,7 @@
 				E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */,
 				14AD91121DCA97FD0014F9FE /* EvalCodeBlock.cpp */,
 				14AD91061DCA92940014F9FE /* EvalCodeBlock.h */,
-				969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */,
+				969A07920ED1D3AE00F1F681 /* DirectEvalCodeCache.h */,
 				14142E521B796EDD00F4BF4B /* ExecutableInfo.h */,
 				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
 				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
@@ -8197,7 +8197,7 @@
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
 				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
 				996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */,
-				969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */,
+				969A07980ED1D3AE00F1F681 /* DirectEvalCodeCache.h in Headers */,
 				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
 				FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */,
 				0F12DE101979D5FD0006FF4E /* ExceptionFuzz.h in Headers */,

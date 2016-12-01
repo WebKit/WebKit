@@ -37,7 +37,7 @@ namespace JSC {
 
     class SlotVisitor;
 
-    class EvalCodeCache {
+    class DirectEvalCodeCache {
     public:
         class CacheKey {
         public:

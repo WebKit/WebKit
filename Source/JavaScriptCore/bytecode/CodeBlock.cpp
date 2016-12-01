@@ -1797,17 +1797,6 @@ void CodeBlock::dumpBytecode(
     macro(functionExpressions) \
     macro(constantRegisters)
 
-#define FOR_EACH_MEMBER_VECTOR_RARE_DATA(macro) \
-    macro(regexps) \
-    macro(functions) \
-    macro(exceptionHandlers) \
-    macro(switchJumpTables) \
-    macro(stringSwitchJumpTables) \
-    macro(evalCodeCache) \
-    macro(expressionInfo) \
-    macro(lineInfo) \
-    macro(callReturnIndexVector)
-
 template<typename T>
 static size_t sizeInBytes(const Vector<T>& vector)
 {
@@ -2487,7 +2476,7 @@ void CodeBlock::setNumParameters(int newValue)
     m_argumentValueProfiles = RefCountedArray<ValueProfile>(newValue);
 }
 
-void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
+void DirectEvalCodeCache::visitAggregate(SlotVisitor& visitor)
 {
     EvalCacheMap::iterator end = m_cacheMap.end();
     for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
@@ -3132,7 +3121,7 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     visitor.append(&m_ownerExecutable);
     visitor.append(&m_unlinkedCode);
     if (m_rareData)
-        m_rareData->m_evalCodeCache.visitAggregate(visitor);
+        m_rareData->m_directEvalCodeCache.visitAggregate(visitor);
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
         visitor.append(&m_functionExprs[i]);

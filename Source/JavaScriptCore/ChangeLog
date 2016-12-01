@@ -1,5 +1,40 @@
 2016-12-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Renamed EvalCodeCache => DirectEvalCodeCache
+        https://bugs.webkit.org/show_bug.cgi?id=165271
+
+        Reviewed by Saam Barati.
+
+        We only use this cache for DirectEval, not IndirectEval.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::DirectEvalCodeCache::visitAggregate):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::EvalCodeCache::visitAggregate): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::directEvalCodeCache):
+        (JSC::CodeBlock::evalCodeCache): Deleted.
+        * bytecode/DirectEvalCodeCache.h: Copied from Source/JavaScriptCore/bytecode/EvalCodeCache.h.
+        (JSC::EvalCodeCache::CacheKey::CacheKey): Deleted.
+        (JSC::EvalCodeCache::CacheKey::hash): Deleted.
+        (JSC::EvalCodeCache::CacheKey::isEmptyValue): Deleted.
+        (JSC::EvalCodeCache::CacheKey::operator==): Deleted.
+        (JSC::EvalCodeCache::CacheKey::isHashTableDeletedValue): Deleted.
+        (JSC::EvalCodeCache::CacheKey::Hash::hash): Deleted.
+        (JSC::EvalCodeCache::CacheKey::Hash::equal): Deleted.
+        (JSC::EvalCodeCache::tryGet): Deleted.
+        (JSC::EvalCodeCache::set): Deleted.
+        (JSC::EvalCodeCache::isEmpty): Deleted.
+        (JSC::EvalCodeCache::clear): Deleted.
+        * bytecode/EvalCodeCache.h: Removed.
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+
+2016-12-01  Geoffrey Garen  <ggaren@apple.com>
+
         Removed some unnecessary indirection in code generation
         https://bugs.webkit.org/show_bug.cgi?id=165264
 

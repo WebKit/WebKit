@@ -37,9 +37,9 @@
 #include "Heap.h"
 #include "Debugger.h"
 #include "DebuggerCallFrame.h"
+#include "DirectEvalCodeCache.h"
 #include "ErrorInstance.h"
 #include "EvalCodeBlock.h"
-#include "EvalCodeCache.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
@@ -131,7 +131,7 @@ JSValue eval(CallFrame* callFrame)
     else
         evalContextType = EvalContextType::None;
 
-    DirectEvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(programSource, callerCallSiteIndex);
+    DirectEvalExecutable* eval = callerCodeBlock->directEvalCodeCache().tryGet(programSource, callerCallSiteIndex);
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
@@ -154,7 +154,7 @@ JSValue eval(CallFrame* callFrame)
         if (!eval)
             return jsUndefined();
 
-        callerCodeBlock->evalCodeCache().set(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, eval);
+        callerCodeBlock->directEvalCodeCache().set(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, eval);
     }
 
     JSValue thisValue = callerFrame->thisValue();

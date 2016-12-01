@@ -53,7 +53,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(ExecState* exec, const Source
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
 
-    // We don't bother with CodeCache here because direct eval uses a specialized EvalCodeCache.
+    // We don't bother with CodeCache here because direct eval uses a specialized DirectEvalCodeCache.
     UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(
         vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, debuggerMode, error, evalContextType, variablesUnderTDZ);
 

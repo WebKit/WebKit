@@ -42,7 +42,7 @@
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
 #include "DeferredCompilationCallback.h"
-#include "EvalCodeCache.h"
+#include "DirectEvalCodeCache.h"
 #include "EvalExecutable.h"
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
@@ -616,7 +616,7 @@ public:
     StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
-    EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
+    DirectEvalCodeCache& directEvalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_directEvalCodeCache; }
 
     enum ShrinkMode {
         // Shrink prior to generating machine code that may point directly into vectors.
@@ -870,7 +870,7 @@ public:
         Vector<SimpleJumpTable> m_switchJumpTables;
         Vector<StringJumpTable> m_stringSwitchJumpTables;
 
-        EvalCodeCache m_evalCodeCache;
+        DirectEvalCodeCache m_directEvalCodeCache;
     };
 
     void clearExceptionHandlers()
