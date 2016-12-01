@@ -1,3 +1,16 @@
+2016-12-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Tapping an element generates a 'click' event that has 0 as timeStamp
+        https://bugs.webkit.org/show_bug.cgi?id=165270
+        <rdar://problem/29224355>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/events/ios/click-event-timestamp-expected.txt: Added.
+        * fast/events/ios/click-event-timestamp.html: Added.
+
 2016-12-01  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix an invalid shadow DOM test

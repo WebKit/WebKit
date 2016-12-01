@@ -522,7 +522,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
 
     WKBeginObservingContentChanges(true);
 
-    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0, WebCore::ForceAtClick, WebCore::NoTap));
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
     WKStopObservingContentChanges();
@@ -569,8 +569,8 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
 
     bool tapWasHandled = false;
     m_lastInteractionLocation = roundedAdjustedPoint;
-    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0, WebCore::ForceAtClick, syntheticClickType));
-    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0, WebCore::ForceAtClick, syntheticClickType));
+    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), WebCore::ForceAtClick, syntheticClickType));
+    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, currentTime(), WebCore::ForceAtClick, syntheticClickType));
 
     RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
