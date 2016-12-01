@@ -1,7 +1,6 @@
 import Builder from '../Builder.js'
 
 const b = new Builder();
-b.setChecked(false);
 let code = b.Type().End()
     .Function().End()
     .Code();

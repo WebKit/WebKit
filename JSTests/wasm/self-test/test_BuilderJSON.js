@@ -403,7 +403,7 @@ const assertOpThrows = (opFn, message) => {
 })();
 
 (function CheckedOpcodeArgumentsTooMany() {
-    assertOpThrows(f => f.Nop("uh-oh!"), `Not the same: "1" and "0": "nop" expects 0 immediates, got 1`);
+    assertOpThrows(f => f.Nop("uh-oh!"), `Not the same: "1" and "0": "nop" expects exactly 0 immediates, got 1`);
 })();
 
 (function UncheckedOpcodeArgumentsTooMany() {
@@ -411,7 +411,7 @@ const assertOpThrows = (opFn, message) => {
 })();
 
 (function CheckedOpcodeArgumentsNotEnough() {
-    assertOpThrows(f => f.I32Const(), `Not the same: "0" and "1": "i32.const" expects 1 immediates, got 0`);
+    assertOpThrows(f => f.I32Const(), `Not the same: "0" and "1": "i32.const" expects exactly 1 immediate, got 0`);
 })();
 
 (function UncheckedOpcodeArgumentsNotEnough() {

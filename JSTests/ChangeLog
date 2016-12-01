@@ -1,3 +1,37 @@
+2016-11-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly builder: don't throw when checker not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=165219
+
+        Reviewed by Mark Lam.
+
+        We should perform whichever checks we've implemented, and assume the rest are OK until bug #163421 is fixed.
+
+        * wasm/Builder.js:
+        * wasm/README.md:
+        * wasm/function-tests/add-12.js:
+        * wasm/function-tests/br-if-loop-less-than.js:
+        * wasm/function-tests/brTableAsIf.js:
+        * wasm/function-tests/brTableManyValues.js:
+        * wasm/function-tests/brTableWithLoop.js:
+        * wasm/function-tests/dumb-eq-if-then-else.js:
+        * wasm/function-tests/dumb-less-than-fallthrough.js:
+        * wasm/function-tests/dumb-less-than-ite.js:
+        * wasm/function-tests/eqz.js:
+        * wasm/function-tests/factorial.js:
+        * wasm/function-tests/float-sub.js:
+        * wasm/function-tests/i32-load.js:
+        * wasm/function-tests/i32-load8-s.js:
+        * wasm/function-tests/if-then-else-fallthrough.js:
+        * wasm/function-tests/if-then-fallthrough.js:
+        * wasm/function-tests/loop-mult.js:
+        * wasm/function-tests/loop-sum.js:
+        * wasm/function-tests/max.js:
+        * wasm/function-tests/min.js:
+        * wasm/function-tests/ret5.js:
+        * wasm/function-tests/select.js:
+        * wasm/self-test/test_BuilderJSON.js:
+
 2016-11-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: improve Instance

@@ -35,7 +35,6 @@ const builder = new Builder();
 
 // Construct the equivalent of: (module (func "answer" (i32.const 42) (return)))
 builder
-    .setChecked(false) // FIXME remove once checking is better implemented.
     // Declare a Type section, which the builder will auto-fill as functions are defined.
     .Type().End()
     // Declare a Function section, which the builder will auto-fill as functions are defined.
