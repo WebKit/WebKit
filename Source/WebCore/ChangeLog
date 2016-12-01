@@ -1,3 +1,55 @@
+2016-12-01  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Implement IDBObjectStore.getKey().
+        https://bugs.webkit.org/show_bug.cgi?id=165256
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/idbobjectstore-getkey-1-private.html
+               storage/indexeddb/modern/idbobjectstore-getkey-1.html
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::getKey):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::createObjectStoreGet):
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::requestedObjectStoreRecordType):
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+
+        * Modules/indexeddb/IndexedDB.h:
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetRecord):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/shared/IDBGetRecordData.cpp:
+        (WebCore::IDBGetRecordData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        (WebCore::IDBGetRecordData::encode):
+        (WebCore::IDBGetRecordData::decode):
+
 2016-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Misc. cleanup in Modules/fetch

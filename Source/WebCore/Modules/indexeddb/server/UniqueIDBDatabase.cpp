@@ -1051,7 +1051,7 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
     if (uint64_t indexIdentifier = requestData.indexIdentifier())
         postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetIndexRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), indexIdentifier, requestData.indexRecordType(), getRecordData.keyRangeData));
     else
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), getRecordData.keyRangeData));
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), getRecordData.keyRangeData, getRecordData.type));
 }
 
 void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData, GetAllResultsCallback callback)
@@ -1066,7 +1066,7 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetAllRecords, callbackID, requestData.transactionIdentifier(), getAllRecordsData));
 }
 
-void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData)
+void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData, IDBGetRecordDataType type)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performGetRecord");
@@ -1074,7 +1074,7 @@ void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBR
     ASSERT(m_backingStore);
 
     IDBGetResult result;
-    IDBError error = m_backingStore->getRecord(transactionIdentifier, objectStoreIdentifier, keyRangeData, result);
+    IDBError error = m_backingStore->getRecord(transactionIdentifier, objectStoreIdentifier, keyRangeData, type, result);
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetRecord, callbackIdentifier, error, result));
 }

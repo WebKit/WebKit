@@ -1,3 +1,16 @@
+2016-12-01  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Implement IDBObjectStore.getKey().
+        https://bugs.webkit.org/show_bug.cgi?id=165256
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/idbobjectstore-getkey-1-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getkey-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbobjectstore-getkey-1-private.html: Added.
+        * storage/indexeddb/modern/idbobjectstore-getkey-1.html: Added.
+        * storage/indexeddb/modern/resources/idbobjectstore-getkey-1.js: Added.
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn off text selection

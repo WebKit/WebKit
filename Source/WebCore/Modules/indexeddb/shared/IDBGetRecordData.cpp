@@ -34,7 +34,7 @@ namespace WebCore {
 
 IDBGetRecordData IDBGetRecordData::isolatedCopy() const
 {
-    return { keyRangeData.isolatedCopy() };
+    return { keyRangeData.isolatedCopy(), type };
 }
 
 } // namespace WebCore

@@ -68,6 +68,11 @@ Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBIndex& in
     return adoptRef(*new IDBRequest(context, index, transaction));
 }
 
+Ref<IDBRequest> IDBRequest::createObjectStoreGet(ScriptExecutionContext& context, IDBObjectStore& objectStore, IndexedDB::ObjectStoreRecordType type, IDBTransaction& transaction)
+{
+    return adoptRef(*new IDBRequest(context, objectStore, type, transaction));
+}
+
 Ref<IDBRequest> IDBRequest::createIndexGet(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
 {
     return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
@@ -110,6 +115,17 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
     , m_indexSource(&index)
+    , m_connectionProxy(transaction.database().connectionProxy())
+{
+    suspendIfNeeded();
+}
+
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IndexedDB::ObjectStoreRecordType type, IDBTransaction& transaction)
+    : IDBActiveDOMObject(&context)
+    , m_transaction(&transaction)
+    , m_resourceIdentifier(transaction.connectionProxy())
+    , m_objectStoreSource(&objectStore)
+    , m_requestedObjectStoreRecordType(type)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
     suspendIfNeeded();
@@ -196,6 +212,13 @@ uint64_t IDBRequest::sourceIndexIdentifier() const
     if (!m_indexSource)
         return 0;
     return m_indexSource->info().identifier();
+}
+
+IndexedDB::ObjectStoreRecordType IDBRequest::requestedObjectStoreRecordType() const
+{
+    ASSERT(currentThread() == originThreadID());
+
+    return m_requestedObjectStoreRecordType;
 }
 
 IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const

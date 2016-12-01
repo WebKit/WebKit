@@ -952,7 +952,9 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& state, IDBObjectStor
 
     ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
-    auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
+    IndexedDB::ObjectStoreRecordType type = getRecordData.type == IDBGetRecordDataType::KeyAndValue ? IndexedDB::ObjectStoreRecordType::ValueOnly : IndexedDB::ObjectStoreRecordType::KeyOnly;
+
+    auto request = IDBRequest::createObjectStoreGet(*scriptExecutionContext(), objectStore, type, *this);
     addRequest(request.get());
 
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData));
@@ -988,7 +990,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& state, IDBIndex& i
     auto request = IDBRequest::createIndexGet(*scriptExecutionContext(), index, type, *this);
     addRequest(request.get());
 
-    IDBGetRecordData getRecordData = { range };
+    IDBGetRecordData getRecordData = { range, IDBGetRecordDataType::KeyAndValue };
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData));
 
     return request;
@@ -1014,9 +1016,13 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
 
     ASSERT(resultData.type() == IDBResultType::GetRecordSuccess);
 
+    bool useResultKey = request.sourceIndexIdentifier() && request.requestedIndexRecordType() == IndexedDB::IndexRecordType::Key;
+    if (!useResultKey)
+        useResultKey = request.requestedObjectStoreRecordType() == IndexedDB::ObjectStoreRecordType::KeyOnly;
+
     const IDBGetResult& result = resultData.getResult();
 
-    if (request.sourceIndexIdentifier() && request.requestedIndexRecordType() == IndexedDB::IndexRecordType::Key) {
+    if (useResultKey) {
         if (!result.keyData().isNull())
             request.setResult(result.keyData());
         else

@@ -60,6 +60,7 @@ public:
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    static Ref<IDBRequest> createObjectStoreGet(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     static Ref<IDBRequest> createIndexGet(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
@@ -80,6 +81,7 @@ public:
 
     uint64_t sourceObjectStoreIdentifier() const;
     uint64_t sourceIndexIdentifier() const;
+    IndexedDB::ObjectStoreRecordType requestedObjectStoreRecordType() const;
     IndexedDB::IndexRecordType requestedIndexRecordType() const;
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -132,6 +134,7 @@ private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     void clearResult();
@@ -168,7 +171,8 @@ private:
     RefPtr<IDBCursor> m_cursorSource;
 
     bool m_hasPendingActivity { true };
-    IndexedDB::IndexRecordType m_requestedIndexRecordType;
+    IndexedDB::ObjectStoreRecordType m_requestedObjectStoreRecordType { IndexedDB::ObjectStoreRecordType::ValueOnly };
+    IndexedDB::IndexRecordType m_requestedIndexRecordType { IndexedDB::IndexRecordType::Key };
 
     RefPtr<IDBCursor> m_pendingCursor;
 

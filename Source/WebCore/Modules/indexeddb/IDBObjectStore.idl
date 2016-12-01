@@ -42,6 +42,8 @@
     [CallWith=ScriptState, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete(any key);
     [CallWith=ScriptState, MayThrowException] IDBRequest get(IDBKeyRange? key);
     [CallWith=ScriptState, MayThrowException] IDBRequest get(any key);
+    [CallWith=ScriptState, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
+    [CallWith=ScriptState, MayThrowException] IDBRequest getKey(any key);
     [CallWith=ScriptState, MayThrowException] IDBRequest clear();
     [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
     [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional DOMString direction = "next");

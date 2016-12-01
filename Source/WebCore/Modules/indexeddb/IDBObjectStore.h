@@ -77,6 +77,8 @@ public:
     ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
     ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&, IDBKeyRange*);

@@ -30,6 +30,7 @@
 
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
+#include "IDBGetRecordData.h"
 #include "IDBGetResult.h"
 #include "IDBIndexInfo.h"
 #include "IDBIterateCursorData.h"
@@ -350,7 +351,7 @@ IDBError MemoryIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     return objectStore->addRecord(*transaction, keyData, value);
 }
 
-IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IDBGetResult& outValue)
+IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IDBGetRecordDataType type, IDBGetResult& outValue)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::getRecord");
 
@@ -363,7 +364,15 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!objectStore)
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No backing store object store found") };
 
-    outValue = objectStore->valueForKeyRange(range);
+    switch (type) {
+    case IDBGetRecordDataType::KeyAndValue:
+        outValue = objectStore->valueForKeyRange(range);
+        break;
+    case IDBGetRecordDataType::KeyOnly:
+        outValue = objectStore->lowestKeyWithRecordInRange(range);
+        break;
+    }
+
     return { };
 }
 

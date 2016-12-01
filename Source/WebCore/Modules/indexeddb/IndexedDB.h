@@ -74,6 +74,11 @@ enum class IndexRecordType {
     Value,
 };
 
+enum class ObjectStoreRecordType {
+    ValueOnly,
+    KeyOnly,
+};
+
 // In order of the least to the highest precedent in terms of sort order.
 enum KeyType {
     Max = -1,

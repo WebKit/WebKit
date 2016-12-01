@@ -33,6 +33,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"
+#include "IDBGetRecordData.h"
 #include "IDBGetResult.h"
 #include "IDBIterateCursorData.h"
 #include "IDBKeyData.h"
@@ -1785,7 +1786,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
     return { };
 }
 
-IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyRangeData& keyRange, IDBGetResult& resultValue)
+IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyRangeData& keyRange, IDBGetRecordDataType type, IDBGetResult& resultValue)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getRecord - key range %s, object store %" PRIu64, keyRange.loggingString().utf8().data(), objectStoreID);
 
@@ -1824,17 +1825,39 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         static NeverDestroyed<ASCIILiteral> lowerClosedUpperOpen("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
         static NeverDestroyed<ASCIILiteral> lowerClosedUpperClosed("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
 
+        static NeverDestroyed<ASCIILiteral> lowerOpenUpperOpenKeyOnly("SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<ASCIILiteral> lowerOpenUpperClosedKeyOnly("SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<ASCIILiteral> lowerClosedUpperOpenKeyOnly("SELECT key FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<ASCIILiteral> lowerClosedUpperClosedKeyOnly("SELECT key FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
+
         SQLiteStatement* sql = nullptr;
-        if (keyRange.lowerOpen) {
-            if (keyRange.upperOpen)
-                sql = cachedStatement(SQL::GetValueRecordsLowerOpenUpperOpen, lowerOpenUpperOpen.get());
-            else
-                sql = cachedStatement(SQL::GetValueRecordsLowerOpenUpperClosed, lowerOpenUpperClosed.get());
-        } else {
-            if (keyRange.upperOpen)
-                sql = cachedStatement(SQL::GetValueRecordsLowerClosedUpperOpen, lowerClosedUpperOpen.get());
-            else
-                sql = cachedStatement(SQL::GetValueRecordsLowerClosedUpperClosed, lowerClosedUpperClosed.get());
+
+        switch (type) {
+        case IDBGetRecordDataType::KeyAndValue:
+            if (keyRange.lowerOpen) {
+                if (keyRange.upperOpen)
+                    sql = cachedStatement(SQL::GetValueRecordsLowerOpenUpperOpen, lowerOpenUpperOpen.get());
+                else
+                    sql = cachedStatement(SQL::GetValueRecordsLowerOpenUpperClosed, lowerOpenUpperClosed.get());
+            } else {
+                if (keyRange.upperOpen)
+                    sql = cachedStatement(SQL::GetValueRecordsLowerClosedUpperOpen, lowerClosedUpperOpen.get());
+                else
+                    sql = cachedStatement(SQL::GetValueRecordsLowerClosedUpperClosed, lowerClosedUpperClosed.get());
+            }
+            break;
+        case IDBGetRecordDataType::KeyOnly:
+            if (keyRange.lowerOpen) {
+                if (keyRange.upperOpen)
+                    sql = cachedStatement(SQL::GetKeyRecordsLowerOpenUpperOpen, lowerOpenUpperOpenKeyOnly.get());
+                else
+                    sql = cachedStatement(SQL::GetKeyRecordsLowerOpenUpperClosed, lowerOpenUpperClosedKeyOnly.get());
+            } else {
+                if (keyRange.upperOpen)
+                    sql = cachedStatement(SQL::GetKeyRecordsLowerClosedUpperOpen, lowerClosedUpperOpenKeyOnly.get());
+                else
+                    sql = cachedStatement(SQL::GetKeyRecordsLowerClosedUpperClosed, lowerClosedUpperClosedKeyOnly.get());
+            }
         }
 
         if (!sql
@@ -1861,7 +1884,25 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         sql->getColumnBlobAsVector(0, buffer);
         resultBuffer = ThreadSafeDataBuffer::adoptVector(buffer);
 
-        recordID = sql->getColumnInt64(1);
+        if (type == IDBGetRecordDataType::KeyAndValue)
+            recordID = sql->getColumnInt64(1);
+    }
+
+    if (type == IDBGetRecordDataType::KeyOnly) {
+        auto* vector = resultBuffer.data();
+        if (!vector) {
+            LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error extracting key data from database executing IDBObjectStore.getKey()") };
+        }
+
+        IDBKeyData keyData;
+        if (!deserializeIDBKeyData(vector->data(), vector->size(), keyData)) {
+            LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error extracting key data from database executing IDBObjectStore.getKey()") };
+        }
+
+        resultValue = { keyData };
+        return { };
     }
 
     ASSERT(recordID);

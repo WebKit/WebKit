@@ -57,6 +57,8 @@ class IDBGetAllResult;
 class IDBRequestData;
 class IDBTransactionInfo;
 
+enum class IDBGetRecordDataType;
+
 namespace IndexedDB {
 enum class IndexRecordType;
 }
@@ -156,7 +158,7 @@ private:
     void performDeleteIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier);
     void performRenameIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
     void performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode);
-    void performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&);
+    void performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType);
     void performGetAllRecords(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&);
     void performGetIndexRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
     void performGetCount(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&);
