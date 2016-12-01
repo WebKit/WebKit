@@ -1,5 +1,20 @@
 2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r208745. rdar://problem/29277336
+
+    2016-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct handling of changing input type
+            https://bugs.webkit.org/show_bug.cgi?id=164759
+            <rdar://problem/29211174>
+
+            Reviewed by Darin Adler.
+
+            * fast/forms/search-cancel-button-change-input-expected.txt: Added.
+            * fast/forms/search-cancel-button-change-input.html: Added.
+
+2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r208825. rdar://problem/29277338
 
     2016-11-16  Brent Fulgham  <bfulgham@apple.com>
