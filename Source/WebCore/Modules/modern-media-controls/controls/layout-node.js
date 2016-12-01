@@ -37,6 +37,9 @@ class LayoutNode
 
     set x(x)
     {
+        if (x === this._x)
+            return;
+
         this._x = x;
         this.markDirtyProperty("x");
     }
@@ -48,6 +51,9 @@ class LayoutNode
 
     set y(y)
     {
+        if (y === this._y)
+            return;
+
         this._y = y;
         this.markDirtyProperty("y");
     }
@@ -59,6 +65,9 @@ class LayoutNode
 
     set width(width)
     {
+        if (width === this._width)
+            return;
+
         this._width = width;
         this.markDirtyProperty("width");
     }
@@ -70,6 +79,9 @@ class LayoutNode
 
     set height(height)
     {
+        if (height === this._height)
+            return;
+
         this._height = height;
         this.markDirtyProperty("height");
     }
@@ -81,6 +93,9 @@ class LayoutNode
 
     set visible(flag)
     {
+        if (flag === this._visible)
+            return;
+
         this._visible = flag;
         this.markDirtyProperty("visible");
     }
@@ -265,7 +280,7 @@ function performScheduledLayout()
 {
     dirtyNodes.forEach(node => {
         node.needsLayout = false;
-        node.layout()
+        node.layout();
     });
     dirtyNodes.clear();
     scheduler.unscheduleLayout(performScheduledLayout);

@@ -16,6 +16,10 @@ node.y = 20
 Layout was performed
 PASS node.y is 20
 PASS node.element.style.top is "20px"
+
+node.y = 20
+PASS scheduler.hasScheduledLayoutCallbacks is false
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

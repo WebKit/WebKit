@@ -1,3 +1,24 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] LayoutNode: only mark properties as dirty if different than current value
+        https://bugs.webkit.org/show_bug.cgi?id=165236
+
+        Reviewed by Simon Fraser.
+
+        Update LayoutNode property tests to check that setting a given property to the
+        same value doesn't schedule an update.
+
+        * media/modern-media-controls/layout-node/height-expected.txt:
+        * media/modern-media-controls/layout-node/height.html:
+        * media/modern-media-controls/layout-node/visible-expected.txt:
+        * media/modern-media-controls/layout-node/visible.html:
+        * media/modern-media-controls/layout-node/width-expected.txt:
+        * media/modern-media-controls/layout-node/width.html:
+        * media/modern-media-controls/layout-node/x-expected.txt:
+        * media/modern-media-controls/layout-node/x.html:
+        * media/modern-media-controls/layout-node/y-expected.txt:
+        * media/modern-media-controls/layout-node/y.html:
+
 2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         SubtleCrypto::deriveKey always return NOT_SUPPORTED_ERR for now

@@ -1,3 +1,22 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] LayoutNode: only mark properties as dirty if different than current value
+        https://bugs.webkit.org/show_bug.cgi?id=165236
+
+        Reviewed by Simon Fraser.
+
+        Check that the new value is different than the current value before marking the property as dirty.
+
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.set x):
+        (LayoutNode.prototype.set y):
+        (LayoutNode.prototype.set width):
+        (LayoutNode.prototype.set height):
+        (LayoutNode.prototype.set visible):
+        (performScheduledLayout):
+        * Modules/modern-media-controls/controls/scheduler.js:
+        (const.scheduler.new.prototype.get hasScheduledLayoutCallbacks):
+
 2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         SubtleCrypto::deriveKey always return NOT_SUPPORTED_ERR for now

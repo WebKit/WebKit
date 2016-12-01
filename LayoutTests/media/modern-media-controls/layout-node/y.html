@@ -30,6 +30,13 @@ scheduler.frameDidFire = function()
     debug("Layout was performed");
     shouldBe("node.y", "20");
     shouldBeEqualToString("node.element.style.top", "20px");
+
+    debug("");
+    debug("node.y = 20");
+    node.y = 20;
+    shouldBeFalse("scheduler.hasScheduledLayoutCallbacks");
+    debug("");
+
     finishJSTest();
 };
 

@@ -16,6 +16,10 @@ node.width = 20
 Layout was performed
 PASS node.width is 20
 PASS node.element.style.width is "20px"
+
+node.width = 20
+PASS scheduler.hasScheduledLayoutCallbacks is false
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

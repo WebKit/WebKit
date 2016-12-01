@@ -36,6 +36,13 @@ scheduler.frameDidFire = function()
     case 2:
         shouldBe("node.visible", "true");
         shouldBeEqualToString("node.element.style.display", "inherit");
+
+        debug("");
+        debug("node.visible = true");
+        node.visible = true;
+        shouldBeFalse("scheduler.hasScheduledLayoutCallbacks");
+        debug("");
+
         finishJSTest();
         break;
     }

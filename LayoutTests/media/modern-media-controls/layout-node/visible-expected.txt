@@ -20,6 +20,10 @@ node.visible = true
 Layout was performed
 PASS node.visible is true
 PASS node.element.style.display is "inherit"
+
+node.visible = true
+PASS scheduler.hasScheduledLayoutCallbacks is false
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
