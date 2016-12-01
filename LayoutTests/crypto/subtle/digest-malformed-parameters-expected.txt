@@ -1,0 +1,11 @@
+Test digest with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.digest() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.digest(1) rejected promise  with TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

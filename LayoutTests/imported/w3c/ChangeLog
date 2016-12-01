@@ -1,3 +1,14 @@
+2016-11-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::digest to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164742
+        <rdar://problem/29258037>
+
+        Reviewed by Darin Adler.
+
+        * WebCryptoAPI/digest/test_digest-expected.txt:
+        * WebCryptoAPI/idlharness-expected.txt:
+
 2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::wrapKey to match the latest spec

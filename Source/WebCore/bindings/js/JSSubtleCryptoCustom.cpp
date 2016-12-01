@@ -645,6 +645,38 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
     algorithm->verify(key.releaseNonNull(), WTFMove(signature), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
+static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 2)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::Digest);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto data = toVector(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto algorithm = createAlgorithm(state, params->identifier);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& digest) mutable {
+        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), digest.data(), digest.size());
+        return;
+    };
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
+        rejectWithException(WTFMove(capturedPromise), ec);
+    };
+
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    ASSERT(subtle);
+    algorithm->digest(WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+}
+
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -908,6 +940,11 @@ JSValue JSSubtleCrypto::sign(ExecState& state)
 JSValue JSSubtleCrypto::verify(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionVerifyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::digest(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionDigestPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::generateKey(ExecState& state)

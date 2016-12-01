@@ -1,3 +1,39 @@
+2016-11-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::digest to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164742
+        <rdar://problem/29258037>
+
+        Reviewed by Darin Adler.
+
+        * crypto/subtle/digest-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/digest-malformed-parameters.html: Added.
+        * crypto/subtle/sha1-digest-expected.txt: Added.
+        * crypto/subtle/sha1-digest.html: Added.
+        * crypto/subtle/sha224-digest-expected.txt: Added.
+        * crypto/subtle/sha224-digest.html: Added.
+        * crypto/subtle/sha256-digest-expected.txt: Added.
+        * crypto/subtle/sha256-digest.html: Added.
+        * crypto/subtle/sha384-digest-expected.txt: Added.
+        * crypto/subtle/sha384-digest.html: Added.
+        * crypto/subtle/sha512-digest-expected.txt: Added.
+        * crypto/subtle/sha512-digest.html: Added.
+        * crypto/workers/subtle/resources/sha1-digest.js: Added.
+        * crypto/workers/subtle/resources/sha224-digest.js: Added.
+        * crypto/workers/subtle/resources/sha256-digest.js: Added.
+        * crypto/workers/subtle/resources/sha384-digest.js: Added.
+        * crypto/workers/subtle/resources/sha512-digest.js: Added.
+        * crypto/workers/subtle/sha1-digest-expected.txt: Added.
+        * crypto/workers/subtle/sha1-digest.html: Added.
+        * crypto/workers/subtle/sha224-digest-expected.txt: Added.
+        * crypto/workers/subtle/sha224-digest.html: Added.
+        * crypto/workers/subtle/sha256-digest-expected.txt: Added.
+        * crypto/workers/subtle/sha256-digest.html: Added.
+        * crypto/workers/subtle/sha384-digest-expected.txt: Added.
+        * crypto/workers/subtle/sha384-digest.html: Added.
+        * crypto/workers/subtle/sha512-digest-expected.txt: Added.
+        * crypto/workers/subtle/sha512-digest.html: Added.
+
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: <audio> controls

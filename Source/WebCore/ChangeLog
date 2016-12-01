@@ -1,3 +1,53 @@
+2016-11-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::digest to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164742
+        <rdar://problem/29258037>
+
+        Reviewed by Darin Adler.
+
+        This patch updates the SubtleCrypto::digest method to match the latest spec:
+        https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-digest.
+        It also refers to the latest Editor's Draft to a certain degree:
+        https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-digest.
+        Currently supported digest algorithms are SHA-1, SHA-224, SHA-256, SHA-384,
+        and SHA-512.
+
+        Tests: crypto/subtle/digest-malformed-parameters.html
+               crypto/subtle/sha1-digest.html
+               crypto/subtle/sha224-digest.html
+               crypto/subtle/sha256-digest.html
+               crypto/subtle/sha384-digest.html
+               crypto/subtle/sha512-digest.html
+               crypto/workers/subtle/sha1-digest.html
+               crypto/workers/subtle/sha224-digest.html
+               crypto/workers/subtle/sha256-digest.html
+               crypto/workers/subtle/sha384-digest.html
+               crypto/workers/subtle/sha512-digest.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::jsSubtleCryptoFunctionDigestPromise):
+        (WebCore::JSSubtleCrypto::digest):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::digest):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA1.h:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA224.h:
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA256.h:
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA384.h:
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA512.h:
+
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] UI Library: <audio> controls

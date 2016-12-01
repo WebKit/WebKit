@@ -52,6 +52,11 @@ void CryptoAlgorithm::verify(Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
+void CryptoAlgorithm::digest(Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+{
+    exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
 void CryptoAlgorithm::generateKey(const CryptoAlgorithmParameters&, bool, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);

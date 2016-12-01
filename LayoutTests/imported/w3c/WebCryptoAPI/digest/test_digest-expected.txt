@@ -1,84 +1,84 @@
 encrypt Tests for digest method
 
 
-FAIL SHA-1 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-1 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-1 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-1 with empty source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-256 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-256 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-256 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-256 with empty source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-384 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-384 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-384 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-384 with empty source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-512 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-512 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-512 with empty source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-512 with empty source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-1 with short source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-1 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-1 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-1 with short source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-256 with short source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-256 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-256 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-256 with short source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-384 with short source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-384 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-384 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-384 with short source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-512 with short source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-512 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-512 with short source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-512 with short source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-1 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-1 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-1 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-1 with medium source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-256 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-256 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-256 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-256 with medium source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-384 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-384 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-384 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-384 with medium source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-512 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-512 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-512 with medium source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-512 with medium source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-1 with long source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-1 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-1 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-1 with long source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-256 with long source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-256 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-256 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-256 with long source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-384 with long source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-384 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-384 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-384 with long source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL SHA-512 with long source data subtle.digest is not a function. (In 'subtle.digest({name: upCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL sha-512 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL Sha-512 with long source data subtle.digest is not a function. (In 'subtle.digest({name: mixedCase}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL SHA-512 with long source data and altered buffer after call subtle.digest is not a function. (In 'subtle.digest({name: upCase}, copiedBuffer)', 'subtle.digest' is undefined)
-FAIL AES-GCM with empty subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL RSA-OAEP with empty subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL PBKDF2 with empty subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-KW with empty subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-GCM with short subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL RSA-OAEP with short subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL PBKDF2 with short subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-KW with short subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-GCM with medium subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL RSA-OAEP with medium subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL PBKDF2 with medium subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-KW with medium subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-GCM with long subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL RSA-OAEP with long subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL PBKDF2 with long subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
-FAIL AES-KW with long subtle.digest is not a function. (In 'subtle.digest({name: badName}, sourceData[size])', 'subtle.digest' is undefined)
+PASS SHA-1 with empty source data 
+PASS sha-1 with empty source data 
+PASS Sha-1 with empty source data 
+PASS SHA-1 with empty source data and altered buffer after call 
+PASS SHA-256 with empty source data 
+PASS sha-256 with empty source data 
+PASS Sha-256 with empty source data 
+PASS SHA-256 with empty source data and altered buffer after call 
+PASS SHA-384 with empty source data 
+PASS sha-384 with empty source data 
+PASS Sha-384 with empty source data 
+PASS SHA-384 with empty source data and altered buffer after call 
+PASS SHA-512 with empty source data 
+PASS sha-512 with empty source data 
+PASS Sha-512 with empty source data 
+PASS SHA-512 with empty source data and altered buffer after call 
+PASS SHA-1 with short source data 
+PASS sha-1 with short source data 
+PASS Sha-1 with short source data 
+PASS SHA-1 with short source data and altered buffer after call 
+PASS SHA-256 with short source data 
+PASS sha-256 with short source data 
+PASS Sha-256 with short source data 
+PASS SHA-256 with short source data and altered buffer after call 
+PASS SHA-384 with short source data 
+PASS sha-384 with short source data 
+PASS Sha-384 with short source data 
+PASS SHA-384 with short source data and altered buffer after call 
+PASS SHA-512 with short source data 
+PASS sha-512 with short source data 
+PASS Sha-512 with short source data 
+PASS SHA-512 with short source data and altered buffer after call 
+PASS SHA-1 with medium source data 
+PASS sha-1 with medium source data 
+PASS Sha-1 with medium source data 
+PASS SHA-1 with medium source data and altered buffer after call 
+PASS SHA-256 with medium source data 
+PASS sha-256 with medium source data 
+PASS Sha-256 with medium source data 
+PASS SHA-256 with medium source data and altered buffer after call 
+PASS SHA-384 with medium source data 
+PASS sha-384 with medium source data 
+PASS Sha-384 with medium source data 
+PASS SHA-384 with medium source data and altered buffer after call 
+PASS SHA-512 with medium source data 
+PASS sha-512 with medium source data 
+PASS Sha-512 with medium source data 
+PASS SHA-512 with medium source data and altered buffer after call 
+PASS SHA-1 with long source data 
+PASS sha-1 with long source data 
+PASS Sha-1 with long source data 
+PASS SHA-1 with long source data and altered buffer after call 
+PASS SHA-256 with long source data 
+PASS sha-256 with long source data 
+PASS Sha-256 with long source data 
+PASS SHA-256 with long source data and altered buffer after call 
+PASS SHA-384 with long source data 
+PASS sha-384 with long source data 
+PASS Sha-384 with long source data 
+PASS SHA-384 with long source data and altered buffer after call 
+PASS SHA-512 with long source data 
+PASS sha-512 with long source data 
+PASS Sha-512 with long source data 
+PASS SHA-512 with long source data and altered buffer after call 
+PASS AES-GCM with empty 
+PASS RSA-OAEP with empty 
+PASS PBKDF2 with empty 
+PASS AES-KW with empty 
+PASS AES-GCM with short 
+PASS RSA-OAEP with short 
+PASS PBKDF2 with short 
+PASS AES-KW with short 
+PASS AES-GCM with medium 
+PASS RSA-OAEP with medium 
+PASS PBKDF2 with medium 
+PASS AES-KW with medium 
+PASS AES-GCM with long 
+PASS RSA-OAEP with long 
+PASS PBKDF2 with long 
+PASS AES-KW with long 
 

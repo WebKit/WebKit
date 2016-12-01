@@ -29,6 +29,8 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoDigest.h"
+#include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -40,6 +42,25 @@ Ref<CryptoAlgorithm> CryptoAlgorithmSHA512::create()
 CryptoAlgorithmIdentifier CryptoAlgorithmSHA512::identifier() const
 {
     return s_identifier;
+}
+
+void CryptoAlgorithmSHA512::digest(Vector<uint8_t>&& message, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    auto digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_512);
+    if (!digest) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    context.ref();
+    workQueue.dispatch([digest = WTFMove(digest), message = WTFMove(message), callback = WTFMove(callback), &context]() mutable {
+        digest->addBytes(message.data(), message.size());
+        auto result = digest->computeHash();
+        context.postTask([callback = WTFMove(callback), result = WTFMove(result)](ScriptExecutionContext& context) {
+            callback(result);
+            context.deref();
+        });
+    });
 }
 
 ExceptionOr<void> CryptoAlgorithmSHA512::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
