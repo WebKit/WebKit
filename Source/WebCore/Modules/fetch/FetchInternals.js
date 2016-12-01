@@ -71,7 +71,7 @@ function consumeStream(response, type)
             return @Promise.prototype.@then.@call(@readableStreamDefaultReaderRead(reader), pull);
         }
         return @Promise.prototype.@then.@call(@readableStreamDefaultReaderRead(reader), pull);
-    } catch(e) {
+    } catch (e) {
         return @Promise.@reject(e);
     }
 }

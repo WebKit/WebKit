@@ -31,7 +31,7 @@ function fetch(input, init)
 
     try {
         return @fetchRequest(new @Request(input, init));
-    } catch(e) {
+    } catch (e) {
         return @Promise.@reject(e);
     }
 }

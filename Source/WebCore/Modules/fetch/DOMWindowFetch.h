@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class DOMWindow;
-class Dictionary;
 class FetchRequest;
 
 class DOMWindowFetch {

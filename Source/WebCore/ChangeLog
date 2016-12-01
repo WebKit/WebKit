@@ -1,3 +1,30 @@
+2016-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Misc. cleanup in Modules/fetch
+        https://bugs.webkit.org/show_bug.cgi?id=165240
+
+        Reviewed by Darin Adler.
+
+        * Modules/fetch/DOMWindowFetch.h:
+        * Modules/fetch/FetchBody.cpp:
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchInternals.js:
+        (consumeStream):
+        * Modules/fetch/FetchLoader.cpp:
+        * Modules/fetch/FetchResponse.h:
+        Remove unnecessary includes and forward declarations.
+
+        * Modules/fetch/DOMWindowFetch.js:
+        (fetch):
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        * Modules/fetch/WorkerGlobalScopeFetch.js:
+        (fetch):
+        Improve style.
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn off text selection

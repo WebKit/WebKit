@@ -46,9 +46,7 @@ class JSValue;
 
 namespace WebCore {
 
-class DOMFormData;
 class FetchBodyOwner;
-class FetchHeaders;
 class FetchResponseSource;
 class ScriptExecutionContext;
 

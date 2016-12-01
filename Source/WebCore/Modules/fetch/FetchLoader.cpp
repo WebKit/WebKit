@@ -43,7 +43,6 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
-#include "ThreadableLoader.h"
 
 namespace WebCore {
 

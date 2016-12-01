@@ -41,7 +41,6 @@ class JSValue;
 
 namespace WebCore {
 
-class Dictionary;
 class FetchRequest;
 class ReadableStreamSource;
 

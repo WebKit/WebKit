@@ -32,7 +32,6 @@
 #if ENABLE(FETCH_API)
 
 #include "JSBlob.h"
-#include "JSDOMPromise.h"
 #include "TextResourceDecoder.h"
 
 namespace WebCore {

@@ -46,7 +46,7 @@ function initializeFetchResponse(body, init)
         @fillFetchHeaders(this.headers, init.headers);
 
     if (body !== @undefined && body !== null) {
-        if (status == 101 || status == 204 || status == 205 || status == 304)
+        if (status === 101 || status === 204 || status === 205 || status === 304)
             @throwTypeError("Response cannot have a body with the given status");
 
         // FIXME: Use @isReadableStream once it is no longer guarded by READABLE_STREAM_API guard.
