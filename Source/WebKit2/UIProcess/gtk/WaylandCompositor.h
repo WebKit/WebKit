@@ -97,6 +97,7 @@ public:
         WeakPtr<Buffer> m_pendingBuffer;
         unsigned m_texture;
         EGLImageKHR m_image;
+        WebCore::IntSize m_imageSize;
         Vector<wl_resource*> m_frameCallbackList;
         WebPageProxy* m_webPage { nullptr };
     };
