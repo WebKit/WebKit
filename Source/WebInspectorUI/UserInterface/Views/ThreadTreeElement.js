@@ -66,6 +66,33 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
             activeCallFrameTreeElement.isActiveCallFrame = true;
         }
 
+        let currentStackTrace = targetData.asyncStackTrace;
+        while (currentStackTrace) {
+            console.assert(currentStackTrace.callFrames.length, "StackTrace should have non-empty call frames array.");
+            if (!currentStackTrace.callFrames.length)
+                break;
+
+            let boundaryCallFrame;
+            if (currentStackTrace.topCallFrameIsBoundary) {
+                boundaryCallFrame = currentStackTrace.callFrames[0];
+                console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
+            } else {
+                // Create a generic native CallFrame for the asynchronous boundary.
+                const functionName = WebInspector.UIString("(async)");
+                const nativeCode = true;
+                boundaryCallFrame = new WebInspector.CallFrame(null, null, null, functionName, null, null, nativeCode);
+            }
+
+            const isAsyncBoundaryCallFrame = true;
+            this.appendChild(new WebInspector.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
+
+            let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
+            for (let i = startIndex; i < currentStackTrace.callFrames.length; ++i)
+                this.appendChild(new WebInspector.CallFrameTreeElement(currentStackTrace.callFrames[i]));
+
+            currentStackTrace = currentStackTrace.parentStackTrace;
+        }
+
         this.expand();
     }
 

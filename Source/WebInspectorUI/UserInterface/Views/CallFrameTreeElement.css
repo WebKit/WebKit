@@ -47,7 +47,10 @@
 .tree-outline .item.call-frame.async-boundary {
     cursor: default;
     color: var(--text-color-gray-medium);
-    padding-left: 0;
+}
+
+.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
+    padding-left: 5px;
 }
 
 .tree-outline .item.call-frame.async-boundary .icon {
@@ -72,6 +75,11 @@
 }
 
 .tree-outline .item.call-frame.async-boundary::before {
+    width: 30px;
+    margin-left: -5px;
+    margin-right: 1px;
+}
+
+.tree-outline.single-thread .item.call-frame.async-boundary::before {
     width: 20px;
-    margin-right: 2px;
 }

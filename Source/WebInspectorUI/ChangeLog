@@ -1,3 +1,48 @@
+2016-12-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Show async stack traces for workers
+        https://bugs.webkit.org/show_bug.cgi?id=165235
+        <rdar://problem/29450172>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline > .children > .item.call-frame.async-boundary):
+        (.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary):
+        (.tree-outline .item.call-frame.async-boundary::before):
+        (.tree-outline.single-thread .item.call-frame.async-boundary::before):
+        (.tree-outline .item.call-frame.async-boundary): Deleted.
+        Style changes for single/multiple-thread call stacks.
+        Padding changes to account for Thread tree element.
+        Make selectors more specific where needed.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .tree-outline.single-thread > .item.thread):
+        (.sidebar > .panel.navigation.debugger .tree-outline.single-thread):
+        Style changes for single/multiple-thread call stacks.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        Use a single tree outline for showing a single thread or multiple threads.
+        For single-threaded, hide Thread tree element and un-indent children.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._targetAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._targetRemoved):
+        (WebInspector.DebuggerSidebarPanel.prototype._updateCallStackTreeOutline):
+        Update tree style and whether Thread tree element is selectable.
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+        Remove support for second tree outline.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._updateSingleThreadCallStacks): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._selectActiveCallFrameTreeElement): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._showSingleThreadCallStacks): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._showMultipleThreadCallStacks): Deleted.
+        No longer needed after unifying tree outlines.
+
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WebInspector.ThreadTreeElement.prototype.refresh):
+        Append call frames from the async stack trace.
+
 2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clicking on link in Web Inspector can cause UIProcess to crash
