@@ -1,3 +1,11 @@
+2016-11-30  Darin Adler  <darin@apple.com>
+
+        Roll out StringBuilder changes from the previous patch.
+        They were a slowdown on a Kraken JSON test.
+
+        * runtime/JSONObject.cpp:
+        Roll out changes from below.
+
 2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Specifying same module entry point multiple times cause TypeError

@@ -1,5 +1,14 @@
 2016-11-30  Darin Adler  <darin@apple.com>
 
+        Roll out StringBuilder changes from the previous patch.
+        They were a slowdown on a Kraken JSON test.
+
+        * wtf/text/StringBuilder.cpp:
+        * wtf/text/StringBuilder.h:
+        Roll out changes from below.
+
+2016-11-30  Darin Adler  <darin@apple.com>
+
         Streamline and speed up tokenizer and segmented string classes
         https://bugs.webkit.org/show_bug.cgi?id=165003
 
