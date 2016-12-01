@@ -29,6 +29,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
+    "${WEBCORE_DIR}/Modules/webdriver"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/animation"
@@ -312,6 +313,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdatabase/SQLTransaction.idl
     Modules/webdatabase/SQLTransactionCallback.idl
     Modules/webdatabase/SQLTransactionErrorCallback.idl
+
+    Modules/webdriver/NavigatorWebDriver.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
@@ -1016,6 +1019,8 @@ set(WebCore_SOURCES
     Modules/webdatabase/SQLTransactionBackend.cpp
     Modules/webdatabase/SQLTransactionCoordinator.cpp
     Modules/webdatabase/SQLTransactionStateMachine.cpp
+
+    Modules/webdriver/NavigatorWebDriver.cpp
 
     Modules/websockets/ThreadableWebSocketChannel.cpp
     Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp

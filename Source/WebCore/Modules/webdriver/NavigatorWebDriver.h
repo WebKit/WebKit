@@ -23,9 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreAdditions.cpp>
-#endif
+#include "Supplementable.h"
 
+namespace WebCore {
+
+class Frame;
+class Navigator;
+
+class NavigatorWebDriver final : public Supplement<Navigator> {
+public:
+    explicit NavigatorWebDriver(Frame*);
+    virtual ~NavigatorWebDriver();
+
+    bool isControlledByAutomation() const;
+
+    static NavigatorWebDriver* from(Navigator*);
+    static bool isControlledByAutomation(Navigator& navigator);
+private:
+    static const char* supplementName();
+
+    Frame* m_frame { nullptr };
+};
+
+} // namespace WebCore

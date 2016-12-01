@@ -48,6 +48,7 @@ VPATH = \
     $(WebCore)/Modules/streams \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
+    $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
     $(WebCore)/animation \
     $(WebCore)/bindings/generic \
@@ -240,6 +241,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransaction.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
+    $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/animation/Animatable.idl \

@@ -1,3 +1,28 @@
+2016-12-01  Brian Burg  <bburg@apple.com>
+
+        Web Automation: expose navigator.webdriver if the page is controlled by automation
+        https://bugs.webkit.org/show_bug.cgi?id=165245
+        <rdar://problem/29449874>
+
+        Reviewed by Joseph Pecoraro.
+
+        Move the implementation into OpenSource. It's in Modules/webdriver/.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        Add new paths and files.
+
+        * Modules/webdriver/NavigatorWebDriver.cpp: Added.
+        (WebCore::NavigatorWebDriver::NavigatorWebDriver):
+        (WebCore::NavigatorWebDriver::~NavigatorWebDriver):
+        (WebCore::NavigatorWebDriver::supplementName):
+        (WebCore::NavigatorWebDriver::isControlledByAutomation):
+        (WebCore::NavigatorWebDriver::from):
+        (WebCore::JSNavigator::webdriver):
+        * Modules/webdriver/NavigatorWebDriver.h: Added.
+        * Modules/webdriver/NavigatorWebDriver.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-01  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Implement IDBObjectStore.getKey().
