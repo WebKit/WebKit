@@ -573,7 +573,7 @@ static bool needsPlaybackControlsManagerQuirk(Page& page)
         return false;
 
     String host = page.mainFrame().document()->url().host();
-    return equalLettersIgnoringASCIICase(host, "www.netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
+    return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
 }
 
 HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)

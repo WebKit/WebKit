@@ -1,3 +1,16 @@
+2016-12-01  Beth Dakin  <bdakin@apple.com>
+
+        Blacklist Netflix for TouchBar support
+        https://bugs.webkit.org/show_bug.cgi?id=165104
+
+        Rubber-stamped by Tim Horton.
+
+        Meant to not have the www. in the first case because that is covered by the second 
+        case.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsPlaybackControlsManagerQuirk):
+
 2016-12-01  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support -webkit-overflow-scrolling: touch
