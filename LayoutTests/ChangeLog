@@ -1,5 +1,19 @@
 2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r209149. rdar://problem/29404230
+
+    2016-11-30  Mark Lam  <mark.lam@apple.com>
+
+            Proxy is not allowed in the global prototype chain.
+            https://bugs.webkit.org/show_bug.cgi?id=165205
+
+            Reviewed by Geoffrey Garen.
+
+            * js/dom/proxy-is-not-allowed-in-global-prototype-chain-expected.txt: Added.
+            * js/dom/proxy-is-not-allowed-in-global-prototype-chain.html: Added.
+
+2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r209145. rdar://problem/29404231
 
     2016-11-30  Brent Fulgham  <bfulgham@apple.com>
