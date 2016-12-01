@@ -1,3 +1,16 @@
+2016-11-30  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed, rolling out r209168.
+
+        Caused 2 API tests to fail
+
+        Reverted changeset:
+
+        "IndexedDB: When doing puts, don't
+        "updateAllIndexesForAddRecord" if there are no indexes."
+        https://bugs.webkit.org/show_bug.cgi?id=165215
+        http://trac.webkit.org/changeset/209168
+
 2016-11-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Build break when using --minimal

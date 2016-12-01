@@ -1660,21 +1660,19 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         recordID = m_sqliteDB->lastInsertRowID();
     }
 
-    if (!objectStoreInfo.indexMap().isEmpty()) {
-        auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value.data());
+    auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value.data());
 
-        if (!error.isNull()) {
-            auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
-            if (!sql
-                || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
-                || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
-                || sql->step() != SQLITE_DONE) {
-                LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
-                return { IDBDatabaseException::UnknownError, ASCIILiteral("Indexing new object store record failed, but unable to remove the object store record itself") };
-            }
-
-            return error;
+    if (!error.isNull()) {
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+        if (!sql
+            || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
+            || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
+            || sql->step() != SQLITE_DONE) {
+            LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Indexing new object store record failed, but unable to remove the object store record itself") };
         }
+
+        return error;
     }
 
     const Vector<String>& blobURLs = value.blobURLs();
@@ -1730,7 +1728,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
 
     transaction->notifyCursorsOfChanges(objectStoreInfo.identifier());
 
-    return { };
+    return error;
 }
 
 IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths)
