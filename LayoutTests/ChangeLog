@@ -1,3 +1,15 @@
+2016-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix an invalid shadow DOM test
+        https://bugs.webkit.org/show_bug.cgi?id=165273
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shadow-dom/css-scoping-slot-with-id.html:
+        Pseudo-element needs to be rightmost. The rule is illegal, but our old parser
+        incorrectly allowed it. Fix the test by just flipping the order so that ::slotted(*)
+        occurs last.
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::unwrapKey to match the latest spec

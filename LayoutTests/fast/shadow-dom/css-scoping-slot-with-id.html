@@ -47,7 +47,7 @@ host.attachShadow({ mode: 'open' }).innerHTML = `
 var host = document.querySelector('#t3');
 host.attachShadow({ mode: 'open' }).innerHTML = `
   <style>
-    ::slotted(*)#myslot {
+    #myslot::slotted(*) {
       background-color: green; width: 100%; height: 100%;
     }
   </style>
