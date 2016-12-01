@@ -33,7 +33,7 @@
 #include "JSFunctionInlines.h"
 #include "JSObject.h"
 #include "JSWebAssemblyInstance.h"
-#include "LLintThunks.h"
+#include "LLIntThunks.h"
 #include "ProtoCallFrame.h"
 #include "VM.h"
 #include "WasmFormat.h"

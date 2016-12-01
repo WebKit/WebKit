@@ -51,6 +51,10 @@ public:
     void link(ExecState*);
     JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
+    const SourceCode& sourceCode() const { return m_sourceCode; }
+    const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
+    const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
+
     ModuleProgramExecutable* moduleProgramExecutable() const { return m_moduleProgramExecutable.get(); }
 
 private:
@@ -63,6 +67,9 @@ private:
 
     void instantiateDeclarations(ExecState*, ModuleProgramExecutable*);
 
+    SourceCode m_sourceCode;
+    VariableEnvironment m_declaredVariables;
+    VariableEnvironment m_lexicalVariables;
     WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
 };
 

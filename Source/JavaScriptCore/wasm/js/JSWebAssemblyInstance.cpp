@@ -56,10 +56,10 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure)
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     Base::finishCreation(vm);
+    ASSERT(inherits(info()));
     m_module.set(vm, this, module);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
-    // FIXME this should put the module namespace object onto the exports object, instead of moduleEnvironment in WebAssemblyInstanceConstructor. https://bugs.webkit.org/show_bug.cgi?id=165121
-    ASSERT(inherits(info()));
+    putDirect(vm, Identifier::fromString(&vm, "exports"), moduleNamespaceObject, None);
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)

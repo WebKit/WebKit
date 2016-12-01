@@ -88,15 +88,11 @@ public:
     std::optional<ImportEntry> tryGetImportEntry(UniquedStringImpl* localName);
     std::optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
 
-    const SourceCode& sourceCode() const { return m_sourceCode; }
     const Identifier& moduleKey() const { return m_moduleKey; }
     const OrderedIdentifierSet& requestedModules() const { return m_requestedModules; }
     const ExportEntries& exportEntries() const { return m_exportEntries; }
     const ImportEntries& importEntries() const { return m_importEntries; }
     const OrderedIdentifierSet& starExportEntries() const { return m_starExportEntries; }
-
-    const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
-    const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
 
     void dump();
 
@@ -126,7 +122,7 @@ public:
     }
 
 protected:
-    AbstractModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
+    AbstractModuleRecord(VM&, Structure*, const Identifier&);
     void finishCreation(ExecState*, VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -142,11 +138,6 @@ private:
 
     // The loader resolves the given module name to the module key. The module key is the unique value to represent this module.
     Identifier m_moduleKey;
-
-    SourceCode m_sourceCode;
-
-    VariableEnvironment m_declaredVariables;
-    VariableEnvironment m_lexicalVariables;
 
     // Currently, we don't keep the occurrence order of the import / export entries.
     // So, we does not guarantee the order of the errors.

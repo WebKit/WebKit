@@ -46,15 +46,15 @@ Structure* WebAssemblyModuleRecord::createStructure(VM& vm, JSGlobalObject* glob
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-WebAssemblyModuleRecord* WebAssemblyModuleRecord::create(ExecState* exec, VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+WebAssemblyModuleRecord* WebAssemblyModuleRecord::create(ExecState* exec, VM& vm, Structure* structure, const Identifier& moduleKey, const Wasm::ModuleInformation& moduleInformation)
 {
-    WebAssemblyModuleRecord* instance = new (NotNull, allocateCell<WebAssemblyModuleRecord>(vm.heap)) WebAssemblyModuleRecord(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables);
-    instance->finishCreation(exec, vm);
+    WebAssemblyModuleRecord* instance = new (NotNull, allocateCell<WebAssemblyModuleRecord>(vm.heap)) WebAssemblyModuleRecord(vm, structure, moduleKey);
+    instance->finishCreation(exec, vm, moduleInformation);
     return instance;
 }
 
-WebAssemblyModuleRecord::WebAssemblyModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
-    : Base(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables)
+WebAssemblyModuleRecord::WebAssemblyModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey)
+    : Base(vm, structure, moduleKey)
 {
 }
 
@@ -64,10 +64,31 @@ void WebAssemblyModuleRecord::destroy(JSCell* cell)
     thisObject->WebAssemblyModuleRecord::~WebAssemblyModuleRecord();
 }
 
-void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm)
+void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm::ModuleInformation& moduleInformation)
 {
     Base::finishCreation(exec, vm);
     ASSERT(inherits(info()));
+    for (const auto& exp : moduleInformation.exports) {
+        switch (exp.kind) {
+        case Wasm::External::Function: {
+            addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
+            break;
+        }
+        case Wasm::External::Table: {
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
+            break;
+        }
+        case Wasm::External::Memory: {
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            break;
+        }
+        case Wasm::External::Global: {
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
+            // In the MVP, only immutable global variables can be exported.
+            break;
+        }
+        }
+    }
 }
 
 void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -92,11 +113,8 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, JSValue(), this);
-    unsigned offset = 0;
     for (const auto& exp : moduleInformation.exports) {
         JSValue exportedValue;
-        PutPropertySlot slot(this);
-        slot.setNewProperty(this, offset++);
         switch (exp.kind) {
         case Wasm::External::Function: {
             // 1. If e is a closure c:

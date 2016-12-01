@@ -72,10 +72,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
         return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be Object because the WebAssembly.Module has imports"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     Identifier moduleKey = Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
-    SourceCode sourceCode;
-    VariableEnvironment declaredVariables;
-    VariableEnvironment lexicalVariables;
-    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(state, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables);
+    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(state, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     Structure* instanceStructure = InternalFunction::createSubclassStructure(state, state->newTarget(), globalObject->WebAssemblyInstanceStructure());
@@ -88,8 +85,6 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (verbose)
         moduleRecord->dump();
-    // FIXME the following should be in JSWebAssemblyInstance instead of here. https://bugs.webkit.org/show_bug.cgi?id=165121
-    instance->putDirect(vm, Identifier::fromString(&vm, "exports"), JSValue(moduleRecord->moduleEnvironment()), None);
     JSValue startResult = moduleRecord->evaluate(state);
     UNUSED_PARAM(startResult);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

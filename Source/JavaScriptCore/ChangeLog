@@ -1,3 +1,51 @@
+2016-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WebAssembly JS API: export a module namespace object instead of a module environment
+        https://bugs.webkit.org/show_bug.cgi?id=165121
+
+        Reviewed by Saam Barati.
+
+        This patch setup AbstractModuleRecord further for WebAssemblyModuleRecord.
+        For exported entries in a wasm instance, we set up exported entries for
+        AbstractModuleRecord. This allows us to export WASM exported functions in
+        the module handling code.
+
+        Since the exported entries in the abstract module record are correctly
+        instantiated, the module namespace object for WASM module also starts
+        working correctly. So we start exposing the module namespace object
+        as `instance.exports` instead of the module environment object.
+
+        And we move SourceCode, lexicalVariables, and declaredVariables fields to
+        JSModuleRecord since they are related to JS source code (in the spec words,
+        they are related to the source text module record).
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::AbstractModuleRecord):
+        * runtime/AbstractModuleRecord.h:
+        (JSC::AbstractModuleRecord::sourceCode): Deleted.
+        (JSC::AbstractModuleRecord::declaredVariables): Deleted.
+        (JSC::AbstractModuleRecord::lexicalVariables): Deleted.
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::JSModuleRecord):
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::sourceCode):
+        (JSC::JSModuleRecord::declaredVariables):
+        (JSC::JSModuleRecord::lexicalVariables):
+        * wasm/WasmFormat.cpp:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        * wasm/js/WebAssemblyFunction.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::create):
+        (JSC::WebAssemblyModuleRecord::WebAssemblyModuleRecord):
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        WebAssemblyModuleRecord::link should perform linking things.
+        So allocating exported entries should be done here.
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2016-11-30  Mark Lam  <mark.lam@apple.com>
 
         TypeInfo::OutOfLineTypeFlags should be 16 bits in size.

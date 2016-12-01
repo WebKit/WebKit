@@ -50,7 +50,10 @@ JSModuleRecord* JSModuleRecord::create(ExecState* exec, VM& vm, Structure* struc
     return instance;
 }
 JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
-    : Base(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables)
+    : Base(vm, structure, moduleKey)
+    , m_sourceCode(sourceCode)
+    , m_declaredVariables(declaredVariables)
+    , m_lexicalVariables(lexicalVariables)
 {
 }
 

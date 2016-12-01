@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AbstractModuleRecord.h"
+#include "WasmFormat.h"
 
 namespace JSC {
 
@@ -43,15 +44,15 @@ public:
     DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
+    static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
     void link(ExecState*, JSWebAssemblyInstance*);
     JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
 private:
-    WebAssemblyModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
+    WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
-    void finishCreation(ExecState*, VM&);
+    void finishCreation(ExecState*, VM&, const Wasm::ModuleInformation&);
     static void destroy(JSCell*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
