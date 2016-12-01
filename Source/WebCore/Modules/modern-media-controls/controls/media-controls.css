@@ -23,6 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+:host(audio) {
+    width: 200px;
+    height: 50px;
+}
+
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls {
     position: relative;

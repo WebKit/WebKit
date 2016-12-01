@@ -1,3 +1,21 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: <audio> controls
+        https://bugs.webkit.org/show_bug.cgi?id=164619
+        <rdar://problem/29207215>
+
+        Reviewed by Dean Jackson.
+
+        Add tests to check the default size of an <audio> element and which of
+        the media controls buttons are enabled in that case.
+
+        * media/modern-media-controls/audio/audio-controls-buttons-expected.txt: Added.
+        * media/modern-media-controls/audio/audio-controls-buttons.html: Added.
+        * media/modern-media-controls/audio/audio-controls-metrics-expected.txt: Added.
+        * media/modern-media-controls/audio/audio-controls-metrics.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-11-30  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: layoutState->m_renderer == this in WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage

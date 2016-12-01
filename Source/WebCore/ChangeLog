@@ -1,3 +1,19 @@
+2016-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] UI Library: <audio> controls
+        https://bugs.webkit.org/show_bug.cgi?id=164619
+        <rdar://problem/29207215>
+
+        Reviewed by Dean Jackson.
+
+        Add a default size for <audio> elements (200x50).
+
+        Tests: media/modern-media-controls/audio/audio-controls-buttons.html
+               media/modern-media-controls/audio/audio-controls-metrics.html
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio)):
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r209144): API test IndexedDB.DeleteRecovery failing.

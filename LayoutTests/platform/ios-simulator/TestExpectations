@@ -2745,6 +2745,7 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
 media/modern-media-controls/pip-support [ Skip ]
 media/modern-media-controls/placard-support [ Skip ]
+media/modern-media-controls/audio [ Skip ]
 
 # This test is Mac-specific since it checks that we have custom controls in fullscreen.
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]

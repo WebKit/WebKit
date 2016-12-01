@@ -1,0 +1,15 @@
+Testing the <audio> controls buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Making AirPlay routes available.
+AirPlay routes became available.
+PASS mediaController.controls.controlsBar.children[2].children.length is 2
+PASS mediaController.controls.controlsBar.children[2].children[0] is mediaController.controls.muteButton
+PASS mediaController.controls.controlsBar.children[2].children[1] is mediaController.controls.airplayButton
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

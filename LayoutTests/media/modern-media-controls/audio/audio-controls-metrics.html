@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>&lt;audio></code> controls metrics.");
+
+const audio = document.body.appendChild(document.createElement("audio"));
+audio.controls = true;
+
+const bounds = audio.getBoundingClientRect();
+shouldBe("bounds.width", "200");
+shouldBe("bounds.height", "50");
+
+debug("");
+audio.remove();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
