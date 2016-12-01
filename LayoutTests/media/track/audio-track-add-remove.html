@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script src=../../resources/gc.js></script>
+    <script>
+    function trackAdded(event)
+    {
+        consoleWrite("EVENT(" + event.type + ")");
+        video.audioTracks.onaddtrack = null;
+        var track = event.track;
+        track.enabled = false;
+        video.src = "";
+        video = null;
+
+        setTimeout(function() {
+            gc();
+            track.enabled = !track.enabled;
+            consoleWrite("PASS: Track is in valid state.");
+            endTest();
+        }, 0);
+    }
+
+    function setup()
+    {
+        findMediaElement();
+        video.audioTracks.addEventListener("addtrack", trackAdded);
+        video.src = findMediaFile('audio', '../content/silence');
+    }
+    </script>
+</head>
+<body onload="setup()">
+    <video controls></video>
+    <p>Test audio track handling.</p>
+</body>
+</html>
