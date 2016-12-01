@@ -1,3 +1,36 @@
+2016-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some unnecessary indirection in code generation
+        https://bugs.webkit.org/show_bug.cgi?id=165264
+
+        Reviewed by Keith Miller.
+
+        There's no need to route through JSGlobalObject when producing code --
+        it just made the code harder to read.
+
+        This patch moves functions from JSGlobalObject to their singleton
+        call sites.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedEvalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalEvalCodeBlock): Deleted.
+        * runtime/CodeCache.h:
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock): Deleted.
+        (JSC::JSGlobalObject::createLocalEvalCodeBlock): Deleted.
+        (JSC::JSGlobalObject::createGlobalEvalCodeBlock): Deleted.
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::create):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/ProgramExecutable.h:
+
 2016-11-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: update binary format to 0xD version

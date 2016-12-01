@@ -27,6 +27,7 @@
 
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
+#include "CodeCache.h"
 #include "Debugger.h"
 #include "Exception.h"
 #include "JIT.h"
@@ -79,6 +80,19 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 
+    ParserError error;
+    JSParserStrictMode strictMode = isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+
+    UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedProgramCodeBlock(
+        vm, this, source(), strictMode, debuggerMode, error);
+
+    if (globalObject->hasDebugger())
+        globalObject->debugger()->sourceParsed(callFrame, source().provider(), error.line(), error.message());
+
+    if (error.isValid())
+        return error.toErrorObject(globalObject, source());
+
     JSValue nextPrototype = globalObject->getPrototypeDirect();
     while (nextPrototype && nextPrototype.isObject()) {
         if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType)) {
@@ -88,11 +102,6 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
     
-    JSObject* exception = nullptr;
-    UnlinkedProgramCodeBlock* unlinkedCodeBlock = globalObject->createProgramCodeBlock(callFrame, this, &exception);
-    if (UNLIKELY(exception))
-        return exception;
-
     JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();
     const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
     const VariableEnvironment& lexicalDeclarations = unlinkedCodeBlock->lexicalDeclarations();

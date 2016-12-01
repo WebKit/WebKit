@@ -26,9 +26,12 @@
 #include "config.h"
 #include "IndirectEvalExecutable.h"
 
+#include "CodeCache.h"
+#include "Debugger.h"
 #include "Error.h"
 #include "HeapInlines.h"
 #include "JSCJSValueInlines.h"
+#include "ParserError.h"
 
 namespace JSC {
 
@@ -46,10 +49,20 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(ExecState* exec, const So
     auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(*exec->heap())) IndirectEvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(vm);
 
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createGlobalEvalCodeBlock(exec, executable);
-    ASSERT(!!scope.exception() == !unlinkedEvalCode);
-    if (!unlinkedEvalCode)
-        return 0;
+    ParserError error;
+    JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+    
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = vm.codeCache()->getUnlinkedEvalCodeBlock(
+        vm, executable, executable->source(), strictMode, debuggerMode, error, evalContextType);
+
+    if (globalObject->hasDebugger())
+        globalObject->debugger()->sourceParsed(exec, executable->source().provider(), error.line(), error.message());
+
+    if (error.isValid()) {
+        throwVMError(exec, scope, error.toErrorObject(globalObject, executable->source()));
+        return nullptr;
+    }
 
     executable->m_unlinkedEvalCodeBlock.set(vm, executable, unlinkedEvalCode);
 

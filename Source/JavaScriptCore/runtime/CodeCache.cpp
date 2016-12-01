@@ -85,7 +85,7 @@ UnlinkedProgramCodeBlock* CodeCache::getUnlinkedProgramCodeBlock(VM& vm, Program
     return getUnlinkedGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, strictMode, JSParserScriptMode::Classic, debuggerMode, error, EvalContextType::None);
 }
 
-UnlinkedEvalCodeBlock* CodeCache::getUnlinkedGlobalEvalCodeBlock(VM& vm, IndirectEvalExecutable* executable, const SourceCode& source, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType)
+UnlinkedEvalCodeBlock* CodeCache::getUnlinkedEvalCodeBlock(VM& vm, IndirectEvalExecutable* executable, const SourceCode& source, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ParserError& error, EvalContextType evalContextType)
 {
     return getUnlinkedGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, strictMode, JSParserScriptMode::Classic, debuggerMode, error, evalContextType);
 }

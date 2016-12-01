@@ -42,7 +42,6 @@ public:
         return executable;
     }
 
-
     JSObject* initializeGlobalProperties(VM&, CallFrame*, JSScope*);
 
     static void destroy(JSCell*);

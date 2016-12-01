@@ -834,11 +834,6 @@ public:
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
     WeakRandom& weakRandom() { return m_weakRandom; }
 
-    UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createLocalEvalCodeBlock(CallFrame*, DirectEvalExecutable*, const VariableEnvironment*);
-    UnlinkedEvalCodeBlock* createGlobalEvalCodeBlock(CallFrame*, IndirectEvalExecutable*);
-    UnlinkedModuleProgramCodeBlock* createModuleProgramCodeBlock(CallFrame*, ModuleProgramExecutable*);
-
     bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
 
 protected:
