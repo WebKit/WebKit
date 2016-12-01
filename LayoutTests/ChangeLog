@@ -1,3 +1,12 @@
+2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html as failing on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=165262
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Promote the "on" property from AirPlayButton to IconButton
